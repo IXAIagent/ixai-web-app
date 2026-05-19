@@ -3,7 +3,7 @@ import Link from "next/link";
 const mobileItems = [
   { label: "首頁", href: "/" },
   { label: "每日", href: "/daily-brief" },
-  { label: "週報", href: "/weekly-brief" },
+  { label: "自選", href: "/watchlist" },
   { label: "Pro", href: "/ixai" },
 ];
 

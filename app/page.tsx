@@ -7,7 +7,6 @@ import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview"
 import {
   marketOverview,
   proFeatures,
-  watchlist,
 } from "@/lib/mock-data";
 import { getLatestDailyBrief } from "@/src/lib/dailyBriefs";
 import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
@@ -32,7 +31,7 @@ export default function Home() {
         className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]"
         id="watchlist"
       >
-        <Watchlist assets={watchlist} />
+        <Watchlist />
         <div id="weekly-brief">
           <WeeklyBriefPreview brief={latestWeeklyBrief} />
         </div>
