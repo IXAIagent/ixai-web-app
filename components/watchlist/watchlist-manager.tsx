@@ -2,6 +2,12 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
+  MARKET_DATA_DISCLAIMER,
+  type MarketDataStatus,
+  type MarketQuote,
+  type MarketQuotesResponse,
+} from "@/src/lib/market-data/types";
+import {
   addWatchlistItem,
   clearWatchlist,
   getWatchlist,
@@ -38,6 +44,13 @@ const exampleItems = [
   market: WatchlistMarket;
 }[];
 
+const statusLabels: Record<MarketDataStatus, string> = {
+  realtime: "即時",
+  delayed: "延遲",
+  simulated: "模擬",
+  unavailable: "暫無資料",
+};
+
 function marketLabel(market: WatchlistMarket) {
   return marketOptions.find((item) => item.value === market)?.label ?? market;
 }
@@ -62,6 +75,7 @@ export function WatchlistManager() {
   const [market, setMarket] = useState<WatchlistMarket>("US");
   const [note, setNote] = useState("");
   const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
+  const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({});
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -76,6 +90,41 @@ export function WatchlistManager() {
 
     return () => window.clearTimeout(timeoutId);
   }, []);
+
+  useEffect(() => {
+    if (items.length === 0) {
+      return;
+    }
+
+    let isMounted = true;
+    const symbols = items.map((item) => item.symbol);
+
+    async function loadQuotes() {
+      try {
+        const response = await fetch(`/api/market/quotes?symbols=${symbols.join(",")}`);
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as MarketQuotesResponse;
+        if (isMounted) {
+          setQuotes(
+            Object.fromEntries(data.quotes.map((quote) => [quote.symbol, quote])),
+          );
+        }
+      } catch {
+        if (isMounted) {
+          setQuotes({});
+        }
+      }
+    }
+
+    loadQuotes();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [items]);
 
   const normalizedSymbol = useMemo(
     () => normalizeSymbol(symbol, market),
@@ -274,6 +323,7 @@ export function WatchlistManager() {
             <div className="divide-y divide-[var(--ixai-border)]">
               {items.map((item) => {
                 const key = `${item.market}:${item.symbol}`;
+                const quote = quotes[item.symbol];
 
                 return (
                   <article className="p-5" key={key}>
@@ -305,6 +355,26 @@ export function WatchlistManager() {
                       <span className="rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
                         {new Date(item.addedAt).toLocaleDateString("zh-TW")}
                       </span>
+                      <span className="rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
+                        {quote ? statusLabels[quote.status] : "暫無資料"}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 grid gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3 sm:grid-cols-[1fr_auto] sm:items-end">
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                          Market Data
+                        </p>
+                        <p className="mt-1 font-mono text-lg font-semibold text-[var(--ixai-forest)]">
+                          {quote?.price ?? "暫無資料"}
+                        </p>
+                        <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
+                          {quote?.sourceLabel ?? "Market Data Layer"}
+                        </p>
+                      </div>
+                      <p className="font-mono text-sm font-medium text-[var(--ixai-forest-soft)]">
+                        {quote?.dailyChange ?? "--"}
+                      </p>
                     </div>
 
                     <div className="mt-4 grid gap-3">
@@ -333,6 +403,20 @@ export function WatchlistManager() {
             </div>
           )}
         </section>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-5 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:p-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          Market Data Layer
+        </p>
+        <p className="mt-2">
+          自選觀察會顯示每筆資料的狀態：即時、延遲、模擬或暫無資料。BTC / ETH
+          會嘗試讀取 CoinGecko，其餘標的目前以 provider placeholder 與 fallback mock
+          維持穩定體驗。
+        </p>
+        <p className="mt-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+          {MARKET_DATA_DISCLAIMER}
+        </p>
       </section>
     </div>
   );

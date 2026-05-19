@@ -4,10 +4,7 @@ import { ProCta } from "@/components/dashboard/pro-cta";
 import { TodaysBrief } from "@/components/dashboard/todays-brief";
 import { Watchlist } from "@/components/dashboard/watchlist";
 import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview";
-import {
-  marketOverview,
-  proFeatures,
-} from "@/lib/mock-data";
+import { proFeatures } from "@/lib/mock-data";
 import { getLatestDailyBrief } from "@/src/lib/dailyBriefs";
 import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
@@ -24,7 +21,7 @@ export default function Home() {
         id="markets"
       >
         <TodaysBrief brief={latestDailyBrief} />
-        <MarketOverview markets={marketOverview} />
+        <MarketOverview />
       </div>
 
       <div

@@ -1,18 +1,18 @@
-import type { Direction } from "@/lib/mock-data";
+import type { MarketDirection } from "@/src/lib/market-data/types";
 
-const directionStyles: Record<Direction, string> = {
+const directionStyles: Record<MarketDirection, string> = {
   up: "border-emerald-700/18 bg-emerald-700/8 text-emerald-800",
   down: "border-red-800/18 bg-red-800/8 text-red-800",
   flat: "border-[var(--ixai-border)] bg-[rgba(176,141,87,0.08)] text-[var(--ixai-forest-soft)]",
 };
 
-const directionLabels: Record<Direction, string> = {
+const directionLabels: Record<MarketDirection, string> = {
   up: "上行",
   down: "下行",
   flat: "持平",
 };
 
-export function DirectionPill({ direction }: { direction: Direction }) {
+export function DirectionPill({ direction }: { direction: MarketDirection }) {
   return (
     <span
       className={`inline-flex min-w-14 items-center justify-center rounded-lg border px-2.5 py-1 text-xs font-medium ${directionStyles[direction]}`}

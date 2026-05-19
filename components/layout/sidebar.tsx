@@ -4,7 +4,7 @@ const navItems = [
   { label: "市場首頁", href: "/" },
   { label: "每日簡報", href: "/daily-brief" },
   { label: "週報", href: "/weekly-brief" },
-  { label: "市場總覽", href: "/#markets" },
+  { label: "市場總覽", href: "/market" },
   { label: "自選觀察", href: "/watchlist" },
   { label: "IXAI Pro", href: "/ixai" },
   { label: "關於一玄", href: "/about" },
