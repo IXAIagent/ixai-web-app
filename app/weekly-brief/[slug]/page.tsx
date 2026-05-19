@@ -1,0 +1,269 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import {
+  getAllWeeklyBriefs,
+  getWeeklyBriefBySlug,
+} from "@/src/lib/weeklyBriefs";
+import type { WeeklyBriefSource } from "@/content/weekly-briefs";
+
+const sourceTypeLabels: Record<WeeklyBriefSource["type"], string> = {
+  official_data: "官方資料",
+  earnings_calendar: "財報行事曆",
+  market_news: "市場新聞",
+  crypto_market: "Crypto 市場資料",
+  company_ir: "公司 IR",
+  editorial_review: "一玄人工審閱",
+};
+
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export function generateStaticParams() {
+  return getAllWeeklyBriefs().map((brief) => ({ slug: brief.slug }));
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+  const brief = getWeeklyBriefBySlug(slug);
+
+  if (!brief) {
+    return {
+      title: "Weekly Brief Not Found | IXAI",
+    };
+  }
+
+  return {
+    title: `${brief.title} | IXAI Weekly Brief`,
+    description: brief.executiveSummary,
+  };
+}
+
+export default async function WeeklyBriefDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const brief = getWeeklyBriefBySlug(slug);
+
+  if (!brief) {
+    notFound();
+  }
+
+  return (
+    <article className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
+        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
+          Weekly Brief
+        </p>
+        <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">
+          {brief.title}
+        </h1>
+        <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
+          {brief.executiveSummary}
+        </p>
+        <div className="mt-5 flex flex-wrap gap-2 text-xs text-white/74">
+          <span className="rounded-lg border border-white/12 px-2.5 py-1">
+            發布時間：{brief.publishedAt}
+          </span>
+          <span className="rounded-lg border border-white/12 px-2.5 py-1">
+            市場回顧期間：{brief.coveragePeriod}
+          </span>
+          <span className="rounded-lg border border-white/12 px-2.5 py-1">
+            下週市場焦點：{brief.upcomingPeriod}
+          </span>
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          編輯觀察
+        </p>
+        <p className="mt-3 text-base leading-8 text-[var(--ixai-forest-soft)]">
+          {brief.editorialNote}
+        </p>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)]">
+        <div className="border-b border-[var(--ixai-border)] px-5 py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            重大事件
+          </p>
+          <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
+            本週市場定價來源
+          </h2>
+        </div>
+        <div className="divide-y divide-[var(--ixai-border)]">
+          {brief.majorEvents.map((event) => (
+            <section
+              className="grid gap-4 px-5 py-5 md:grid-cols-[10rem_1fr]"
+              key={event.headline}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ixai-forest)]">
+                {event.category}
+              </p>
+              <div>
+                <h3 className="text-lg font-semibold leading-7 text-[var(--ixai-forest)]">
+                  {event.headline}
+                </h3>
+                <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+                  {event.summary}
+                </p>
+                <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.26)] bg-[rgba(176,141,87,0.08)] p-4">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                    一玄觀點
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                    {event.ixuanView}
+                  </p>
+                </div>
+              </div>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">
+        <div className="border-b border-[var(--ixai-border)] px-5 py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            資產觀察
+          </p>
+        </div>
+        <div className="grid gap-0 md:grid-cols-2">
+          {brief.assetObservations.map((asset) => (
+            <article
+              className="border-b border-[var(--ixai-border)] p-5 md:border-r"
+              key={asset.label}
+            >
+              <h3 className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
+                {asset.label}
+              </h3>
+              <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+                {asset.text}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)]">
+        <div className="border-b border-[var(--ixai-border)] px-5 py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            下週市場焦點
+          </p>
+          <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
+            觀察期間：{brief.upcomingPeriod}
+          </h2>
+        </div>
+        <div className="divide-y divide-[var(--ixai-border)]">
+          {brief.upcomingFocus.map((item) => (
+            <article
+              className="grid gap-3 px-5 py-4 lg:grid-cols-[8rem_1fr_1fr]"
+              key={`${item.date}-${item.event}`}
+            >
+              <p className="font-mono text-xs text-[var(--ixai-gold)]">
+                {item.date}
+              </p>
+              <div>
+                <h3 className="text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
+                  {item.event}
+                </h3>
+                <p className="mt-1 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+                  {item.whyItMatters}
+                </p>
+              </div>
+              <p className="text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {item.marketImpact}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          風險提醒
+        </p>
+        <div className="mt-3 grid gap-3">
+          {brief.riskNotes.map((note) => (
+            <p
+              className="text-sm leading-7 text-[var(--ixai-forest-soft)]"
+              key={note}
+            >
+              {note}
+            </p>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(9,41,31,0.035)]">
+        <div className="border-b border-[var(--ixai-border)] px-5 py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            資料來源 / 信任層
+          </p>
+          <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
+            公開資訊、人工審閱與風險脈絡
+          </h2>
+        </div>
+        <div className="grid gap-3 p-5 md:grid-cols-2">
+          {brief.sources.map((source) => (
+            <div
+              className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] p-4"
+              key={`${source.type}-${source.label}`}
+            >
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                {sourceTypeLabels[source.type]}
+              </p>
+              {source.url ? (
+                <a
+                  className="mt-2 block text-sm font-semibold text-[var(--ixai-forest)]"
+                  href={source.url}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {source.label}
+                </a>
+              ) : (
+                <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">
+                  {source.label}
+                </p>
+              )}
+              {source.note ? (
+                <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+                  {source.note}
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] sm:p-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
+          回到 IXAI
+        </p>
+        <div className="mt-2 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold">
+              將週報脈絡接回每日監控。
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-7 text-white/68">
+              將 Weekly Brief 與每日簡報、IXAI Pro 產品教育放在同一個 App 工作區中閱讀。
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              className="inline-flex rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+              href="/daily-brief"
+            >
+              每日簡報
+            </Link>
+            <Link
+              className="inline-flex rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-white/78"
+              href="/ixai"
+            >
+              了解 IXAI Pro
+            </Link>
+          </div>
+        </div>
+      </section>
+    </article>
+  );
+}
