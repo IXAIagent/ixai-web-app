@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { DailyBriefLocalDetail } from "@/components/daily-brief/daily-brief-local-detail";
 import type { DailyBrief } from "@/content/daily-briefs";
 import {
   getAllDailyBriefs,
@@ -44,7 +44,7 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
   const brief = getDailyBriefBySlug(slug);
 
   if (!brief) {
-    notFound();
+    return <DailyBriefLocalDetail slug={slug} />;
   }
 
   return (

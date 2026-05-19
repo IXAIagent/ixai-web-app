@@ -5,11 +5,11 @@ import { TodaysBrief } from "@/components/dashboard/todays-brief";
 import { Watchlist } from "@/components/dashboard/watchlist";
 import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview";
 import { proFeatures } from "@/lib/mock-data";
-import { getLatestDailyBrief } from "@/src/lib/dailyBriefs";
+import { getLatestPublishedBrief } from "@/src/lib/editorial/repository";
 import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
 export default function Home() {
-  const latestDailyBrief = getLatestDailyBrief();
+  const latestDailyBrief = getLatestPublishedBrief();
   const latestWeeklyBrief = getLatestWeeklyBrief();
 
   return (
