@@ -1,3 +1,4 @@
+import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { Sidebar } from "@/components/layout/sidebar";
 import Link from "next/link";
@@ -25,6 +26,7 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
 
       <main className="min-h-screen pb-24 pt-16 md:ml-64 md:pb-0 md:pt-0">
         {children}
+        <Footer />
       </main>
 
       <MobileNav />

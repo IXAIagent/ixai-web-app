@@ -10,8 +10,7 @@ export function Hero() {
             AI Wealth Intelligence Platform
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-8 text-white/72">
-            每日打開的市場情報入口，將利率、AI 科技、台股供應鏈與 Crypto
-            風險脈絡整理成可持續閱讀的決策節奏。
+            一套每天打開的 AI wealth intelligence platform，將市場情報、風險脈絡與資產觀察整理成可持續使用的金融決策節奏。
           </p>
         </div>
 
@@ -20,7 +19,7 @@ export function Hero() {
             <p className="text-xs uppercase tracking-[0.2em] text-white/42">
               今日閱讀框架
             </p>
-            <p className="mt-2 text-lg font-medium">Daily Brief + Market OS</p>
+            <p className="mt-2 text-lg font-medium">Daily Brief + Intelligence OS</p>
           </div>
           <div className="grid grid-cols-3 gap-2">
             {["閱讀", "判斷", "監控"].map((item) => (

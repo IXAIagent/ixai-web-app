@@ -52,10 +52,10 @@ export default function IxaiPage() {
           IXAI Pro
         </p>
         <h1 className="mt-3 max-w-3xl text-3xl font-semibold leading-tight sm:text-4xl">
-          理解每日市場工作區背後的操作系統。
+          從每日閱讀，進入 AI Wealth Intelligence 的監控層。
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
-          IXAI 不是另一個資訊看板，而是協助你把每日市場閱讀、風險監控與資產脈絡整理成可重複使用的財富情報流程。
+          IXAI 不是另一個資訊看板，而是把市場情報、AI 分析與風險監控整合成可每天使用的 financial intelligence layer。
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
@@ -83,7 +83,7 @@ export default function IxaiPage() {
           </h2>
           <div>
             <p className="text-sm leading-7 text-[var(--ixai-ink-muted)]">
-              IXAI 是面向現代投資者的 AI Wealth Operating System，協助整理股票、利率、Crypto、結構型商品與個人風險脈絡，讓市場資訊更適合每日使用。
+              IXAI 是面向現代投資者的 AI Wealth Intelligence Platform，協助整理股票、利率、Crypto、結構型商品與個人風險脈絡，讓市場資訊轉化成更穩定的 daily intelligence。
             </p>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               {operatingSystemPoints.map((point) => (

@@ -10,11 +10,11 @@ export function ProCta({ features }: { features: string[] }) {
             IXAI Pro
           </p>
           <h2 className="mt-2 text-xl font-semibold">
-            升級 IXAI Pro，建立更完整的監控層
+            升級 IXAI Pro，建立 AI wealth intelligence 的監控層
           </h2>
           <p className="mt-3 text-sm leading-7 text-white/68">
             未來將延伸至結構型商品監控、AI 風險提醒、投資組合情報與 Crypto
-            監控，讓每日閱讀進一步轉為持續追蹤。
+            監控，讓每日閱讀進一步轉為個人化、可持續的 intelligence workflow。
           </p>
           <Link
             className="mt-5 inline-flex rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"

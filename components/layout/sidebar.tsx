@@ -7,6 +7,7 @@ const navItems = [
   { label: "市場總覽", href: "/#markets" },
   { label: "自選觀察", href: "/watchlist" },
   { label: "IXAI Pro", href: "/ixai" },
+  { label: "關於一玄", href: "/about" },
 ];
 
 export function Sidebar() {
