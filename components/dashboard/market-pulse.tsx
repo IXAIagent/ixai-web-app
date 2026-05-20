@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { marketPulseItems, type PulseSentiment } from "@/src/lib/daily-intelligence";
 import type { MarketDirection, MarketQuote, MarketQuotesResponse } from "@/src/lib/market-data/types";
 
@@ -69,9 +71,7 @@ export function MarketPulse() {
       <div className="border-b border-white/10 px-4 py-4 sm:px-5 lg:px-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-              Market Pulse
-            </p>
+            <Eyebrow density="extra-wide">Market Pulse</Eyebrow>
             <h1 className="mt-2 text-2xl font-semibold leading-tight sm:text-3xl">
               今日市場脈搏
             </h1>
@@ -130,9 +130,9 @@ export function MarketPulse() {
               <p className="mt-4 min-h-12 text-sm leading-6 text-white/68">
                 {item.note}
               </p>
-              <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ixai-gold)]">
+              <Eyebrow mono density="regular" className="mt-3">
                 {quote?.updatedAt ? "Updated now" : item.updatedLabel}
-              </p>
+              </Eyebrow>
             </article>
           );
         })}

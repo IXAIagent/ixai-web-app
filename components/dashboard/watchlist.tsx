@@ -165,12 +165,21 @@ export function Watchlist() {
               </article>
             );
           })}
-          <div className="px-4 py-3 sm:px-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
             <Link
               className="inline-flex min-h-10 items-center rounded-lg border border-[var(--ixai-border)] px-4 text-sm font-medium text-[var(--ixai-forest)]"
               href="/watchlist"
             >
               管理自選觀察
+            </Link>
+            {/* v1.7: soft Pro seed inside the monitoring tier — no badge,
+                no popup, just an inline reference. Premium conversion sits
+                next to the workflow it upgrades. */}
+            <Link
+              className="text-xs text-[var(--ixai-ink-muted)] transition hover:text-[var(--ixai-forest)]"
+              href="/ixai"
+            >
+              Pro 用戶可監控更多標的、設定自訂提醒 →
             </Link>
           </div>
         </div>
