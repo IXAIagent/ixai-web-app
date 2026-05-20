@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   getDrafts,
   publishDraft,
@@ -9,7 +9,11 @@ import {
 } from "@/src/lib/editorial/repository";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
-import type { DailyBriefDraft, DailyBriefDraftStatus } from "@/src/types/editorial";
+import type {
+  DailyBriefDraft,
+  DailyBriefDraftStatus,
+  DailyDraftGenerationSummary,
+} from "@/src/types/editorial";
 import type { NewsIntakeResult } from "@/src/types/news";
 
 const statusLabels: Record<DailyBriefDraftStatus, string> = {
@@ -50,6 +54,10 @@ export function DailyBriefsAdmin() {
   const [selectedId, setSelectedId] = useState(() => drafts[0]?.id ?? "");
   const [isGenerating, setIsGenerating] = useState(false);
   const [intakeMeta, setIntakeMeta] = useState<NewsIntakeResult | null>(null);
+  const [schedulerStatus, setSchedulerStatus] = useState<{
+    schedulerConfigured: boolean;
+    lastGeneration: DailyDraftGenerationSummary | null;
+  } | null>(null);
   const publishedBriefs = useMemo(
     () =>
       drafts
@@ -64,6 +72,37 @@ export function DailyBriefsAdmin() {
   const selectedDraft = drafts.find((draft) => draft.id === selectedId) ?? drafts[0];
   const supabaseReady = isSupabaseClientConfigured();
   const intakeSources = intakeMeta?.sourceStatus ?? intakeMeta?.sources ?? [];
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadSchedulerStatus() {
+      try {
+        const response = await fetch("/api/admin/daily-briefs/scheduler/status");
+        const status = (await response.json()) as {
+          schedulerConfigured: boolean;
+          lastGeneration: DailyDraftGenerationSummary | null;
+        };
+
+        if (!ignore) {
+          setSchedulerStatus(status);
+        }
+      } catch {
+        if (!ignore) {
+          setSchedulerStatus({
+            schedulerConfigured: false,
+            lastGeneration: null,
+          });
+        }
+      }
+    }
+
+    void loadSchedulerStatus();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   function refresh(nextDrafts?: DailyBriefDraft[]) {
     const next = nextDrafts ?? getDrafts();
@@ -89,7 +128,21 @@ export function DailyBriefsAdmin() {
       const intake = (await response.json()) as NewsIntakeResult;
       const draft = generateDailyIntelligenceDraftFromNews(intake.items);
       const nextDrafts = saveDraft(draft);
+      const generatedAt = new Date().toISOString();
       setIntakeMeta(intake);
+      setSchedulerStatus((current) => ({
+        schedulerConfigured: current?.schedulerConfigured ?? false,
+        lastGeneration: {
+          status: "generated",
+          draftSlug: draft.slug,
+          generatedAt,
+          sourceMode: intake.mode,
+          itemCount: intake.itemCount,
+          sourceStatus: intake.sourceStatus ?? intake.sources,
+          schedulerConfigured: current?.schedulerConfigured ?? false,
+          forced: false,
+        },
+      }));
       setDrafts(nextDrafts);
       setSelectedId(draft.id);
     } finally {
@@ -186,6 +239,49 @@ export function DailyBriefsAdmin() {
             </p>
           </section>
         ) : null}
+
+        <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/62">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                Daily Auto Draft Scheduler
+              </p>
+              <p className="mt-1">
+                Scheduler:{" "}
+                <span className="text-white">
+                  {schedulerStatus?.schedulerConfigured ? "configured" : "not configured"}
+                </span>{" "}
+                · Human review required
+              </p>
+            </div>
+            <div className="grid gap-1 text-xs leading-5 text-white/48 lg:min-w-[320px]">
+              <p>
+                Last generated draft:{" "}
+                <span className="text-white">
+                  {schedulerStatus?.lastGeneration?.draftSlug ?? "No scheduled draft yet"}
+                </span>
+              </p>
+              <p>
+                Source mode:{" "}
+                <span className="text-white">
+                  {schedulerStatus?.lastGeneration?.sourceMode ?? "-"}
+                </span>{" "}
+                · Item count:{" "}
+                <span className="text-white">
+                  {schedulerStatus?.lastGeneration?.itemCount ?? "-"}
+                </span>
+              </p>
+              <p>
+                Generated time:{" "}
+                <span className="text-white">
+                  {schedulerStatus?.lastGeneration
+                    ? formatDate(schedulerStatus.lastGeneration.generatedAt)
+                    : "-"}
+                </span>
+              </p>
+            </div>
+          </div>
+        </section>
 
         <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
           <section className="rounded-lg border border-white/10 bg-white/[0.035]">

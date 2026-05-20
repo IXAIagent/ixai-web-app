@@ -5,6 +5,8 @@ import type { DailyBriefDraft, DailyIntelligenceDraft } from "@/src/types/editor
 const STORAGE_KEY = "ixai.editorial.dailyBriefDrafts.v1";
 const PUBLISH_EVENT = "ixai-editorial-publish";
 
+let serverDrafts: DailyBriefDraft[] = [];
+
 function canUseStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
 }
@@ -27,7 +29,7 @@ function toDraftFromPublishedBrief(brief: DailyBrief): DailyBriefDraft {
 
 function readStoredDrafts(): DailyBriefDraft[] {
   if (!canUseStorage()) {
-    return [];
+    return serverDrafts;
   }
 
   try {
@@ -57,6 +59,7 @@ function readStoredDrafts(): DailyBriefDraft[] {
 
 function writeStoredDrafts(drafts: DailyBriefDraft[]) {
   if (!canUseStorage()) {
+    serverDrafts = drafts;
     return;
   }
 
@@ -115,6 +118,10 @@ export function saveDraft(draft: DailyBriefDraft): DailyBriefDraft[] {
 
   writeStoredDrafts(next);
   return getDrafts();
+}
+
+export function findDraftForDate(dateKey: string): DailyBriefDraft | undefined {
+  return readStoredDrafts().find((draft) => draft.slug.includes(dateKey));
 }
 
 export function publishDraft(id: string): DailyBriefDraft[] {

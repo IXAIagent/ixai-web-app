@@ -118,6 +118,7 @@ export async function generateDailyIntelligenceDraft(): Promise<DailyBriefDraft>
 
 export function generateDailyIntelligenceDraftFromNews(
   newsItems: NormalizedNewsItem[],
+  options: { slugSuffix?: string } = {},
 ): DailyBriefDraft {
   const intelligence = generateDailyIntelligenceFromNews(newsItems);
   const rates = byCategory(newsItems, "rates");
@@ -125,7 +126,8 @@ export function generateDailyIntelligenceDraftFromNews(
   const equities = byCategory(newsItems, "equities");
   const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const now = nowIso();
-  const slug = `daily-intelligence-${now.slice(0, 10)}`;
+  const baseSlug = `daily-intelligence-${now.slice(0, 10)}`;
+  const slug = options.slugSuffix ? `${baseSlug}-${options.slugSuffix}` : baseSlug;
 
   return {
     id: `generated-${slug}`,

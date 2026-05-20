@@ -49,3 +49,21 @@ export type DailyBriefDraft = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type DailyDraftGenerationSummary = {
+  status: "generated" | "existing";
+  draftSlug: string;
+  generatedAt: string;
+  sourceMode: "real" | "fallback";
+  itemCount: number;
+  sourceStatus: {
+    id: string;
+    label: string;
+    enabled: boolean;
+    status: "success" | "failed" | "disabled" | "fallback";
+    itemCount: number;
+    reason?: string;
+  }[];
+  schedulerConfigured: boolean;
+  forced: boolean;
+};
