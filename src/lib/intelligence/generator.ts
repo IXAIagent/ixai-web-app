@@ -1,4 +1,3 @@
-import { getLatestNewsIntake } from "@/src/lib/news/providers";
 import type { DailyBriefDraft, DailyIntelligenceDraft } from "@/src/types/editorial";
 import type { NormalizedNewsItem } from "@/src/types/news";
 
@@ -44,7 +43,7 @@ export function generateDailyIntelligenceFromNews(
       .map((item, index) => ({
         category: item.category,
         title: item.title,
-        summary: item.summary,
+        summary: item.summary ?? "IXAI intake captured this market item for editorial review.",
         updatedLabel: minutesAgoLabel(8 + index * 4),
       })),
     marketRegimeNote:
@@ -68,7 +67,12 @@ export function generateDailyIntelligenceFromNews(
 }
 
 export async function generateDailyIntelligenceDraft(): Promise<DailyBriefDraft> {
-  const newsItems = await getLatestNewsIntake();
+  return generateDailyIntelligenceDraftFromNews([]);
+}
+
+export function generateDailyIntelligenceDraftFromNews(
+  newsItems: NormalizedNewsItem[],
+): DailyBriefDraft {
   const intelligence = generateDailyIntelligenceFromNews(newsItems);
   const now = nowIso();
   const slug = `daily-intelligence-${now.slice(0, 10)}`;

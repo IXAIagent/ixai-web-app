@@ -7,9 +7,10 @@ import {
   publishDraft,
   saveDraft,
 } from "@/src/lib/editorial/repository";
-import { generateDailyIntelligenceDraft } from "@/src/lib/intelligence/generator";
+import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
 import type { DailyBriefDraft, DailyBriefDraftStatus } from "@/src/types/editorial";
+import type { NewsIntakeResult } from "@/src/types/news";
 
 const statusLabels: Record<DailyBriefDraftStatus, string> = {
   draft: "Draft",
@@ -48,6 +49,7 @@ export function DailyBriefsAdmin() {
   const [drafts, setDrafts] = useState<DailyBriefDraft[]>(() => getDrafts());
   const [selectedId, setSelectedId] = useState(() => drafts[0]?.id ?? "");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [intakeMeta, setIntakeMeta] = useState<NewsIntakeResult | null>(null);
   const publishedBriefs = useMemo(
     () =>
       drafts
@@ -82,8 +84,11 @@ export function DailyBriefsAdmin() {
     setIsGenerating(true);
 
     try {
-      const draft = await generateDailyIntelligenceDraft();
+      const response = await fetch("/api/news/latest?limit=10");
+      const intake = (await response.json()) as NewsIntakeResult;
+      const draft = generateDailyIntelligenceDraftFromNews(intake.items);
       const nextDrafts = saveDraft(draft);
+      setIntakeMeta(intake);
       setDrafts(nextDrafts);
       setSelectedId(draft.id);
     } finally {
@@ -124,6 +129,33 @@ export function DailyBriefsAdmin() {
             </div>
           </div>
         </header>
+
+        {intakeMeta ? (
+          <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/62">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                  News Intake
+                </p>
+                <p className="mt-1">
+                  Source mode: <span className="text-white">{intakeMeta.mode}</span> · Items used:{" "}
+                  <span className="text-white">{intakeMeta.itemCount}</span> · Last fetch:{" "}
+                  <span className="text-white">{formatDate(intakeMeta.fetchedAt)}</span>
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {intakeMeta.sources.map((source) => (
+                  <span
+                    className="rounded-md border border-white/10 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.12em] text-white/54"
+                    key={source.id}
+                  >
+                    {source.label}: {source.status}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
           <section className="rounded-lg border border-white/10 bg-white/[0.035]">
