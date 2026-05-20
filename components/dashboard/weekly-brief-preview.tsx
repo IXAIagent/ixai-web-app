@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
 import type { WeeklyBrief } from "@/content/weekly-briefs";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 export function WeeklyBriefPreview({ brief }: { brief: WeeklyBrief }) {
   return (
@@ -48,7 +49,7 @@ export function WeeklyBriefPreview({ brief }: { brief: WeeklyBrief }) {
           </Link>
           <Link
             className="mt-3 inline-flex rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href="/ixai"
+            href={ixaiEcosystem.proPreviewUrl}
           >
             了解 IXAI Pro
           </Link>

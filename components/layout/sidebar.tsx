@@ -34,14 +34,14 @@ const navGroups: Array<{
   {
     heading: "Membership",
     items: [
-      { label: "FCN 監控", href: "/fcn" },
-      { label: "IXAI Pro", href: "/ixai" },
+      { label: "FCN", href: "/fcn" },
+      { label: "IXAI Pro", href: "/pro" },
     ],
   },
   {
     heading: "Brand",
     items: [
-      { label: "關於一玄", href: "/about" },
+      { label: "About IXAI", href: "/about" },
     ],
   },
 ];

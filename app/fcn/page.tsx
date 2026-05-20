@@ -11,13 +11,14 @@ import {
   getFcnPortfolioSnapshot,
   getFcnRiskLabel,
 } from "@/src/lib/fcn/engine";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 import type { MarketDataStatus } from "@/src/lib/market-data/types";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "FCN 監控 | IXAI Pro",
-  description: "IXAI Pro FCN Monitoring Phase 1：worst-of、KI / KO distance 與 coupon schedule 風險觀察。",
+  title: "FCN Education + Intelligence | IXAI",
+  description: "IXAI FCN Education + Intelligence：理解 coupon、KI、KO、worst-of 與結構型商品風險。",
 };
 
 const riskClasses: Record<FcnRiskLevel, string> = {
@@ -220,15 +221,16 @@ export default async function FcnPage() {
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          IXAI Pro · FCN Monitoring
+          FCN Education + Intelligence
         </p>
         <div className="mt-3 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <h1 className="max-w-3xl font-serif text-3xl font-semibold leading-snug sm:text-5xl">
-              FCN 風險監控，從 worst-of 開始。
+              先理解 FCN，再監控 worst-of 風險。
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
-              Free 告訴你市場正在發生什麼；IXAI Pro 會開始追蹤你的結構型商品正在承受什麼風險。
+              這裡是 IXAI Public Intelligence Layer 的 FCN 教育入口。下方 engine preview
+              示範 IXAI Pro 如何把 coupon、KI、KO、worst-of 與市場波動整理成風險 awareness。
             </p>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
@@ -242,6 +244,64 @@ export default async function FcnPage() {
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            What is FCN
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
+            FCN 是高收益結構型商品，也伴隨條件式風險。
+          </h2>
+          <div className="mt-5 grid gap-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            {[
+              ["Coupon", "投資人依條款獲得配息，但配息不等於本金保證。"],
+              ["KI", "Knock-In 障礙。若標的跌破 KI，最終還本結果可能受到影響。"],
+              ["KO", "Knock-Out 障礙。若觀察日達成 KO 條件，商品可能提前出場。"],
+              ["Worst-of", "多標的 FCN 通常由表現最弱標的決定主要風險。"],
+            ].map(([title, copy]) => (
+              <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4" key={title}>
+                <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ixai-gold)]">
+                  {title}
+                </span>
+                <span className="mt-2 block">{copy}</span>
+              </p>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Why FCN Risk Control Matters
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
+            FCN 需要監控的不是單一價格，而是 regime、集中度與障礙距離。
+          </h2>
+          <div className="mt-5 grid gap-4 text-sm leading-8 text-[var(--ixai-ink-muted)]">
+            <p>
+              市場波動擴大時，高 beta 標的可能快速接近 KI；若多檔 FCN 重複曝險於同一批科技股或高波動資產，
+              concentration risk 會放大 portfolio 的最差情境。
+            </p>
+            <p>
+              IXAI 的方向不是提供買賣建議，而是把 coupon schedule、KI breach、worst-of
+              與市場 regime 放進同一個風險觀察框架。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          IXAI Risk Intelligence Preview
+        </p>
+        <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+          以下為 demo FCN positions，用於展示 IXAI Pro 的 read-only risk monitoring 邏輯。
+        </h2>
+        <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+          這不是正式客戶持倉，也不是交易系統。若 quote 不可用，IXAI 會停止推算距離，
+          避免用模擬價格製造錯誤風險感。
+        </p>
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -334,15 +394,21 @@ export default async function FcnPage() {
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
             className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
-            href="/market"
+            href={ixaiEcosystem.contactUrl}
           >
-            查看市場總覽
+            想了解你的 FCN 風險？
           </Link>
           <Link
             className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href="/account"
+            href={ixaiEcosystem.contactUrl}
           >
-            前往我的 IXAI
+            預約一玄顧問
+          </Link>
+          <Link
+            className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            href={ixaiEcosystem.proPreviewUrl}
+          >
+            了解 IXAI Pro
           </Link>
         </div>
         <p className="mt-5 border-t border-[var(--ixai-border)] pt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">

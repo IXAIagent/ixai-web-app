@@ -4,9 +4,9 @@ const mobileItems = [
   { label: "首頁", href: "/" },
   { label: "每日", href: "/daily-brief" },
   { label: "市場", href: "/market" },
-  { label: "自選", href: "/watchlist" },
   { label: "FCN", href: "/fcn" },
-  { label: "我的", href: "/account" },
+  { label: "Pro", href: "/pro" },
+  { label: "關於", href: "/about" },
 ];
 
 export function MobileNav() {

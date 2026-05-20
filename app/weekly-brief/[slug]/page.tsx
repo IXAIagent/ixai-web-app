@@ -4,6 +4,7 @@ import {
   getAllWeeklyBriefs,
   getWeeklyBriefBySlug,
 } from "@/src/lib/weeklyBriefs";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 import type { WeeklyBriefSource } from "@/content/weekly-briefs";
 
 const sourceTypeLabels: Record<WeeklyBriefSource["type"], string> = {
@@ -257,7 +258,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
             </Link>
             <Link
               className="inline-flex rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-white/78"
-              href="/ixai"
+              href={ixaiEcosystem.proPreviewUrl}
             >
               了解 IXAI Pro
             </Link>

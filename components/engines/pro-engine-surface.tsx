@@ -5,6 +5,7 @@ import {
   formatFcnPercent,
   getFcnRiskLabel,
 } from "@/src/lib/fcn/engine";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 import type { FcnPortfolioSnapshot } from "@/src/types/fcn";
 
 const toneClasses: Record<ProEngineSurface["metric"]["tone"], string> = {
@@ -156,9 +157,9 @@ export function ProEngineSurface({ fcnSnapshot }: { fcnSnapshot?: FcnPortfolioSn
         </div>
         <Link
           className="w-fit rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-          href="/ixai"
+          href={ixaiEcosystem.proPreviewUrl}
         >
-          查看 Pro 方向
+          查看 IXAI Pro
         </Link>
       </div>
 

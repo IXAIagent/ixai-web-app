@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useIdentity } from "@/components/auth/auth-provider";
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 import type {
   MarketDataStatus,
   MarketQuote,
@@ -180,7 +181,7 @@ export function Watchlist() {
                 next to the workflow it upgrades. */}
             <Link
               className="text-xs text-[var(--ixai-ink-muted)] transition hover:text-[var(--ixai-forest)]"
-              href={session.mode === "authenticated" ? "/ixai" : "/account"}
+              href={session.mode === "authenticated" ? ixaiEcosystem.proPreviewUrl : "/account"}
             >
               {session.mode === "authenticated"
                 ? "Pro 用戶可監控更多標的、設定自訂提醒 →"

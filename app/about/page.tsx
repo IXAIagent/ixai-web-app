@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBrandContactChannels } from "@/src/lib/brand/contact";
+import { ecosystemLayers } from "@/src/lib/ixai/ecosystem";
 
 const beliefs = [
   {
@@ -129,6 +130,48 @@ export default function AboutPage() {
               <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
                 {belief.copy}
               </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.84)] p-6 sm:p-7">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          IXAI Ecosystem
+        </p>
+        <h2 className="mt-2 max-w-3xl font-serif text-3xl font-semibold leading-tight text-[var(--ixai-forest)]">
+          ixai-web-app 是 Public Intelligence Layer，IXAI Pro 是 AI Wealth Operating System。
+        </h2>
+        <p className="mt-4 max-w-4xl text-sm leading-8 text-[var(--ixai-ink-muted)]">
+          Daily Brief、Weekly Brief、Market Intelligence、FCN Education、AI Risk Monitoring
+          與 Portfolio OS 都屬於同一個 IXAI ecosystem：公開層建立閱讀習慣與信任，
+          Pro 層把 intelligence 延伸成個人化風險工作流。
+        </p>
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          {ecosystemLayers.map((layer) => (
+            <article
+              className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-5"
+              key={layer.title}
+            >
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                {layer.label}
+              </p>
+              <h3 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+                {layer.title}
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+                {layer.copy}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {layer.items.map((item) => (
+                  <span
+                    className="rounded-md border border-[var(--ixai-border)] bg-[rgba(9,41,31,0.025)] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]"
+                    key={item}
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
             </article>
           ))}
         </div>

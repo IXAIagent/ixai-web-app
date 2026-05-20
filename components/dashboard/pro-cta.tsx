@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SectionCard } from "@/components/dashboard/section-card";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 export function ProCta({ features }: { features: string[] }) {
   return (
@@ -18,7 +19,7 @@ export function ProCta({ features }: { features: string[] }) {
           </p>
           <Link
             className="mt-5 inline-flex rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href="/ixai"
+            href={ixaiEcosystem.proPreviewUrl}
           >
             了解 IXAI Pro
           </Link>
