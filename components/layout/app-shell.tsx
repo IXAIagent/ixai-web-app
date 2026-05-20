@@ -24,7 +24,7 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
 
       <Sidebar />
 
-      <main className="min-h-screen pb-24 pt-16 md:ml-64 md:pb-0 md:pt-0">
+      <main className="min-h-screen pb-24 pt-16 md:ml-56 md:pb-0 md:pt-0">
         {children}
         <Footer />
       </main>

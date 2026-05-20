@@ -40,6 +40,14 @@ function marketLabel(market: WatchlistMarket) {
   return labels[market];
 }
 
+function updatedLabel(quote?: MarketQuote) {
+  if (!quote?.updatedAt) {
+    return "Updated locally";
+  }
+
+  return "Updated now";
+}
+
 export function Watchlist() {
   const [assets, setAssets] = useState<WatchlistItem[]>([]);
   const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({});
@@ -99,9 +107,9 @@ export function Watchlist() {
 
   return (
     <SectionCard>
-      <SectionHeader action="Personal" eyebrow="自選觀察" title="我的市場入口" />
+      <SectionHeader action="Widget" eyebrow="自選觀察" title="個人市場雷達" />
       {assets.length === 0 ? (
-        <div className="p-5">
+        <div className="p-4 sm:p-5">
           <p className="text-base font-semibold leading-7 text-[var(--ixai-forest)]">
             新增你關注的股票、ETF 或 Crypto，IXAI 將逐步建立你的個人市場觀察。
           </p>
@@ -122,50 +130,44 @@ export function Watchlist() {
             const quote = quotes[asset.symbol];
 
             return (
-            <article className="px-5 py-4" key={`${asset.market}:${asset.symbol}`}>
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
-                    {displaySymbol(asset)}
-                  </p>
-                  <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
-                    {asset.name}
-                  </p>
+              <article className="px-4 py-3.5 sm:px-5" key={`${asset.market}:${asset.symbol}`}>
+                <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">
+                        {displaySymbol(asset)}
+                      </p>
+                      <span className="rounded-md border border-[var(--ixai-border)] px-2 py-0.5 text-[11px] font-medium text-[var(--ixai-forest-soft)]">
+                        {marketLabel(asset.market)}
+                      </span>
+                    </div>
+                    <p className="mt-1 truncate text-xs text-[var(--ixai-ink-muted)]">
+                      {asset.name}
+                    </p>
+                  </div>
+                  <div className="flex items-end justify-between gap-3 sm:block sm:text-right">
+                    <p className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
+                      {quote?.dailyChange ?? "--"}
+                    </p>
+                    <p className="mt-0.5 text-[11px] text-[var(--ixai-gold)]">
+                      {quote ? statusLabels[quote.status] : "暫無資料"}
+                    </p>
+                  </div>
                 </div>
-                <span className="rounded-lg border border-[var(--ixai-border)] px-2.5 py-1 text-xs font-medium text-[var(--ixai-forest-soft)]">
-                  {marketLabel(asset.market)}
-                </span>
-              </div>
-              <div className="mt-3 flex items-end justify-between gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/38 px-3 py-2">
-                <div>
-                  <p className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
-                    {quote?.price ?? "暫無資料"}
-                  </p>
-                  <p className="mt-0.5 text-xs text-[var(--ixai-ink-muted)]">
-                    {quote?.sourceLabel ?? "Market Data Layer"}
-                  </p>
+
+                <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                  {asset.note || "尚未新增備註。可在自選觀察頁補上你的觀察理由。"}
+                </p>
+                <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-[var(--ixai-ink-muted)]">
+                  <span>{updatedLabel(quote)}</span>
+                  <span className="font-mono">{quote?.price ?? "暫無資料"}</span>
                 </div>
-                <div className="text-right">
-                  <p className="font-mono text-xs font-medium text-[var(--ixai-forest-soft)]">
-                    {quote?.dailyChange ?? "--"}
-                  </p>
-                  <p className="mt-0.5 text-[11px] text-[var(--ixai-gold)]">
-                    {quote ? statusLabels[quote.status] : "暫無資料"}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                {asset.note || "尚未新增備註。可在自選觀察頁補上你的觀察理由。"}
-              </p>
-              <p className="mt-2 text-xs font-medium uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
-                個人自選
-              </p>
-            </article>
+              </article>
             );
           })}
-          <div className="px-5 py-4">
+          <div className="px-4 py-3 sm:px-5">
             <Link
-              className="inline-flex rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+              className="inline-flex min-h-10 items-center rounded-lg border border-[var(--ixai-border)] px-4 text-sm font-medium text-[var(--ixai-forest)]"
               href="/watchlist"
             >
               管理自選觀察

@@ -87,6 +87,26 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     sourceLabel: "Taiwan Stock Placeholder",
     status: "simulated",
   },
+  VIX: {
+    symbol: "VIX",
+    name: "Volatility Index",
+    price: "16.8",
+    dailyChange: "-2.10%",
+    direction: "down",
+    source: "macro-placeholder",
+    sourceLabel: "Macro Placeholder",
+    status: "simulated",
+  },
+  DXY: {
+    symbol: "DXY",
+    name: "US Dollar Index",
+    price: "104.2",
+    dailyChange: "+0.04%",
+    direction: "flat",
+    source: "macro-placeholder",
+    sourceLabel: "Macro Placeholder",
+    status: "simulated",
+  },
 };
 
 export function getFallbackMarketQuote(symbol: string): MarketQuote {

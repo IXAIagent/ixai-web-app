@@ -12,26 +12,26 @@ const navItems = [
 
 export function Sidebar() {
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-[rgba(176,141,87,0.24)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] md:flex md:flex-col">
-      <div className="border-b border-white/10 px-6 py-6">
-        <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[var(--ixai-gold)]">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-[rgba(176,141,87,0.22)] bg-[#071f17] text-[var(--ixai-cream)] md:flex md:flex-col">
+      <div className="border-b border-white/10 px-4 py-5">
+        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.32em] text-[var(--ixai-gold)]">
           IXAI
         </p>
-        <h1 className="mt-2 text-xl font-semibold tracking-normal">
-          財富情報系統
+        <h1 className="mt-2 text-base font-semibold tracking-normal">
+          Intelligence OS
         </h1>
-        <p className="mt-2 max-w-44 text-sm leading-6 text-white/58">
-          為每日市場閱讀建立更有紀律的決策脈絡。
+        <p className="mt-2 text-xs leading-5 text-white/48">
+          Daily market command layer.
         </p>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-1 px-3 py-5">
+      <nav className="flex flex-1 flex-col gap-1 px-2.5 py-4">
         {navItems.map((item, index) => (
           <Link
-            className={`rounded-lg px-3 py-2.5 text-sm transition ${
+            className={`rounded-md px-3 py-2 font-mono text-xs transition ${
               index === 0
                 ? "bg-white/10 text-white"
-                : "text-white/62 hover:bg-white/7 hover:text-white"
+                : "text-white/54 hover:bg-white/[0.06] hover:text-white"
             }`}
             href={item.href}
             key={item.label}
@@ -41,12 +41,12 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="m-3 rounded-lg border border-white/10 bg-white/[0.045] p-4">
-        <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          今日脈絡
+      <div className="m-2.5 rounded-lg border border-white/10 bg-black/18 p-3">
+        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          Risk State
         </p>
-        <p className="mt-2 text-sm leading-6 text-white/72">
-          市場結構偏正向，領漲集中，仍對利率變化敏感。
+        <p className="mt-2 text-xs leading-5 text-white/62">
+          Risk-on 偏正向，但利率仍是估值壓力源。
         </p>
       </div>
     </aside>
