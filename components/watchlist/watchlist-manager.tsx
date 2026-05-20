@@ -10,6 +10,9 @@ import {
   type MarketQuotesResponse,
 } from "@/src/lib/market-data/types";
 import {
+  loadUserWatchlist,
+} from "@/src/lib/personalization/persistence";
+import {
   getWatchlistSyncState,
   syncWatchlistToAccount,
 } from "@/src/lib/personalization/watchlist-sync";
@@ -99,6 +102,44 @@ export function WatchlistManager() {
 
     return () => window.clearTimeout(timeoutId);
   }, []);
+
+  useEffect(() => {
+    if (session.mode !== "authenticated") {
+      return;
+    }
+
+    let isMounted = true;
+
+    async function loadAccountWatchlist() {
+      const result = await loadUserWatchlist(session);
+
+      if (!isMounted) {
+        return;
+      }
+
+      if (result.status.mode === "synced") {
+        setItems(result.items);
+        setEditingNotes(
+          Object.fromEntries(
+            result.items.map((item) => [`${item.market}:${item.symbol}`, item.note ?? ""]),
+          ),
+        );
+      }
+
+      setManualSyncState({
+        mode: result.status.mode === "synced" ? "synced" : "pending",
+        label: result.status.label,
+        message: result.status.message,
+        lastSyncedAt: result.status.lastSyncedAt,
+      });
+    }
+
+    void loadAccountWatchlist();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [session]);
 
   useEffect(() => {
     if (items.length === 0) {

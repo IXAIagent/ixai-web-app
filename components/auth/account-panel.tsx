@@ -1,7 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useIdentity } from "@/components/auth/auth-provider";
+import { interestOptions } from "@/src/lib/personalization/memory";
+import { getWatchlist } from "@/src/lib/watchlist";
 
 export function AccountPanel() {
   const {
@@ -9,6 +11,7 @@ export function AccountPanel() {
     continueAsGuest,
     memory,
     mounted,
+    persistenceStatus,
     sendMagicLink,
     session,
     signInWithGoogle,
@@ -16,7 +19,19 @@ export function AccountPanel() {
   } = useIdentity();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [watchlistCount, setWatchlistCount] = useState(0);
   const isAuthenticated = session.mode === "authenticated";
+  const preferredLabels = memory.preferredCategories
+    .map((category) => interestOptions.find((option) => option.id === category)?.label)
+    .filter(Boolean);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setWatchlistCount(getWatchlist().length);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   async function handleMagicLink(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,6 +77,30 @@ export function AccountPanel() {
               Last visit: {new Date(memory.lastVisitAt).toLocaleString("zh-TW")}
             </p>
           </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="rounded-lg border border-[var(--ixai-border)] bg-white/36 p-4">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                Persistence Mode
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">
+                {persistenceStatus.label}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
+                {persistenceStatus.message}
+              </p>
+            </div>
+            <div className="rounded-lg border border-[var(--ixai-border)] bg-white/36 p-4">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                Personal Profile
+              </p>
+              <p className="mt-2 text-sm text-[var(--ixai-forest)]">
+                Watchlist count: <span className="font-semibold">{watchlistCount}</span>
+              </p>
+              <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
+                Preferred categories: {preferredLabels.length > 0 ? preferredLabels.join(" / ") : "尚未設定"}
+              </p>
+            </div>
+          </div>
           <button
             className="w-fit rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             onClick={signOut}
@@ -72,6 +111,18 @@ export function AccountPanel() {
         </div>
       ) : (
         <div className="mt-5 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="rounded-lg border border-[var(--ixai-border)] bg-white/36 p-4 lg:col-span-2">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+              Guest Status
+            </p>
+            <div className="mt-2 grid gap-2 text-sm leading-6 text-[var(--ixai-forest-soft)] sm:grid-cols-3">
+              <p>Persistence: Local only</p>
+              <p>Watchlist count: {watchlistCount}</p>
+              <p>
+                Interests: {preferredLabels.length > 0 ? preferredLabels.join(" / ") : "尚未設定"}
+              </p>
+            </div>
+          </div>
           <div className="grid gap-3">
             <button
               className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:opacity-50"

@@ -1,5 +1,20 @@
-import type { DailyBriefDraft, DailyIntelligenceDraft } from "@/src/types/editorial";
-import type { NormalizedNewsItem } from "@/src/types/news";
+import {
+  AIProviderError,
+  generateDailyIntelligenceWithAI,
+  getOpenAIProviderConfig,
+  type AIDailyIntelligenceResult,
+} from "@/src/lib/intelligence/ai-provider";
+import type {
+  DailyBriefDraft,
+  DailyIntelligenceDraft,
+  DailyIntelligenceProviderErrorReason,
+  DailyIntelligenceProviderMode,
+  DailyIntelligenceProviderStatus,
+} from "@/src/types/editorial";
+import type { NewsIntakeMode, NormalizedNewsItem } from "@/src/types/news";
+
+const COMPLIANCE_NOTE =
+  "本簡報由 IXAI 根據公開新聞標題、摘要與市場資料生成草稿，並需經人工審閱。內容僅供資訊參考，不構成投資建議、買賣指令或報酬承諾。";
 
 function byCategory(items: NormalizedNewsItem[], category: NormalizedNewsItem["category"]) {
   return items.find((item) => item.category === category);
@@ -65,11 +80,19 @@ function minutesAgoLabel(minutes: number) {
 
 export function generateDailyIntelligenceFromNews(
   newsItems: NormalizedNewsItem[],
+  options: {
+    providerMode?: DailyIntelligenceProviderMode;
+    providerStatus?: DailyIntelligenceProviderStatus;
+    errorReason?: DailyIntelligenceProviderErrorReason;
+    sourceMode?: NewsIntakeMode;
+  } = {},
 ): DailyIntelligenceDraft {
   const ai = firstByCategories(newsItems, ["ai_tech", "semiconductors"]);
   const crypto = byCategory(newsItems, "crypto");
   const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const risk = byCategory(newsItems, "risk");
+  const rates = byCategory(newsItems, "rates");
+  const macro = byCategory(newsItems, "macro");
   const generatedAt = nowIso();
 
   return {
@@ -99,6 +122,10 @@ export function generateDailyIntelligenceFromNews(
     cryptoObservation:
       crypto?.summary ??
       "Crypto 仍是流動性敏感資產，對美元與實質利率變化反應較快。",
+    macroRatesObservation:
+      rates?.summary ??
+      macro?.summary ??
+      "總經與利率訊號仍需觀察美債長端殖利率、美元與 Fed 官員談話是否形成同向壓力。",
     whatToMonitor: [
       "美債長端殖利率是否重新上行",
       "NVIDIA 與 AI 供應鏈是否維持領漲廣度",
@@ -109,18 +136,128 @@ export function generateDailyIntelligenceFromNews(
     ],
     sessionLabel: "Asia Session",
     generatedAt,
+    sourceMode: options.sourceMode,
+    providerMode: options.providerMode ?? "fallback",
+    providerStatus:
+      options.providerStatus ??
+      buildProviderStatus(options.providerMode ?? "fallback", options.errorReason ?? "missing_key"),
+    inputNewsCount: newsItems.length,
+    complianceNote: COMPLIANCE_NOTE,
   };
+}
+
+function generateDailyIntelligenceFromAI(
+  aiDraft: AIDailyIntelligenceResult,
+  newsItems: NormalizedNewsItem[],
+  providerMode: DailyIntelligenceProviderMode,
+): DailyIntelligenceDraft {
+  const feedItems = aiDraft.intelligenceFeed.length
+    ? aiDraft.intelligenceFeed
+    : generateDailyIntelligenceFromNews(newsItems, {
+        providerMode,
+        sourceMode: aiDraft.sourceMode,
+      }).feedItems;
+
+  return {
+    todayHeadline: aiDraft.headline,
+    riskFocus: {
+      label: "IXAI Risk Focus",
+      title: aiDraft.riskFocus.title,
+      summary: aiDraft.riskFocus.summary,
+      updatedLabel: minutesAgoLabel(6),
+    },
+    feedItems,
+    marketRegimeNote: aiDraft.marketRegimeNote,
+    marketRegime: aiDraft.marketRegime,
+    aiTechObservation: aiDraft.aiTechObservation,
+    cryptoObservation: aiDraft.cryptoObservation,
+    macroRatesObservation: aiDraft.macroRatesObservation,
+    whatToMonitor: aiDraft.whatToMonitor,
+    sessionLabel: "Asia Session",
+    generatedAt: aiDraft.generatedAt,
+    sourceMode: aiDraft.sourceMode,
+    providerMode,
+    providerStatus: buildProviderStatus(providerMode),
+    inputNewsCount: newsItems.length,
+    complianceNote: COMPLIANCE_NOTE,
+  };
+}
+
+function buildProviderStatus(
+  providerMode: DailyIntelligenceProviderMode,
+  errorReason?: DailyIntelligenceProviderErrorReason,
+  errorMessage?: string,
+): DailyIntelligenceProviderStatus {
+  const config = getOpenAIProviderConfig();
+
+  return {
+    providerMode,
+    openAIKeyDetected: config.openAIKeyDetected,
+    model: config.model,
+    errorReason,
+    errorMessage,
+  };
+}
+
+function reasonFromError(error: unknown): DailyIntelligenceProviderErrorReason {
+  if (error instanceof AIProviderError) {
+    return error.reason;
+  }
+
+  return "unknown_error";
 }
 
 export async function generateDailyIntelligenceDraft(): Promise<DailyBriefDraft> {
   return generateDailyIntelligenceDraftFromNews([]);
 }
 
-export function generateDailyIntelligenceDraftFromNews(
+export async function generateDailyIntelligenceDraftFromNews(
   newsItems: NormalizedNewsItem[],
-  options: { slugSuffix?: string } = {},
-): DailyBriefDraft {
-  const intelligence = generateDailyIntelligenceFromNews(newsItems);
+  options: { slugSuffix?: string; sourceMode?: NewsIntakeMode } = {},
+): Promise<DailyBriefDraft> {
+  const hasOpenAIKey = getOpenAIProviderConfig().openAIKeyDetected;
+  let providerMode: DailyIntelligenceProviderMode = hasOpenAIKey ? "openai" : "fallback";
+  let providerStatus = buildProviderStatus(providerMode, hasOpenAIKey ? undefined : "missing_key");
+  let intelligence: DailyIntelligenceDraft;
+  let generatedMarketSummary =
+    "IXAI 根據今日 intake layer 的市場訊號，整理利率、總經、美股、AI 科技、Crypto 與台灣半導體的風險脈絡。這是一份待編輯審核的 daily intelligence draft。";
+
+  if (hasOpenAIKey) {
+    try {
+      const aiDraft = await generateDailyIntelligenceWithAI(newsItems, {
+        sourceMode: options.sourceMode ?? "real",
+        sessionLabel: "Asia Session",
+      });
+      intelligence = generateDailyIntelligenceFromAI(aiDraft, newsItems, "openai");
+      providerStatus = buildProviderStatus("openai");
+      intelligence.providerStatus = providerStatus;
+      generatedMarketSummary = aiDraft.marketSummary;
+    } catch (error) {
+      providerMode = "error_fallback";
+      const errorReason = reasonFromError(error);
+      providerStatus = buildProviderStatus(
+        providerMode,
+        errorReason,
+        error instanceof Error ? error.message : "Unknown OpenAI provider error",
+      );
+      console.warn("[IXAI] OpenAI Daily Intelligence failed. Falling back to structured generator.", {
+        message: error instanceof Error ? error.message : "Unknown OpenAI provider error",
+        reason: errorReason,
+      });
+      intelligence = generateDailyIntelligenceFromNews(newsItems, {
+        providerMode,
+        providerStatus,
+        sourceMode: options.sourceMode ?? "fallback",
+      });
+    }
+  } else {
+    intelligence = generateDailyIntelligenceFromNews(newsItems, {
+      providerMode,
+      providerStatus,
+      sourceMode: options.sourceMode ?? "fallback",
+    });
+  }
+
   const rates = byCategory(newsItems, "rates");
   const macro = byCategory(newsItems, "macro");
   const equities = byCategory(newsItems, "equities");
@@ -134,14 +271,14 @@ export function generateDailyIntelligenceDraftFromNews(
     slug,
     status: "review",
     title: intelligence.todayHeadline,
-    marketSummary:
-      "IXAI 根據今日 intake layer 的市場訊號，整理利率、總經、美股、AI 科技、Crypto 與台灣半導體的風險脈絡。這是一份待編輯審核的 daily intelligence draft。",
+    marketSummary: generatedMarketSummary,
     editorialNote: intelligence.marketRegimeNote,
     sections: [
       {
         category: "rates",
         headline: "利率仍是今日風險資產的定價核心。",
         summary:
+          intelligence.macroRatesObservation ??
           rates?.summary ??
           macro?.summary ??
           "長端殖利率若維持高檔，高估值科技股與風險資產仍需重新定價。",

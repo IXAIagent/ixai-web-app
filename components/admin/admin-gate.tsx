@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, useSyncExternalStore } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import type { AdminGateMode } from "@/src/lib/admin/auth";
 
 const STORAGE_KEY = "ixai.admin.gate.v1";
@@ -20,18 +20,6 @@ function subscribeAdminStorage(callback: () => void) {
   return () => window.removeEventListener("storage", callback);
 }
 
-function subscribeClientMount() {
-  return () => undefined;
-}
-
-function getClientMountedSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
-
 export function AdminGate({
   children,
   mode,
@@ -44,22 +32,32 @@ export function AdminGate({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [manualUnlocked, setManualUnlocked] = useState(false);
-  const mounted = useSyncExternalStore(
-    subscribeClientMount,
-    getClientMountedSnapshot,
-    getServerSnapshot,
-  );
-  const hasStoredAccess = useSyncExternalStore(
-    subscribeAdminStorage,
-    () => {
+  const [mounted, setMounted] = useState(false);
+  const [hasStoredAccess, setHasStoredAccess] = useState(false);
+
+  useEffect(() => {
+    function syncStoredAccess() {
       if (mode !== "password" || !passwordHash) {
-        return false;
+        setHasStoredAccess(false);
+        return;
       }
 
-      return window.sessionStorage.getItem(STORAGE_KEY) === `granted:${passwordHash}`;
-    },
-    getServerSnapshot,
-  );
+      setHasStoredAccess(window.sessionStorage.getItem(STORAGE_KEY) === `granted:${passwordHash}`);
+    }
+
+    const timer = window.setTimeout(() => {
+      setMounted(true);
+      syncStoredAccess();
+    }, 0);
+
+    const unsubscribe = subscribeAdminStorage(syncStoredAccess);
+
+    return () => {
+      window.clearTimeout(timer);
+      unsubscribe();
+    };
+  }, [mode, passwordHash]);
+
   const isUnlocked = mounted && (manualUnlocked || hasStoredAccess);
 
   function unlock() {

@@ -34,10 +34,19 @@ export type PersonalMemory = {
 };
 
 export type WatchlistSyncState = {
-  mode: "local" | "account" | "unavailable";
+  mode: "local" | "synced" | "pending";
   label: string;
   lastSyncedAt?: string;
   message?: string;
+};
+
+export type PersistenceMode = "local" | "synced" | "pending";
+
+export type PersistenceStatus = {
+  mode: PersistenceMode;
+  label: string;
+  message: string;
+  lastSyncedAt?: string;
 };
 
 export type PersistedIdentityPayload = {

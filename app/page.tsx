@@ -6,6 +6,7 @@ import { RiskFocus } from "@/components/dashboard/risk-focus";
 import { TodaysBrief } from "@/components/dashboard/todays-brief";
 import { Watchlist } from "@/components/dashboard/watchlist";
 import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview";
+import { ProEngineSurface } from "@/components/engines/pro-engine-surface";
 import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { proFeatures } from "@/lib/mock-data";
@@ -50,6 +51,12 @@ export default function Home() {
       >
         <Watchlist />
       </div>
+
+      {/* Tier 3.5: first visible personal intelligence engine surface.
+          This keeps the v1.7 hierarchy intact while clarifying the leap from
+          free market intelligence to Pro personal monitoring. */}
+      <SectionDivider label="個人情報引擎" hint="Your IXAI Intelligence" />
+      <ProEngineSurface />
 
       {/* Tier 4: this-week depth + reference data. */}
       <SectionDivider label="本週深度" hint="This week" />

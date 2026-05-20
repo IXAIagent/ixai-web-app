@@ -1,0 +1,55 @@
+import { getAdminAccessState } from "@/src/lib/admin/auth";
+import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
+import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
+
+export const dynamic = "force-dynamic";
+
+function canGenerateDraft(request: Request) {
+  const accessState = getAdminAccessState();
+
+  if (accessState.mode === "locked") {
+    return false;
+  }
+
+  if (accessState.mode === "development") {
+    return true;
+  }
+
+  return request.headers.get("x-ixai-admin-hash") === accessState.passwordHash;
+}
+
+export async function POST(request: Request) {
+  if (!canGenerateDraft(request)) {
+    return Response.json(
+      {
+        status: "unauthorized",
+        message: "Missing or invalid admin gate token.",
+      },
+      { status: 401 },
+    );
+  }
+
+  const intake = await getLatestNewsIntakeResult();
+  const draft = await generateDailyIntelligenceDraftFromNews(intake.items, {
+    sourceMode: intake.mode,
+  });
+  const intelligence = draft.intelligence;
+
+  return Response.json({
+    draft,
+    intake,
+    ai: {
+      providerMode: intelligence?.providerMode ?? "fallback",
+      providerStatus: intelligence?.providerStatus,
+      openAIKeyDetected: intelligence?.providerStatus?.openAIKeyDetected ?? false,
+      model: intelligence?.providerStatus?.model ?? "unknown",
+      errorReason: intelligence?.providerStatus?.errorReason,
+      errorMessage: intelligence?.providerStatus?.errorMessage,
+      inputNewsCount: intelligence?.inputNewsCount ?? intake.itemCount,
+      sourceMode: intelligence?.sourceMode ?? intake.mode,
+      generatedAt: intelligence?.generatedAt ?? draft.createdAt,
+      complianceNote: intelligence?.complianceNote,
+      editorialReviewRequired: true,
+    },
+  });
+}

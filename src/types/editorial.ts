@@ -16,6 +16,24 @@ export type DailyRiskFocus = {
 
 export type MarketRegime = "risk-on" | "risk-off" | "mixed";
 
+export type DailyIntelligenceProviderMode = "openai" | "fallback" | "error_fallback";
+
+export type DailyIntelligenceProviderErrorReason =
+  | "missing_key"
+  | "invalid_api_key"
+  | "insufficient_quota"
+  | "model_error"
+  | "json_parse_error"
+  | "unknown_error";
+
+export type DailyIntelligenceProviderStatus = {
+  providerMode: DailyIntelligenceProviderMode;
+  openAIKeyDetected: boolean;
+  model: string;
+  errorReason?: DailyIntelligenceProviderErrorReason;
+  errorMessage?: string;
+};
+
 export type DailyIntelligenceDraft = {
   todayHeadline: string;
   riskFocus: DailyRiskFocus;
@@ -24,9 +42,15 @@ export type DailyIntelligenceDraft = {
   marketRegime: MarketRegime;
   aiTechObservation: string;
   cryptoObservation: string;
+  macroRatesObservation?: string;
   whatToMonitor: string[];
   sessionLabel: "Asia Session" | "US Futures" | "Pre-market";
   generatedAt: string;
+  sourceMode?: "real" | "fallback";
+  providerMode?: DailyIntelligenceProviderMode;
+  providerStatus?: DailyIntelligenceProviderStatus;
+  inputNewsCount?: number;
+  complianceNote?: string;
   publishedAt?: string;
 };
 
@@ -56,6 +80,9 @@ export type DailyDraftGenerationSummary = {
   generatedAt: string;
   sourceMode: "real" | "fallback";
   itemCount: number;
+  providerMode?: DailyIntelligenceProviderMode;
+  providerStatus?: DailyIntelligenceProviderStatus;
+  inputNewsCount?: number;
   sourceStatus: {
     id: string;
     label: string;

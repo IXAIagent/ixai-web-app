@@ -21,18 +21,25 @@ import {
 import {
   createDefaultMemory,
   readPersonalMemory,
-  writePersonalMemory,
 } from "@/src/lib/personalization/memory";
+import {
+  loadProfileMemory,
+  loadUserPreferences,
+  saveProfileMemory,
+  saveUserPreferences,
+} from "@/src/lib/personalization/persistence";
 import type {
   IXAISession,
   IntelligenceInterest,
   PersonalMemory,
+  PersistenceStatus,
 } from "@/src/types/identity";
 
 type IdentityContextValue = {
   mounted: boolean;
   session: IXAISession;
   memory: PersonalMemory;
+  persistenceStatus: PersistenceStatus;
   authConfigured: boolean;
   signInWithGoogle: () => void;
   sendMagicLink: (email: string) => Promise<{ ok: boolean; message: string }>;
@@ -44,10 +51,18 @@ type IdentityContextValue = {
 
 const IdentityContext = createContext<IdentityContextValue | null>(null);
 
+const localPersistenceStatus: PersistenceStatus = {
+  mode: "local",
+  label: "Local only",
+  message: "Guest data is stored on this device.",
+};
+
 export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [mounted, setMounted] = useState(false);
   const [session, setSession] = useState<IXAISession>(getGuestSession);
   const [memory, setMemory] = useState<PersonalMemory>(createDefaultMemory);
+  const [persistenceStatus, setPersistenceStatus] =
+    useState<PersistenceStatus>(localPersistenceStatus);
   const authConfigured = isSupabaseAuthConfigured();
 
   useEffect(() => {
@@ -67,9 +82,24 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
             refreshToken: hashSession.refreshToken,
             expiresAt: hashSession.expiresAt,
           };
-          const nextMemory = readPersonalMemory(user.id);
+          const memoryResult = await loadProfileMemory(nextSession);
+          const preferenceResult = await loadUserPreferences(nextSession);
+          const nextMemory = {
+            ...memoryResult.memory,
+            preferredCategories: preferenceResult.preferences,
+          };
           setSession(nextSession);
           setMemory(nextMemory);
+          setPersistenceStatus(
+            memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
+              ? {
+                  mode: "synced",
+                  label: "Synced",
+                  message: "Profile memory and preferences are connected to your IXAI account.",
+                  lastSyncedAt: new Date().toISOString(),
+                }
+              : memoryResult.status,
+          );
           writeIdentityPayload(nextSession, nextMemory);
           window.history.replaceState(null, document.title, window.location.pathname);
         }
@@ -78,6 +108,15 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         if (!ignore) {
           setSession(payload.session);
           setMemory(payload.memory);
+          setPersistenceStatus(
+            payload.session.mode === "authenticated"
+              ? {
+                  mode: "pending",
+                  label: "Sync pending",
+                  message: "Session restored locally. Supabase hydration will resume when available.",
+                }
+              : localPersistenceStatus,
+          );
         }
       }
 
@@ -103,8 +142,10 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       lastVisitAt: new Date().toISOString(),
     };
 
-    writePersonalMemory(nextMemory, session.user?.id);
-  }, [memory, mounted, session.user?.id]);
+    void saveProfileMemory(session, nextMemory).then((status) => {
+      setPersistenceStatus(status);
+    });
+  }, [memory, mounted, session]);
 
   const value = useMemo<IdentityContextValue>(() => {
     function persist(nextSession: IXAISession, nextMemory: PersonalMemory) {
@@ -117,6 +158,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       mounted,
       session,
       memory,
+      persistenceStatus,
       authConfigured,
       signInWithGoogle() {
         const url = buildGoogleOAuthUrl(window.location.origin + "/account");
@@ -138,6 +180,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         clearIdentityPayload();
         setSession(getGuestSession());
         setMemory(readPersonalMemory());
+        setPersistenceStatus(localPersistenceStatus);
       },
       completeOnboarding(interests: IntelligenceInterest[]) {
         const nextMemory = {
@@ -147,6 +190,12 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
           lastVisitAt: new Date().toISOString(),
         };
         persist(session, nextMemory);
+        void saveUserPreferences(session, interests).then((status) => {
+          setPersistenceStatus(status);
+        });
+        void saveProfileMemory(session, nextMemory).then((status) => {
+          setPersistenceStatus(status);
+        });
       },
       updateMemory(updates: Partial<PersonalMemory>) {
         const nextMemory = {
@@ -155,9 +204,12 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
           lastVisitAt: new Date().toISOString(),
         };
         persist(session, nextMemory);
+        void saveProfileMemory(session, nextMemory).then((status) => {
+          setPersistenceStatus(status);
+        });
       },
     };
-  }, [authConfigured, memory, mounted, session]);
+  }, [authConfigured, memory, mounted, persistenceStatus, session]);
 
   return (
     <IdentityContext.Provider value={value}>

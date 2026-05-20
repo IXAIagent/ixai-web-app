@@ -7,11 +7,13 @@ import {
   publishDraft,
   saveDraft,
 } from "@/src/lib/editorial/repository";
-import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
 import type {
   DailyBriefDraft,
   DailyBriefDraftStatus,
+  DailyIntelligenceProviderErrorReason,
+  DailyIntelligenceProviderMode,
+  DailyIntelligenceProviderStatus,
   DailyDraftGenerationSummary,
 } from "@/src/types/editorial";
 import type { NewsIntakeResult } from "@/src/types/news";
@@ -27,6 +29,22 @@ const statusStyles: Record<DailyBriefDraftStatus, string> = {
   review: "border-[rgba(176,141,87,0.4)] bg-[rgba(176,141,87,0.12)] text-[var(--ixai-gold)]",
   published: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
 };
+
+type GenerationMeta = {
+  providerMode: DailyIntelligenceProviderMode;
+  providerStatus?: DailyIntelligenceProviderStatus;
+  openAIKeyDetected: boolean;
+  model: string;
+  errorReason?: DailyIntelligenceProviderErrorReason;
+  errorMessage?: string;
+  inputNewsCount: number;
+  sourceMode: "real" | "fallback";
+  generatedAt: string;
+  complianceNote?: string;
+  editorialReviewRequired: boolean;
+};
+
+const ADMIN_GATE_STORAGE_KEY = "ixai.admin.gate.v1";
 
 function StatusBadge({ status }: { status: DailyBriefDraftStatus }) {
   return (
@@ -49,11 +67,60 @@ function formatDate(value?: string) {
   });
 }
 
+function getAdminGateHash() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const stored = window.sessionStorage.getItem(ADMIN_GATE_STORAGE_KEY) ?? "";
+
+  return stored.startsWith("granted:") ? stored.slice("granted:".length) : "";
+}
+
+function statusPillClass(status: "success" | "warning" | "muted") {
+  if (status === "success") {
+    return "border-emerald-300/25 bg-emerald-300/10 text-emerald-100";
+  }
+
+  if (status === "warning") {
+    return "border-amber-300/25 bg-amber-300/10 text-amber-100";
+  }
+
+  return "border-white/10 bg-white/[0.045] text-white/56";
+}
+
+function StatusCard({
+  title,
+  status,
+  children,
+}: Readonly<{
+  title: string;
+  status: "success" | "warning" | "muted";
+  children: React.ReactNode;
+}>) {
+  return (
+    <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/62">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+          {title}
+        </p>
+        <span
+          className={`rounded px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${statusPillClass(status)}`}
+        >
+          {status}
+        </span>
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export function DailyBriefsAdmin() {
   const [drafts, setDrafts] = useState<DailyBriefDraft[]>(() => getDrafts());
   const [selectedId, setSelectedId] = useState(() => drafts[0]?.id ?? "");
   const [isGenerating, setIsGenerating] = useState(false);
   const [intakeMeta, setIntakeMeta] = useState<NewsIntakeResult | null>(null);
+  const [generationMeta, setGenerationMeta] = useState<GenerationMeta | null>(null);
   const [schedulerStatus, setSchedulerStatus] = useState<{
     schedulerConfigured: boolean;
     lastGeneration: DailyDraftGenerationSummary | null;
@@ -72,6 +139,7 @@ export function DailyBriefsAdmin() {
   const selectedDraft = drafts.find((draft) => draft.id === selectedId) ?? drafts[0];
   const supabaseReady = isSupabaseClientConfigured();
   const intakeSources = intakeMeta?.sourceStatus ?? intakeMeta?.sources ?? [];
+  const openAIStatus = generationMeta?.providerStatus ?? null;
 
   useEffect(() => {
     let ignore = false;
@@ -124,20 +192,40 @@ export function DailyBriefsAdmin() {
     setIsGenerating(true);
 
     try {
-      const response = await fetch("/api/news/latest?limit=12");
-      const intake = (await response.json()) as NewsIntakeResult;
-      const draft = generateDailyIntelligenceDraftFromNews(intake.items);
+      const adminGateHash = getAdminGateHash();
+      const response = await fetch("/api/admin/daily-briefs/draft", {
+        method: "POST",
+        headers: adminGateHash
+          ? {
+              "x-ixai-admin-hash": adminGateHash,
+            }
+          : undefined,
+      });
+
+      if (!response.ok) {
+        throw new Error("Draft generation failed.");
+      }
+
+      const payload = (await response.json()) as {
+        draft: DailyBriefDraft;
+        intake: NewsIntakeResult;
+        ai: GenerationMeta;
+      };
+      const { draft, intake, ai } = payload;
       const nextDrafts = saveDraft(draft);
-      const generatedAt = new Date().toISOString();
       setIntakeMeta(intake);
+      setGenerationMeta(ai);
       setSchedulerStatus((current) => ({
         schedulerConfigured: current?.schedulerConfigured ?? false,
         lastGeneration: {
           status: "generated",
           draftSlug: draft.slug,
-          generatedAt,
+          generatedAt: ai.generatedAt,
           sourceMode: intake.mode,
           itemCount: intake.itemCount,
+          providerMode: ai.providerMode,
+          providerStatus: ai.providerStatus,
+          inputNewsCount: ai.inputNewsCount,
           sourceStatus: intake.sourceStatus ?? intake.sources,
           schedulerConfigured: current?.schedulerConfigured ?? false,
           forced: false,
@@ -163,15 +251,17 @@ export function DailyBriefsAdmin() {
                 Daily Brief Draft Pipeline
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/62">
-                市場資料、AI draft、Admin review 與 Publish workflow 的第一版內部營運層。
-                目前以 local fallback 模擬，未來可直接替換為 Supabase repository。
+                市場資料、OpenAI synthesis、Admin review 與 Publish workflow 的內部營運層。
+                Draft 需人工審閱後才會發布到 Dashboard 與 Daily Brief。
               </p>
             </div>
-            <div className="grid gap-3 rounded-lg border border-white/10 bg-black/18 p-4 text-sm leading-6 text-white/62">
+            <div className="grid gap-3 rounded-lg border border-white/10 bg-black/18 p-4 text-sm leading-6 text-white/62 lg:min-w-[300px]">
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                Supabase
+                Generate
               </p>
-              <p className="mt-2">{supabaseReady ? "Env configured" : "Env optional / fallback mode"}</p>
+              <p className="text-xs leading-5 text-white/46">
+                News intake → OpenAI provider → review draft. No auto-publish.
+              </p>
               <button
                 className="rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[#071a14] disabled:cursor-wait disabled:opacity-60"
                 disabled={isGenerating}
@@ -183,6 +273,135 @@ export function DailyBriefsAdmin() {
             </div>
           </div>
         </header>
+
+        <div className="grid gap-4 xl:grid-cols-4">
+          <StatusCard
+            status={intakeMeta?.mode === "real" ? "success" : intakeMeta ? "warning" : "muted"}
+            title="News Intake Status"
+          >
+            {intakeMeta ? (
+              <>
+                <p>
+                  Source mode: <span className="text-white">{intakeMeta.mode}</span>
+                </p>
+                <p>
+                  News item count: <span className="text-white">{intakeMeta.itemCount}</span>
+                </p>
+                <p>
+                  Last fetch: <span className="text-white">{formatDate(intakeMeta.fetchedAt)}</span>
+                </p>
+              </>
+            ) : (
+              <p>尚未執行本次 draft generation。</p>
+            )}
+          </StatusCard>
+
+          <StatusCard
+            status={
+              generationMeta?.providerMode === "openai"
+                ? "success"
+                : generationMeta
+                  ? "warning"
+                  : "muted"
+            }
+            title="OpenAI Provider Status"
+          >
+            {generationMeta ? (
+              <>
+                <p>
+                  providerMode: <span className="text-white">{generationMeta.providerMode}</span>
+                </p>
+                <p>
+                  OpenAI API key detected:{" "}
+                  <span className="text-white">{generationMeta.openAIKeyDetected ? "yes" : "no"}</span>
+                </p>
+                <p>
+                  Model used: <span className="text-white">{generationMeta.model}</span>
+                </p>
+                <p>
+                  Error reason:{" "}
+                  <span className="text-white">
+                    {generationMeta.errorReason ?? openAIStatus?.errorReason ?? "-"}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <p>Generate 後會顯示 provider 狀態與 fallback 原因。</p>
+            )}
+          </StatusCard>
+
+          <StatusCard status={supabaseReady ? "success" : "warning"} title="Supabase Persistence Status">
+            <p>
+              Supabase env: <span className="text-white">{supabaseReady ? "configured" : "not configured"}</span>
+            </p>
+            <p>
+              Persistence mode:{" "}
+              <span className="text-white">{supabaseReady ? "Supabase ready" : "local fallback"}</span>
+            </p>
+            <p className="text-xs leading-5 text-white/42">
+              Admin drafts remain local repository fallback until production CMS persistence is enabled.
+            </p>
+          </StatusCard>
+
+          <StatusCard
+            status={schedulerStatus?.schedulerConfigured ? "success" : "warning"}
+            title="Scheduler Status"
+          >
+            <p>
+              Scheduler:{" "}
+              <span className="text-white">
+                {schedulerStatus?.schedulerConfigured ? "configured" : "not configured"}
+              </span>
+            </p>
+            <p>
+              Last draft:{" "}
+              <span className="text-white">
+                {schedulerStatus?.lastGeneration?.draftSlug ?? "No scheduled draft yet"}
+              </span>
+            </p>
+            <p>
+              AI provider:{" "}
+              <span className="text-white">
+                {schedulerStatus?.lastGeneration?.providerMode ?? "-"}
+              </span>
+            </p>
+          </StatusCard>
+        </div>
+
+        {generationMeta ? (
+          <section className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.07)] p-4 text-sm leading-6 text-white/64">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                  AI Synthesis Result
+                </p>
+                <p className="mt-1">
+                  providerMode: <span className="text-white">{generationMeta.providerMode}</span> · Model:{" "}
+                  <span className="text-white">{generationMeta.model}</span> · Input news:{" "}
+                  <span className="text-white">{generationMeta.inputNewsCount}</span> · Generated:{" "}
+                  <span className="text-white">{formatDate(generationMeta.generatedAt)}</span>
+                </p>
+                <p className="mt-2 text-xs leading-5 text-white/46">
+                  AI generated · editorial review required
+                </p>
+              </div>
+              {generationMeta.providerMode !== "openai" ? (
+                <div className="rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-xs leading-5 text-amber-100/86 lg:max-w-md">
+                  Fallback active:{" "}
+                  <span className="font-mono">{generationMeta.errorReason ?? "unknown_error"}</span>
+                  {generationMeta.errorMessage ? (
+                    <span className="mt-1 block text-amber-100/70">{generationMeta.errorMessage}</span>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+            {generationMeta.complianceNote ? (
+              <p className="mt-3 border-t border-white/10 pt-3 text-xs leading-5 text-white/42">
+                {generationMeta.complianceNote}
+              </p>
+            ) : null}
+          </section>
+        ) : null}
 
         {intakeMeta ? (
           <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/62">
@@ -269,6 +488,16 @@ export function DailyBriefsAdmin() {
                 · Item count:{" "}
                 <span className="text-white">
                   {schedulerStatus?.lastGeneration?.itemCount ?? "-"}
+                </span>
+              </p>
+              <p>
+                AI provider:{" "}
+                <span className="text-white">
+                  {schedulerStatus?.lastGeneration?.providerMode ?? "-"}
+                </span>{" "}
+                · Input news:{" "}
+                <span className="text-white">
+                  {schedulerStatus?.lastGeneration?.inputNewsCount ?? "-"}
                 </span>
               </p>
               <p>

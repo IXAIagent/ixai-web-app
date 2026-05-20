@@ -24,6 +24,9 @@ function buildSummary({
   intake,
   schedulerConfigured,
   forced,
+  providerMode,
+  providerStatus,
+  inputNewsCount,
 }: {
   status: DailyDraftGenerationSummary["status"];
   draftSlug: string;
@@ -31,6 +34,9 @@ function buildSummary({
   intake: NewsIntakeResult;
   schedulerConfigured: boolean;
   forced: boolean;
+  providerMode?: DailyDraftGenerationSummary["providerMode"];
+  providerStatus?: DailyDraftGenerationSummary["providerStatus"];
+  inputNewsCount?: number;
 }): DailyDraftGenerationSummary {
   return {
     status,
@@ -38,6 +44,9 @@ function buildSummary({
     generatedAt,
     sourceMode: intake.mode,
     itemCount: intake.itemCount,
+    providerMode,
+    providerStatus,
+    inputNewsCount: inputNewsCount ?? intake.itemCount,
     sourceStatus: intake.sourceStatus ?? intake.sources,
     schedulerConfigured,
     forced,
@@ -74,14 +83,19 @@ export async function generateScheduledDailyDraft({
       intake,
       schedulerConfigured,
       forced: false,
+      providerMode: existingDraft.intelligence?.providerMode,
+      providerStatus: existingDraft.intelligence?.providerStatus,
+      inputNewsCount: existingDraft.intelligence?.inputNewsCount,
     });
 
     return lastGenerationSummary;
   }
 
-  const draft = generateDailyIntelligenceDraftFromNews(
+  const draft = await generateDailyIntelligenceDraftFromNews(
     intake.items,
-    force ? { slugSuffix: forceSuffix() } : undefined,
+    force
+      ? { slugSuffix: forceSuffix(), sourceMode: intake.mode }
+      : { sourceMode: intake.mode },
   );
   const savedDrafts = saveDraft(draft);
   const savedDraft = savedDrafts.find((item) => item.id === draft.id) ?? draft;
@@ -93,6 +107,9 @@ export async function generateScheduledDailyDraft({
     intake,
     schedulerConfigured,
     forced: force,
+    providerMode: savedDraft.intelligence?.providerMode,
+    providerStatus: savedDraft.intelligence?.providerStatus,
+    inputNewsCount: savedDraft.intelligence?.inputNewsCount,
   });
 
   return lastGenerationSummary;
