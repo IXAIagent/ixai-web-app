@@ -5,7 +5,9 @@ import { useMemo, useState } from "react";
 import {
   getDrafts,
   publishDraft,
+  saveDraft,
 } from "@/src/lib/editorial/repository";
+import { generateDailyIntelligenceDraft } from "@/src/lib/intelligence/generator";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
 import type { DailyBriefDraft, DailyBriefDraftStatus } from "@/src/types/editorial";
 
@@ -45,6 +47,7 @@ function formatDate(value?: string) {
 export function DailyBriefsAdmin() {
   const [drafts, setDrafts] = useState<DailyBriefDraft[]>(() => getDrafts());
   const [selectedId, setSelectedId] = useState(() => drafts[0]?.id ?? "");
+  const [isGenerating, setIsGenerating] = useState(false);
   const publishedBriefs = useMemo(
     () =>
       drafts
@@ -75,6 +78,19 @@ export function DailyBriefsAdmin() {
     refresh(publishDraft(selectedDraft.id));
   }
 
+  async function handleGenerateDraft() {
+    setIsGenerating(true);
+
+    try {
+      const draft = await generateDailyIntelligenceDraft();
+      const nextDrafts = saveDraft(draft);
+      setDrafts(nextDrafts);
+      setSelectedId(draft.id);
+    } finally {
+      setIsGenerating(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#071a14] text-[#f5f0e6]">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
@@ -92,11 +108,19 @@ export function DailyBriefsAdmin() {
                 目前以 local fallback 模擬，未來可直接替換為 Supabase repository。
               </p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-black/18 p-4 text-sm leading-6 text-white/62">
+            <div className="grid gap-3 rounded-lg border border-white/10 bg-black/18 p-4 text-sm leading-6 text-white/62">
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                 Supabase
               </p>
               <p className="mt-2">{supabaseReady ? "Env configured" : "Env optional / fallback mode"}</p>
+              <button
+                className="rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[#071a14] disabled:cursor-wait disabled:opacity-60"
+                disabled={isGenerating}
+                onClick={handleGenerateDraft}
+                type="button"
+              >
+                {isGenerating ? "Generating..." : "Generate Daily Intelligence Draft"}
+              </button>
             </div>
           </div>
         </header>
@@ -180,6 +204,25 @@ export function DailyBriefsAdmin() {
                       <p className="mt-2 text-sm leading-7 text-white/72">
                         {selectedDraft.editorialNote}
                       </p>
+                    </div>
+                  ) : null}
+
+                  {selectedDraft.intelligence ? (
+                    <div className="grid gap-3 rounded-lg border border-emerald-300/18 bg-emerald-300/8 p-4">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-200">
+                        Live Intelligence Payload
+                      </p>
+                      <p className="text-sm leading-7 text-white/72">
+                        {selectedDraft.intelligence.marketRegimeNote}
+                      </p>
+                      <div className="flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.12em]">
+                        <span className="rounded-md border border-white/10 px-2 py-1 text-white/62">
+                          {selectedDraft.intelligence.sessionLabel}
+                        </span>
+                        <span className="rounded-md border border-white/10 px-2 py-1 text-white/62">
+                          {selectedDraft.intelligence.marketRegime}
+                        </span>
+                      </div>
                     </div>
                   ) : null}
 

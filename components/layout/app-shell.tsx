@@ -1,9 +1,7 @@
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { MobileTopInsight } from "@/components/layout/mobile-top-insight";
 import { Sidebar } from "@/components/layout/sidebar";
-import { Eyebrow } from "@/components/ui/eyebrow";
-import { todayRiskFocus } from "@/src/lib/daily-intelligence";
-import Link from "next/link";
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -13,12 +11,7 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
           "市場入口" label. Truncated to one line via line-clamp-1. */}
       <div className="fixed inset-x-0 top-0 z-20 border-b border-[rgba(176,141,87,0.28)] bg-[rgba(245,240,230,0.88)] px-4 py-3 backdrop-blur md:hidden">
         <div className="flex items-center justify-between gap-3">
-          <Link className="min-w-0 flex-1" href="/">
-            <Eyebrow>{todayRiskFocus.label}</Eyebrow>
-            <p className="mt-0.5 line-clamp-1 text-sm font-semibold text-[var(--ixai-forest)]">
-              {todayRiskFocus.title}
-            </p>
-          </Link>
+          <MobileTopInsight />
           <div className="h-8 w-8 shrink-0 rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] text-center text-sm font-semibold leading-8 text-[var(--ixai-forest)]">
             I
           </div>

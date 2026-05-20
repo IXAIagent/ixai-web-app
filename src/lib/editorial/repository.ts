@@ -1,6 +1,6 @@
 import { dailyBriefs, type DailyBrief } from "@/content/daily-briefs";
 import { mockGeneratedDrafts } from "@/src/lib/editorial/mockGeneratedDrafts";
-import type { DailyBriefDraft } from "@/src/types/editorial";
+import type { DailyBriefDraft, DailyIntelligenceDraft } from "@/src/types/editorial";
 
 const STORAGE_KEY = "ixai.editorial.dailyBriefDrafts.v1";
 const PUBLISH_EVENT = "ixai-editorial-publish";
@@ -93,6 +93,10 @@ export function getLatestPublishedBrief(): DailyBriefDraft {
   return getPublishedBriefs()[0] ?? toDraftFromPublishedBrief(dailyBriefs[0]);
 }
 
+export function getLatestPublishedIntelligence(): DailyIntelligenceDraft | undefined {
+  return getPublishedBriefs().find((brief) => brief.intelligence)?.intelligence;
+}
+
 export function getPublishedBriefBySlug(slug: string): DailyBriefDraft | undefined {
   return getPublishedBriefs().find((brief) => brief.slug === slug);
 }
@@ -124,6 +128,12 @@ export function publishDraft(id: string): DailyBriefDraft[] {
   const publishedDraft: DailyBriefDraft = {
     ...draft,
     status: "published",
+    intelligence: draft.intelligence
+      ? {
+          ...draft.intelligence,
+          publishedAt: now,
+        }
+      : undefined,
     publishedAt: now,
     updatedAt: now,
   };

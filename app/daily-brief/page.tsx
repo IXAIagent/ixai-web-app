@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DailyBriefLiveArchive } from "@/components/daily-brief/daily-brief-live-archive";
 import { getAllDailyBriefs, getLatestDailyBrief } from "@/src/lib/dailyBriefs";
 
 export const metadata = {
@@ -23,6 +24,8 @@ export default function DailyBriefArchivePage() {
           以利率、美股、台股、Crypto 與 AI 科技為主軸，整理每日盤前值得閱讀的市場摘要與一玄觀點。
         </p>
       </section>
+
+      <DailyBriefLiveArchive staticSlug={latestBrief.slug} />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
         <div className="grid gap-5 p-5 lg:grid-cols-[1fr_16rem] lg:p-6">

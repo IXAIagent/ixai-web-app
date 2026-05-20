@@ -1,6 +1,31 @@
+"use client";
+
 import { intelligenceFeedItems } from "@/src/lib/daily-intelligence";
+import {
+  getLatestPublishedIntelligence,
+  subscribeToEditorialUpdates,
+} from "@/src/lib/editorial/repository";
+import type { DailyIntelligenceFeedItem } from "@/src/types/editorial";
+import { useEffect, useState } from "react";
 
 export function IntelligenceFeed() {
+  const [feedItems, setFeedItems] =
+    useState<DailyIntelligenceFeedItem[]>(intelligenceFeedItems);
+
+  useEffect(() => {
+    function syncIntelligence() {
+      setFeedItems(getLatestPublishedIntelligence()?.feedItems ?? intelligenceFeedItems);
+    }
+
+    const timeoutId = window.setTimeout(syncIntelligence, 0);
+    const unsubscribe = subscribeToEditorialUpdates(syncIntelligence);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] shadow-[0_16px_44px_rgba(9,41,31,0.05)]">
       <div className="border-b border-[var(--ixai-border)] px-4 py-3 sm:px-5">
@@ -12,7 +37,7 @@ export function IntelligenceFeed() {
         </h2>
       </div>
       <div className="divide-y divide-[var(--ixai-border)]">
-        {intelligenceFeedItems.map((item) => (
+        {feedItems.map((item) => (
           <article
             className="grid gap-3 px-4 py-4 transition hover:bg-[rgba(9,41,31,0.035)] sm:px-5 md:grid-cols-[7rem_1fr]"
             key={item.title}
