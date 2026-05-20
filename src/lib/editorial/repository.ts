@@ -92,12 +92,26 @@ export function getPublishedBriefs(): DailyBriefDraft[] {
     );
 }
 
+export function getPublishedIntelligenceBriefs(): DailyBriefDraft[] {
+  return getPublishedBriefs()
+    .filter((draft) => Boolean(draft.intelligence))
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt ?? b.updatedAt).getTime() -
+        new Date(a.publishedAt ?? a.updatedAt).getTime(),
+    );
+}
+
+export function getLatestPublishedIntelligenceBrief(): DailyBriefDraft | undefined {
+  return getPublishedIntelligenceBriefs()[0];
+}
+
 export function getLatestPublishedBrief(): DailyBriefDraft {
-  return getPublishedBriefs()[0] ?? toDraftFromPublishedBrief(dailyBriefs[0]);
+  return getLatestPublishedIntelligenceBrief() ?? getPublishedBriefs()[0] ?? toDraftFromPublishedBrief(dailyBriefs[0]);
 }
 
 export function getLatestPublishedIntelligence(): DailyIntelligenceDraft | undefined {
-  return getPublishedBriefs().find((brief) => brief.intelligence)?.intelligence;
+  return getLatestPublishedIntelligenceBrief()?.intelligence;
 }
 
 export function getPublishedBriefBySlug(slug: string): DailyBriefDraft | undefined {
