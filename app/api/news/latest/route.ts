@@ -7,14 +7,18 @@ import type { NewsCategory } from "@/src/types/news";
 export const dynamic = "force-dynamic";
 
 const categoryMap: Record<string, NewsCategory> = {
-  macro: "Macro",
-  ai: "AI / Tech",
-  tech: "AI / Tech",
-  crypto: "Crypto",
-  rates: "Rates",
-  equities: "Equities",
-  risk: "Risk",
-  geopolitics: "Geopolitics",
+  macro: "macro",
+  ai: "ai_tech",
+  tech: "ai_tech",
+  ai_tech: "ai_tech",
+  crypto: "crypto",
+  rates: "rates",
+  equities: "equities",
+  taiwan: "taiwan",
+  semiconductors: "semiconductors",
+  semi: "semiconductors",
+  risk: "risk",
+  geopolitics: "geopolitics",
 };
 
 export async function GET(request: Request) {
@@ -30,13 +34,16 @@ export async function GET(request: Request) {
     : await getLatestNewsIntakeResult();
   const category = categoryParam ? categoryMap[categoryParam] : undefined;
   const items = result.items
-    .filter((item) => (category ? item.category === category : true))
+    .filter((item) =>
+      category ? item.category === category || item.tags?.includes(category) : true,
+    )
     .slice(0, limit);
 
   return Response.json({
     ...result,
     items,
     itemCount: items.length,
+    sourceStatus: result.sourceStatus ?? result.sources,
     requestedCategory: category ?? null,
     limit,
   });

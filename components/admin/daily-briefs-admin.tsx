@@ -63,6 +63,7 @@ export function DailyBriefsAdmin() {
   );
   const selectedDraft = drafts.find((draft) => draft.id === selectedId) ?? drafts[0];
   const supabaseReady = isSupabaseClientConfigured();
+  const intakeSources = intakeMeta?.sourceStatus ?? intakeMeta?.sources ?? [];
 
   function refresh(nextDrafts?: DailyBriefDraft[]) {
     const next = nextDrafts ?? getDrafts();
@@ -84,7 +85,7 @@ export function DailyBriefsAdmin() {
     setIsGenerating(true);
 
     try {
-      const response = await fetch("/api/news/latest?limit=10");
+      const response = await fetch("/api/news/latest?limit=12");
       const intake = (await response.json()) as NewsIntakeResult;
       const draft = generateDailyIntelligenceDraftFromNews(intake.items);
       const nextDrafts = saveDraft(draft);
@@ -143,17 +144,46 @@ export function DailyBriefsAdmin() {
                   <span className="text-white">{formatDate(intakeMeta.fetchedAt)}</span>
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {intakeMeta.sources.map((source) => (
-                  <span
-                    className="rounded-md border border-white/10 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.12em] text-white/54"
-                    key={source.id}
-                  >
-                    {source.label}: {source.status}
-                  </span>
-                ))}
-              </div>
             </div>
+            {intakeMeta.mode === "fallback" ? (
+              <div className="mt-3 rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-xs leading-5 text-amber-100/86">
+                正在使用 fallback intake。Draft 仍可審核與發布，但請在發布前確認市場脈絡是否需要人工補充。
+              </div>
+            ) : null}
+            <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+              {intakeSources.map((source) => (
+                <div
+                  className="rounded-md border border-white/10 bg-black/14 px-3 py-2"
+                  key={source.id}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/72">
+                      {source.label}
+                    </span>
+                    <span
+                      className={`rounded px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${
+                        source.status === "success"
+                          ? "bg-emerald-400/10 text-emerald-200"
+                          : source.status === "failed" || source.status === "fallback"
+                            ? "bg-amber-300/10 text-amber-100"
+                            : "bg-white/8 text-white/42"
+                      }`}
+                    >
+                      {source.status}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-white/46">
+                    {source.enabled ? "Real source" : "Disabled slot"} · {source.itemCount} items
+                  </p>
+                  {source.reason ? (
+                    <p className="mt-1 text-xs leading-5 text-white/38">{source.reason}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-xs leading-5 text-white/42">
+              {intakeMeta.disclaimer}
+            </p>
           </section>
         ) : null}
 

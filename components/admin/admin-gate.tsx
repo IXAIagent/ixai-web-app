@@ -20,6 +20,14 @@ function subscribeAdminStorage(callback: () => void) {
   return () => window.removeEventListener("storage", callback);
 }
 
+function subscribeClientMount() {
+  return () => undefined;
+}
+
+function getClientMountedSnapshot() {
+  return true;
+}
+
 function getServerSnapshot() {
   return false;
 }
@@ -36,6 +44,11 @@ export function AdminGate({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [manualUnlocked, setManualUnlocked] = useState(false);
+  const mounted = useSyncExternalStore(
+    subscribeClientMount,
+    getClientMountedSnapshot,
+    getServerSnapshot,
+  );
   const hasStoredAccess = useSyncExternalStore(
     subscribeAdminStorage,
     () => {
@@ -47,7 +60,7 @@ export function AdminGate({
     },
     getServerSnapshot,
   );
-  const isUnlocked = manualUnlocked || hasStoredAccess;
+  const isUnlocked = mounted && (manualUnlocked || hasStoredAccess);
 
   function unlock() {
     if (mode === "password" && passwordHash) {

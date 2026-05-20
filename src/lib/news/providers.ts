@@ -3,7 +3,9 @@ import type {
   NewsCategory,
   NewsIntakeProvider,
   NewsIntakeResult,
+  NewsParserType,
   NewsSourceId,
+  NewsSourceStatus,
   NormalizedNewsItem,
 } from "@/src/types/news";
 
@@ -17,9 +19,13 @@ type RssSourceConfig = {
   label: string;
   url: string;
   enabled: boolean;
-  category: NewsCategory;
+  categories: NewsCategory[];
+  parserType: NewsParserType;
   maxItems: number;
   tags: string[];
+  notes: string;
+  disabledReason?: string;
+  includeKeywords?: string[];
 };
 
 let cachedResult: NewsIntakeResult | null = null;
@@ -30,18 +36,102 @@ const rssSources: RssSourceConfig[] = [
     label: "CoinDesk",
     url: "https://www.coindesk.com/arc/outboundfeeds/rss",
     enabled: true,
-    category: "Crypto",
-    maxItems: 6,
+    categories: ["crypto", "risk"],
+    parserType: "rss",
+    maxItems: 5,
     tags: ["crypto", "digital-assets"],
+    notes: "Public RSS feed used for crypto market headlines only.",
+  },
+  {
+    id: "federal-reserve",
+    label: "Federal Reserve",
+    url: "https://www.federalreserve.gov/feeds/press_monetary.xml",
+    enabled: true,
+    categories: ["rates", "macro"],
+    parserType: "rss",
+    maxItems: 3,
+    tags: ["rates", "macro", "fomc", "official-source"],
+    notes: "Official Federal Reserve monetary policy RSS feed.",
+  },
+  {
+    id: "marketwatch",
+    label: "MarketWatch",
+    url: "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+    enabled: true,
+    categories: ["equities", "macro", "ai_tech", "rates"],
+    parserType: "rss",
+    maxItems: 6,
+    tags: ["us-market", "equities"],
+    notes: "Public top-stories RSS feed. IXAI only uses headlines, links, timestamps, and short feed descriptions.",
+    includeKeywords: [
+      "ai",
+      "anthropic",
+      "chip",
+      "earnings",
+      "fed",
+      "fomc",
+      "futures",
+      "inflation",
+      "ipo",
+      "market",
+      "nasdaq",
+      "nvidia",
+      "rates",
+      "s&p",
+      "spacex",
+      "stocks",
+      "tesla",
+      "treasury",
+      "yield",
+    ],
   },
   {
     id: "yahoo-finance",
     label: "Yahoo Finance",
     url: "https://finance.yahoo.com/news/rssindex",
     enabled: false,
-    category: "Equities",
+    categories: ["equities"],
+    parserType: "rss",
     maxItems: 4,
     tags: ["markets", "equities"],
+    notes: "Provider slot retained for future Yahoo-style market feed integration.",
+    disabledReason: "Disabled after repeated 429/rate-limit responses during intake checks.",
+  },
+  {
+    id: "cnbc",
+    label: "CNBC",
+    url: "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+    enabled: false,
+    categories: ["macro", "equities"],
+    parserType: "rss",
+    maxItems: 4,
+    tags: ["us-market", "macro"],
+    notes: "Provider slot retained for future use if RSS access is stable.",
+    disabledReason: "Disabled because the RSS endpoint returned 403 Access Denied in local verification.",
+  },
+  {
+    id: "cnyes",
+    label: "CNYES",
+    url: "https://www.cnyes.com/rss/news/cat/tw_stock",
+    enabled: false,
+    categories: ["taiwan", "semiconductors"],
+    parserType: "rss",
+    maxItems: 4,
+    tags: ["taiwan", "semiconductors"],
+    notes: "Taiwan market provider slot for a future legal and stable RSS/API source.",
+    disabledReason: "Disabled because the tested endpoint redirected to an error page.",
+  },
+  {
+    id: "nasdaq",
+    label: "Nasdaq",
+    url: "https://www.nasdaq.com/feed/rssoutbound?category=Markets",
+    enabled: false,
+    categories: ["equities", "ai_tech"],
+    parserType: "rss",
+    maxItems: 4,
+    tags: ["us-market", "equities"],
+    notes: "Provider slot retained pending stable RSS verification.",
+    disabledReason: "Disabled until the feed endpoint can be verified reliably.",
   },
 ];
 
@@ -66,6 +156,8 @@ function decodeXml(value: string) {
   return value
     .replaceAll("<![CDATA[", "")
     .replaceAll("]]>", "")
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, decimal: string) => String.fromCodePoint(Number.parseInt(decimal, 10)))
     .replaceAll("&amp;", "&")
     .replaceAll("&lt;", "<")
     .replaceAll("&gt;", ">")
@@ -94,29 +186,77 @@ function idFromSource(source: RssSourceConfig, title: string, url: string) {
   return `${source.id}-${hash.toString(16)}`;
 }
 
+function containsTerm(text: string, term: string) {
+  const lowerTerm = term.toLowerCase();
+
+  if (lowerTerm.length <= 3 && /^[a-z0-9]+$/.test(lowerTerm)) {
+    return new RegExp(`\\b${lowerTerm}\\b`, "i").test(text);
+  }
+
+  return text.includes(lowerTerm);
+}
+
+function containsAny(text: string, terms: string[]) {
+  return terms.some((term) => containsTerm(text, term));
+}
+
 function inferCategory(source: RssSourceConfig, title: string): NewsCategory {
   const text = title.toLowerCase();
 
-  if (text.includes("bitcoin") || text.includes("btc") || text.includes("crypto") || text.includes("ether")) {
-    return "Crypto";
+  if (source.id === "federal-reserve") {
+    return "rates";
   }
 
-  if (text.includes("fed") || text.includes("yield") || text.includes("rate")) {
-    return "Rates";
+  if (containsAny(text, ["bitcoin", "btc", "crypto", "ether", "ethereum", "stablecoin", "tokenized", "solana", "xrp"])) {
+    return "crypto";
   }
 
-  if (text.includes("ai") || text.includes("nvidia") || text.includes("semiconductor")) {
-    return "AI / Tech";
+  if (
+    containsAny(text, ["taiwan", "tsmc", "台積", "semiconductor", "chip"])
+  ) {
+    return containsAny(text, ["taiwan", "tsmc", "台積"])
+      ? "taiwan"
+      : "semiconductors";
   }
 
-  return source.category;
+  if (containsAny(text, ["fed", "fomc", "yield", "treasury", "rate", "rates"])) {
+    return "rates";
+  }
+
+  if (containsAny(text, ["ai", "nvidia", "openai", "anthropic", "tesla"])) {
+    return "ai_tech";
+  }
+
+  if (containsAny(text, ["inflation", "gdp", "tariff", "economy"])) {
+    return "macro";
+  }
+
+  if (containsAny(text, ["vix", "volatility", "selloff"])) {
+    return "risk";
+  }
+
+  if (containsAny(text, ["stock", "stocks", "market", "nasdaq", "s&p", "dow", "ipo"])) {
+    return "equities";
+  }
+
+  return source.categories[0];
+}
+
+function isRelevantToSource(source: RssSourceConfig, title: string, summary: string) {
+  if (!source.includeKeywords?.length) {
+    return true;
+  }
+
+  const text = `${title} ${summary}`.toLowerCase();
+
+  return source.includeKeywords.some((keyword) => containsTerm(text, keyword));
 }
 
 function parseRssItems(xml: string, source: RssSourceConfig): NormalizedNewsItem[] {
   const fetchedAt = new Date().toISOString();
   const matches = [...xml.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/gi)];
 
-  return matches.slice(0, source.maxItems).map((match) => {
+  return matches.map((match) => {
     const itemXml = match[1];
     const title = stripTags(readTag(itemXml, "title"));
     const url = stripTags(readTag(itemXml, "link"));
@@ -139,7 +279,8 @@ function parseRssItems(xml: string, source: RssSourceConfig): NormalizedNewsItem
       fetchedAt,
       tags: source.tags,
     };
-  }).filter((item) => item.title);
+  }).filter((item) => item.title && isRelevantToSource(source, item.title, item.summary ?? ""))
+    .slice(0, source.maxItems);
 }
 
 async function fetchWithTimeout(url: string) {
@@ -174,26 +315,48 @@ function dedupeItems(items: NormalizedNewsItem[]) {
   });
 }
 
-export function getFallbackNewsIntakeResult(): NewsIntakeResult {
+function asSourceStatus(
+  source: RssSourceConfig,
+  status: NewsSourceStatus["status"],
+  itemCount: number,
+  reason?: string,
+): NewsSourceStatus {
+  return {
+    id: source.id,
+    label: source.label,
+    enabled: source.enabled,
+    status,
+    itemCount,
+    reason,
+  };
+}
+
+export function getFallbackNewsIntakeResult(previousSources: NewsSourceStatus[] = []): NewsIntakeResult {
   const fetchedAt = new Date().toISOString();
   const items = mockNewsItems.map((item) => ({
     ...item,
     fetchedAt,
   }));
 
+  const sourceStatus: NewsSourceStatus[] = [
+    ...previousSources,
+    {
+      id: "ixai-mock",
+      label: "IXAI Mock Intake",
+      enabled: true,
+      status: "fallback",
+      itemCount: items.length,
+      reason: "All real intake sources were unavailable or returned no usable items.",
+    },
+  ];
+
   return {
     items,
     mode: "fallback",
     itemCount: items.length,
     fetchedAt,
-    sources: [
-      {
-        id: "ixai-mock",
-        label: "IXAI Mock Intake",
-        status: "fallback",
-        itemCount: items.length,
-      },
-    ],
+    sources: sourceStatus,
+    sourceStatus,
     disclaimer: NEWS_INTAKE_DISCLAIMER,
   };
 }
@@ -205,17 +368,12 @@ export async function getLatestNewsIntakeResult(): Promise<NewsIntakeResult> {
     return cachedResult;
   }
 
-  const sourceResults: NewsIntakeResult["sources"] = [];
+  const sourceResults: NewsSourceStatus[] = [];
   const realItems: NormalizedNewsItem[] = [];
 
   for (const source of rssSources) {
     if (!source.enabled) {
-      sourceResults.push({
-        id: source.id,
-        label: source.label,
-        status: "disabled",
-        itemCount: 0,
-      });
+      sourceResults.push(asSourceStatus(source, "disabled", 0, source.disabledReason));
       continue;
     }
 
@@ -229,19 +387,14 @@ export async function getLatestNewsIntakeResult(): Promise<NewsIntakeResult> {
       const xml = await response.text();
       const items = parseRssItems(xml, source);
       realItems.push(...items);
-      sourceResults.push({
-        id: source.id,
-        label: source.label,
-        status: "success",
-        itemCount: items.length,
-      });
-    } catch {
-      sourceResults.push({
-        id: source.id,
-        label: source.label,
-        status: "failed",
-        itemCount: 0,
-      });
+      sourceResults.push(asSourceStatus(source, "success", items.length));
+    } catch (error) {
+      sourceResults.push(asSourceStatus(
+        source,
+        "failed",
+        0,
+        error instanceof Error ? error.message : "Unknown intake error",
+      ));
     }
   }
 
@@ -250,7 +403,7 @@ export async function getLatestNewsIntakeResult(): Promise<NewsIntakeResult> {
   );
 
   if (deduped.length === 0) {
-    cachedResult = getFallbackNewsIntakeResult();
+    cachedResult = getFallbackNewsIntakeResult(sourceResults);
     return cachedResult;
   }
 
@@ -260,6 +413,7 @@ export async function getLatestNewsIntakeResult(): Promise<NewsIntakeResult> {
     itemCount: deduped.length,
     fetchedAt: new Date().toISOString(),
     sources: sourceResults,
+    sourceStatus: sourceResults,
     disclaimer: NEWS_INTAKE_DISCLAIMER,
   };
 

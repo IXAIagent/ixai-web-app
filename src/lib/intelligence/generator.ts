@@ -1,8 +1,58 @@
 import type { DailyBriefDraft, DailyIntelligenceDraft } from "@/src/types/editorial";
 import type { NormalizedNewsItem } from "@/src/types/news";
 
-function byCategory(items: NormalizedNewsItem[], category: string) {
+function byCategory(items: NormalizedNewsItem[], category: NormalizedNewsItem["category"]) {
   return items.find((item) => item.category === category);
+}
+
+function firstByCategories(
+  items: NormalizedNewsItem[],
+  categories: NormalizedNewsItem["category"][],
+) {
+  return categories
+    .map((category) => byCategory(items, category))
+    .find((item): item is NormalizedNewsItem => Boolean(item));
+}
+
+function balancedFeedItems(items: NormalizedNewsItem[]) {
+  const priority: NormalizedNewsItem["category"][] = [
+    "rates",
+    "macro",
+    "equities",
+    "ai_tech",
+    "semiconductors",
+    "taiwan",
+    "crypto",
+    "risk",
+  ];
+  const selected: NormalizedNewsItem[] = [];
+  const seenIds = new Set<string>();
+
+  for (const category of priority) {
+    const item = items.find((candidate) => candidate.category === category && !seenIds.has(candidate.id));
+
+    if (item) {
+      selected.push(item);
+      seenIds.add(item.id);
+    }
+
+    if (selected.length >= 5) {
+      break;
+    }
+  }
+
+  for (const item of items) {
+    if (selected.length >= 5) {
+      break;
+    }
+
+    if (!seenIds.has(item.id)) {
+      selected.push(item);
+      seenIds.add(item.id);
+    }
+  }
+
+  return selected;
 }
 
 function nowIso() {
@@ -16,11 +66,10 @@ function minutesAgoLabel(minutes: number) {
 export function generateDailyIntelligenceFromNews(
   newsItems: NormalizedNewsItem[],
 ): DailyIntelligenceDraft {
-  const rates = byCategory(newsItems, "Rates");
-  const ai = byCategory(newsItems, "AI / Tech");
-  const crypto = byCategory(newsItems, "Crypto");
-  const equities = byCategory(newsItems, "Equities");
-  const risk = byCategory(newsItems, "Risk");
+  const ai = firstByCategories(newsItems, ["ai_tech", "semiconductors"]);
+  const crypto = byCategory(newsItems, "crypto");
+  const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
+  const risk = byCategory(newsItems, "risk");
   const generatedAt = nowIso();
 
   return {
@@ -33,12 +82,7 @@ export function generateDailyIntelligenceFromNews(
         "市場表面風險偏好改善，但利率若再度上行，高 beta 資產可能同步回撤。",
       updatedLabel: minutesAgoLabel(6),
     },
-    feedItems: [
-      rates,
-      ai,
-      crypto,
-      equities,
-    ]
+    feedItems: balancedFeedItems(newsItems)
       .filter((item): item is NormalizedNewsItem => Boolean(item))
       .map((item, index) => ({
         category: item.category,
@@ -59,7 +103,9 @@ export function generateDailyIntelligenceFromNews(
       "美債長端殖利率是否重新上行",
       "NVIDIA 與 AI 供應鏈是否維持領漲廣度",
       "BTC / ETH 是否同步反映風險偏好",
-      "VIX 低位是否掩蓋資產集中度風險",
+      taiwan
+        ? "台積電與半導體供應鏈是否受到美股科技股與匯率波動牽動"
+        : "VIX 低位是否掩蓋資產集中度風險",
     ],
     sessionLabel: "Asia Session",
     generatedAt,
@@ -74,6 +120,10 @@ export function generateDailyIntelligenceDraftFromNews(
   newsItems: NormalizedNewsItem[],
 ): DailyBriefDraft {
   const intelligence = generateDailyIntelligenceFromNews(newsItems);
+  const rates = byCategory(newsItems, "rates");
+  const macro = byCategory(newsItems, "macro");
+  const equities = byCategory(newsItems, "equities");
+  const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const now = nowIso();
   const slug = `daily-intelligence-${now.slice(0, 10)}`;
 
@@ -83,14 +133,15 @@ export function generateDailyIntelligenceDraftFromNews(
     status: "review",
     title: intelligence.todayHeadline,
     marketSummary:
-      "IXAI 根據今日 intake layer 的市場訊號，整理利率、AI 科技、Crypto 與美股廣度的風險脈絡。這是一份待編輯審核的 daily intelligence draft。",
+      "IXAI 根據今日 intake layer 的市場訊號，整理利率、總經、美股、AI 科技、Crypto 與台灣半導體的風險脈絡。這是一份待編輯審核的 daily intelligence draft。",
     editorialNote: intelligence.marketRegimeNote,
     sections: [
       {
         category: "rates",
         headline: "利率仍是今日風險資產的定價核心。",
         summary:
-          byCategory(newsItems, "Rates")?.summary ??
+          rates?.summary ??
+          macro?.summary ??
           "長端殖利率若維持高檔，高估值科技股與風險資產仍需重新定價。",
         ixaiView:
           "IXAI 先觀察利率是否影響股票領漲廣度與 Crypto beta，而不是只看單一資產方向。",
@@ -113,10 +164,19 @@ export function generateDailyIntelligenceDraftFromNews(
         category: "us_market",
         headline: "美股指數穩定，但市場廣度仍需確認。",
         summary:
-          byCategory(newsItems, "Equities")?.summary ??
+          equities?.summary ??
           "指數層面維持韌性，但領漲集中度提高會放大回撤風險。",
         ixaiView:
           "若 SPY、QQQ 與 VIX 訊號分歧，應降低對單一 risk-on 敘事的依賴。",
+      },
+      {
+        category: "taiwan_market",
+        headline: "台灣半導體仍需連結美股 AI 與匯率風險觀察。",
+        summary:
+          taiwan?.summary ??
+          "台股與半導體供應鏈仍受 AI 資本支出與外資流向影響，短線需同步觀察美股科技股與美元走勢。",
+        ixaiView:
+          "IXAI 會把台積電與供應鏈視為全球 AI trade 的延伸，而不是只看單一台股行情。",
       },
     ],
     riskFocus: intelligence.whatToMonitor,

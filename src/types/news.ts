@@ -1,11 +1,13 @@
 export type NewsCategory =
-  | "Macro"
-  | "AI / Tech"
-  | "Crypto"
-  | "Rates"
-  | "Equities"
-  | "Risk"
-  | "Geopolitics";
+  | "macro"
+  | "rates"
+  | "equities"
+  | "ai_tech"
+  | "crypto"
+  | "taiwan"
+  | "semiconductors"
+  | "risk"
+  | "geopolitics";
 
 export type NewsSourceId =
   | "yahoo-finance"
@@ -13,10 +15,24 @@ export type NewsSourceId =
   | "reuters"
   | "bloomberg"
   | "coindesk"
+  | "federal-reserve"
+  | "marketwatch"
+  | "nasdaq"
   | "cnyes"
   | "futu"
   | "the-block"
   | "ixai-mock";
+
+export type NewsParserType = "rss";
+
+export type NewsSourceStatus = {
+  id: NewsSourceId;
+  label: string;
+  enabled: boolean;
+  status: "success" | "failed" | "disabled" | "fallback";
+  itemCount: number;
+  reason?: string;
+};
 
 export type NormalizedNewsItem = {
   id: string;
@@ -44,11 +60,7 @@ export type NewsIntakeResult = {
   mode: NewsIntakeMode;
   itemCount: number;
   fetchedAt: string;
-  sources: {
-    id: NewsSourceId;
-    label: string;
-    status: "success" | "failed" | "disabled" | "fallback";
-    itemCount: number;
-  }[];
+  sources: NewsSourceStatus[];
+  sourceStatus: NewsSourceStatus[];
   disclaimer: string;
 };
