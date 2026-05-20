@@ -196,26 +196,15 @@ export default function AboutPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {communityLinks.map((link) => (
-              link.isEnabled ? (
-                <a
-                  className="rounded-lg border border-white/10 bg-white/[0.045] px-4 py-3 text-sm font-medium text-white/76 transition hover:bg-white/10 hover:text-white"
-                  href={link.value}
-                  key={link.label}
-                >
-                  {link.label}
-                </a>
-              ) : (
-                <div
-                  aria-disabled="true"
-                  className="rounded-lg border border-white/10 bg-white/[0.025] px-4 py-3 text-sm font-medium text-white/36"
-                  key={link.label}
-                >
-                  <span>{link.label}</span>
-                  <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.14em] text-white/28">
-                    即將開放
-                  </span>
-                </div>
-              )
+              <a
+                className="rounded-lg border border-white/10 bg-white/[0.045] px-4 py-3 text-sm font-medium text-white/76 transition hover:bg-white/10 hover:text-white"
+                href={link.value}
+                key={link.label}
+                rel={link.isExternal ? "noreferrer" : undefined}
+                target={link.isExternal ? "_blank" : undefined}
+              >
+                {link.ctaLabel}
+              </a>
             ))}
           </div>
         </div>

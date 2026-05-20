@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
 import {
   FCN_MONITORING_DISCLAIMER,
   type FcnPositionSnapshot,
@@ -207,6 +208,8 @@ function FcnRiskCard({ snapshot }: { snapshot: FcnPositionSnapshot }) {
 }
 
 export default async function FcnPage() {
+  const contactLinks = getPrimaryContactLinks();
+  const lineUrl = contactLinks.line?.value ?? ixaiEcosystem.contactUrl;
   const snapshot = await getFcnPortfolioSnapshot();
   const weakest = snapshot.highestRiskPosition?.worstOf;
   const nextTimeline = snapshot.positions
@@ -391,19 +394,26 @@ export default async function FcnPage() {
             ? `${weakest.symbol} 是目前最弱標的，會直接影響 ${snapshot.highestRiskPosition?.position.name} 的 KI 緩衝。若市場資料變成不可用，IXAI 會停止推算距離，避免使用模擬價格產生錯誤風險感。`
             : "目前沒有足夠 market quote 形成 worst-of 判讀。IXAI 會等到 real / delayed quote 可用後再更新 FCN risk state。"}
         </p>
+        <p className="mt-4 text-sm font-semibold text-[var(--ixai-forest)]">
+          想了解你的 FCN 風險？可透過 LINE 預約一玄顧問，先從條款與風險監控開始。
+        </p>
         <div className="mt-5 flex flex-wrap gap-3">
-          <Link
+          <a
             className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
-            href={ixaiEcosystem.contactUrl}
+            href={lineUrl}
+            rel="noreferrer"
+            target="_blank"
           >
-            想了解你的 FCN 風險？
-          </Link>
-          <Link
+            加入 LINE 諮詢
+          </a>
+          <a
             className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href={ixaiEcosystem.contactUrl}
+            href={lineUrl}
+            rel="noreferrer"
+            target="_blank"
           >
             預約一玄顧問
-          </Link>
+          </a>
           <Link
             className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             href={ixaiEcosystem.proPreviewUrl}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getBrandContactChannels } from "@/src/lib/brand/contact";
+import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
 import { ecosystemLayers, ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 const proCapabilities = [
@@ -50,8 +50,9 @@ export const metadata = {
 };
 
 export default function ProPage() {
-  const contactChannels = getBrandContactChannels();
-  const enabledContact = contactChannels.find((channel) => channel.isEnabled);
+  const contactLinks = getPrimaryContactLinks();
+  const lineUrl = contactLinks.line?.value ?? ixaiEcosystem.contactUrl;
+  const emailUrl = contactLinks.email?.value ?? ixaiEcosystem.contactUrl;
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-7 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
@@ -72,18 +73,20 @@ export default function ProPage() {
               而是協助使用者建立 portfolio、FCN、Crypto 與總經風險 awareness 的工作層。
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link
+              <a
                 className="rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
-                href={ixaiEcosystem.contactUrl}
+                href={lineUrl}
+                rel="noreferrer"
+                target="_blank"
               >
-                {ixaiEcosystem.cta.applyExperience}
-              </Link>
-              <Link
+                申請 IXAI Pro
+              </a>
+              <a
                 className="rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
-                href={ixaiEcosystem.contactUrl}
+                href={emailUrl}
               >
                 {ixaiEcosystem.cta.contactIxuan}
-              </Link>
+              </a>
               <Link
                 className="rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
                 href={ixaiEcosystem.dailyBriefUrl}
@@ -218,23 +221,33 @@ export default function ProPage() {
               想把市場情報延伸成你的 AI Wealth OS？
             </h2>
             <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-              目前先以 placeholder contact config 呈現。正式 LINE、Email 或顧問入口上線後，
-              會直接接入此 CTA，不需改動頁面結構。
+              透過 LINE 或 Email 了解 IXAI Pro、FCN 風險監控與 AI-assisted risk awareness。
+              一玄不提供報牌或報酬承諾，所有溝通以風險理解與資訊整理為核心。
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link
+            <a
               className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
-              href={enabledContact?.value ?? ixaiEcosystem.contactUrl}
+              href={lineUrl}
+              rel="noreferrer"
+              target="_blank"
             >
               預約一玄顧問
-            </Link>
-            <Link
+            </a>
+            <a
               className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
-              href={ixaiEcosystem.contactUrl}
+              href={lineUrl}
+              rel="noreferrer"
+              target="_blank"
             >
               申請 IXAI Pro
-            </Link>
+            </a>
+            <a
+              className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+              href={emailUrl}
+            >
+              聯絡一玄
+            </a>
           </div>
         </div>
       </section>
