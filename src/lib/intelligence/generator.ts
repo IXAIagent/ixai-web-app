@@ -85,6 +85,7 @@ export function generateDailyIntelligenceFromNews(
     providerStatus?: DailyIntelligenceProviderStatus;
     errorReason?: DailyIntelligenceProviderErrorReason;
     sourceMode?: NewsIntakeMode;
+    sourceLabels?: string[];
   } = {},
 ): DailyIntelligenceDraft {
   const ai = firstByCategories(newsItems, ["ai_tech", "semiconductors"]);
@@ -142,6 +143,7 @@ export function generateDailyIntelligenceFromNews(
       options.providerStatus ??
       buildProviderStatus(options.providerMode ?? "fallback", options.errorReason ?? "missing_key"),
     inputNewsCount: newsItems.length,
+    sourceLabels: options.sourceLabels,
     complianceNote: COMPLIANCE_NOTE,
   };
 }
@@ -150,6 +152,7 @@ function generateDailyIntelligenceFromAI(
   aiDraft: AIDailyIntelligenceResult,
   newsItems: NormalizedNewsItem[],
   providerMode: DailyIntelligenceProviderMode,
+  sourceLabels: string[],
 ): DailyIntelligenceDraft {
   const feedItems = aiDraft.intelligenceFeed.length
     ? aiDraft.intelligenceFeed
@@ -179,6 +182,7 @@ function generateDailyIntelligenceFromAI(
     providerMode,
     providerStatus: buildProviderStatus(providerMode),
     inputNewsCount: newsItems.length,
+    sourceLabels,
     complianceNote: COMPLIANCE_NOTE,
   };
 }
@@ -213,7 +217,7 @@ export async function generateDailyIntelligenceDraft(): Promise<DailyBriefDraft>
 
 export async function generateDailyIntelligenceDraftFromNews(
   newsItems: NormalizedNewsItem[],
-  options: { slugSuffix?: string; sourceMode?: NewsIntakeMode } = {},
+  options: { slugSuffix?: string; sourceMode?: NewsIntakeMode; sourceLabels?: string[] } = {},
 ): Promise<DailyBriefDraft> {
   const hasOpenAIKey = getOpenAIProviderConfig().openAIKeyDetected;
   let providerMode: DailyIntelligenceProviderMode = hasOpenAIKey ? "openai" : "fallback";
@@ -221,6 +225,9 @@ export async function generateDailyIntelligenceDraftFromNews(
   let intelligence: DailyIntelligenceDraft;
   let generatedMarketSummary =
     "IXAI 根據今日 intake layer 的市場訊號，整理利率、總經、美股、AI 科技、Crypto 與台灣半導體的風險脈絡。這是一份待編輯審核的 daily intelligence draft。";
+  const sourceLabels =
+    options.sourceLabels ??
+    [...new Set(newsItems.map((item) => item.sourceLabel).filter(Boolean))];
 
   if (hasOpenAIKey) {
     try {
@@ -228,7 +235,7 @@ export async function generateDailyIntelligenceDraftFromNews(
         sourceMode: options.sourceMode ?? "real",
         sessionLabel: "Asia Session",
       });
-      intelligence = generateDailyIntelligenceFromAI(aiDraft, newsItems, "openai");
+      intelligence = generateDailyIntelligenceFromAI(aiDraft, newsItems, "openai", sourceLabels);
       providerStatus = buildProviderStatus("openai");
       intelligence.providerStatus = providerStatus;
       generatedMarketSummary = aiDraft.marketSummary;
@@ -248,6 +255,7 @@ export async function generateDailyIntelligenceDraftFromNews(
         providerMode,
         providerStatus,
         sourceMode: options.sourceMode ?? "fallback",
+        sourceLabels,
       });
     }
   } else {
@@ -255,6 +263,7 @@ export async function generateDailyIntelligenceDraftFromNews(
       providerMode,
       providerStatus,
       sourceMode: options.sourceMode ?? "fallback",
+      sourceLabels,
     });
   }
 

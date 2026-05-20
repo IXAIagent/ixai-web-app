@@ -16,8 +16,8 @@ export default function AccountPage() {
           個人化 AI wealth intelligence 的起點。
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/72">
-          v1.9 先建立輕量身份、興趣設定與 intelligence memory。未來 IXAI Pro
-          會把這些訊號延伸成 FCN、投資組合與風險監控工作流。
+          我的 IXAI 是個人身份層、偏好中心、watchlist 同步中心，也是未來 IXAI Pro
+          個人情報工作區的入口。
         </p>
       </section>
 
@@ -25,9 +25,9 @@ export default function AccountPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         {[
-          ["FREE", "Daily Brief、Weekly Brief、basic watchlist 與 guest memory。"],
-          ["PERSONAL", "登入後同步 watchlist、interests 與 daily usage context。"],
-          ["PRO", "未來解鎖 FCN monitoring、AI risk alerts、portfolio intelligence。"],
+          ["FREE", "Daily Brief、Weekly Brief、市場總覽與 basic watchlist。"],
+          ["PERSONAL", "保存 watchlist、interests、reading memory，調整個人情報優先順序。"],
+          ["PRO", "FCN monitoring、portfolio intelligence、AI risk alerts、crypto monitoring、personal morning brief。"],
         ].map(([label, copy]) => (
           <article
             className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-4"
@@ -41,6 +41,30 @@ export default function AccountPage() {
             </p>
           </article>
         ))}
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          Why login?
+        </p>
+        <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+          登入不是為了限制閱讀，而是為了建立你的個人市場記憶。
+        </h2>
+        <div className="mt-5 grid gap-3 text-sm leading-7 text-[var(--ixai-forest-soft)] md:grid-cols-2">
+          {[
+            "跨裝置同步 watchlist，不只存在單一瀏覽器。",
+            "保存 interests，讓情報排序逐步貼近你的市場關注。",
+            "累積 reading memory，讓 IXAI 更懂你的每日使用脈絡。",
+            "為未來 IXAI Pro 的 FCN、portfolio、AI risk alerts 與 personal morning brief 做準備。",
+          ].map((item) => (
+            <p
+              className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4"
+              key={item}
+            >
+              {item}
+            </p>
+          ))}
+        </div>
       </section>
     </div>
   );

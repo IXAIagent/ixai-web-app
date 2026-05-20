@@ -1,6 +1,6 @@
 export type MarketDirection = "up" | "down" | "flat";
 
-export type MarketDataStatus = "realtime" | "delayed" | "simulated" | "unavailable";
+export type MarketDataStatus = "real" | "realtime" | "delayed" | "fallback" | "simulated" | "unavailable";
 
 export type MarketQuote = {
   symbol: string;

@@ -94,8 +94,27 @@ export async function generateScheduledDailyDraft({
   const draft = await generateDailyIntelligenceDraftFromNews(
     intake.items,
     force
-      ? { slugSuffix: forceSuffix(), sourceMode: intake.mode }
-      : { sourceMode: intake.mode },
+      ? {
+          slugSuffix: forceSuffix(),
+          sourceMode: intake.mode,
+          sourceLabels: [
+            ...new Set(
+              (intake.sourceStatus ?? intake.sources)
+                .filter((source) => source.status === "success" && source.itemCount > 0)
+                .map((source) => source.label),
+            ),
+          ],
+        }
+      : {
+          sourceMode: intake.mode,
+          sourceLabels: [
+            ...new Set(
+              (intake.sourceStatus ?? intake.sources)
+                .filter((source) => source.status === "success" && source.itemCount > 0)
+                .map((source) => source.label),
+            ),
+          ],
+        },
   );
   const savedDrafts = saveDraft(draft);
   const savedDraft = savedDrafts.find((item) => item.id === draft.id) ?? draft;

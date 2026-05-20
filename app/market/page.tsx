@@ -17,9 +17,8 @@ export default function MarketPage() {
           市場總覽，從資料狀態開始。
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
-          v1.5 先建立 provider 架構與資料可信度標示。BTC 與 ETH
-          會嘗試讀取 CoinGecko，其餘美股、ETF、台股先以 fallback mock
-          保持版面與使用流程穩定。
+          IXAI 以 provider 架構讀取 Crypto、美股 ETF、美股科技股與台股代表標的，
+          並在每筆 quote 明確標示真實、延遲或 fallback 狀態。
         </p>
       </section>
 
@@ -34,14 +33,13 @@ export default function MarketPage() {
         </h2>
         <div className="mt-5 grid gap-3 text-sm leading-7 text-[var(--ixai-forest-soft)] md:grid-cols-2">
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
-            CoinGecko provider：BTC / ETH 真實資料，API 失敗時回落至 fallback mock。
+            CoinGecko provider：BTC / ETH / SOL 真實資料，API 失敗時回落至明確標示的 fallback。
           </p>
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
-            Yahoo-style provider placeholder：保留未來接入美股、ETF、指數行情的位置。
+            Yahoo Finance provider：SPY、QQQ、NVDA、TSLA、AAPL、TSM 等美股與 ETF 延遲報價。
           </p>
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
-            Taiwan stock provider placeholder：保留台股行情接入位置，不在 build
-            階段抓取資料。
+            Taiwan symbols：2330.TW、0050.TW 使用 Yahoo Finance Taiwan symbol，失敗時才 fallback。
           </p>
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
             News provider placeholder：未來僅接合法新聞源、RSS 或摘要入口，不做未授權全文抓取。

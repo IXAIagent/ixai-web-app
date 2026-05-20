@@ -1,4 +1,4 @@
-import { getMarketQuotes } from "@/src/lib/market-data/providers";
+import { getMarketQuotes } from "@/src/lib/market/providers";
 import {
   MARKET_DATA_DISCLAIMER,
   type MarketQuotesResponse,

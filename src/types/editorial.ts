@@ -50,6 +50,7 @@ export type DailyIntelligenceDraft = {
   providerMode?: DailyIntelligenceProviderMode;
   providerStatus?: DailyIntelligenceProviderStatus;
   inputNewsCount?: number;
+  sourceLabels?: string[];
   complianceNote?: string;
   publishedAt?: string;
 };

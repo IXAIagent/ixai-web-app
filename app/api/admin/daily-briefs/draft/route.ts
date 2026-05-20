@@ -30,8 +30,16 @@ export async function POST(request: Request) {
   }
 
   const intake = await getLatestNewsIntakeResult();
+  const sourceLabels = [
+    ...new Set(
+      (intake.sourceStatus ?? intake.sources)
+        .filter((source) => source.status === "success" && source.itemCount > 0)
+        .map((source) => source.label),
+    ),
+  ];
   const draft = await generateDailyIntelligenceDraftFromNews(intake.items, {
     sourceMode: intake.mode,
+    sourceLabels,
   });
   const intelligence = draft.intelligence;
 

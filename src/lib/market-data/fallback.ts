@@ -3,7 +3,17 @@ import type { MarketQuote } from "@/src/lib/market-data/types";
 const nowIso = () => new Date().toISOString();
 
 export function normalizeMarketSymbol(symbol: string): string {
-  return symbol.trim().toUpperCase();
+  const normalized = symbol.trim().toUpperCase();
+
+  if (normalized === "TSMC") {
+    return "TSM";
+  }
+
+  if (normalized === "2330" || normalized === "0050") {
+    return `${normalized}.TW`;
+  }
+
+  return normalized;
 }
 
 const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
@@ -13,6 +23,16 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     price: "$104,860",
     dailyChange: "-0.28%",
     direction: "down",
+    source: "fallback-mock",
+    sourceLabel: "Fallback Mock",
+    status: "simulated",
+  },
+  SOL: {
+    symbol: "SOL",
+    name: "Solana",
+    price: "$168.20",
+    dailyChange: "+0.32%",
+    direction: "up",
     source: "fallback-mock",
     sourceLabel: "Fallback Mock",
     status: "simulated",
@@ -33,8 +53,8 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     price: "$621.40",
     dailyChange: "+0.42%",
     direction: "up",
-    source: "yahoo-style-placeholder",
-    sourceLabel: "Yahoo-style Placeholder",
+    source: "fallback-mock",
+    sourceLabel: "Fallback Mock",
     status: "simulated",
   },
   QQQ: {
@@ -43,8 +63,8 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     price: "$537.18",
     dailyChange: "+0.61%",
     direction: "up",
-    source: "yahoo-style-placeholder",
-    sourceLabel: "Yahoo-style Placeholder",
+    source: "fallback-mock",
+    sourceLabel: "Fallback Mock",
     status: "simulated",
   },
   NVDA: {
@@ -53,28 +73,28 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     price: "$138.22",
     dailyChange: "+1.18%",
     direction: "up",
-    source: "yahoo-style-placeholder",
-    sourceLabel: "Yahoo-style Placeholder",
+    source: "fallback-mock",
+    sourceLabel: "Fallback Mock",
     status: "simulated",
   },
-  TSMC: {
-    symbol: "TSMC",
+  TSM: {
+    symbol: "TSM",
     name: "台積電 ADR",
     price: "$186.72",
     dailyChange: "+0.74%",
     direction: "up",
-    source: "yahoo-style-placeholder",
-    sourceLabel: "Yahoo-style Placeholder",
+    source: "fallback-mock",
+    sourceLabel: "Fallback Mock",
     status: "simulated",
   },
-  "2330": {
-    symbol: "2330.TW",
-    name: "台積電",
-    price: "NT$1,045",
-    dailyChange: "+0.48%",
+  "0050.TW": {
+    symbol: "0050.TW",
+    name: "元大台灣50",
+    price: "NT$196.40",
+    dailyChange: "+0.35%",
     direction: "up",
-    source: "taiwan-stock-placeholder",
-    sourceLabel: "Taiwan Stock Placeholder",
+    source: "fallback-mock",
+    sourceLabel: "Fallback Mock",
     status: "simulated",
   },
   "2330.TW": {
@@ -83,8 +103,8 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     price: "NT$1,045",
     dailyChange: "+0.48%",
     direction: "up",
-    source: "taiwan-stock-placeholder",
-    sourceLabel: "Taiwan Stock Placeholder",
+    source: "fallback-mock",
+    sourceLabel: "Fallback Mock",
     status: "simulated",
   },
   VIX: {
@@ -137,4 +157,4 @@ export function getFallbackMarketQuotes(symbols: string[]): MarketQuote[] {
   return symbols.map((symbol) => getFallbackMarketQuote(symbol));
 }
 
-export const defaultMarketSymbols = ["BTC", "ETH", "SPY", "QQQ", "NVDA", "TSMC", "2330.TW"];
+export const defaultMarketSymbols = ["BTC", "ETH", "SOL", "SPY", "QQQ", "NVDA", "TSM", "2330.TW", "0050.TW"];

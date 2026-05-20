@@ -55,10 +55,12 @@ const exampleItems = [
 }[];
 
 const statusLabels: Record<MarketDataStatus, string> = {
+  real: "真實",
   realtime: "即時",
   delayed: "延遲",
+  fallback: "Fallback",
   simulated: "模擬",
-  unavailable: "暫無資料",
+  unavailable: "資料不可用",
 };
 
 function marketLabel(market: WatchlistMarket) {
@@ -75,6 +77,27 @@ function displaySymbol(item: WatchlistItem) {
   }
 
   return item.symbol;
+}
+
+function formatUpdatedAt(updatedAt?: string) {
+  if (!updatedAt) {
+    return "更新時間不明";
+  }
+
+  const date = new Date(updatedAt);
+
+  if (Number.isNaN(date.getTime())) {
+    return "更新時間不明";
+  }
+
+  return date.toLocaleTimeString("zh-TW", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function quoteForItem(item: WatchlistItem, quotes: Record<string, MarketQuote>) {
+  return quotes[item.symbol] ?? quotes[displaySymbol(item)];
 }
 
 export function WatchlistManager() {
@@ -245,6 +268,23 @@ export function WatchlistManager() {
           新增你關注的股票、ETF、指數或 Crypto。Guest 先以 local-first
           保存；登入後可接上 IXAI account sync 與未來 Pro 監控。
         </p>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-white/58">
+          自選觀察會成為未來 IXAI 個人情報與風險提醒的基礎。
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            className="rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            href="/market"
+          >
+            查看市場總覽
+          </Link>
+          <Link
+            className="rounded-lg border border-white/15 px-4 py-2 text-sm font-medium text-white/78 transition hover:bg-white/8 hover:text-white"
+            href="/account"
+          >
+            前往我的 IXAI
+          </Link>
+        </div>
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
@@ -418,7 +458,8 @@ export function WatchlistManager() {
             <div className="divide-y divide-[var(--ixai-border)]">
               {items.map((item) => {
                 const key = `${item.market}:${item.symbol}`;
-                const quote = quotes[item.symbol];
+                const quote = quoteForItem(item, quotes);
+                const quoteUnavailable = !quote || quote.status === "unavailable";
 
                 return (
                   <article className="p-5" key={key}>
@@ -451,7 +492,7 @@ export function WatchlistManager() {
                         {new Date(item.addedAt).toLocaleDateString("zh-TW")}
                       </span>
                       <span className="rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
-                        {quote ? statusLabels[quote.status] : "暫無資料"}
+                        {quote ? statusLabels[quote.status] : "尚未載入"}
                       </span>
                     </div>
 
@@ -461,14 +502,16 @@ export function WatchlistManager() {
                           Market Data
                         </p>
                         <p className="mt-1 font-mono text-lg font-semibold text-[var(--ixai-forest)]">
-                          {quote?.price ?? "暫無資料"}
+                          {quoteUnavailable ? "資料暫不可用" : quote.price}
                         </p>
                         <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
-                          {quote?.sourceLabel ?? "Market Data Layer"}
+                          {quote
+                            ? `${quote.sourceLabel} · ${statusLabels[quote.status]} · 更新 ${formatUpdatedAt(quote.updatedAt)}`
+                            : "正在嘗試讀取 market quote"}
                         </p>
                       </div>
                       <p className="font-mono text-sm font-medium text-[var(--ixai-forest-soft)]">
-                        {quote?.dailyChange ?? "--"}
+                        {quoteUnavailable ? "Unavailable" : quote.dailyChange}
                       </p>
                     </div>
 
@@ -505,9 +548,8 @@ export function WatchlistManager() {
           Market Data Layer
         </p>
         <p className="mt-2">
-          自選觀察會顯示每筆資料的狀態：即時、延遲、模擬或暫無資料。BTC / ETH
-          會嘗試讀取 CoinGecko，其餘標的目前以 provider placeholder 與 fallback mock
-          維持穩定體驗。
+          自選觀察會顯示每筆資料的狀態：真實、即時、延遲、模擬或資料不可用。
+          IXAI 會嘗試讀取 CoinGecko 與 Yahoo Finance；provider 失敗時才回落至明確標示的 fallback。
         </p>
         <p className="mt-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
           {MARKET_DATA_DISCLAIMER}

@@ -60,8 +60,8 @@ export function AccountPanel() {
         {isAuthenticated ? "你的 IXAI 身份已建立" : "以 Guest 模式開始，登入後同步你的市場記憶"}
       </h2>
       <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-        Guest 可以閱讀 Daily / Weekly Brief 與使用本機自選觀察；登入後可把 watchlist、
-        interests 與 daily usage memory 接上未來 IXAI Pro 工作流。
+        Guest 模式是有效的免費使用方式；登入的價值在於同步 watchlist、保存 interests，
+        並為未來個人化 intelligence 與 IXAI Pro 模組建立基礎。
       </p>
 
       {isAuthenticated ? (
@@ -123,18 +123,29 @@ export function AccountPanel() {
               </p>
             </div>
           </div>
+          {!authConfigured ? (
+            <div className="rounded-lg border border-amber-300/35 bg-amber-100/35 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)] lg:col-span-2">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                登入同步尚未啟用
+              </p>
+              <p className="mt-2">
+                目前尚未設定 Supabase Auth env，因此 Google 登入與 magic link 不會啟用。
+                你仍可用 Guest 模式閱讀內容、建立本機 watchlist 與保存偏好。
+              </p>
+            </div>
+          ) : null}
           <div className="grid gap-3">
             <button
-              className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:bg-[var(--ixai-forest)]/45 disabled:text-[var(--ixai-cream)]/60"
               disabled={!authConfigured}
               onClick={signInWithGoogle}
               type="button"
             >
-              使用 Google 登入
+              {authConfigured ? "使用 Google 登入" : "Google 登入尚未啟用"}
             </button>
             {!authConfigured ? (
               <p className="text-xs leading-5 text-[var(--ixai-ink-muted)]">
-                Supabase Auth 尚未設定。設定 env 後即可啟用 Google 與 magic link。
+                設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY 後即可啟用登入同步。
               </p>
             ) : null}
             <button
@@ -162,7 +173,7 @@ export function AccountPanel() {
               disabled={!email || !authConfigured}
               type="submit"
             >
-              寄送登入連結
+              {authConfigured ? "寄送登入連結" : "Magic link 尚未啟用"}
             </button>
             {message ? (
               <p className="text-xs leading-5 text-[var(--ixai-forest-soft)]">{message}</p>

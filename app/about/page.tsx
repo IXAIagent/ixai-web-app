@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { getBrandContactChannels } from "@/src/lib/brand/contact";
 
 const beliefs = [
   {
@@ -19,13 +20,6 @@ const beliefs = [
   },
 ];
 
-const communityLinks = [
-  { label: "LINE", href: "#" },
-  { label: "Instagram", href: "#" },
-  { label: "Threads", href: "#" },
-  { label: "Email", href: "mailto:hello@ixai.placeholder" },
-];
-
 export const metadata = {
   title: "關於一玄 | IXAI",
   description:
@@ -33,6 +27,8 @@ export const metadata = {
 };
 
 export default function AboutPage() {
+  const communityLinks = getBrandContactChannels();
+
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-7 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
       <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
@@ -157,13 +153,26 @@ export default function AboutPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {communityLinks.map((link) => (
-              <a
-                className="rounded-lg border border-white/10 bg-white/[0.045] px-4 py-3 text-sm font-medium text-white/76 transition hover:bg-white/10 hover:text-white"
-                href={link.href}
-                key={link.label}
-              >
-                {link.label}
-              </a>
+              link.isEnabled ? (
+                <a
+                  className="rounded-lg border border-white/10 bg-white/[0.045] px-4 py-3 text-sm font-medium text-white/76 transition hover:bg-white/10 hover:text-white"
+                  href={link.value}
+                  key={link.label}
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <div
+                  aria-disabled="true"
+                  className="rounded-lg border border-white/10 bg-white/[0.025] px-4 py-3 text-sm font-medium text-white/36"
+                  key={link.label}
+                >
+                  <span>{link.label}</span>
+                  <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.14em] text-white/28">
+                    即將開放
+                  </span>
+                </div>
+              )
             ))}
           </div>
         </div>
