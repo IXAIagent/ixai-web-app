@@ -11,11 +11,15 @@ import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { proFeatures } from "@/lib/mock-data";
 import { getLatestPublishedBrief } from "@/src/lib/editorial/repository";
+import { getFcnPortfolioSnapshot } from "@/src/lib/fcn/engine";
 import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
   const latestDailyBrief = getLatestPublishedBrief();
   const latestWeeklyBrief = getLatestWeeklyBrief();
+  const fcnSnapshot = await getFcnPortfolioSnapshot();
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-3 py-4 sm:gap-6 sm:px-5 lg:px-6 lg:py-6">
@@ -56,7 +60,7 @@ export default function Home() {
           This keeps the v1.7 hierarchy intact while clarifying the leap from
           free market intelligence to Pro personal monitoring. */}
       <SectionDivider label="個人情報引擎" hint="Your IXAI Intelligence" />
-      <ProEngineSurface />
+      <ProEngineSurface fcnSnapshot={fcnSnapshot} />
 
       {/* Tier 4: this-week depth + reference data. */}
       <SectionDivider label="本週深度" hint="This week" />

@@ -1,5 +1,11 @@
 import Link from "next/link";
 import { proEngineSurfaces, type ProEngineSurface } from "@/src/lib/engines/pro-engine-surfaces";
+import {
+  formatFcnDate,
+  formatFcnPercent,
+  getFcnRiskLabel,
+} from "@/src/lib/fcn/engine";
+import type { FcnPortfolioSnapshot } from "@/src/types/fcn";
 
 const toneClasses: Record<ProEngineSurface["metric"]["tone"], string> = {
   calm: "text-emerald-900/78 bg-emerald-900/[0.06] border-emerald-900/10",
@@ -8,8 +14,8 @@ const toneClasses: Record<ProEngineSurface["metric"]["tone"], string> = {
 };
 
 function EngineCard({ engine }: { engine: ProEngineSurface }) {
-  return (
-    <article className="relative overflow-hidden rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 shadow-[0_18px_48px_rgba(9,41,31,0.055)]">
+  const content = (
+    <>
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
@@ -61,14 +67,78 @@ function EngineCard({ engine }: { engine: ProEngineSurface }) {
         ))}
       </div>
 
+      {engine.href ? (
+        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+          Open engine →
+        </p>
+      ) : null}
+
       {engine.status === "locked" ? (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[rgba(255,250,240,0.94)] to-transparent backdrop-blur-[1px]" />
       ) : null}
+    </>
+  );
+
+  if (engine.href) {
+    return (
+      <Link
+        className="relative block overflow-hidden rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 shadow-[0_18px_48px_rgba(9,41,31,0.055)] transition hover:border-[rgba(176,141,87,0.46)] hover:bg-[rgba(255,250,240,0.96)]"
+        href={engine.href}
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <article className="relative overflow-hidden rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 shadow-[0_18px_48px_rgba(9,41,31,0.055)]">
+      {content}
     </article>
   );
 }
 
-export function ProEngineSurface() {
+function withFcnSummary(fcnSnapshot?: FcnPortfolioSnapshot): ProEngineSurface[] {
+  if (!fcnSnapshot?.highestRiskPosition) {
+    return proEngineSurfaces;
+  }
+
+  const highestRisk = fcnSnapshot.highestRiskPosition;
+  const weakest = highestRisk.worstOf;
+
+  return proEngineSurfaces.map((engine) => {
+    if (engine.id !== "fcn") {
+      return engine;
+    }
+
+    if (!weakest) {
+      return {
+        ...engine,
+        state: "等待市場資料",
+        signal: `${fcnSnapshot.totalFcns} 檔 FCN 已建立監控，但 quote 尚未形成可用 worst-of。`,
+        metric: {
+          label: "Monitored FCNs",
+          value: `${fcnSnapshot.totalFcns}`,
+          tone: "calm",
+        },
+      };
+    }
+
+    return {
+      ...engine,
+      state: `${highestRisk.position.name} · ${getFcnRiskLabel(highestRisk.riskLevel)}`,
+      signal: `${weakest.symbol} 是目前 weakest underlying，表現 ${formatFcnPercent(weakest.priceChangePercent)}；下一個 coupon date：${formatFcnDate(fcnSnapshot.nextCouponDate)}。`,
+      metric: {
+        label: "Monitored FCNs",
+        value: `${fcnSnapshot.totalFcns}`,
+        tone: highestRisk.riskLevel === "highRisk" || highestRisk.riskLevel === "breached" ? "stress" : "watch",
+      },
+    };
+  });
+}
+
+export function ProEngineSurface({ fcnSnapshot }: { fcnSnapshot?: FcnPortfolioSnapshot }) {
+  const surfaces = withFcnSummary(fcnSnapshot);
+
   return (
     <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.72)] p-4 shadow-[0_24px_72px_rgba(9,41,31,0.055)] sm:p-5">
       <div className="flex flex-col gap-4 border-b border-[var(--ixai-border)] pb-4 lg:flex-row lg:items-end lg:justify-between">
@@ -93,7 +163,7 @@ export function ProEngineSurface() {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        {proEngineSurfaces.map((engine) => (
+        {surfaces.map((engine) => (
           <EngineCard engine={engine} key={engine.id} />
         ))}
       </div>

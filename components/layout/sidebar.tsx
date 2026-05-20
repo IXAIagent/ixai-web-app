@@ -34,6 +34,7 @@ const navGroups: Array<{
   {
     heading: "Membership",
     items: [
+      { label: "FCN 監控", href: "/fcn" },
       { label: "IXAI Pro", href: "/ixai" },
     ],
   },

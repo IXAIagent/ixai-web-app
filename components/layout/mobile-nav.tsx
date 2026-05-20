@@ -5,7 +5,7 @@ const mobileItems = [
   { label: "每日", href: "/daily-brief" },
   { label: "市場", href: "/market" },
   { label: "自選", href: "/watchlist" },
-  { label: "Pro", href: "/ixai" },
+  { label: "FCN", href: "/fcn" },
   { label: "我的", href: "/account" },
 ];
 

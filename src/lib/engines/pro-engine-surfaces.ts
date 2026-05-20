@@ -10,6 +10,7 @@ export type ProEngineSurface = {
   id: ProEngineId;
   title: string;
   label: string;
+  href?: string;
   status: "locked" | "preview";
   state: string;
   signal: string;
@@ -43,14 +44,15 @@ export const proEngineSurfaces: ProEngineSurface[] = [
     id: "fcn",
     title: "FCN Exposure",
     label: "Structured Product Engine",
+    href: "/fcn",
     status: "preview",
     state: "Barrier watch",
-    signal: "Simulated FCN basket is sensitive to semiconductor and Nasdaq volatility.",
+    signal: "FCN Monitoring 會追蹤 worst-of、KI / KO distance 與 coupon schedule。",
     summary:
-      "未來 FCN engine 會追蹤標的價格、障礙距離、配息節奏與提前出場風險。",
+      "Phase 1 已接入 demo FCN positions 與 market quote layer，用於 read-only risk monitoring。",
     metric: {
       label: "Barrier distance",
-      value: "Locked",
+      value: "Open",
       tone: "stress",
     },
     lockedItems: ["Barrier monitor", "Coupon calendar", "Worst-of asset"],
