@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AccountStatus } from "@/components/auth/account-status";
 import { Eyebrow } from "@/components/ui/eyebrow";
 
 // v1.7: nav grouped into workflow tiers instead of 7 flat peers.
@@ -27,6 +28,7 @@ const navGroups: Array<{
     heading: "Personal",
     items: [
       { label: "自選觀察", href: "/watchlist" },
+      { label: "我的 IXAI", href: "/account" },
     ],
   },
   {
@@ -86,13 +88,16 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="m-2.5 rounded-lg border border-white/10 bg-black/18 p-3">
-        <Eyebrow mono className="text-[10px]">
-          Risk State
-        </Eyebrow>
-        <p className="mt-2 text-xs leading-5 text-white/62">
-          Risk-on 偏正向，但利率仍是估值壓力源。
-        </p>
+      <div className="m-2.5 grid gap-2">
+        <AccountStatus />
+        <div className="rounded-lg border border-white/10 bg-black/18 p-3">
+          <Eyebrow mono className="text-[10px]">
+            Risk State
+          </Eyebrow>
+          <p className="mt-2 text-xs leading-5 text-white/62">
+            Risk-on 偏正向，但利率仍是估值壓力源。
+          </p>
+        </div>
       </div>
     </aside>
   );

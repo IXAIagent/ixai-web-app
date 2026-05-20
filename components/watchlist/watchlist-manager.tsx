@@ -1,12 +1,18 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useIdentity } from "@/components/auth/auth-provider";
 import {
   MARKET_DATA_DISCLAIMER,
   type MarketDataStatus,
   type MarketQuote,
   type MarketQuotesResponse,
 } from "@/src/lib/market-data/types";
+import {
+  getWatchlistSyncState,
+  syncWatchlistToAccount,
+} from "@/src/lib/personalization/watchlist-sync";
 import {
   addWatchlistItem,
   clearWatchlist,
@@ -18,6 +24,7 @@ import {
   type WatchlistItem,
   type WatchlistMarket,
 } from "@/src/lib/watchlist";
+import type { WatchlistSyncState } from "@/src/types/identity";
 
 const assetTypeOptions: { label: string; value: WatchlistAssetType }[] = [
   { label: "股票", value: "stock" },
@@ -68,6 +75,7 @@ function displaySymbol(item: WatchlistItem) {
 }
 
 export function WatchlistManager() {
+  const { session, updateMemory } = useIdentity();
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [symbol, setSymbol] = useState("");
   const [name, setName] = useState("");
@@ -76,6 +84,7 @@ export function WatchlistManager() {
   const [note, setNote] = useState("");
   const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
   const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({});
+  const [manualSyncState, setManualSyncState] = useState<WatchlistSyncState | null>(null);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -130,12 +139,23 @@ export function WatchlistManager() {
     () => normalizeSymbol(symbol, market),
     [market, symbol],
   );
+  const syncState = useMemo(
+    () => manualSyncState ?? getWatchlistSyncState(session),
+    [manualSyncState, session],
+  );
 
   function sync(nextItems: WatchlistItem[]) {
     setItems(nextItems);
     setEditingNotes(
       Object.fromEntries(nextItems.map((item) => [`${item.market}:${item.symbol}`, item.note ?? ""])),
     );
+    updateMemory({
+      watchedSymbols: nextItems.map((item) => item.symbol),
+    });
+  }
+
+  async function handleAccountSync() {
+    setManualSyncState(await syncWatchlistToAccount(session, items));
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -181,9 +201,43 @@ export function WatchlistManager() {
           建立你的個人市場入口。
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
-          新增你關注的股票、ETF、指數或 Crypto。IXAI 會先以 local-first
-          方式保存，讓每日市場閱讀逐步變成你的個人觀察清單。
+          新增你關注的股票、ETF、指數或 Crypto。Guest 先以 local-first
+          保存；登入後可接上 IXAI account sync 與未來 Pro 監控。
         </p>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Personal Persistence
+            </p>
+            <p className="mt-1">
+              {syncState.label} · {syncState.message}
+            </p>
+            {syncState.lastSyncedAt ? (
+              <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
+                Last synced: {new Date(syncState.lastSyncedAt).toLocaleString("zh-TW")}
+              </p>
+            ) : null}
+          </div>
+          {session.mode === "authenticated" ? (
+            <button
+              className="w-fit rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+              onClick={handleAccountSync}
+              type="button"
+            >
+              Sync to account
+            </button>
+          ) : (
+            <Link
+              className="w-fit rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+              href="/account"
+            >
+              登入同步
+            </Link>
+          )}
+        </div>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">

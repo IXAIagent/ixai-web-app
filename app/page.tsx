@@ -6,6 +6,7 @@ import { RiskFocus } from "@/components/dashboard/risk-focus";
 import { TodaysBrief } from "@/components/dashboard/todays-brief";
 import { Watchlist } from "@/components/dashboard/watchlist";
 import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview";
+import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { proFeatures } from "@/lib/mock-data";
 import { getLatestPublishedBrief } from "@/src/lib/editorial/repository";
@@ -25,6 +26,7 @@ export default function Home() {
           Tier 5 — Premium membership */}
 
       {/* Tier 1: insight headline first, market data immediately below. */}
+      <OnboardingCard />
       <RiskFocus />
       <MarketPulse />
 

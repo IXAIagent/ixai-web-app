@@ -26,10 +26,16 @@ export function ProCta({ features }: { features: string[] }) {
         <div className="grid gap-3 sm:grid-cols-2">
           {features.map((feature) => (
             <div
-              className="rounded-lg border border-white/10 bg-white/[0.045] p-4"
+              className="relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] p-4"
               key={feature}
             >
+              <span className="absolute right-3 top-3 rounded-md border border-white/10 bg-black/18 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/46">
+                Pro
+              </span>
               <p className="text-sm font-medium">{feature}</p>
+              <p className="mt-2 text-xs leading-5 text-white/42">
+                Available in IXAI Pro
+              </p>
             </div>
           ))}
         </div>

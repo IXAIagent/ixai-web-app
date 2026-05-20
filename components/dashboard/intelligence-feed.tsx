@@ -1,16 +1,33 @@
 "use client";
 
 import { intelligenceFeedItems } from "@/src/lib/daily-intelligence";
+import { useIdentity } from "@/components/auth/auth-provider";
 import {
   getLatestPublishedIntelligence,
   subscribeToEditorialUpdates,
 } from "@/src/lib/editorial/repository";
+import { personalizeCategoryOrder } from "@/src/lib/personalization/memory";
 import type { DailyIntelligenceFeedItem } from "@/src/types/editorial";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export function IntelligenceFeed() {
+  const { memory, mounted } = useIdentity();
   const [feedItems, setFeedItems] =
     useState<DailyIntelligenceFeedItem[]>(intelligenceFeedItems);
+  const personalizedItems = useMemo(() => {
+    if (!mounted || memory.preferredCategories.length === 0) {
+      return feedItems;
+    }
+
+    const order = personalizeCategoryOrder(memory);
+
+    return [...feedItems].sort((a, b) => {
+      const aIndex = order.indexOf(a.category);
+      const bIndex = order.indexOf(b.category);
+
+      return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex);
+    });
+  }, [feedItems, memory, mounted]);
 
   useEffect(() => {
     function syncIntelligence() {
@@ -37,7 +54,7 @@ export function IntelligenceFeed() {
         </h2>
       </div>
       <div className="divide-y divide-[var(--ixai-border)]">
-        {feedItems.map((item) => (
+        {personalizedItems.map((item) => (
           <article
             className="grid gap-3 px-4 py-4 transition hover:bg-[rgba(9,41,31,0.035)] sm:px-5 md:grid-cols-[7rem_1fr]"
             key={item.title}

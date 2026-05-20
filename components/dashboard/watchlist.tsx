@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useIdentity } from "@/components/auth/auth-provider";
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
 import type {
   MarketDataStatus,
@@ -49,6 +50,7 @@ function updatedLabel(quote?: MarketQuote) {
 }
 
 export function Watchlist() {
+  const { session } = useIdentity();
   const [assets, setAssets] = useState<WatchlistItem[]>([]);
   const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({});
 
@@ -114,8 +116,7 @@ export function Watchlist() {
             新增你關注的股票、ETF 或 Crypto，IXAI 將逐步建立你的個人市場觀察。
           </p>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-            目前先以本機 localStorage 保存，不需要登入；行情資料會透過 v1.5
-            provider layer 顯示資料狀態。
+            Guest 會以本機保存；登入 IXAI account 後，watchlist 可接上未來跨裝置同步與個人 intelligence memory。
           </p>
           <Link
             className="mt-5 inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
@@ -177,9 +178,11 @@ export function Watchlist() {
                 next to the workflow it upgrades. */}
             <Link
               className="text-xs text-[var(--ixai-ink-muted)] transition hover:text-[var(--ixai-forest)]"
-              href="/ixai"
+              href={session.mode === "authenticated" ? "/ixai" : "/account"}
             >
-              Pro 用戶可監控更多標的、設定自訂提醒 →
+              {session.mode === "authenticated"
+                ? "Pro 用戶可監控更多標的、設定自訂提醒 →"
+                : "登入後同步到你的 IXAI account →"}
             </Link>
           </div>
         </div>

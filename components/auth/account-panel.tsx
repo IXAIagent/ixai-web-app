@@ -1,0 +1,124 @@
+"use client";
+
+import { FormEvent, useState } from "react";
+import { useIdentity } from "@/components/auth/auth-provider";
+
+export function AccountPanel() {
+  const {
+    authConfigured,
+    continueAsGuest,
+    memory,
+    mounted,
+    sendMagicLink,
+    session,
+    signInWithGoogle,
+    signOut,
+  } = useIdentity();
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const isAuthenticated = session.mode === "authenticated";
+
+  async function handleMagicLink(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setMessage("");
+    const result = await sendMagicLink(email);
+    setMessage(result.message);
+    if (result.ok) {
+      setEmail("");
+    }
+  }
+
+  if (!mounted) {
+    return (
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-5">
+        <p className="text-sm text-[var(--ixai-ink-muted)]">Loading identity...</p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_16px_44px_rgba(9,41,31,0.05)] sm:p-6">
+      <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+        Identity Layer
+      </p>
+      <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+        {isAuthenticated ? "你的 IXAI 身份已建立" : "以 Guest 模式開始，登入後同步你的市場記憶"}
+      </h2>
+      <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+        Guest 可以閱讀 Daily / Weekly Brief 與使用本機自選觀察；登入後可把 watchlist、
+        interests 與 daily usage memory 接上未來 IXAI Pro 工作流。
+      </p>
+
+      {isAuthenticated ? (
+        <div className="mt-5 grid gap-4">
+          <div className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+              Signed in
+            </p>
+            <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">
+              {session.user?.email ?? session.user?.name ?? "IXAI account"}
+            </p>
+            <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
+              Last visit: {new Date(memory.lastVisitAt).toLocaleString("zh-TW")}
+            </p>
+          </div>
+          <button
+            className="w-fit rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            onClick={signOut}
+            type="button"
+          >
+            登出
+          </button>
+        </div>
+      ) : (
+        <div className="mt-5 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="grid gap-3">
+            <button
+              className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!authConfigured}
+              onClick={signInWithGoogle}
+              type="button"
+            >
+              使用 Google 登入
+            </button>
+            {!authConfigured ? (
+              <p className="text-xs leading-5 text-[var(--ixai-ink-muted)]">
+                Supabase Auth 尚未設定。設定 env 後即可啟用 Google 與 magic link。
+              </p>
+            ) : null}
+            <button
+              className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+              onClick={continueAsGuest}
+              type="button"
+            >
+              繼續使用 Guest 模式
+            </button>
+          </div>
+
+          <form className="grid gap-3" onSubmit={handleMagicLink}>
+            <label className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]">
+              Email magic link
+              <input
+                className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--ixai-gold)]"
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+                type="email"
+                value={email}
+              />
+            </label>
+            <button
+              className="w-fit rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[var(--ixai-forest)] disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!email || !authConfigured}
+              type="submit"
+            >
+              寄送登入連結
+            </button>
+            {message ? (
+              <p className="text-xs leading-5 text-[var(--ixai-forest-soft)]">{message}</p>
+            ) : null}
+          </form>
+        </div>
+      )}
+    </section>
+  );
+}

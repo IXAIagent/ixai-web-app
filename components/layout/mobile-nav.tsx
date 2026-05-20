@@ -6,7 +6,7 @@ const mobileItems = [
   { label: "市場", href: "/market" },
   { label: "自選", href: "/watchlist" },
   { label: "Pro", href: "/ixai" },
-  { label: "關於", href: "/about" },
+  { label: "我的", href: "/account" },
 ];
 
 export function MobileNav() {
