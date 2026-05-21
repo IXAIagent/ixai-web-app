@@ -19,7 +19,7 @@ export function MobileNav() {
             className={`rounded-lg py-2 text-center text-xs font-medium ${
               index === 0
                 ? "bg-white/10 text-[var(--ixai-cream)]"
-                : "text-white/58"
+                : "text-[rgba(245,240,230,0.58)]"
             }`}
             href={item.href}
             key={item.label}

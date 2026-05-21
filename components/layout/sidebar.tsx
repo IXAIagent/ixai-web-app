@@ -57,7 +57,7 @@ export function Sidebar() {
         <h1 className="mt-2 text-base font-semibold tracking-normal">
           Intelligence OS
         </h1>
-        <p className="mt-2 text-xs leading-5 text-white/48">
+        <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.48)]">
           Daily market command layer.
         </p>
       </div>
@@ -77,8 +77,8 @@ export function Sidebar() {
               <Link
                 className={`rounded-md px-3 py-2 font-mono text-xs transition ${
                   item.primary
-                    ? "bg-white/10 text-white"
-                    : "text-white/54 hover:bg-white/[0.06] hover:text-white"
+                    ? "bg-white/10 text-[var(--ixai-cream)]"
+                    : "text-[rgba(245,240,230,0.54)] hover:bg-white/[0.06] hover:text-[var(--ixai-cream)]"
                 }`}
                 href={item.href}
                 key={item.label}
@@ -98,7 +98,7 @@ export function Sidebar() {
           <Eyebrow mono className="text-[10px]">
             Risk State
           </Eyebrow>
-          <p className="mt-2 text-xs leading-5 text-white/62">
+          <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.62)]">
             Risk-on 偏正向，但利率仍是估值壓力源。
           </p>
         </div>

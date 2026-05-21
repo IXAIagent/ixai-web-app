@@ -41,7 +41,7 @@ export function RiskFocus() {
           Risk-first
         </span>
       </div>
-      <p className="mt-3 text-sm leading-7 text-white/66">
+      <p className="mt-3 text-sm leading-7 text-[rgba(245,240,230,0.66)]">
         {riskFocus.summary}
       </p>
       <Eyebrow mono className="mt-3">

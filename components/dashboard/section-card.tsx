@@ -26,10 +26,10 @@ export function SectionHeader({
   return (
     <div className="flex items-start justify-between gap-4 border-b border-[var(--ixai-border)] px-5 py-4">
       <div>
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+        <p className="ds-label-md text-[var(--ixai-gold)]" style={{ letterSpacing: "0.22em" }}>
           {eyebrow}
         </p>
-        <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
+        <h2 className="ds-heading-md mt-1 text-[var(--ixai-forest)]">
           {title}
         </h2>
       </div>

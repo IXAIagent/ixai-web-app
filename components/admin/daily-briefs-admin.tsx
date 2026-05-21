@@ -21,7 +21,7 @@ const statusLabels: Record<DailyBriefDraftStatus, string> = {
 };
 
 const statusStyles: Record<DailyBriefDraftStatus, string> = {
-  draft: "border-white/12 bg-white/6 text-white/62",
+  draft: "border-white/12 bg-white/6 text-[rgba(245,240,230,0.62)]",
   review: "border-[rgba(176,141,87,0.4)] bg-[rgba(176,141,87,0.12)] text-[var(--ixai-gold)]",
   published: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
 };
@@ -75,7 +75,7 @@ function statusPillClass(status: "success" | "warning" | "muted") {
     return "border-amber-300/25 bg-amber-300/10 text-amber-100";
   }
 
-  return "border-white/10 bg-white/[0.045] text-white/56";
+  return "border-white/10 bg-white/[0.045] text-[rgba(245,240,230,0.56)]";
 }
 
 function StatusCard({
@@ -88,7 +88,7 @@ function StatusCard({
   children: React.ReactNode;
 }>) {
   return (
-    <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/62">
+    <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
       <div className="mb-3 flex items-center justify-between gap-3">
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
           {title}
@@ -274,16 +274,16 @@ export function DailyBriefsAdmin() {
               <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
                 Daily Brief Draft Pipeline
               </h1>
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-white/62">
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
                 市場資料、OpenAI synthesis、Admin review 與 Publish workflow 的內部營運層。
                 Draft 需人工審閱後才會發布到 Dashboard 與 Daily Brief。
               </p>
             </div>
-            <div className="grid gap-3 rounded-lg border border-white/10 bg-black/18 p-4 text-sm leading-6 text-white/62 lg:min-w-[300px]">
+            <div className="grid gap-3 rounded-lg border border-white/10 bg-black/18 p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)] lg:min-w-[300px]">
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                 Generate
               </p>
-              <p className="text-xs leading-5 text-white/46">
+              <p className="text-xs leading-5 text-[rgba(245,240,230,0.46)]">
                 News intake → OpenAI provider → review draft. No auto-publish.
               </p>
               <button
@@ -306,13 +306,13 @@ export function DailyBriefsAdmin() {
             {intakeMeta ? (
               <>
                 <p>
-                  Source mode: <span className="text-white">{intakeMeta.mode}</span>
+                  Source mode: <span className="text-[var(--ixai-cream)]">{intakeMeta.mode}</span>
                 </p>
                 <p>
-                  News item count: <span className="text-white">{intakeMeta.itemCount}</span>
+                  News item count: <span className="text-[var(--ixai-cream)]">{intakeMeta.itemCount}</span>
                 </p>
                 <p>
-                  Last fetch: <span className="text-white">{formatDate(intakeMeta.fetchedAt)}</span>
+                  Last fetch: <span className="text-[var(--ixai-cream)]">{formatDate(intakeMeta.fetchedAt)}</span>
                 </p>
               </>
             ) : (
@@ -333,18 +333,18 @@ export function DailyBriefsAdmin() {
             {generationMeta ? (
               <>
                 <p>
-                  providerMode: <span className="text-white">{generationMeta.providerMode}</span>
+                  providerMode: <span className="text-[var(--ixai-cream)]">{generationMeta.providerMode}</span>
                 </p>
                 <p>
                   OpenAI API key detected:{" "}
-                  <span className="text-white">{generationMeta.openAIKeyDetected ? "yes" : "no"}</span>
+                  <span className="text-[var(--ixai-cream)]">{generationMeta.openAIKeyDetected ? "yes" : "no"}</span>
                 </p>
                 <p>
-                  Model used: <span className="text-white">{generationMeta.model}</span>
+                  Model used: <span className="text-[var(--ixai-cream)]">{generationMeta.model}</span>
                 </p>
                 <p>
                   Error reason:{" "}
-                  <span className="text-white">
+                  <span className="text-[var(--ixai-cream)]">
                     {generationMeta.errorReason ?? openAIStatus?.errorReason ?? "-"}
                   </span>
                 </p>
@@ -359,11 +359,11 @@ export function DailyBriefsAdmin() {
             title="Supabase Persistence Status"
           >
             <p>
-              Supabase env: <span className="text-white">{supabaseReady ? "configured" : "not configured"}</span>
+              Supabase env: <span className="text-[var(--ixai-cream)]">{supabaseReady ? "configured" : "not configured"}</span>
             </p>
             <p>
               Persistence mode:{" "}
-              <span className="text-white">
+              <span className="text-[var(--ixai-cream)]">
                 {persistenceMeta?.writable
                   ? "durable Supabase"
                   : supabaseReady
@@ -371,7 +371,7 @@ export function DailyBriefsAdmin() {
                     : "local fallback"}
               </span>
             </p>
-            <p className="text-xs leading-5 text-white/42">
+            <p className="text-xs leading-5 text-[rgba(245,240,230,0.42)]">
               Published state uses Supabase when the table and server write key are available; otherwise IXAI falls back safely without breaking review flow.
             </p>
           </StatusCard>
@@ -382,19 +382,19 @@ export function DailyBriefsAdmin() {
           >
             <p>
               Scheduler:{" "}
-              <span className="text-white">
+              <span className="text-[var(--ixai-cream)]">
                 {schedulerStatus?.schedulerConfigured ? "configured" : "not configured"}
               </span>
             </p>
             <p>
               Last draft:{" "}
-              <span className="text-white">
+              <span className="text-[var(--ixai-cream)]">
                 {schedulerStatus?.lastGeneration?.draftSlug ?? "No scheduled draft yet"}
               </span>
             </p>
             <p>
               AI provider:{" "}
-              <span className="text-white">
+              <span className="text-[var(--ixai-cream)]">
                 {schedulerStatus?.lastGeneration?.providerMode ?? "-"}
               </span>
             </p>
@@ -402,19 +402,19 @@ export function DailyBriefsAdmin() {
         </div>
 
         {generationMeta ? (
-          <section className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.07)] p-4 text-sm leading-6 text-white/64">
+          <section className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.07)] p-4 text-sm leading-6 text-[rgba(245,240,230,0.64)]">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
               <div>
                 <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                   AI Synthesis Result
                 </p>
                 <p className="mt-1">
-                  providerMode: <span className="text-white">{generationMeta.providerMode}</span> · Model:{" "}
-                  <span className="text-white">{generationMeta.model}</span> · Input news:{" "}
-                  <span className="text-white">{generationMeta.inputNewsCount}</span> · Generated:{" "}
-                  <span className="text-white">{formatDate(generationMeta.generatedAt)}</span>
+                  providerMode: <span className="text-[var(--ixai-cream)]">{generationMeta.providerMode}</span> · Model:{" "}
+                  <span className="text-[var(--ixai-cream)]">{generationMeta.model}</span> · Input news:{" "}
+                  <span className="text-[var(--ixai-cream)]">{generationMeta.inputNewsCount}</span> · Generated:{" "}
+                  <span className="text-[var(--ixai-cream)]">{formatDate(generationMeta.generatedAt)}</span>
                 </p>
-                <p className="mt-2 text-xs leading-5 text-white/46">
+                <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.46)]">
                   AI generated · editorial review required
                 </p>
               </div>
@@ -429,7 +429,7 @@ export function DailyBriefsAdmin() {
               ) : null}
             </div>
             {generationMeta.complianceNote ? (
-              <p className="mt-3 border-t border-white/10 pt-3 text-xs leading-5 text-white/42">
+              <p className="mt-3 border-t border-white/10 pt-3 text-xs leading-5 text-[rgba(245,240,230,0.42)]">
                 {generationMeta.complianceNote}
               </p>
             ) : null}
@@ -437,16 +437,16 @@ export function DailyBriefsAdmin() {
         ) : null}
 
         {intakeMeta ? (
-          <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/62">
+          <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                   News Intake
                 </p>
                 <p className="mt-1">
-                  Source mode: <span className="text-white">{intakeMeta.mode}</span> · Items used:{" "}
-                  <span className="text-white">{intakeMeta.itemCount}</span> · Last fetch:{" "}
-                  <span className="text-white">{formatDate(intakeMeta.fetchedAt)}</span>
+                  Source mode: <span className="text-[var(--ixai-cream)]">{intakeMeta.mode}</span> · Items used:{" "}
+                  <span className="text-[var(--ixai-cream)]">{intakeMeta.itemCount}</span> · Last fetch:{" "}
+                  <span className="text-[var(--ixai-cream)]">{formatDate(intakeMeta.fetchedAt)}</span>
                 </p>
               </div>
             </div>
@@ -462,7 +462,7 @@ export function DailyBriefsAdmin() {
                   key={source.id}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/72">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[rgba(245,240,230,0.72)]">
                       {source.label}
                     </span>
                     <span
@@ -471,28 +471,28 @@ export function DailyBriefsAdmin() {
                           ? "bg-emerald-400/10 text-emerald-200"
                           : source.status === "failed" || source.status === "fallback"
                             ? "bg-amber-300/10 text-amber-100"
-                            : "bg-white/8 text-white/42"
+                            : "bg-white/8 text-[rgba(245,240,230,0.42)]"
                       }`}
                     >
                       {source.status}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-white/46">
+                  <p className="mt-1 text-xs text-[rgba(245,240,230,0.46)]">
                     {source.enabled ? "Real source" : "Disabled slot"} · {source.itemCount} items
                   </p>
                   {source.reason ? (
-                    <p className="mt-1 text-xs leading-5 text-white/38">{source.reason}</p>
+                    <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.38)]">{source.reason}</p>
                   ) : null}
                 </div>
               ))}
             </div>
-            <p className="mt-3 text-xs leading-5 text-white/42">
+            <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.42)]">
               {intakeMeta.disclaimer}
             </p>
           </section>
         ) : null}
 
-        <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/62">
+        <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
@@ -500,42 +500,42 @@ export function DailyBriefsAdmin() {
               </p>
               <p className="mt-1">
                 Scheduler:{" "}
-                <span className="text-white">
+                <span className="text-[var(--ixai-cream)]">
                   {schedulerStatus?.schedulerConfigured ? "configured" : "not configured"}
                 </span>{" "}
                 · Human review required
               </p>
             </div>
-            <div className="grid gap-1 text-xs leading-5 text-white/48 lg:min-w-[320px]">
+            <div className="grid gap-1 text-xs leading-5 text-[rgba(245,240,230,0.48)] lg:min-w-[320px]">
               <p>
                 Last generated draft:{" "}
-                <span className="text-white">
+                <span className="text-[var(--ixai-cream)]">
                   {schedulerStatus?.lastGeneration?.draftSlug ?? "No scheduled draft yet"}
                 </span>
               </p>
               <p>
                 Source mode:{" "}
-                <span className="text-white">
+                <span className="text-[var(--ixai-cream)]">
                   {schedulerStatus?.lastGeneration?.sourceMode ?? "-"}
                 </span>{" "}
                 · Item count:{" "}
-                <span className="text-white">
+                <span className="text-[var(--ixai-cream)]">
                   {schedulerStatus?.lastGeneration?.itemCount ?? "-"}
                 </span>
               </p>
               <p>
                 AI provider:{" "}
-                <span className="text-white">
+                <span className="text-[var(--ixai-cream)]">
                   {schedulerStatus?.lastGeneration?.providerMode ?? "-"}
                 </span>{" "}
                 · Input news:{" "}
-                <span className="text-white">
+                <span className="text-[var(--ixai-cream)]">
                   {schedulerStatus?.lastGeneration?.inputNewsCount ?? "-"}
                 </span>
               </p>
               <p>
                 Generated time:{" "}
-                <span className="text-white">
+                <span className="text-[var(--ixai-cream)]">
                   {schedulerStatus?.lastGeneration
                     ? formatDate(schedulerStatus.lastGeneration.generatedAt)
                     : "-"}
@@ -565,10 +565,10 @@ export function DailyBriefsAdmin() {
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-sm font-semibold leading-6 text-white">
+                      <h3 className="text-sm font-semibold leading-6 text-[var(--ixai-cream)]">
                         {draft.title}
                       </h3>
-                      <p className="mt-1 font-mono text-xs text-white/38">
+                      <p className="mt-1 font-mono text-xs text-[rgba(245,240,230,0.38)]">
                         {draft.slug}
                       </p>
                     </div>
@@ -590,7 +590,7 @@ export function DailyBriefsAdmin() {
                     <h2 className="mt-2 text-xl font-semibold leading-8">
                       {selectedDraft.title}
                     </h2>
-                    <p className="mt-2 font-mono text-xs text-white/42">
+                    <p className="mt-2 font-mono text-xs text-[rgba(245,240,230,0.42)]">
                       Updated {formatDate(selectedDraft.updatedAt)}
                     </p>
                   </div>
@@ -611,7 +611,7 @@ export function DailyBriefsAdmin() {
                     <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                       Market Summary
                     </p>
-                    <p className="mt-2 text-sm leading-7 text-white/72">
+                    <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.72)]">
                       {selectedDraft.marketSummary}
                     </p>
                   </div>
@@ -621,7 +621,7 @@ export function DailyBriefsAdmin() {
                       <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                         Editorial Note
                       </p>
-                      <p className="mt-2 text-sm leading-7 text-white/72">
+                      <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.72)]">
                         {selectedDraft.editorialNote}
                       </p>
                     </div>
@@ -632,14 +632,14 @@ export function DailyBriefsAdmin() {
                       <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-200">
                         Live Intelligence Payload
                       </p>
-                      <p className="text-sm leading-7 text-white/72">
+                      <p className="text-sm leading-7 text-[rgba(245,240,230,0.72)]">
                         {selectedDraft.intelligence.marketRegimeNote}
                       </p>
                       <div className="flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.12em]">
-                        <span className="rounded-md border border-white/10 px-2 py-1 text-white/62">
+                        <span className="rounded-md border border-white/10 px-2 py-1 text-[rgba(245,240,230,0.62)]">
                           {selectedDraft.intelligence.sessionLabel}
                         </span>
-                        <span className="rounded-md border border-white/10 px-2 py-1 text-white/62">
+                        <span className="rounded-md border border-white/10 px-2 py-1 text-[rgba(245,240,230,0.62)]">
                           {selectedDraft.intelligence.marketRegime}
                         </span>
                       </div>
@@ -658,11 +658,11 @@ export function DailyBriefsAdmin() {
                         <h3 className="mt-2 text-sm font-semibold leading-6">
                           {section.headline}
                         </h3>
-                        <p className="mt-2 text-sm leading-7 text-white/58">
+                        <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.58)]">
                           {section.summary}
                         </p>
                         {section.ixaiView ? (
-                          <p className="mt-3 border-t border-white/10 pt-3 text-sm leading-7 text-white/68">
+                          <p className="mt-3 border-t border-white/10 pt-3 text-sm leading-7 text-[rgba(245,240,230,0.68)]">
                             {section.ixaiView}
                           </p>
                         ) : null}
@@ -684,7 +684,7 @@ export function DailyBriefsAdmin() {
               <h2 className="mt-1 text-base font-semibold">已發布 Daily Brief</h2>
             </div>
             <Link
-              className="w-fit rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-white/72"
+              className="w-fit rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-[rgba(245,240,230,0.72)]"
               href="/"
             >
               查看 Dashboard

@@ -14,7 +14,7 @@ export function AccountStatus() {
       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
         My IXAI
       </p>
-      <p className="mt-2 text-xs leading-5 text-white/62">
+      <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.62)]">
         {!mounted
           ? "讀取中..."
           : session.mode === "authenticated"

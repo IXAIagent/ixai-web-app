@@ -15,13 +15,13 @@ const directionLabels: Record<MarketDirection, string> = {
 const directionStyles: Record<MarketDirection, string> = {
   up: "text-emerald-200",
   down: "text-red-200",
-  flat: "text-white/60",
+  flat: "text-[rgba(245,240,230,0.60)]",
 };
 
 const feelingStyles: Record<PulseSentiment, string> = {
   "risk-on": "border-emerald-300/22 bg-emerald-300/10 text-emerald-100",
   "risk-off": "border-red-300/22 bg-red-300/10 text-red-100",
-  neutral: "border-white/12 bg-white/[0.045] text-white/62",
+  neutral: "border-white/12 bg-white/[0.045] text-[rgba(245,240,230,0.62)]",
 };
 
 const feelingLabels: Record<PulseSentiment, string> = {
@@ -77,10 +77,10 @@ export function MarketPulse() {
             </h1>
           </div>
           <div className="flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.12em]">
-            <span className="rounded-md border border-white/10 bg-white/[0.045] px-2.5 py-1 text-white/58">
+            <span className="rounded-md border border-white/10 bg-white/[0.045] px-2.5 py-1 text-[rgba(245,240,230,0.58)]">
               Asia Session
             </span>
-            <span className="rounded-md border border-white/10 bg-white/[0.045] px-2.5 py-1 text-white/58">
+            <span className="rounded-md border border-white/10 bg-white/[0.045] px-2.5 py-1 text-[rgba(245,240,230,0.58)]">
               US Futures
             </span>
           </div>
@@ -97,14 +97,14 @@ export function MarketPulse() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-mono text-lg font-semibold text-white">
+                    <p className="font-mono text-lg font-semibold text-[var(--ixai-cream)]">
                       {item.symbol}
                     </p>
-                    <span className="rounded-md border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-white/46">
+                    <span className="rounded-md border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[rgba(245,240,230,0.46)]">
                       {item.session}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-white/42">{item.label}</p>
+                  <p className="mt-1 text-xs text-[rgba(245,240,230,0.42)]">{item.label}</p>
                 </div>
                 <span
                   className={`rounded-md border px-2 py-1 text-[11px] font-medium ${feelingStyles[item.feeling]}`}
@@ -114,20 +114,20 @@ export function MarketPulse() {
               </div>
 
               <div className="mt-4 flex items-end justify-between gap-3">
-                <p className="font-mono text-xl font-semibold text-white">
+                <p className="font-mono text-xl font-semibold text-[var(--ixai-cream)]">
                   {quote?.price ?? "--"}
                 </p>
                 <div className="text-right">
                   <p className={`font-mono text-sm font-semibold ${directionStyles[direction]}`}>
                     {quote?.dailyChange ?? "--"}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-white/42">
+                  <p className="mt-0.5 text-[11px] text-[rgba(245,240,230,0.42)]">
                     {directionLabels[direction]}
                   </p>
                 </div>
               </div>
 
-              <p className="mt-4 min-h-12 text-sm leading-6 text-white/68">
+              <p className="mt-4 min-h-12 text-sm leading-6 text-[rgba(245,240,230,0.68)]">
                 {item.note}
               </p>
               <Eyebrow mono density="regular" className="mt-3">

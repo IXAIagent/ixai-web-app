@@ -23,7 +23,7 @@ export function SectionTitle({
 }>) {
   return (
     <h3
-      className={`text-sm font-semibold leading-6 ${TONE_CLASS[tone]} ${className}`}
+      className={`ds-heading-sm ${TONE_CLASS[tone]} ${className}`}
     >
       {children}
     </h3>

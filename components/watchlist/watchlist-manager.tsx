@@ -265,11 +265,11 @@ export function WatchlistManager() {
         <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">
           建立你的個人市場入口。
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
+        <p className="mt-4 max-w-3xl text-base leading-8 text-[rgba(245,240,230,0.72)]">
           新增你關注的股票、ETF、指數或 Crypto。Guest 模式會先保存在本機瀏覽器；
           登入同步開放後，可延伸到 IXAI Pro 個人監控。
         </p>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-white/58">
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.58)]">
           {ixaiIdentity.watchlistSyncCopy}
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
@@ -280,7 +280,7 @@ export function WatchlistManager() {
             查看市場總覽
           </Link>
           <Link
-            className="rounded-lg border border-white/15 px-4 py-2 text-sm font-medium text-white/78 transition hover:bg-white/8 hover:text-white"
+            className="rounded-lg border border-white/15 px-4 py-2 text-sm font-medium text-[rgba(245,240,230,0.78)] transition hover:bg-white/8 hover:text-[var(--ixai-cream)]"
             href="/account"
           >
             前往我的 IXAI

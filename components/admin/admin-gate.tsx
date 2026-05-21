@@ -102,7 +102,7 @@ export function AdminGate({
           <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
             IXAI Editorial Console
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/62">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
             內部內容營運後台。
             {mode === "development"
               ? "目前未設定管理密碼，僅允許本機開發模式進入。"
@@ -111,10 +111,10 @@ export function AdminGate({
 
           <form className="mt-7 grid gap-4" onSubmit={handleSubmit}>
             {mode === "password" ? (
-              <label className="grid gap-2 text-sm font-medium text-white/76">
+              <label className="grid gap-2 text-sm font-medium text-[rgba(245,240,230,0.76)]">
                 請輸入管理密碼
                 <input
-                  className="rounded-lg border border-white/12 bg-black/22 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/28 focus:border-[var(--ixai-gold)]"
+                  className="rounded-lg border border-white/12 bg-black/22 px-4 py-3 text-sm text-[var(--ixai-cream)] outline-none transition placeholder:text-[rgba(245,240,230,0.28)] focus:border-[var(--ixai-gold)]"
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Admin password"
                   type="password"
@@ -122,7 +122,7 @@ export function AdminGate({
                 />
               </label>
             ) : (
-              <div className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.08)] p-4 text-sm leading-7 text-white/68">
+              <div className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.08)] p-4 text-sm leading-7 text-[rgba(245,240,230,0.68)]">
                 本機開發警示：`IXAI_ADMIN_PASSWORD` 尚未設定。Production
                 環境會直接鎖定後台，不允許進入內容。
               </div>

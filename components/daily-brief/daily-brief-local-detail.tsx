@@ -83,7 +83,7 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
         <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">
           {brief.title}
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
+        <p className="mt-4 max-w-3xl text-base leading-8 text-[rgba(245,240,230,0.72)]">
           {brief.marketSummary}
         </p>
       </section>

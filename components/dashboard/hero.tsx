@@ -9,14 +9,14 @@ export function Hero() {
           <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-normal sm:text-4xl">
             AI Wealth Intelligence Platform
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-8 text-white/72">
+          <p className="mt-4 max-w-2xl text-base leading-8 text-[rgba(245,240,230,0.72)]">
             一套每天打開的 AI wealth intelligence platform，將市場情報、風險脈絡與資產觀察整理成可持續使用的金融決策節奏。
           </p>
         </div>
 
         <div className="grid content-between gap-4 border-t border-white/10 pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-white/42">
+            <p className="text-xs uppercase tracking-[0.2em] text-[rgba(245,240,230,0.42)]">
               今日閱讀框架
             </p>
             <p className="mt-2 text-lg font-medium">Daily Brief + Intelligence OS</p>

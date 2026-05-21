@@ -13,11 +13,11 @@ export function ProCta({ features }: { features: string[] }) {
           <h2 className="mt-2 text-xl font-semibold">
             升級 IXAI Pro，建立 AI wealth intelligence 的監控層
           </h2>
-          <p className="mt-3 text-sm leading-7 text-white/68">
+          <p className="mt-3 text-sm leading-7 text-[rgba(245,240,230,0.68)]">
             未來將延伸至結構型商品監控、AI 風險提醒、投資組合情報與 Crypto
             監控，讓每日閱讀進一步轉為個人化、可持續的 intelligence workflow。
           </p>
-          <p className="mt-3 text-xs leading-6 text-white/50">
+          <p className="mt-3 text-xs leading-6 text-[rgba(245,240,230,0.50)]">
             {ixaiIdentity.sharedAccountMessage}
           </p>
           <a
@@ -35,11 +35,11 @@ export function ProCta({ features }: { features: string[] }) {
               className="relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] p-4"
               key={feature}
             >
-              <span className="absolute right-3 top-3 rounded-md border border-white/10 bg-black/18 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/46">
+              <span className="absolute right-3 top-3 rounded-md border border-white/10 bg-black/18 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[rgba(245,240,230,0.46)]">
                 Pro
               </span>
               <p className="text-sm font-medium">{feature}</p>
-              <p className="mt-2 text-xs leading-5 text-white/42">
+              <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.42)]">
                 Available in IXAI Pro
               </p>
             </div>
