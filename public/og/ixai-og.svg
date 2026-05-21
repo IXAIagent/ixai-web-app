@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">IXAI — AI Financial Intelligence</title>
+  <desc id="desc">IXAI social preview image with I-Xuan brand, cream, forest and gold identity.</desc>
+  <rect width="1200" height="630" fill="#09291f"/>
+  <rect x="34" y="34" width="1132" height="562" rx="34" fill="#fff7e8" opacity="0.96"/>
+  <rect x="64" y="64" width="1072" height="502" rx="24" fill="#0f3428"/>
+  <path d="M96 476 C255 414 376 457 492 407 C641 343 738 214 1104 164" fill="none" stroke="#b08d57" stroke-width="2.2" opacity="0.62"/>
+  <path d="M96 506 C255 444 376 487 492 437 C641 373 738 244 1104 194" fill="none" stroke="#fff7e8" stroke-width="1.1" opacity="0.2"/>
+  <circle cx="1020" cy="150" r="76" fill="none" stroke="#b08d57" stroke-width="1.5" opacity="0.42"/>
+  <circle cx="1020" cy="150" r="38" fill="none" stroke="#fff7e8" stroke-width="1" opacity="0.2"/>
+  <text x="112" y="136" fill="#b08d57" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" letter-spacing="7">I-XUAN / 一玄</text>
+  <text x="112" y="274" fill="#fff7e8" font-family="Georgia, 'Times New Roman', serif" font-size="116" font-weight="700" letter-spacing="2">IXAI</text>
+  <text x="118" y="344" fill="#fff7e8" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="600" opacity="0.92">AI Financial Intelligence</text>
+  <text x="118" y="402" fill="#d7c5a6" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="500">Risk Monitoring Platform</text>
+  <text x="118" y="504" fill="#fff7e8" font-family="Arial, Helvetica, sans-serif" font-size="20" opacity="0.72">Daily Brief · Market Intelligence · FCN Risk Observation · IXAI Pro</text>
+  <rect x="896" y="448" width="184" height="48" rx="24" fill="none" stroke="#b08d57" stroke-width="1.4"/>
+  <text x="931" y="480" fill="#b08d57" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" letter-spacing="3">IXAI PRO</text>
+</svg>

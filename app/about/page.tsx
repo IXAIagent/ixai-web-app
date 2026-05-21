@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBrandContactChannels } from "@/src/lib/brand/contact";
+import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ecosystemLayers } from "@/src/lib/ixai/ecosystem";
 
 const beliefs = [
@@ -21,20 +22,11 @@ const beliefs = [
   },
 ];
 
-export const metadata = {
-  title: "關於一玄",
+export const metadata = buildPublicMetadata({
+  title: "關於一玄與 IXAI",
   description:
     "認識 IXAI、一玄與 AI Wealth Intelligence 的品牌理念、founder narrative 與 community layer。",
-  openGraph: {
-    title: "關於一玄與 IXAI",
-    description: "認識 IXAI ecosystem、公開市場情報入口與 IXAI Pro AI Wealth Operating System。",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "關於一玄與 IXAI",
-    description: "認識 IXAI ecosystem、品牌信任與 AI 風險觀察方向。",
-  },
-};
+});
 
 export default function AboutPage() {
   const communityLinks = getBrandContactChannels();

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
+import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ecosystemLayers, ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 const proCapabilities = [
@@ -43,21 +44,11 @@ const previewCards = [
   ["Personal Brief", "Watchlist-aware context", "Review required"],
 ];
 
-export const metadata = {
-  title: "IXAI Pro",
+export const metadata = buildPublicMetadata({
+  title: "IXAI Pro — AI Wealth Operating System",
   description:
     "IXAI Pro 是跨資產 AI 風控與 intelligence workspace，延伸自 IXAI 公開市場情報入口。",
-  openGraph: {
-    title: "IXAI Pro — AI Wealth Operating System",
-    description:
-      "跨資產 AI 風控與 intelligence workspace，從公開市場情報延伸到個人化風險監控。",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "IXAI Pro — AI Wealth Operating System",
-    description: "跨資產 AI 風控與個人化 intelligence workspace。",
-  },
-};
+});
 
 export default function ProPage() {
   const contactLinks = getPrimaryContactLinks();

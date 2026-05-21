@@ -1,20 +1,12 @@
 import { MarketOverview } from "@/components/dashboard/market-overview";
+import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { MARKET_DATA_DISCLAIMER } from "@/src/lib/market-data/types";
 
-export const metadata = {
-  title: "市場總覽",
+export const metadata = buildPublicMetadata({
+  title: "IXAI 市場總覽 — Market Overview",
   description:
     "IXAI 市場總覽追蹤 Crypto、美股 ETF、美股科技股與台股代表標的，並清楚標示資料狀態。",
-  openGraph: {
-    title: "IXAI 市場總覽 — Market Overview",
-    description: "追蹤主要市場價格、資料狀態與市場觀察入口。",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "IXAI 市場總覽 — Market Overview",
-    description: "追蹤主要市場價格與市場觀察入口。",
-  },
-};
+});
 
 export default function MarketPage() {
   return (

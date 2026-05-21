@@ -1,18 +1,10 @@
 import { AccountPanel } from "@/components/auth/account-panel";
+import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
-export const metadata = {
+export const metadata = buildPublicMetadata({
   title: "我的 IXAI",
   description: "我的 IXAI 是偏好設定、watchlist 同步與未來個人化 AI 風險監控的入口。",
-  openGraph: {
-    title: "我的 IXAI",
-    description: "管理偏好、watchlist 與未來個人化 AI 風險監控入口。",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "我的 IXAI",
-    description: "管理偏好與 watchlist，同步未來個人化市場觀察。",
-  },
-};
+});
 
 export default function AccountPage() {
   return (

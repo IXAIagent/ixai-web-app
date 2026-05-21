@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
+import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import {
   FCN_MONITORING_DISCLAIMER,
   type FcnPositionSnapshot,
@@ -17,19 +18,10 @@ import type { MarketDataStatus } from "@/src/lib/market-data/types";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "FCN 風險觀察",
+export const metadata = buildPublicMetadata({
+  title: "IXAI FCN 風險觀察",
   description: "IXAI FCN Education + Intelligence：理解 coupon、KI、KO、worst-of 與結構型商品風險。",
-  openGraph: {
-    title: "IXAI FCN 風險觀察",
-    description: "理解 coupon、KI、KO、worst-of 與結構型商品風險，並了解 IXAI Pro 如何監控 FCN。",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "IXAI FCN 風險觀察",
-    description: "FCN 教育、worst-of 與 KI / KO 風險觀察。",
-  },
-};
+});
 
 const riskClasses: Record<FcnRiskLevel, string> = {
   breached: "border-[#8f3326]/24 bg-[#8f3326]/10 text-[#6b241b]",

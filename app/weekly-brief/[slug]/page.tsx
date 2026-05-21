@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import {
   getAllWeeklyBriefs,
   getWeeklyBriefBySlug,
@@ -34,19 +35,10 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
-  return {
+  return buildPublicMetadata({
     title: `${brief.title} | IXAI Weekly Brief`,
     description: brief.executiveSummary,
-    openGraph: {
-      title: `${brief.title} | IXAI Weekly Brief`,
-      description: brief.executiveSummary,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${brief.title} | IXAI Weekly Brief`,
-      description: brief.executiveSummary,
-    },
-  };
+  });
 }
 
 export default async function WeeklyBriefDetailPage({ params }: PageProps) {

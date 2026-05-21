@@ -11,29 +11,18 @@ import { ProEngineSurface } from "@/components/engines/pro-engine-surface";
 import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { proFeatures } from "@/lib/mock-data";
+import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getLatestPublishedBrief } from "@/src/lib/editorial/repository";
 import { getFcnPortfolioSnapshot } from "@/src/lib/fcn/engine";
 import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
+export const metadata = buildPublicMetadata({
   title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
   description:
     "IXAI 是免費市場 intelligence 與 AI 風險觀察平台，提供 Daily Brief、Market Pulse、FCN 教育與 IXAI Pro 入口。",
-  openGraph: {
-    title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
-    description:
-      "每日市場情報、AI 風險觀察與 IXAI Pro AI Wealth Operating System 入口。",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
-    description:
-      "免費市場 intelligence 與 AI 風險觀察平台，清楚連向 IXAI Pro。",
-  },
-};
+});
 
 export default async function Home() {
   const latestDailyBrief = getLatestPublishedBrief();

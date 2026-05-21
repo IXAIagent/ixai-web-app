@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { AppShell } from "@/components/layout/app-shell";
+import {
+  ixaiDefaultDescription,
+  ixaiDefaultTitle,
+  ixaiMetadataBase,
+  ixaiOgImage,
+} from "@/src/lib/brand/metadata";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,25 +21,37 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: ixaiMetadataBase,
   title: {
-    default: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+    default: ixaiDefaultTitle,
     template: "%s | IXAI",
   },
-  description:
-    "IXAI 是免費市場 intelligence 與 AI 風險觀察平台，提供 Daily Brief、Market Pulse、FCN 教育與 IXAI Pro 入口。",
+  description: ixaiDefaultDescription,
+  alternates: {
+    canonical: "/",
+  },
+  applicationName: "IXAI",
+  icons: {
+    icon: [
+      { rel: "icon", url: "/favicon.ico" },
+      { rel: "icon", type: "image/svg+xml", url: "/icon.svg" },
+    ],
+  },
+  manifest: "/manifest.webmanifest",
   openGraph: {
-    description:
-      "每日市場情報、AI 風險觀察與 IXAI Pro AI Wealth Operating System 入口。",
+    description: ixaiDefaultDescription,
+    images: [ixaiOgImage],
     locale: "zh_TW",
     siteName: "IXAI",
-    title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+    title: ixaiDefaultTitle,
     type: "website",
+    url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    description:
-      "免費市場 intelligence 與 AI 風險觀察平台，清楚連向 IXAI Pro。",
-    title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+    description: ixaiDefaultDescription,
+    images: [ixaiOgImage.url],
+    title: ixaiDefaultTitle,
   },
 };
 

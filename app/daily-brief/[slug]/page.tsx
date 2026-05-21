@@ -5,6 +5,7 @@ import {
   getAllDailyBriefs,
   getDailyBriefBySlug,
 } from "@/src/lib/dailyBriefs";
+import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 const categoryLabels: Record<DailyBrief["sections"][number]["category"], string> =
   {
@@ -33,19 +34,10 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
-  return {
+  return buildPublicMetadata({
     title: `${brief.title} | IXAI Daily Brief`,
     description: brief.marketSummary,
-    openGraph: {
-      title: `${brief.title} | IXAI Daily Brief`,
-      description: brief.marketSummary,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${brief.title} | IXAI Daily Brief`,
-      description: brief.marketSummary,
-    },
-  };
+  });
 }
 
 export default async function DailyBriefDetailPage({ params }: PageProps) {
