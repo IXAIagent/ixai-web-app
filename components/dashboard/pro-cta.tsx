@@ -1,5 +1,6 @@
 import { SectionCard } from "@/components/dashboard/section-card";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
+import { ixaiIdentity } from "@/src/lib/ixai/identity";
 
 export function ProCta({ features }: { features: string[] }) {
   return (
@@ -15,6 +16,9 @@ export function ProCta({ features }: { features: string[] }) {
           <p className="mt-3 text-sm leading-7 text-white/68">
             未來將延伸至結構型商品監控、AI 風險提醒、投資組合情報與 Crypto
             監控，讓每日閱讀進一步轉為個人化、可持續的 intelligence workflow。
+          </p>
+          <p className="mt-3 text-xs leading-6 text-white/50">
+            {ixaiIdentity.sharedAccountMessage}
           </p>
           <a
             className="mt-5 inline-flex rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"

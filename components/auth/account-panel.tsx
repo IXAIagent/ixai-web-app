@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useIdentity } from "@/components/auth/auth-provider";
+import { ixaiIdentity } from "@/src/lib/ixai/identity";
 import { interestOptions } from "@/src/lib/personalization/memory";
 import { getWatchlist } from "@/src/lib/watchlist";
 
@@ -63,6 +64,14 @@ export function AccountPanel() {
         Guest 模式是有效的免費使用方式；登入的價值在於同步自選觀察、保存關注主題，
         並為未來個人化 AI 風險監控與 IXAI Pro 模組建立基礎。
       </p>
+      <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3">
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+          {ixaiIdentity.syncPendingBadge}
+        </p>
+        <p className="mt-2 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          {ixaiIdentity.sharedAccountMessage}
+        </p>
+      </div>
 
       {isAuthenticated ? (
         <div className="mt-5 grid gap-4">
@@ -87,6 +96,9 @@ export function AccountPanel() {
               </p>
               <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
                 {persistenceStatus.message}
+              </p>
+              <p className="mt-2 text-xs leading-5 text-[var(--ixai-ink-muted)]">
+                {ixaiIdentity.preferencesSyncCopy}
               </p>
             </div>
             <div className="rounded-lg border border-[var(--ixai-border)] bg-white/36 p-4">
@@ -131,6 +143,9 @@ export function AccountPanel() {
               <p className="mt-2">
                 目前登入同步尚未啟用，因此 Google 登入與 email 登入連結不會啟用。
                 你仍可用 Guest 模式閱讀內容、建立本機 watchlist 與保存偏好。
+              </p>
+              <p className="mt-2">
+                {ixaiIdentity.accountContinuityCopy}
               </p>
             </div>
           ) : null}

@@ -1,5 +1,6 @@
 import { AccountPanel } from "@/components/auth/account-panel";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
+import { ixaiIdentity } from "@/src/lib/ixai/identity";
 
 export const metadata = buildPublicMetadata({
   title: "我的 IXAI",
@@ -19,6 +20,9 @@ export default function AccountPage() {
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/72">
           我的 IXAI 是個人身份層、偏好中心、watchlist 同步中心，也是未來 IXAI Pro
           個人情報工作區的入口。
+        </p>
+        <p className="mt-3 max-w-3xl text-xs leading-6 text-white/56">
+          {ixaiIdentity.sharedAccountMessage}
         </p>
       </section>
 
@@ -57,6 +61,7 @@ export default function AccountPage() {
             "保存 interests，讓情報排序逐步貼近你的市場關注。",
             "累積 reading memory，讓 IXAI 更懂你的每日使用脈絡。",
             "為未來 IXAI Pro 的 FCN、portfolio、AI risk alerts 與 personal morning brief 做準備。",
+            ixaiIdentity.accountContinuityCopy,
           ].map((item) => (
             <p
               className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4"

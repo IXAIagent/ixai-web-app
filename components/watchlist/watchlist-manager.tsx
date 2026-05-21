@@ -9,6 +9,7 @@ import {
   type MarketQuote,
   type MarketQuotesResponse,
 } from "@/src/lib/market-data/types";
+import { ixaiIdentity } from "@/src/lib/ixai/identity";
 import {
   loadUserWatchlist,
 } from "@/src/lib/personalization/persistence";
@@ -269,7 +270,7 @@ export function WatchlistManager() {
           登入同步開放後，可延伸到 IXAI Pro 個人監控。
         </p>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-white/58">
-          自選觀察會成為未來 IXAI 個人情報與風險提醒的基礎。
+          {ixaiIdentity.watchlistSyncCopy}
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
@@ -295,6 +296,9 @@ export function WatchlistManager() {
             </p>
             <p className="mt-1">
               {syncState.label} · {syncState.message}
+            </p>
+            <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
+              {ixaiIdentity.sharedAccountMessage}
             </p>
             {syncState.lastSyncedAt ? (
               <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">

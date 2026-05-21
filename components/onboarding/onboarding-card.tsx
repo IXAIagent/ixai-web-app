@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useIdentity } from "@/components/auth/auth-provider";
+import { ixaiIdentity } from "@/src/lib/ixai/identity";
 import {
   interestOptions,
 } from "@/src/lib/personalization/memory";
@@ -35,6 +36,9 @@ export function OnboardingCard() {
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--ixai-ink-muted)]">
             選擇你最關注的市場，IXAI 會微調摘要排序。內容仍以一玄每日市場觀察為主，個人化只作為輔助。
+          </p>
+          <p className="mt-2 max-w-2xl text-xs leading-6 text-[var(--ixai-ink-muted)]">
+            {ixaiIdentity.preferencesSyncCopy}
           </p>
         </div>
         <span className="w-fit rounded-md border border-[var(--ixai-border)] px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-forest-soft)]">

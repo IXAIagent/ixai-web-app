@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ixaiIdentity } from "@/src/lib/ixai/identity";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 type EcosystemBridgeVariant = "public" | "pro";
@@ -32,7 +33,7 @@ export function EcosystemBridge({
               : "Public App 提供免費市場情報、教育與每日觀察；需要更深入的 AI 風險監控與 Portfolio Intelligence，可進入 IXAI Pro Dashboard。"}
           </p>
           <p className="mt-2 text-xs leading-6 text-[var(--ixai-ink-muted)]">
-            未來將支援 Public App 與 IXAI Pro 共用帳號與 Watchlist 同步。
+            {ixaiIdentity.sharedAccountMessage}
           </p>
         </div>
 
