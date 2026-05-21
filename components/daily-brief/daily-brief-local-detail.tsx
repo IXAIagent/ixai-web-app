@@ -274,7 +274,7 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
         <div className="grid gap-4 p-5 md:grid-cols-[1fr_15rem]">
           <div>
             <div className="flex flex-wrap gap-2">
-              {(sourceLabels.length ? sourceLabels : ["IXAI Editorial Backup"]).map((source) => (
+              {(sourceLabels.length ? sourceLabels : ["IXAI 編輯備援"]).map((source) => (
                 <span
                   className="rounded-lg border border-[var(--ixai-border)] bg-white/45 px-3 py-1.5 text-xs font-medium text-[var(--ixai-forest-soft)]"
                   key={source}

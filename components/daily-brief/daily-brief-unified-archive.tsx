@@ -121,7 +121,7 @@ export function DailyBriefUnifiedArchive({
       {isFallback ? (
         <section className="rounded-lg border border-amber-300/35 bg-amber-100/30 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-            Editorial Backup
+            一玄編輯備援
           </p>
           <p className="mt-2">
             目前尚未偵測到最新已發布簡報，因此暫時顯示一玄編輯備援內容。

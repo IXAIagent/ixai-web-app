@@ -16,7 +16,7 @@ PWA implementation has not started. This document identifies blockers and recomm
 Ready:
 
 - Has `app/manifest.ts`.
-- Has favicon, app icon, apple touch icon.
+- Has favicon, app icon, apple touch icon, 192/512 PWA icons, and a maskable icon generated from `public/logo/ixuan-logo.png`.
 - Has local Open Graph image.
 - Has mobile bottom navigation and app-shell style structure.
 - Has local-first Watchlist and preferences.
@@ -25,7 +25,6 @@ Not ready:
 
 - No service worker.
 - No offline route strategy.
-- Daily Intelligence publish state is not durable backend state.
 - Admin/editorial routes should not be cached.
 - Market/news API responses need clear cache rules.
 
@@ -177,8 +176,15 @@ Pro Dashboard:
 
 Public App:
 
-- Good baseline.
-- Consider adding maskable icon later.
+- Manifest uses `name` / `short_name`: `IXAI`.
+- `start_url` and `scope` are `/`.
+- `display` is `standalone`.
+- Brand colors are aligned to IXAI cream (`#f5f0e6`) and forest (`#09291f`).
+- Icons are generated from the official one玄 logo asset:
+  - `/icons/ixai-icon-192.png`
+  - `/icons/ixai-icon-512.png`
+  - `/icons/ixai-maskable-512.png`
+- App metadata points to `https://app.ixuan.ai` by default and still allows `NEXT_PUBLIC_SITE_URL` override.
 
 Pro Dashboard:
 
@@ -191,7 +197,7 @@ Pro Dashboard:
 
 1. Fix Public admin security boundary.
 2. Verify Supabase Daily Intelligence persistence in production.
-3. Add route-level PWA cache policy document.
+3. Keep service worker scope public-only and exclude admin/API sensitive routes.
 4. Implement Public installability only.
 5. Add offline editorial cache later.
 6. Revisit Pro Dashboard after token/session strategy is hardened.

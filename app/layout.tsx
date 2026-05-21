@@ -34,8 +34,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { rel: "icon", url: "/favicon.ico" },
-      { rel: "icon", type: "image/svg+xml", url: "/icon.svg" },
+      { rel: "icon", sizes: "512x512", type: "image/png", url: "/icon.png" },
     ],
+    apple: [{ rel: "apple-touch-icon", sizes: "180x180", url: "/apple-icon.png" }],
   },
   manifest: "/manifest.webmanifest",
   openGraph: {

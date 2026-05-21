@@ -41,7 +41,10 @@ export function MarketOverview({
 }: {
   symbols?: string[];
 }) {
-  const initialQuotes = useMemo(() => getFallbackMarketQuotes(symbols), [symbols]);
+  const initialQuotes = useMemo(
+    () => getFallbackMarketQuotes(symbols).map((quote) => ({ ...quote, updatedAt: "" })),
+    [symbols],
+  );
   const [markets, setMarkets] = useState<MarketQuote[]>(initialQuotes);
 
   useEffect(() => {
@@ -74,7 +77,7 @@ export function MarketOverview({
 
   return (
     <SectionCard>
-      <SectionHeader action="Market Data v1.5" eyebrow="市場總覽" title="核心資產追蹤" />
+      <SectionHeader action="資料狀態" eyebrow="市場總覽" title="核心資產追蹤" />
       <div className="grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-1">
         {markets.map((asset) => (
           <div

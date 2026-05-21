@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { MobileTopInsight } from "@/components/layout/mobile-top-insight";
@@ -9,18 +10,25 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
       {/* v1.7: mobile top bar shows today's headline so the morning user gets
           insight at first glance, before any scroll. Replaces the generic
           "市場入口" label. Truncated to one line via line-clamp-1. */}
-      <div className="fixed inset-x-0 top-0 z-20 border-b border-[rgba(176,141,87,0.28)] bg-[rgba(245,240,230,0.88)] px-4 py-3 backdrop-blur md:hidden">
+      <div className="fixed inset-x-0 top-0 z-20 border-b border-[rgba(176,141,87,0.28)] bg-[rgba(245,240,230,0.88)] px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur md:hidden">
         <div className="flex items-center justify-between gap-3">
           <MobileTopInsight />
-          <div className="h-8 w-8 shrink-0 rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] text-center text-sm font-semibold leading-8 text-[var(--ixai-forest)]">
-            I
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)]">
+            <Image
+              alt="IXAI"
+              className="h-auto w-7"
+              height={48}
+              priority
+              src="/logo/ixuan-logo.png"
+              width={96}
+            />
           </div>
         </div>
       </div>
 
       <Sidebar />
 
-      <main className="min-h-screen pb-24 pt-16 md:ml-56 md:pb-0 md:pt-0">
+      <main className="min-h-screen pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[calc(4.25rem+env(safe-area-inset-top))] md:ml-56 md:pb-0 md:pt-0">
         {children}
         <Footer />
       </main>

@@ -105,7 +105,7 @@ function buildUnderlyingSnapshot(
     knockInDistancePercent,
     knockOutDistancePercent,
     priceChangePercent,
-    quoteSourceLabel: quote?.sourceLabel ?? "Market Data Layer",
+    quoteSourceLabel: quote?.sourceLabel ?? "資料來源待確認",
     quoteStatus: quote?.status ?? "unavailable",
     updatedAt: quote?.updatedAt,
   };

@@ -27,7 +27,7 @@ export default function MarketPage() {
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Market Data Notes
+          市場資料說明
         </p>
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
           資料狀態說明

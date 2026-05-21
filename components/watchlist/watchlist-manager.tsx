@@ -283,8 +283,9 @@ export function WatchlistManager() {
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
-            className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[#09291f]"
             href="/market"
+            style={{ color: "#09291f" }}
           >
             <BarChart3 className="h-4 w-4" aria-hidden="true" />
             查看市場總覽
@@ -535,7 +536,7 @@ export function WatchlistManager() {
                     <div className="mt-4 grid gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3 sm:grid-cols-[1fr_auto] sm:items-end">
                       <div>
                         <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-                          Market Data
+                          市場資料
                         </p>
                         <p className="mt-1 font-mono text-lg font-semibold text-[var(--ixai-forest)]">
                           {quoteUnavailable ? "資料暫不可用" : quote.price}

@@ -1,27 +1,33 @@
 import type { MetadataRoute } from "next";
 import {
   ixaiDefaultDescription,
-  ixaiDefaultTitle,
 } from "@/src/lib/brand/metadata";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    background_color: "#fff7e8",
+    background_color: "#f5f0e6",
     description: ixaiDefaultDescription,
     display: "standalone",
     icons: [
       {
-        sizes: "any",
-        src: "/favicon.ico",
-        type: "image/x-icon",
+        sizes: "192x192",
+        src: "/icons/ixai-icon-192.png",
+        type: "image/png",
       },
       {
         sizes: "512x512",
-        src: "/icon.svg",
-        type: "image/svg+xml",
+        src: "/icons/ixai-icon-512.png",
+        type: "image/png",
+      },
+      {
+        purpose: "maskable",
+        sizes: "512x512",
+        src: "/icons/ixai-maskable-512.png",
+        type: "image/png",
       },
     ],
-    name: ixaiDefaultTitle,
+    name: "IXAI",
+    scope: "/",
     short_name: "IXAI",
     start_url: "/",
     theme_color: "#09291f",
