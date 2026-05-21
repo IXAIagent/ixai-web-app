@@ -20,8 +20,8 @@ const statusLabels: Record<MarketDataStatus, string> = {
   real: "真實",
   realtime: "即時",
   delayed: "延遲",
-  fallback: "備援",
-  simulated: "模擬",
+  fallback: "參考",
+  simulated: "參考",
   unavailable: "資料不可用",
 };
 

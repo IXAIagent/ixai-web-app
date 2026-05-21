@@ -5,15 +5,6 @@ import type { AdminGateMode } from "@/src/lib/admin/auth";
 
 const STORAGE_KEY = "ixai.admin.gate.v1";
 
-async function sha256(value: string) {
-  const data = new TextEncoder().encode(value);
-  const digest = await window.crypto.subtle.digest("SHA-256", data);
-
-  return [...new Uint8Array(digest)]
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
-
 function subscribeAdminStorage(callback: () => void) {
   window.addEventListener("storage", callback);
 
@@ -23,11 +14,9 @@ function subscribeAdminStorage(callback: () => void) {
 export function AdminGate({
   children,
   mode,
-  passwordHash,
 }: Readonly<{
   children: React.ReactNode;
   mode: AdminGateMode;
-  passwordHash: string | null;
 }>) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -36,18 +25,27 @@ export function AdminGate({
   const [hasStoredAccess, setHasStoredAccess] = useState(false);
 
   useEffect(() => {
-    function syncStoredAccess() {
-      if (mode !== "password" || !passwordHash) {
-        setHasStoredAccess(false);
+    async function syncStoredAccess() {
+      if (mode === "development") {
+        setHasStoredAccess(window.sessionStorage.getItem(STORAGE_KEY) === "granted");
         return;
       }
 
-      setHasStoredAccess(window.sessionStorage.getItem(STORAGE_KEY) === `granted:${passwordHash}`);
+      try {
+        const response = await fetch("/api/admin/session", { cache: "no-store" });
+        const payload = (await response.json()) as { authenticated?: boolean };
+        setHasStoredAccess(
+          Boolean(payload.authenticated) &&
+            window.sessionStorage.getItem(STORAGE_KEY) === "granted",
+        );
+      } catch {
+        setHasStoredAccess(false);
+      }
     }
 
     const timer = window.setTimeout(() => {
       setMounted(true);
-      syncStoredAccess();
+      void syncStoredAccess();
     }, 0);
 
     const unsubscribe = subscribeAdminStorage(syncStoredAccess);
@@ -56,16 +54,13 @@ export function AdminGate({
       window.clearTimeout(timer);
       unsubscribe();
     };
-  }, [mode, passwordHash]);
+  }, [mode]);
 
   const isUnlocked = mounted && (manualUnlocked || hasStoredAccess);
 
   function unlock() {
-    if (mode === "password" && passwordHash) {
-      window.sessionStorage.setItem(STORAGE_KEY, `granted:${passwordHash}`);
-      window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
-    }
-
+    window.sessionStorage.setItem(STORAGE_KEY, "granted");
+    window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
     setManualUnlocked(true);
   }
 
@@ -78,14 +73,13 @@ export function AdminGate({
       return;
     }
 
-    if (!passwordHash) {
-      setError("管理密碼尚未設定");
-      return;
-    }
+    const response = await fetch("/api/admin/session", {
+      body: JSON.stringify({ password }),
+      headers: { "content-type": "application/json" },
+      method: "POST",
+    });
 
-    const inputHash = await sha256(password);
-
-    if (inputHash !== passwordHash) {
+    if (!response.ok) {
       setError("密碼不正確");
       setPassword("");
       return;

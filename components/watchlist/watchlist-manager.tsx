@@ -59,8 +59,8 @@ const statusLabels: Record<MarketDataStatus, string> = {
   real: "真實",
   realtime: "即時",
   delayed: "延遲",
-  fallback: "備援",
-  simulated: "模擬",
+  fallback: "參考",
+  simulated: "參考",
   unavailable: "資料不可用",
 };
 
@@ -552,8 +552,8 @@ export function WatchlistManager() {
           Market Data Layer
         </p>
         <p className="mt-2">
-          自選觀察會顯示每筆資料的狀態：真實、即時、延遲、模擬或資料不可用。
-          IXAI 會嘗試讀取公開市場資料；若資料來源暫時失敗，會以「備援」或「資料不可用」清楚標示。
+          自選觀察會顯示每筆資料的狀態：真實、即時、延遲、參考或資料不可用。
+          IXAI 會嘗試讀取公開市場資料；若資料來源暫時失敗，會以「參考」或「資料不可用」清楚標示。
         </p>
         <p className="mt-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
           {MARKET_DATA_DISCLAIMER}

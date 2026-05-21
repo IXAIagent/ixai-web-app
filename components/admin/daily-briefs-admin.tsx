@@ -44,8 +44,6 @@ type GenerationMeta = {
   editorialReviewRequired: boolean;
 };
 
-const ADMIN_GATE_STORAGE_KEY = "ixai.admin.gate.v1";
-
 function StatusBadge({ status }: { status: DailyBriefDraftStatus }) {
   return (
     <span
@@ -65,16 +63,6 @@ function formatDate(value?: string) {
     dateStyle: "medium",
     timeStyle: "short",
   });
-}
-
-function getAdminGateHash() {
-  if (typeof window === "undefined") {
-    return "";
-  }
-
-  const stored = window.sessionStorage.getItem(ADMIN_GATE_STORAGE_KEY) ?? "";
-
-  return stored.startsWith("granted:") ? stored.slice("granted:".length) : "";
 }
 
 function statusPillClass(status: "success" | "warning" | "muted") {
@@ -192,14 +180,8 @@ export function DailyBriefsAdmin() {
     setIsGenerating(true);
 
     try {
-      const adminGateHash = getAdminGateHash();
       const response = await fetch("/api/admin/daily-briefs/draft", {
         method: "POST",
-        headers: adminGateHash
-          ? {
-              "x-ixai-admin-hash": adminGateHash,
-            }
-          : undefined,
       });
 
       if (!response.ok) {

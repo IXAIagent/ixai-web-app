@@ -35,8 +35,6 @@ export default function AdminLayout({
   }
 
   return (
-    <AdminGate mode={accessState.mode} passwordHash={accessState.passwordHash}>
-      {children}
-    </AdminGate>
+    <AdminGate mode={accessState.mode}>{children}</AdminGate>
   );
 }

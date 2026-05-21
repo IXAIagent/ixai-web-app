@@ -1,25 +1,12 @@
-import { getAdminAccessState } from "@/src/lib/admin/auth";
+import type { NextRequest } from "next/server";
+import { isAdminRequestAuthorized } from "@/src/lib/admin/auth";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
 
 export const dynamic = "force-dynamic";
 
-function canGenerateDraft(request: Request) {
-  const accessState = getAdminAccessState();
-
-  if (accessState.mode === "locked") {
-    return false;
-  }
-
-  if (accessState.mode === "development") {
-    return true;
-  }
-
-  return request.headers.get("x-ixai-admin-hash") === accessState.passwordHash;
-}
-
-export async function POST(request: Request) {
-  if (!canGenerateDraft(request)) {
+export async function POST(request: NextRequest) {
+  if (!isAdminRequestAuthorized(request)) {
     return Response.json(
       {
         status: "unauthorized",

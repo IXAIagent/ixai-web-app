@@ -80,3 +80,28 @@ missing, or the tables/RLS are not ready:
 - UI shows Local only or Sync pending
 
 This keeps the app usable while deployment setup is incomplete.
+
+## Daily Intelligence Persistence Draft
+
+v1.18 adds a draft migration for the editorial pipeline:
+
+```txt
+supabase/migrations/002_daily_intelligence_persistence.sql
+```
+
+Table:
+
+- `ixai_daily_intelligence_drafts`
+
+Purpose:
+
+- durable Daily Intelligence draft/review/published state
+- source status and provider mode metadata
+- structured intelligence payload
+- public read access for `published` rows only
+- future admin write access through Supabase Auth role claims
+
+This migration is not wired into runtime yet. The current publish flow remains
+local-first so v1.18 does not risk breaking editorial operations. Before PWA
+offline caching, published Daily Brief state should move to this table or an
+equivalent durable backend source of truth.

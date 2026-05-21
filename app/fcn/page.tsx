@@ -33,10 +33,10 @@ const riskClasses: Record<FcnRiskLevel, string> = {
 
 const quoteStatusLabels: Record<MarketDataStatus, string> = {
   delayed: "延遲",
-  fallback: "備援",
+  fallback: "參考",
   real: "真實",
   realtime: "即時",
-  simulated: "模擬",
+  simulated: "參考",
   unavailable: "資料不可用",
 };
 
@@ -64,7 +64,7 @@ function riskDescription(level: FcnRiskLevel) {
     breached: "至少一個 worst-of 標的已觸及或低於 KI 區域，需以發行文件與交易對手資料確認條款狀態。",
     highRisk: "Worst-of 距離 KI 已低於 5%，此 FCN 應進入高頻監控。",
     safe: "目前 worst-of 與 KI 仍有緩衝，但仍需留意觀察日與市場波動。",
-    unavailable: "目前缺少可用 quote，IXAI 不使用模擬價格推算 FCN 距離。",
+    unavailable: "目前缺少可用 quote，IXAI 不使用非市場資料推算 FCN 距離。",
     watch: "Worst-of 接近 KI 緩衝區，應持續追蹤價格與下一個觀察日。",
   }[level];
 }
@@ -306,7 +306,7 @@ export default async function FcnPage() {
         </h2>
         <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
           這不是正式客戶持倉，也不是交易系統。若市場資料不可用，IXAI 會停止推算距離，
-          避免用模擬價格製造錯誤風險感。
+          避免用非市場資料製造錯誤風險感。
         </p>
       </section>
 
@@ -394,7 +394,7 @@ export default async function FcnPage() {
         </h2>
         <p className="mt-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
           {weakest
-            ? `${weakest.symbol} 是目前最弱標的，會直接影響 ${snapshot.highestRiskPosition?.position.name} 的 KI 緩衝。若市場資料變成不可用，IXAI 會停止推算距離，避免使用模擬價格產生錯誤風險感。`
+            ? `${weakest.symbol} 是目前最弱標的，會直接影響 ${snapshot.highestRiskPosition?.position.name} 的 KI 緩衝。若市場資料變成不可用，IXAI 會停止推算距離，避免使用非市場資料產生錯誤風險感。`
             : "目前沒有足夠 market quote 形成 worst-of 判讀。IXAI 會等到 real / delayed quote 可用後再更新 FCN risk state。"}
         </p>
         <p className="mt-4 text-sm font-semibold text-[var(--ixai-forest)]">
