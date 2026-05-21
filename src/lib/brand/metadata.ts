@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const fallbackSiteUrl = "https://ixai-web-app.vercel.app";
+const fallbackSiteUrl = "https://app.ixuan.ai";
 
 function normalizeSiteUrl(value?: string) {
   if (!value) {

@@ -1,5 +1,4 @@
--- IXAI Daily Intelligence persistence draft.
--- This migration is intentionally not wired into runtime code yet.
+-- IXAI Daily Intelligence durable persistence.
 -- Goal: replace localStorage / in-memory editorial repository with durable
 -- Supabase state before PWA offline caching or production editorial use.
 
@@ -35,6 +34,10 @@ create unique index if not exists ixai_daily_intelligence_drafts_published_slug_
   on public.ixai_daily_intelligence_drafts (slug)
   where status = 'published';
 
+create unique index if not exists ixai_daily_intelligence_drafts_active_slug_idx
+  on public.ixai_daily_intelligence_drafts (slug)
+  where status in ('draft', 'review');
+
 alter table public.ixai_daily_intelligence_drafts enable row level security;
 
 -- Public read policy for published Daily Briefs.
@@ -47,3 +50,5 @@ create policy "published daily intelligence is readable"
 -- Replace this with Supabase Auth role claims before production:
 -- using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'ixai_admin')
 -- with check ((auth.jwt() -> 'app_metadata' ->> 'role') = 'ixai_admin')
+-- Server-side admin writes currently use SUPABASE_SERVICE_ROLE_KEY, which
+-- bypasses RLS and must never be exposed to client code.

@@ -8,6 +8,7 @@ import type {
 import type { NewsSourceStatus } from "@/src/types/news";
 
 const TABLE = "ixai_daily_intelligence_drafts";
+const SUPABASE_TIMEOUT_MS = 6000;
 
 type DailyIntelligenceRow = {
   source_id: string;
@@ -90,26 +91,34 @@ async function supabaseFetch<T>(path: string, init: RequestInit = {}, write = fa
     throw new Error(write ? "Supabase write env is not configured." : "Supabase env is not configured.");
   }
 
-  const response = await fetch(`${config.restUrl}/${path}`, {
-    ...init,
-    cache: "no-store",
-    headers: {
-      apikey: config.apiKey,
-      authorization: `Bearer ${config.authKey}`,
-      "content-type": "application/json",
-      ...(init.headers ?? {}),
-    },
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), SUPABASE_TIMEOUT_MS);
 
-  if (!response.ok) {
-    throw new Error(`Supabase ${response.status}`);
+  try {
+    const response = await fetch(`${config.restUrl}/${path}`, {
+      ...init,
+      cache: "no-store",
+      signal: controller.signal,
+      headers: {
+        apikey: config.apiKey,
+        authorization: `Bearer ${config.authKey}`,
+        "content-type": "application/json",
+        ...(init.headers ?? {}),
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Supabase ${response.status}`);
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return (await response.json()) as T;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  return (await response.json()) as T;
 }
 
 export function isDailyIntelligencePersistenceReadable() {
