@@ -1,6 +1,6 @@
 import {
-  findDraftForDate,
-  saveDraft,
+  findDraftForDateAsync,
+  saveDraftAsync,
 } from "@/src/lib/editorial/repository";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
@@ -71,7 +71,7 @@ export async function generateScheduledDailyDraft({
   force?: boolean;
 } = {}): Promise<DailyDraftGenerationSummary> {
   const dateKey = todayKey();
-  const existingDraft = findDraftForDate(dateKey);
+  const existingDraft = await findDraftForDateAsync(dateKey);
   const intake = await getLatestNewsIntakeResult();
   const schedulerConfigured = isSchedulerConfigured();
 
@@ -116,7 +116,7 @@ export async function generateScheduledDailyDraft({
           ],
         },
   );
-  const savedDrafts = saveDraft(draft);
+  const savedDrafts = await saveDraftAsync(draft);
   const savedDraft = savedDrafts.find((item) => item.id === draft.id) ?? draft;
 
   lastGenerationSummary = buildSummary({

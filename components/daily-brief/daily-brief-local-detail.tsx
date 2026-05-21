@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { getPublishedBriefBySlug } from "@/src/lib/editorial/repository";
+import { useEffect, useState } from "react";
 import type { DailyBriefDraft } from "@/src/types/editorial";
 
 const categoryLabels: Record<string, string> = {
@@ -14,11 +13,47 @@ const categoryLabels: Record<string, string> = {
 };
 
 export function DailyBriefLocalDetail({ slug }: { slug: string }) {
-  const [brief] = useState<DailyBriefDraft | undefined>(() =>
-    getPublishedBriefBySlug(slug),
-  );
+  const [brief, setBrief] = useState<DailyBriefDraft | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadBrief() {
+      const response = await fetch(`/api/daily-briefs?slug=${encodeURIComponent(slug)}`, {
+        cache: "no-store",
+      }).catch(() => null);
+      const payload = response?.ok
+        ? ((await response.json()) as { brief?: DailyBriefDraft | null })
+        : null;
+
+      if (!ignore) {
+        setBrief(payload?.brief ?? null);
+        setLoaded(true);
+      }
+    }
+
+    void loadBrief();
+
+    return () => {
+      ignore = true;
+    };
+  }, [slug]);
   const intelligence = brief?.intelligence;
   const sourceLabels = intelligence?.sourceLabels ?? [];
+
+  if (!loaded) {
+    return (
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-10 sm:px-6 lg:px-8">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          Daily Brief
+        </p>
+        <h1 className="text-2xl font-semibold text-[var(--ixai-forest)]">
+          正在讀取每日簡報。
+        </h1>
+      </div>
+    );
+  }
 
   if (!brief) {
     return (

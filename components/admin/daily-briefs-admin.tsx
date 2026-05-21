@@ -1,12 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import {
-  getDrafts,
-  publishDraft,
-  saveDraft,
-} from "@/src/lib/editorial/repository";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getDrafts } from "@/src/lib/editorial/repository";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
 import type {
   DailyBriefDraft,
@@ -42,6 +38,11 @@ type GenerationMeta = {
   generatedAt: string;
   complianceNote?: string;
   editorialReviewRequired: boolean;
+};
+
+type PersistenceMeta = {
+  readable: boolean;
+  writable: boolean;
 };
 
 function StatusBadge({ status }: { status: DailyBriefDraftStatus }) {
@@ -113,6 +114,7 @@ export function DailyBriefsAdmin() {
     schedulerConfigured: boolean;
     lastGeneration: DailyDraftGenerationSummary | null;
   } | null>(null);
+  const [persistenceMeta, setPersistenceMeta] = useState<PersistenceMeta | null>(null);
   const publishedBriefs = useMemo(
     () =>
       drafts
@@ -129,8 +131,38 @@ export function DailyBriefsAdmin() {
   const intakeSources = intakeMeta?.sourceStatus ?? intakeMeta?.sources ?? [];
   const openAIStatus = generationMeta?.providerStatus ?? null;
 
+  const refresh = useCallback((nextDrafts?: DailyBriefDraft[]) => {
+    const next = nextDrafts ?? getDrafts();
+    setDrafts(next);
+    if (!next.some((draft) => draft.id === selectedId)) {
+      setSelectedId(next[0]?.id ?? "");
+    }
+  }, [selectedId]);
+
   useEffect(() => {
     let ignore = false;
+
+    async function loadDrafts() {
+      try {
+        const response = await fetch("/api/admin/daily-briefs", { cache: "no-store" });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          drafts: DailyBriefDraft[];
+          persistence?: PersistenceMeta;
+        };
+
+        if (!ignore && Array.isArray(payload.drafts)) {
+          refresh(payload.drafts);
+          setPersistenceMeta(payload.persistence ?? null);
+        }
+      } catch {
+        // Keep local fallback state available.
+      }
+    }
 
     async function loadSchedulerStatus() {
       try {
@@ -153,27 +185,35 @@ export function DailyBriefsAdmin() {
       }
     }
 
+    void loadDrafts();
     void loadSchedulerStatus();
 
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [refresh]);
 
-  function refresh(nextDrafts?: DailyBriefDraft[]) {
-    const next = nextDrafts ?? getDrafts();
-    setDrafts(next);
-    if (!next.some((draft) => draft.id === selectedId)) {
-      setSelectedId(next[0]?.id ?? "");
-    }
-  }
-
-  function handlePublish() {
+  async function handlePublish() {
     if (!selectedDraft) {
       return;
     }
 
-    refresh(publishDraft(selectedDraft.id));
+    const response = await fetch("/api/admin/daily-briefs", {
+      body: JSON.stringify({ action: "publish", id: selectedDraft.id }),
+      headers: { "content-type": "application/json" },
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const payload = (await response.json()) as {
+      drafts: DailyBriefDraft[];
+      persistence?: PersistenceMeta;
+    };
+    refresh(payload.drafts);
+    setPersistenceMeta(payload.persistence ?? null);
   }
 
   async function handleGenerateDraft() {
@@ -190,13 +230,15 @@ export function DailyBriefsAdmin() {
 
       const payload = (await response.json()) as {
         draft: DailyBriefDraft;
+        drafts: DailyBriefDraft[];
         intake: NewsIntakeResult;
         ai: GenerationMeta;
+        persistence?: PersistenceMeta;
       };
       const { draft, intake, ai } = payload;
-      const nextDrafts = saveDraft(draft);
       setIntakeMeta(intake);
       setGenerationMeta(ai);
+      setPersistenceMeta(payload.persistence ?? null);
       setSchedulerStatus((current) => ({
         schedulerConfigured: current?.schedulerConfigured ?? false,
         lastGeneration: {
@@ -213,7 +255,7 @@ export function DailyBriefsAdmin() {
           forced: false,
         },
       }));
-      setDrafts(nextDrafts);
+      setDrafts(payload.drafts);
       setSelectedId(draft.id);
     } finally {
       setIsGenerating(false);
@@ -312,16 +354,25 @@ export function DailyBriefsAdmin() {
             )}
           </StatusCard>
 
-          <StatusCard status={supabaseReady ? "success" : "warning"} title="Supabase Persistence Status">
+          <StatusCard
+            status={persistenceMeta?.writable ? "success" : supabaseReady ? "warning" : "warning"}
+            title="Supabase Persistence Status"
+          >
             <p>
               Supabase env: <span className="text-white">{supabaseReady ? "configured" : "not configured"}</span>
             </p>
             <p>
               Persistence mode:{" "}
-              <span className="text-white">{supabaseReady ? "Supabase ready" : "local fallback"}</span>
+              <span className="text-white">
+                {persistenceMeta?.writable
+                  ? "durable Supabase"
+                  : supabaseReady
+                    ? "read-ready / write fallback"
+                    : "local fallback"}
+              </span>
             </p>
             <p className="text-xs leading-5 text-white/42">
-              Admin drafts remain local repository fallback until production CMS persistence is enabled.
+              Published state uses Supabase when the table and server write key are available; otherwise IXAI falls back safely without breaking review flow.
             </p>
           </StatusCard>
 

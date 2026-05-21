@@ -1,5 +1,9 @@
 import { dailyBriefs, type DailyBrief } from "@/content/daily-briefs";
 import { mockGeneratedDrafts } from "@/src/lib/editorial/mockGeneratedDrafts";
+import {
+  loadDailyIntelligenceDraftsFromSupabase,
+  saveDailyIntelligenceDraftToSupabase,
+} from "@/src/lib/editorial/persistence";
 import type { DailyBriefDraft, DailyIntelligenceDraft } from "@/src/types/editorial";
 
 const STORAGE_KEY = "ixai.editorial.dailyBriefDrafts.v1";
@@ -82,6 +86,21 @@ export function getDrafts(): DailyBriefDraft[] {
   return seedDrafts();
 }
 
+export async function getDraftsAsync(): Promise<DailyBriefDraft[]> {
+  const persisted = await loadDailyIntelligenceDraftsFromSupabase();
+
+  if (persisted?.length) {
+    const persistedIds = new Set(persisted.map((draft) => draft.id));
+    const localSeeds = seedDrafts().filter((draft) => !persistedIds.has(draft.id));
+
+    return [...persisted, ...localSeeds].sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    );
+  }
+
+  return getDrafts();
+}
+
 export function getPublishedBriefs(): DailyBriefDraft[] {
   return getDrafts()
     .filter((draft) => draft.status === "published")
@@ -90,6 +109,20 @@ export function getPublishedBriefs(): DailyBriefDraft[] {
         new Date(b.publishedAt ?? b.updatedAt).getTime() -
         new Date(a.publishedAt ?? a.updatedAt).getTime(),
     );
+}
+
+export async function getPublishedBriefsAsync(): Promise<DailyBriefDraft[]> {
+  const persisted = await loadDailyIntelligenceDraftsFromSupabase({ publishedOnly: true });
+
+  if (persisted?.length) {
+    return persisted.sort(
+      (a, b) =>
+        new Date(b.publishedAt ?? b.updatedAt).getTime() -
+        new Date(a.publishedAt ?? a.updatedAt).getTime(),
+    );
+  }
+
+  return getPublishedBriefs();
 }
 
 export function getPublishedIntelligenceBriefs(): DailyBriefDraft[] {
@@ -102,20 +135,50 @@ export function getPublishedIntelligenceBriefs(): DailyBriefDraft[] {
     );
 }
 
+export async function getPublishedIntelligenceBriefsAsync(): Promise<DailyBriefDraft[]> {
+  return (await getPublishedBriefsAsync())
+    .filter((draft) => Boolean(draft.intelligence))
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt ?? b.updatedAt).getTime() -
+        new Date(a.publishedAt ?? a.updatedAt).getTime(),
+    );
+}
+
 export function getLatestPublishedIntelligenceBrief(): DailyBriefDraft | undefined {
   return getPublishedIntelligenceBriefs()[0];
+}
+
+export async function getLatestPublishedIntelligenceBriefAsync(): Promise<DailyBriefDraft | undefined> {
+  return (await getPublishedIntelligenceBriefsAsync())[0];
 }
 
 export function getLatestPublishedBrief(): DailyBriefDraft {
   return getLatestPublishedIntelligenceBrief() ?? getPublishedBriefs()[0] ?? toDraftFromPublishedBrief(dailyBriefs[0]);
 }
 
+export async function getLatestPublishedBriefAsync(): Promise<DailyBriefDraft> {
+  return (
+    (await getLatestPublishedIntelligenceBriefAsync()) ??
+    (await getPublishedBriefsAsync())[0] ??
+    toDraftFromPublishedBrief(dailyBriefs[0])
+  );
+}
+
 export function getLatestPublishedIntelligence(): DailyIntelligenceDraft | undefined {
   return getLatestPublishedIntelligenceBrief()?.intelligence;
 }
 
+export async function getLatestPublishedIntelligenceAsync(): Promise<DailyIntelligenceDraft | undefined> {
+  return (await getLatestPublishedIntelligenceBriefAsync())?.intelligence;
+}
+
 export function getPublishedBriefBySlug(slug: string): DailyBriefDraft | undefined {
   return getPublishedBriefs().find((brief) => brief.slug === slug);
+}
+
+export async function getPublishedBriefBySlugAsync(slug: string): Promise<DailyBriefDraft | undefined> {
+  return (await getPublishedBriefsAsync()).find((brief) => brief.slug === slug);
 }
 
 export function saveDraft(draft: DailyBriefDraft): DailyBriefDraft[] {
@@ -134,8 +197,30 @@ export function saveDraft(draft: DailyBriefDraft): DailyBriefDraft[] {
   return getDrafts();
 }
 
+export async function saveDraftAsync(draft: DailyBriefDraft): Promise<DailyBriefDraft[]> {
+  const now = new Date().toISOString();
+  const nextDraft = {
+    ...draft,
+    updatedAt: now,
+  };
+  const persisted = await saveDailyIntelligenceDraftToSupabase(nextDraft);
+
+  if (!persisted) {
+    return saveDraft(nextDraft);
+  }
+
+  const localDrafts = saveDraft(persisted);
+  const persistedDrafts = await getDraftsAsync();
+
+  return persistedDrafts.length ? persistedDrafts : localDrafts;
+}
+
 export function findDraftForDate(dateKey: string): DailyBriefDraft | undefined {
   return readStoredDrafts().find((draft) => draft.slug.includes(dateKey));
+}
+
+export async function findDraftForDateAsync(dateKey: string): Promise<DailyBriefDraft | undefined> {
+  return (await getDraftsAsync()).find((draft) => draft.slug.includes(dateKey));
 }
 
 export function publishDraft(id: string): DailyBriefDraft[] {
@@ -160,6 +245,30 @@ export function publishDraft(id: string): DailyBriefDraft[] {
   };
 
   return saveDraft(publishedDraft);
+}
+
+export async function publishDraftAsync(id: string): Promise<DailyBriefDraft[]> {
+  const draft = (await getDraftsAsync()).find((item) => item.id === id);
+
+  if (!draft) {
+    return getDraftsAsync();
+  }
+
+  const now = new Date().toISOString();
+  const publishedDraft: DailyBriefDraft = {
+    ...draft,
+    status: "published",
+    intelligence: draft.intelligence
+      ? {
+          ...draft.intelligence,
+          publishedAt: now,
+        }
+      : undefined,
+    publishedAt: now,
+    updatedAt: now,
+  };
+
+  return saveDraftAsync(publishedDraft);
 }
 
 export function subscribeToEditorialUpdates(callback: () => void) {

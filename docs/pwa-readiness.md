@@ -63,16 +63,17 @@ Requirement:
 
 ### Blocker 2. Published Content Durability
 
-Public Daily Intelligence should move from in-memory/localStorage repository to durable Supabase before offline caching.
+Public Daily Intelligence has a Supabase-backed persistence path as of v1.18.1.
 
-Risk:
+Remaining risk:
 
-- PWA can cache an inconsistent published brief state.
+- Production must apply `supabase/migrations/002_daily_intelligence_persistence.sql`.
+- Production must configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and server-only `SUPABASE_SERVICE_ROLE_KEY` for admin writes.
+- Until verified in production, the fallback path can still serve local/server-memory state.
 
 Requirement:
 
-- Establish server source of truth for published briefs.
-- Wire `supabase/migrations/002_daily_intelligence_persistence.sql` or an equivalent durable schema before offline Daily Brief caching.
+- Confirm Supabase is the source of truth before enabling offline Daily Brief caching.
 
 ### Blocker 3. Pro Token Strategy
 
@@ -189,7 +190,7 @@ Pro Dashboard:
 ## Recommended Order Before PWA
 
 1. Fix Public admin security boundary.
-2. Add durable published Daily Brief persistence.
+2. Verify Supabase Daily Intelligence persistence in production.
 3. Add route-level PWA cache policy document.
 4. Implement Public installability only.
 5. Add offline editorial cache later.
@@ -197,6 +198,6 @@ Pro Dashboard:
 
 ## PWA Readiness Assessment
 
-Public App: close to installable, not ready for offline intelligence cache.
+Public App: close to installable; Daily Intelligence has a durable persistence path but needs production Supabase verification before offline intelligence cache.
 
 Pro Dashboard: not PWA-ready yet because auth and private data caching need stronger boundaries.

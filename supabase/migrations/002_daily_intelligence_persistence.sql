@@ -5,6 +5,7 @@
 
 create table if not exists public.ixai_daily_intelligence_drafts (
   id uuid primary key default gen_random_uuid(),
+  source_id text not null unique,
   slug text not null,
   status text not null check (status in ('draft', 'review', 'published')),
   title text not null,

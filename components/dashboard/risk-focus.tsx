@@ -2,22 +2,25 @@
 
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { todayRiskFocus } from "@/src/lib/daily-intelligence";
-import {
-  getLatestPublishedIntelligence,
-  subscribeToEditorialUpdates,
-} from "@/src/lib/editorial/repository";
+import { subscribeToEditorialUpdates } from "@/src/lib/editorial/repository";
+import type { DailyBriefDraft } from "@/src/types/editorial";
 import { useEffect, useState } from "react";
 
 export function RiskFocus() {
   const [riskFocus, setRiskFocus] = useState(todayRiskFocus);
 
   useEffect(() => {
-    function syncIntelligence() {
-      setRiskFocus(getLatestPublishedIntelligence()?.riskFocus ?? todayRiskFocus);
+    async function syncIntelligence() {
+      const response = await fetch("/api/daily-briefs", { cache: "no-store" }).catch(() => null);
+      const payload = response?.ok
+        ? ((await response.json()) as { latest?: DailyBriefDraft })
+        : null;
+
+      setRiskFocus(payload?.latest?.intelligence?.riskFocus ?? todayRiskFocus);
     }
 
-    const timeoutId = window.setTimeout(syncIntelligence, 0);
-    const unsubscribe = subscribeToEditorialUpdates(syncIntelligence);
+    const timeoutId = window.setTimeout(() => void syncIntelligence(), 0);
+    const unsubscribe = subscribeToEditorialUpdates(() => void syncIntelligence());
 
     return () => {
       window.clearTimeout(timeoutId);

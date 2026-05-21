@@ -1,5 +1,10 @@
 import type { NextRequest } from "next/server";
 import { isAdminRequestAuthorized } from "@/src/lib/admin/auth";
+import {
+  isDailyIntelligencePersistenceReadable,
+  isDailyIntelligencePersistenceWritable,
+} from "@/src/lib/editorial/persistence";
+import { saveDraftAsync } from "@/src/lib/editorial/repository";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
 
@@ -28,10 +33,16 @@ export async function POST(request: NextRequest) {
     sourceMode: intake.mode,
     sourceLabels,
   });
+  const drafts = await saveDraftAsync(draft);
   const intelligence = draft.intelligence;
 
   return Response.json({
     draft,
+    drafts,
+    persistence: {
+      readable: isDailyIntelligencePersistenceReadable(),
+      writable: isDailyIntelligencePersistenceWritable(),
+    },
     intake,
     ai: {
       providerMode: intelligence?.providerMode ?? "fallback",

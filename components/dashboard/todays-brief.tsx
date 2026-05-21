@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
 import {
-  getLatestPublishedBrief,
   subscribeToEditorialUpdates,
 } from "@/src/lib/editorial/repository";
 import type { DailyBriefDraft } from "@/src/types/editorial";
@@ -21,12 +20,19 @@ export function TodaysBrief({ brief }: { brief: DailyBriefDraft }) {
   const [currentBrief, setCurrentBrief] = useState(brief);
 
   useEffect(() => {
-    function syncPublishedBrief() {
-      setCurrentBrief(getLatestPublishedBrief());
+    async function syncPublishedBrief() {
+      const response = await fetch("/api/daily-briefs", { cache: "no-store" }).catch(() => null);
+      const payload = response?.ok
+        ? ((await response.json()) as { latest?: DailyBriefDraft })
+        : null;
+
+      if (payload?.latest) {
+        setCurrentBrief(payload.latest);
+      }
     }
 
-    const timeoutId = window.setTimeout(syncPublishedBrief, 0);
-    const unsubscribe = subscribeToEditorialUpdates(syncPublishedBrief);
+    const timeoutId = window.setTimeout(() => void syncPublishedBrief(), 0);
+    const unsubscribe = subscribeToEditorialUpdates(() => void syncPublishedBrief());
 
     return () => {
       window.clearTimeout(timeoutId);

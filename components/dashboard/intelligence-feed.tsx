@@ -2,12 +2,9 @@
 
 import { intelligenceFeedItems } from "@/src/lib/daily-intelligence";
 import { useIdentity } from "@/components/auth/auth-provider";
-import {
-  getLatestPublishedIntelligence,
-  subscribeToEditorialUpdates,
-} from "@/src/lib/editorial/repository";
+import { subscribeToEditorialUpdates } from "@/src/lib/editorial/repository";
 import { personalizeCategoryOrder } from "@/src/lib/personalization/memory";
-import type { DailyIntelligenceFeedItem } from "@/src/types/editorial";
+import type { DailyBriefDraft, DailyIntelligenceFeedItem } from "@/src/types/editorial";
 import { useEffect, useMemo, useState } from "react";
 
 export function IntelligenceFeed() {
@@ -30,12 +27,17 @@ export function IntelligenceFeed() {
   }, [feedItems, memory, mounted]);
 
   useEffect(() => {
-    function syncIntelligence() {
-      setFeedItems(getLatestPublishedIntelligence()?.feedItems ?? intelligenceFeedItems);
+    async function syncIntelligence() {
+      const response = await fetch("/api/daily-briefs", { cache: "no-store" }).catch(() => null);
+      const payload = response?.ok
+        ? ((await response.json()) as { latest?: DailyBriefDraft })
+        : null;
+
+      setFeedItems(payload?.latest?.intelligence?.feedItems ?? intelligenceFeedItems);
     }
 
-    const timeoutId = window.setTimeout(syncIntelligence, 0);
-    const unsubscribe = subscribeToEditorialUpdates(syncIntelligence);
+    const timeoutId = window.setTimeout(() => void syncIntelligence(), 0);
+    const unsubscribe = subscribeToEditorialUpdates(() => void syncIntelligence());
 
     return () => {
       window.clearTimeout(timeoutId);

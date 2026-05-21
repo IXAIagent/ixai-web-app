@@ -7,6 +7,9 @@ import {
 } from "@/src/lib/dailyBriefs";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
+import { getPublishedBriefBySlugAsync } from "@/src/lib/editorial/repository";
+
+export const dynamic = "force-dynamic";
 
 const categoryLabels: Record<DailyBrief["sections"][number]["category"], string> =
   {
@@ -27,7 +30,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  const brief = getDailyBriefBySlug(slug);
+  const brief = (await getPublishedBriefBySlugAsync(slug)) ?? getDailyBriefBySlug(slug);
 
   if (!brief) {
     return {
@@ -43,6 +46,12 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function DailyBriefDetailPage({ params }: PageProps) {
   const { slug } = await params;
+  const persistedBrief = await getPublishedBriefBySlugAsync(slug);
+
+  if (persistedBrief) {
+    return <DailyBriefLocalDetail slug={slug} />;
+  }
+
   const brief = getDailyBriefBySlug(slug);
 
   if (!brief) {

@@ -13,7 +13,7 @@ import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { proFeatures } from "@/lib/mock-data";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
-import { getLatestPublishedBrief } from "@/src/lib/editorial/repository";
+import { getLatestPublishedBriefAsync } from "@/src/lib/editorial/repository";
 import { getFcnPortfolioSnapshot } from "@/src/lib/fcn/engine";
 import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
@@ -26,7 +26,7 @@ export const metadata = buildPublicMetadata({
 });
 
 export default async function Home() {
-  const latestDailyBrief = getLatestPublishedBrief();
+  const latestDailyBrief = await getLatestPublishedBriefAsync();
   const latestWeeklyBrief = getLatestWeeklyBrief();
   const fcnSnapshot = await getFcnPortfolioSnapshot();
 

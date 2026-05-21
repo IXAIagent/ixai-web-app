@@ -3,10 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { DailyBrief } from "@/content/daily-briefs";
-import {
-  getPublishedIntelligenceBriefs,
-  subscribeToEditorialUpdates,
-} from "@/src/lib/editorial/repository";
+import { subscribeToEditorialUpdates } from "@/src/lib/editorial/repository";
+import type { DailyBriefDraft } from "@/src/types/editorial";
 
 type ArchiveBrief = {
   slug: string;
@@ -60,8 +58,12 @@ export function DailyBriefUnifiedArchive({
   const isFallback = sourceState === "fallback";
 
   useEffect(() => {
-    function syncPublishedIntelligence() {
-      const publishedIntelligence = getPublishedIntelligenceBriefs();
+    async function syncPublishedIntelligence() {
+      const response = await fetch("/api/daily-briefs", { cache: "no-store" }).catch(() => null);
+      const payload = response?.ok
+        ? ((await response.json()) as { briefs?: DailyBriefDraft[] })
+        : null;
+      const publishedIntelligence = payload?.briefs ?? [];
 
       if (publishedIntelligence.length > 0) {
         setBriefs(
@@ -82,8 +84,8 @@ export function DailyBriefUnifiedArchive({
       setSourceState("fallback");
     }
 
-    const timeoutId = window.setTimeout(syncPublishedIntelligence, 0);
-    const unsubscribe = subscribeToEditorialUpdates(syncPublishedIntelligence);
+    const timeoutId = window.setTimeout(() => void syncPublishedIntelligence(), 0);
+    const unsubscribe = subscribeToEditorialUpdates(() => void syncPublishedIntelligence());
 
     return () => {
       window.clearTimeout(timeoutId);
