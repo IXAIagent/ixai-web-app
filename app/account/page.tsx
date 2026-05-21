@@ -1,8 +1,17 @@
 import { AccountPanel } from "@/components/auth/account-panel";
 
 export const metadata = {
-  title: "我的 IXAI | Identity",
-  description: "IXAI lightweight identity, guest mode, interests, and personal intelligence memory.",
+  title: "我的 IXAI",
+  description: "我的 IXAI 是偏好設定、watchlist 同步與未來個人化 AI 風險監控的入口。",
+  openGraph: {
+    title: "我的 IXAI",
+    description: "管理偏好、watchlist 與未來個人化 AI 風險監控入口。",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "我的 IXAI",
+    description: "管理偏好與 watchlist，同步未來個人化市場觀察。",
+  },
 };
 
 export default function AccountPage() {
@@ -25,9 +34,9 @@ export default function AccountPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         {[
-          ["FREE", "Daily Brief、Weekly Brief、市場總覽與 basic watchlist。"],
-          ["PERSONAL", "保存 watchlist、interests、reading memory，調整個人情報優先順序。"],
-          ["PRO", "FCN monitoring、portfolio intelligence、AI risk alerts、crypto monitoring、personal morning brief。"],
+          ["FREE", "Daily Brief、Weekly Brief、市場總覽與基礎自選觀察。"],
+          ["PERSONAL", "保存自選觀察、關注主題與閱讀記憶，調整個人情報優先順序。"],
+          ["PRO", "FCN 監控、投資組合 intelligence、AI 風險提醒、Crypto 監控與個人晨報。"],
         ].map(([label, copy]) => (
           <article
             className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-4"

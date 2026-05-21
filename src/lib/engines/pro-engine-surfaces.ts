@@ -49,7 +49,7 @@ export const proEngineSurfaces: ProEngineSurface[] = [
     state: "Barrier watch",
     signal: "FCN Monitoring 會追蹤 worst-of、KI / KO distance 與 coupon schedule。",
     summary:
-      "Phase 1 已接入 demo FCN positions 與 market quote layer，用於 read-only risk monitoring。",
+      "以範例 FCN 組合展示 worst-of、障礙距離與配息節奏如何被轉成風險觀察。",
     metric: {
       label: "Barrier distance",
       value: "Open",

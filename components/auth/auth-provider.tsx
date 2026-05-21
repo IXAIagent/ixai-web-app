@@ -53,8 +53,8 @@ const IdentityContext = createContext<IdentityContextValue | null>(null);
 
 const localPersistenceStatus: PersistenceStatus = {
   mode: "local",
-  label: "Local only",
-  message: "Guest data is stored on this device.",
+  label: "本機保存",
+  message: "Guest 資料會保存在此裝置。",
 };
 
 export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {

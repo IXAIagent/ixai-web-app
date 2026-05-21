@@ -43,10 +43,10 @@ function authHeaders(session: IXAISession) {
   };
 }
 
-function pendingStatus(message = "Supabase persistence is not available. Local fallback is active."): PersistenceStatus {
+function pendingStatus(message = "跨裝置同步暫時不可用，已改用本機保存。"): PersistenceStatus {
   return {
     mode: "pending",
-    label: "Sync pending",
+    label: "等待同步",
     message,
   };
 }
@@ -88,11 +88,11 @@ export async function loadUserWatchlist(session: IXAISession): Promise<{
     return {
       items: getWatchlist(),
       status: session.mode === "authenticated"
-        ? pendingStatus("Account active, but Supabase watchlist persistence is not configured.")
+        ? pendingStatus("帳戶已啟用，但自選觀察同步尚未完成設定。")
         : {
             mode: "local",
-            label: "Local only",
-            message: "Guest watchlist is stored on this device.",
+            label: "本機保存",
+            message: "Guest 自選觀察會保存在此裝置。",
           },
     };
   }
@@ -128,15 +128,15 @@ export async function loadUserWatchlist(session: IXAISession): Promise<{
       })),
       status: {
         mode: "synced",
-        label: "Synced",
-        message: "Watchlist loaded from your IXAI account.",
+        label: "已同步",
+        message: "已從你的 IXAI 帳戶讀取自選觀察。",
         lastSyncedAt: new Date().toISOString(),
       },
     };
   } catch {
     return {
       items: getWatchlist(),
-      status: pendingStatus("Could not load Supabase watchlist. Local fallback is active."),
+      status: pendingStatus("無法讀取雲端自選觀察，已改用本機內容。"),
     };
   }
 }
@@ -150,11 +150,11 @@ export async function saveUserWatchlist(
 
   if (!config || !headers || !session.user?.id) {
     return session.mode === "authenticated"
-      ? pendingStatus("Account active, but Supabase watchlist persistence is not configured.")
+      ? pendingStatus("帳戶已啟用，但自選觀察同步尚未完成設定。")
       : {
           mode: "local",
-          label: "Local only",
-          message: "Guest watchlist is stored on this device.",
+          label: "本機保存",
+          message: "Guest 自選觀察會保存在此裝置。",
         };
   }
 
@@ -193,12 +193,12 @@ export async function saveUserWatchlist(
 
     return {
       mode: "synced",
-      label: "Synced",
-      message: "Watchlist saved to your IXAI account.",
+      label: "已同步",
+      message: "自選觀察已保存到你的 IXAI 帳戶。",
       lastSyncedAt: new Date().toISOString(),
     };
   } catch {
-    return pendingStatus("Could not save to Supabase. Local watchlist remains intact.");
+    return pendingStatus("暫時無法同步，自選觀察仍保存在本機。");
   }
 }
 
@@ -213,11 +213,11 @@ export async function loadUserPreferences(session: IXAISession): Promise<{
     return {
       preferences: getLocalPreferences(session.user?.id),
       status: session.mode === "authenticated"
-        ? pendingStatus("Account active, but Supabase preferences are not configured.")
+        ? pendingStatus("帳戶已啟用，但偏好同步尚未完成設定。")
         : {
             mode: "local",
-            label: "Local only",
-            message: "Guest preferences are stored on this device.",
+            label: "本機保存",
+            message: "Guest 偏好會保存在此裝置。",
           },
     };
   }
@@ -240,15 +240,15 @@ export async function loadUserPreferences(session: IXAISession): Promise<{
       preferences,
       status: {
         mode: "synced",
-        label: "Synced",
-        message: "Preferences loaded from your IXAI account.",
+        label: "已同步",
+        message: "已從你的 IXAI 帳戶讀取偏好。",
         lastSyncedAt: new Date().toISOString(),
       },
     };
   } catch {
     return {
       preferences: getLocalPreferences(session.user?.id),
-      status: pendingStatus("Could not load Supabase preferences. Local fallback is active."),
+      status: pendingStatus("無法讀取雲端偏好，已改用本機內容。"),
     };
   }
 }
@@ -263,11 +263,11 @@ export async function saveUserPreferences(
 
   if (!config || !headers || !session.user?.id) {
     return session.mode === "authenticated"
-      ? pendingStatus("Account active, but Supabase preferences are not configured.")
+      ? pendingStatus("帳戶已啟用，但偏好同步尚未完成設定。")
       : {
           mode: "local",
-          label: "Local only",
-          message: "Guest preferences are stored on this device.",
+          label: "本機保存",
+          message: "Guest 偏好會保存在此裝置。",
         };
   }
 
@@ -292,12 +292,12 @@ export async function saveUserPreferences(
 
     return {
       mode: "synced",
-      label: "Synced",
-      message: "Preferences saved to your IXAI account.",
+      label: "已同步",
+      message: "偏好已保存到你的 IXAI 帳戶。",
       lastSyncedAt: new Date().toISOString(),
     };
   } catch {
-    return pendingStatus("Could not save preferences to Supabase. Local fallback is active.");
+    return pendingStatus("暫時無法同步偏好，已保存在本機。");
   }
 }
 
@@ -312,11 +312,11 @@ export async function loadProfileMemory(session: IXAISession): Promise<{
     return {
       memory: readPersonalMemory(session.user?.id),
       status: session.mode === "authenticated"
-        ? pendingStatus("Account active, but Supabase profile memory is not configured.")
+        ? pendingStatus("帳戶已啟用，但市場記憶同步尚未完成設定。")
         : {
             mode: "local",
-            label: "Local only",
-            message: "Guest memory is stored on this device.",
+            label: "本機保存",
+            message: "Guest 市場記憶會保存在此裝置。",
           },
     };
   }
@@ -355,15 +355,15 @@ export async function loadProfileMemory(session: IXAISession): Promise<{
       memory,
       status: {
         mode: "synced",
-        label: "Synced",
-        message: "Profile memory loaded from your IXAI account.",
+        label: "已同步",
+        message: "已從你的 IXAI 帳戶讀取市場記憶。",
         lastSyncedAt: new Date().toISOString(),
       },
     };
   } catch {
     return {
       memory: readPersonalMemory(session.user?.id),
-      status: pendingStatus("Could not load Supabase memory. Local fallback is active."),
+      status: pendingStatus("無法讀取雲端市場記憶，已改用本機內容。"),
     };
   }
 }
@@ -378,11 +378,11 @@ export async function saveProfileMemory(
 
   if (!config || !headers || !session.user?.id) {
     return session.mode === "authenticated"
-      ? pendingStatus("Account active, but Supabase profile memory is not configured.")
+      ? pendingStatus("帳戶已啟用，但市場記憶同步尚未完成設定。")
       : {
           mode: "local",
-          label: "Local only",
-          message: "Guest memory is stored on this device.",
+          label: "本機保存",
+          message: "Guest 市場記憶會保存在此裝置。",
         };
   }
 
@@ -410,11 +410,11 @@ export async function saveProfileMemory(
 
     return {
       mode: "synced",
-      label: "Synced",
-      message: "Profile memory saved to your IXAI account.",
+      label: "已同步",
+      message: "市場記憶已保存到你的 IXAI 帳戶。",
       lastSyncedAt: new Date().toISOString(),
     };
   } catch {
-    return pendingStatus("Could not save memory to Supabase. Local fallback is active.");
+    return pendingStatus("暫時無法同步市場記憶，已保存在本機。");
   }
 }

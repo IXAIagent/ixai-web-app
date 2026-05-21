@@ -58,7 +58,7 @@ const statusLabels: Record<MarketDataStatus, string> = {
   real: "真實",
   realtime: "即時",
   delayed: "延遲",
-  fallback: "Fallback",
+  fallback: "備援",
   simulated: "模擬",
   unavailable: "資料不可用",
 };
@@ -259,14 +259,14 @@ export function WatchlistManager() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          Personal Watchlist
+          自選觀察
         </p>
         <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">
           建立你的個人市場入口。
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
-          新增你關注的股票、ETF、指數或 Crypto。Guest 先以 local-first
-          保存；登入後可接上 IXAI account sync 與未來 Pro 監控。
+          新增你關注的股票、ETF、指數或 Crypto。Guest 模式會先保存在本機瀏覽器；
+          登入同步開放後，可延伸到 IXAI Pro 個人監控。
         </p>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-white/58">
           自選觀察會成為未來 IXAI 個人情報與風險提醒的基礎。
@@ -291,14 +291,14 @@ export function WatchlistManager() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-              Personal Persistence
+              保存狀態
             </p>
             <p className="mt-1">
               {syncState.label} · {syncState.message}
             </p>
             {syncState.lastSyncedAt ? (
               <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
-                Last synced: {new Date(syncState.lastSyncedAt).toLocaleString("zh-TW")}
+                上次同步：{new Date(syncState.lastSyncedAt).toLocaleString("zh-TW")}
               </p>
             ) : null}
           </div>
@@ -308,7 +308,7 @@ export function WatchlistManager() {
               onClick={handleAccountSync}
               type="button"
             >
-              Sync to account
+              同步到帳戶
             </button>
           ) : (
             <Link
@@ -327,7 +327,7 @@ export function WatchlistManager() {
           onSubmit={handleSubmit}
         >
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Add Symbol
+            新增標的
           </p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
             新增觀察標的
@@ -335,7 +335,7 @@ export function WatchlistManager() {
 
           <div className="mt-5 grid gap-4">
             <label className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]">
-              Symbol
+              代號
               <input
                 className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] px-3 py-2.5 font-mono text-sm outline-none transition focus:border-[var(--ixai-gold)]"
                 onChange={(event) => setSymbol(event.target.value)}
@@ -549,7 +549,7 @@ export function WatchlistManager() {
         </p>
         <p className="mt-2">
           自選觀察會顯示每筆資料的狀態：真實、即時、延遲、模擬或資料不可用。
-          IXAI 會嘗試讀取 CoinGecko 與 Yahoo Finance；provider 失敗時才回落至明確標示的 fallback。
+          IXAI 會嘗試讀取公開市場資料；若資料來源暫時失敗，會以「備援」或「資料不可用」清楚標示。
         </p>
         <p className="mt-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
           {MARKET_DATA_DISCLAIMER}

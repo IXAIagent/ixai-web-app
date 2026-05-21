@@ -111,7 +111,7 @@ export async function sendMagicLink(email: string, redirectTo: string) {
   if (!config) {
     return {
       ok: false,
-      message: "Supabase Auth 尚未設定。請先設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。",
+      message: "登入同步尚未啟用。你仍可使用 Guest 模式閱讀內容與建立自選觀察。",
     };
   }
 
@@ -131,7 +131,7 @@ export async function sendMagicLink(email: string, redirectTo: string) {
   if (!response.ok) {
     return {
       ok: false,
-      message: "Magic link 無法送出，請確認 Supabase Auth 設定。",
+      message: "Email 登入連結暫時無法送出，請稍後再試。",
     };
   }
 

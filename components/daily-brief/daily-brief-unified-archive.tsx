@@ -95,10 +95,10 @@ export function DailyBriefUnifiedArchive({
     return (
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5">
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-          Published Intelligence
+          Daily Brief
         </p>
         <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-          正在讀取已發布 Daily Intelligence。
+          正在讀取最新每日簡報。
         </p>
       </section>
     );
@@ -119,11 +119,10 @@ export function DailyBriefUnifiedArchive({
       {isFallback ? (
         <section className="rounded-lg border border-amber-300/35 bg-amber-100/30 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-            Fallback Source
+            Editorial Backup
           </p>
           <p className="mt-2">
-            目前尚未偵測到已發布的 live intelligence brief，因此暫時顯示 static editorial fallback。
-            Production 正常營運時應由 published intelligence 作為唯一來源。
+            目前尚未偵測到最新已發布簡報，因此暫時顯示一玄編輯備援內容。
           </p>
         </section>
       ) : null}
@@ -178,7 +177,7 @@ export function DailyBriefUnifiedArchive({
                   </h3>
                 </div>
                 <span className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--ixai-ink-muted)]">
-                  {isFallback ? "Static Fallback" : "Published Intelligence"}
+                  {isFallback ? "編輯備援" : "已發布簡報"}
                 </span>
               </div>
             </Link>

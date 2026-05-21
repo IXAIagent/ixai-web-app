@@ -92,7 +92,7 @@ function setCachedQuote(cacheKey: string, quote: MarketQuote) {
 
 function formatUsd(value?: number) {
   if (typeof value !== "number") {
-    return "暫無資料";
+    return "資料不可用";
   }
 
   return new Intl.NumberFormat("en-US", {
@@ -104,7 +104,7 @@ function formatUsd(value?: number) {
 
 function formatPrice(value: number | undefined, currency = "USD") {
   if (typeof value !== "number") {
-    return "暫無資料";
+    return "資料不可用";
   }
 
   if (currency === "TWD") {
@@ -305,7 +305,7 @@ export const yahooFinanceProvider: MarketQuoteProvider = {
 
 export const fallbackMockProvider: MarketQuoteProvider = {
   id: "fallback-mock",
-  label: "Fallback Mock Provider",
+  label: "備援市場資料",
   supports() {
     return true;
   },

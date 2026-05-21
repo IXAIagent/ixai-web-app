@@ -36,6 +36,15 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${brief.title} | IXAI Daily Brief`,
     description: brief.marketSummary,
+    openGraph: {
+      title: `${brief.title} | IXAI Daily Brief`,
+      description: brief.marketSummary,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${brief.title} | IXAI Daily Brief`,
+      description: brief.marketSummary,
+    },
   };
 }
 

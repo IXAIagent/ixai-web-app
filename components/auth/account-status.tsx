@@ -12,14 +12,14 @@ export function AccountStatus() {
       href="/account"
     >
       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-        Identity
+        My IXAI
       </p>
       <p className="mt-2 text-xs leading-5 text-white/62">
         {!mounted
-          ? "Loading..."
+          ? "讀取中..."
           : session.mode === "authenticated"
-            ? "IXAI account active"
-            : "Guest mode"}
+            ? "IXAI 帳戶已啟用"
+            : "Guest 模式"}
       </p>
     </Link>
   );

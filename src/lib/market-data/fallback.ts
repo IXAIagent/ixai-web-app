@@ -24,7 +24,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "-0.28%",
     direction: "down",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   SOL: {
@@ -34,7 +34,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+0.32%",
     direction: "up",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   ETH: {
@@ -44,7 +44,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+0.09%",
     direction: "flat",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   SPY: {
@@ -54,7 +54,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+0.42%",
     direction: "up",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   QQQ: {
@@ -64,7 +64,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+0.61%",
     direction: "up",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   NVDA: {
@@ -74,7 +74,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+1.18%",
     direction: "up",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   TSM: {
@@ -84,7 +84,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+0.74%",
     direction: "up",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   "0050.TW": {
@@ -94,7 +94,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+0.35%",
     direction: "up",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   "2330.TW": {
@@ -104,7 +104,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+0.48%",
     direction: "up",
     source: "fallback-mock",
-    sourceLabel: "Fallback Mock",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   VIX: {
@@ -114,7 +114,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "-2.10%",
     direction: "down",
     source: "macro-placeholder",
-    sourceLabel: "Macro Placeholder",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
   DXY: {
@@ -124,7 +124,7 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     dailyChange: "+0.04%",
     direction: "flat",
     source: "macro-placeholder",
-    sourceLabel: "Macro Placeholder",
+    sourceLabel: "備援資料",
     status: "simulated",
   },
 };
@@ -137,11 +137,11 @@ export function getFallbackMarketQuote(symbol: string): MarketQuote {
     return {
       symbol: normalized,
       name: normalized,
-      price: "暫無資料",
+      price: "資料不可用",
       dailyChange: "--",
       direction: "flat",
       source: "fallback-mock",
-      sourceLabel: "Fallback Mock",
+      sourceLabel: "備援資料",
       status: "unavailable",
       updatedAt: nowIso(),
     };

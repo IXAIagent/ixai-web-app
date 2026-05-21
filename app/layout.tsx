@@ -15,9 +15,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IXAI | AI Wealth Intelligence Platform",
+  title: {
+    default: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+    template: "%s | IXAI",
+  },
   description:
-    "IXAI 是每日市場情報、資產脈絡與風險觀察的 AI Wealth Intelligence Platform。",
+    "IXAI 是免費市場 intelligence 與 AI 風險觀察平台，提供 Daily Brief、Market Pulse、FCN 教育與 IXAI Pro 入口。",
+  openGraph: {
+    description:
+      "每日市場情報、AI 風險觀察與 IXAI Pro AI Wealth Operating System 入口。",
+    locale: "zh_TW",
+    siteName: "IXAI",
+    title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    description:
+      "免費市場 intelligence 與 AI 風險觀察平台，清楚連向 IXAI Pro。",
+    title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+  },
 };
 
 export default function RootLayout({

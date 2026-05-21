@@ -28,17 +28,17 @@ export function OnboardingCard() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            First Visit Setup
+            第一次使用
           </p>
           <h2 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
-            建立你的 Daily Intelligence profile
+            選擇你關注的市場主題
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--ixai-ink-muted)]">
-            選擇你最關注的市場，IXAI 會微調摘要排序。內容仍以 IXAI curated intelligence 為主，個人化只作為輔助。
+            選擇你最關注的市場，IXAI 會微調摘要排序。內容仍以一玄每日市場觀察為主，個人化只作為輔助。
           </p>
         </div>
         <span className="w-fit rounded-md border border-[var(--ixai-border)] px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-forest-soft)]">
-          {session.mode === "authenticated" ? "Account memory" : "Guest memory"}
+          {session.mode === "authenticated" ? "帳戶同步" : "Guest 模式"}
         </span>
       </div>
 

@@ -44,9 +44,19 @@ const previewCards = [
 ];
 
 export const metadata = {
-  title: "IXAI Pro | AI Wealth Operating System",
+  title: "IXAI Pro",
   description:
-    "IXAI Pro 是跨資產 AI 風控與 intelligence workspace，延伸自 IXAI Public Intelligence Layer。",
+    "IXAI Pro 是跨資產 AI 風控與 intelligence workspace，延伸自 IXAI 公開市場情報入口。",
+  openGraph: {
+    title: "IXAI Pro — AI Wealth Operating System",
+    description:
+      "跨資產 AI 風控與 intelligence workspace，從公開市場情報延伸到個人化風險監控。",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IXAI Pro — AI Wealth Operating System",
+    description: "跨資產 AI 風控與個人化 intelligence workspace。",
+  },
 };
 
 export default function ProPage() {

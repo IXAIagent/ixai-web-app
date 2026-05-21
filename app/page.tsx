@@ -1,4 +1,5 @@
 import { IntelligenceFeed } from "@/components/dashboard/intelligence-feed";
+import { LaunchIntro } from "@/components/dashboard/launch-intro";
 import { MarketOverview } from "@/components/dashboard/market-overview";
 import { MarketPulse } from "@/components/dashboard/market-pulse";
 import { ProCta } from "@/components/dashboard/pro-cta";
@@ -16,6 +17,24 @@ import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+  description:
+    "IXAI 是免費市場 intelligence 與 AI 風險觀察平台，提供 Daily Brief、Market Pulse、FCN 教育與 IXAI Pro 入口。",
+  openGraph: {
+    title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+    description:
+      "每日市場情報、AI 風險觀察與 IXAI Pro AI Wealth Operating System 入口。",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+    description:
+      "免費市場 intelligence 與 AI 風險觀察平台，清楚連向 IXAI Pro。",
+  },
+};
+
 export default async function Home() {
   const latestDailyBrief = getLatestPublishedBrief();
   const latestWeeklyBrief = getLatestWeeklyBrief();
@@ -32,6 +51,7 @@ export default async function Home() {
 
       {/* Tier 1: insight headline first, market data immediately below. */}
       <OnboardingCard />
+      <LaunchIntro />
       <RiskFocus />
       <MarketPulse />
 

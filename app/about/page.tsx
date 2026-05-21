@@ -22,9 +22,18 @@ const beliefs = [
 ];
 
 export const metadata = {
-  title: "關於一玄 | IXAI",
+  title: "關於一玄",
   description:
     "認識 IXAI、一玄與 AI Wealth Intelligence 的品牌理念、founder narrative 與 community layer。",
+  openGraph: {
+    title: "關於一玄與 IXAI",
+    description: "認識 IXAI ecosystem、公開市場情報入口與 IXAI Pro AI Wealth Operating System。",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "關於一玄與 IXAI",
+    description: "認識 IXAI ecosystem、品牌信任與 AI 風險觀察方向。",
+  },
 };
 
 export default function AboutPage() {
@@ -75,14 +84,14 @@ export default function AboutPage() {
         </p>
         <div className="mt-4 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
           <h2 className="font-serif text-3xl font-semibold leading-tight text-[var(--ixai-forest)]">
-            市場資訊過載之後，投資者需要的不是更多聲音，而是更好的 intelligence layer。
+            市場資訊過載之後，投資者需要的不是更多聲音，而是更清楚的市場觀察系統。
           </h2>
           <div className="grid gap-4 text-sm leading-8 text-[var(--ixai-ink-muted)]">
             <p>
               資訊變多，風險不會因此變少。投資者每天接觸新聞、價格、KOL、財報與政策訊號，卻很少有一個穩定的系統，幫助自己分辨哪些訊號真正影響資產配置。
             </p>
             <p>
-              AI 將改變金融資訊處理方式。IXAI 想建立的是 daily intelligence layer：每天可打開、可閱讀、可監控，也能逐步回到個人投資脈絡的金融作業系統。
+              AI 將改變金融資訊處理方式。IXAI 想建立的是每日市場情報入口：每天可打開、可閱讀、可監控，也能逐步回到個人投資脈絡的金融作業系統。
             </p>
           </div>
         </div>
@@ -140,7 +149,7 @@ export default function AboutPage() {
           IXAI Ecosystem
         </p>
         <h2 className="mt-2 max-w-3xl font-serif text-3xl font-semibold leading-tight text-[var(--ixai-forest)]">
-          ixai-web-app 是 Public Intelligence Layer，IXAI Pro 是 AI Wealth Operating System。
+          ixai-web-app 是公開市場情報入口，IXAI Pro 是 AI Wealth Operating System。
         </h2>
         <p className="mt-4 max-w-4xl text-sm leading-8 text-[var(--ixai-ink-muted)]">
           Daily Brief、Weekly Brief、Market Intelligence、FCN Education、AI Risk Monitoring

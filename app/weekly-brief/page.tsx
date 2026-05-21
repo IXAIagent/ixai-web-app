@@ -2,9 +2,18 @@ import Link from "next/link";
 import { getAllWeeklyBriefs, getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
 export const metadata = {
-  title: "週報 | IXAI",
+  title: "週報",
   description:
-    "IXAI Weekly Brief 每週市場事件、資產觀察、下週焦點與風險提醒。",
+    "IXAI Weekly Brief 整理每週市場事件、資產觀察、下週焦點與風險提醒。",
+  openGraph: {
+    title: "IXAI Weekly Brief — 每週市場週報",
+    description: "每週市場事件、資產觀察、下週焦點與風險提醒。",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IXAI Weekly Brief — 每週市場週報",
+    description: "每週市場事件、資產觀察與風險提醒。",
+  },
 };
 
 export default function WeeklyBriefArchivePage() {

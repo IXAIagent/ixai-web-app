@@ -20,9 +20,9 @@ const statusLabels: Record<MarketDataStatus, string> = {
   real: "真實",
   realtime: "即時",
   delayed: "延遲",
-  fallback: "Fallback",
+  fallback: "備援",
   simulated: "模擬",
-  unavailable: "暫無資料",
+  unavailable: "資料不可用",
 };
 
 function displaySymbol(item: WatchlistItem) {
@@ -154,7 +154,7 @@ export function Watchlist() {
                       {quote?.dailyChange ?? "--"}
                     </p>
                     <p className="mt-0.5 text-[11px] text-[var(--ixai-gold)]">
-                      {quote ? statusLabels[quote.status] : "暫無資料"}
+                      {quote ? statusLabels[quote.status] : "資料讀取中"}
                     </p>
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export function Watchlist() {
                 </p>
                 <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-[var(--ixai-ink-muted)]">
                   <span>{updatedLabel(quote)}</span>
-                  <span className="font-mono">{quote?.price ?? "暫無資料"}</span>
+                  <span className="font-mono">{quote?.price ?? "資料讀取中"}</span>
                 </div>
               </article>
             );

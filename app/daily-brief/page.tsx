@@ -2,8 +2,18 @@ import { DailyBriefUnifiedArchive } from "@/components/daily-brief/daily-brief-u
 import { getAllDailyBriefs } from "@/src/lib/dailyBriefs";
 
 export const metadata = {
-  title: "每日簡報 | IXAI",
-  description: "IXAI Daily Brief 每日市場觀察與市場情報封存。",
+  title: "每日簡報",
+  description:
+    "IXAI Daily Brief 提供每日市場情報、AI-assisted 風險觀察與重點市場摘要。",
+  openGraph: {
+    title: "IXAI Daily Brief — 每日市場情報",
+    description: "每日市場情報、AI 風險觀察與市場摘要，協助建立清晰的市場開場。",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IXAI Daily Brief — 每日市場情報",
+    description: "每日市場情報、AI 風險觀察與市場摘要。",
+  },
 };
 
 export default function DailyBriefArchivePage() {

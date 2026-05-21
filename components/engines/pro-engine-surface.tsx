@@ -70,7 +70,7 @@ function EngineCard({ engine }: { engine: ProEngineSurface }) {
 
       {engine.href ? (
         <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
-          Open engine →
+          查看風險觀察 →
         </p>
       ) : null}
 
@@ -151,8 +151,8 @@ export function ProEngineSurface({ fcnSnapshot }: { fcnSnapshot?: FcnPortfolioSn
             Free 是市場情報，IXAI Pro 是你的情報引擎。
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-ink-muted)]">
-            這些 engine surfaces 目前以 preview 呈現。未來會接上 portfolio、FCN、
-            watchlist、風險提醒與 AI morning brief，形成個人化監控工作流。
+            目前先開放 FCN 風險觀察示範。未來會接上 portfolio、watchlist、
+            風險提醒與 AI morning brief，形成個人化監控工作流。
           </p>
         </div>
         <Link
