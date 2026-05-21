@@ -3,6 +3,8 @@ import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { MobileTopInsight } from "@/components/layout/mobile-top-insight";
 import { Sidebar } from "@/components/layout/sidebar";
+import { OfflineStatus } from "@/components/pwa/offline-status";
+import { PwaRegister } from "@/components/pwa/pwa-register";
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -27,6 +29,8 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
       </div>
 
       <Sidebar />
+      <PwaRegister />
+      <OfflineStatus />
 
       <main className="min-h-screen pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[calc(4.25rem+env(safe-area-inset-top))] md:ml-56 md:pb-0 md:pt-0">
         {children}

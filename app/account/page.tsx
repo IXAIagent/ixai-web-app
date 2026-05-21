@@ -1,4 +1,5 @@
 import { AccountPanel } from "@/components/auth/account-panel";
+import { PwaInstallCard } from "@/components/pwa/install-card";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ixaiIdentity } from "@/src/lib/ixai/identity";
 
@@ -27,6 +28,7 @@ export default function AccountPage() {
       </section>
 
       <AccountPanel />
+      <PwaInstallCard />
 
       <section className="grid gap-4 md:grid-cols-3">
         {[

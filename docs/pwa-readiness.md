@@ -21,10 +21,15 @@ Ready:
 - Has mobile bottom navigation and app-shell style structure.
 - Has local-first Watchlist and preferences.
 
-Not ready:
+Ready as of v1.19:
 
-- No service worker.
-- No offline route strategy.
+- Minimal service worker foundation exists for installability.
+- Service worker caches only static app assets, icons, manifest, and Next build assets.
+- Global offline status copy warns that market data and latest briefs may not update while offline.
+
+Still not ready:
+
+- No aggressive offline reading mode.
 - Admin/editorial routes should not be cached.
 - Market/news API responses need clear cache rules.
 
@@ -90,26 +95,32 @@ Requirement:
 
 ### Phase 1: Public App Installability Only
 
-Implement only:
+Implemented:
 
 - manifest verification
 - icon coverage
 - installable app shell
-- no offline data cache yet
-- no service worker or a minimal no-cache service worker if required
+- minimal service worker for static assets only
+- no offline market-data cache
+- no notification registration
 
 Cache:
 
 - static assets
-- app shell CSS/JS via Next/Vercel default caching
+- app shell CSS/JS build assets
+- icons, manifest, logo, Open Graph image
 
 Do not cache:
 
 - `/admin`
+- `/admin/*`
 - `/api/admin/*`
-- `/api/news/latest`
-- `/api/market/quotes`
-- `/daily-brief` dynamic published state until persistence is durable
+- `/api/auth/*`
+- `/api/news/*`
+- `/api/market/*`
+- `/api/daily-briefs`
+- scheduler / cron / draft / generation / session routes
+- unpublished editorial content
 
 ### Phase 2: Public Offline Reading
 
@@ -198,8 +209,8 @@ Pro Dashboard:
 1. Fix Public admin security boundary.
 2. Verify Supabase Daily Intelligence persistence in production.
 3. Keep service worker scope public-only and exclude admin/API sensitive routes.
-4. Implement Public installability only.
-5. Add offline editorial cache later.
+4. Validate installability on `https://app.ixuan.ai` with Chrome Lighthouse / Application tab.
+5. Add offline editorial cache later only after production Supabase is verified.
 6. Revisit Pro Dashboard after token/session strategy is hardened.
 
 ## PWA Readiness Assessment
