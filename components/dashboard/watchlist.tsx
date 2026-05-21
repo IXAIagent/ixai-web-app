@@ -179,14 +179,16 @@ export function Watchlist() {
             {/* v1.7: soft Pro seed inside the monitoring tier — no badge,
                 no popup, just an inline reference. Premium conversion sits
                 next to the workflow it upgrades. */}
-            <Link
+            <a
               className="text-xs text-[var(--ixai-ink-muted)] transition hover:text-[var(--ixai-forest)]"
-              href={session.mode === "authenticated" ? ixaiEcosystem.proPreviewUrl : "/account"}
+              href={session.mode === "authenticated" ? ixaiEcosystem.proDashboardUrl : "/account"}
+              rel={session.mode === "authenticated" ? "noopener noreferrer" : undefined}
+              target={session.mode === "authenticated" ? "_blank" : undefined}
             >
               {session.mode === "authenticated"
                 ? "Pro 用戶可監控更多標的、設定自訂提醒 →"
                 : "登入後同步到你的 IXAI account →"}
-            </Link>
+            </a>
           </div>
         </div>
       )}

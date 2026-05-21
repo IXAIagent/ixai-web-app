@@ -47,12 +47,14 @@ export function WeeklyBriefPreview({ brief }: { brief: WeeklyBrief }) {
           >
             閱讀週報
           </Link>
-          <Link
+          <a
             className="mt-3 inline-flex rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href={ixaiEcosystem.proPreviewUrl}
+            href={ixaiEcosystem.proDashboardUrl}
+            rel="noopener noreferrer"
+            target="_blank"
           >
-            了解 IXAI Pro
-          </Link>
+            {ixaiEcosystem.cta.enterPro}
+          </a>
         </div>
       </div>
     </SectionCard>

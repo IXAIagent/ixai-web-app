@@ -2,13 +2,14 @@ import Link from "next/link";
 
 import { AccountStatus } from "@/components/auth/account-status";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 // v1.7: nav grouped into workflow tiers instead of 7 flat peers.
 // Mirrors the homepage hierarchy: daily workflow → market reference →
 // personal monitoring → membership → brand.
 const navGroups: Array<{
   heading: string;
-  items: Array<{ label: string; href: string; primary?: boolean }>;
+  items: Array<{ external?: boolean; label: string; href: string; primary?: boolean }>;
 }> = [
   {
     heading: "Daily",
@@ -35,7 +36,7 @@ const navGroups: Array<{
     heading: "Membership",
     items: [
       { label: "FCN", href: "/fcn" },
-      { label: "IXAI Pro", href: "/pro" },
+      { external: true, label: "IXAI Pro", href: ixaiEcosystem.proDashboardUrl },
     ],
   },
   {
@@ -81,6 +82,8 @@ export function Sidebar() {
                 }`}
                 href={item.href}
                 key={item.label}
+                rel={item.external ? "noopener noreferrer" : undefined}
+                target={item.external ? "_blank" : undefined}
               >
                 {item.label}
               </Link>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SectionCard } from "@/components/dashboard/section-card";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
@@ -17,12 +16,14 @@ export function ProCta({ features }: { features: string[] }) {
             未來將延伸至結構型商品監控、AI 風險提醒、投資組合情報與 Crypto
             監控，讓每日閱讀進一步轉為個人化、可持續的 intelligence workflow。
           </p>
-          <Link
+          <a
             className="mt-5 inline-flex rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href={ixaiEcosystem.proPreviewUrl}
+            href={ixaiEcosystem.proDashboardUrl}
+            rel="noopener noreferrer"
+            target="_blank"
           >
-            了解 IXAI Pro
-          </Link>
+            {ixaiEcosystem.cta.enterPro}
+          </a>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {features.map((feature) => (

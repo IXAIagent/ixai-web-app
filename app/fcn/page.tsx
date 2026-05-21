@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
 import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import {
@@ -250,6 +250,8 @@ export default async function FcnPage() {
         </div>
       </section>
 
+      <EcosystemBridge />
+
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
@@ -415,12 +417,14 @@ export default async function FcnPage() {
           >
             預約一玄顧問
           </a>
-          <Link
+          <a
             className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href={ixaiEcosystem.proPreviewUrl}
+            href={ixaiEcosystem.proDashboardUrl}
+            rel="noopener noreferrer"
+            target="_blank"
           >
-            了解 IXAI Pro
-          </Link>
+            {ixaiEcosystem.cta.enterPro}
+          </a>
         </div>
         <p className="mt-5 border-t border-[var(--ixai-border)] pt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">
           {FCN_MONITORING_DISCLAIMER}

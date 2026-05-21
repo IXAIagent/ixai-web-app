@@ -36,6 +36,14 @@ export function LaunchIntro() {
           </Link>
           <a
             className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            href={ixaiEcosystem.proDashboardUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {ixaiEcosystem.cta.enterPro}
+          </a>
+          <a
+            className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             href={lineUrl}
             rel="noreferrer"
             target="_blank"

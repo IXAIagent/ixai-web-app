@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
 import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ecosystemLayers, ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
@@ -76,11 +77,11 @@ export default function ProPage() {
             <div className="mt-7 flex flex-wrap gap-3">
               <a
                 className="rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
-                href={lineUrl}
-                rel="noreferrer"
+                href={ixaiEcosystem.proDashboardUrl}
+                rel="noopener noreferrer"
                 target="_blank"
               >
-                申請 IXAI Pro
+                {ixaiEcosystem.cta.enterPro}
               </a>
               <a
                 className="rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
@@ -117,6 +118,8 @@ export default function ProPage() {
           </div>
         </div>
       </section>
+
+      <EcosystemBridge />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
@@ -237,8 +240,8 @@ export default function ProPage() {
             </a>
             <a
               className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
-              href={lineUrl}
-              rel="noreferrer"
+              href={ixaiEcosystem.proDashboardUrl}
+              rel="noopener noreferrer"
               target="_blank"
             >
               申請 IXAI Pro

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
 import { getBrandContactChannels } from "@/src/lib/brand/contact";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ecosystemLayers } from "@/src/lib/ixai/ecosystem";
@@ -177,6 +178,8 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
+
+      <EcosystemBridge />
 
       <section
         className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-6 text-[var(--ixai-cream)] sm:p-7"

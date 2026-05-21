@@ -257,12 +257,14 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
             >
               每日簡報
             </Link>
-            <Link
+            <a
               className="inline-flex rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-white/78"
-              href={ixaiEcosystem.proPreviewUrl}
+              href={ixaiEcosystem.proDashboardUrl}
+              rel="noopener noreferrer"
+              target="_blank"
             >
-              了解 IXAI Pro
-            </Link>
+              {ixaiEcosystem.cta.enterPro}
+            </a>
           </div>
         </div>
       </section>

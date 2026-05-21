@@ -6,6 +6,7 @@ import {
   getDailyBriefBySlug,
 } from "@/src/lib/dailyBriefs";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 const categoryLabels: Record<DailyBrief["sections"][number]["category"], string> =
   {
@@ -175,12 +176,14 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
               未來 IXAI Pro 將延伸至 FCN、投資組合風險、Crypto 曝險與 AI 風險提醒。
             </p>
           </div>
-          <Link
+          <a
             className="inline-flex w-fit rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href="/#ixai-pro"
+            href={ixaiEcosystem.proDashboardUrl}
+            rel="noopener noreferrer"
+            target="_blank"
           >
-            了解 IXAI Pro
-          </Link>
+            {ixaiEcosystem.cta.enterPro}
+          </a>
         </div>
       </section>
     </article>

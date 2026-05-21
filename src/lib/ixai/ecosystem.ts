@@ -1,18 +1,26 @@
 export const ixaiEcosystem = {
-  publicAppUrl: "/",
+  publicAppUrl: "https://ixai-web-app.vercel.app",
   proPreviewUrl: "/pro",
-  proDashboardUrl: "",
+  proDashboardUrl: "https://ixai-website-clean.vercel.app/dashboard",
   dailyBriefUrl: "/daily-brief",
   marketUrl: "/market",
   fcnEducationUrl: "/fcn",
   aboutUrl: "/about",
   contactUrl: "/about#contact",
+  labels: {
+    ecosystem: "IXAI Ecosystem",
+    publicLayer: "Public Intelligence",
+    proLayer: "IXAI Pro Dashboard",
+  },
   cta: {
     applyExperience: "申請 IXAI Pro",
     contactIxuan: "聯絡一玄",
+    enterPro: "進入 IXAI Pro",
     viewDailyBrief: "查看 Daily Brief",
     learnPro: "了解 IXAI Pro",
     bookAdvisor: "預約一玄顧問",
+    returnPublic: "返回 Public Intelligence",
+    returnDailyBrief: "返回 Daily Brief",
   },
 };
 

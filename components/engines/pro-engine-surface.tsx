@@ -155,12 +155,14 @@ export function ProEngineSurface({ fcnSnapshot }: { fcnSnapshot?: FcnPortfolioSn
             風險提醒與 AI morning brief，形成個人化監控工作流。
           </p>
         </div>
-        <Link
+        <a
           className="w-fit rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-          href={ixaiEcosystem.proPreviewUrl}
+          href={ixaiEcosystem.proDashboardUrl}
+          rel="noopener noreferrer"
+          target="_blank"
         >
-          查看 IXAI Pro
-        </Link>
+          {ixaiEcosystem.cta.enterPro}
+        </a>
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">

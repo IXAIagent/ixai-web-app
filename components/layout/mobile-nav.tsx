@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 const mobileItems = [
   { label: "首頁", href: "/" },
   { label: "每日", href: "/daily-brief" },
   { label: "市場", href: "/market" },
   { label: "FCN", href: "/fcn" },
-  { label: "Pro", href: "/pro" },
+  { external: true, label: "Pro", href: ixaiEcosystem.proDashboardUrl },
   { label: "關於", href: "/about" },
 ];
 
@@ -22,6 +23,8 @@ export function MobileNav() {
             }`}
             href={item.href}
             key={item.label}
+            rel={item.external ? "noopener noreferrer" : undefined}
+            target={item.external ? "_blank" : undefined}
           >
             {item.label}
           </Link>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 const operatingSystemPoints = [
   "每日市場簡報",
@@ -203,12 +204,14 @@ export default function IxaiPage() {
               Daily Brief 與 Weekly Brief 是免費閱讀層。IXAI Pro 的方向，是把這個習慣延伸到監控、提醒、投資組合情報與結構型商品脈絡。
             </p>
           </div>
-          <Link
+          <a
             className="inline-flex w-fit rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
-            href="/#ixai-pro"
+            href={ixaiEcosystem.proDashboardUrl}
+            rel="noopener noreferrer"
+            target="_blank"
           >
-            了解 IXAI Pro
-          </Link>
+            {ixaiEcosystem.cta.enterPro}
+          </a>
         </div>
       </section>
     </div>

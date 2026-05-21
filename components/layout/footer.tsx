@@ -1,4 +1,5 @@
 import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
+import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 export function Footer() {
   const contactLinks = getPrimaryContactLinks();
@@ -14,6 +15,14 @@ export function Footer() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-5 text-xs leading-6 text-white/48 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:px-6">
         <p>市場資料與內容僅供資訊參考，不構成投資建議、買賣指令或報酬承諾。</p>
         <div className="flex flex-wrap items-center gap-3">
+          <a
+            className="text-white/64 transition hover:text-white"
+            href={ixaiEcosystem.proDashboardUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {ixaiEcosystem.cta.enterPro}
+          </a>
           {footerLinks.map((link) => (
             <a
               className="text-white/56 transition hover:text-white"

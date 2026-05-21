@@ -8,6 +8,7 @@ import { TodaysBrief } from "@/components/dashboard/todays-brief";
 import { Watchlist } from "@/components/dashboard/watchlist";
 import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview";
 import { ProEngineSurface } from "@/components/engines/pro-engine-surface";
+import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
 import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { proFeatures } from "@/lib/mock-data";
@@ -84,6 +85,7 @@ export default async function Home() {
           from free workflow to IXAI Pro. */}
       <SectionDivider label="IXAI Pro" hint="Membership" variant="premium" />
       <div id="ixai-pro">
+        <EcosystemBridge className="mb-4" />
         <ProCta features={proFeatures} />
       </div>
     </div>
