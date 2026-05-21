@@ -1,4 +1,11 @@
 import Link from "next/link";
+import {
+  ArrowDown,
+  ArrowUpRight,
+  CalendarCheck,
+  FileText,
+  Mail,
+} from "lucide-react";
 import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
 import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -76,23 +83,26 @@ export default function ProPage() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a
-                className="rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
                 href={ixaiEcosystem.proDashboardUrl}
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 {ixaiEcosystem.cta.enterPro}
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
               </a>
               <a
-                className="rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
                 href={emailUrl}
               >
+                <Mail className="h-4 w-4" aria-hidden="true" />
                 {ixaiEcosystem.cta.contactIxuan}
               </a>
               <Link
-                className="rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
                 href={ixaiEcosystem.dailyBriefUrl}
               >
+                <FileText className="h-4 w-4" aria-hidden="true" />
                 {ixaiEcosystem.cta.viewDailyBrief}
               </Link>
             </div>
@@ -182,9 +192,10 @@ export default function ProPage() {
               </p>
               <p className="mt-2 text-base font-semibold text-[var(--ixai-forest)]">{step}</p>
               {index < architectureSteps.length - 1 ? (
-                <p className="mt-3 font-mono text-xs uppercase tracking-[0.14em] text-[var(--ixai-ink-muted)]">
-                  ↓ bridge
-                </p>
+                <div className="mt-3 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--ixai-ink-muted)]">
+                  <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                  next layer
+                </div>
               ) : null}
             </div>
           ))}
@@ -193,7 +204,7 @@ export default function ProPage() {
 
       <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Mock Dashboard Preview
+          IXAI Pro Workspace Preview
         </p>
         <h2 className="mt-2 text-2xl font-semibold">
           Pro dashboard 會是工作空間，不是公開內容頁。
@@ -231,25 +242,28 @@ export default function ProPage() {
           </div>
           <div className="flex flex-wrap gap-3">
             <a
-              className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
               href={lineUrl}
               rel="noreferrer"
               target="_blank"
             >
+              <CalendarCheck className="h-4 w-4" aria-hidden="true" />
               預約一玄顧問
             </a>
             <a
-              className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
               href={ixaiEcosystem.proDashboardUrl}
               rel="noopener noreferrer"
               target="_blank"
             >
               申請 IXAI Pro
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </a>
             <a
-              className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
               href={emailUrl}
             >
+              <Mail className="h-4 w-4" aria-hidden="true" />
               聯絡一玄
             </a>
           </div>

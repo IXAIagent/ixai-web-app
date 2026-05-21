@@ -1,4 +1,5 @@
 import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
+import { ArrowUpRight, CalendarCheck, MessageCircle, ShieldCheck } from "lucide-react";
 import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import {
@@ -233,8 +234,8 @@ export default async function FcnPage() {
               先理解 FCN，再監控 worst-of 風險。
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
-          這裡是 IXAI 的 FCN 教育入口。下方風險觀察示範
-              示範 IXAI Pro 如何把 coupon、KI、KO、worst-of 與市場波動整理成風險 awareness。
+              這裡是 IXAI 的 FCN 教育入口。下方風險觀察示範 IXAI Pro
+              如何把 coupon、KI、KO、worst-of 與市場波動整理成風險 awareness。
             </p>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
@@ -386,9 +387,12 @@ export default async function FcnPage() {
       </section>
 
       <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          IXAI Interpretation
-        </p>
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            IXAI Interpretation
+          </p>
+        </div>
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
           目前應優先觀察 worst-of 與下一個 coupon date。
         </h2>
@@ -402,28 +406,31 @@ export default async function FcnPage() {
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <a
-            className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
             href={lineUrl}
             rel="noreferrer"
             target="_blank"
           >
+            <MessageCircle className="h-4 w-4" aria-hidden="true" />
             加入 LINE 諮詢
           </a>
           <a
-            className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             href={lineUrl}
             rel="noreferrer"
             target="_blank"
           >
+            <CalendarCheck className="h-4 w-4" aria-hidden="true" />
             預約一玄顧問
           </a>
           <a
-            className="rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             href={ixaiEcosystem.proDashboardUrl}
             rel="noopener noreferrer"
             target="_blank"
           >
             {ixaiEcosystem.cta.enterPro}
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </div>
         <p className="mt-5 border-t border-[var(--ixai-border)] pt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ArrowUpRight, Camera, Mail, MessageCircle, Users } from "lucide-react";
 import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
 import { getBrandContactChannels } from "@/src/lib/brand/contact";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -22,6 +23,13 @@ const beliefs = [
     copy: "真正有用的金融產品，應該能每天打開，逐步建立投資者自己的市場操作語境。",
   },
 ];
+
+const contactIcons = {
+  Email: Mail,
+  Facebook: Users,
+  Instagram: Camera,
+  LINE: MessageCircle,
+};
 
 export const metadata = buildPublicMetadata({
   title: "關於一玄與 IXAI",
@@ -199,17 +207,25 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {communityLinks.map((link) => (
-              <a
-                className="rounded-lg border border-white/10 bg-white/[0.045] px-4 py-3 text-sm font-medium text-white/76 transition hover:bg-white/10 hover:text-white"
-                href={link.value}
-                key={link.label}
-                rel={link.isExternal ? "noreferrer" : undefined}
-                target={link.isExternal ? "_blank" : undefined}
-              >
-                {link.ctaLabel}
-              </a>
-            ))}
+            {communityLinks.map((link) => {
+              const ContactIcon = contactIcons[link.label];
+
+              return (
+                <a
+                  className="inline-flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/[0.045] px-4 py-3 text-sm font-medium text-white/76 transition hover:bg-white/10 hover:text-white"
+                  href={link.value}
+                  key={link.label}
+                  rel={link.isExternal ? "noreferrer" : undefined}
+                  target={link.isExternal ? "_blank" : undefined}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <ContactIcon className="h-4 w-4" aria-hidden="true" />
+                    {link.ctaLabel}
+                  </span>
+                  <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
+                </a>
+              );
+            })}
           </div>
         </div>
       </section>

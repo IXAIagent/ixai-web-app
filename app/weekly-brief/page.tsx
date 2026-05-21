@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight, CalendarDays, Clock3 } from "lucide-react";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getAllWeeklyBriefs, getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
@@ -39,10 +40,12 @@ export default function WeeklyBriefArchivePage() {
               {latestBrief.executiveSummary}
             </p>
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-[var(--ixai-forest-soft)]">
-              <span className="rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
+                <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
                 發布時間：{latestBrief.publishedAt}
               </span>
-              <span className="rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
+                <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
                 市場回顧期間：{latestBrief.coveragePeriod}
               </span>
               <span className="rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
@@ -52,10 +55,11 @@ export default function WeeklyBriefArchivePage() {
           </div>
           <div className="flex items-end lg:justify-end">
             <Link
-              className="inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
               href={`/weekly-brief/${latestBrief.slug}`}
             >
               閱讀週報
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -96,6 +100,7 @@ export default function WeeklyBriefArchivePage() {
                 </div>
                 <span className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--ixai-ink-muted)]">
                   Weekly Brief
+                  <ArrowRight className="mt-2 h-4 w-4 lg:ml-auto" aria-hidden="true" />
                 </span>
               </div>
             </Link>

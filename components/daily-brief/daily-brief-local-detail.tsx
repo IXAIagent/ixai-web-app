@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AlertTriangle, ListChecks } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { DailyBriefDraft } from "@/src/types/editorial";
 
@@ -212,16 +213,22 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {brief.riskFocus?.length ? (
-          <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">
+          <section className="rounded-lg border border-[#9f5530]/24 bg-[#9f5530]/[0.08]">
             <div className="border-b border-[var(--ixai-border)] px-5 py-4">
-              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                風險焦點
+              <div className="flex items-center gap-2 text-[#6f351f]">
+                <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+                  風險焦點
+                </p>
+              </div>
+              <p className="mt-2 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+                今日較需要警覺的下行風險、波動來源與市場壓力點。
               </p>
             </div>
             <ul className="divide-y divide-[var(--ixai-border)]">
               {brief.riskFocus.map((risk) => (
                 <li
-                  className="px-5 py-4 text-sm leading-7 text-[var(--ixai-forest-soft)]"
+                  className="px-5 py-4 text-sm leading-7 text-[#5f2e1c]"
                   key={risk}
                 >
                   {risk}
@@ -232,10 +239,16 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
         ) : null}
 
         {intelligence ? (
-          <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">
+          <section className="rounded-lg border border-[rgba(9,41,31,0.16)] bg-[rgba(9,41,31,0.045)]">
             <div className="border-b border-[var(--ixai-border)] px-5 py-4">
-              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                What To Monitor
+              <div className="flex items-center gap-2 text-[var(--ixai-forest)]">
+                <ListChecks className="h-4 w-4" aria-hidden="true" />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+                  What To Monitor
+                </p>
+              </div>
+              <p className="mt-2 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+                接下來需要追蹤的訊號、日期與確認條件，作為後續市場觀察清單。
               </p>
             </div>
             <ul className="divide-y divide-[var(--ixai-border)]">

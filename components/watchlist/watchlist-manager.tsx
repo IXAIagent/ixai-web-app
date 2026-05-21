@@ -2,6 +2,15 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import {
+  ArrowRight,
+  BarChart3,
+  Plus,
+  RefreshCw,
+  Save,
+  Trash2,
+  UserCircle,
+} from "lucide-react";
 import { useIdentity } from "@/components/auth/auth-provider";
 import {
   MARKET_DATA_DISCLAIMER,
@@ -274,15 +283,17 @@ export function WatchlistManager() {
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
-            className="rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             href="/market"
           >
+            <BarChart3 className="h-4 w-4" aria-hidden="true" />
             查看市場總覽
           </Link>
           <Link
-            className="rounded-lg border border-white/15 px-4 py-2 text-sm font-medium text-[rgba(245,240,230,0.78)] transition hover:bg-white/8 hover:text-[var(--ixai-cream)]"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2 text-sm font-medium text-[rgba(245,240,230,0.78)] transition hover:bg-white/8 hover:text-[var(--ixai-cream)]"
             href="/account"
           >
+            <UserCircle className="h-4 w-4" aria-hidden="true" />
             前往我的 IXAI
           </Link>
         </div>
@@ -308,17 +319,19 @@ export function WatchlistManager() {
           </div>
           {session.mode === "authenticated" ? (
             <button
-              className="w-fit rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+              className="inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
               onClick={handleAccountSync}
               type="button"
             >
+              <RefreshCw className="h-4 w-4" aria-hidden="true" />
               同步到帳戶
             </button>
           ) : (
             <Link
-              className="w-fit rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+              className="inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
               href="/account"
             >
+              <UserCircle className="h-4 w-4" aria-hidden="true" />
               登入同步
             </Link>
           )}
@@ -402,10 +415,11 @@ export function WatchlistManager() {
           </div>
 
           <button
-            className="mt-5 inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:opacity-45"
+            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:opacity-45"
             disabled={!normalizedSymbol}
             type="submit"
           >
+            <Plus className="h-4 w-4" aria-hidden="true" />
             加入自選觀察
           </button>
 
@@ -440,10 +454,11 @@ export function WatchlistManager() {
             </div>
             {items.length > 0 ? (
               <button
-                className="rounded-lg border border-[var(--ixai-border)] px-3 py-1.5 text-xs font-medium text-[var(--ixai-forest-soft)]"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--ixai-border)] px-3 py-1.5 text-xs font-medium text-[var(--ixai-forest-soft)]"
                 onClick={() => sync(clearWatchlist())}
                 type="button"
               >
+                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                 清空
               </button>
             ) : null}
@@ -457,6 +472,22 @@ export function WatchlistManager() {
               <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
                 新增你關注的股票、ETF 或 Crypto，IXAI 將逐步建立你的個人市場觀察。
               </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+                  href="/market"
+                >
+                  <BarChart3 className="h-4 w-4" aria-hidden="true" />
+                  查看市場總覽
+                </Link>
+                <Link
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+                  href="/account"
+                >
+                  <UserCircle className="h-4 w-4" aria-hidden="true" />
+                  前往我的 IXAI
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="divide-y divide-[var(--ixai-border)]">
@@ -477,10 +508,11 @@ export function WatchlistManager() {
                         </p>
                       </div>
                       <button
-                        className="rounded-lg border border-[var(--ixai-border)] px-3 py-1.5 text-xs font-medium text-[var(--ixai-forest-soft)]"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--ixai-border)] px-3 py-1.5 text-xs font-medium text-[var(--ixai-forest-soft)]"
                         onClick={() => handleRemove(item)}
                         type="button"
                       >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         移除
                       </button>
                     </div>
@@ -532,10 +564,11 @@ export function WatchlistManager() {
                         value={editingNotes[key] ?? ""}
                       />
                       <button
-                        className="w-fit rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-xs font-medium text-[var(--ixai-cream)]"
+                        className="inline-flex w-fit items-center gap-1.5 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-xs font-medium text-[var(--ixai-cream)]"
                         onClick={() => handleNoteSave(item)}
                         type="button"
                       >
+                        <Save className="h-3.5 w-3.5" aria-hidden="true" />
                         儲存備註
                       </button>
                     </div>
@@ -549,12 +582,28 @@ export function WatchlistManager() {
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-5 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Market Data Layer
+          自選觀察如何使用資料
         </p>
         <p className="mt-2">
           自選觀察會顯示每筆資料的狀態：真實、即時、延遲、參考或資料不可用。
           IXAI 會嘗試讀取公開市場資料；若資料來源暫時失敗，會以「參考」或「資料不可用」清楚標示。
         </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            href="/market"
+          >
+            查看市場總覽
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+          <Link
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            href="/account"
+          >
+            前往我的 IXAI
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
         <p className="mt-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
           {MARKET_DATA_DISCLAIMER}
         </p>

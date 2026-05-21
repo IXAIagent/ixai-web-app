@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowRight, ArrowUpRight, CalendarDays, ShieldCheck } from "lucide-react";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import {
   getAllWeeklyBriefs,
@@ -62,7 +63,8 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
           {brief.executiveSummary}
         </p>
         <div className="mt-5 flex flex-wrap gap-2 text-xs text-white/74">
-          <span className="rounded-lg border border-white/12 px-2.5 py-1">
+          <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/12 px-2.5 py-1">
+            <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
             發布時間：{brief.publishedAt}
           </span>
           <span className="rounded-lg border border-white/12 px-2.5 py-1">
@@ -180,9 +182,12 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          風險提醒
-        </p>
+        <div className="flex items-center gap-2 text-[var(--ixai-forest)]">
+          <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            風險提醒
+          </p>
+        </div>
         <div className="mt-3 grid gap-3">
           {brief.riskNotes.map((note) => (
             <p
@@ -252,18 +257,20 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              className="inline-flex rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
               href="/daily-brief"
             >
               每日簡報
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
-              className="inline-flex rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-white/78"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-white/78"
               href={ixaiEcosystem.proDashboardUrl}
               rel="noopener noreferrer"
               target="_blank"
             >
               {ixaiEcosystem.cta.enterPro}
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </a>
           </div>
         </div>

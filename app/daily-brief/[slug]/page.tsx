@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AlertTriangle, ArrowLeft, ArrowUpRight, Eye } from "lucide-react";
 import { DailyBriefLocalDetail } from "@/components/daily-brief/daily-brief-local-detail";
 import type { DailyBrief } from "@/content/daily-briefs";
 import {
@@ -74,9 +75,10 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
             </p>
           </div>
           <Link
-            className="inline-flex w-fit rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-white/80 transition hover:bg-white/8 hover:text-white"
+            className="inline-flex w-fit items-center gap-2 rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-white/80 transition hover:bg-white/8 hover:text-white"
             href="/daily-brief"
           >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             回到封存
           </Link>
         </div>
@@ -133,16 +135,22 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">
+        <section className="rounded-lg border border-[#9f5530]/24 bg-[#9f5530]/[0.08]">
           <div className="border-b border-[var(--ixai-border)] px-5 py-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              風險焦點
+            <div className="flex items-center gap-2 text-[#6f351f]">
+              <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+                風險焦點
+              </p>
+            </div>
+            <p className="mt-2 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+              今日需要優先警覺的市場壓力與下行風險。
             </p>
           </div>
           <ul className="divide-y divide-[var(--ixai-border)]">
             {brief.riskFocus.map((risk) => (
               <li
-                className="px-5 py-4 text-sm leading-7 text-[var(--ixai-forest-soft)]"
+                className="px-5 py-4 text-sm leading-7 text-[#5f2e1c]"
                 key={risk}
               >
                 {risk}
@@ -151,10 +159,16 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
           </ul>
         </section>
 
-        <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">
+        <section className="rounded-lg border border-[rgba(9,41,31,0.16)] bg-[rgba(9,41,31,0.045)]">
           <div className="border-b border-[var(--ixai-border)] px-5 py-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              自選觀察重點
+            <div className="flex items-center gap-2 text-[var(--ixai-forest)]">
+              <Eye className="h-4 w-4" aria-hidden="true" />
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+                自選觀察重點
+              </p>
+            </div>
+            <p className="mt-2 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+              可放回 Watchlist 持續追蹤的標的與觀察理由。
             </p>
           </div>
           <div className="divide-y divide-[var(--ixai-border)]">
@@ -186,12 +200,13 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
             </p>
           </div>
           <a
-            className="inline-flex w-fit rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             href={ixaiEcosystem.proDashboardUrl}
             rel="noopener noreferrer"
             target="_blank"
           >
             {ixaiEcosystem.cta.enterPro}
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </div>
       </section>

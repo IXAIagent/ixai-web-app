@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight, ArrowUpRight, LockKeyhole } from "lucide-react";
 import { proEngineSurfaces, type ProEngineSurface } from "@/src/lib/engines/pro-engine-surfaces";
 import {
   formatFcnDate,
@@ -61,7 +62,8 @@ function EngineCard({ engine }: { engine: ProEngineSurface }) {
             <span className="text-xs font-medium text-[var(--ixai-forest-soft)]">
               {item}
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-gold)]">
+            <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-gold)]">
+              <LockKeyhole className="h-3 w-3" aria-hidden="true" />
               Pro
             </span>
           </div>
@@ -69,8 +71,9 @@ function EngineCard({ engine }: { engine: ProEngineSurface }) {
       </div>
 
       {engine.href ? (
-        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
-          查看風險觀察 →
+        <p className="mt-4 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+          查看風險觀察
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </p>
       ) : null}
 
@@ -156,12 +159,13 @@ export function ProEngineSurface({ fcnSnapshot }: { fcnSnapshot?: FcnPortfolioSn
           </p>
         </div>
         <a
-          className="w-fit rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+          className="inline-flex w-fit items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
           href={ixaiEcosystem.proDashboardUrl}
           rel="noopener noreferrer"
           target="_blank"
         >
           {ixaiEcosystem.cta.enterPro}
+          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </a>
       </div>
 

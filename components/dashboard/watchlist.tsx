@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowUpRight, Plus, UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useIdentity } from "@/components/auth/auth-provider";
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
@@ -122,9 +123,10 @@ export function Watchlist() {
             Guest 會以本機保存；登入 IXAI account 後，watchlist 可接上未來跨裝置同步與個人 intelligence memory。
           </p>
           <Link
-            className="mt-5 inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
             href="/watchlist"
           >
+            <Plus className="h-4 w-4" aria-hidden="true" />
             新增自選標的
           </Link>
         </div>
@@ -171,10 +173,11 @@ export function Watchlist() {
           })}
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
             <Link
-              className="inline-flex min-h-10 items-center rounded-lg border border-[var(--ixai-border)] px-4 text-sm font-medium text-[var(--ixai-forest)]"
+              className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 text-sm font-medium text-[var(--ixai-forest)]"
               href="/watchlist"
             >
               管理自選觀察
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             {/* v1.7: soft Pro seed inside the monitoring tier — no badge,
                 no popup, just an inline reference. Premium conversion sits
@@ -186,8 +189,13 @@ export function Watchlist() {
               target={session.mode === "authenticated" ? "_blank" : undefined}
             >
               {session.mode === "authenticated"
-                ? "Pro 用戶可監控更多標的、設定自訂提醒 →"
-                : "登入後同步到你的 IXAI account →"}
+                ? "Pro 用戶可監控更多標的、設定自訂提醒"
+                : "登入後同步到你的 IXAI account"}
+              {session.mode === "authenticated" ? (
+                <ArrowUpRight className="ml-1 inline h-3.5 w-3.5" aria-hidden="true" />
+              ) : (
+                <UserCircle className="ml-1 inline h-3.5 w-3.5" aria-hidden="true" />
+              )}
             </a>
           </div>
         </div>
