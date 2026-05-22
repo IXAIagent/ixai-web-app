@@ -3,6 +3,7 @@ import {
   readPersonalMemory,
   writePersonalMemory,
 } from "@/src/lib/personalization/memory";
+import { getAuthRedirectUrl } from "@/src/lib/auth/get-auth-redirect-url";
 import { getSupabaseClientConfig } from "@/src/lib/supabase/client";
 import type {
   IXAISession,
@@ -12,7 +13,6 @@ import type {
 } from "@/src/types/identity";
 
 const IDENTITY_KEY = "ixai.identity.v1";
-const DEFAULT_SITE_URL = "https://app.ixuan.ai";
 
 function canUseStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -91,24 +91,7 @@ export function isSupabaseAuthConfigured() {
   return getSupabaseAuthConfig() !== null;
 }
 
-export function getAuthSiteUrl() {
-  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  const normalizedUrl = (configuredUrl || DEFAULT_SITE_URL).replace(/\/+$/, "");
-  const isLocalhost =
-    normalizedUrl.includes("localhost") || normalizedUrl.includes("127.0.0.1");
-
-  if (process.env.NODE_ENV === "production" && isLocalhost) {
-    return DEFAULT_SITE_URL;
-  }
-
-  return normalizedUrl;
-}
-
-export function getAuthCallbackUrl() {
-  return `${getAuthSiteUrl()}/auth/callback`;
-}
-
-export function buildGoogleOAuthUrl(redirectTo = getAuthCallbackUrl()) {
+export function buildGoogleOAuthUrl() {
   const config = getSupabaseAuthConfig();
 
   if (!config) {
@@ -117,7 +100,7 @@ export function buildGoogleOAuthUrl(redirectTo = getAuthCallbackUrl()) {
 
   const params = new URLSearchParams({
     provider: "google",
-    redirect_to: redirectTo,
+    redirect_to: getAuthRedirectUrl(),
   });
 
   return `${config.url}/auth/v1/authorize?${params.toString()}`;
@@ -472,7 +455,7 @@ export async function registerWithPassword(
 ): Promise<PasswordAuthResult> {
   try {
     const supabase = createSupabaseAuthClient();
-    const callbackUrl = getAuthCallbackUrl();
+    const callbackUrl = getAuthRedirectUrl();
 
     if (process.env.NODE_ENV === "development") {
       console.log({
@@ -555,7 +538,7 @@ export async function signOutSupabase(accessToken?: string) {
   }
 }
 
-export async function sendMagicLink(email: string, redirectTo = getAuthCallbackUrl()) {
+export async function sendMagicLink(email: string) {
   const config = getSupabaseAuthConfig();
 
   if (!config) {
@@ -574,7 +557,7 @@ export async function sendMagicLink(email: string, redirectTo = getAuthCallbackU
     body: JSON.stringify({
       email,
       create_user: true,
-      email_redirect_to: redirectTo,
+      email_redirect_to: getAuthRedirectUrl(),
     }),
   });
 
