@@ -6,6 +6,7 @@ const logoSizes = {
   md: "w-20",
   lg: "w-28",
 };
+const logoSrc = "/logo/ixuan-logo.png?v=1204";
 
 export function IxaiLogo({
   className = "",
@@ -23,7 +24,7 @@ export function IxaiLogo({
       height={239}
       priority={priority}
       sizes="(max-width: 768px) 96px, 128px"
-      src="/logo/ixuan-logo.png"
+      src={logoSrc}
       unoptimized
       width={527}
     />
