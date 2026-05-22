@@ -41,7 +41,11 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
       ? await signInWithPassword(email, password)
       : await registerWithPassword(email, password);
 
-    setMessage(result.message);
+    setMessage(
+      !isLogin && process.env.NODE_ENV !== "production" && result.debugMessage
+        ? result.debugMessage
+        : result.message,
+    );
     setIsSubmitting(false);
 
     if (result.authenticated || session.mode === "authenticated") {

@@ -128,6 +128,7 @@ type SupabaseAuthResponse = {
   refresh_token?: string;
   expires_at?: number;
   expires_in?: number;
+  code?: string;
   user?: {
     id?: string;
     email?: string;
@@ -139,12 +140,16 @@ type SupabaseAuthResponse = {
   };
   error?: string;
   error_description?: string;
+  message?: string;
   msg?: string;
+  name?: string;
+  status?: number;
 };
 
 export type PasswordAuthResult = {
   ok: boolean;
   message: string;
+  debugMessage?: string;
   session?: IXAISession;
   requiresEmailConfirmation?: boolean;
 };
@@ -186,6 +191,12 @@ function buildSessionFromAuthResponse(payload: SupabaseAuthResponse): IXAISessio
 
 type AuthErrorContext = "login" | "register" | "magic_link";
 
+type IXAIAuthDebugError = Error & {
+  code?: string;
+  status?: number;
+  responseBody?: unknown;
+};
+
 function logAuthDebug(
   context: AuthErrorContext,
   details: {
@@ -208,12 +219,130 @@ function logAuthDebug(
   });
 }
 
+function logRegisterRawError(error: IXAIAuthDebugError) {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
+  console.error("[IXAI REGISTER RAW ERROR]", error);
+  console.error("[IXAI REGISTER RAW ERROR DETAILS]", {
+    message: error.message,
+    status: error.status,
+    code: error.code,
+    name: error.name,
+    responseBody: error.responseBody,
+  });
+}
+
+function getSupabaseAuthConfigOrThrow() {
+  const config = getSupabaseAuthConfig();
+
+  if (!config) {
+    throw new Error("IXAI Account production auth 尚未設定。");
+  }
+
+  return config;
+}
+
+async function parseSupabaseAuthResponse(response: Response): Promise<SupabaseAuthResponse> {
+  const text = await response.text();
+
+  if (!text) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(text) as SupabaseAuthResponse;
+  } catch {
+    return {
+      error: "invalid_auth_response",
+      message: text,
+    };
+  }
+}
+
+function buildSupabaseAuthError(
+  payload: SupabaseAuthResponse,
+  status?: number,
+): IXAIAuthDebugError {
+  const message =
+    payload.message ??
+    payload.error_description ??
+    payload.msg ??
+    payload.error ??
+    `Supabase auth request failed${status ? ` with status ${status}` : ""}.`;
+  const error = new Error(message) as IXAIAuthDebugError;
+  error.name = payload.name ?? "SupabaseAuthError";
+  error.status = payload.status ?? status;
+  error.code = payload.code ?? payload.error;
+  error.responseBody = payload;
+  return error;
+}
+
+function createSupabaseAuthClient() {
+  const config = getSupabaseAuthConfigOrThrow();
+
+  return {
+    auth: {
+      async signUp({
+        email,
+        password,
+        options,
+      }: {
+        email: string;
+        password: string;
+        options: {
+          emailRedirectTo: string;
+        };
+      }) {
+        const signUpUrl = new URL(`${config.url}/auth/v1/signup`);
+        signUpUrl.searchParams.set("redirect_to", options.emailRedirectTo);
+
+        const response = await fetch(signUpUrl.toString(), {
+          method: "POST",
+          headers: {
+            apikey: config.anonKey,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            email_redirect_to: options.emailRedirectTo,
+            options: {
+              emailRedirectTo: options.emailRedirectTo,
+              email_redirect_to: options.emailRedirectTo,
+            },
+          }),
+        });
+        const payload = await parseSupabaseAuthResponse(response);
+
+        if (!response.ok) {
+          return {
+            data: null,
+            error: buildSupabaseAuthError(payload, response.status),
+            payload,
+            status: response.status,
+          };
+        }
+
+        return {
+          data: payload,
+          error: null,
+          payload,
+          status: response.status,
+        };
+      },
+    },
+  };
+}
+
 function normalizeAuthError(
   payload: SupabaseAuthResponse,
   context: AuthErrorContext,
   status?: number,
 ) {
-  const raw = payload.error_description ?? payload.msg ?? payload.error ?? "";
+  const raw =
+    payload.message ?? payload.error_description ?? payload.msg ?? payload.error ?? "";
   const lower = raw.toLowerCase();
 
   logAuthDebug(context, {
@@ -341,41 +470,36 @@ export async function registerWithPassword(
   email: string,
   password: string,
 ): Promise<PasswordAuthResult> {
-  const config = getSupabaseAuthConfig();
-
-  if (!config) {
-    return {
-      ok: false,
-      message: "IXAI Account production auth 尚未設定。",
-    };
-  }
-
   try {
+    const supabase = createSupabaseAuthClient();
     const callbackUrl = getAuthCallbackUrl();
-    const signUpUrl = new URL(`${config.url}/auth/v1/signup`);
-    signUpUrl.searchParams.set("redirect_to", callbackUrl);
 
-    const response = await fetch(signUpUrl.toString(), {
-      method: "POST",
-      headers: {
-        apikey: config.anonKey,
-        "content-type": "application/json",
+    if (process.env.NODE_ENV === "development") {
+      console.log({
+        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+        siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+      });
+    }
+
+    const { data: payload, error, status } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: callbackUrl,
       },
-      body: JSON.stringify({
-        email,
-        password,
-        email_redirect_to: callbackUrl,
-        options: {
-          email_redirect_to: callbackUrl,
-        },
-      }),
     });
-    const payload = await response.json() as SupabaseAuthResponse;
 
-    if (!response.ok) {
+    if (error) {
+      logRegisterRawError(error);
+      const errorPayload =
+        error.responseBody && typeof error.responseBody === "object"
+          ? error.responseBody as SupabaseAuthResponse
+          : { message: error.message, code: error.code, status: error.status };
       return {
         ok: false,
-        message: normalizeAuthError(payload, "register", response.status),
+        message: normalizeAuthError(errorPayload, "register", status),
+        debugMessage: process.env.NODE_ENV !== "production" ? error.message : undefined,
       };
     }
 
@@ -394,13 +518,19 @@ export async function registerWithPassword(
       message: "IXAI Account 已建立並登入。",
       session,
     };
-  } catch {
-    logAuthDebug("register", {
-      message: "network_error",
-    });
+  } catch (error) {
+    const authError = error instanceof Error
+      ? error as IXAIAuthDebugError
+      : new Error("Unknown register error") as IXAIAuthDebugError;
+
+    logRegisterRawError(authError);
     return {
       ok: false,
-      message: "IXAI Account 暫時無法建立。",
+      message:
+        authError.message === "IXAI Account production auth 尚未設定。"
+          ? authError.message
+          : "IXAI Account 暫時無法建立。",
+      debugMessage: process.env.NODE_ENV !== "production" ? authError.message : undefined,
     };
   }
 }

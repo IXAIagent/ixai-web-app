@@ -42,6 +42,7 @@ import type {
 type AuthActionResult = {
   ok: boolean;
   message: string;
+  debugMessage?: string;
   authenticated?: boolean;
 };
 
@@ -211,6 +212,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         return {
           ok: result.ok,
           message: result.message,
+          debugMessage: result.debugMessage,
           authenticated: Boolean(result.session),
         };
       },
@@ -224,6 +226,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         return {
           ok: result.ok,
           message: result.message,
+          debugMessage: result.debugMessage,
           authenticated: Boolean(result.session),
         };
       },
