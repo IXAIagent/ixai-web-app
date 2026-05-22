@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { useIdentity } from "@/components/auth/auth-provider";
-import { hasAcceptedGuestMode } from "@/src/lib/identity/session";
 
 const exemptPathPrefixes = [
   "/about",
@@ -35,8 +33,7 @@ function AuthEntryShell({
 
 export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
-  const { continueAsGuest, mounted, session } = useIdentity();
-  const [guestAccepted, setGuestAccepted] = useState(hasAcceptedGuestMode);
+  const { mounted, session } = useIdentity();
 
   if (isExemptPath(pathname)) {
     return <>{children}</>;
@@ -55,7 +52,7 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
     );
   }
 
-  if (session.mode === "authenticated" || guestAccepted) {
+  if (session.mode === "authenticated") {
     return <>{children}</>;
   }
 
@@ -68,13 +65,15 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
             IXAI Public Intelligence
           </p>
           <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
-            AI wealth intelligence，從每天的市場入口開始。
+            建立你的 IXAI intelligence workspace。
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-7 text-white/68 sm:mt-5">
-            閱讀 Daily Brief、建立自選觀察，並逐步連接未來 IXAI Pro 的個人風險監控與 intelligence workspace。
+            開始建立個人市場觀察系統：每日市場 intelligence、FCN 教育、AI risk monitoring，
+            以及未來可升級的 IXAI Pro AI Wealth Operating System。
           </p>
           <p className="mt-5 rounded-lg border border-white/10 bg-white/[0.055] p-3 text-xs leading-6 text-white/58">
-            不需要登入也能使用 Public App。建立 IXAI Account 是為了未來同步 Watchlist、偏好與 Pro workflow。
+            IXAI Public App 是一個帳號型 intelligence funnel。建立帳號後，你的 Watchlist、
+            偏好與未來 Pro workflow 才能形成連續的市場記憶。
           </p>
         </div>
 
@@ -86,10 +85,11 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
             進入 IXAI
           </h2>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-            你可以先用 Guest 模式閱讀與建立本機自選，也可以建立 IXAI Account，為未來跨裝置同步與 IXAI Pro continuity 做準備。
+            建立 IXAI Account 後即可進入 Public Intelligence Layer，閱讀每日市場情報、
+            建立個人自選觀察，並為未來 IXAI Pro continuity 做準備。
           </p>
 
-          <div className="mt-6 grid gap-3">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <Link
               className="ixai-cta-forest inline-flex min-h-12 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-5 py-3 text-sm font-semibold"
               href="/register"
@@ -102,16 +102,6 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
             >
               登入
             </Link>
-            <button
-              className="inline-flex min-h-12 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.30)] bg-[rgba(176,141,87,0.08)] px-5 py-3 text-sm font-medium text-[var(--ixai-forest-soft)]"
-              onClick={() => {
-                continueAsGuest();
-                setGuestAccepted(true);
-              }}
-              type="button"
-            >
-              Continue as Guest
-            </button>
           </div>
 
           <div className="mt-6 grid gap-3 text-xs leading-6 text-[var(--ixai-ink-muted)] sm:grid-cols-3">

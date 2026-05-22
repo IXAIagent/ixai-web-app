@@ -39,7 +39,7 @@ export default function AccountPage() {
         </h2>
         <div className="mt-5 grid gap-3 text-sm leading-6 text-[var(--ixai-forest-soft)] sm:grid-cols-2 lg:grid-cols-4">
           {[
-            ["Public App", "可使用 Guest 或 IXAI Account。"],
+            ["Public App", "使用 IXAI Account 進入 Public Intelligence Layer。"],
             ["Shared login", "未來支援 Public App 與 IXAI Pro 共用登入。"],
             ["Watchlist sync", "目前此裝置保存；登入後將逐步支援跨裝置同步。"],
             ["Notifications", "Daily Brief、風險與 FCN 通知需使用者明確開啟。"],
@@ -81,10 +81,10 @@ export default function AccountPage() {
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Why login?
+          Why account?
         </p>
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-          登入不是為了限制閱讀，而是為了建立你的個人市場記憶。
+          IXAI Account 是建立個人市場記憶與未來 Pro continuity 的起點。
         </h2>
         <div className="mt-5 grid gap-3 text-sm leading-7 text-[var(--ixai-forest-soft)] md:grid-cols-2">
           {[

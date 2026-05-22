@@ -12,7 +12,6 @@ import {
   clearIdentityPayload,
   fetchSupabaseUser,
   getGuestSession,
-  acceptGuestMode,
   isSupabaseAuthConfigured,
   readHashSession,
   readIdentityPayload,
@@ -55,7 +54,6 @@ type IdentityContextValue = {
   signInWithPassword: (email: string, password: string) => Promise<AuthActionResult>;
   registerWithPassword: (email: string, password: string) => Promise<AuthActionResult>;
   sendMagicLink: (email: string) => Promise<{ ok: boolean; message: string }>;
-  continueAsGuest: () => void;
   signOut: () => void;
   completeOnboarding: (interests: IntelligenceInterest[]) => void;
   updateMemory: (updates: Partial<PersonalMemory>) => void;
@@ -66,7 +64,7 @@ const IdentityContext = createContext<IdentityContextValue | null>(null);
 const localPersistenceStatus: PersistenceStatus = {
   mode: "local",
   label: "本機保存",
-  message: "Guest 資料會保存在此裝置。",
+  message: "尚未登入 IXAI Account。",
 };
 
 export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -227,14 +225,6 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
           message: result.message,
           authenticated: Boolean(result.session),
         };
-      },
-      continueAsGuest() {
-        acceptGuestMode();
-        const nextMemory = {
-          ...memory,
-          onboardingCompleted: true,
-        };
-        persist(getGuestSession(), nextMemory);
       },
       signOut() {
         void signOutSupabase(session.accessToken);

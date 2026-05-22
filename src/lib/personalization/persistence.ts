@@ -92,7 +92,7 @@ export async function loadUserWatchlist(session: IXAISession): Promise<{
         : {
             mode: "local",
             label: "本機保存",
-            message: "Guest 自選觀察會保存在此裝置。",
+            message: "尚未登入 IXAI Account，自選觀察暫存於此裝置。",
           },
     };
   }
@@ -154,7 +154,7 @@ export async function saveUserWatchlist(
       : {
           mode: "local",
           label: "本機保存",
-          message: "Guest 自選觀察會保存在此裝置。",
+          message: "尚未登入 IXAI Account，自選觀察暫存於此裝置。",
         };
   }
 
@@ -217,7 +217,7 @@ export async function loadUserPreferences(session: IXAISession): Promise<{
         : {
             mode: "local",
             label: "本機保存",
-            message: "Guest 偏好會保存在此裝置。",
+            message: "尚未登入 IXAI Account，偏好暫存於此裝置。",
           },
     };
   }
@@ -267,7 +267,7 @@ export async function saveUserPreferences(
       : {
           mode: "local",
           label: "本機保存",
-          message: "Guest 偏好會保存在此裝置。",
+          message: "尚未登入 IXAI Account，偏好暫存於此裝置。",
         };
   }
 
@@ -316,7 +316,7 @@ export async function loadProfileMemory(session: IXAISession): Promise<{
         : {
             mode: "local",
             label: "本機保存",
-            message: "Guest 市場記憶會保存在此裝置。",
+            message: "尚未登入 IXAI Account，市場記憶暫存於此裝置。",
           },
     };
   }
@@ -382,7 +382,7 @@ export async function saveProfileMemory(
       : {
           mode: "local",
           label: "本機保存",
-          message: "Guest 市場記憶會保存在此裝置。",
+          message: "尚未登入 IXAI Account，市場記憶暫存於此裝置。",
         };
   }
 

@@ -19,7 +19,7 @@ export function AccountStatus() {
           ? "讀取中..."
           : session.mode === "authenticated"
             ? "IXAI 帳戶已啟用"
-            : "Guest 模式"}
+            : "需要登入"}
       </p>
     </Link>
   );

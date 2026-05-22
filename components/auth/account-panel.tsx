@@ -10,7 +10,6 @@ import { getWatchlist } from "@/src/lib/watchlist";
 export function AccountPanel() {
   const {
     authConfigured,
-    continueAsGuest,
     memory,
     mounted,
     persistenceStatus,
@@ -59,11 +58,12 @@ export function AccountPanel() {
         My IXAI
       </p>
       <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-        {isAuthenticated ? "你的 IXAI 身份已建立" : "以 Guest 模式開始，登入後同步你的市場記憶"}
+        {isAuthenticated ? "你的 IXAI 身份已建立" : "建立帳號後進入 IXAI intelligence workspace"}
       </h2>
       <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-        Guest 模式是有效的免費使用方式；登入的價值在於準備同步自選觀察、保存關注主題，
-        並為未來個人化 AI 風險監控與 IXAI Pro 模組建立基礎。Pro 連接與跨裝置同步會分階段開放。
+        IXAI Public App 現在以帳號作為進入點。登入後可以進入每日市場 intelligence、
+        建立個人自選觀察，並為未來 IXAI Pro 個人化 AI 風險監控建立基礎。
+        Pro 連接與跨裝置同步會分階段開放。
       </p>
       <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3">
         <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
@@ -126,10 +126,10 @@ export function AccountPanel() {
         <div className="mt-5 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-lg border border-[var(--ixai-border)] bg-white/36 p-4 lg:col-span-2">
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-              Guest 模式
+              尚未登入
             </p>
             <div className="mt-2 grid gap-2 text-sm leading-6 text-[var(--ixai-forest-soft)] sm:grid-cols-3">
-              <p>保存方式：本機瀏覽器</p>
+              <p>進入狀態：需要 IXAI Account</p>
               <p>自選數量：{watchlistCount}</p>
               <p>
                 關注主題：{preferredLabels.length > 0 ? preferredLabels.join(" / ") : "尚未設定"}
@@ -143,7 +143,7 @@ export function AccountPanel() {
               </p>
               <p className="mt-2">
                 目前登入同步尚未啟用，因此 Google 登入與 email 登入連結不會啟用。
-                你仍可用 Guest 模式閱讀內容、建立本機 watchlist 與保存偏好。
+                請先設定 Supabase public env，才能開放 IXAI Account funnel。
               </p>
               <p className="mt-2">
                 {ixaiIdentity.accountContinuityCopy}
@@ -178,13 +178,6 @@ export function AccountPanel() {
                 登入同步開放後，你可以跨裝置保存自選觀察與市場偏好。
               </p>
             ) : null}
-            <button
-              className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest-soft)]"
-              onClick={continueAsGuest}
-              type="button"
-            >
-              繼續使用 Guest 模式
-            </button>
           </div>
 
           <form className="grid gap-3" onSubmit={handleMagicLink}>

@@ -12,7 +12,6 @@ import type {
 } from "@/src/types/identity";
 
 const IDENTITY_KEY = "ixai.identity.v1";
-const GUEST_ACCEPTED_KEY = "ixai.guest.accepted.v1";
 
 function canUseStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -81,22 +80,6 @@ export function clearIdentityPayload() {
 
   window.localStorage.removeItem(IDENTITY_KEY);
   window.dispatchEvent(new Event("ixai-identity-change"));
-}
-
-export function hasAcceptedGuestMode() {
-  if (!canUseStorage()) {
-    return false;
-  }
-
-  return window.localStorage.getItem(GUEST_ACCEPTED_KEY) === "true";
-}
-
-export function acceptGuestMode() {
-  if (!canUseStorage()) {
-    return;
-  }
-
-  window.localStorage.setItem(GUEST_ACCEPTED_KEY, "true");
 }
 
 export function getSupabaseAuthConfig() {
@@ -215,7 +198,7 @@ export async function signInWithPassword(
   if (!config) {
     return {
       ok: false,
-      message: "登入同步尚未啟用。你仍可使用 Guest 模式閱讀內容與建立自選觀察。",
+      message: "登入同步尚未啟用。請先設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。",
     };
   }
 
@@ -268,7 +251,7 @@ export async function registerWithPassword(
   if (!config) {
     return {
       ok: false,
-      message: "帳號建立尚未啟用。你仍可使用 Guest 模式閱讀內容與建立自選觀察。",
+      message: "帳號建立尚未啟用。請先設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。",
     };
   }
 
@@ -339,7 +322,7 @@ export async function sendMagicLink(email: string, redirectTo: string) {
   if (!config) {
     return {
       ok: false,
-      message: "登入同步尚未啟用。你仍可使用 Guest 模式閱讀內容與建立自選觀察。",
+      message: "登入同步尚未啟用。請先設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。",
     };
   }
 

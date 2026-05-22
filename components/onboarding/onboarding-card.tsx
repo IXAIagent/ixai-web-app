@@ -42,7 +42,7 @@ export function OnboardingCard() {
           </p>
         </div>
         <span className="w-fit rounded-md border border-[var(--ixai-border)] px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-forest-soft)]">
-          {session.mode === "authenticated" ? "帳戶同步" : "Guest 模式"}
+          {session.mode === "authenticated" ? "帳戶同步" : "登入後啟用"}
         </span>
       </div>
 

@@ -1,4 +1,4 @@
-const IXAI_STATIC_CACHE = "ixai-static-v1.20.1";
+const IXAI_STATIC_CACHE = "ixai-static-v1.20.2";
 
 const PRECACHE_URLS = [
   "/manifest.webmanifest",

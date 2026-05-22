@@ -14,7 +14,6 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
   const router = useRouter();
   const {
     authConfigured,
-    continueAsGuest,
     registerWithPassword,
     session,
     signInWithPassword,
@@ -42,11 +41,6 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
     }
   }
 
-  function handleGuestMode() {
-    continueAsGuest();
-    router.push("/account");
-  }
-
   return (
     <section className="mx-auto grid w-full max-w-5xl gap-5 px-3 py-4 sm:px-6 sm:py-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-8 lg:py-12">
       <div className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_20px_70px_rgba(9,41,31,0.16)] sm:p-7">
@@ -63,8 +57,8 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
             : "建立帳號是未來 Watchlist 同步、個人偏好保存與 IXAI Pro continuity 的基礎。"}
         </p>
         <div className="mt-5 rounded-lg border border-white/12 bg-white/6 p-4 text-xs leading-6 text-white/64">
-          Guest 模式仍可閱讀 Daily Brief、Weekly Brief 與建立本機自選觀察。
-          登入只用於逐步建立你的個人市場記憶。
+          IXAI Public App 現在以帳號作為進入點。登入後才能進入 Daily Brief、
+          Market、Watchlist 與未來 IXAI Pro continuity。
         </div>
       </div>
 
@@ -81,7 +75,7 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
         <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
           {authConfigured
             ? "登入後即可在此裝置保存 IXAI session；跨裝置同步與 Pro handoff 將分階段開放。"
-            : "登入同步尚未啟用。你仍可用 Guest 模式使用 Public App。"}
+            : "登入同步尚未啟用。請先在環境變數設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。"}
         </p>
 
         <div className="mt-5 grid gap-4">
@@ -117,13 +111,6 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
             type="submit"
           >
             {isSubmitting ? "處理中..." : isLogin ? "登入 IXAI" : "建立 IXAI Account"}
-          </button>
-          <button
-            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] px-5 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
-            onClick={handleGuestMode}
-            type="button"
-          >
-            使用 Guest 模式
           </button>
         </div>
 

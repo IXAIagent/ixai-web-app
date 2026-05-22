@@ -120,7 +120,7 @@ export function Watchlist() {
             新增你關注的股票、ETF 或 Crypto，IXAI 將逐步建立你的個人市場觀察。
           </p>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-            Guest 會以本機保存；登入 IXAI account 後，watchlist 可接上未來跨裝置同步與個人 intelligence memory。
+            Watchlist 會先建立你的個人市場觀察系統，未來可接上跨裝置同步與個人 intelligence memory。
           </p>
           <Link
             className="ixai-cta-forest mt-5 inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium"
