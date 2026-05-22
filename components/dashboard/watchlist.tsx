@@ -123,7 +123,7 @@ export function Watchlist() {
             Guest 會以本機保存；登入 IXAI account 後，watchlist 可接上未來跨裝置同步與個人 intelligence memory。
           </p>
           <Link
-            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+            className="ixai-cta-forest mt-5 inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium"
             href="/watchlist"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />

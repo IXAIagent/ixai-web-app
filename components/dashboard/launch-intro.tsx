@@ -23,7 +23,7 @@ export function LaunchIntro() {
         </div>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
           <Link
-            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-sm font-medium text-[var(--ixai-cream)] sm:px-4"
+            className="ixai-cta-forest inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-sm font-medium sm:px-4"
             href={ixaiEcosystem.dailyBriefUrl}
           >
             查看 Daily Brief

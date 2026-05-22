@@ -39,7 +39,7 @@ export function EcosystemBridge({
 
         {isPro ? (
           <a
-            className="inline-flex w-fit rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold text-[var(--ixai-cream)]"
+            className="ixai-cta-forest inline-flex w-fit rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold"
             href={`${ixaiEcosystem.publicAppUrl}${ixaiEcosystem.dailyBriefUrl}`}
             rel="noopener noreferrer"
             target="_blank"
@@ -49,7 +49,7 @@ export function EcosystemBridge({
         ) : (
           <div className="flex flex-wrap gap-3">
             <a
-              className="inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold text-[var(--ixai-cream)]"
+              className="ixai-cta-forest inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold"
               href={ixaiEcosystem.proDashboardUrl}
               rel="noopener noreferrer"
               target="_blank"

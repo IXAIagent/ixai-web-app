@@ -151,7 +151,7 @@ export function AccountPanel() {
           ) : null}
           <div className="grid gap-3">
             <button
-              className="rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:bg-[var(--ixai-forest)]/45 disabled:text-[var(--ixai-cream)]/60"
+              className="ixai-cta-forest rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:bg-[var(--ixai-forest)]/45 disabled:text-[var(--ixai-cream)]/60"
               disabled={!authConfigured}
               onClick={signInWithGoogle}
               type="button"

@@ -55,7 +55,7 @@ export default function WeeklyBriefArchivePage() {
           </div>
           <div className="flex items-end lg:justify-end">
             <Link
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)] sm:w-fit"
+              className="ixai-cta-forest inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium sm:w-fit"
               href={`/weekly-brief/${latestBrief.slug}`}
             >
               閱讀週報

@@ -105,7 +105,7 @@ export function PwaInstallCard() {
         </div>
         {installEvent ? (
           <button
-            className="inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
+            className="ixai-cta-forest inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold"
             onClick={handleInstall}
             type="button"
           >

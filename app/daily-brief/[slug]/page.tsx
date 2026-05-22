@@ -200,7 +200,7 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
             </p>
           </div>
           <a
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)] sm:w-fit"
+            className="ixai-cta-cream inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium sm:w-fit"
             href={ixaiEcosystem.proDashboardUrl}
             rel="noopener noreferrer"
             target="_blank"

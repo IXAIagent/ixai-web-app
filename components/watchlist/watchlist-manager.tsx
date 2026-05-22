@@ -320,7 +320,7 @@ export function WatchlistManager() {
           </div>
           {session.mode === "authenticated" ? (
             <button
-              className="inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+              className="ixai-cta-forest inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium"
               onClick={handleAccountSync}
               type="button"
             >
@@ -329,7 +329,7 @@ export function WatchlistManager() {
             </button>
           ) : (
             <Link
-              className="inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+              className="ixai-cta-forest inline-flex w-fit items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium"
               href="/account"
             >
               <UserCircle className="h-4 w-4" aria-hidden="true" />
@@ -416,7 +416,7 @@ export function WatchlistManager() {
           </div>
 
           <button
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:opacity-45 sm:mt-5 sm:w-fit"
+            className="ixai-cta-forest mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-45 sm:mt-5 sm:w-fit"
             disabled={!normalizedSymbol}
             type="submit"
           >
@@ -565,7 +565,7 @@ export function WatchlistManager() {
                         value={editingNotes[key] ?? ""}
                       />
                       <button
-                        className="inline-flex w-fit items-center gap-1.5 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-xs font-medium text-[var(--ixai-cream)]"
+                        className="ixai-cta-forest inline-flex w-fit items-center gap-1.5 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-xs font-medium"
                         onClick={() => handleNoteSave(item)}
                         type="button"
                       >

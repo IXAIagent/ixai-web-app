@@ -83,7 +83,7 @@ export default function ProPage() {
             </p>
             <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-7 sm:flex sm:flex-wrap sm:gap-3">
               <a
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-3 py-2.5 text-sm font-semibold text-[var(--ixai-forest)] sm:px-4"
+                className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-3 py-2.5 text-sm font-semibold sm:px-4"
                 href={ixaiEcosystem.proDashboardUrl}
                 rel="noopener noreferrer"
                 target="_blank"
@@ -92,14 +92,14 @@ export default function ProPage() {
                 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
               </a>
               <a
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white sm:px-4"
+                className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white sm:px-4"
                 href={emailUrl}
               >
                 <Mail className="h-4 w-4" aria-hidden="true" />
                 {ixaiEcosystem.cta.contactIxuan}
               </a>
               <Link
-                className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white sm:col-span-1 sm:px-4"
+                className="ixai-cta-outline-dark col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white sm:col-span-1 sm:px-4"
                 href={ixaiEcosystem.dailyBriefUrl}
               >
                 <FileText className="h-4 w-4" aria-hidden="true" />
@@ -242,7 +242,7 @@ export default function ProPage() {
           </div>
           <div className="flex flex-wrap gap-3">
             <a
-              className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
+              className="ixai-cta-forest inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold"
               href={lineUrl}
               rel="noreferrer"
               target="_blank"

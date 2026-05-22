@@ -34,8 +34,8 @@ export function MobileNav() {
             (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href));
           const className = `flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl px-1.5 text-center transition active:scale-[0.98] ${
             isActive
-              ? "border border-[rgba(245,240,230,0.14)] bg-[rgba(245,240,230,0.12)] text-[var(--ixai-cream)] shadow-inner"
-              : "text-[rgba(245,240,230,0.58)] hover:bg-white/[0.04] hover:text-[rgba(245,240,230,0.82)]"
+              ? "border border-[rgba(176,141,87,0.42)] bg-[rgba(245,240,230,0.92)] text-[var(--ixai-forest)] shadow-[0_10px_26px_rgba(0,0,0,0.20)]"
+              : "text-[rgba(245,240,230,0.66)] hover:bg-white/[0.055] hover:text-[var(--ixai-cream)]"
           }`;
 
           return (
@@ -46,7 +46,10 @@ export function MobileNav() {
               rel={item.external ? "noopener noreferrer" : undefined}
               target={item.external ? "_blank" : undefined}
             >
-              <Icon className="h-4 w-4" aria-hidden="true" />
+              <Icon
+                className={`h-4 w-4 ${isActive ? "text-[var(--ixai-gold)]" : "text-[rgba(245,240,230,0.62)]"}`}
+                aria-hidden="true"
+              />
               <span className="text-[10px] font-medium leading-none">{item.label}</span>
             </Link>
           );

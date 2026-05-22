@@ -42,7 +42,7 @@ export function WeeklyBriefPreview({ brief }: { brief: WeeklyBrief }) {
             ))}
           </div>
           <Link
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)] sm:mt-5"
+            className="ixai-cta-forest mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium sm:mt-5"
             href={`/weekly-brief/${brief.slug}`}
           >
             閱讀週報

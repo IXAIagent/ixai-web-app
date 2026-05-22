@@ -73,7 +73,7 @@ export function OnboardingCard() {
       </div>
 
       <button
-        className="mt-4 min-h-11 w-full rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)] sm:w-fit"
+        className="ixai-cta-forest mt-4 min-h-11 w-full rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium sm:w-fit"
         onClick={() => completeOnboarding(selected)}
         type="button"
       >

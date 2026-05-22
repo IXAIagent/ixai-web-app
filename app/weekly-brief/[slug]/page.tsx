@@ -257,7 +257,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+              className="ixai-cta-cream inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium"
               href="/daily-brief"
             >
               每日簡報

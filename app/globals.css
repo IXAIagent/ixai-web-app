@@ -67,6 +67,33 @@ a {
   text-decoration: none;
 }
 
+.ixai-cta-forest {
+  color: var(--ixai-cream) !important;
+}
+
+.ixai-cta-forest svg {
+  color: var(--ixai-cream) !important;
+  stroke: currentColor;
+}
+
+.ixai-cta-cream {
+  color: var(--ixai-forest) !important;
+}
+
+.ixai-cta-cream svg {
+  color: var(--ixai-forest) !important;
+  stroke: currentColor;
+}
+
+.ixai-cta-outline-dark {
+  color: rgba(245, 240, 230, 0.82) !important;
+}
+
+.ixai-cta-outline-dark svg {
+  color: var(--ixai-gold) !important;
+  stroke: currentColor;
+}
+
 /* v1.18 typography tokens — Bloomberg × Apple × Linear × Notion scale.
    Adoption is opt-in per component. Existing inline Tailwind classes
    continue to work; new components and refactors should prefer these. */
