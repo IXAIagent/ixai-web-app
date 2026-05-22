@@ -64,26 +64,26 @@ export default function ProPage() {
   const emailUrl = contactLinks.email?.value ?? ixaiEcosystem.contactUrl;
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-7 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-7 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
-        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:p-10">
+        <div className="grid gap-5 p-4 sm:gap-8 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:p-10">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-[var(--ixai-gold)]">
               IXAI Pro Preview
             </p>
-            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight sm:text-5xl">
+            <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:mt-4 sm:text-5xl">
               IXAI Pro
-              <span className="mt-2 block text-2xl font-medium text-white/74 sm:text-3xl">
+              <span className="mt-1.5 block text-xl font-medium text-white/74 sm:mt-2 sm:text-3xl">
                 AI Wealth Operating System
               </span>
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-white/72">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-white/72 sm:mt-6 sm:text-base sm:leading-8">
               跨資產 AI 風控與 intelligence workspace。IXAI Pro 不是交易入口，
               而是協助使用者建立 portfolio、FCN、Crypto 與總經風險 awareness 的工作層。
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-7 sm:flex sm:flex-wrap sm:gap-3">
               <a
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-3 py-2.5 text-sm font-semibold text-[var(--ixai-forest)] sm:px-4"
                 href={ixaiEcosystem.proDashboardUrl}
                 rel="noopener noreferrer"
                 target="_blank"
@@ -92,14 +92,14 @@ export default function ProPage() {
                 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
               </a>
               <a
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white sm:px-4"
                 href={emailUrl}
               >
                 <Mail className="h-4 w-4" aria-hidden="true" />
                 {ixaiEcosystem.cta.contactIxuan}
               </a>
               <Link
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white"
+                className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium text-white/76 transition hover:bg-white/8 hover:text-white sm:col-span-1 sm:px-4"
                 href={ixaiEcosystem.dailyBriefUrl}
               >
                 <FileText className="h-4 w-4" aria-hidden="true" />
@@ -108,7 +108,7 @@ export default function ProPage() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
+          <div className="rounded-lg border border-white/10 bg-white/[0.045] p-3.5 sm:p-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
               Public ↔ Pro Bridge
             </p>
@@ -131,7 +131,7 @@ export default function ProPage() {
 
       <EcosystemBridge />
 
-      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-4 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           What IXAI Pro Does
         </p>
@@ -202,7 +202,7 @@ export default function ProPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] sm:p-6">
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           IXAI Pro Workspace Preview
         </p>

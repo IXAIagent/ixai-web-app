@@ -67,12 +67,12 @@ export function MarketPulse() {
   }, []);
 
   return (
-    <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_18px_60px_rgba(9,41,31,0.16)]">
-      <div className="border-b border-white/10 px-4 py-4 sm:px-5 lg:px-6">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_16px_48px_rgba(9,41,31,0.15)] sm:shadow-[0_18px_60px_rgba(9,41,31,0.16)]">
+      <div className="border-b border-white/10 px-3.5 py-3 sm:px-5 sm:py-4 lg:px-6">
+        <div className="flex flex-col gap-2.5 md:flex-row md:items-end md:justify-between md:gap-3">
           <div>
             <Eyebrow density="extra-wide">Market Pulse</Eyebrow>
-            <h1 className="mt-2 text-2xl font-semibold leading-tight sm:text-3xl">
+            <h1 className="mt-1.5 text-xl font-semibold leading-7 sm:mt-2 sm:text-3xl sm:leading-tight">
               今日市場脈搏
             </h1>
           </div>
@@ -93,7 +93,7 @@ export function MarketPulse() {
           const direction = quote?.direction ?? item.direction;
 
           return (
-            <article className="bg-[var(--ixai-forest)] p-4 sm:p-5" key={item.symbol}>
+            <article className="bg-[var(--ixai-forest)] p-3.5 sm:p-5" key={item.symbol}>
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
@@ -113,7 +113,7 @@ export function MarketPulse() {
                 </span>
               </div>
 
-              <div className="mt-4 flex items-end justify-between gap-3">
+              <div className="mt-3 flex items-end justify-between gap-3 sm:mt-4">
                 <p className="font-mono text-xl font-semibold text-[var(--ixai-cream)]">
                   {quote?.price ?? "--"}
                 </p>
@@ -127,7 +127,7 @@ export function MarketPulse() {
                 </div>
               </div>
 
-              <p className="mt-4 min-h-12 text-sm leading-6 text-[rgba(245,240,230,0.68)]">
+              <p className="mt-3 text-sm leading-6 text-[rgba(245,240,230,0.68)] sm:mt-4 sm:min-h-12">
                 {item.note}
               </p>
               <Eyebrow mono density="regular" className="mt-3">

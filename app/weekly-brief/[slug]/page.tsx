@@ -51,15 +51,15 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
   }
 
   return (
-    <article className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
+    <article className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
           Weekly Brief
         </p>
-        <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">
+        <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
           {brief.title}
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:text-base sm:leading-8">
           {brief.executiveSummary}
         </p>
         <div className="mt-5 flex flex-wrap gap-2 text-xs text-white/74">
@@ -76,17 +76,17 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           編輯觀察
         </p>
-        <p className="mt-3 text-base leading-8 text-[var(--ixai-forest-soft)]">
+        <p className="mt-2.5 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:mt-3 sm:text-base sm:leading-8">
           {brief.editorialNote}
         </p>
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)]">
-        <div className="border-b border-[var(--ixai-border)] px-5 py-4">
+        <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
             重大事件
           </p>
@@ -97,20 +97,20 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         <div className="divide-y divide-[var(--ixai-border)]">
           {brief.majorEvents.map((event) => (
             <section
-              className="grid gap-4 px-5 py-5 md:grid-cols-[10rem_1fr]"
+              className="grid gap-3 px-4 py-4 sm:px-5 sm:py-5 md:grid-cols-[10rem_1fr]"
               key={event.headline}
             >
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ixai-forest)]">
                 {event.category}
               </p>
               <div>
-                <h3 className="text-lg font-semibold leading-7 text-[var(--ixai-forest)]">
+                <h3 className="text-base font-semibold leading-6 text-[var(--ixai-forest)] sm:text-lg sm:leading-7">
                   {event.headline}
                 </h3>
                 <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
                   {event.summary}
                 </p>
-                <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.26)] bg-[rgba(176,141,87,0.08)] p-4">
+                <div className="mt-3 rounded-lg border border-[rgba(176,141,87,0.26)] bg-[rgba(176,141,87,0.08)] p-3.5 sm:mt-4 sm:p-4">
                   <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                     一玄觀點
                   </p>
@@ -125,7 +125,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">
-        <div className="border-b border-[var(--ixai-border)] px-5 py-4">
+        <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
             資產觀察
           </p>
@@ -133,7 +133,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         <div className="grid gap-0 md:grid-cols-2">
           {brief.assetObservations.map((asset) => (
             <article
-              className="border-b border-[var(--ixai-border)] p-5 md:border-r"
+              className="border-b border-[var(--ixai-border)] p-4 sm:p-5 md:border-r"
               key={asset.label}
             >
               <h3 className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
@@ -148,7 +148,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)]">
-        <div className="border-b border-[var(--ixai-border)] px-5 py-4">
+        <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
             下週市場焦點
           </p>
@@ -159,7 +159,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         <div className="divide-y divide-[var(--ixai-border)]">
           {brief.upcomingFocus.map((item) => (
             <article
-              className="grid gap-3 px-5 py-4 lg:grid-cols-[8rem_1fr_1fr]"
+              className="grid gap-3 px-4 py-3.5 sm:px-5 sm:py-4 lg:grid-cols-[8rem_1fr_1fr]"
               key={`${item.date}-${item.event}`}
             >
               <p className="font-mono text-xs text-[var(--ixai-gold)]">
@@ -181,7 +181,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-4 sm:p-6">
         <div className="flex items-center gap-2 text-[var(--ixai-forest)]">
           <ShieldCheck className="h-4 w-4" aria-hidden="true" />
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
@@ -201,7 +201,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(9,41,31,0.035)]">
-        <div className="border-b border-[var(--ixai-border)] px-5 py-4">
+        <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
             資料來源 / 信任層
           </p>
@@ -209,7 +209,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
             公開資訊、人工審閱與風險脈絡
           </h2>
         </div>
-        <div className="grid gap-3 p-5 md:grid-cols-2">
+        <div className="grid gap-3 p-4 sm:p-5 md:grid-cols-2">
           {brief.sources.map((source) => (
             <div
               className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] p-4"
@@ -242,7 +242,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] sm:p-6">
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
           回到 IXAI
         </p>

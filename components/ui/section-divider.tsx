@@ -30,11 +30,11 @@ export function SectionDivider({
       ? "h-px flex-1 bg-[rgba(176,141,87,0.55)]"
       : "h-px flex-1 bg-[rgba(176,141,87,0.28)]";
   return (
-    <div className="flex items-baseline gap-3 pt-1">
+    <div className="flex items-baseline gap-2 pt-0.5 sm:gap-3 sm:pt-1">
       <Eyebrow density="extra-wide">{label}</Eyebrow>
       <span className={lineClass} aria-hidden />
       {hint ? (
-        <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-ink-muted)]">
+        <span className="hidden text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-ink-muted)] sm:inline">
           {hint}
         </span>
       ) : null}

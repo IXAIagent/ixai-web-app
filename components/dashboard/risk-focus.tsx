@@ -29,11 +29,11 @@ export function RiskFocus() {
   }, []);
 
   return (
-    <section className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(9,41,31,0.96)] p-4 text-[var(--ixai-cream)] shadow-[0_16px_44px_rgba(9,41,31,0.12)] sm:p-5">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <section className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(9,41,31,0.96)] p-3.5 text-[var(--ixai-cream)] shadow-[0_14px_38px_rgba(9,41,31,0.12)] sm:p-5 sm:shadow-[0_16px_44px_rgba(9,41,31,0.12)]">
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
           <Eyebrow density="extra-wide">{riskFocus.label}</Eyebrow>
-          <h2 className="mt-2 text-lg font-semibold leading-7">
+          <h2 className="mt-1.5 text-base font-semibold leading-6 sm:mt-2 sm:text-lg sm:leading-7">
             {riskFocus.title}
           </h2>
         </div>
@@ -41,10 +41,10 @@ export function RiskFocus() {
           Risk-first
         </span>
       </div>
-      <p className="mt-3 text-sm leading-7 text-[rgba(245,240,230,0.66)]">
+      <p className="mt-2.5 text-sm leading-6 text-[rgba(245,240,230,0.66)] sm:mt-3 sm:leading-7">
         {riskFocus.summary}
       </p>
-      <Eyebrow mono className="mt-3">
+      <Eyebrow mono className="mt-2.5 sm:mt-3">
         {riskFocus.updatedLabel}
       </Eyebrow>
     </section>

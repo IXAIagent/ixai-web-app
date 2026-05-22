@@ -78,10 +78,10 @@ export function MarketOverview({
   return (
     <SectionCard>
       <SectionHeader action="資料狀態" eyebrow="市場總覽" title="核心資產追蹤" />
-      <div className="grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-1">
+      <div className="grid gap-2.5 p-3.5 sm:grid-cols-2 sm:gap-3 sm:p-4 xl:grid-cols-1">
         {markets.map((asset) => (
           <div
-            className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-4"
+            className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3.5 transition active:scale-[0.995] sm:p-4"
             key={asset.symbol}
           >
             <div className="flex items-start justify-between gap-3">
@@ -95,7 +95,7 @@ export function MarketOverview({
               </div>
               <DirectionPill direction={asset.direction} />
             </div>
-            <div className="mt-4 flex items-end justify-between gap-3">
+            <div className="mt-3 flex items-end justify-between gap-3 sm:mt-4">
               <p className="font-mono text-xl font-semibold text-[var(--ixai-forest)]">
                 {asset.price}
               </p>
@@ -103,17 +103,19 @@ export function MarketOverview({
                 {asset.dailyChange}
               </p>
             </div>
-            <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px] leading-5 text-[var(--ixai-ink-muted)]">
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] leading-5 text-[var(--ixai-ink-muted)] sm:mt-4">
               <span className="rounded-md border border-[var(--ixai-border)] px-2 py-0.5 font-medium text-[var(--ixai-forest-soft)]">
                 {statusLabels[asset.status]}
               </span>
               <span>{asset.sourceLabel}</span>
-              <span suppressHydrationWarning>更新 {formatUpdatedAt(asset.updatedAt)}</span>
+              <span suppressHydrationWarning>
+                {asset.updatedAt ? `更新 ${formatUpdatedAt(asset.updatedAt)}` : "更新中"}
+              </span>
             </div>
           </div>
         ))}
       </div>
-      <p className="border-t border-[var(--ixai-border)] px-5 py-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+      <p className="border-t border-[var(--ixai-border)] px-4 py-3.5 text-xs leading-6 text-[var(--ixai-ink-muted)] sm:px-5 sm:py-4">
         {MARKET_DATA_DISCLAIMER}
       </p>
     </SectionCard>

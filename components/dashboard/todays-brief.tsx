@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
 import {
@@ -47,7 +48,7 @@ export function TodaysBrief({ brief }: { brief: DailyBriefDraft }) {
         eyebrow="今日市場簡報"
         title={currentBrief.title}
       />
-      <div className="px-5 py-4">
+      <div className="px-4 py-3.5 sm:px-5 sm:py-4">
         <p className="max-w-3xl text-sm leading-6 text-[var(--ixai-forest-soft)]">
           {currentBrief.marketSummary}
         </p>
@@ -55,7 +56,7 @@ export function TodaysBrief({ brief }: { brief: DailyBriefDraft }) {
       <div className="divide-y divide-[var(--ixai-border)] border-y border-[var(--ixai-border)]">
         {currentBrief.sections.slice(0, 3).map((section) => (
           <article
-            className="grid gap-3 px-5 py-4 sm:grid-cols-[9rem_1fr]"
+            className="grid gap-3 px-4 py-3.5 sm:grid-cols-[9rem_1fr] sm:px-5 sm:py-4"
             key={`${section.category}-${section.headline}`}
           >
             <div>
@@ -77,7 +78,7 @@ export function TodaysBrief({ brief }: { brief: DailyBriefDraft }) {
           </article>
         ))}
       </div>
-      <div className="px-5 py-4">
+      <div className="px-4 py-3.5 sm:px-5 sm:py-4">
         <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
           編輯觀察
         </p>
@@ -85,10 +86,11 @@ export function TodaysBrief({ brief }: { brief: DailyBriefDraft }) {
           {currentBrief.editorialNote}
         </p>
         <Link
-          className="mt-4 inline-flex rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)] sm:w-fit"
           href={`/daily-brief/${currentBrief.slug}`}
         >
           閱讀每日簡報
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
     </SectionCard>

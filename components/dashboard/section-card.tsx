@@ -7,7 +7,7 @@ export function SectionCard({
 }>) {
   return (
     <section
-      className={`rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] shadow-[0_20px_60px_rgba(9,41,31,0.06)] ${className}`}
+      className={`rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] shadow-[0_12px_36px_rgba(9,41,31,0.045)] sm:shadow-[0_20px_60px_rgba(9,41,31,0.06)] ${className}`}
     >
       {children}
     </section>
@@ -24,12 +24,12 @@ export function SectionHeader({
   action?: string;
 }>) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[var(--ixai-border)] px-5 py-4">
+    <div className="flex items-start justify-between gap-3 border-b border-[var(--ixai-border)] px-4 py-3.5 sm:gap-4 sm:px-5 sm:py-4">
       <div>
         <p className="ds-label-md text-[var(--ixai-gold)]" style={{ letterSpacing: "0.22em" }}>
           {eyebrow}
         </p>
-        <h2 className="ds-heading-md mt-1 text-[var(--ixai-forest)]">
+        <h2 className="mt-1 text-[15px] font-semibold leading-5 text-[var(--ixai-forest)] sm:text-base sm:leading-6">
           {title}
         </h2>
       </div>

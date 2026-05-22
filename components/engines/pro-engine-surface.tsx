@@ -86,7 +86,7 @@ function EngineCard({ engine }: { engine: ProEngineSurface }) {
   if (engine.href) {
     return (
       <Link
-        className="relative block overflow-hidden rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 shadow-[0_18px_48px_rgba(9,41,31,0.055)] transition hover:border-[rgba(176,141,87,0.46)] hover:bg-[rgba(255,250,240,0.96)]"
+        className="relative block overflow-hidden rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-3.5 shadow-[0_12px_34px_rgba(9,41,31,0.045)] transition active:scale-[0.995] hover:border-[rgba(176,141,87,0.46)] hover:bg-[rgba(255,250,240,0.96)] sm:p-4 sm:shadow-[0_18px_48px_rgba(9,41,31,0.055)]"
         href={engine.href}
       >
         {content}
@@ -95,7 +95,7 @@ function EngineCard({ engine }: { engine: ProEngineSurface }) {
   }
 
   return (
-    <article className="relative overflow-hidden rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 shadow-[0_18px_48px_rgba(9,41,31,0.055)]">
+    <article className="relative overflow-hidden rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-3.5 shadow-[0_12px_34px_rgba(9,41,31,0.045)] sm:p-4 sm:shadow-[0_18px_48px_rgba(9,41,31,0.055)]">
       {content}
     </article>
   );
@@ -144,22 +144,22 @@ export function ProEngineSurface({ fcnSnapshot }: { fcnSnapshot?: FcnPortfolioSn
   const surfaces = withFcnSummary(fcnSnapshot);
 
   return (
-    <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.72)] p-4 shadow-[0_24px_72px_rgba(9,41,31,0.055)] sm:p-5">
-      <div className="flex flex-col gap-4 border-b border-[var(--ixai-border)] pb-4 lg:flex-row lg:items-end lg:justify-between">
+    <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.72)] p-3.5 shadow-[0_14px_42px_rgba(9,41,31,0.045)] sm:p-5 sm:shadow-[0_24px_72px_rgba(9,41,31,0.055)]">
+      <div className="flex flex-col gap-3 border-b border-[var(--ixai-border)] pb-3.5 sm:gap-4 sm:pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
             Your IXAI Intelligence
           </p>
-          <h2 className="mt-2 text-xl font-semibold leading-8 text-[var(--ixai-forest)]">
+          <h2 className="mt-1.5 text-lg font-semibold leading-6 text-[var(--ixai-forest)] sm:mt-2 sm:text-xl sm:leading-8">
             Free 是市場情報，IXAI Pro 是你的情報引擎。
           </h2>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-ink-muted)]">
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--ixai-ink-muted)] sm:leading-7">
             目前先開放 FCN 風險觀察示範。未來會接上 portfolio、watchlist、
             風險提醒與 AI morning brief，形成個人化監控工作流。
           </p>
         </div>
         <a
-          className="inline-flex w-fit items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)] sm:w-fit"
           href={ixaiEcosystem.proDashboardUrl}
           rel="noopener noreferrer"
           target="_blank"
@@ -169,7 +169,7 @@ export function ProEngineSurface({ fcnSnapshot }: { fcnSnapshot?: FcnPortfolioSn
         </a>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
+      <div className="mt-3.5 grid gap-3 sm:mt-4 sm:gap-4 lg:grid-cols-3">
         {surfaces.map((engine) => (
           <EngineCard engine={engine} key={engine.id} />
         ))}

@@ -14,29 +14,29 @@ export default function WeeklyBriefArchivePage() {
   const allBriefs = getAllWeeklyBriefs();
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
           Weekly Brief
         </p>
-        <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">
+        <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
           每週市場週報，整理更完整的市場操作圖。
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:text-base sm:leading-8">
           以更低頻、結構化的方式回顧重大事件、資產觀察、風險提醒與下週市場焦點。
         </p>
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
-        <div className="grid gap-5 p-5 lg:grid-cols-[1fr_16rem] lg:p-6">
+        <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[1fr_16rem] lg:p-6">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
               最新週報 / {latestBrief.publishedAt}
             </p>
-            <h2 className="mt-3 max-w-3xl text-2xl font-semibold leading-8 text-[var(--ixai-forest)]">
+            <h2 className="mt-2 max-w-3xl text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:mt-3 sm:text-2xl sm:leading-8">
               {latestBrief.title}
             </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--ixai-ink-muted)]">
+            <p className="mt-2.5 max-w-3xl text-sm leading-6 text-[var(--ixai-ink-muted)] sm:mt-3 sm:leading-7">
               {latestBrief.executiveSummary}
             </p>
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-[var(--ixai-forest-soft)]">
@@ -55,7 +55,7 @@ export default function WeeklyBriefArchivePage() {
           </div>
           <div className="flex items-end lg:justify-end">
             <Link
-              className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)] sm:w-fit"
               href={`/weekly-brief/${latestBrief.slug}`}
             >
               閱讀週報

@@ -86,11 +86,11 @@ function Metric({
   }[tone];
 
   return (
-    <div className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-4">
+    <div className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3.5 sm:p-4">
       <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--ixai-ink-muted)]">
         {label}
       </p>
-      <p className={`mt-2 font-mono text-xl font-semibold ${toneClass}`}>{value}</p>
+      <p className={`mt-1.5 font-mono text-lg font-semibold sm:mt-2 sm:text-xl ${toneClass}`}>{value}</p>
     </div>
   );
 }
@@ -164,13 +164,13 @@ function FcnRiskCard({ snapshot }: { snapshot: FcnPositionSnapshot }) {
   const worstOf = snapshot.worstOf;
 
   return (
-    <article className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)]">
+    <article className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-4 shadow-[0_14px_38px_rgba(9,41,31,0.045)] sm:p-5 sm:shadow-[0_18px_48px_rgba(9,41,31,0.05)]">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             Structured Product
           </p>
-          <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+          <h2 className="mt-1.5 text-lg font-semibold leading-6 text-[var(--ixai-forest)] sm:mt-2 sm:text-xl">
             {snapshot.position.name}
           </h2>
           <p className="mt-2 text-sm leading-6 text-[var(--ixai-ink-muted)]">
@@ -180,7 +180,7 @@ function FcnRiskCard({ snapshot }: { snapshot: FcnPositionSnapshot }) {
         <RiskBadge level={snapshot.riskLevel} />
       </div>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-4 grid gap-2.5 sm:mt-5 sm:grid-cols-2 sm:gap-3 xl:grid-cols-4">
         <Metric
           label="Worst-of"
           tone={snapshot.riskLevel === "highRisk" || snapshot.riskLevel === "breached" ? "risk" : "neutral"}
@@ -198,11 +198,11 @@ function FcnRiskCard({ snapshot }: { snapshot: FcnPositionSnapshot }) {
         <Metric label="Next Coupon" value={formatFcnDate(snapshot.nextCouponDate)} />
       </div>
 
-      <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/40 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+      <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/40 p-3.5 text-sm leading-6 text-[var(--ixai-forest-soft)] sm:mt-5 sm:p-4 sm:leading-7">
         {riskDescription(snapshot.riskLevel)}
       </p>
 
-      <div className="mt-5">
+      <div className="mt-4 sm:mt-5">
         <UnderlyingRiskTable underlyings={snapshot.underlyings} />
       </div>
     </article>
@@ -223,26 +223,26 @@ export default async function FcnPage() {
     .filter((item) => item.observation);
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
           FCN Education + Intelligence
         </p>
         <div className="mt-3 grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
-            <h1 className="max-w-3xl font-serif text-3xl font-semibold leading-snug sm:text-5xl">
+            <h1 className="max-w-3xl font-serif text-2xl font-semibold leading-8 sm:text-5xl sm:leading-snug">
               先理解 FCN，再監控 worst-of 風險。
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:text-base sm:leading-8">
               這裡是 IXAI 的 FCN 教育入口。下方風險觀察示範 IXAI Pro
               如何把 coupon、KI、KO、worst-of 與市場波動整理成風險 awareness。
             </p>
           </div>
-          <div className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
+          <div className="rounded-lg border border-white/10 bg-white/[0.045] p-3.5 sm:p-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
               Current Focus
             </p>
-            <p className="mt-2 text-sm leading-7 text-white/70">
+            <p className="mt-2 text-sm leading-6 text-white/70 sm:leading-7">
               {weakest
                 ? `${snapshot.highestRiskPosition?.position.name} 目前由 ${weakest.symbol} 驅動主要風險，worst-of 表現 ${formatFcnPercent(weakest.priceChangePercent)}。`
                 : "等待市場資料後，IXAI 會標示最高風險 FCN 與 weakest underlying。"}
@@ -254,21 +254,21 @@ export default async function FcnPage() {
       <EcosystemBridge />
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
+        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
             What is FCN
           </p>
-          <h2 className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
+          <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
             FCN 是高收益結構型商品，也伴隨條件式風險。
           </h2>
-          <div className="mt-5 grid gap-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          <div className="mt-4 grid gap-2.5 text-sm leading-6 text-[var(--ixai-forest-soft)] sm:mt-5 sm:gap-3 sm:leading-7">
             {[
               ["Coupon", "投資人依條款獲得配息，但配息不等於本金保證。"],
               ["KI", "Knock-In 障礙。若標的跌破 KI，最終還本結果可能受到影響。"],
               ["KO", "Knock-Out 障礙。若觀察日達成 KO 條件，商品可能提前出場。"],
               ["Worst-of", "多標的 FCN 通常由表現最弱標的決定主要風險。"],
             ].map(([title, copy]) => (
-              <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4" key={title}>
+              <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-3.5 sm:p-4" key={title}>
                 <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ixai-gold)]">
                   {title}
                 </span>
@@ -278,14 +278,14 @@ export default async function FcnPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
+        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
             Why FCN Risk Control Matters
           </p>
-          <h2 className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
+          <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
             FCN 需要監控的不是單一價格，而是 regime、集中度與障礙距離。
           </h2>
-          <div className="mt-5 grid gap-4 text-sm leading-8 text-[var(--ixai-ink-muted)]">
+          <div className="mt-4 grid gap-3 text-sm leading-7 text-[var(--ixai-ink-muted)] sm:mt-5 sm:gap-4 sm:leading-8">
             <p>
               市場波動擴大時，高 beta 標的可能快速接近 KI；若多檔 FCN 重複曝險於同一批科技股或高波動資產，
               concentration risk 會放大 portfolio 的最差情境。
@@ -298,14 +298,14 @@ export default async function FcnPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] p-4 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           IXAI 風險觀察示範
         </p>
-        <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+        <h2 className="mt-2 text-lg font-semibold leading-6 text-[var(--ixai-forest)] sm:text-xl">
           以下為範例 FCN 組合，用於展示 IXAI Pro 的唯讀風險觀察方式。
         </h2>
-        <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+        <p className="mt-2.5 text-sm leading-6 text-[var(--ixai-ink-muted)] sm:mt-3 sm:leading-7">
           這不是正式客戶持倉，也不是交易系統。若市場資料不可用，IXAI 會停止推算距離，
           避免用非市場資料製造錯誤風險感。
         </p>
@@ -325,7 +325,7 @@ export default async function FcnPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-5">
+        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-4 sm:p-5">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
             Coupon Timeline
           </p>
@@ -386,7 +386,7 @@ export default async function FcnPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] p-4 sm:p-6">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
@@ -396,7 +396,7 @@ export default async function FcnPage() {
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
           目前應優先觀察 worst-of 與下一個 coupon date。
         </h2>
-        <p className="mt-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+        <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)] sm:mt-4 sm:leading-7">
           {weakest
             ? `${weakest.symbol} 是目前最弱標的，會直接影響 ${snapshot.highestRiskPosition?.position.name} 的 KI 緩衝。若市場資料變成不可用，IXAI 會停止推算距離，避免使用非市場資料產生錯誤風險感。`
             : "目前沒有足夠 market quote 形成 worst-of 判讀。IXAI 會等到 real / delayed quote 可用後再更新 FCN risk state。"}
@@ -404,9 +404,9 @@ export default async function FcnPage() {
         <p className="mt-4 text-sm font-semibold text-[var(--ixai-forest)]">
           想了解你的 FCN 風險？可透過 LINE 預約一玄顧問，先從條款與風險監控開始。
         </p>
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
           <a
-            className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
             href={lineUrl}
             rel="noreferrer"
             target="_blank"
@@ -415,7 +415,7 @@ export default async function FcnPage() {
             加入 LINE 諮詢
           </a>
           <a
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             href={lineUrl}
             rel="noreferrer"
             target="_blank"
@@ -424,7 +424,7 @@ export default async function FcnPage() {
             預約一玄顧問
           </a>
           <a
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             href={ixaiEcosystem.proDashboardUrl}
             rel="noopener noreferrer"
             target="_blank"

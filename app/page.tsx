@@ -31,7 +31,7 @@ export default async function Home() {
   const fcnSnapshot = await getFcnPortfolioSnapshot();
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-3 py-4 sm:gap-6 sm:px-5 lg:px-6 lg:py-6">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-3 py-3 sm:gap-6 sm:px-5 sm:py-4 lg:px-6 lg:py-6">
       {/* v1.7: five-tier daily intelligence workflow.
           Tier 1 — Today's headline (insight first, data second)
           Tier 2 — Free intelligence (curated + editorial morning note)
@@ -40,10 +40,12 @@ export default async function Home() {
           Tier 5 — Premium membership */}
 
       {/* Tier 1: insight headline first, market data immediately below. */}
-      <OnboardingCard />
-      <LaunchIntro />
       <RiskFocus />
       <MarketPulse />
+      <div className="grid gap-3 sm:gap-4 lg:grid-cols-[0.92fr_1.08fr]">
+        <LaunchIntro />
+        <OnboardingCard />
+      </div>
 
       {/* Tier 2: free intelligence layer. */}
       <SectionDivider label="免費情報" hint="Daily intelligence" />

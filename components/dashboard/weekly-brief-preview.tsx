@@ -11,12 +11,12 @@ export function WeeklyBriefPreview({ brief }: { brief: WeeklyBrief }) {
         eyebrow="每週市場週報"
         title="本週重點情報"
       />
-      <div className="grid gap-5 p-5 lg:grid-cols-[1fr_15rem]">
+      <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[1fr_15rem]">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
             {brief.publishedAt}
           </p>
-          <h3 className="mt-3 max-w-2xl text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
+          <h3 className="mt-2.5 max-w-2xl text-lg font-semibold leading-6 text-[var(--ixai-forest)] sm:mt-3 sm:text-xl sm:leading-7">
             {brief.title}
           </h3>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ixai-ink-muted)]">
@@ -27,7 +27,7 @@ export function WeeklyBriefPreview({ brief }: { brief: WeeklyBrief }) {
           </p>
         </div>
 
-        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(9,41,31,0.035)] p-4">
+        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(9,41,31,0.035)] p-3.5 sm:p-4">
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--ixai-forest)]">
             觀察期間
           </p>
@@ -42,13 +42,13 @@ export function WeeklyBriefPreview({ brief }: { brief: WeeklyBrief }) {
             ))}
           </div>
           <Link
-            className="mt-5 inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)] sm:mt-5"
             href={`/weekly-brief/${brief.slug}`}
           >
             閱讀週報
           </Link>
           <a
-            className="mt-3 inline-flex rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="mt-2.5 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)] sm:mt-3"
             href={ixaiEcosystem.proDashboardUrl}
             rel="noopener noreferrer"
             target="_blank"

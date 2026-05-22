@@ -266,24 +266,24 @@ export function WatchlistManager() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
           自選觀察
         </p>
-        <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">
+        <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
           建立你的個人市場入口。
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-[rgba(245,240,230,0.72)]">
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-[rgba(245,240,230,0.72)] sm:mt-4 sm:text-base sm:leading-8">
           新增你關注的股票、ETF、指數或 Crypto。Guest 模式會先保存在本機瀏覽器；
           登入同步開放後，可延伸到 IXAI Pro 個人監控。
         </p>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.58)]">
+        <p className="mt-2 max-w-3xl text-xs leading-6 text-[rgba(245,240,230,0.58)] sm:mt-3 sm:text-sm sm:leading-7">
           {ixaiIdentity.watchlistSyncCopy}
         </p>
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
           <Link
-            className="inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[#09291f]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-3 py-2 text-sm font-medium text-[#09291f] sm:px-4"
             href="/market"
             style={{ color: "#09291f" }}
           >
@@ -291,7 +291,7 @@ export function WatchlistManager() {
             查看市場總覽
           </Link>
           <Link
-            className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2 text-sm font-medium text-[rgba(245,240,230,0.78)] transition hover:bg-white/8 hover:text-[var(--ixai-cream)]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm font-medium text-[rgba(245,240,230,0.78)] transition hover:bg-white/8 hover:text-[var(--ixai-cream)] sm:px-4"
             href="/account"
           >
             <UserCircle className="h-4 w-4" aria-hidden="true" />
@@ -300,7 +300,7 @@ export function WatchlistManager() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-3.5 text-sm leading-6 text-[var(--ixai-forest-soft)] sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
@@ -341,7 +341,7 @@ export function WatchlistManager() {
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <form
-          className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.88)] p-5 sm:p-6"
+          className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.88)] p-4 sm:p-6"
           onSubmit={handleSubmit}
         >
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
@@ -351,7 +351,7 @@ export function WatchlistManager() {
             新增觀察標的
           </h2>
 
-          <div className="mt-5 grid gap-4">
+          <div className="mt-4 grid gap-3.5 sm:mt-5 sm:gap-4">
             <label className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]">
               代號
               <input
@@ -416,7 +416,7 @@ export function WatchlistManager() {
           </div>
 
           <button
-            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:opacity-45"
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] disabled:cursor-not-allowed disabled:opacity-45 sm:mt-5 sm:w-fit"
             disabled={!normalizedSymbol}
             type="submit"
           >
@@ -424,7 +424,7 @@ export function WatchlistManager() {
             加入自選觀察
           </button>
 
-          <div className="mt-5 border-t border-[var(--ixai-border)] pt-4">
+          <div className="mt-4 border-t border-[var(--ixai-border)] pt-3.5 sm:mt-5 sm:pt-4">
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
               範例
             </p>
@@ -444,7 +444,7 @@ export function WatchlistManager() {
         </form>
 
         <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">
-          <div className="flex items-start justify-between gap-4 border-b border-[var(--ixai-border)] px-5 py-4">
+          <div className="flex items-start justify-between gap-3 border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
                 Watchlist
@@ -466,7 +466,7 @@ export function WatchlistManager() {
           </div>
 
           {items.length === 0 ? (
-            <div className="p-5 sm:p-6">
+            <div className="p-4 sm:p-6">
               <p className="text-lg font-semibold text-[var(--ixai-forest)]">
                 新增第一個你關注的標的。
               </p>
@@ -475,14 +475,14 @@ export function WatchlistManager() {
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
                   href="/market"
                 >
                   <BarChart3 className="h-4 w-4" aria-hidden="true" />
                   查看市場總覽
                 </Link>
                 <Link
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
                   href="/account"
                 >
                   <UserCircle className="h-4 w-4" aria-hidden="true" />
@@ -498,7 +498,7 @@ export function WatchlistManager() {
                 const quoteUnavailable = !quote || quote.status === "unavailable";
 
                 return (
-                  <article className="p-5" key={key}>
+                  <article className="p-4 sm:p-5" key={key}>
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">
@@ -533,7 +533,7 @@ export function WatchlistManager() {
                       </span>
                     </div>
 
-                    <div className="mt-4 grid gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3 sm:grid-cols-[1fr_auto] sm:items-end">
+                    <div className="mt-3.5 grid gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3 sm:mt-4 sm:grid-cols-[1fr_auto] sm:items-end">
                       <div>
                         <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
                           市場資料
@@ -589,16 +589,16 @@ export function WatchlistManager() {
           自選觀察會顯示每筆資料的狀態：真實、即時、延遲、參考或資料不可用。
           IXAI 會嘗試讀取公開市場資料；若資料來源暫時失敗，會以「參考」或「資料不可用」清楚標示。
         </p>
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
           <Link
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-sm font-medium text-[var(--ixai-forest)] sm:px-4"
             href="/market"
           >
             查看市場總覽
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-sm font-medium text-[var(--ixai-forest)] sm:px-4"
             href="/account"
           >
             前往我的 IXAI
