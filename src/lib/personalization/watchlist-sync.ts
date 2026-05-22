@@ -10,7 +10,7 @@ export function getWatchlistSyncState(session: IXAISession): WatchlistSyncState 
     return {
       mode: "local",
       label: "本機保存",
-      message: "Guest 自選觀察會保存在此裝置；登入同步開放後可跨裝置使用。",
+      message: "目前此裝置保存；登入後將逐步支援跨裝置同步。",
     };
   }
 
@@ -18,14 +18,14 @@ export function getWatchlistSyncState(session: IXAISession): WatchlistSyncState 
     return {
       mode: "pending",
       label: "等待同步",
-      message: "IXAI 帳戶已啟用，但跨裝置同步尚未完成設定。",
+      message: "IXAI Account 已啟用；跨裝置同步與 Pro handoff 將分階段開放。",
     };
   }
 
   return {
     mode: "synced",
-    label: "已保存到 IXAI 帳戶",
-    message: "自選觀察可同步到你的 IXAI 帳戶。",
+    label: "已連接 IXAI Account",
+    message: "自選觀察已準備連接帳戶；跨裝置同步功能將逐步開放。",
   };
 }
 

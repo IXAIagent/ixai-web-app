@@ -15,7 +15,10 @@ import {
   isSupabaseAuthConfigured,
   readHashSession,
   readIdentityPayload,
+  registerWithPassword as registerWithSupabasePassword,
   sendMagicLink,
+  signInWithPassword as signInWithSupabasePassword,
+  signOutSupabase,
   writeIdentityPayload,
 } from "@/src/lib/identity/session";
 import {
@@ -35,6 +38,12 @@ import type {
   PersistenceStatus,
 } from "@/src/types/identity";
 
+type AuthActionResult = {
+  ok: boolean;
+  message: string;
+  authenticated?: boolean;
+};
+
 type IdentityContextValue = {
   mounted: boolean;
   session: IXAISession;
@@ -42,6 +51,8 @@ type IdentityContextValue = {
   persistenceStatus: PersistenceStatus;
   authConfigured: boolean;
   signInWithGoogle: () => void;
+  signInWithPassword: (email: string, password: string) => Promise<AuthActionResult>;
+  registerWithPassword: (email: string, password: string) => Promise<AuthActionResult>;
   sendMagicLink: (email: string) => Promise<{ ok: boolean; message: string }>;
   continueAsGuest: () => void;
   signOut: () => void;
@@ -154,6 +165,27 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       writeIdentityPayload(nextSession, nextMemory);
     }
 
+    async function activateAuthenticatedSession(nextSession: IXAISession) {
+      const memoryResult = await loadProfileMemory(nextSession);
+      const preferenceResult = await loadUserPreferences(nextSession);
+      const nextMemory = {
+        ...memoryResult.memory,
+        preferredCategories: preferenceResult.preferences,
+        onboardingCompleted: true,
+      };
+      persist(nextSession, nextMemory);
+      setPersistenceStatus(
+        memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
+          ? {
+              mode: "synced",
+              label: "已連接 IXAI Account",
+              message: "偏好與市場記憶已準備連接 IXAI 帳戶。",
+              lastSyncedAt: new Date().toISOString(),
+            }
+          : memoryResult.status,
+      );
+    }
+
     return {
       mounted,
       session,
@@ -169,6 +201,32 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       sendMagicLink(email: string) {
         return sendMagicLink(email, window.location.origin + "/account");
       },
+      async signInWithPassword(email: string, password: string) {
+        const result = await signInWithSupabasePassword(email, password);
+
+        if (result.ok && result.session) {
+          await activateAuthenticatedSession(result.session);
+        }
+
+        return {
+          ok: result.ok,
+          message: result.message,
+          authenticated: Boolean(result.session),
+        };
+      },
+      async registerWithPassword(email: string, password: string) {
+        const result = await registerWithSupabasePassword(email, password);
+
+        if (result.ok && result.session) {
+          await activateAuthenticatedSession(result.session);
+        }
+
+        return {
+          ok: result.ok,
+          message: result.message,
+          authenticated: Boolean(result.session),
+        };
+      },
       continueAsGuest() {
         const nextMemory = {
           ...memory,
@@ -177,6 +235,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         persist(getGuestSession(), nextMemory);
       },
       signOut() {
+        void signOutSupabase(session.accessToken);
         clearIdentityPayload();
         setSession(getGuestSession());
         setMemory(readPersonalMemory());

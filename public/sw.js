@@ -1,4 +1,4 @@
-const IXAI_STATIC_CACHE = "ixai-static-v1.19.0";
+const IXAI_STATIC_CACHE = "ixai-static-v1.20.0";
 
 const PRECACHE_URLS = [
   "/manifest.webmanifest",
@@ -14,8 +14,15 @@ const PRECACHE_URLS = [
 
 const EXCLUDED_PREFIXES = [
   "/admin",
+  "/account",
+  "/login",
+  "/register",
+  "/auth",
   "/api/admin",
   "/api/auth",
+  "/api/session",
+  "/api/supabase",
+  "/api/user",
   "/api/market",
   "/api/news",
   "/api/daily-briefs",
@@ -25,9 +32,13 @@ const EXCLUDED_KEYWORDS = [
   "cron",
   "draft",
   "generate",
+  "oauth",
+  "password",
   "scheduler",
   "session",
   "service-role",
+  "supabase",
+  "token",
 ];
 
 function isExcluded(url) {

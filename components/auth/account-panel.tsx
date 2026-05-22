@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useIdentity } from "@/components/auth/auth-provider";
 import { ixaiIdentity } from "@/src/lib/ixai/identity";
@@ -61,8 +62,8 @@ export function AccountPanel() {
         {isAuthenticated ? "你的 IXAI 身份已建立" : "以 Guest 模式開始，登入後同步你的市場記憶"}
       </h2>
       <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-        Guest 模式是有效的免費使用方式；登入的價值在於同步自選觀察、保存關注主題，
-        並為未來個人化 AI 風險監控與 IXAI Pro 模組建立基礎。
+        Guest 模式是有效的免費使用方式；登入的價值在於準備同步自選觀察、保存關注主題，
+        並為未來個人化 AI 風險監控與 IXAI Pro 模組建立基礎。Pro 連接與跨裝置同步會分階段開放。
       </p>
       <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3">
         <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
@@ -150,8 +151,22 @@ export function AccountPanel() {
             </div>
           ) : null}
           <div className="grid gap-3">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Link
+                className="ixai-cta-forest inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold"
+                href="/login"
+              >
+                Email 登入
+              </Link>
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+                href="/register"
+              >
+                建立帳號
+              </Link>
+            </div>
             <button
-              className="ixai-cta-forest rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:bg-[var(--ixai-forest)]/45 disabled:text-[var(--ixai-cream)]/60"
+              className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)] disabled:cursor-not-allowed disabled:opacity-50"
               disabled={!authConfigured}
               onClick={signInWithGoogle}
               type="button"
@@ -164,7 +179,7 @@ export function AccountPanel() {
               </p>
             ) : null}
             <button
-              className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+              className="rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest-soft)]"
               onClick={continueAsGuest}
               type="button"
             >

@@ -275,8 +275,8 @@ export function WatchlistManager() {
           建立你的個人市場入口。
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-[rgba(245,240,230,0.72)] sm:mt-4 sm:text-base sm:leading-8">
-          新增你關注的股票、ETF、指數或 Crypto。Guest 模式會先保存在本機瀏覽器；
-          登入同步開放後，可延伸到 IXAI Pro 個人監控。
+          新增你關注的股票、ETF、指數或 Crypto。目前此裝置保存；登入後將逐步支援跨裝置同步，
+          並為未來 IXAI Pro 個人監控建立基礎。
         </p>
         <p className="mt-2 max-w-3xl text-xs leading-6 text-[rgba(245,240,230,0.58)] sm:mt-3 sm:text-sm sm:leading-7">
           {ixaiIdentity.watchlistSyncCopy}
