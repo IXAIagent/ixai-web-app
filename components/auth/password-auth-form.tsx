@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { useIdentity } from "@/components/auth/auth-provider";
@@ -12,6 +12,7 @@ type PasswordAuthFormProps = {
 
 export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     authConfigured,
     registerWithPassword,
@@ -23,6 +24,13 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isLogin = mode === "login";
+  const routeMessage =
+    searchParams.get("verified") === "1"
+      ? "Email 已驗證，請重新登入 IXAI。"
+      : searchParams.get("error") === "auth_callback_failed"
+        ? "Email 驗證連結無法完成，請重新登入 IXAI。"
+        : "";
+  const displayMessage = message || routeMessage;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -75,7 +83,7 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
         <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
           {authConfigured
             ? "登入後即可在此裝置保存 IXAI session；跨裝置同步與 Pro handoff 將分階段開放。"
-            : "登入同步尚未啟用。請先在環境變數設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。"}
+            : "IXAI Account production auth 尚未設定。"}
         </p>
 
         <div className="mt-5 grid gap-4">
@@ -114,9 +122,9 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
           </button>
         </div>
 
-        {message ? (
+        {displayMessage ? (
           <p className="mt-4 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-            {message}
+            {displayMessage}
           </p>
         ) : null}
 

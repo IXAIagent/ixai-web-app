@@ -11,6 +11,7 @@ import {
   buildGoogleOAuthUrl,
   clearIdentityPayload,
   fetchSupabaseUser,
+  getAuthCallbackUrl,
   getGuestSession,
   isSupabaseAuthConfigured,
   readHashSession,
@@ -192,13 +193,13 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       persistenceStatus,
       authConfigured,
       signInWithGoogle() {
-        const url = buildGoogleOAuthUrl(window.location.origin + "/account");
+        const url = buildGoogleOAuthUrl(getAuthCallbackUrl());
         if (url) {
           window.location.href = url;
         }
       },
       sendMagicLink(email: string) {
-        return sendMagicLink(email, window.location.origin + "/account");
+        return sendMagicLink(email, getAuthCallbackUrl());
       },
       async signInWithPassword(email: string, password: string) {
         const result = await signInWithSupabasePassword(email, password);

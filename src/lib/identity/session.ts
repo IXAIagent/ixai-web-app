@@ -12,6 +12,7 @@ import type {
 } from "@/src/types/identity";
 
 const IDENTITY_KEY = "ixai.identity.v1";
+const DEFAULT_SITE_URL = "https://app.ixuan.ai";
 
 function canUseStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -90,7 +91,24 @@ export function isSupabaseAuthConfigured() {
   return getSupabaseAuthConfig() !== null;
 }
 
-export function buildGoogleOAuthUrl(redirectTo: string) {
+export function getAuthSiteUrl() {
+  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const normalizedUrl = (configuredUrl || DEFAULT_SITE_URL).replace(/\/+$/, "");
+  const isLocalhost =
+    normalizedUrl.includes("localhost") || normalizedUrl.includes("127.0.0.1");
+
+  if (process.env.NODE_ENV === "production" && isLocalhost) {
+    return DEFAULT_SITE_URL;
+  }
+
+  return normalizedUrl;
+}
+
+export function getAuthCallbackUrl() {
+  return `${getAuthSiteUrl()}/auth/callback`;
+}
+
+export function buildGoogleOAuthUrl(redirectTo = getAuthCallbackUrl()) {
   const config = getSupabaseAuthConfig();
 
   if (!config) {
@@ -171,7 +189,7 @@ function normalizeAuthError(payload: SupabaseAuthResponse, fallback: string) {
   const lower = raw.toLowerCase();
 
   if (lower.includes("invalid login") || lower.includes("invalid credentials")) {
-    return "Email 或密碼不正確，請確認後再試一次。";
+    return "Email 或密碼不正確。";
   }
 
   if (lower.includes("already registered") || lower.includes("already exists")) {
@@ -198,7 +216,7 @@ export async function signInWithPassword(
   if (!config) {
     return {
       ok: false,
-      message: "登入同步尚未啟用。請先設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。",
+      message: "IXAI Account production auth 尚未設定。",
     };
   }
 
@@ -251,18 +269,29 @@ export async function registerWithPassword(
   if (!config) {
     return {
       ok: false,
-      message: "帳號建立尚未啟用。請先設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。",
+      message: "IXAI Account production auth 尚未設定。",
     };
   }
 
   try {
-    const response = await fetch(`${config.url}/auth/v1/signup`, {
+    const callbackUrl = getAuthCallbackUrl();
+    const signUpUrl = new URL(`${config.url}/auth/v1/signup`);
+    signUpUrl.searchParams.set("redirect_to", callbackUrl);
+
+    const response = await fetch(signUpUrl.toString(), {
       method: "POST",
       headers: {
         apikey: config.anonKey,
         "content-type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({
+        email,
+        password,
+        email_redirect_to: callbackUrl,
+        options: {
+          email_redirect_to: callbackUrl,
+        },
+      }),
     });
     const payload = await response.json() as SupabaseAuthResponse;
 
@@ -316,13 +345,13 @@ export async function signOutSupabase(accessToken?: string) {
   }
 }
 
-export async function sendMagicLink(email: string, redirectTo: string) {
+export async function sendMagicLink(email: string, redirectTo = getAuthCallbackUrl()) {
   const config = getSupabaseAuthConfig();
 
   if (!config) {
     return {
       ok: false,
-      message: "登入同步尚未啟用。請先設定 NEXT_PUBLIC_SUPABASE_URL 與 NEXT_PUBLIC_SUPABASE_ANON_KEY。",
+      message: "IXAI Account production auth 尚未設定。",
     };
   }
 

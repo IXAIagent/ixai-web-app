@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { PasswordAuthForm } from "@/components/auth/password-auth-form";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -7,5 +8,9 @@ export const metadata = buildPublicMetadata({
 });
 
 export default function RegisterPage() {
-  return <PasswordAuthForm mode="register" />;
+  return (
+    <Suspense fallback={null}>
+      <PasswordAuthForm mode="register" />
+    </Suspense>
+  );
 }
