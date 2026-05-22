@@ -114,7 +114,7 @@ export default function ProPage() {
             </p>
             <div className="mt-4 grid gap-3">
               {ecosystemLayers.map((layer) => (
-                <div className="rounded-lg border border-white/10 bg-black/10 p-4" key={layer.title}>
+                <div className="rounded-lg border border-white/10 bg-white/[0.045] p-4" key={layer.title}>
                   <p className="font-mono text-xs uppercase tracking-[0.14em] text-white/42">
                     {layer.label}
                   </p>

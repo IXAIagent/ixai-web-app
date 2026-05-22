@@ -8,7 +8,7 @@ export function AccountStatus() {
 
   return (
     <Link
-      className="block rounded-lg border border-white/10 bg-black/18 p-3 transition hover:bg-white/[0.06]"
+      className="block rounded-lg border border-white/10 bg-white/[0.045] p-3 transition hover:bg-white/[0.07]"
       href="/account"
     >
       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">

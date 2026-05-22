@@ -1,6 +1,7 @@
 "use client";
 
-import { Download, Smartphone } from "lucide-react";
+import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
+import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type BeforeInstallPromptEvent = Event & {
@@ -59,7 +60,7 @@ export function PwaInstallCard() {
     return (
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
         <div className="flex items-start gap-3">
-          <Smartphone className="mt-1 h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
+          <IxaiLogoFrame className="h-10 w-16" logoSize="sm" />
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
               IXAI App
@@ -80,7 +81,7 @@ export function PwaInstallCard() {
     <section className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3">
-          <Smartphone className="mt-1 h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
+          <IxaiLogoFrame className="h-10 w-16" logoSize="sm" />
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
               Install IXAI
@@ -108,7 +109,7 @@ export function PwaInstallCard() {
             onClick={handleInstall}
             type="button"
           >
-            <Download className="h-4 w-4" aria-hidden="true" />
+            <Download className="h-4 w-4 text-[var(--ixai-cream)]" aria-hidden="true" />
             安裝 IXAI
           </button>
         ) : null}

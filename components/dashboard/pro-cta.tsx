@@ -35,7 +35,7 @@ export function ProCta({ features }: { features: string[] }) {
                 className="relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] p-3.5 sm:p-4"
               key={feature}
             >
-              <span className="absolute right-3 top-3 rounded-md border border-white/10 bg-black/18 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[rgba(245,240,230,0.46)]">
+              <span className="absolute right-3 top-3 rounded-md border border-white/10 bg-white/[0.055] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[rgba(245,240,230,0.54)]">
                 Pro
               </span>
               <p className="text-sm font-medium">{feature}</p>

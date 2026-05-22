@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { MobileTopInsight } from "@/components/layout/mobile-top-insight";
@@ -15,16 +15,7 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
       <div className="fixed inset-x-0 top-0 z-20 border-b border-[rgba(176,141,87,0.28)] bg-[rgba(245,240,230,0.90)] px-3.5 pb-2.5 pt-[calc(env(safe-area-inset-top)+0.6rem)] backdrop-blur md:hidden">
         <div className="flex items-center justify-between gap-3">
           <MobileTopInsight />
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)]">
-            <Image
-              alt="IXAI"
-              className="h-auto w-6"
-              height={48}
-              priority
-              src="/logo/ixuan-logo.png"
-              width={96}
-            />
-          </div>
+          <IxaiLogoFrame className="h-8 w-12" logoSize="xs" priority />
         </div>
       </div>
 

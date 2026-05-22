@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { ArrowUpRight, Camera, Mail, MessageCircle, Users } from "lucide-react";
+import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
 import { getBrandContactChannels } from "@/src/lib/brand/contact";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -45,16 +45,7 @@ export default function AboutPage() {
       <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <div className="grid gap-5 p-4 sm:gap-8 sm:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:p-10">
           <div className="flex items-start gap-3 sm:gap-4">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.045] sm:h-16 sm:w-16">
-              <Image
-                alt="I-Xuan Investment Co. Ltd."
-                className="h-auto w-14 sm:w-12"
-                height={60}
-                priority
-                src="/logo/ixuan-logo.png"
-                width={120}
-              />
-            </div>
+            <IxaiLogoFrame className="h-16 w-24 sm:h-14 sm:w-20" logoSize="md" priority tone="dark" />
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-[var(--ixai-gold)]">
                 IXAI
@@ -208,7 +199,7 @@ export default function AboutPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {communityLinks.map((link) => {
-              const ContactIcon = contactIcons[link.label];
+              const ContactIcon = contactIcons[link.label] ?? Mail;
 
               return (
                 <a
@@ -219,7 +210,7 @@ export default function AboutPage() {
                   target={link.isExternal ? "_blank" : undefined}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <ContactIcon className="h-4 w-4" aria-hidden="true" />
+                    <ContactIcon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
                     {link.ctaLabel}
                   </span>
                   <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AccountStatus } from "@/components/auth/account-status";
+import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
@@ -51,13 +52,18 @@ export function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-[rgba(176,141,87,0.22)] bg-[#071f17] text-[var(--ixai-cream)] md:flex md:flex-col">
       <div className="border-b border-white/10 px-4 py-5">
-        <Eyebrow mono density="extra-wide" className="text-[10px]">
-          IXAI
-        </Eyebrow>
-        <h1 className="mt-2 text-base font-semibold tracking-normal">
-          Intelligence OS
-        </h1>
-        <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.48)]">
+        <div className="flex items-center gap-3">
+          <IxaiLogoFrame className="h-10 w-[4.75rem]" logoSize="sm" priority tone="dark" />
+          <div>
+            <Eyebrow mono density="extra-wide" className="text-[10px]">
+              IXAI
+            </Eyebrow>
+            <h1 className="mt-1 text-sm font-semibold tracking-normal">
+              Intelligence OS
+            </h1>
+          </div>
+        </div>
+        <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.50)]">
           Daily market command layer.
         </p>
       </div>
@@ -94,7 +100,7 @@ export function Sidebar() {
 
       <div className="m-2.5 grid gap-2">
         <AccountStatus />
-        <div className="rounded-lg border border-white/10 bg-black/18 p-3">
+        <div className="rounded-lg border border-white/10 bg-white/[0.045] p-3">
           <Eyebrow mono className="text-[10px]">
             Risk State
           </Eyebrow>
