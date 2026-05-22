@@ -12,6 +12,7 @@ import {
   clearIdentityPayload,
   fetchSupabaseUser,
   getGuestSession,
+  acceptGuestMode,
   isSupabaseAuthConfigured,
   readHashSession,
   readIdentityPayload,
@@ -228,6 +229,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         };
       },
       continueAsGuest() {
+        acceptGuestMode();
         const nextMemory = {
           ...memory,
           onboardingCompleted: true,

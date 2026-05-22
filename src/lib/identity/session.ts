@@ -12,6 +12,7 @@ import type {
 } from "@/src/types/identity";
 
 const IDENTITY_KEY = "ixai.identity.v1";
+const GUEST_ACCEPTED_KEY = "ixai.guest.accepted.v1";
 
 function canUseStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -80,6 +81,22 @@ export function clearIdentityPayload() {
 
   window.localStorage.removeItem(IDENTITY_KEY);
   window.dispatchEvent(new Event("ixai-identity-change"));
+}
+
+export function hasAcceptedGuestMode() {
+  if (!canUseStorage()) {
+    return false;
+  }
+
+  return window.localStorage.getItem(GUEST_ACCEPTED_KEY) === "true";
+}
+
+export function acceptGuestMode() {
+  if (!canUseStorage()) {
+    return;
+  }
+
+  window.localStorage.setItem(GUEST_ACCEPTED_KEY, "true");
 }
 
 export function getSupabaseAuthConfig() {

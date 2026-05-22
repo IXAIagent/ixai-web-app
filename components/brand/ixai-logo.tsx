@@ -24,6 +24,7 @@ export function IxaiLogo({
       priority={priority}
       sizes="(max-width: 768px) 96px, 128px"
       src="/logo/ixuan-logo.png"
+      unoptimized
       width={527}
     />
   );

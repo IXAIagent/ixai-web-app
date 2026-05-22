@@ -6,7 +6,7 @@ import {
   BarChart3,
   FileText,
   Home,
-  Info,
+  UserCircle,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -18,7 +18,7 @@ const mobileItems = [
   { icon: BarChart3, label: "市場", href: "/market" },
   { icon: ShieldCheck, label: "FCN", href: "/fcn" },
   { external: true, icon: Sparkles, label: "Pro", href: ixaiEcosystem.proDashboardUrl },
-  { icon: Info, label: "關於", href: "/about" },
+  { icon: UserCircle, label: "我的", href: "/account" },
 ];
 
 export function MobileNav() {

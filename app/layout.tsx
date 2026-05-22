@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AuthEntryGate } from "@/components/auth/auth-entry-gate";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { AppShell } from "@/components/layout/app-shell";
 import {
@@ -68,7 +69,9 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <AuthProvider>
-          <AppShell>{children}</AppShell>
+          <AuthEntryGate>
+            <AppShell>{children}</AppShell>
+          </AuthEntryGate>
         </AuthProvider>
       </body>
     </html>
