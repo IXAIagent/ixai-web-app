@@ -12,10 +12,10 @@ import type {
   MarketQuotesResponse,
 } from "@/src/lib/market-data/types";
 import {
-  getWatchlist,
   type WatchlistItem,
   type WatchlistMarket,
 } from "@/src/lib/watchlist";
+import { ensureDefaultWatchlistSeed } from "@/src/lib/watchlist-defaults";
 
 const statusLabels: Record<MarketDataStatus, string> = {
   real: "真實",
@@ -60,7 +60,10 @@ export function Watchlist() {
 
   useEffect(() => {
     function syncWatchlist() {
-      setAssets(getWatchlist().slice(0, 5));
+      // v1.28.5 — share the default-seed path with /watchlist and the teaser
+      // so a brand-new visitor sees the same baseline watchlist across the
+      // home dashboard, the market page teaser, and the manager.
+      setAssets(ensureDefaultWatchlistSeed().slice(0, 5));
     }
 
     const timeoutId = window.setTimeout(syncWatchlist, 0);
@@ -133,7 +136,9 @@ export function Watchlist() {
       ) : (
         <div className="divide-y divide-[var(--ixai-border)]">
           {assets.map((asset) => {
-            const quote = quotes[asset.symbol];
+            // v1.28.5 — match the lookup behavior of the manager / teaser so
+            // legacy TW rows stored without a .TW suffix still resolve.
+            const quote = quotes[asset.symbol] ?? quotes[displaySymbol(asset)];
 
             return (
               <article className="px-4 py-3.5 sm:px-5" key={`${asset.market}:${asset.symbol}`}>
@@ -148,7 +153,7 @@ export function Watchlist() {
                       </span>
                     </div>
                     <p className="mt-1 truncate text-xs text-[var(--ixai-ink-muted)]">
-                      {asset.name}
+                      {asset.name || displaySymbol(asset)}
                     </p>
                   </div>
                   <div className="flex items-end justify-between gap-3 sm:block sm:text-right">

@@ -1,5 +1,5 @@
 export const ixaiEcosystem = {
-  publicAppUrl: "https://ixai-web-app.vercel.app",
+  publicAppUrl: "https://app.ixuan.ai",
   proPreviewUrl: "/pro",
   proDashboardUrl: "https://ixai-website-clean.vercel.app/dashboard",
   dailyBriefUrl: "/daily-brief",
