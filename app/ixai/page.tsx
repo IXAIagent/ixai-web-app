@@ -205,7 +205,7 @@ export default function IxaiPage() {
             </p>
           </div>
           <a
-            className="inline-flex w-fit rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+            className="ixai-cta-cream inline-flex min-h-11 w-fit items-center justify-center rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-semibold"
             href={ixaiEcosystem.proDashboardUrl}
             rel="noopener noreferrer"
             target="_blank"

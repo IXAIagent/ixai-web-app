@@ -39,7 +39,7 @@ export function EcosystemBridge({
 
         {isPro ? (
           <a
-            className="ixai-cta-forest inline-flex w-fit rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold"
+            className="ixai-cta-forest inline-flex min-h-11 w-fit items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold"
             href={`${ixaiEcosystem.publicAppUrl}${ixaiEcosystem.dailyBriefUrl}`}
             rel="noopener noreferrer"
             target="_blank"
@@ -49,7 +49,7 @@ export function EcosystemBridge({
         ) : (
           <div className="flex flex-wrap gap-3">
             <a
-              className="ixai-cta-forest inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold"
+              className="ixai-cta-forest inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold"
               href={ixaiEcosystem.proDashboardUrl}
               rel="noopener noreferrer"
               target="_blank"
@@ -57,7 +57,7 @@ export function EcosystemBridge({
               {ixaiEcosystem.cta.enterPro}
             </a>
             <Link
-              className="inline-flex rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
               href={ixaiEcosystem.dailyBriefUrl}
             >
               {ixaiEcosystem.cta.viewDailyBrief}

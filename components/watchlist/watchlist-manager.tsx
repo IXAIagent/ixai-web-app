@@ -316,9 +316,8 @@ export function WatchlistManager() {
         </p>
         <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
           <Link
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-3 py-2 text-sm font-medium text-[#09291f] sm:px-4"
+            className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-3 py-2 text-sm font-semibold sm:px-4"
             href="/market"
-            style={{ color: "#09291f" }}
           >
             <BarChart3 className="h-4 w-4" aria-hidden="true" />
             查看市場總覽

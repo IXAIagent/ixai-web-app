@@ -20,8 +20,14 @@ export function ProCta({ features }: { features: string[] }) {
           <p className="mt-3 text-xs leading-6 text-[rgba(245,240,230,0.50)]">
             {ixaiIdentity.sharedAccountMessage}
           </p>
+          {/* v1.29.2 — use the .ixai-cta-cream utility class (which carries
+              !important) instead of inline text-[var(--ixai-forest)]. The
+              parent SectionCard sets text-[var(--ixai-cream)] which has the
+              same specificity as the inline override, so the CTA was
+              rendering cream-on-cream and looked blank/white on the home
+              page bottom. The utility class forces forest text reliably. */}
           <a
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)] sm:mt-5 sm:w-fit"
+            className="ixai-cta-cream mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[var(--ixai-cream)] px-4 py-2 text-sm font-semibold sm:mt-5 sm:w-fit sm:px-5"
             href={ixaiEcosystem.proDashboardUrl}
             rel="noopener noreferrer"
             target="_blank"

@@ -32,7 +32,7 @@ export default function AdminPage() {
           管理 AI generated draft、review queue 與 publish workflow。這頁目前不放入公開導覽。
         </p>
         <Link
-          className="mt-5 inline-flex rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium text-[var(--ixai-cream)]"
+          className="ixai-cta-forest mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold"
           href="/admin/daily-briefs"
         >
           進入 Daily Brief Pipeline
