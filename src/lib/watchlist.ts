@@ -55,14 +55,41 @@ function writeWatchlist(items: WatchlistItem[]) {
   window.dispatchEvent(new Event("ixai-watchlist-change"));
 }
 
-export function normalizeSymbol(symbol: string, market?: WatchlistMarket): string {
-  const normalized = symbol.trim().toUpperCase();
+// v1.28.1 — robust normalization so dynamic symbols match what the quote
+// provider returns. Rules:
+//   - trim / strip whitespace
+//   - uppercase
+//   - Taiwan 4-digit codes get .TW suffix (so storage key matches provider key)
+//   - existing .TW / .tw suffix is preserved
+//   - crypto and other symbols pass through after uppercasing
+export function normalizeWatchlistSymbol(
+  symbol: string,
+  market?: WatchlistMarket,
+): string {
+  const stripped = symbol.replace(/\s+/g, "");
 
-  if (market === "TW" && /^\d{4}$/.test(normalized)) {
-    return normalized;
+  if (!stripped) {
+    return "";
   }
 
-  return normalized;
+  const upper = stripped.toUpperCase();
+
+  if (market === "TW") {
+    if (/^\d{4}$/.test(upper)) {
+      return `${upper}.TW`;
+    }
+
+    if (/^\d{4}\.TW$/.test(upper)) {
+      return upper;
+    }
+  }
+
+  return upper;
+}
+
+// Kept for backward compatibility with existing call sites.
+export function normalizeSymbol(symbol: string, market?: WatchlistMarket): string {
+  return normalizeWatchlistSymbol(symbol, market);
 }
 
 export function getWatchlist(): WatchlistItem[] {

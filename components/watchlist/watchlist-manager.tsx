@@ -226,6 +226,25 @@ export function WatchlistManager() {
     return Object.fromEntries(quotesPayload.quotes.map((quote) => [quote.symbol, quote]));
   }, [quotesPayload]);
 
+  // v1.28.1 — dev-only diagnostic for symbols that come back unavailable so
+  // we can spot provider gaps without polluting production logs.
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") {
+      return;
+    }
+
+    if (!quotesPayload) {
+      return;
+    }
+
+    for (const item of items) {
+      const quote = quoteForItem(item, quotes);
+      if (!quote || quote.status === "unavailable") {
+        console.warn(`[watchlist] missing quote for ${displaySymbol(item)}`);
+      }
+    }
+  }, [items, quotes, quotesPayload]);
+
   const normalizedSymbol = useMemo(
     () => normalizeSymbol(symbol, market),
     [market, symbol],
@@ -529,7 +548,7 @@ export function WatchlistManager() {
                           {displaySymbol(item)}
                         </p>
                         <p className="mt-1 text-sm text-[var(--ixai-ink-muted)]">
-                          {item.name}
+                          {item.name || displaySymbol(item)}
                         </p>
                       </div>
                       <button

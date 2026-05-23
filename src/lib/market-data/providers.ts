@@ -238,8 +238,40 @@ export const coinGeckoProvider: MarketQuoteProvider = {
   },
 };
 
+// v1.28.1 — passthrough mode: when a watchlist symbol is not in the curated
+// metadata map, build a best-effort dynamic meta so Yahoo Finance is still
+// queried with the raw symbol. This lets users add arbitrary US / TW tickers
+// (AMD, AAPL, PLTR, etc.) without us pre-registering them.
+function getYahooMeta(symbol: string) {
+  const existing = yahooSymbols[symbol];
+
+  if (existing) {
+    return existing;
+  }
+
+  if (!isLikelyEquitySymbol(symbol)) {
+    return undefined;
+  }
+
+  return { yahooSymbol: symbol, symbol, name: symbol };
+}
+
+// Conservative gate so we don't dispatch Yahoo requests for clearly-invalid
+// input (empty strings, free-form text). Accepts US equities (1-5 letters,
+// optional digits), Taiwan codes with .TW suffix, dotted indices, and the
+// known special tickers in the curated map.
+const EQUITY_SYMBOL_PATTERN = /^[A-Z0-9]{1,6}(?:\.[A-Z]{1,4})?$/;
+
+function isLikelyEquitySymbol(symbol: string): boolean {
+  if (symbol in yahooSymbols) {
+    return true;
+  }
+
+  return EQUITY_SYMBOL_PATTERN.test(symbol);
+}
+
 async function getYahooChartQuote(symbol: string) {
-  const meta = yahooSymbols[symbol];
+  const meta = getYahooMeta(symbol);
 
   if (!meta) {
     return undefined;
@@ -307,12 +339,13 @@ export const yahooFinanceProvider: MarketQuoteProvider = {
   id: "yahoo-finance",
   label: "Yahoo Finance",
   supports(symbol) {
-    return normalizeMarketSymbol(symbol) in yahooSymbols;
+    const normalized = normalizeMarketSymbol(symbol);
+    return isLikelyEquitySymbol(normalized);
   },
   async getQuotes(symbols) {
     const supportedSymbols = symbols
       .map(normalizeMarketSymbol)
-      .filter((symbol) => symbol in yahooSymbols);
+      .filter((symbol) => isLikelyEquitySymbol(symbol));
     const settled = await Promise.allSettled(
       supportedSymbols.map((symbol) => getYahooChartQuote(symbol)),
     );

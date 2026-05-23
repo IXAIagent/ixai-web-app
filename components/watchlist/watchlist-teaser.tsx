@@ -34,8 +34,19 @@ const marketLabels: Record<WatchlistMarket, string> = {
   Global: "MACRO",
 };
 
+function withTwSuffix(item: WatchlistItem): string {
+  if (item.market === "TW" && /^\d{4}$/.test(item.symbol)) {
+    return `${item.symbol}.TW`;
+  }
+
+  return item.symbol;
+}
+
 function quoteForItem(item: WatchlistItem, quotes: Record<string, MarketQuote>) {
-  return quotes[item.symbol];
+  // v1.28.1 — try the stored symbol first, then the .TW-suffixed variant so
+  // legacy storage rows that pre-date normalizeWatchlistSymbol still match
+  // against provider-normalized response keys (e.g. 2330 vs 2330.TW).
+  return quotes[item.symbol] ?? quotes[withTwSuffix(item)];
 }
 
 export function WatchlistTeaser() {
@@ -154,7 +165,7 @@ export function WatchlistTeaser() {
                     {item.symbol}
                   </p>
                   <p className="mt-0.5 truncate text-[11px] text-[var(--ixai-ink-muted)]">
-                    {item.name}
+                    {item.name || item.symbol}
                   </p>
                 </div>
                 <span className="shrink-0 rounded-md border border-[var(--ixai-border)] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
