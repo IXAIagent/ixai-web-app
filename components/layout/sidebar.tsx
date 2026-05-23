@@ -37,7 +37,7 @@ const navGroups: Array<{
     heading: "Membership",
     items: [
       { label: "FCN", href: "/fcn" },
-      { external: true, label: "IXAI Pro", href: ixaiEcosystem.proDashboardUrl },
+      { label: "IXAI Pro", href: ixaiEcosystem.proPreviewUrl },
     ],
   },
   {

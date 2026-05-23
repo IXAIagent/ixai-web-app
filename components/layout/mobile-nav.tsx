@@ -17,7 +17,7 @@ const mobileItems = [
   { icon: FileText, label: "每日", href: "/daily-brief" },
   { icon: BarChart3, label: "市場", href: "/market" },
   { icon: ShieldCheck, label: "FCN", href: "/fcn" },
-  { external: true, icon: Sparkles, label: "Pro", href: ixaiEcosystem.proDashboardUrl },
+  { icon: Sparkles, label: "Pro", href: ixaiEcosystem.proPreviewUrl },
   { icon: UserCircle, label: "我的", href: "/account" },
 ];
 
@@ -30,8 +30,7 @@ export function MobileNav() {
         {mobileItems.map((item) => {
           const Icon = item.icon;
           const isActive =
-            !item.external &&
-            (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href));
+            item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           const className = `flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl px-1.5 text-center transition active:scale-[0.98] ${
             isActive
               ? "border border-[rgba(176,141,87,0.42)] bg-[rgba(245,240,230,0.92)] text-[var(--ixai-forest)] shadow-[0_10px_26px_rgba(0,0,0,0.20)]"
@@ -43,8 +42,6 @@ export function MobileNav() {
               className={className}
               href={item.href}
               key={item.label}
-              rel={item.external ? "noopener noreferrer" : undefined}
-              target={item.external ? "_blank" : undefined}
             >
               <Icon
                 className={`h-4 w-4 ${isActive ? "text-[var(--ixai-gold)]" : "text-[rgba(245,240,230,0.62)]"}`}

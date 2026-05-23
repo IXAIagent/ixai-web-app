@@ -21,11 +21,9 @@ export function Footer() {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <a
             className="text-[rgba(245,240,230,0.64)] transition hover:text-[var(--ixai-cream)]"
-            href={ixaiEcosystem.proDashboardUrl}
-            rel="noopener noreferrer"
-            target="_blank"
+            href={ixaiEcosystem.proPreviewUrl}
           >
-            {ixaiEcosystem.cta.enterPro}
+            {ixaiEcosystem.cta.learnPro}
           </a>
           {footerLinks.map((link) => (
             <a
