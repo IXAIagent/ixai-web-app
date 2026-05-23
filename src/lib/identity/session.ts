@@ -4,13 +4,17 @@ import {
   writePersonalMemory,
 } from "@/src/lib/personalization/memory";
 import { getAuthRedirectUrl } from "@/src/lib/auth/get-auth-redirect-url";
-import { getSupabaseClientConfig } from "@/src/lib/supabase/client";
+import {
+  createSupabaseBrowserClient,
+  getSupabaseClientConfig,
+} from "@/src/lib/supabase/client";
 import type {
   IXAISession,
   IXAIUser,
   PersonalMemory,
   PersistedIdentityPayload,
 } from "@/src/types/identity";
+import type { AuthError, Session, User } from "@supabase/supabase-js";
 
 const IDENTITY_KEY = "ixai.identity.v1";
 
@@ -35,20 +39,12 @@ export function readIdentityPayload(): PersistedIdentityPayload {
 
   try {
     const raw = window.localStorage.getItem(IDENTITY_KEY);
-    const parsed = raw ? JSON.parse(raw) : null;
-
-    if (!parsed?.session || parsed.session.mode !== "authenticated") {
-      return {
-        session: getGuestSession(),
-        memory: readPersonalMemory(),
-      };
-    }
-
-    const session = parsed.session as IXAISession;
+    const parsed = raw ? JSON.parse(raw) as { user?: IXAIUser } : null;
+    const userId = parsed?.user?.id;
 
     return {
-      session,
-      memory: readPersonalMemory(session.user?.id),
+      session: getGuestSession(),
+      memory: readPersonalMemory(userId),
     };
   } catch {
     return {
@@ -66,8 +62,15 @@ export function writeIdentityPayload(session: IXAISession, memory: PersonalMemor
   window.localStorage.setItem(
     IDENTITY_KEY,
     JSON.stringify({
-      session,
-      memory,
+      lastSeenAt: new Date().toISOString(),
+      user: session.user
+        ? {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.name,
+            avatarUrl: session.user.avatarUrl,
+          }
+        : null,
     }),
   );
   writePersonalMemory(memory, session.user?.id);
@@ -91,36 +94,8 @@ export function isSupabaseAuthConfigured() {
   return getSupabaseAuthConfig() !== null;
 }
 
-export function buildGoogleOAuthUrl() {
-  const config = getSupabaseAuthConfig();
-
-  if (!config) {
-    return null;
-  }
-
-  const params = new URLSearchParams({
-    provider: "google",
-    redirect_to: getAuthRedirectUrl(),
-  });
-
-  return `${config.url}/auth/v1/authorize?${params.toString()}`;
-}
-
 type SupabaseAuthResponse = {
-  access_token?: string;
-  refresh_token?: string;
-  expires_at?: number;
-  expires_in?: number;
   code?: string;
-  user?: {
-    id?: string;
-    email?: string;
-    user_metadata?: {
-      name?: string;
-      full_name?: string;
-      avatar_url?: string;
-    };
-  };
   error?: string;
   error_description?: string;
   message?: string;
@@ -137,7 +112,15 @@ export type PasswordAuthResult = {
   requiresEmailConfirmation?: boolean;
 };
 
-function buildUserFromAuthResponse(user: SupabaseAuthResponse["user"]): IXAIUser | null {
+export type AuthActionResult = {
+  ok: boolean;
+  message: string;
+  debugMessage?: string;
+  session?: IXAISession;
+  requiresEmailConfirmation?: boolean;
+};
+
+export function buildUserFromSupabaseUser(user: User | null | undefined): IXAIUser | null {
   if (!user?.id) {
     return null;
   }
@@ -150,12 +133,8 @@ function buildUserFromAuthResponse(user: SupabaseAuthResponse["user"]): IXAIUser
   };
 }
 
-function buildSessionFromAuthResponse(payload: SupabaseAuthResponse): IXAISession | null {
-  if (!payload.access_token) {
-    return null;
-  }
-
-  const user = buildUserFromAuthResponse(payload.user);
+export function buildIXAISessionFromSupabaseSession(session: Session | null): IXAISession | null {
+  const user = buildUserFromSupabaseUser(session?.user);
 
   if (!user) {
     return null;
@@ -164,11 +143,6 @@ function buildSessionFromAuthResponse(payload: SupabaseAuthResponse): IXAISessio
   return {
     mode: "authenticated",
     user,
-    accessToken: payload.access_token,
-    refreshToken: payload.refresh_token,
-    expiresAt: payload.expires_at ?? (
-      payload.expires_in ? Math.floor(Date.now() / 1000) + payload.expires_in : undefined
-    ),
   };
 }
 
@@ -179,6 +153,21 @@ type IXAIAuthDebugError = Error & {
   status?: number;
   responseBody?: unknown;
 };
+
+function authErrorToPayload(error: AuthError | Error | null): SupabaseAuthResponse {
+  if (!error) {
+    return {};
+  }
+
+  const authError = error as AuthError & { code?: string; status?: number };
+
+  return {
+    code: authError.code,
+    message: authError.message,
+    name: authError.name,
+    status: authError.status,
+  };
+}
 
 function logAuthDebug(
   context: AuthErrorContext,
@@ -215,108 +204,6 @@ function logRegisterRawError(error: IXAIAuthDebugError) {
     name: error.name,
     responseBody: error.responseBody,
   });
-}
-
-function getSupabaseAuthConfigOrThrow() {
-  const config = getSupabaseAuthConfig();
-
-  if (!config) {
-    throw new Error("IXAI Account production auth 尚未設定。");
-  }
-
-  return config;
-}
-
-async function parseSupabaseAuthResponse(response: Response): Promise<SupabaseAuthResponse> {
-  const text = await response.text();
-
-  if (!text) {
-    return {};
-  }
-
-  try {
-    return JSON.parse(text) as SupabaseAuthResponse;
-  } catch {
-    return {
-      error: "invalid_auth_response",
-      message: text,
-    };
-  }
-}
-
-function buildSupabaseAuthError(
-  payload: SupabaseAuthResponse,
-  status?: number,
-): IXAIAuthDebugError {
-  const message =
-    payload.message ??
-    payload.error_description ??
-    payload.msg ??
-    payload.error ??
-    `Supabase auth request failed${status ? ` with status ${status}` : ""}.`;
-  const error = new Error(message) as IXAIAuthDebugError;
-  error.name = payload.name ?? "SupabaseAuthError";
-  error.status = payload.status ?? status;
-  error.code = payload.code ?? payload.error;
-  error.responseBody = payload;
-  return error;
-}
-
-function createSupabaseAuthClient() {
-  const config = getSupabaseAuthConfigOrThrow();
-
-  return {
-    auth: {
-      async signUp({
-        email,
-        password,
-        options,
-      }: {
-        email: string;
-        password: string;
-        options: {
-          emailRedirectTo: string;
-        };
-      }) {
-        const signUpUrl = new URL(`${config.url}/auth/v1/signup`);
-        signUpUrl.searchParams.set("redirect_to", options.emailRedirectTo);
-
-        const response = await fetch(signUpUrl.toString(), {
-          method: "POST",
-          headers: {
-            apikey: config.anonKey,
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-            email_redirect_to: options.emailRedirectTo,
-            options: {
-              emailRedirectTo: options.emailRedirectTo,
-              email_redirect_to: options.emailRedirectTo,
-            },
-          }),
-        });
-        const payload = await parseSupabaseAuthResponse(response);
-
-        if (!response.ok) {
-          return {
-            data: null,
-            error: buildSupabaseAuthError(payload, response.status),
-            payload,
-            status: response.status,
-          };
-        }
-
-        return {
-          data: payload,
-          error: null,
-          payload,
-          status: response.status,
-        };
-      },
-    },
-  };
 }
 
 function normalizeAuthError(
@@ -397,9 +284,9 @@ export async function signInWithPassword(
   email: string,
   password: string,
 ): Promise<PasswordAuthResult> {
-  const config = getSupabaseAuthConfig();
+  const supabase = createSupabaseBrowserClient();
 
-  if (!config) {
+  if (!supabase) {
     return {
       ok: false,
       message: "IXAI Account production auth 尚未設定。",
@@ -407,24 +294,20 @@ export async function signInWithPassword(
   }
 
   try {
-    const response = await fetch(`${config.url}/auth/v1/token?grant_type=password`, {
-      method: "POST",
-      headers: {
-        apikey: config.anonKey,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
-    const payload = await response.json() as SupabaseAuthResponse;
 
-    if (!response.ok) {
+    if (error) {
+      const payload = authErrorToPayload(error);
       return {
         ok: false,
-        message: normalizeAuthError(payload, "login", response.status),
+        message: normalizeAuthError(payload, "login", payload.status),
       };
     }
 
-    const session = buildSessionFromAuthResponse(payload);
+    const session = buildIXAISessionFromSupabaseSession(data.session);
 
     if (!session) {
       return {
@@ -449,12 +332,48 @@ export async function signInWithPassword(
   }
 }
 
+export async function signInWithGoogleOAuth() {
+  const supabase = createSupabaseBrowserClient();
+
+  if (!supabase) {
+    return {
+      ok: false,
+      message: "IXAI Account production auth 尚未設定。",
+    };
+  }
+
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: getAuthRedirectUrl(),
+    },
+  });
+
+  if (error) {
+    const payload = authErrorToPayload(error);
+    return {
+      ok: false,
+      message: normalizeAuthError(payload, "login", payload.status),
+    };
+  }
+
+  return {
+    ok: true,
+    message: "正在前往 Google 登入。",
+  };
+}
+
 export async function registerWithPassword(
   email: string,
   password: string,
 ): Promise<PasswordAuthResult> {
   try {
-    const supabase = createSupabaseAuthClient();
+    const supabase = createSupabaseBrowserClient();
+
+    if (!supabase) {
+      throw new Error("IXAI Account production auth 尚未設定。");
+    }
+
     const callbackUrl = getAuthRedirectUrl();
 
     if (process.env.NODE_ENV === "development") {
@@ -465,7 +384,7 @@ export async function registerWithPassword(
       });
     }
 
-    const { data: payload, error, status } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -474,19 +393,21 @@ export async function registerWithPassword(
     });
 
     if (error) {
-      logRegisterRawError(error);
-      const errorPayload =
-        error.responseBody && typeof error.responseBody === "object"
-          ? error.responseBody as SupabaseAuthResponse
-          : { message: error.message, code: error.code, status: error.status };
+      const payload = authErrorToPayload(error);
+      logRegisterRawError({
+        ...error,
+        code: payload.code,
+        responseBody: payload,
+        status: payload.status,
+      } as IXAIAuthDebugError);
       return {
         ok: false,
-        message: normalizeAuthError(errorPayload, "register", status),
+        message: normalizeAuthError(payload, "register", payload.status),
         debugMessage: process.env.NODE_ENV !== "production" ? error.message : undefined,
       };
     }
 
-    const session = buildSessionFromAuthResponse(payload);
+    const session = buildIXAISessionFromSupabaseSession(data.session);
 
     if (!session) {
       return {
@@ -518,63 +439,46 @@ export async function registerWithPassword(
   }
 }
 
-export async function signOutSupabase(accessToken?: string) {
-  const config = getSupabaseAuthConfig();
+export async function signOutSupabase() {
+  const supabase = createSupabaseBrowserClient();
 
-  if (!config || !accessToken) {
+  if (!supabase) {
     return;
   }
 
-  try {
-    await fetch(`${config.url}/auth/v1/logout`, {
-      method: "POST",
-      headers: {
-        apikey: config.anonKey,
-        authorization: `Bearer ${accessToken}`,
-      },
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.warn("[IXAI AUTH] signOut failed", {
+      message: error.message,
+      name: error.name,
     });
-  } catch {
-    // Local sign-out still clears the IXAI session.
   }
 }
 
 export async function sendMagicLink(email: string) {
-  const config = getSupabaseAuthConfig();
+  const supabase = createSupabaseBrowserClient();
 
-  if (!config) {
+  if (!supabase) {
     return {
       ok: false,
       message: "IXAI Account production auth 尚未設定。",
     };
   }
 
-  const response = await fetch(`${config.url}/auth/v1/otp`, {
-    method: "POST",
-    headers: {
-      apikey: config.anonKey,
-      "content-type": "application/json",
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: getAuthRedirectUrl(),
+      shouldCreateUser: true,
     },
-    body: JSON.stringify({
-      email,
-      create_user: true,
-      email_redirect_to: getAuthRedirectUrl(),
-    }),
   });
 
-  if (!response.ok) {
-    let payload: SupabaseAuthResponse = {};
-
-    try {
-      payload = await response.json() as SupabaseAuthResponse;
-    } catch {
-      payload = {
-        error: "magic_link_error",
-      };
-    }
-
+  if (error) {
+    const payload = authErrorToPayload(error);
     return {
       ok: false,
-      message: normalizeAuthError(payload, "magic_link", response.status),
+      message: normalizeAuthError(payload, "magic_link", payload.status),
     };
   }
 
@@ -584,63 +488,22 @@ export async function sendMagicLink(email: string) {
   };
 }
 
-export function readHashSession() {
-  if (typeof window === "undefined" || !window.location.hash) {
+export async function getCurrentSupabaseIXAISession(): Promise<IXAISession | null> {
+  const supabase = createSupabaseBrowserClient();
+
+  if (!supabase) {
     return null;
   }
 
-  const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-  const accessToken = params.get("access_token");
+  const { data, error } = await supabase.auth.getSession();
 
-  if (!accessToken) {
+  if (error) {
+    console.warn("[IXAI AUTH] getSession failed", {
+      message: error.message,
+      name: error.name,
+    });
     return null;
   }
 
-  return {
-    accessToken,
-    refreshToken: params.get("refresh_token") ?? undefined,
-    expiresAt: params.get("expires_at")
-      ? Number(params.get("expires_at"))
-      : undefined,
-  };
-}
-
-export async function fetchSupabaseUser(accessToken: string): Promise<IXAIUser | null> {
-  const config = getSupabaseAuthConfig();
-
-  if (!config) {
-    return null;
-  }
-
-  const response = await fetch(`${config.url}/auth/v1/user`, {
-    headers: {
-      apikey: config.anonKey,
-      authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    return null;
-  }
-
-  const user = await response.json() as {
-    id?: string;
-    email?: string;
-    user_metadata?: {
-      name?: string;
-      full_name?: string;
-      avatar_url?: string;
-    };
-  };
-
-  if (!user.id) {
-    return null;
-  }
-
-  return {
-    id: user.id,
-    email: user.email,
-    name: user.user_metadata?.name ?? user.user_metadata?.full_name,
-    avatarUrl: user.user_metadata?.avatar_url,
-  };
+  return buildIXAISessionFromSupabaseSession(data.session);
 }

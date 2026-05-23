@@ -14,7 +14,7 @@ export function getWatchlistSyncState(session: IXAISession): WatchlistSyncState 
     };
   }
 
-  if (!getSupabaseClientConfig() || !session.accessToken) {
+  if (!getSupabaseClientConfig()) {
     return {
       mode: "pending",
       label: "等待同步",

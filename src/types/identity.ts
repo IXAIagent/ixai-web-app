@@ -12,9 +12,6 @@ export type IXAIUser = {
 export type IXAISession = {
   mode: IdentityMode;
   user: IXAIUser | null;
-  accessToken?: string;
-  refreshToken?: string;
-  expiresAt?: number;
 };
 
 export type IntelligenceInterest =

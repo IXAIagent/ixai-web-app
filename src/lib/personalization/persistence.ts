@@ -1,5 +1,8 @@
 import { readPersonalMemory, writePersonalMemory } from "@/src/lib/personalization/memory";
-import { getSupabaseClientConfig } from "@/src/lib/supabase/client";
+import {
+  getSupabaseAccessToken,
+  getSupabaseClientConfig,
+} from "@/src/lib/supabase/client";
 import {
   getWatchlist,
   type WatchlistItem,
@@ -25,21 +28,21 @@ function hasSupabaseSession(session: IXAISession) {
   return Boolean(
     getSupabaseClientConfig() &&
       session.mode === "authenticated" &&
-      session.user?.id &&
-      session.accessToken,
+      session.user?.id,
   );
 }
 
-function authHeaders(session: IXAISession) {
+async function authHeaders() {
   const config = getSupabaseClientConfig();
+  const accessToken = await getSupabaseAccessToken();
 
-  if (!config || !session.accessToken) {
+  if (!config || !accessToken) {
     return null;
   }
 
   return {
     apikey: config.anonKey,
-    authorization: `Bearer ${session.accessToken}`,
+    authorization: `Bearer ${accessToken}`,
   };
 }
 
@@ -82,7 +85,7 @@ export async function loadUserWatchlist(session: IXAISession): Promise<{
   status: PersistenceStatus;
 }> {
   const config = getSupabaseClientConfig();
-  const headers = authHeaders(session);
+  const headers = await authHeaders();
 
   if (!config || !headers || !session.user?.id) {
     return {
@@ -146,7 +149,7 @@ export async function saveUserWatchlist(
   items: WatchlistItem[],
 ): Promise<PersistenceStatus> {
   const config = getSupabaseClientConfig();
-  const headers = authHeaders(session);
+  const headers = await authHeaders();
 
   if (!config || !headers || !session.user?.id) {
     return session.mode === "authenticated"
@@ -207,7 +210,7 @@ export async function loadUserPreferences(session: IXAISession): Promise<{
   status: PersistenceStatus;
 }> {
   const config = getSupabaseClientConfig();
-  const headers = authHeaders(session);
+  const headers = await authHeaders();
 
   if (!config || !headers || !session.user?.id) {
     return {
@@ -259,7 +262,7 @@ export async function saveUserPreferences(
 ): Promise<PersistenceStatus> {
   saveLocalPreferences(preferences, session.user?.id);
   const config = getSupabaseClientConfig();
-  const headers = authHeaders(session);
+  const headers = await authHeaders();
 
   if (!config || !headers || !session.user?.id) {
     return session.mode === "authenticated"
@@ -306,7 +309,7 @@ export async function loadProfileMemory(session: IXAISession): Promise<{
   status: PersistenceStatus;
 }> {
   const config = getSupabaseClientConfig();
-  const headers = authHeaders(session);
+  const headers = await authHeaders();
 
   if (!hasSupabaseSession(session) || !config || !headers || !session.user?.id) {
     return {
@@ -374,7 +377,7 @@ export async function saveProfileMemory(
 ): Promise<PersistenceStatus> {
   writePersonalMemory(memory, session.user?.id);
   const config = getSupabaseClientConfig();
-  const headers = authHeaders(session);
+  const headers = await authHeaders();
 
   if (!config || !headers || !session.user?.id) {
     return session.mode === "authenticated"

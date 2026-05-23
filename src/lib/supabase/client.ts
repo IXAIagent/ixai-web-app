@@ -1,6 +1,34 @@
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+
 type SupabaseConfig = {
   url: string;
   anonKey: string;
+};
+
+let browserClient: SupabaseClient | null = null;
+
+const supabaseSessionStorage = {
+  getItem(key: string) {
+    if (typeof window === "undefined") {
+      return null;
+    }
+
+    return window.sessionStorage.getItem(key);
+  },
+  setItem(key: string, value: string) {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.sessionStorage.setItem(key, value);
+  },
+  removeItem(key: string) {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.sessionStorage.removeItem(key);
+  },
 };
 
 export function getSupabaseClientConfig(): SupabaseConfig | null {
@@ -25,8 +53,34 @@ export function createSupabaseBrowserClient() {
     return null;
   }
 
-  return {
-    mode: "placeholder" as const,
-    ...config,
-  };
+  if (browserClient) {
+    return browserClient;
+  }
+
+  browserClient = createClient(config.url, config.anonKey, {
+    auth: {
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      persistSession: true,
+      storage: supabaseSessionStorage,
+    },
+  });
+
+  return browserClient;
+}
+
+export async function getSupabaseAccessToken() {
+  const supabase = createSupabaseBrowserClient();
+
+  if (!supabase) {
+    return null;
+  }
+
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error || !data.session?.access_token) {
+    return null;
+  }
+
+  return data.session.access_token;
 }

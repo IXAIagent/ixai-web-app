@@ -8,15 +8,15 @@ import {
   useState,
 } from "react";
 import {
-  buildGoogleOAuthUrl,
+  buildIXAISessionFromSupabaseSession,
   clearIdentityPayload,
-  fetchSupabaseUser,
+  getCurrentSupabaseIXAISession,
   getGuestSession,
   isSupabaseAuthConfigured,
-  readHashSession,
   readIdentityPayload,
   registerWithPassword as registerWithSupabasePassword,
   sendMagicLink,
+  signInWithGoogleOAuth,
   signInWithPassword as signInWithSupabasePassword,
   signOutSupabase,
   writeIdentityPayload,
@@ -31,6 +31,7 @@ import {
   saveProfileMemory,
   saveUserPreferences,
 } from "@/src/lib/personalization/persistence";
+import { createSupabaseBrowserClient } from "@/src/lib/supabase/client";
 import type {
   IXAISession,
   IntelligenceInterest,
@@ -51,7 +52,7 @@ type IdentityContextValue = {
   memory: PersonalMemory;
   persistenceStatus: PersistenceStatus;
   authConfigured: boolean;
-  signInWithGoogle: () => void;
+  signInWithGoogle: () => Promise<AuthActionResult>;
   signInWithPassword: (email: string, password: string) => Promise<AuthActionResult>;
   registerWithPassword: (email: string, password: string) => Promise<AuthActionResult>;
   sendMagicLink: (email: string) => Promise<{ ok: boolean; message: string }>;
@@ -79,41 +80,62 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
   useEffect(() => {
     let ignore = false;
 
+    async function activateAuthenticatedSession(nextSession: IXAISession) {
+      const memoryResult = await loadProfileMemory(nextSession);
+      const preferenceResult = await loadUserPreferences(nextSession);
+      const nextMemory = {
+        ...memoryResult.memory,
+        preferredCategories: preferenceResult.preferences,
+        onboardingCompleted: true,
+      };
+
+      if (ignore) {
+        return;
+      }
+
+      setSession(nextSession);
+      setMemory(nextMemory);
+      setPersistenceStatus(
+        memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
+          ? {
+              mode: "synced",
+              label: "已連接 IXAI Account",
+              message: "偏好與市場記憶已準備連接 IXAI 帳戶。",
+              lastSyncedAt: new Date().toISOString(),
+            }
+          : memoryResult.status,
+      );
+      writeIdentityPayload(nextSession, nextMemory);
+    }
+
+    function clearAuthState({ redirectToLogin = false }: { redirectToLogin?: boolean } = {}) {
+      clearIdentityPayload();
+      setSession(getGuestSession());
+      setMemory(readPersonalMemory());
+      setPersistenceStatus(localPersistenceStatus);
+
+      if (!redirectToLogin || typeof window === "undefined") {
+        return;
+      }
+
+      const pathname = window.location.pathname;
+      const authSafePath =
+        pathname === "/login" ||
+        pathname === "/register" ||
+        pathname === "/about" ||
+        pathname.startsWith("/admin") ||
+        pathname.startsWith("/auth");
+
+      if (!authSafePath) {
+        window.location.assign("/login");
+      }
+    }
+
     async function hydrateIdentity() {
-      const hashSession = readHashSession();
+      const currentSession = await getCurrentSupabaseIXAISession();
 
-      if (hashSession) {
-        const user = await fetchSupabaseUser(hashSession.accessToken);
-
-        if (user && !ignore) {
-          const nextSession: IXAISession = {
-            mode: "authenticated",
-            user,
-            accessToken: hashSession.accessToken,
-            refreshToken: hashSession.refreshToken,
-            expiresAt: hashSession.expiresAt,
-          };
-          const memoryResult = await loadProfileMemory(nextSession);
-          const preferenceResult = await loadUserPreferences(nextSession);
-          const nextMemory = {
-            ...memoryResult.memory,
-            preferredCategories: preferenceResult.preferences,
-          };
-          setSession(nextSession);
-          setMemory(nextMemory);
-          setPersistenceStatus(
-            memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
-              ? {
-                  mode: "synced",
-                  label: "Synced",
-                  message: "Profile memory and preferences are connected to your IXAI account.",
-                  lastSyncedAt: new Date().toISOString(),
-                }
-              : memoryResult.status,
-          );
-          writeIdentityPayload(nextSession, nextMemory);
-          window.history.replaceState(null, document.title, window.location.pathname);
-        }
+      if (currentSession) {
+        await activateAuthenticatedSession(currentSession);
       } else {
         const payload = readIdentityPayload();
         if (!ignore) {
@@ -137,9 +159,27 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     }
 
     void hydrateIdentity();
+    const supabase = createSupabaseBrowserClient();
+    const authListener = supabase?.auth.onAuthStateChange((event, supabaseSession) => {
+      const nextSession = buildIXAISessionFromSupabaseSession(supabaseSession);
+
+      if (
+        nextSession &&
+        (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED")
+      ) {
+        void activateAuthenticatedSession(nextSession);
+        return;
+      }
+
+      if (event === "SIGNED_OUT") {
+        clearAuthState({ redirectToLogin: true });
+      }
+    });
+    const subscription = authListener?.data.subscription;
 
     return () => {
       ignore = true;
+      subscription?.unsubscribe();
     };
   }, []);
 
@@ -193,10 +233,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       persistenceStatus,
       authConfigured,
       signInWithGoogle() {
-        const url = buildGoogleOAuthUrl();
-        if (url) {
-          window.location.href = url;
-        }
+        return signInWithGoogleOAuth();
       },
       sendMagicLink(email: string) {
         return sendMagicLink(email);
@@ -230,11 +267,14 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         };
       },
       signOut() {
-        void signOutSupabase(session.accessToken);
-        clearIdentityPayload();
-        setSession(getGuestSession());
-        setMemory(readPersonalMemory());
-        setPersistenceStatus(localPersistenceStatus);
+        void (async () => {
+          await signOutSupabase();
+          clearIdentityPayload();
+          setSession(getGuestSession());
+          setMemory(readPersonalMemory());
+          setPersistenceStatus(localPersistenceStatus);
+          window.location.assign("/login");
+        })();
       },
       completeOnboarding(interests: IntelligenceInterest[]) {
         const nextMemory = {
