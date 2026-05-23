@@ -5,6 +5,10 @@ const nowIso = () => new Date().toISOString();
 export function normalizeMarketSymbol(symbol: string): string {
   const normalized = symbol.trim().toUpperCase();
 
+  if (normalized === "TWD=X") {
+    return "USDTWD=X";
+  }
+
   if (normalized === "TSMC") {
     return "TSM";
   }
@@ -107,6 +111,36 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     sourceLabel: "備援資料",
     status: "simulated",
   },
+  "USDTWD=X": {
+    symbol: "USDTWD=X",
+    name: "USD/TWD 美金兌台幣",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "macro-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "GC=F": {
+    symbol: "GC=F",
+    name: "黃金期貨",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "macro-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "SI=F": {
+    symbol: "SI=F",
+    name: "白銀期貨",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "macro-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
   VIX: {
     symbol: "VIX",
     name: "Volatility Index",
@@ -158,3 +192,5 @@ export function getFallbackMarketQuotes(symbols: string[]): MarketQuote[] {
 }
 
 export const defaultMarketSymbols = ["BTC", "ETH", "SOL", "SPY", "QQQ", "NVDA", "TSM", "2330.TW", "0050.TW"];
+
+export const macroMarketSymbols = ["USDTWD=X", "GC=F", "SI=F"];

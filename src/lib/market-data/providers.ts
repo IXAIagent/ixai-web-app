@@ -26,6 +26,9 @@ const coinGeckoIds: Record<string, { id: string; name: string }> = {
 };
 
 const yahooSymbols: Record<string, { yahooSymbol: string; symbol: string; name: string }> = {
+  "USDTWD=X": { yahooSymbol: "USDTWD=X", symbol: "USDTWD=X", name: "USD/TWD 美金兌台幣" },
+  "GC=F": { yahooSymbol: "GC=F", symbol: "GC=F", name: "黃金期貨" },
+  "SI=F": { yahooSymbol: "SI=F", symbol: "SI=F", name: "白銀期貨" },
   SPY: { yahooSymbol: "SPY", symbol: "SPY", name: "S&P 500 ETF" },
   QQQ: { yahooSymbol: "QQQ", symbol: "QQQ", name: "Nasdaq 100 ETF" },
   NVDA: { yahooSymbol: "NVDA", symbol: "NVDA", name: "NVIDIA" },

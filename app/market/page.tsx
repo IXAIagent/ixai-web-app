@@ -5,7 +5,7 @@ import { MARKET_DATA_DISCLAIMER } from "@/src/lib/market-data/types";
 export const metadata = buildPublicMetadata({
   title: "IXAI 市場總覽 — Market Overview",
   description:
-    "IXAI 市場總覽追蹤 Crypto、美股 ETF、美股科技股與台股代表標的，並清楚標示資料狀態。",
+    "IXAI 市場總覽追蹤宏觀資產、Crypto、美股 ETF、美股科技股與台股代表標的，並清楚標示資料狀態。",
 });
 
 export default function MarketPage() {
@@ -19,7 +19,7 @@ export default function MarketPage() {
           主要市場價格與風險觀察入口。
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:text-base sm:leading-8">
-          追蹤 Crypto、美股 ETF、美股科技股與台股代表標的，並清楚標示每筆市場資料的更新狀態。
+          追蹤美元兌台幣、黃金、白銀、Crypto、美股 ETF、美股科技股與台股代表標的，並清楚標示每筆市場資料的更新狀態。
         </p>
       </section>
 
@@ -33,6 +33,9 @@ export default function MarketPage() {
           資料狀態說明
         </h2>
         <div className="mt-5 grid gap-3 text-sm leading-7 text-[var(--ixai-forest-soft)] md:grid-cols-2">
+          <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
+            宏觀資產：USD/TWD、黃金與白銀用於觀察美元、避險資產與通膨預期的市場脈絡。
+          </p>
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
             Crypto：BTC / ETH / SOL 會優先讀取公開市場資料；若資料暫時不可用，頁面會明確標示。
           </p>
