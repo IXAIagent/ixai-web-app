@@ -21,6 +21,7 @@ import {
   signOutSupabase,
   writeIdentityPayload,
 } from "@/src/lib/identity/session";
+import { bootstrapUserProfile } from "@/src/lib/account/profile";
 import {
   createDefaultMemory,
   readPersonalMemory,
@@ -106,6 +107,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
           : memoryResult.status,
       );
       writeIdentityPayload(nextSession, nextMemory);
+      void bootstrapUserProfile(nextSession);
     }
 
     function clearAuthState({ redirectToLogin = false }: { redirectToLogin?: boolean } = {}) {
@@ -214,6 +216,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         onboardingCompleted: true,
       };
       persist(nextSession, nextMemory);
+      void bootstrapUserProfile(nextSession);
       setPersistenceStatus(
         memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
           ? {

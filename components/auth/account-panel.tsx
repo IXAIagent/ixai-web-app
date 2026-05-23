@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useIdentity } from "@/components/auth/auth-provider";
+import {
+  loadUserProfile,
+  saveUserProfile,
+  type IxaiUserProfile,
+} from "@/src/lib/account/profile";
 import { ixaiIdentity } from "@/src/lib/ixai/identity";
 import { interestOptions } from "@/src/lib/personalization/memory";
 import { getWatchlist } from "@/src/lib/watchlist";
@@ -20,6 +25,13 @@ export function AccountPanel() {
   } = useIdentity();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [profile, setProfile] = useState<IxaiUserProfile | null>(null);
+  const [profileDisplayName, setProfileDisplayName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+  const [profileProInterest, setProfileProInterest] = useState(false);
+  const [profileMessage, setProfileMessage] = useState("");
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
+  const [isProfileSaving, setIsProfileSaving] = useState(false);
   const [watchlistCount, setWatchlistCount] = useState(0);
   const isAuthenticated = session.mode === "authenticated";
   const preferredLabels = memory.preferredCategories
@@ -34,6 +46,40 @@ export function AccountPanel() {
     return () => window.clearTimeout(timeoutId);
   }, []);
 
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadProfile() {
+      if (!isAuthenticated) {
+        setProfile(null);
+        setProfileDisplayName("");
+        setProfilePhone("");
+        setProfileProInterest(false);
+        setProfileMessage("");
+        return;
+      }
+
+      setIsProfileLoading(true);
+      const nextProfile = await loadUserProfile(session);
+
+      if (ignore) {
+        return;
+      }
+
+      setProfile(nextProfile);
+      setProfileDisplayName(nextProfile?.displayName ?? session.user?.name ?? "");
+      setProfilePhone(nextProfile?.phone ?? "");
+      setProfileProInterest(Boolean(nextProfile?.proInterest));
+      setIsProfileLoading(false);
+    }
+
+    void loadProfile();
+
+    return () => {
+      ignore = true;
+    };
+  }, [isAuthenticated, session]);
+
   async function handleMagicLink(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
@@ -41,6 +87,28 @@ export function AccountPanel() {
     setMessage(result.message);
     if (result.ok) {
       setEmail("");
+    }
+  }
+
+  async function handleProfileSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setProfileMessage("");
+    setIsProfileSaving(true);
+
+    const result = await saveUserProfile(session, {
+      displayName: profileDisplayName,
+      phone: profilePhone,
+      proInterest: profileProInterest,
+    });
+
+    setIsProfileSaving(false);
+    setProfileMessage(result.message);
+
+    if (result.profile) {
+      setProfile(result.profile);
+      setProfileDisplayName(result.profile.displayName ?? "");
+      setProfilePhone(result.profile.phone ?? "");
+      setProfileProInterest(result.profile.proInterest);
     }
   }
 
@@ -114,6 +182,80 @@ export function AccountPanel() {
               </p>
             </div>
           </div>
+          <form
+            className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-white/42 p-4"
+            onSubmit={handleProfileSubmit}
+          >
+            <div className="grid gap-2">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                Account Profile
+              </p>
+              <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+                基本資料與 IXAI Pro 通知
+              </h3>
+              <p className="text-xs leading-6 text-[var(--ixai-ink-muted)]">
+                完成基本資料後，一玄團隊可於 IXAI Pro 開放時優先通知你。
+              </p>
+            </div>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <label className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]">
+                Email
+                <input
+                  className="min-h-11 rounded-lg border border-[var(--ixai-border)] bg-[rgba(245,240,230,0.62)] px-3 py-2.5 text-sm text-[var(--ixai-ink-muted)] outline-none"
+                  disabled
+                  value={profile?.email ?? session.user?.email ?? ""}
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]">
+                顯示名稱
+                <input
+                  className="min-h-11 rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--ixai-gold)]"
+                  disabled={isProfileLoading || isProfileSaving}
+                  onChange={(event) => setProfileDisplayName(event.target.value)}
+                  placeholder="你的名字或稱呼"
+                  value={profileDisplayName}
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]">
+                聯絡電話
+                <input
+                  autoComplete="tel"
+                  className="min-h-11 rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--ixai-gold)]"
+                  disabled={isProfileLoading || isProfileSaving}
+                  onChange={(event) => setProfilePhone(event.target.value)}
+                  placeholder="選填"
+                  type="tel"
+                  value={profilePhone}
+                />
+              </label>
+              <label className="flex min-h-11 items-center gap-3 rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] px-3 py-2.5 text-sm font-medium text-[var(--ixai-forest)]">
+                <input
+                  checked={profileProInterest}
+                  className="h-4 w-4 accent-[var(--ixai-gold)]"
+                  disabled={isProfileLoading || isProfileSaving}
+                  onChange={(event) => setProfileProInterest(event.target.checked)}
+                  type="checkbox"
+                />
+                有興趣收到 IXAI Pro 開放通知
+              </label>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <button
+                className="ixai-cta-forest inline-flex min-h-11 w-fit items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isProfileLoading || isProfileSaving}
+                type="submit"
+              >
+                {isProfileSaving ? "儲存中..." : "儲存基本資料"}
+              </button>
+              {profileMessage ? (
+                <p className="text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                  {profileMessage}
+                </p>
+              ) : null}
+            </div>
+          </form>
           <button
             className="w-fit rounded-lg border border-[var(--ixai-border)] px-4 py-2 text-sm font-medium text-[var(--ixai-forest)]"
             onClick={signOut}
