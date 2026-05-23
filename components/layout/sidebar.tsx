@@ -43,7 +43,7 @@ const navGroups: Array<{
   {
     heading: "Brand",
     items: [
-      { label: "About IXAI", href: "/about" },
+      { label: "About 一玄", href: "/about" },
     ],
   },
 ];
