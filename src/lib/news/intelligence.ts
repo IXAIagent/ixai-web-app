@@ -269,6 +269,64 @@ export function enrichNewsItem(item: NormalizedNewsItem): NewsIntelligenceItem {
   };
 }
 
+function normalizeTitleKey(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[\s　]+/gu, " ")
+    .replace(/[^\p{L}\p{N} ]/gu, "")
+    .trim();
+}
+
+function pickWithDiversity(
+  pool: NewsIntelligenceItem[],
+  limit: number,
+  used: Set<string>,
+  options: { maxPerCategory: number; maxPerSource: number },
+) {
+  const result: NewsIntelligenceItem[] = [];
+  const categoryCount = new Map<string, number>();
+  const sourceCount = new Map<string, number>();
+
+  for (const item of pool) {
+    if (result.length >= limit) {
+      break;
+    }
+
+    const key = normalizeTitleKey(item.title);
+
+    if (!key || used.has(key)) {
+      continue;
+    }
+
+    if ((categoryCount.get(item.category) ?? 0) >= options.maxPerCategory) {
+      continue;
+    }
+
+    if ((sourceCount.get(item.sourceLabel) ?? 0) >= options.maxPerSource) {
+      continue;
+    }
+
+    result.push(item);
+    used.add(key);
+    categoryCount.set(item.category, (categoryCount.get(item.category) ?? 0) + 1);
+    sourceCount.set(item.sourceLabel, (sourceCount.get(item.sourceLabel) ?? 0) + 1);
+  }
+
+  return result;
+}
+
+function isTaiwanItem(item: NewsIntelligenceItem) {
+  return (
+    item.marketImpact === "TAIWAN_AI" ||
+    item.category === "TAIWAN" ||
+    item.category === "SEMICONDUCTOR"
+  );
+}
+
+function isCryptoItem(item: NewsIntelligenceItem) {
+  return item.marketImpact === "CRYPTO" || item.category === "CRYPTO";
+}
+
 export function buildNewsIntelligence(items: NormalizedNewsItem[]) {
   const enriched = items.map(enrichNewsItem).sort((a, b) => {
     const levelScore: Record<NewsImpactLevel, number> = { HIGH: 3, MEDIUM: 2, LOW: 1 };
@@ -281,13 +339,39 @@ export function buildNewsIntelligence(items: NormalizedNewsItem[]) {
     return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
   });
 
+  const used = new Set<string>();
+
+  // Priority 1: Taiwan AI Focus owns Taiwan / Semiconductor signals.
+  const taiwanAiFocus = pickWithDiversity(
+    enriched.filter(isTaiwanItem),
+    4,
+    used,
+    { maxPerCategory: 3, maxPerSource: 2 },
+  );
+
+  // Priority 2: Crypto Intelligence owns Crypto signals not already used.
+  const cryptoIntelligence = pickWithDiversity(
+    enriched.filter(isCryptoItem),
+    4,
+    used,
+    { maxPerCategory: 4, maxPerSource: 2 },
+  );
+
+  // Priority 3: Top Intelligence covers global macro / FED / geopolitics / US tech.
+  // Taiwan-focused and pure crypto items are excluded — they live in their own sections.
+  const topPool = enriched.filter(
+    (item) => !isTaiwanItem(item) && !isCryptoItem(item),
+  );
+  const topIntelligence = pickWithDiversity(
+    topPool,
+    5,
+    used,
+    { maxPerCategory: 2, maxPerSource: 2 },
+  );
+
   return {
-    topIntelligence: enriched.slice(0, 5),
-    taiwanAiFocus: enriched
-      .filter((item) => item.marketImpact === "TAIWAN_AI" || item.category === "TAIWAN")
-      .slice(0, 4),
-    cryptoIntelligence: enriched
-      .filter((item) => item.marketImpact === "CRYPTO" || item.category === "CRYPTO")
-      .slice(0, 4),
+    topIntelligence,
+    taiwanAiFocus,
+    cryptoIntelligence,
   };
 }

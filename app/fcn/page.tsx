@@ -103,59 +103,116 @@ function RiskBadge({ level }: { level: FcnRiskLevel }) {
   );
 }
 
+function UnderlyingRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3 border-b border-[var(--ixai-border)] py-2 last:border-b-0">
+      <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-ink-muted)]">
+        {label}
+      </span>
+      <span className="font-mono text-sm font-medium text-[var(--ixai-forest)]">{value}</span>
+    </div>
+  );
+}
+
 function UnderlyingRiskTable({ underlyings }: { underlyings: FcnUnderlyingSnapshot[] }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[760px] border-separate border-spacing-0 text-left text-sm">
-        <thead>
-          <tr className="text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-ink-muted)]">
-            <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Symbol</th>
-            <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Initial</th>
-            <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Current</th>
-            <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Change</th>
-            <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">KI Price</th>
-            <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">KI Distance</th>
-            <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Quote</th>
-          </tr>
-        </thead>
-        <tbody>
-          {underlyings.map((underlying) => (
-            <tr className="text-[var(--ixai-forest-soft)]" key={underlying.symbol}>
-              <td className="border-b border-[var(--ixai-border)] px-3 py-3">
-                <span className="font-mono font-semibold text-[var(--ixai-forest)]">
+    <div className="w-full">
+      {/* Mobile: stacked cards so iPhone widths don't force horizontal scroll. */}
+      <div className="grid gap-3 md:hidden">
+        {underlyings.map((underlying) => (
+          <div
+            className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-3.5"
+            key={underlying.symbol}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
                   {underlying.symbol}
-                </span>
-                <span className="ml-2 text-xs text-[var(--ixai-ink-muted)]">
-                  {underlying.name}
-                </span>
-              </td>
-              <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
-                {underlying.initialPrice.toFixed(2)}
-              </td>
-              <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
-                {underlying.isQuoteUsable ? underlying.formattedCurrentPrice : "資料不可用"}
-              </td>
-              <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
-                {formatFcnPercent(underlying.priceChangePercent)}
-              </td>
-              <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
-                {underlying.knockInPrice.toFixed(2)}
-              </td>
-              <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
-                {formatFcnPercent(underlying.knockInDistancePercent)}
-              </td>
-              <td className="border-b border-[var(--ixai-border)] px-3 py-3">
-                <span className="rounded-md border border-[var(--ixai-border)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
-                  {quoteStatusLabels[underlying.quoteStatus]}
-                </span>
-                <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
-                  {underlying.quoteSourceLabel} · {formatUpdatedAt(underlying.updatedAt)}
                 </p>
-              </td>
+                <p className="mt-1 truncate text-xs text-[var(--ixai-ink-muted)]">
+                  {underlying.name}
+                </p>
+              </div>
+              <span className="shrink-0 rounded-md border border-[var(--ixai-border)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
+                {quoteStatusLabels[underlying.quoteStatus]}
+              </span>
+            </div>
+            <div className="mt-3">
+              <UnderlyingRow label="Initial" value={underlying.initialPrice.toFixed(2)} />
+              <UnderlyingRow
+                label="Current"
+                value={underlying.isQuoteUsable ? underlying.formattedCurrentPrice : "資料不可用"}
+              />
+              <UnderlyingRow
+                label="Change"
+                value={formatFcnPercent(underlying.priceChangePercent)}
+              />
+              <UnderlyingRow label="KI Price" value={underlying.knockInPrice.toFixed(2)} />
+              <UnderlyingRow
+                label="KI Distance"
+                value={formatFcnPercent(underlying.knockInDistancePercent)}
+              />
+            </div>
+            <p className="mt-3 text-[11px] leading-5 text-[var(--ixai-ink-muted)]">
+              {underlying.quoteSourceLabel} · {formatUpdatedAt(underlying.updatedAt)}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Tablet / desktop: full table with horizontal scroll fallback. */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full border-separate border-spacing-0 text-left text-sm">
+          <thead>
+            <tr className="text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-ink-muted)]">
+              <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Symbol</th>
+              <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Initial</th>
+              <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Current</th>
+              <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Change</th>
+              <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">KI Price</th>
+              <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">KI Distance</th>
+              <th className="border-b border-[var(--ixai-border)] px-3 py-3 font-medium">Quote</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {underlyings.map((underlying) => (
+              <tr className="text-[var(--ixai-forest-soft)]" key={underlying.symbol}>
+                <td className="border-b border-[var(--ixai-border)] px-3 py-3">
+                  <span className="font-mono font-semibold text-[var(--ixai-forest)]">
+                    {underlying.symbol}
+                  </span>
+                  <span className="ml-2 text-xs text-[var(--ixai-ink-muted)]">
+                    {underlying.name}
+                  </span>
+                </td>
+                <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
+                  {underlying.initialPrice.toFixed(2)}
+                </td>
+                <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
+                  {underlying.isQuoteUsable ? underlying.formattedCurrentPrice : "資料不可用"}
+                </td>
+                <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
+                  {formatFcnPercent(underlying.priceChangePercent)}
+                </td>
+                <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
+                  {underlying.knockInPrice.toFixed(2)}
+                </td>
+                <td className="border-b border-[var(--ixai-border)] px-3 py-3 font-mono">
+                  {formatFcnPercent(underlying.knockInDistancePercent)}
+                </td>
+                <td className="border-b border-[var(--ixai-border)] px-3 py-3">
+                  <span className="rounded-md border border-[var(--ixai-border)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
+                    {quoteStatusLabels[underlying.quoteStatus]}
+                  </span>
+                  <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
+                    {underlying.quoteSourceLabel} · {formatUpdatedAt(underlying.updatedAt)}
+                  </p>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
