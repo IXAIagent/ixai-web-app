@@ -5,8 +5,12 @@ import {
 } from "@/src/lib/market-data/fallback";
 import { getMarketQuotes } from "@/src/lib/market-data/providers";
 import type { MarketQuote } from "@/src/lib/market-data/types";
+import {
+  buildNewsIntelligence,
+  type NewsIntelligenceItem,
+} from "@/src/lib/news/intelligence";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
-import type { NewsCategory, NewsIntakeMode, NormalizedNewsItem } from "@/src/types/news";
+import type { NewsIntakeMode } from "@/src/types/news";
 
 export type SentimentCard = {
   symbol: string;
@@ -26,14 +30,11 @@ export type MarketSummaryItem = {
   text: string;
 };
 
-export type TopMarketSignal = {
+export type RiskRadarAlert = {
   id: string;
+  level: "LOW" | "MEDIUM" | "HIGH";
   title: string;
-  sourceLabel: string;
-  impactTag: string;
-  riskTag: string;
-  interpretation: string;
-  publishedAt: string;
+  detail: string;
 };
 
 export type MarketIntelligenceResponse = {
@@ -44,8 +45,11 @@ export type MarketIntelligenceResponse = {
     commentary: string;
   };
   summary: MarketSummaryItem[];
+  riskRadar: RiskRadarAlert[];
   aiSupplyChain: MarketQuote[];
-  topSignals: TopMarketSignal[];
+  topIntelligence: NewsIntelligenceItem[];
+  taiwanAiFocus: NewsIntelligenceItem[];
+  cryptoIntelligence: NewsIntelligenceItem[];
   newsMode: NewsIntakeMode;
   inputNewsCount: number;
 };
@@ -71,6 +75,10 @@ function parseNumber(value?: string) {
   const parsed = Number.parseFloat(value.replace(/[^\d.-]/g, ""));
 
   return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function parsePercent(value?: string) {
+  return parseNumber(value);
 }
 
 function vixState(value?: number) {
@@ -228,73 +236,59 @@ function buildSummary(quotes: MarketQuote[]): MarketSummaryItem[] {
   ];
 }
 
-function impactTagForCategory(category: NewsCategory) {
-  const labels: Record<NewsCategory, string> = {
-    macro: "MACRO",
-    rates: "FED",
-    equities: "EQUITY",
-    ai_tech: "AI",
-    crypto: "CRYPTO",
-    taiwan: "TAIWAN",
-    semiconductors: "SEMIS",
-    risk: "RISK",
-    geopolitics: "GEO",
-  };
+function buildRiskRadar(quotes: MarketQuote[]): RiskRadarAlert[] {
+  const alerts: RiskRadarAlert[] = [];
+  const vix = parseNumber(quoteBySymbol(quotes, "^VIX")?.price);
+  const tnx = parseNumber(quoteBySymbol(quotes, "^TNX")?.price);
+  const dxy = parseNumber(quoteBySymbol(quotes, "DX-Y.NYB")?.price);
+  const btcMove = Math.abs(parsePercent(quoteBySymbol(quotes, "BTC")?.dailyChange) ?? 0);
 
-  return labels[category];
-}
-
-function riskTagForCategory(category: NewsCategory) {
-  if (category === "rates" || category === "macro") {
-    return "利率風險";
+  if (typeof vix === "number" && vix > 25) {
+    alerts.push({
+      id: "vix-risk-off",
+      level: "HIGH",
+      title: "VIX > 25：Risk-off warning",
+      detail: "波動率升高，市場可能進入避險模式；需留意股債、Crypto 與高 beta 資產同步降槓桿。",
+    });
   }
 
-  if (category === "ai_tech" || category === "semiconductors" || category === "taiwan") {
-    return "AI 供應鏈";
+  if (typeof tnx === "number" && tnx > 4.5) {
+    alerts.push({
+      id: "tnx-tech-pressure",
+      level: "MEDIUM",
+      title: "US10Y > 4.5%：Tech valuation pressure",
+      detail: "美債殖利率處於高檔時，AI 與大型科技股估值折現率壓力上升。",
+    });
   }
 
-  if (category === "crypto") {
-    return "風險偏好";
+  if (typeof dxy === "number" && dxy > 105) {
+    alerts.push({
+      id: "dxy-dollar-pressure",
+      level: "MEDIUM",
+      title: "DXY > 105：Strong dollar pressure",
+      detail: "美元偏強通常壓抑非美資產與 Crypto 風險偏好，也會影響亞洲資金流。",
+    });
   }
 
-  if (category === "risk" || category === "geopolitics") {
-    return "避險觀察";
+  if (btcMove > 5) {
+    alerts.push({
+      id: "btc-volatility",
+      level: "MEDIUM",
+      title: "BTC daily move > 5%：Crypto volatility elevated",
+      detail: "BTC 單日波動擴大，代表 Crypto 槓桿與流動性狀態需要更密集監控。",
+    });
   }
 
-  return "市場動能";
-}
-
-function interpretationForNews(item: NormalizedNewsItem) {
-  switch (item.category) {
-    case "rates":
-      return "殖利率與 Fed 訊號會直接影響科技股估值與美元流動性。";
-    case "macro":
-      return "總經數據若偏強，市場可能重新定價利率路徑與風險資產折現率。";
-    case "ai_tech":
-      return "AI 科技股仍是資金焦點，但高估值環境下需同步觀察利率與財報預期。";
-    case "semiconductors":
-    case "taiwan":
-      return "半導體與台灣供應鏈是 AI capex 的核心觀察軸，留意資金是否擴散。";
-    case "crypto":
-      return "Crypto 新聞主要反映流動性與風險偏好，需避免用單一事件推論趨勢。";
-    case "risk":
-    case "geopolitics":
-      return "事件風險可能提高避險需求，短線需觀察美元、VIX 與股債連動。";
-    default:
-      return "市場訊號需與價格、利率與風險偏好交叉確認。";
-  }
-}
-
-function buildTopSignals(items: NormalizedNewsItem[]) {
-  return items.slice(0, 5).map((item) => ({
-    id: item.id,
-    title: item.title,
-    sourceLabel: item.sourceLabel,
-    impactTag: impactTagForCategory(item.category),
-    riskTag: riskTagForCategory(item.category),
-    interpretation: interpretationForNews(item),
-    publishedAt: item.publishedAt,
-  }));
+  return alerts.length > 0
+    ? alerts
+    : [
+        {
+          id: "market-watch",
+          level: "LOW",
+          title: "No major risk threshold triggered",
+          detail: "VIX、美元、利率與 BTC 波動目前未觸發主要風險門檻；仍需持續觀察新聞與價格是否同步轉向。",
+        },
+      ];
 }
 
 export async function getMarketIntelligence(): Promise<MarketIntelligenceResponse> {
@@ -314,6 +308,7 @@ export async function getMarketIntelligence(): Promise<MarketIntelligenceRespons
           mode: "fallback" as const,
           itemCount: 0,
         };
+  const newsIntelligence = buildNewsIntelligence(news.items);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -323,10 +318,13 @@ export async function getMarketIntelligence(): Promise<MarketIntelligenceRespons
       commentary: "CNN Fear & Greed 後續可透過合法 API 接入；目前先保留為情緒儀表 placeholder。",
     },
     summary: buildSummary(quotes),
+    riskRadar: buildRiskRadar(quotes),
     aiSupplyChain: aiSupplyChainSymbols.map(
       (symbol) => quoteBySymbol(quotes, symbol) ?? getFallbackMarketQuotes([symbol])[0],
     ),
-    topSignals: buildTopSignals(news.items),
+    topIntelligence: newsIntelligence.topIntelligence,
+    taiwanAiFocus: newsIntelligence.taiwanAiFocus,
+    cryptoIntelligence: newsIntelligence.cryptoIntelligence,
     newsMode: news.mode,
     inputNewsCount: news.itemCount,
   };

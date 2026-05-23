@@ -19,6 +19,11 @@ export type NewsSourceId =
   | "marketwatch"
   | "nasdaq"
   | "cnyes"
+  | "commercial-times"
+  | "economic-daily"
+  | "moneydj"
+  | "seeking-alpha"
+  | "decrypt"
   | "futu"
   | "the-block"
   | "ixai-mock";

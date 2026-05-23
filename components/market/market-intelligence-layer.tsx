@@ -3,6 +3,7 @@
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
 import type { MarketIntelligenceResponse } from "@/src/lib/market-data/intelligence";
 import type { MarketDataStatus, MarketQuote } from "@/src/lib/market-data/types";
+import type { NewsIntelligenceItem } from "@/src/lib/news/intelligence";
 import { useEffect, useState } from "react";
 
 const statusLabels: Record<MarketDataStatus, string> = {
@@ -19,6 +20,12 @@ const stateClasses: Record<string, string> = {
   neutral: "border-[var(--ixai-border)] bg-white/55 text-[var(--ixai-forest-soft)]",
   watch: "border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.12)] text-[var(--ixai-forest)]",
   risk: "border-red-900/15 bg-red-50/75 text-red-900",
+};
+
+const impactLevelClasses: Record<string, string> = {
+  HIGH: "border-red-900/20 bg-red-50/80 text-red-900",
+  MEDIUM: "border-[rgba(176,141,87,0.36)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-forest)]",
+  LOW: "border-[var(--ixai-border)] bg-white/55 text-[var(--ixai-forest-soft)]",
 };
 
 function formatUpdatedAt(updatedAt: string) {
@@ -70,6 +77,58 @@ function SupplyChainCard({ quote }: { quote: MarketQuote }) {
         <span>{statusLabels[quote.status]}</span>
         <span>{quote.sourceLabel}</span>
         <span suppressHydrationWarning>更新 {formatUpdatedAt(quote.updatedAt)}</span>
+      </div>
+    </div>
+  );
+}
+
+function IntelligenceSignalCard({ item }: { item: NewsIntelligenceItem }) {
+  return (
+    <article className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3.5 sm:p-4">
+      <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-[var(--ixai-forest-soft)]">
+        <span className="rounded-md border border-[var(--ixai-border)] px-2 py-0.5">{item.category}</span>
+        <span className={`rounded-md border px-2 py-0.5 ${impactLevelClasses[item.impactLevel]}`}>
+          {item.impactLevel}
+        </span>
+        <span className="rounded-md border border-[rgba(176,141,87,0.34)] px-2 py-0.5 text-[var(--ixai-gold)]">
+          {item.riskTag}
+        </span>
+        <span className="rounded-md border border-[var(--ixai-border)] px-2 py-0.5 font-mono">
+          {item.marketImpact}
+        </span>
+        <span>{item.sourceLabel}</span>
+      </div>
+      <h3 className="mt-3 text-sm font-semibold leading-6 text-[var(--ixai-forest)]">{item.title}</h3>
+      <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.shortInterpretation}</p>
+      <p className="mt-2 border-t border-[var(--ixai-border)] pt-2 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+        Why it matters：{item.whyItMatters}
+      </p>
+    </article>
+  );
+}
+
+function IntelligenceSection({
+  title,
+  items,
+  emptyText,
+}: {
+  title: string;
+  items: NewsIntelligenceItem[];
+  emptyText: string;
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.55)]">
+      <div className="border-b border-[var(--ixai-border)] px-3.5 py-3 sm:px-4">
+        <h3 className="text-sm font-semibold text-[var(--ixai-forest)]">{title}</h3>
+      </div>
+      <div className="grid gap-2.5 p-3.5 sm:gap-3 sm:p-4">
+        {items.length > 0 ? (
+          items.map((item) => <IntelligenceSignalCard item={item} key={item.id} />)
+        ) : (
+          <p className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-4 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+            {emptyText}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -178,6 +237,19 @@ export function MarketIntelligenceLayer() {
       </SectionCard>
 
       <SectionCard>
+        <SectionHeader action="Risk Radar" eyebrow="風險雷達" title="Rule-based market alerts" />
+        <div className="grid gap-2.5 p-3.5 sm:grid-cols-2 sm:gap-3 sm:p-4">
+          {data.riskRadar.map((alert) => (
+            <article className={`rounded-lg border p-3.5 sm:p-4 ${impactLevelClasses[alert.level]}`} key={alert.id}>
+              <p className="font-mono text-xs font-semibold uppercase">{alert.level}</p>
+              <h3 className="mt-2 text-sm font-semibold leading-6">{alert.title}</h3>
+              <p className="mt-2 text-sm leading-6">{alert.detail}</p>
+            </article>
+          ))}
+        </div>
+      </SectionCard>
+
+      <SectionCard>
         <SectionHeader action="Taiwan AI" eyebrow="台股 AI Supply Chain" title="AI Supply Chain Watch" />
         <div className="grid gap-2.5 p-3.5 sm:grid-cols-2 sm:gap-3 sm:p-4 xl:grid-cols-3">
           {data.aiSupplyChain.map((quote) => (
@@ -187,27 +259,23 @@ export function MarketIntelligenceLayer() {
       </SectionCard>
 
       <SectionCard>
-        <SectionHeader action="Signals" eyebrow="新聞情報層" title="Top Market Signals" />
-        <div className="grid gap-2.5 p-3.5 sm:gap-3 sm:p-4">
-          {data.topSignals.length > 0 ? (
-            data.topSignals.map((signal) => (
-              <article className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3.5 sm:p-4" key={signal.id}>
-                <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-[var(--ixai-forest-soft)]">
-                  <span className="rounded-md border border-[var(--ixai-border)] px-2 py-0.5">{signal.impactTag}</span>
-                  <span className="rounded-md border border-[rgba(176,141,87,0.34)] px-2 py-0.5 text-[var(--ixai-gold)]">
-                    {signal.riskTag}
-                  </span>
-                  <span>{signal.sourceLabel}</span>
-                </div>
-                <h3 className="mt-3 text-sm font-semibold leading-6 text-[var(--ixai-forest)]">{signal.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{signal.interpretation}</p>
-              </article>
-            ))
-          ) : (
-            <p className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-4 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-              目前新聞訊號暫時無法更新；IXAI 會保留市場價格與風險觀察，不顯示未確認的新聞內容。
-            </p>
-          )}
+        <SectionHeader action="News Intelligence" eyebrow="新聞情報層" title="Market Signals" />
+        <div className="grid gap-3 p-3.5 sm:p-4 xl:grid-cols-2">
+          <IntelligenceSection
+            emptyText="目前沒有足夠的高權重市場訊號；IXAI 會等待更清楚的新聞與價格交叉確認。"
+            items={data.topIntelligence}
+            title="Top Intelligence"
+          />
+          <IntelligenceSection
+            emptyText="目前未偵測到明確的台灣 AI 供應鏈新聞訊號。"
+            items={data.taiwanAiFocus}
+            title="Taiwan AI Focus"
+          />
+          <IntelligenceSection
+            emptyText="目前 Crypto 新聞訊號不足；以 BTC 價格與美元流動性為主要觀察。"
+            items={data.cryptoIntelligence}
+            title="Crypto Intelligence"
+          />
         </div>
         <p className="border-t border-[var(--ixai-border)] px-4 py-3.5 text-xs leading-6 text-[var(--ixai-ink-muted)] sm:px-5 sm:py-4">
           本區塊使用公開新聞標題與摘要做風險脈絡整理，不重製新聞全文；內容僅供市場資訊與風險觀察參考。
