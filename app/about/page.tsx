@@ -220,7 +220,15 @@ export default function AboutPage() {
             </p>
           ))}
         </div>
-        <p className="mt-5 border-t border-[var(--ixai-border)] pt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+        <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-[var(--ixai-border)] pt-4">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(176,141,87,0.4)] bg-[rgba(176,141,87,0.13)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            IXAI Public Beta
+          </span>
+          <span className="text-xs leading-6 text-[var(--ixai-ink-muted)]">
+            IXAI Public Beta 持續優化中，歡迎提供回饋。
+          </span>
+        </div>
+        <p className="mt-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
           IXAI Public App 提供市場資訊、教育內容與風險觀察；不構成個別投資建議，
           也不承諾任何績效或保證獲利。完整 FCN 風控、portfolio intelligence 與個人化提醒，
           將保留在未來的 IXAI Pro 付費層。

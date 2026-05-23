@@ -14,6 +14,7 @@ import {
 import { useIdentity } from "@/components/auth/auth-provider";
 import { ProInterestCard } from "@/components/pro/pro-interest-card";
 import { useLiveResource } from "@/src/hooks/use-live-resource";
+import { trackEvent } from "@/src/lib/analytics/events";
 import { log } from "@/src/lib/log";
 import {
   MARKET_DATA_DISCLAIMER,
@@ -280,6 +281,7 @@ export function WatchlistManager() {
         note,
       }),
     );
+    trackEvent("watchlist_add", { symbol: normalizedSymbol, market, source: "manual" });
     setSymbol("");
     setName("");
     setNote("");
@@ -287,6 +289,7 @@ export function WatchlistManager() {
 
   function addExample(example: (typeof exampleItems)[number]) {
     sync(addWatchlistItem(example));
+    trackEvent("watchlist_add", { symbol: example.symbol, market: example.market, source: "example" });
   }
 
   function handleNoteSave(item: WatchlistItem) {
@@ -295,6 +298,7 @@ export function WatchlistManager() {
   }
 
   function handleRemove(item: WatchlistItem) {
+    trackEvent("watchlist_remove", { symbol: item.symbol, market: item.market });
     sync(removeWatchlistItem(item.symbol, item.market));
   }
 

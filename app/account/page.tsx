@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowUpRight, Bug, MessageSquare } from "lucide-react";
 import { AccountPanel } from "@/components/auth/account-panel";
 import { PwaInstallCard } from "@/components/pwa/install-card";
 import { WatchlistAccountStatus } from "@/components/watchlist/watchlist-account-status";
@@ -31,6 +33,40 @@ export default function AccountPage() {
       <AccountPanel />
 
       <WatchlistAccountStatus />
+
+      <section className="rounded-2xl border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          Public Beta · Feedback
+        </p>
+        <h2 className="mt-2 text-lg font-semibold leading-7 text-[var(--ixai-forest)] sm:text-xl">
+          IXAI Public Beta 持續優化中，歡迎提供回饋。
+        </h2>
+        <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          直接告訴一玄與 IXAI 團隊你看到的問題、想加的功能、或對 IXAI Pro 的期待。
+        </p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 sm:gap-3">
+          <Link
+            className="inline-flex min-h-11 items-center justify-between gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+            href="/feedback"
+          >
+            <span className="inline-flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+              提供意見
+            </span>
+            <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
+          </Link>
+          <Link
+            className="inline-flex min-h-11 items-center justify-between gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+            href="/feedback"
+          >
+            <span className="inline-flex items-center gap-2">
+              <Bug className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+              回報問題
+            </span>
+            <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
 
       <PwaInstallCard />
 

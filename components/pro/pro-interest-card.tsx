@@ -8,6 +8,7 @@ import {
   saveUserProfile,
   type IxaiUserProfile,
 } from "@/src/lib/account/profile";
+import { trackEvent } from "@/src/lib/analytics/events";
 
 export function ProInterestCard() {
   const { mounted, session } = useIdentity();
@@ -58,6 +59,7 @@ export function ProInterestCard() {
 
     if (result.profile) {
       setProfile(result.profile);
+      trackEvent("pro_interest", { source: "pro_interest_card" });
     }
   }
 

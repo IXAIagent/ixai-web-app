@@ -1,4 +1,5 @@
 import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
+import { FcnIntroHint } from "@/components/onboarding/fcn-intro-hint";
 import { ProInterestCard } from "@/components/pro/pro-interest-card";
 import {
   AlertTriangle,
@@ -510,6 +511,10 @@ export default async function FcnPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-7 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+      {/* v1.29.5 — first-time FCN visitor hint. Inline, dismissible,
+          localStorage marker ixai_fcn_intro_seen_v1. Never a modal. */}
+      <FcnIntroHint />
+
       {/* 1. FCN Education Hero — narrative-first, two CTAs to learn or preview Pro. */}
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">

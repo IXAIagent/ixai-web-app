@@ -9,6 +9,7 @@ import { Watchlist } from "@/components/dashboard/watchlist";
 import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview";
 import { ProEngineSurface } from "@/components/engines/pro-engine-surface";
 import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
+import { FirstVisitBanner } from "@/components/onboarding/first-visit-banner";
 import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { proFeatures } from "@/lib/mock-data";
@@ -38,6 +39,10 @@ export default async function Home() {
           Tier 3 — Personal monitoring (with soft Pro seeding)
           Tier 4 — This week (deeper editorial + reference data)
           Tier 5 — Premium membership */}
+
+      {/* v1.29.5 — first-visit welcome banner. Dismissible, localStorage
+          marker ixai_onboarding_seen_v1, never shown twice. */}
+      <FirstVisitBanner />
 
       {/* Tier 1: insight headline first, market data immediately below. */}
       <RiskFocus />

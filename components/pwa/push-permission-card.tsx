@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { BellOff, BellRing, ShieldAlert, Sparkles } from "lucide-react";
+import { trackEvent } from "@/src/lib/analytics/events";
 
 type PermissionState = "unsupported" | "default" | "granted" | "denied" | "unknown";
 
@@ -60,8 +61,10 @@ export function PushPermissionCard({ compact = false }: { compact?: boolean }) {
 
       if (result === "granted") {
         setFeedback("已啟用 IXAI 市場通知。你可以在通知設定調整類別。");
+        trackEvent("push_enable", { surface: "push_permission_card" });
       } else if (result === "denied") {
         setFeedback("通知已被瀏覽器封鎖。可至瀏覽器設定重新開啟。");
+        trackEvent("push_denied", { surface: "push_permission_card" });
       }
     } catch {
       setFeedback("此瀏覽器目前無法授權通知，可稍後再試。");

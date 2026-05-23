@@ -30,6 +30,9 @@ export default function NotificationSettingsPage() {
           這裡是 IXAI 通知層的偏好設定。Public App 目前先建立通知架構與權限流程，
           真正的市場推播會在後續逐步開放。所有偏好都保留在你的裝置上。
         </p>
+        <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          IXAI Public Beta
+        </p>
       </section>
 
       <PushPermissionCard />
