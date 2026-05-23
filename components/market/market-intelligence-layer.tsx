@@ -267,7 +267,11 @@ export function MarketIntelligenceLayer() {
             title="Top Intelligence"
           />
           <IntelligenceSection
-            emptyText="目前未偵測到明確的台灣 AI 供應鏈新聞訊號。"
+            emptyText={
+              data.taiwanNewsStatus === "unavailable"
+                ? "台灣新聞來源暫時無法連線；IXAI 不會將空白資料解讀為沒有訊號。"
+                : "目前未偵測到明確的台灣 AI 供應鏈新聞訊號。"
+            }
             items={data.taiwanAiFocus}
             title="Taiwan AI Focus"
           />

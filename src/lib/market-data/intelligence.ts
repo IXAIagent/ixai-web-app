@@ -10,7 +10,7 @@ import {
   type NewsIntelligenceItem,
 } from "@/src/lib/news/intelligence";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
-import type { NewsIntakeMode } from "@/src/types/news";
+import type { NewsIntakeMode, NewsSourceId, NewsSourceStatus } from "@/src/types/news";
 
 export type SentimentCard = {
   symbol: string;
@@ -52,6 +52,8 @@ export type MarketIntelligenceResponse = {
   cryptoIntelligence: NewsIntelligenceItem[];
   newsMode: NewsIntakeMode;
   inputNewsCount: number;
+  taiwanNewsStatus: "active" | "unavailable";
+  taiwanNewsSourceLabels: string[];
 };
 
 const intelligenceSymbols = [
@@ -63,8 +65,26 @@ const intelligenceSymbols = [
   ...aiSupplyChainSymbols,
 ];
 
+const taiwanNewsSourceIds = new Set<NewsSourceId>([
+  "yahoo-tw-stock",
+  "cnyes",
+  "commercial-times",
+  "economic-daily",
+  "moneydj",
+]);
+
 function quoteBySymbol(quotes: MarketQuote[], symbol: string) {
   return quotes.find((quote) => quote.symbol === symbol);
+}
+
+function getTaiwanNewsSourceState(sourceStatus: NewsSourceStatus[] = []) {
+  const taiwanSources = sourceStatus.filter((source) => taiwanNewsSourceIds.has(source.id));
+  const activeSources = taiwanSources.filter((source) => source.enabled && source.status === "success" && source.itemCount > 0);
+
+  return {
+    taiwanNewsStatus: activeSources.length > 0 ? "active" as const : "unavailable" as const,
+    taiwanNewsSourceLabels: activeSources.map((source) => source.label),
+  };
 }
 
 function parseNumber(value?: string) {
@@ -307,8 +327,10 @@ export async function getMarketIntelligence(): Promise<MarketIntelligenceRespons
           items: [],
           mode: "fallback" as const,
           itemCount: 0,
+          sourceStatus: [],
         };
   const newsIntelligence = buildNewsIntelligence(news.items);
+  const taiwanSourceState = getTaiwanNewsSourceState(news.sourceStatus);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -327,6 +349,8 @@ export async function getMarketIntelligence(): Promise<MarketIntelligenceRespons
     cryptoIntelligence: newsIntelligence.cryptoIntelligence,
     newsMode: news.mode,
     inputNewsCount: news.itemCount,
+    taiwanNewsStatus: taiwanSourceState.taiwanNewsStatus,
+    taiwanNewsSourceLabels: taiwanSourceState.taiwanNewsSourceLabels,
   };
 }
 

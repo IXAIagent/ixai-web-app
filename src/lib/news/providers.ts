@@ -86,6 +86,47 @@ const rssSources: RssSourceConfig[] = [
     ],
   },
   {
+    id: "yahoo-tw-stock",
+    label: "Yahoo 台股",
+    url: "https://tw.stock.yahoo.com/rss?category=tw-market",
+    enabled: true,
+    categories: ["taiwan", "semiconductors", "ai_tech"],
+    parserType: "rss",
+    maxItems: 8,
+    tags: ["taiwan", "tw-stock", "semiconductors", "ai-supply-chain"],
+    notes:
+      "Public Yahoo Taiwan stock RSS. IXAI only uses headlines, links, timestamps, and feed descriptions.",
+    includeKeywords: [
+      "台積電",
+      "tsmc",
+      "2330",
+      "ai",
+      "ai 伺服器",
+      "ai server",
+      "廣達",
+      "緯創",
+      "緯穎",
+      "技嘉",
+      "奇鋐",
+      "雙鴻",
+      "散熱",
+      "台達電",
+      "聯發科",
+      "cowos",
+      "先進封裝",
+      "hbm",
+      "半導體",
+      "晶圓代工",
+      "外資",
+      "台指期",
+      "台股",
+      "加權指數",
+      "etf",
+      "伺服器",
+      "供應鏈",
+    ],
+  },
+  {
     id: "yahoo-finance",
     label: "Yahoo Finance",
     url: "https://finance.yahoo.com/news/rssindex",
@@ -148,14 +189,14 @@ const rssSources: RssSourceConfig[] = [
   {
     id: "cnyes",
     label: "CNYES",
-    url: "https://www.cnyes.com/rss/news/cat/tw_stock",
+    url: "https://news.cnyes.com/rss/v1/news/category/tw_stock_news",
     enabled: false,
     categories: ["taiwan", "semiconductors"],
     parserType: "rss",
     maxItems: 4,
     tags: ["taiwan", "semiconductors"],
     notes: "Taiwan market provider slot for a future legal and stable RSS/API source.",
-    disabledReason: "Disabled because the tested endpoint redirected to an error page.",
+    disabledReason: "Endpoint is reachable but returned an empty RSS channel during local verification.",
   },
   {
     id: "commercial-times",
@@ -302,8 +343,8 @@ function containsAny(text: string, terms: string[]) {
   return terms.some((term) => containsTerm(text, term));
 }
 
-function inferCategory(source: RssSourceConfig, title: string): NewsCategory {
-  const text = title.toLowerCase();
+function inferCategory(source: RssSourceConfig, headline: string): NewsCategory {
+  const text = headline.toLowerCase();
 
   if (source.id === "federal-reserve") {
     return "rates";
@@ -314,11 +355,49 @@ function inferCategory(source: RssSourceConfig, title: string): NewsCategory {
   }
 
   if (
-    containsAny(text, ["taiwan", "tsmc", "台積", "semiconductor", "chip"])
+    containsAny(text, [
+      "台積電",
+      "tsmc",
+      "2330",
+      "semiconductor",
+      "chip",
+      "台積",
+      "半導體",
+      "晶圓代工",
+      "cowos",
+      "先進封裝",
+      "hbm",
+      "廣達",
+      "緯創",
+      "緯穎",
+      "技嘉",
+      "奇鋐",
+      "雙鴻",
+      "散熱",
+      "台達電",
+      "聯發科",
+      "ai 伺服器",
+      "ai server",
+      "伺服器",
+    ])
   ) {
-    return containsAny(text, ["taiwan", "tsmc", "台積"])
-      ? "taiwan"
-      : "semiconductors";
+    return "semiconductors";
+  }
+
+  if (
+    containsAny(text, [
+      "taiwan",
+      "台灣",
+      "台股",
+      "twse",
+      "taipei",
+      "外資",
+      "台指期",
+      "加權指數",
+      "etf",
+    ])
+  ) {
+    return "taiwan";
   }
 
   if (containsAny(text, ["fed", "fomc", "yield", "treasury", "rate", "rates"])) {
@@ -371,7 +450,7 @@ function parseRssItems(xml: string, source: RssSourceConfig): NormalizedNewsItem
       id: idFromSource(source, title, url),
       title,
       summary: summary || undefined,
-      category: inferCategory(source, title),
+      category: inferCategory(source, `${title} ${summary}`),
       source: source.id,
       sourceLabel: source.label,
       url: url || undefined,

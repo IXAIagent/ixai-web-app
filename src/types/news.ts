@@ -11,6 +11,7 @@ export type NewsCategory =
 
 export type NewsSourceId =
   | "yahoo-finance"
+  | "yahoo-tw-stock"
   | "cnbc"
   | "reuters"
   | "bloomberg"
