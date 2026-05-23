@@ -4,16 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Eye,
   FileText,
-  Info,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
-// v1.25.2: mobile bottom nav prioritizes brand funnel — Daily → Market → FCN → Pro → About.
-// External Pro link and About surface are now first-class entries so PWA retention and
-// founder narrative are reachable from any screen.
+// v1.28: mobile bottom nav prioritizes daily retention — Daily → Market →
+// Watch → FCN → Pro. About 一玄 moves to the sidebar / account surfaces so
+// the bottom row is dominated by daily-usage features.
 const mobileItems: Array<{
   icon: typeof FileText;
   label: string;
@@ -23,9 +23,9 @@ const mobileItems: Array<{
 }> = [
   { icon: FileText, label: "Daily", href: "/daily-brief" },
   { icon: BarChart3, label: "Market", href: "/market" },
+  { icon: Eye, label: "Watch", href: "/watchlist" },
   { icon: ShieldCheck, label: "FCN", href: "/fcn" },
   { icon: Sparkles, label: "Pro", href: ixaiEcosystem.proPreviewUrl, external: true, matchPrefixes: ["/pro"] },
-  { icon: Info, label: "About", href: "/about" },
 ];
 
 export function MobileNav() {

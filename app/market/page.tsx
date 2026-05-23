@@ -1,6 +1,7 @@
 import { MarketOverview } from "@/components/dashboard/market-overview";
 import { MarketIntelligenceLayer } from "@/components/market/market-intelligence-layer";
 import { PushPermissionCard } from "@/components/pwa/push-permission-card";
+import { WatchlistTeaser } from "@/components/watchlist/watchlist-teaser";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { MARKET_DATA_DISCLAIMER } from "@/src/lib/market-data/types";
 
@@ -26,6 +27,8 @@ export default function MarketPage() {
       </section>
 
       <MarketOverview />
+
+      <WatchlistTeaser />
 
       <PushPermissionCard compact />
 

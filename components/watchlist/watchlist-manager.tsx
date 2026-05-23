@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -12,6 +12,8 @@ import {
   UserCircle,
 } from "lucide-react";
 import { useIdentity } from "@/components/auth/auth-provider";
+import { ProInterestCard } from "@/components/pro/pro-interest-card";
+import { useLiveResource } from "@/src/hooks/use-live-resource";
 import {
   MARKET_DATA_DISCLAIMER,
   type MarketDataStatus,
@@ -29,7 +31,6 @@ import {
 import {
   addWatchlistItem,
   clearWatchlist,
-  getWatchlist,
   normalizeSymbol,
   removeWatchlistItem,
   updateWatchlistItem,
@@ -37,6 +38,7 @@ import {
   type WatchlistItem,
   type WatchlistMarket,
 } from "@/src/lib/watchlist";
+import { ensureDefaultWatchlistSeed } from "@/src/lib/watchlist-defaults";
 import type { WatchlistSyncState } from "@/src/types/identity";
 
 const assetTypeOptions: { label: string; value: WatchlistAssetType }[] = [
@@ -119,12 +121,11 @@ export function WatchlistManager() {
   const [market, setMarket] = useState<WatchlistMarket>("US");
   const [note, setNote] = useState("");
   const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
-  const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({});
   const [manualSyncState, setManualSyncState] = useState<WatchlistSyncState | null>(null);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
-      const current = getWatchlist();
+      const current = ensureDefaultWatchlistSeed();
       setItems(current);
       setEditingNotes(
         Object.fromEntries(
@@ -174,40 +175,56 @@ export function WatchlistManager() {
     };
   }, [session]);
 
-  useEffect(() => {
-    if (items.length === 0) {
-      return;
-    }
-
-    let isMounted = true;
-    const symbols = items.map((item) => item.symbol);
-
-    async function loadQuotes() {
-      try {
-        const response = await fetch(`/api/market/quotes?symbols=${symbols.join(",")}`);
-        if (!response.ok) {
-          return;
-        }
-
-        const data = (await response.json()) as MarketQuotesResponse;
-        if (isMounted) {
-          setQuotes(
-            Object.fromEntries(data.quotes.map((quote) => [quote.symbol, quote])),
-          );
-        }
-      } catch {
-        if (isMounted) {
-          setQuotes({});
-        }
+  // v1.28 — 60s stale-while-revalidate refresh, paused while the tab is
+  // hidden. Last successful payload is retained on failure (the hook never
+  // clears data on error), so users see the previous quote rather than
+  // empty cells when an upstream provider blips.
+  const symbolsKey = useMemo(() => items.map((item) => item.symbol).join(","), [items]);
+  const fetchQuotes = useCallback(
+    async (signal: AbortSignal): Promise<MarketQuotesResponse> => {
+      if (!symbolsKey) {
+        return {
+          quotes: [],
+          disclaimer: MARKET_DATA_DISCLAIMER,
+          requestedSymbols: [],
+          generatedAt: new Date().toISOString(),
+        };
       }
+
+      const response = await fetch(`/api/market/quotes?symbols=${symbolsKey}`, { signal });
+
+      if (!response.ok) {
+        throw new Error("watchlist quote refresh failed");
+      }
+
+      return (await response.json()) as MarketQuotesResponse;
+    },
+    [symbolsKey],
+  );
+  const getQuotesUpdatedAt = useCallback(
+    (payload: MarketQuotesResponse) => payload.generatedAt,
+    [],
+  );
+  const {
+    data: quotesPayload,
+    isRefreshing: isQuotesRefreshing,
+    lastUpdatedAt: quotesLastUpdatedAt,
+  } = useLiveResource({
+    fetcher: fetchQuotes,
+    getUpdatedAt: getQuotesUpdatedAt,
+    refreshIntervalMs: 60_000,
+  });
+
+  // useLiveResource retains the last successful payload on error, so deriving
+  // quotes directly from it preserves the previous reading rather than
+  // clearing cells when an upstream fetch hiccups.
+  const quotes = useMemo(() => {
+    if (!quotesPayload) {
+      return {} as Record<string, MarketQuote>;
     }
 
-    loadQuotes();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [items]);
+    return Object.fromEntries(quotesPayload.quotes.map((quote) => [quote.symbol, quote]));
+  }, [quotesPayload]);
 
   const normalizedSymbol = useMemo(
     () => normalizeSymbol(symbol, market),
@@ -452,6 +469,13 @@ export function WatchlistManager() {
               <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
                 目前自選清單
               </h2>
+              <p className="mt-1 text-[11px] leading-5 text-[var(--ixai-ink-muted)]" suppressHydrationWarning>
+                {quotesLastUpdatedAt
+                  ? `更新於 ${formatUpdatedAt(quotesLastUpdatedAt)}`
+                  : "資料更新中"}
+                {" · "}
+                {isQuotesRefreshing ? "背景更新中" : "每 60 秒自動更新"}
+              </p>
             </div>
             {items.length > 0 ? (
               <button
@@ -606,8 +630,42 @@ export function WatchlistManager() {
           </Link>
         </div>
         <p className="mt-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+          自選觀察僅作市場資訊整理，不構成投資建議或買賣指令。
+        </p>
+        <p className="mt-2 text-xs leading-6 text-[var(--ixai-ink-muted)]">
           {MARKET_DATA_DISCLAIMER}
         </p>
+      </section>
+
+      {/* v1.28 Watchlist Intelligence Teaser — Pro preview only, no engine. */}
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          Watchlist Intelligence Preview
+        </p>
+        <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
+          未來 IXAI Pro 將根據你的 watchlist 產生更深入的 AI 風險與市場判讀。
+        </h2>
+        <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)] sm:mt-3 sm:leading-8">
+          Public App 負責建立你的自選觀察與每日習慣；個人化 AI 風險解讀、跨資產關聯與
+          regime 監控保留在 IXAI Pro，將分階段開放。
+        </p>
+        <div className="mt-5 grid gap-4 sm:mt-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <ProInterestCard />
+          <div className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 sm:p-5">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Pro Preview
+            </p>
+            <ul className="mt-3 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              <li>· 你的 watchlist 與市場 regime 的個人化交叉解讀</li>
+              <li>· 跨美股 / 台股 / Crypto 的集中度與關聯觀察</li>
+              <li>· AI 風險語境化提醒（不喊單，不保證績效）</li>
+              <li>· 與 FCN worst-of、KI distance 監控的個人化串接</li>
+            </ul>
+            <p className="mt-3 border-t border-[var(--ixai-border)] pt-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+              以上為 Pro 開放後的觀察方向，並非 Public App 目前功能。
+            </p>
+          </div>
+        </div>
       </section>
     </div>
   );

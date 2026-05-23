@@ -1,5 +1,6 @@
 import { AccountPanel } from "@/components/auth/account-panel";
 import { PwaInstallCard } from "@/components/pwa/install-card";
+import { WatchlistAccountStatus } from "@/components/watchlist/watchlist-account-status";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ixaiIdentity } from "@/src/lib/ixai/identity";
 
@@ -28,6 +29,9 @@ export default function AccountPage() {
       </section>
 
       <AccountPanel />
+
+      <WatchlistAccountStatus />
+
       <PwaInstallCard />
 
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">

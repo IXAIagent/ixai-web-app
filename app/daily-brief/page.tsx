@@ -1,5 +1,6 @@
 import { DailyBriefUnifiedArchive } from "@/components/daily-brief/daily-brief-unified-archive";
 import { PushPermissionCard } from "@/components/pwa/push-permission-card";
+import { WatchlistTeaser } from "@/components/watchlist/watchlist-teaser";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getAllDailyBriefs } from "@/src/lib/dailyBriefs";
 
@@ -25,6 +26,8 @@ export default function DailyBriefArchivePage() {
           以利率、美股、台股、Crypto 與 AI 科技為主軸，整理每日盤前值得閱讀的市場摘要與一玄觀點。
         </p>
       </section>
+
+      <WatchlistTeaser />
 
       <PushPermissionCard compact />
 
