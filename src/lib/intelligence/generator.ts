@@ -11,6 +11,7 @@ import type {
   DailyIntelligenceProviderMode,
   DailyIntelligenceProviderStatus,
 } from "@/src/types/editorial";
+import { log } from "@/src/lib/log";
 import type { NewsIntakeMode, NormalizedNewsItem } from "@/src/types/news";
 
 const COMPLIANCE_NOTE =
@@ -247,7 +248,7 @@ export async function generateDailyIntelligenceDraftFromNews(
         errorReason,
         error instanceof Error ? error.message : "Unknown OpenAI provider error",
       );
-      console.warn("[IXAI] OpenAI Daily Intelligence failed. Falling back to structured generator.", {
+      log.warn("[IXAI] OpenAI Daily Intelligence failed. Falling back to structured generator.", {
         message: error instanceof Error ? error.message : "Unknown OpenAI provider error",
         reason: errorReason,
       });

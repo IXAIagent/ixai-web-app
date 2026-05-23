@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthEntryGate } from "@/components/auth/auth-entry-gate";
 import { AuthProvider } from "@/components/auth/auth-provider";
@@ -21,6 +21,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// v1.29 — viewport export so the IXAI deep-forest theme is reflected in
+// iOS Safari + Android Chrome chrome bars and PWA standalone status bar.
+export const viewport: Viewport = {
+  themeColor: "#09291f",
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   metadataBase: ixaiMetadataBase,
   title: {
@@ -32,6 +41,14 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   applicationName: "IXAI",
+  // v1.29 — Apple PWA meta so a standalone install matches the IXAI brand
+  // (status bar tone, app title, web-app capability) instead of falling
+  // back to generic Safari chrome.
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "IXAI",
+  },
   icons: {
     icon: [
       { rel: "icon", url: "/favicon.ico" },

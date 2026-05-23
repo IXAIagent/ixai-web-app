@@ -67,6 +67,17 @@ a {
   text-decoration: none;
 }
 
+/* v1.29 — unified keyboard focus ring. We don't ship :focus-visible per
+   component because we want one calm gold ring that matches the brand
+   accent on every interactive element (links, buttons, inputs, summary,
+   role=switch). Mouse / touch users never see it; keyboard / a11y tools
+   do, so PWA + screen reader audits surface a visible focus target. */
+:where(a, button, input, select, textarea, summary, [role="button"], [role="switch"]):focus-visible {
+  outline: 2px solid var(--ixai-gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .ixai-cta-forest {
   color: var(--ixai-cream) !important;
 }

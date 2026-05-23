@@ -1,3 +1,4 @@
+import { log } from "@/src/lib/log";
 import {
   getSupabaseAccessToken,
   getSupabaseClientConfig,
@@ -94,7 +95,7 @@ export async function bootstrapUserProfile(session: IXAISession) {
       throw new Error(`Profile bootstrap failed with status ${response.status}`);
     }
   } catch (error) {
-    console.warn("[IXAI PROFILE] bootstrap failed", {
+    log.warn("[IXAI PROFILE] bootstrap failed", {
       message: error instanceof Error ? error.message : "unknown_error",
     });
   }
@@ -143,7 +144,7 @@ export async function loadUserProfile(session: IXAISession): Promise<IxaiUserPro
       onboardingCompleted: false,
     };
   } catch (error) {
-    console.warn("[IXAI PROFILE] load failed", {
+    log.warn("[IXAI PROFILE] load failed", {
       message: error instanceof Error ? error.message : "unknown_error",
     });
     return null;
@@ -202,7 +203,7 @@ export async function saveUserProfile(
       message: "基本資料已更新。",
     };
   } catch (error) {
-    console.warn("[IXAI PROFILE] save failed", {
+    log.warn("[IXAI PROFILE] save failed", {
       message: error instanceof Error ? error.message : "unknown_error",
     });
 

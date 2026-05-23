@@ -14,6 +14,7 @@ import {
 import { useIdentity } from "@/components/auth/auth-provider";
 import { ProInterestCard } from "@/components/pro/pro-interest-card";
 import { useLiveResource } from "@/src/hooks/use-live-resource";
+import { log } from "@/src/lib/log";
 import {
   MARKET_DATA_DISCLAIMER,
   type MarketDataStatus,
@@ -229,10 +230,6 @@ export function WatchlistManager() {
   // v1.28.1 — dev-only diagnostic for symbols that come back unavailable so
   // we can spot provider gaps without polluting production logs.
   useEffect(() => {
-    if (process.env.NODE_ENV !== "development") {
-      return;
-    }
-
     if (!quotesPayload) {
       return;
     }
@@ -240,7 +237,7 @@ export function WatchlistManager() {
     for (const item of items) {
       const quote = quoteForItem(item, quotes);
       if (!quote || quote.status === "unavailable") {
-        console.warn(`[watchlist] missing quote for ${displaySymbol(item)}`);
+        log.warn(`[watchlist] missing quote for ${displaySymbol(item)}`);
       }
     }
   }, [items, quotes, quotesPayload]);
@@ -572,7 +569,7 @@ export function WatchlistManager() {
                         {new Date(item.addedAt).toLocaleDateString("zh-TW")}
                       </span>
                       <span className="rounded-lg border border-[var(--ixai-border)] px-2.5 py-1">
-                        {quote ? statusLabels[quote.status] : "尚未載入"}
+                        {quote ? statusLabels[quote.status] : "資料更新中"}
                       </span>
                     </div>
 
@@ -582,12 +579,12 @@ export function WatchlistManager() {
                           市場資料
                         </p>
                         <p className="mt-1 font-mono text-lg font-semibold text-[var(--ixai-forest)]">
-                          {quoteUnavailable ? "資料暫不可用" : quote.price}
+                          {quoteUnavailable ? "資料暫時無法取得" : quote.price}
                         </p>
                         <p className="mt-1 text-xs text-[var(--ixai-ink-muted)]">
                           {quote
                             ? `${quote.sourceLabel} · ${statusLabels[quote.status]} · 更新 ${formatUpdatedAt(quote.updatedAt)}`
-                            : "正在嘗試讀取 market quote"}
+                            : "資料更新中"}
                         </p>
                       </div>
                       <p className="font-mono text-sm font-medium text-[var(--ixai-forest-soft)]">

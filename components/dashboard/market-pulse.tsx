@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { useLiveResource } from "@/src/hooks/use-live-resource";
 import { marketPulseItems, type PulseSentiment } from "@/src/lib/daily-intelligence";
-import type { MarketDirection, MarketQuote, MarketQuotesResponse } from "@/src/lib/market-data/types";
+import type {
+  MarketDirection,
+  MarketQuote,
+  MarketQuotesResponse,
+} from "@/src/lib/market-data/types";
 
 const directionLabels: Record<MarketDirection, string> = {
   up: "上行",
@@ -34,37 +39,40 @@ function quoteMap(quotes: MarketQuote[]) {
   return Object.fromEntries(quotes.map((quote) => [quote.symbol, quote]));
 }
 
+// v1.29 — live data parity: home dashboard MarketPulse now shares the same
+// 60s stale-while-revalidate cadence as /market and /watchlist via the
+// useLiveResource hook (paused while the tab is hidden).
+const PULSE_SYMBOLS = marketPulseItems.map((item) => item.symbol).join(",");
+
 export function MarketPulse() {
-  const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({});
+  const fetchQuotes = useCallback(
+    async (signal: AbortSignal): Promise<MarketQuotesResponse> => {
+      const response = await fetch(`/api/market/quotes?symbols=${PULSE_SYMBOLS}`, { signal });
 
-  useEffect(() => {
-    let isMounted = true;
-    const symbols = marketPulseItems.map((item) => item.symbol).join(",");
-
-    async function loadQuotes() {
-      try {
-        const response = await fetch(`/api/market/quotes?symbols=${symbols}`);
-        if (!response.ok) {
-          return;
-        }
-
-        const data = (await response.json()) as MarketQuotesResponse;
-        if (isMounted) {
-          setQuotes(quoteMap(data.quotes));
-        }
-      } catch {
-        if (isMounted) {
-          setQuotes({});
-        }
+      if (!response.ok) {
+        throw new Error("MarketPulse quote refresh failed");
       }
+
+      return (await response.json()) as MarketQuotesResponse;
+    },
+    [],
+  );
+  const getQuotesUpdatedAt = useCallback(
+    (payload: MarketQuotesResponse) => payload.generatedAt,
+    [],
+  );
+  const { data: quotesPayload } = useLiveResource({
+    fetcher: fetchQuotes,
+    getUpdatedAt: getQuotesUpdatedAt,
+    refreshIntervalMs: 60_000,
+  });
+  const quotes = useMemo(() => {
+    if (!quotesPayload) {
+      return {} as Record<string, MarketQuote>;
     }
 
-    loadQuotes();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    return quoteMap(quotesPayload.quotes);
+  }, [quotesPayload]);
 
   return (
     <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_16px_48px_rgba(9,41,31,0.15)] sm:shadow-[0_18px_60px_rgba(9,41,31,0.16)]">

@@ -140,7 +140,7 @@ export function WatchlistTeaser() {
           </div>
         </div>
         <Link
-          className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-1.5 text-xs font-medium text-[var(--ixai-forest)]"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-xs font-medium text-[var(--ixai-forest)]"
           href="/watchlist"
         >
           管理
@@ -181,7 +181,7 @@ export function WatchlistTeaser() {
                 </p>
               </div>
               <p className="text-[10px] leading-4 text-[var(--ixai-ink-muted)]">
-                {quote ? statusLabels[quote.status] : "尚未載入"}
+                {quote ? statusLabels[quote.status] : "資料更新中"}
               </p>
             </Link>
           );

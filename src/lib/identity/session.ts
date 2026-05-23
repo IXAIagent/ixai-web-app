@@ -4,6 +4,7 @@ import {
   writePersonalMemory,
 } from "@/src/lib/personalization/memory";
 import { getAuthRedirectUrl } from "@/src/lib/auth/get-auth-redirect-url";
+import { log } from "@/src/lib/log";
 import {
   createSupabaseBrowserClient,
   getSupabaseClientConfig,
@@ -178,11 +179,7 @@ function logAuthDebug(
     message?: string;
   },
 ) {
-  if (process.env.NODE_ENV !== "development") {
-    return;
-  }
-
-  console.error("[IXAI AUTH]", {
+  log.error("[IXAI AUTH]", {
     context,
     status: details.status,
     error: details.error,
@@ -192,12 +189,8 @@ function logAuthDebug(
 }
 
 function logRegisterRawError(error: IXAIAuthDebugError) {
-  if (process.env.NODE_ENV !== "development") {
-    return;
-  }
-
-  console.error("[IXAI REGISTER RAW ERROR]", error);
-  console.error("[IXAI REGISTER RAW ERROR DETAILS]", {
+  log.error("[IXAI REGISTER RAW ERROR]", error);
+  log.error("[IXAI REGISTER RAW ERROR DETAILS]", {
     message: error.message,
     status: error.status,
     code: error.code,
@@ -376,13 +369,11 @@ export async function registerWithPassword(
 
     const callbackUrl = getAuthRedirectUrl();
 
-    if (process.env.NODE_ENV === "development") {
-      console.log({
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-        hasAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-        siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
-      });
-    }
+    log.debug({
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+      siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+    });
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -449,7 +440,7 @@ export async function signOutSupabase() {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    console.warn("[IXAI AUTH] signOut failed", {
+    log.warn("[IXAI AUTH] signOut failed", {
       message: error.message,
       name: error.name,
     });
@@ -498,7 +489,7 @@ export async function getCurrentSupabaseIXAISession(): Promise<IXAISession | nul
   const { data, error } = await supabase.auth.getSession();
 
   if (error) {
-    console.warn("[IXAI AUTH] getSession failed", {
+    log.warn("[IXAI AUTH] getSession failed", {
       message: error.message,
       name: error.name,
     });

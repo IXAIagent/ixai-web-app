@@ -1,5 +1,6 @@
 import "server-only";
 
+import { log } from "@/src/lib/log";
 import type {
   DailyIntelligenceFeedItem,
   DailyIntelligenceProviderErrorReason,
@@ -330,7 +331,7 @@ export async function generateDailyIntelligenceWithAI(
       normalizedContext,
     );
   } catch (firstError) {
-    console.warn("[IXAI] OpenAI Daily Intelligence generation retrying after parse/request error.", {
+    log.warn("[IXAI] OpenAI Daily Intelligence generation retrying after parse/request error.", {
       message: firstError instanceof Error ? firstError.message : "Unknown OpenAI provider error",
     });
 

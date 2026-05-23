@@ -1,6 +1,8 @@
 // v1.27 push foundation — client-only service worker registration helper.
 // Production-only, idempotent, and never throws into the host page.
 
+import { log } from "@/src/lib/log";
+
 const SW_SCRIPT_PATH = "/sw.js";
 const SW_SCOPE = "/";
 
@@ -41,7 +43,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       });
     } catch (error) {
       // Reading or admin workflows must never be interrupted by SW errors.
-      console.warn("[ixai] service worker registration skipped:", error);
+      log.warn("[ixai] service worker registration skipped:", error);
       return null;
     } finally {
       // Clear after a tick so genuinely repeated calls still de-dupe within

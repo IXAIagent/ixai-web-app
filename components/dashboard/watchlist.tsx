@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { ArrowUpRight, Plus, UserCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useIdentity } from "@/components/auth/auth-provider";
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
+import { useLiveResource } from "@/src/hooks/use-live-resource";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
-import type {
-  MarketDataStatus,
-  MarketQuote,
-  MarketQuotesResponse,
+import {
+  MARKET_DATA_DISCLAIMER,
+  type MarketDataStatus,
+  type MarketQuote,
+  type MarketQuotesResponse,
 } from "@/src/lib/market-data/types";
 import {
   type WatchlistItem,
@@ -56,7 +58,6 @@ function updatedLabel(quote?: MarketQuote) {
 export function Watchlist() {
   const { session } = useIdentity();
   const [assets, setAssets] = useState<WatchlistItem[]>([]);
-  const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({});
 
   useEffect(() => {
     function syncWatchlist() {
@@ -77,42 +78,47 @@ export function Watchlist() {
     };
   }, []);
 
-  useEffect(() => {
-    if (assets.length === 0) {
-      return;
-    }
-
-    let isMounted = true;
-    const symbols = assets.map((asset) => asset.symbol);
-
-    async function loadQuotes() {
-      try {
-        const response = await fetch(`/api/market/quotes?symbols=${symbols.join(",")}`);
-        if (!response.ok) {
-          return;
-        }
-
-        const data = (await response.json()) as MarketQuotesResponse;
-        if (!isMounted) {
-          return;
-        }
-
-        setQuotes(
-          Object.fromEntries(data.quotes.map((quote) => [quote.symbol, quote])),
-        );
-      } catch {
-        if (isMounted) {
-          setQuotes({});
-        }
+  // v1.29 — live data parity: home dashboard Watchlist widget now shares
+  // the 60s stale-while-revalidate cadence used on /watchlist and the
+  // teaser, paused while the tab is hidden.
+  const symbolsKey = useMemo(() => assets.map((asset) => asset.symbol).join(","), [assets]);
+  const fetchQuotes = useCallback(
+    async (signal: AbortSignal): Promise<MarketQuotesResponse> => {
+      if (!symbolsKey) {
+        return {
+          quotes: [],
+          disclaimer: MARKET_DATA_DISCLAIMER,
+          requestedSymbols: [],
+          generatedAt: new Date().toISOString(),
+        };
       }
+
+      const response = await fetch(`/api/market/quotes?symbols=${symbolsKey}`, { signal });
+
+      if (!response.ok) {
+        throw new Error("Watchlist quote refresh failed");
+      }
+
+      return (await response.json()) as MarketQuotesResponse;
+    },
+    [symbolsKey],
+  );
+  const getQuotesUpdatedAt = useCallback(
+    (payload: MarketQuotesResponse) => payload.generatedAt,
+    [],
+  );
+  const { data: quotesPayload } = useLiveResource({
+    fetcher: fetchQuotes,
+    getUpdatedAt: getQuotesUpdatedAt,
+    refreshIntervalMs: 60_000,
+  });
+  const quotes = useMemo(() => {
+    if (!quotesPayload) {
+      return {} as Record<string, MarketQuote>;
     }
 
-    loadQuotes();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [assets]);
+    return Object.fromEntries(quotesPayload.quotes.map((quote) => [quote.symbol, quote]));
+  }, [quotesPayload]);
 
   return (
     <SectionCard>
@@ -161,7 +167,7 @@ export function Watchlist() {
                       {quote?.dailyChange ?? "--"}
                     </p>
                     <p className="mt-0.5 text-[11px] text-[var(--ixai-gold)]">
-                      {quote ? statusLabels[quote.status] : "資料讀取中"}
+                      {quote ? statusLabels[quote.status] : "資料更新中"}
                     </p>
                   </div>
                 </div>
@@ -171,14 +177,14 @@ export function Watchlist() {
                 </p>
                 <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-[var(--ixai-ink-muted)]">
                   <span>{updatedLabel(quote)}</span>
-                  <span className="font-mono">{quote?.price ?? "資料讀取中"}</span>
+                  <span className="font-mono">{quote?.price ?? "資料更新中"}</span>
                 </div>
               </article>
             );
           })}
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
             <Link
-              className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 text-sm font-medium text-[var(--ixai-forest)]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 text-sm font-medium text-[var(--ixai-forest)]"
               href="/watchlist"
             >
               管理自選觀察

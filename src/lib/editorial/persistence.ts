@@ -1,3 +1,4 @@
+import { log } from "@/src/lib/log";
 import { getSupabaseRestConfig } from "@/src/lib/supabase/server";
 import type {
   DailyBriefDraft,
@@ -41,7 +42,7 @@ function logPersistenceFallback(message: string, error?: unknown) {
   }
 
   const detail = error instanceof Error ? error.message : String(error ?? "");
-  console.warn(`[IXAI Daily Intelligence persistence] ${message}${detail ? `: ${detail}` : ""}`);
+  log.warn(`[IXAI Daily Intelligence persistence] ${message}${detail ? `: ${detail}` : ""}`);
 }
 
 function rowToDraft(row: DailyIntelligenceRow): DailyBriefDraft {

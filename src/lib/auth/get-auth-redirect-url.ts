@@ -1,3 +1,5 @@
+import { log } from "@/src/lib/log";
+
 const PRODUCTION_SITE_URL = "https://app.ixuan.ai";
 
 export function getAuthRedirectUrl() {
@@ -9,9 +11,7 @@ export function getAuthRedirectUrl() {
       : withoutAuthQuery.replace(/\/$/, "");
   const redirectUrl = `${normalized}/auth/callback`;
 
-  if (process.env.NODE_ENV === "development") {
-    console.log("[IXAI AUTH REDIRECT]", redirectUrl);
-  }
+  log.debug("[IXAI AUTH REDIRECT]", redirectUrl);
 
   return redirectUrl;
 }
