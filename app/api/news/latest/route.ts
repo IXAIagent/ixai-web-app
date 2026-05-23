@@ -39,12 +39,19 @@ export async function GET(request: Request) {
     )
     .slice(0, limit);
 
-  return Response.json({
-    ...result,
-    items,
-    itemCount: items.length,
-    sourceStatus: result.sourceStatus ?? result.sources,
-    requestedCategory: category ?? null,
-    limit,
-  });
+  return Response.json(
+    {
+      ...result,
+      items,
+      itemCount: items.length,
+      sourceStatus: result.sourceStatus ?? result.sources,
+      requestedCategory: category ?? null,
+      limit,
+    },
+    {
+      headers: {
+        "Cache-Control": "public, s-maxage=180, stale-while-revalidate=60",
+      },
+    },
+  );
 }

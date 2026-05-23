@@ -6,8 +6,15 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const intelligence = await getMarketIntelligence();
 
-  return Response.json({
-    ...intelligence,
-    disclaimer: MARKET_DATA_DISCLAIMER,
-  });
+  return Response.json(
+    {
+      ...intelligence,
+      disclaimer: MARKET_DATA_DISCLAIMER,
+    },
+    {
+      headers: {
+        "Cache-Control": "public, s-maxage=180, stale-while-revalidate=60",
+      },
+    },
+  );
 }

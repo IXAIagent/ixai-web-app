@@ -1,10 +1,11 @@
 "use client";
 
 import { SectionCard, SectionHeader } from "@/components/dashboard/section-card";
+import { useLiveResource } from "@/src/hooks/use-live-resource";
 import type { MarketIntelligenceResponse } from "@/src/lib/market-data/intelligence";
 import type { MarketDataStatus, MarketQuote } from "@/src/lib/market-data/types";
 import type { NewsIntelligenceItem } from "@/src/lib/news/intelligence";
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 
 const statusLabels: Record<MarketDataStatus, string> = {
   real: "真實",
@@ -143,37 +144,30 @@ function LoadingCard() {
 }
 
 export function MarketIntelligenceLayer() {
-  const [data, setData] = useState<MarketIntelligenceResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const fetchMarketIntelligence = useCallback(async (signal: AbortSignal) => {
+    const response = await fetch("/api/market/intelligence", {
+      cache: "no-store",
+      signal,
+    });
 
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadIntelligence() {
-      try {
-        const response = await fetch("/api/market/intelligence");
-
-        if (!response.ok) {
-          return;
-        }
-
-        const payload = (await response.json()) as MarketIntelligenceResponse;
-        if (isMounted) {
-          setData(payload);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
+    if (!response.ok) {
+      throw new Error("Market intelligence refresh failed");
     }
 
-    loadIntelligence();
-
-    return () => {
-      isMounted = false;
-    };
+    return (await response.json()) as MarketIntelligenceResponse;
   }, []);
+  const getIntelligenceUpdatedAt = useCallback((payload: MarketIntelligenceResponse) => payload.generatedAt, []);
+  const {
+    data,
+    errorMessage,
+    isLoading,
+    isRefreshing,
+    lastUpdatedAt,
+  } = useLiveResource({
+    fetcher: fetchMarketIntelligence,
+    getUpdatedAt: getIntelligenceUpdatedAt,
+    refreshIntervalMs: 180_000,
+  });
 
   if (isLoading || !data) {
     return (
@@ -187,8 +181,17 @@ export function MarketIntelligenceLayer() {
     );
   }
 
+  const freshnessLabel = errorMessage
+    ? "更新失敗，稍後自動重試"
+    : `${lastUpdatedAt ? `更新於 ${formatUpdatedAt(lastUpdatedAt)}` : "資料更新中"}｜${
+        isRefreshing ? "背景更新中" : "每 3 分鐘自動更新"
+      }｜資料可能延遲`;
+
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="rounded-lg border border-[var(--ixai-border)] bg-white/45 px-3.5 py-2.5 text-xs leading-5 text-[var(--ixai-ink-muted)] sm:px-4">
+        {freshnessLabel}
+      </div>
       <SectionCard>
         <SectionHeader action="Sentiment" eyebrow="市場情緒" title="波動、利率與美元壓力" />
         <div className="grid gap-2.5 p-3.5 sm:grid-cols-2 sm:gap-3 sm:p-4 xl:grid-cols-4">

@@ -16,10 +16,17 @@ export async function GET(request: Request) {
   const requestedSymbols = symbols.length > 0 ? symbols : ["BTC", "ETH", "SPY"];
   const quotes = await getMarketQuotes(requestedSymbols);
 
-  return Response.json({
-    quotes,
-    disclaimer: MARKET_DATA_DISCLAIMER,
-    requestedSymbols,
-    generatedAt: new Date().toISOString(),
-  } satisfies MarketQuotesResponse);
+  return Response.json(
+    {
+      quotes,
+      disclaimer: MARKET_DATA_DISCLAIMER,
+      requestedSymbols,
+      generatedAt: new Date().toISOString(),
+    } satisfies MarketQuotesResponse,
+    {
+      headers: {
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+      },
+    },
+  );
 }

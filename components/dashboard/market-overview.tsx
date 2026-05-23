@@ -13,7 +13,8 @@ import {
   type MarketQuote,
   type MarketQuotesResponse,
 } from "@/src/lib/market-data/types";
-import { useEffect, useMemo, useState } from "react";
+import { useLiveResource } from "@/src/hooks/use-live-resource";
+import { useCallback, useMemo } from "react";
 
 const statusLabels: Record<MarketDataStatus, string> = {
   real: "真實",
@@ -80,6 +81,7 @@ export function MarketOverview({
 }: {
   symbols?: string[];
 }) {
+  const requestedSymbols = useMemo(() => [...macroMarketSymbols, ...symbols], [symbols]);
   const initialQuotes = useMemo(
     () => getFallbackMarketQuotes(symbols).map((quote) => ({ ...quote, updatedAt: "" })),
     [symbols],
@@ -89,43 +91,63 @@ export function MarketOverview({
     [],
   );
   const macroSymbolSet = useMemo(() => new Set(macroMarketSymbols), []);
-  const [markets, setMarkets] = useState<MarketQuote[]>(initialQuotes);
-  const [macroAssets, setMacroAssets] = useState<MarketQuote[]>(initialMacroQuotes);
+  const initialResponse = useMemo(
+    () => ({
+      quotes: [...initialMacroQuotes, ...initialQuotes],
+      disclaimer: MARKET_DATA_DISCLAIMER,
+      requestedSymbols,
+      generatedAt: "",
+    } satisfies MarketQuotesResponse),
+    [initialMacroQuotes, initialQuotes, requestedSymbols],
+  );
+  const fetchQuotes = useCallback(
+    async (signal: AbortSignal) => {
+      const response = await fetch(`/api/market/quotes?symbols=${requestedSymbols.join(",")}`, {
+        cache: "no-store",
+        signal,
+      });
 
-  useEffect(() => {
-    let isMounted = true;
-    const requestedSymbols = [...macroMarketSymbols, ...symbols];
-
-    async function loadQuotes() {
-      try {
-        const response = await fetch(`/api/market/quotes?symbols=${requestedSymbols.join(",")}`);
-        if (!response.ok) {
-          return;
-        }
-
-        const data = (await response.json()) as MarketQuotesResponse;
-        if (isMounted) {
-          setMacroAssets(data.quotes.filter((quote) => macroSymbolSet.has(quote.symbol)));
-          setMarkets(data.quotes.filter((quote) => !macroSymbolSet.has(quote.symbol)));
-        }
-      } catch {
-        if (isMounted) {
-          setMacroAssets(initialMacroQuotes);
-          setMarkets(initialQuotes);
-        }
+      if (!response.ok) {
+        throw new Error("Market quotes refresh failed");
       }
-    }
 
-    loadQuotes();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [initialMacroQuotes, initialQuotes, macroSymbolSet, symbols]);
+      return (await response.json()) as MarketQuotesResponse;
+    },
+    [requestedSymbols],
+  );
+  const getQuoteUpdatedAt = useCallback((payload: MarketQuotesResponse) => payload.generatedAt, []);
+  const {
+    data = initialResponse,
+    errorMessage,
+    isLoading,
+    isRefreshing,
+    lastUpdatedAt,
+  } = useLiveResource({
+    fetcher: fetchQuotes,
+    getUpdatedAt: getQuoteUpdatedAt,
+    initialData: initialResponse,
+    refreshIntervalMs: 60_000,
+  });
+  const macroAssets = useMemo(
+    () => data.quotes.filter((quote) => macroSymbolSet.has(quote.symbol)),
+    [data.quotes, macroSymbolSet],
+  );
+  const markets = useMemo(
+    () => data.quotes.filter((quote) => !macroSymbolSet.has(quote.symbol)),
+    [data.quotes, macroSymbolSet],
+  );
+  const freshnessLabel = errorMessage
+    ? "更新失敗，稍後自動重試"
+    : `${lastUpdatedAt ? `更新於 ${formatUpdatedAt(lastUpdatedAt)}` : "資料更新中"}｜${
+        isRefreshing ? "背景更新中" : "每 60 秒自動更新"
+      }`;
 
   return (
     <SectionCard>
       <SectionHeader action="Macro" eyebrow="宏觀資產" title="美元與貴金屬觀察" />
+      <p className="border-b border-[var(--ixai-border)] px-4 pb-3 text-xs leading-5 text-[var(--ixai-ink-muted)] sm:px-5">
+        {isLoading ? "正在取得最新市場資料..." : freshnessLabel}
+      </p>
       <div className="grid gap-2.5 p-3.5 sm:grid-cols-3 sm:gap-3 sm:p-4 xl:grid-cols-1">
         {macroAssets.map((asset) => (
           <QuoteCard asset={asset} key={asset.symbol} />

@@ -9,7 +9,7 @@ import type {
   NormalizedNewsItem,
 } from "@/src/types/news";
 
-const NEWS_CACHE_TTL_MS = 12 * 60 * 1000;
+const NEWS_CACHE_TTL_MS = 3 * 60 * 1000;
 const RSS_FETCH_TIMEOUT_MS = 5000;
 const NEWS_INTAKE_DISCLAIMER =
   "Headlines and links may come from public RSS/API sources. IXAI summaries and interpretation are generated or editorially reviewed for informational purposes only and do not constitute investment advice.";

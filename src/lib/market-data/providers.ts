@@ -84,7 +84,7 @@ type YahooChartResponse = {
 };
 
 const quoteCache = new Map<string, CachedQuoteEntry>();
-const CACHE_TTL_MS = 10 * 60 * 1000;
+const CACHE_TTL_MS = 60 * 1000;
 
 function getCachedQuote(cacheKey: string) {
   const cached = quoteCache.get(cacheKey);
@@ -197,7 +197,7 @@ export const coinGeckoProvider: MarketQuoteProvider = {
         headers: {
           accept: "application/json",
         },
-        next: { revalidate: 600 },
+        next: { revalidate: 60 },
       },
     );
 
@@ -258,7 +258,7 @@ async function getYahooChartQuote(symbol: string) {
         accept: "application/json",
         "user-agent": "IXAI-MarketData/1.0",
       },
-      next: { revalidate: 600 },
+      next: { revalidate: 60 },
       signal: AbortSignal.timeout(8000),
     },
   );
