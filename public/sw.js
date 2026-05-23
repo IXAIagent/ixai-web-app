@@ -144,3 +144,59 @@ self.addEventListener("fetch", (event) => {
     );
   }
 });
+
+// v1.27 push foundation — placeholder handlers only. No server dispatch yet;
+// these are wired so that when push is enabled later, the SW already knows
+// how to render and route notifications without a second deploy.
+self.addEventListener("push", (event) => {
+  let payload = {};
+
+  if (event && event.data) {
+    try {
+      payload = event.data.json();
+    } catch {
+      payload = { title: "IXAI 市場通知", body: event.data.text() };
+    }
+  }
+
+  const title = payload.title || "IXAI 市場通知";
+  const options = {
+    body: payload.body || "市場有新的觀察更新，回到 IXAI 查看詳情。",
+    icon: payload.icon || "/icons/ixai-icon-192.png",
+    badge: payload.badge || "/icons/ixai-icon-192.png",
+    tag: payload.tag || "ixai-default",
+    data: {
+      url: payload.url || "/",
+    },
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const targetUrl = (event.notification.data && event.notification.data.url) || "/";
+
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientsList) => {
+        for (const client of clientsList) {
+          if ("focus" in client && client.url.includes(self.location.origin)) {
+            client.focus();
+            if ("navigate" in client) {
+              return client.navigate(targetUrl).catch(() => null);
+            }
+            return null;
+          }
+        }
+
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(targetUrl);
+        }
+
+        return null;
+      }),
+  );
+});
