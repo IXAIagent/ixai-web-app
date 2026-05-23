@@ -29,6 +29,9 @@ const yahooSymbols: Record<string, { yahooSymbol: string; symbol: string; name: 
   "USDTWD=X": { yahooSymbol: "USDTWD=X", symbol: "USDTWD=X", name: "USD/TWD 美金兌台幣" },
   "GC=F": { yahooSymbol: "GC=F", symbol: "GC=F", name: "黃金期貨" },
   "SI=F": { yahooSymbol: "SI=F", symbol: "SI=F", name: "白銀期貨" },
+  "^VIX": { yahooSymbol: "^VIX", symbol: "^VIX", name: "VIX 波動率指數" },
+  "^TNX": { yahooSymbol: "^TNX", symbol: "^TNX", name: "美國 10 年期公債殖利率" },
+  "DX-Y.NYB": { yahooSymbol: "DX-Y.NYB", symbol: "DX-Y.NYB", name: "DXY 美元指數" },
   SPY: { yahooSymbol: "SPY", symbol: "SPY", name: "S&P 500 ETF" },
   QQQ: { yahooSymbol: "QQQ", symbol: "QQQ", name: "Nasdaq 100 ETF" },
   NVDA: { yahooSymbol: "NVDA", symbol: "NVDA", name: "NVIDIA" },
@@ -45,6 +48,14 @@ const yahooSymbols: Record<string, { yahooSymbol: string; symbol: string; name: 
   TSMC: { yahooSymbol: "TSM", symbol: "TSM", name: "台積電 ADR" },
   "2330": { yahooSymbol: "2330.TW", symbol: "2330.TW", name: "台積電" },
   "2330.TW": { yahooSymbol: "2330.TW", symbol: "2330.TW", name: "台積電" },
+  "2382.TW": { yahooSymbol: "2382.TW", symbol: "2382.TW", name: "廣達" },
+  "3231.TW": { yahooSymbol: "3231.TW", symbol: "3231.TW", name: "緯創" },
+  "2376.TW": { yahooSymbol: "2376.TW", symbol: "2376.TW", name: "技嘉" },
+  "6669.TW": { yahooSymbol: "6669.TW", symbol: "6669.TW", name: "緯穎" },
+  "3017.TW": { yahooSymbol: "3017.TW", symbol: "3017.TW", name: "奇鋐" },
+  "3324.TW": { yahooSymbol: "3324.TW", symbol: "3324.TW", name: "雙鴻" },
+  "2308.TW": { yahooSymbol: "2308.TW", symbol: "2308.TW", name: "台達電" },
+  "2454.TW": { yahooSymbol: "2454.TW", symbol: "2454.TW", name: "聯發科" },
   "0050": { yahooSymbol: "0050.TW", symbol: "0050.TW", name: "元大台灣50" },
   "0050.TW": { yahooSymbol: "0050.TW", symbol: "0050.TW", name: "元大台灣50" },
 };
@@ -132,6 +143,12 @@ function formatChange(value?: number) {
 
   const sign = value > 0 ? "+" : "";
   return `${sign}${value.toFixed(2)}%`;
+}
+
+function formatIndexValue(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: value >= 100 ? 2 : 2,
+  }).format(value);
 }
 
 function directionFromChange(value?: number): MarketDirection {
@@ -267,7 +284,11 @@ async function getYahooChartQuote(symbol: string) {
   const quote = {
     symbol: meta.symbol,
     name: meta.name,
-    price: formatPrice(price, chartMeta?.currency),
+    price: meta.symbol === "^TNX"
+      ? `${(price > 20 ? price / 10 : price).toFixed(2)}%`
+      : meta.symbol === "^VIX" || meta.symbol === "DX-Y.NYB"
+        ? formatIndexValue(price)
+        : formatPrice(price, chartMeta?.currency),
     dailyChange: formatChange(changePercent),
     direction: directionFromChange(changePercent),
     source: "yahoo-finance",

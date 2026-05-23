@@ -1,4 +1,5 @@
 import { MarketOverview } from "@/components/dashboard/market-overview";
+import { MarketIntelligenceLayer } from "@/components/market/market-intelligence-layer";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { MARKET_DATA_DISCLAIMER } from "@/src/lib/market-data/types";
 
@@ -24,6 +25,8 @@ export default function MarketPage() {
       </section>
 
       <MarketOverview />
+
+      <MarketIntelligenceLayer />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-4 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">

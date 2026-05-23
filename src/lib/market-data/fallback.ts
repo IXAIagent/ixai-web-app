@@ -9,6 +9,18 @@ export function normalizeMarketSymbol(symbol: string): string {
     return "USDTWD=X";
   }
 
+  if (normalized === "VIX") {
+    return "^VIX";
+  }
+
+  if (normalized === "TNX" || normalized === "US10Y") {
+    return "^TNX";
+  }
+
+  if (normalized === "DXY") {
+    return "DX-Y.NYB";
+  }
+
   if (normalized === "TSMC") {
     return "TSM";
   }
@@ -111,6 +123,86 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     sourceLabel: "備援資料",
     status: "simulated",
   },
+  "2382.TW": {
+    symbol: "2382.TW",
+    name: "廣達",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "taiwan-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "3231.TW": {
+    symbol: "3231.TW",
+    name: "緯創",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "taiwan-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "2376.TW": {
+    symbol: "2376.TW",
+    name: "技嘉",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "taiwan-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "6669.TW": {
+    symbol: "6669.TW",
+    name: "緯穎",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "taiwan-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "3017.TW": {
+    symbol: "3017.TW",
+    name: "奇鋐",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "taiwan-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "3324.TW": {
+    symbol: "3324.TW",
+    name: "雙鴻",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "taiwan-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "2308.TW": {
+    symbol: "2308.TW",
+    name: "台達電",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "taiwan-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "2454.TW": {
+    symbol: "2454.TW",
+    name: "聯發科",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "taiwan-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
   "USDTWD=X": {
     symbol: "USDTWD=X",
     name: "USD/TWD 美金兌台幣",
@@ -141,25 +233,35 @@ const fallbackQuoteMap: Record<string, Omit<MarketQuote, "updatedAt">> = {
     sourceLabel: "備援資料",
     status: "unavailable",
   },
-  VIX: {
-    symbol: "VIX",
-    name: "Volatility Index",
-    price: "16.8",
-    dailyChange: "-2.10%",
-    direction: "down",
-    source: "macro-placeholder",
-    sourceLabel: "備援資料",
-    status: "simulated",
-  },
-  DXY: {
-    symbol: "DXY",
-    name: "US Dollar Index",
-    price: "104.2",
-    dailyChange: "+0.04%",
+  "^VIX": {
+    symbol: "^VIX",
+    name: "VIX 波動率指數",
+    price: "資料不可用",
+    dailyChange: "--",
     direction: "flat",
-    source: "macro-placeholder",
+    source: "sentiment-fallback",
     sourceLabel: "備援資料",
-    status: "simulated",
+    status: "unavailable",
+  },
+  "^TNX": {
+    symbol: "^TNX",
+    name: "美國 10 年期公債殖利率",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "sentiment-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
+  },
+  "DX-Y.NYB": {
+    symbol: "DX-Y.NYB",
+    name: "DXY 美元指數",
+    price: "資料不可用",
+    dailyChange: "--",
+    direction: "flat",
+    source: "sentiment-fallback",
+    sourceLabel: "備援資料",
+    status: "unavailable",
   },
 };
 
@@ -194,3 +296,17 @@ export function getFallbackMarketQuotes(symbols: string[]): MarketQuote[] {
 export const defaultMarketSymbols = ["BTC", "ETH", "SOL", "SPY", "QQQ", "NVDA", "TSM", "2330.TW", "0050.TW"];
 
 export const macroMarketSymbols = ["USDTWD=X", "GC=F", "SI=F"];
+
+export const marketSentimentSymbols = ["^VIX", "^TNX", "DX-Y.NYB"];
+
+export const aiSupplyChainSymbols = [
+  "2330.TW",
+  "2382.TW",
+  "3231.TW",
+  "2376.TW",
+  "6669.TW",
+  "3017.TW",
+  "3324.TW",
+  "2308.TW",
+  "2454.TW",
+];
