@@ -141,6 +141,14 @@ async function supabaseFetch<T>(
 
     if (!response.ok) {
       const body = await response.text().catch(() => "");
+
+      // v1.30.4 — surface the full Supabase error body in server logs so
+      // schema mismatches (column name, jsonb shape, constraint violation,
+      // RLS denial) are visible in Vercel function logs even though the
+      // API response only carries a production-safe message.
+      logWeeklyPersistence(
+        `Supabase weekly request failed. path=${path} status=${response.status} body=${body.slice(0, 600)}`,
+      );
       throw new WeeklyPersistenceError(
         `Supabase weekly request failed: ${response.status} ${body.slice(0, 220)}`,
         "request_failed",
@@ -366,11 +374,22 @@ export async function saveWeeklyDraftAsync(draft: WeeklyIntelligenceDraft) {
   // API and admin UI surface a real failure instead of pretending the
   // publish landed. The in-memory fallback only fires when Supabase env is
   // absent (i.e. local dev without service role key).
+  //
+  // v1.30.4 — two write-shape fixes vs the previous version that produced
+  // an "empty response" failure for every Generate call:
+  //   1. Wrap the record in an array. PostgREST returns the same shape it
+  //      received, so a single-object payload came back as a single object,
+  //      and saved?.[0] resolved to undefined → strict mode threw.
+  //   2. Add ?on_conflict=slug so the upsert can MERGE on the slug unique
+  //      constraint. Without it, PostgREST defaults to the PK and a repeat
+  //      Generate (same slug, new uuid) would raise 409 unique_violation.
+  const record = toRecord(nextDraft);
+
   try {
     const saved = await supabaseFetch<WeeklyPersistenceRecord[]>(
-      WEEKLY_TABLE,
+      `${WEEKLY_TABLE}?on_conflict=slug`,
       {
-        body: JSON.stringify(toRecord(nextDraft)),
+        body: JSON.stringify([record]),
         headers: {
           Prefer: "resolution=merge-duplicates,return=representation",
         },
@@ -385,6 +404,9 @@ export async function saveWeeklyDraftAsync(draft: WeeklyIntelligenceDraft) {
 
     // Supabase returned 204 / empty — treat as failure rather than silently
     // success: durable write should always come back with the row.
+    logWeeklyPersistence(
+      `Supabase weekly write returned an empty response. slug=${record.slug} status=${record.status}`,
+    );
     throw new WeeklyPersistenceError(
       "Supabase weekly write returned an empty response; row not confirmed.",
       "request_failed",

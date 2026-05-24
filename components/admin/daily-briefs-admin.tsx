@@ -216,8 +216,15 @@ function WeeklyEditorPreview() {
         method: "POST",
       });
 
+      // v1.30.4 — propagate the server's actual error so persistence
+      // failures (Supabase 4xx/5xx, on_conflict mismatch, RLS denial)
+      // reach the admin UI instead of being replaced with a generic line.
       if (!response.ok) {
-        throw new Error("Weekly generation failed.");
+        const errorPayload = (await response.json().catch(() => ({}))) as {
+          message?: string;
+          status?: string;
+        };
+        throw new Error(errorPayload.message ?? "Weekly generation failed.");
       }
 
       const payload = (await response.json()) as {
@@ -235,8 +242,12 @@ function WeeklyEditorPreview() {
           ? `Existing weekly draft loaded · ${payload.summary.itemCount} input items · ${payload.summary.sourceMode}`
           : `Weekly draft generated · ${payload.summary?.itemCount ?? 0} input items · ${payload.summary?.sourceMode ?? "fallback"}`,
       );
-    } catch {
-      setWeeklyMessage("Generate Weekly Draft failed. No content was published.");
+    } catch (error) {
+      setWeeklyMessage(
+        error instanceof Error
+          ? error.message
+          : "Generate Weekly Draft failed. No content was published.",
+      );
     } finally {
       setIsWeeklyGenerating(false);
     }
@@ -259,8 +270,13 @@ function WeeklyEditorPreview() {
         method: "PATCH",
       });
 
+      // v1.30.4 — surface server-side persistence errors instead of
+      // showing a generic Save-failed message.
       if (!response.ok) {
-        throw new Error("Weekly save failed.");
+        const errorPayload = (await response.json().catch(() => ({}))) as {
+          message?: string;
+        };
+        throw new Error(errorPayload.message ?? "Weekly save failed.");
       }
 
       const payload = (await response.json()) as {
@@ -272,8 +288,12 @@ function WeeklyEditorPreview() {
       setWeeklyPersistence(payload.persistence ?? null);
       setSelectedWeeklyId(payload.draft.id);
       setWeeklyMessage(message);
-    } catch {
-      setWeeklyMessage("Weekly draft save failed. Please verify persistence and admin session.");
+    } catch (error) {
+      setWeeklyMessage(
+        error instanceof Error
+          ? error.message
+          : "Weekly draft save failed. Please verify persistence and admin session.",
+      );
     } finally {
       setIsWeeklySaving(false);
     }
