@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock3 } from "lucide-react";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
-import { getAllWeeklyBriefs, getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
+import { getAllWeeklyBriefsAsync, getLatestWeeklyBriefAsync } from "@/src/lib/weeklyBriefs";
 
 export const metadata = buildPublicMetadata({
   title: "IXAI Weekly Intelligence — 每週市場 Intelligence",
@@ -9,9 +9,27 @@ export const metadata = buildPublicMetadata({
     "IXAI Weekly Intelligence 整理每週市場重點、重大事件、下週觀察、FCN 教育與市場正在 pricing 的核心脈絡。",
 });
 
-export default function WeeklyBriefArchivePage() {
-  const latestBrief = getLatestWeeklyBrief();
-  const allBriefs = getAllWeeklyBriefs();
+export default async function WeeklyBriefArchivePage() {
+  const latestBrief = await getLatestWeeklyBriefAsync();
+  const allBriefs = await getAllWeeklyBriefsAsync();
+
+  if (!latestBrief) {
+    return (
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+        <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7">
+          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
+            Weekly Intelligence
+          </p>
+          <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
+            Weekly Intelligence 尚未發布。
+          </h1>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:text-base sm:leading-8">
+            IXAI Editorial Studio 會先產生週報草稿，再由人工審閱後發布。發布後會顯示於此頁。
+          </p>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">

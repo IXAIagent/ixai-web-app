@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getDrafts } from "@/src/lib/editorial/repository";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
-import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 import type {
   DailyBriefDraft,
   DailyBriefDraftStatus,
@@ -12,6 +11,8 @@ import type {
   DailyIntelligenceProviderMode,
   DailyIntelligenceProviderStatus,
   DailyDraftGenerationSummary,
+  WeeklyIntelligenceDraft,
+  WeeklyIntelligenceStatus,
 } from "@/src/types/editorial";
 import type { NewsIntakeResult } from "@/src/types/news";
 
@@ -25,6 +26,20 @@ const statusStyles: Record<DailyBriefDraftStatus, string> = {
   draft: "border-white/12 bg-white/6 text-[rgba(245,240,230,0.62)]",
   review: "border-[rgba(176,141,87,0.4)] bg-[rgba(176,141,87,0.12)] text-[var(--ixai-gold)]",
   published: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
+};
+
+const weeklyStatusLabels: Record<WeeklyIntelligenceStatus, string> = {
+  draft: "Draft",
+  review: "Review",
+  published: "Published",
+  archived: "Archived",
+};
+
+const weeklyStatusStyles: Record<WeeklyIntelligenceStatus, string> = {
+  draft: "border-white/12 bg-white/6 text-[rgba(245,240,230,0.62)]",
+  review: "border-[rgba(176,141,87,0.4)] bg-[rgba(176,141,87,0.12)] text-[var(--ixai-gold)]",
+  published: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
+  archived: "border-white/10 bg-white/[0.035] text-[rgba(245,240,230,0.38)]",
 };
 
 type GenerationMeta = {
@@ -118,23 +133,183 @@ function StatusCard({
   );
 }
 
-function WeeklyEditorPreview() {
-  const latestWeeklyBrief = getLatestWeeklyBrief();
-  const [weeklyDraftGenerated, setWeeklyDraftGenerated] = useState(false);
-  const [weeklySuggestionGenerated, setWeeklySuggestionGenerated] = useState(false);
-  const [weeklyReviewed, setWeeklyReviewed] = useState(false);
-  const [weeklyMessage, setWeeklyMessage] = useState(
-    "Weekly persistence endpoint pending. Current version is preview-ready scaffold.",
+function WeeklyStatusBadge({ status }: { status: WeeklyIntelligenceStatus }) {
+  return (
+    <span
+      className={`rounded-lg border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.14em] ${weeklyStatusStyles[status]}`}
+    >
+      {weeklyStatusLabels[status]}
+    </span>
   );
+}
 
-  function handleGenerateWeeklyDraft() {
-    setWeeklyDraftGenerated(true);
-    setWeeklyMessage("Weekly draft scaffold prepared. Endpoint pending; no content was published.");
+function WeeklyEditorPreview() {
+  const [weeklyDrafts, setWeeklyDrafts] = useState<WeeklyIntelligenceDraft[]>([]);
+  const [selectedWeeklyId, setSelectedWeeklyId] = useState("");
+  const [weeklyPersistence, setWeeklyPersistence] = useState<PersistenceMeta | null>(null);
+  const [weeklyMessage, setWeeklyMessage] = useState("Weekly workflow is connected. Generate creates draft only; publish remains manual.");
+  const [isWeeklyGenerating, setIsWeeklyGenerating] = useState(false);
+  const [isWeeklySaving, setIsWeeklySaving] = useState(false);
+  const [isWeeklyPublishing, setIsWeeklyPublishing] = useState(false);
+
+  const selectedWeeklyDraft =
+    weeklyDrafts.find((draft) => draft.id === selectedWeeklyId) ?? weeklyDrafts[0] ?? null;
+  const weeklyCounts = useMemo(
+    () => ({
+      draft: weeklyDrafts.filter((draft) => draft.status === "draft").length,
+      review: weeklyDrafts.filter((draft) => draft.status === "review").length,
+      published: weeklyDrafts.filter((draft) => draft.status === "published").length,
+      archived: weeklyDrafts.filter((draft) => draft.status === "archived").length,
+    }),
+    [weeklyDrafts],
+  );
+  const canPublishWeekly =
+    selectedWeeklyDraft?.status === "review" &&
+    Boolean(selectedWeeklyDraft.summary && selectedWeeklyDraft.sections.marketHighlights.length);
+
+  const refreshWeeklyDrafts = useCallback((nextDrafts: WeeklyIntelligenceDraft[]) => {
+    setWeeklyDrafts(nextDrafts);
+    setSelectedWeeklyId((current) =>
+      nextDrafts.some((draft) => draft.id === current) ? current : nextDrafts[0]?.id ?? "",
+    );
+  }, []);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadWeeklyDrafts() {
+      try {
+        const response = await fetch("/api/admin/weekly-briefs", { cache: "no-store" });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          drafts: WeeklyIntelligenceDraft[];
+          persistence?: PersistenceMeta;
+        };
+
+        if (!ignore) {
+          refreshWeeklyDrafts(payload.drafts ?? []);
+          setWeeklyPersistence(payload.persistence ?? null);
+        }
+      } catch {
+        if (!ignore) {
+          setWeeklyMessage("Weekly drafts could not be loaded. Check admin session or Supabase persistence.");
+        }
+      }
+    }
+
+    void loadWeeklyDrafts();
+
+    return () => {
+      ignore = true;
+    };
+  }, [refreshWeeklyDrafts]);
+
+  async function handleGenerateWeeklyDraft() {
+    setIsWeeklyGenerating(true);
+
+    try {
+      const response = await fetch("/api/admin/weekly-briefs/generate", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Weekly generation failed.");
+      }
+
+      const payload = (await response.json()) as {
+        draft: WeeklyIntelligenceDraft;
+        drafts: WeeklyIntelligenceDraft[];
+        persistence?: PersistenceMeta;
+        summary?: { status: "generated" | "existing"; itemCount: number; sourceMode: string };
+      };
+
+      refreshWeeklyDrafts(payload.drafts);
+      setWeeklyPersistence(payload.persistence ?? null);
+      setSelectedWeeklyId(payload.draft.id);
+      setWeeklyMessage(
+        payload.summary?.status === "existing"
+          ? `Existing weekly draft loaded · ${payload.summary.itemCount} input items · ${payload.summary.sourceMode}`
+          : `Weekly draft generated · ${payload.summary?.itemCount ?? 0} input items · ${payload.summary?.sourceMode ?? "fallback"}`,
+      );
+    } catch {
+      setWeeklyMessage("Generate Weekly Draft failed. No content was published.");
+    } finally {
+      setIsWeeklyGenerating(false);
+    }
   }
 
-  function handleGenerateWeeklySuggestion() {
-    setWeeklySuggestionGenerated(true);
-    setWeeklyMessage("AI-assisted weekly suggestion scope prepared for editorial review.");
+  async function patchWeeklyDraft(
+    patch: Partial<Pick<WeeklyIntelligenceDraft, "status" | "title" | "summary" | "sections" | "editorialNotes" | "complianceNote">>,
+    message: string,
+  ) {
+    if (!selectedWeeklyDraft) {
+      return;
+    }
+
+    setIsWeeklySaving(true);
+
+    try {
+      const response = await fetch(`/api/admin/weekly-briefs/${selectedWeeklyDraft.id}`, {
+        body: JSON.stringify(patch),
+        headers: { "content-type": "application/json" },
+        method: "PATCH",
+      });
+
+      if (!response.ok) {
+        throw new Error("Weekly save failed.");
+      }
+
+      const payload = (await response.json()) as {
+        draft: WeeklyIntelligenceDraft;
+        drafts: WeeklyIntelligenceDraft[];
+        persistence?: PersistenceMeta;
+      };
+      refreshWeeklyDrafts(payload.drafts);
+      setWeeklyPersistence(payload.persistence ?? null);
+      setSelectedWeeklyId(payload.draft.id);
+      setWeeklyMessage(message);
+    } catch {
+      setWeeklyMessage("Weekly draft save failed. Please verify persistence and admin session.");
+    } finally {
+      setIsWeeklySaving(false);
+    }
+  }
+
+  async function handlePublishWeekly() {
+    if (!selectedWeeklyDraft) {
+      return;
+    }
+
+    setIsWeeklyPublishing(true);
+
+    try {
+      const response = await fetch(`/api/admin/weekly-briefs/${selectedWeeklyDraft.id}/publish`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => ({}))) as { message?: string };
+        throw new Error(payload.message ?? "Weekly publish failed.");
+      }
+
+      const payload = (await response.json()) as {
+        draft: WeeklyIntelligenceDraft;
+        drafts: WeeklyIntelligenceDraft[];
+        persistence?: PersistenceMeta;
+      };
+      refreshWeeklyDrafts(payload.drafts);
+      setWeeklyPersistence(payload.persistence ?? null);
+      setSelectedWeeklyId(payload.draft.id);
+      setWeeklyMessage("Weekly Intelligence manually published after human review.");
+    } catch (error) {
+      setWeeklyMessage(error instanceof Error ? error.message : "Weekly publish failed.");
+    } finally {
+      setIsWeeklyPublishing(false);
+    }
   }
 
   return (
@@ -146,161 +321,228 @@ function WeeklyEditorPreview() {
               Weekly Workflow Console
             </p>
             <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-              News sources / market data / OpenAI → AI-assisted suggestion → Editorial review → Preview → Manual publish.
+              News sources / market data / AI-assisted suggestion → Editorial review → Preview → Manual publish.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
-              className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[#071a14]"
+              className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[#071a14] disabled:cursor-wait disabled:opacity-60"
+              disabled={isWeeklyGenerating}
               onClick={handleGenerateWeeklyDraft}
               type="button"
             >
-              Generate Weekly Draft
+              {isWeeklyGenerating ? "Generating..." : "Generate Weekly Draft"}
             </button>
             <button
-              className="rounded-lg border border-[rgba(176,141,87,0.38)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)]"
-              onClick={handleGenerateWeeklySuggestion}
+              className="rounded-lg border border-[rgba(176,141,87,0.38)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] disabled:opacity-45"
+              disabled={!selectedWeeklyDraft}
+              onClick={() =>
+                setWeeklyMessage(
+                  selectedWeeklyDraft
+                    ? `AI suggestion ready · ${selectedWeeklyDraft.aiSuggestion.keyThemes.join(" / ")}`
+                    : "Generate a weekly draft before requesting AI suggestion.",
+                )
+              }
               type="button"
             >
               Generate AI Suggestion
             </button>
             <button
-              className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.38)] opacity-70"
-              disabled
+              className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.68)] disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={!selectedWeeklyDraft || isWeeklySaving}
+              onClick={() => patchWeeklyDraft({}, "Weekly draft saved.")}
               type="button"
             >
-              Save Weekly Draft
+              Save Draft
+            </button>
+            <button
+              className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.68)] disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={!selectedWeeklyDraft || selectedWeeklyDraft.status === "published" || isWeeklySaving}
+              onClick={() => patchWeeklyDraft({ status: "review" }, "Weekly draft marked as Review.")}
+              type="button"
+            >
+              Mark as Review
             </button>
             <button
               className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.68)]"
+              onClick={() => setWeeklyMessage("Preview is visible below. Human review remains required before publish.")}
               type="button"
             >
               Preview Weekly
             </button>
             <button
-              className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.38)] opacity-70"
-              disabled
+              className="rounded-lg bg-emerald-300/14 px-3 py-2 text-xs font-semibold text-emerald-100 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={!canPublishWeekly || isWeeklyPublishing}
+              onClick={handlePublishWeekly}
               type="button"
             >
-              Publish Weekly
+              {isWeeklyPublishing ? "Publishing..." : "Publish Weekly"}
             </button>
           </div>
         </div>
         <div className="mt-4 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.58)] md:grid-cols-4">
-          <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
-            Draft: {weeklyDraftGenerated ? "generated scaffold" : "not generated"}
-          </p>
-          <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
-            AI suggestion: {weeklySuggestionGenerated ? "ready for review" : "pending"}
-          </p>
-          <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
-            Review: {weeklyReviewed ? "reviewed by editor" : "human review required"}
-          </p>
-          <p className="rounded-md border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-amber-100/82">
-            Publish: disabled until backend is connected
+          {(["draft", "review", "published", "archived"] as WeeklyIntelligenceStatus[]).map((status) => (
+            <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2" key={status}>
+              {weeklyStatusLabels[status]}: {weeklyCounts[status]}
+            </p>
+          ))}
+        </div>
+        <div className="mt-3 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.46)] sm:grid-cols-2">
+          <p>{weeklyMessage}</p>
+          <p>
+            Persistence:{" "}
+            <span className="text-[var(--ixai-cream)]">
+              {weeklyPersistence?.writable ? "durable Supabase" : "safe fallback / static published"}
+            </span>{" "}
+            · Human Review Required · No Auto-publish
           </p>
         </div>
-        <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.42)]">{weeklyMessage}</p>
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
-      <section className="rounded-lg border border-white/10 bg-white/[0.035]">
-        <div className="border-b border-white/10 px-5 py-4">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Weekly Intelligence Editor
-          </p>
-          <h2 className="mt-1 text-base font-semibold">Structured weekly workspace</h2>
-        </div>
-        <div className="grid gap-3 p-5">
-          {[
-            ["title", latestWeeklyBrief.title],
-            ["publish date", latestWeeklyBrief.publishedAt],
-            ["week range", latestWeeklyBrief.coveragePeriod],
-            ["next focus", latestWeeklyBrief.upcomingPeriod],
-            ["status", weeklyReviewed ? "Preview reviewed / publish backend pending" : "Review required"],
-            ["brief type", "週報 / Weekly Intelligence"],
-          ].map(([label, value]) => (
-            <div className="rounded-lg border border-white/10 bg-black/14 p-3" key={label}>
-              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[rgba(245,240,230,0.38)]">
-                {label}
-              </p>
-              <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.78)]">{value}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="rounded-lg border border-white/10 bg-[#0a2119]">
-        <div className="flex flex-col gap-3 border-b border-white/10 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
+        <section className="rounded-lg border border-white/10 bg-white/[0.035]">
+          <div className="border-b border-white/10 px-5 py-4">
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Preview
+              Weekly Draft History
             </p>
-            <h2 className="mt-2 text-xl font-semibold leading-8">{latestWeeklyBrief.title}</h2>
-            <p className="mt-2 font-mono text-xs text-[rgba(245,240,230,0.42)]">
-              Last updated {latestWeeklyBrief.publishedAt} · Human-in-the-loop
-            </p>
+            <h2 className="mt-1 text-base font-semibold">草稿 / Review / Published / Archived</h2>
           </div>
-          <span className="w-fit rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-emerald-200">
-            Preview
-          </span>
-        </div>
-
-        <div className="grid gap-4 p-5">
-          <div className="rounded-lg border border-white/10 bg-black/16 p-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-              Compliance Note
-            </p>
-            <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
-              Human review required. No auto-publish. AI suggestion must be reviewed before publishing.
-              Editorial owner controls final content. No buy/sell advice, target price, or guaranteed return language.
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] p-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-              IXAI Intelligence Summary
-            </p>
-            <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.72)]">
-              {latestWeeklyBrief.intelligenceSummary.pricing}
-            </p>
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-2">
-            {weeklyEditorSections.map((section) => (
-              <article className="rounded-lg border border-white/10 bg-white/[0.03] p-4" key={section}>
-                <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-                  {section}
-                </p>
-                <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.58)]">
-                  Structured field ready for AI-assisted suggestion, editorial review, preview, and publish.
-                </p>
-              </article>
+          <div className="divide-y divide-white/10">
+            {weeklyDrafts.map((draft) => (
+              <button
+                className={`block w-full px-5 py-4 text-left transition ${
+                  draft.id === selectedWeeklyDraft?.id ? "bg-white/9" : "hover:bg-white/5"
+                }`}
+                key={draft.id}
+                onClick={() => setSelectedWeeklyId(draft.id)}
+                type="button"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-sm font-semibold leading-6 text-[var(--ixai-cream)]">
+                      {draft.title}
+                    </h3>
+                    <p className="mt-1 font-mono text-xs text-[rgba(245,240,230,0.38)]">
+                      {draft.weekStart} - {draft.weekEnd}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.42)]">
+                      generated {formatDate(draft.generatedAt)} · updated {formatDate(draft.updatedAt)}
+                      {draft.publishedAt ? ` · published ${formatDate(draft.publishedAt)}` : ""}
+                    </p>
+                  </div>
+                  <WeeklyStatusBadge status={draft.status} />
+                </div>
+              </button>
             ))}
+            {!weeklyDrafts.length ? (
+              <p className="px-5 py-6 text-sm leading-6 text-[rgba(245,240,230,0.5)]">
+                No weekly drafts yet. Generate a draft to start the weekly editorial workflow.
+              </p>
+            ) : null}
           </div>
+        </section>
 
-          <div className="rounded-lg border border-white/10 bg-black/16 p-4 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
-            AI assist scope：summary suggestion、key themes、market interpretation、risk focus、
-            weekly narrative、earnings / Fed importance ranking。Publish 仍需人工審閱。
-          </div>
+        <section className="rounded-lg border border-white/10 bg-[#0a2119]">
+          {selectedWeeklyDraft ? (
+            <>
+              <div className="flex flex-col gap-3 border-b border-white/10 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+                    Weekly Preview
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold leading-8">{selectedWeeklyDraft.title}</h2>
+                  <p className="mt-2 font-mono text-xs text-[rgba(245,240,230,0.42)]">
+                    {selectedWeeklyDraft.weekStart} - {selectedWeeklyDraft.weekEnd} · Last updated{" "}
+                    {formatDate(selectedWeeklyDraft.updatedAt)}
+                  </p>
+                </div>
+                <WeeklyStatusBadge status={selectedWeeklyDraft.status} />
+              </div>
 
-          <label className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-            <input
-              checked={weeklyReviewed}
-              className="mt-1 h-4 w-4 accent-[var(--ixai-gold)]"
-              disabled={!weeklySuggestionGenerated}
-              onChange={(event) => setWeeklyReviewed(event.target.checked)}
-              type="checkbox"
-            />
-            <span>
-              Editorial review completed.{" "}
-              <span className="text-[rgba(245,240,230,0.42)]">
-                Available after AI suggestion is generated; publish remains disabled until Weekly backend is implemented.
-              </span>
-            </span>
-          </label>
-        </div>
-      </section>
+              <div className="grid gap-4 p-5">
+                <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                    Publish Guardrail
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
+                    Human review required. No auto-publish. AI suggestion must be reviewed before publishing.
+                    Editorial owner controls final content. No buy/sell advice, target price, or guaranteed return language.
+                  </p>
+                  {!canPublishWeekly ? (
+                    <p className="mt-2 text-xs leading-5 text-amber-100/80">
+                      Publish disabled until this draft is marked as Review and contains title, summary, sections, and IXAI Intelligence Summary.
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] p-4">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                    IXAI Intelligence Summary
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.72)]">
+                    {selectedWeeklyDraft.sections.intelligenceSummary.pricing}
+                  </p>
+                </div>
+
+                <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                    Summary
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.72)]">
+                    {selectedWeeklyDraft.summary}
+                  </p>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-2">
+                  {weeklyEditorSections.map((section) => (
+                    <article className="rounded-lg border border-white/10 bg-white/[0.03] p-4" key={section}>
+                      <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                        {section}
+                      </p>
+                      <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.58)]">
+                        {section === "本週市場重點"
+                          ? selectedWeeklyDraft.sections.marketHighlights.map((item) => item.headline).join(" / ")
+                          : section === "本週重大事件"
+                            ? selectedWeeklyDraft.sections.majorEvents.map((item) => item.title).join(" / ")
+                            : section === "下週觀察"
+                              ? selectedWeeklyDraft.sections.nextWeekFocus.join(" / ")
+                              : section === "財報焦點"
+                                ? selectedWeeklyDraft.sections.earningsFocus.join(" / ")
+                                : section === "FED / 利率"
+                                  ? selectedWeeklyDraft.sections.fedRates.summary
+                                  : section === "台股 AI"
+                                    ? selectedWeeklyDraft.sections.taiwanAi.summary
+                                    : section === "FCN 市場觀察"
+                                      ? selectedWeeklyDraft.sections.fcnMarketObservation.sentiment
+                                      : selectedWeeklyDraft.sections.intelligenceSummary.riskTone}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+
+                <div className="rounded-lg border border-white/10 bg-black/16 p-4 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
+                  <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                    AI-assisted Suggestion
+                  </p>
+                  <p className="mt-2">{selectedWeeklyDraft.aiSuggestion.intelligenceNarrative}</p>
+                  <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.42)]">
+                    Input news: {selectedWeeklyDraft.aiSuggestion.inputNewsCount} · Source mode:{" "}
+                    {selectedWeeklyDraft.aiSuggestion.sourceMode} · Generated{" "}
+                    {formatDate(selectedWeeklyDraft.aiSuggestion.generatedAt)}
+                  </p>
+                </div>
+
+                <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
+                  {selectedWeeklyDraft.complianceNote}
+                </div>
+              </div>
+            </>
+          ) : (
+            <p className="p-5 text-sm leading-6 text-[rgba(245,240,230,0.5)]">
+              Generate or select a Weekly Intelligence draft to preview.
+            </p>
+          )}
+        </section>
       </div>
     </div>
   );

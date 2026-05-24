@@ -4,7 +4,7 @@ import { ArrowRight, ArrowUpRight, CalendarDays, ShieldCheck } from "lucide-reac
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import {
   getAllWeeklyBriefs,
-  getWeeklyBriefBySlug,
+  getWeeklyBriefBySlugAsync,
 } from "@/src/lib/weeklyBriefs";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 import type { WeeklyBriefSource } from "@/content/weekly-briefs";
@@ -28,7 +28,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  const brief = getWeeklyBriefBySlug(slug);
+  const brief = await getWeeklyBriefBySlugAsync(slug);
 
   if (!brief) {
     return {
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function WeeklyBriefDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const brief = getWeeklyBriefBySlug(slug);
+  const brief = await getWeeklyBriefBySlugAsync(slug);
 
   if (!brief) {
     notFound();

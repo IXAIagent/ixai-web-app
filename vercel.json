@@ -3,6 +3,10 @@
     {
       "path": "/api/admin/daily-briefs/generate",
       "schedule": "30 23 * * *"
+    },
+    {
+      "path": "/api/cron/generate-weekly-brief",
+      "schedule": "0 0 * * 0"
     }
   ]
 }

@@ -95,3 +95,84 @@ export type DailyDraftGenerationSummary = {
   schedulerConfigured: boolean;
   forced: boolean;
 };
+
+export type WeeklyIntelligenceStatus = "draft" | "review" | "published" | "archived";
+
+export type WeeklyIntelligenceSections = {
+  marketHighlights: {
+    label: string;
+    headline: string;
+    summary: string;
+    ixaiView: string;
+  }[];
+  majorEvents: {
+    label: string;
+    title: string;
+    whyItMatters: string;
+  }[];
+  nextWeekFocus: string[];
+  earningsFocus: string[];
+  fedRates: {
+    headline: string;
+    summary: string;
+  };
+  taiwanAi: {
+    headline: string;
+    summary: string;
+  };
+  fcnMarketObservation: {
+    volatility: string;
+    aiBasket: string;
+    worstOf: string;
+    sentiment: string;
+  };
+  intelligenceSummary: {
+    pricing: string;
+    riskTone: string;
+    whatChanged: string;
+  };
+};
+
+export type WeeklyIntelligenceAiSuggestion = {
+  summarySuggestion: string;
+  keyThemes: string[];
+  riskFocus: string[];
+  nextWeekWatchlist: string[];
+  intelligenceNarrative: string;
+  sourceMode: "real" | "fallback";
+  inputNewsCount: number;
+  sourceLabels: string[];
+  generatedAt: string;
+};
+
+export type WeeklyIntelligenceDraft = {
+  id: string;
+  slug: string;
+  title: string;
+  status: WeeklyIntelligenceStatus;
+  weekStart: string;
+  weekEnd: string;
+  publishDate?: string;
+  generatedAt?: string;
+  updatedAt: string;
+  publishedAt?: string;
+  sourceMode: string;
+  summary?: string;
+  sections: WeeklyIntelligenceSections;
+  aiSuggestion: WeeklyIntelligenceAiSuggestion;
+  editorialNotes?: string;
+  complianceNote?: string;
+  createdBy?: string;
+  updatedBy?: string;
+};
+
+export type WeeklyDraftGenerationSummary = {
+  status: "generated" | "existing";
+  draftSlug: string;
+  generatedAt: string;
+  sourceMode: "real" | "fallback";
+  itemCount: number;
+  sourceStatus: DailyDraftGenerationSummary["sourceStatus"];
+  schedulerConfigured: boolean;
+  forced: boolean;
+};
