@@ -11,6 +11,66 @@ export const weeklyBrief20260517: WeeklyBrief = {
     "本週市場的核心不是短線漲跌，而是 AI 資本支出、利率預期與資金風險偏好的重新定價。",
   executiveSummary:
     "本週市場回顧聚焦美國 CPI / PPI、零售銷售與消費者信心變化，並觀察聯準會利率預期、美債殖利率、AI 科技股、台股半導體供應鏈與 BTC / ETH 波動。下週焦點轉向 FOMC 會議紀要、Fed 官員談話、PMI、重要財報與台股供應鏈訊號。",
+  marketHighlights: [
+    {
+      label: "美股",
+      headline: "大型科技股仍是指數風險偏好的核心支撐",
+      summary:
+        "美股本週仍由 AI、半導體與大型科技股帶動風險情緒，但市場寬度與利率敏感度仍是關鍵變數。",
+      ixaiView:
+        "市場正在 pricing AI 資本支出能否延續，同時也在測試高估值科技股對利率高檔的承受力。",
+    },
+    {
+      label: "台股",
+      headline: "台積電與 AI 供應鏈維持主線地位",
+      summary:
+        "台股觀察重點集中在台積電、AI 伺服器、散熱、電源與高階零組件，外資與匯率仍會放大指數波動。",
+      ixaiView:
+        "台股不是只看加權指數創高，而是看 AI 供應鏈能否從權值股擴散到更多品質較高的族群。",
+    },
+    {
+      label: "AI 科技",
+      headline: "NVIDIA 財報前，市場先行定價 AI demand visibility",
+      summary:
+        "AI 科技股維持市場敘事中心，投資人關注雲端資本支出、GPU 需求與供應鏈訂單能見度。",
+      ixaiView:
+        "AI 主線仍強，但若財報指引無法支撐估值，波動會先出現在高 beta 與供應鏈延伸族群。",
+    },
+    {
+      label: "利率 / FED",
+      headline: "利率仍是所有資產的第一層折現率",
+      summary:
+        "CPI、PPI、零售銷售與 Fed 官員語氣讓市場重新評估降息時點，美債殖利率仍是科技股估值壓力來源。",
+      ixaiView:
+        "本週重點不是 Fed 是否立刻轉向，而是市場是否願意接受 higher for longer 的定價。",
+    },
+    {
+      label: "Crypto",
+      headline: "BTC / ETH 仍是流動性與槓桿情緒溫度計",
+      summary:
+        "Crypto 波動反映美元流動性、ETF 資金流與槓桿部位變化，但本週權重低於利率與 AI 科技主線。",
+      ixaiView:
+        "Crypto 可以輔助判斷風險偏好，但不應取代對利率、美元與股市風險承接度的觀察。",
+    },
+  ],
+  intelligenceSummary: {
+    pricing:
+      "市場目前主要在 pricing 三件事：AI 資本支出是否繼續支撐大型科技股、Fed 是否能在通膨未完全降溫下轉向，以及台股 AI 供應鏈的資金集中度是否可持續。",
+    riskTone:
+      "整體風險情緒偏中性偏正向，但不是全面 risk-on。利率高檔、能源與地緣事件仍可能讓高估值資產快速重新定價。",
+    whatChanged:
+      "本週與前期不同之處，在於市場更重視『品質與能見度』，單純題材或短線動能的重要性下降。",
+  },
+  fcnMarketObservation: {
+    volatility:
+      "波動率若維持溫和，FCN 條件可能較穩定；若波動率快速升高，票息改善通常伴隨更高下檔風險。",
+    aiBasket:
+      "AI basket 仍是市場關注焦點，但集中在 NVDA、TSMC、伺服器與半導體供應鏈時，worst-of 風險也會更集中。",
+    worstOf:
+      "FCN 教育觀察重點在 worst-of：一籃子標的中最弱的一檔，往往決定整體風險感受與到期結果。",
+    sentiment:
+      "本週 FCN sentiment 偏向 watch：市場風險偏好仍在，但利率與高估值波動要求更高的風險補償。",
+  },
   majorEvents: [
     {
       category: "US Macro",

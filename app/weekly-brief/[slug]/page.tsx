@@ -54,7 +54,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
     <article className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          Weekly Brief
+          Weekly Intelligence
         </p>
         <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
           {brief.title}
@@ -83,6 +83,63 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         <p className="mt-2.5 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:mt-3 sm:text-base sm:leading-8">
           {brief.editorialNote}
         </p>
+      </section>
+
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)]">
+        <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            IXAI Intelligence Summary
+          </p>
+          <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
+            市場目前正在 pricing 什麼
+          </h2>
+        </div>
+        <div className="grid gap-3 p-4 sm:p-5 lg:grid-cols-3">
+          {[
+            ["Pricing", brief.intelligenceSummary.pricing],
+            ["Risk Tone", brief.intelligenceSummary.riskTone],
+            ["What Changed", brief.intelligenceSummary.whatChanged],
+          ].map(([label, text]) => (
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4" key={label}>
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                {label}
+              </p>
+              <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)]">
+        <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            本週市場重點
+          </p>
+          <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
+            美股、台股、AI 科技、利率與 Crypto
+          </h2>
+        </div>
+        <div className="grid gap-0 md:grid-cols-2">
+          {brief.marketHighlights.map((highlight) => (
+            <article
+              className="border-b border-[var(--ixai-border)] p-4 sm:p-5 md:border-r"
+              key={highlight.label}
+            >
+              <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                {highlight.label}
+              </p>
+              <h3 className="mt-2 text-base font-semibold leading-6 text-[var(--ixai-forest)]">
+                {highlight.headline}
+              </h3>
+              <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+                {highlight.summary}
+              </p>
+              <p className="mt-3 rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {highlight.ixaiView}
+              </p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)]">
@@ -122,6 +179,35 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
             </section>
           ))}
         </div>
+      </section>
+
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)]">
+        <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            FCN 市場觀察
+          </p>
+          <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
+            教育型觀察：波動率、AI basket、worst-of 與 sentiment
+          </h2>
+        </div>
+        <div className="grid gap-3 p-4 sm:p-5 md:grid-cols-2">
+          {[
+            ["Volatility", brief.fcnMarketObservation.volatility],
+            ["AI Basket", brief.fcnMarketObservation.aiBasket],
+            ["Worst-of", brief.fcnMarketObservation.worstOf],
+            ["FCN Sentiment", brief.fcnMarketObservation.sentiment],
+          ].map(([label, text]) => (
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4" key={label}>
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                {label}
+              </p>
+              <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">{text}</p>
+            </article>
+          ))}
+        </div>
+        <p className="border-t border-[var(--ixai-border)] px-4 py-3 text-xs leading-6 text-[var(--ixai-ink-muted)] sm:px-5">
+          本區塊僅為 FCN 教育與市場風險觀察，不包含個人化 KI / KO 監控或真實 FCN intelligence engine。
+        </p>
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">

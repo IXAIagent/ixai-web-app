@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getDrafts } from "@/src/lib/editorial/repository";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
+import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 import type {
   DailyBriefDraft,
   DailyBriefDraftStatus,
@@ -44,6 +45,19 @@ type PersistenceMeta = {
   readable: boolean;
   writable: boolean;
 };
+
+type EditorialDesk = "daily" | "weekly";
+
+const weeklyEditorSections = [
+  "本週市場重點",
+  "本週重大事件",
+  "下週觀察",
+  "財報焦點",
+  "FED / 利率",
+  "台股 AI",
+  "FCN 市場觀察",
+  "IXAI Intelligence Summary",
+];
 
 function StatusBadge({ status }: { status: DailyBriefDraftStatus }) {
   return (
@@ -104,7 +118,88 @@ function StatusCard({
   );
 }
 
+function WeeklyEditorPreview() {
+  const latestWeeklyBrief = getLatestWeeklyBrief();
+
+  return (
+    <div className="grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
+      <section className="rounded-lg border border-white/10 bg-white/[0.035]">
+        <div className="border-b border-white/10 px-5 py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Weekly Intelligence Editor
+          </p>
+          <h2 className="mt-1 text-base font-semibold">Structured weekly workspace</h2>
+        </div>
+        <div className="grid gap-3 p-5">
+          {[
+            ["title", latestWeeklyBrief.title],
+            ["publish date", latestWeeklyBrief.publishedAt],
+            ["week range", latestWeeklyBrief.coveragePeriod],
+            ["next focus", latestWeeklyBrief.upcomingPeriod],
+            ["status", "Published / editorial-reviewed"],
+            ["brief type", "週報 / Weekly Intelligence"],
+          ].map(([label, value]) => (
+            <div className="rounded-lg border border-white/10 bg-black/14 p-3" key={label}>
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[rgba(245,240,230,0.38)]">
+                {label}
+              </p>
+              <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.78)]">{value}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-white/10 bg-[#0a2119]">
+        <div className="flex flex-col gap-3 border-b border-white/10 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+              Preview
+            </p>
+            <h2 className="mt-2 text-xl font-semibold leading-8">{latestWeeklyBrief.title}</h2>
+            <p className="mt-2 font-mono text-xs text-[rgba(245,240,230,0.42)]">
+              Last updated {latestWeeklyBrief.publishedAt} · Human-in-the-loop
+            </p>
+          </div>
+          <span className="w-fit rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-emerald-200">
+            Published
+          </span>
+        </div>
+
+        <div className="grid gap-4 p-5">
+          <div className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] p-4">
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              IXAI Intelligence Summary
+            </p>
+            <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.72)]">
+              {latestWeeklyBrief.intelligenceSummary.pricing}
+            </p>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            {weeklyEditorSections.map((section) => (
+              <article className="rounded-lg border border-white/10 bg-white/[0.03] p-4" key={section}>
+                <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                  {section}
+                </p>
+                <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.58)]">
+                  Structured field ready for AI-assisted suggestion, editorial review, preview, and publish.
+                </p>
+              </article>
+            ))}
+          </div>
+
+          <div className="rounded-lg border border-white/10 bg-black/16 p-4 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
+            AI assist scope：summary suggestion、key themes、market interpretation、risk focus、
+            weekly narrative、earnings / Fed importance ranking。Publish 仍需人工審閱。
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export function DailyBriefsAdmin() {
+  const [activeDesk, setActiveDesk] = useState<EditorialDesk>("daily");
   const [drafts, setDrafts] = useState<DailyBriefDraft[]>(() => getDrafts());
   const [selectedId, setSelectedId] = useState(() => drafts[0]?.id ?? "");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -269,34 +364,67 @@ export function DailyBriefsAdmin() {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-                IXAI Editorial CMS
+                IXAI Editorial Studio
               </p>
               <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
-                Daily Brief Draft Pipeline
+                Daily / Weekly Intelligence Workflow
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
-                市場資料、OpenAI synthesis、Admin review 與 Publish workflow 的內部營運層。
-                Draft 需人工審閱後才會發布到 Dashboard 與 Daily Brief。
+                新聞來源與市場資料先進入 AI-assisted suggestion，再由 Editorial Studio
+                審閱、預覽與發布。日報與週報分流，不做自動發布。
               </p>
             </div>
             <div className="grid gap-3 rounded-lg border border-white/10 bg-black/18 p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)] lg:min-w-[300px]">
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                Generate
+                {activeDesk === "daily" ? "Daily Generate" : "Weekly Assist"}
               </p>
               <p className="text-xs leading-5 text-[rgba(245,240,230,0.46)]">
-                News intake → OpenAI provider → review draft. No auto-publish.
+                {activeDesk === "daily"
+                  ? "News intake → OpenAI provider → review draft. No auto-publish."
+                  : "AI suggestion supports weekly narrative, key themes, Fed / earnings ranking, and risk focus."}
               </p>
-              <button
-                className="rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[#071a14] disabled:cursor-wait disabled:opacity-60"
-                disabled={isGenerating}
-                onClick={handleGenerateDraft}
-                type="button"
-              >
-                {isGenerating ? "Generating..." : "Generate Daily Intelligence Draft"}
-              </button>
+              {activeDesk === "daily" ? (
+                <button
+                  className="rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[#071a14] disabled:cursor-wait disabled:opacity-60"
+                  disabled={isGenerating}
+                  onClick={handleGenerateDraft}
+                  type="button"
+                >
+                  {isGenerating ? "Generating..." : "Generate Daily Intelligence Draft"}
+                </button>
+              ) : (
+                <span className="rounded-lg border border-white/10 bg-white/[0.045] px-3 py-2 text-xs leading-5 text-[rgba(245,240,230,0.58)]">
+                  Weekly editor is structured and preview-ready; publish remains manual.
+                </span>
+              )}
             </div>
           </div>
         </header>
+
+        <div className="grid gap-2 rounded-lg border border-white/10 bg-white/[0.035] p-2 sm:w-fit sm:grid-cols-2">
+          {[
+            ["daily", "Daily Briefs"],
+            ["weekly", "Weekly Intelligence"],
+          ].map(([desk, label]) => (
+            <button
+              className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
+                activeDesk === desk
+                  ? "bg-[var(--ixai-gold)] text-[#071a14]"
+                  : "text-[rgba(245,240,230,0.62)] hover:bg-white/[0.055] hover:text-[var(--ixai-cream)]"
+              }`}
+              key={desk}
+              onClick={() => setActiveDesk(desk as EditorialDesk)}
+              type="button"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {activeDesk === "weekly" ? (
+          <WeeklyEditorPreview />
+        ) : (
+          <>
 
         <div className="grid gap-4 xl:grid-cols-4">
           <StatusCard
@@ -701,6 +829,8 @@ export function DailyBriefsAdmin() {
             ))}
           </div>
         </section>
+          </>
+        )}
       </div>
     </div>
   );

@@ -12,11 +12,31 @@ export type WeeklyBriefAssetObservation = {
   text: string;
 };
 
+export type WeeklyBriefMarketHighlight = {
+  label: string;
+  headline: string;
+  summary: string;
+  ixaiView: string;
+};
+
 export type WeeklyBriefUpcomingFocus = {
   date: string;
   event: string;
   whyItMatters: string;
   marketImpact: string;
+};
+
+export type WeeklyBriefIntelligenceSummary = {
+  pricing: string;
+  riskTone: string;
+  whatChanged: string;
+};
+
+export type WeeklyBriefFcnObservation = {
+  volatility: string;
+  aiBasket: string;
+  worstOf: string;
+  sentiment: string;
 };
 
 export type WeeklyBriefCta = {
@@ -48,6 +68,9 @@ export type WeeklyBrief = {
   upcomingPeriod: string;
   editorialNote: string;
   executiveSummary: string;
+  marketHighlights: WeeklyBriefMarketHighlight[];
+  intelligenceSummary: WeeklyBriefIntelligenceSummary;
+  fcnMarketObservation: WeeklyBriefFcnObservation;
   majorEvents: WeeklyBriefMajorEvent[];
   assetObservations: WeeklyBriefAssetObservation[];
   upcomingFocus: WeeklyBriefUpcomingFocus[];
