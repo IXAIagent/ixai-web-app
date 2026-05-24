@@ -120,9 +120,90 @@ function StatusCard({
 
 function WeeklyEditorPreview() {
   const latestWeeklyBrief = getLatestWeeklyBrief();
+  const [weeklyDraftGenerated, setWeeklyDraftGenerated] = useState(false);
+  const [weeklySuggestionGenerated, setWeeklySuggestionGenerated] = useState(false);
+  const [weeklyReviewed, setWeeklyReviewed] = useState(false);
+  const [weeklyMessage, setWeeklyMessage] = useState(
+    "Weekly persistence endpoint pending. Current version is preview-ready scaffold.",
+  );
+
+  function handleGenerateWeeklyDraft() {
+    setWeeklyDraftGenerated(true);
+    setWeeklyMessage("Weekly draft scaffold prepared. Endpoint pending; no content was published.");
+  }
+
+  function handleGenerateWeeklySuggestion() {
+    setWeeklySuggestionGenerated(true);
+    setWeeklyMessage("AI-assisted weekly suggestion scope prepared for editorial review.");
+  }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
+    <div className="grid gap-5">
+      <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Weekly Workflow Console
+            </p>
+            <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
+              News sources / market data / OpenAI → AI-assisted suggestion → Editorial review → Preview → Manual publish.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[#071a14]"
+              onClick={handleGenerateWeeklyDraft}
+              type="button"
+            >
+              Generate Weekly Draft
+            </button>
+            <button
+              className="rounded-lg border border-[rgba(176,141,87,0.38)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)]"
+              onClick={handleGenerateWeeklySuggestion}
+              type="button"
+            >
+              Generate AI Suggestion
+            </button>
+            <button
+              className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.38)] opacity-70"
+              disabled
+              type="button"
+            >
+              Save Weekly Draft
+            </button>
+            <button
+              className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.68)]"
+              type="button"
+            >
+              Preview Weekly
+            </button>
+            <button
+              className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.38)] opacity-70"
+              disabled
+              type="button"
+            >
+              Publish Weekly
+            </button>
+          </div>
+        </div>
+        <div className="mt-4 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.58)] md:grid-cols-4">
+          <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+            Draft: {weeklyDraftGenerated ? "generated scaffold" : "not generated"}
+          </p>
+          <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+            AI suggestion: {weeklySuggestionGenerated ? "ready for review" : "pending"}
+          </p>
+          <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+            Review: {weeklyReviewed ? "reviewed by editor" : "human review required"}
+          </p>
+          <p className="rounded-md border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-amber-100/82">
+            Publish: disabled until backend is connected
+          </p>
+        </div>
+        <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.42)]">{weeklyMessage}</p>
+      </section>
+
+      <div className="grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
       <section className="rounded-lg border border-white/10 bg-white/[0.035]">
         <div className="border-b border-white/10 px-5 py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
@@ -136,7 +217,7 @@ function WeeklyEditorPreview() {
             ["publish date", latestWeeklyBrief.publishedAt],
             ["week range", latestWeeklyBrief.coveragePeriod],
             ["next focus", latestWeeklyBrief.upcomingPeriod],
-            ["status", "Published / editorial-reviewed"],
+            ["status", weeklyReviewed ? "Preview reviewed / publish backend pending" : "Review required"],
             ["brief type", "週報 / Weekly Intelligence"],
           ].map(([label, value]) => (
             <div className="rounded-lg border border-white/10 bg-black/14 p-3" key={label}>
@@ -161,11 +242,21 @@ function WeeklyEditorPreview() {
             </p>
           </div>
           <span className="w-fit rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-emerald-200">
-            Published
+            Preview
           </span>
         </div>
 
         <div className="grid gap-4 p-5">
+          <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Compliance Note
+            </p>
+            <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
+              Human review required. No auto-publish. AI suggestion must be reviewed before publishing.
+              Editorial owner controls final content. No buy/sell advice, target price, or guaranteed return language.
+            </p>
+          </div>
+
           <div className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] p-4">
             <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
               IXAI Intelligence Summary
@@ -192,8 +283,25 @@ function WeeklyEditorPreview() {
             AI assist scope：summary suggestion、key themes、market interpretation、risk focus、
             weekly narrative、earnings / Fed importance ranking。Publish 仍需人工審閱。
           </div>
+
+          <label className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
+            <input
+              checked={weeklyReviewed}
+              className="mt-1 h-4 w-4 accent-[var(--ixai-gold)]"
+              disabled={!weeklySuggestionGenerated}
+              onChange={(event) => setWeeklyReviewed(event.target.checked)}
+              type="checkbox"
+            />
+            <span>
+              Editorial review completed.{" "}
+              <span className="text-[rgba(245,240,230,0.42)]">
+                Available after AI suggestion is generated; publish remains disabled until Weekly backend is implemented.
+              </span>
+            </span>
+          </label>
         </div>
       </section>
+      </div>
     </div>
   );
 }
@@ -222,6 +330,7 @@ export function DailyBriefsAdmin() {
     [drafts],
   );
   const selectedDraft = drafts.find((draft) => draft.id === selectedId) ?? drafts[0];
+  const canPublishSelectedDraft = selectedDraft?.status === "review";
   const supabaseReady = isSupabaseClientConfigured();
   const intakeSources = intakeMeta?.sourceStatus ?? intakeMeta?.sources ?? [];
   const openAIStatus = generationMeta?.providerStatus ?? null;
@@ -360,16 +469,16 @@ export function DailyBriefsAdmin() {
   return (
     <div className="min-h-screen bg-[#071a14] text-[#f5f0e6]">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-        <header className="rounded-lg border border-white/10 bg-white/[0.035] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:p-7">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <header className="rounded-lg border border-white/10 bg-white/[0.035] p-4 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
                 IXAI Editorial Studio
               </p>
-              <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
+              <h1 className="mt-2 text-2xl font-semibold leading-tight sm:text-3xl">
                 Daily / Weekly Intelligence Workflow
               </h1>
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
                 新聞來源與市場資料先進入 AI-assisted suggestion，再由 Editorial Studio
                 審閱、預覽與發布。日報與週報分流，不做自動發布。
               </p>
@@ -425,6 +534,55 @@ export function DailyBriefsAdmin() {
           <WeeklyEditorPreview />
         ) : (
           <>
+        <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                Daily Workflow Console
+              </p>
+              <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
+                Generate Daily Intelligence Draft → AI-assisted suggestion → Editorial review → Preview → Manual publish.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[#071a14] disabled:cursor-wait disabled:opacity-60"
+                disabled={isGenerating}
+                onClick={handleGenerateDraft}
+                type="button"
+              >
+                {isGenerating ? "Generating..." : "Generate Daily Draft"}
+              </button>
+              <button
+                className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.68)]"
+                type="button"
+              >
+                Preview Daily
+              </button>
+              <button
+                className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.38)] opacity-70"
+                disabled
+                type="button"
+              >
+                Auto Publish Off
+              </button>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.58)] md:grid-cols-4">
+            <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+              Brief type: Daily Brief
+            </p>
+            <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+              Status: {selectedDraft ? statusLabels[selectedDraft.status] : "No draft"}
+            </p>
+            <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+              Review: {canPublishSelectedDraft ? "ready to publish" : "human review required"}
+            </p>
+            <p className="rounded-md border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-amber-100/82">
+              Publish requires editor control; no auto-publish
+            </p>
+          </div>
+        </section>
 
         <div className="grid gap-4 xl:grid-cols-4">
           <StatusCard
@@ -726,15 +884,29 @@ export function DailyBriefsAdmin() {
                     <StatusBadge status={selectedDraft.status} />
                     <button
                       className="rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[#071a14] disabled:cursor-not-allowed disabled:opacity-45"
-                      disabled={selectedDraft.status === "published"}
+                      disabled={!canPublishSelectedDraft}
                       onClick={handlePublish}
                       type="button"
                     >
                       Publish
                     </button>
                   </div>
+                  {!canPublishSelectedDraft ? (
+                    <p className="text-xs leading-5 text-[rgba(245,240,230,0.42)]">
+                      Publish disabled: draft must be in Review status and manually approved by the editorial owner.
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid gap-5 p-5">
+                  <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                      Compliance Note
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
+                      Human review required. No auto-publish. AI suggestion must be reviewed before publishing.
+                      Editorial owner controls final content.
+                    </p>
+                  </div>
                   <div className="rounded-lg border border-white/10 bg-black/16 p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                       Market Summary
