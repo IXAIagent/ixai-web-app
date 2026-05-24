@@ -5,7 +5,7 @@ import {
   getWeeklyDraftByIdAsync,
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
-  listWeeklyDraftsAsync,
+  listAdminWeeklyDraftsAsync,
   updateWeeklyDraftAsync,
 } from "@/src/lib/editorial/weekly";
 
@@ -94,7 +94,7 @@ export async function PATCH(request: NextRequest, context: WeeklyRouteContext) {
 
   return Response.json({
     draft,
-    drafts: await listWeeklyDraftsAsync(),
+    drafts: await listAdminWeeklyDraftsAsync(),
     persistence: {
       readable: isWeeklyPersistenceReadable(),
       writable: isWeeklyPersistenceWritable(),

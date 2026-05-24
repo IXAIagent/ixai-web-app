@@ -5,7 +5,7 @@ import {
   generateWeeklyIntelligenceDraft,
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
-  listWeeklyDraftsAsync,
+  listAdminWeeklyDraftsAsync,
 } from "@/src/lib/editorial/weekly";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const { draft, intake, summary } = await generateWeeklyIntelligenceDraft({ force });
-    const drafts = await listWeeklyDraftsAsync();
+    const drafts = await listAdminWeeklyDraftsAsync();
 
     return Response.json({
       draft,

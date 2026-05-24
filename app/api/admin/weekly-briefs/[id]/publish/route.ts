@@ -3,7 +3,7 @@ import { isAdminRequestAuthorized } from "@/src/lib/admin/auth";
 import {
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
-  listWeeklyDraftsAsync,
+  listAdminWeeklyDraftsAsync,
   publishWeeklyDraftAsync,
 } from "@/src/lib/editorial/weekly";
 
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest, context: WeeklyPublishRouteCont
 
   return Response.json({
     draft: result.draft,
-    drafts: await listWeeklyDraftsAsync(),
+    drafts: await listAdminWeeklyDraftsAsync(),
     persistence: {
       readable: isWeeklyPersistenceReadable(),
       writable: isWeeklyPersistenceWritable(),

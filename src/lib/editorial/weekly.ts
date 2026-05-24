@@ -276,6 +276,34 @@ function getStaticWeeklyDrafts() {
   return weeklyBriefs.map(staticWeeklyToDraft);
 }
 
+// v1.30.5 — admin-facing list. Returns ONLY durable rows (Supabase
+// records + in-memory dev rows). Static fallback weekly briefs are
+// excluded so the Editorial Studio cannot select an id that does not
+// exist in Supabase — previously a stale "static-2026-05-17-weekly-brief"
+// row could appear in the admin list, and Save / Mark Review / Publish
+// would 404 because no such row exists for PATCH.
+//
+// Public read paths (listPublishedWeeklyDraftsAsync, getPublishedWeekly
+// DraftBySlugAsync, getLatestPublishedWeeklyDraftAsync) keep their static
+// fallback intact so /weekly-brief still has a reading experience when
+// Supabase has no published row.
+export async function listAdminWeeklyDraftsAsync() {
+  const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
+    `${WEEKLY_TABLE}?select=*&order=updated_at.desc`,
+    {},
+    false,
+  );
+
+  if (records?.length) {
+    return sortWeeklyDrafts(records.map(toDraft));
+  }
+
+  // No Supabase rows yet → admin should see only durable in-memory drafts
+  // (rare; only relevant in dev without Supabase env). Static fallback is
+  // intentionally NOT mixed in — admin must Generate to populate Supabase.
+  return sortWeeklyDrafts(serverWeeklyDrafts);
+}
+
 export async function listWeeklyDraftsAsync() {
   const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&order=updated_at.desc`,

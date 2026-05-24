@@ -163,14 +163,23 @@ function WeeklyEditorPreview() {
     }),
     [weeklyDrafts],
   );
+  // v1.30.5 — never let a static fallback weekly into the editable
+  // workflow. The admin API now filters these out, but we also guard at
+  // the UI layer so any cached / stale response cannot accidentally bind
+  // Save / Mark Review / Publish to a row that does not exist in Supabase.
+  const selectedIsStatic = selectedWeeklyDraft?.id.startsWith("static-") ?? false;
   const canPublishWeekly =
+    !selectedIsStatic &&
     selectedWeeklyDraft?.status === "review" &&
     Boolean(selectedWeeklyDraft.summary && selectedWeeklyDraft.sections.marketHighlights.length);
 
   const refreshWeeklyDrafts = useCallback((nextDrafts: WeeklyIntelligenceDraft[]) => {
-    setWeeklyDrafts(nextDrafts);
+    const durableDrafts = nextDrafts.filter((draft) => !draft.id.startsWith("static-"));
+    setWeeklyDrafts(durableDrafts);
     setSelectedWeeklyId((current) =>
-      nextDrafts.some((draft) => draft.id === current) ? current : nextDrafts[0]?.id ?? "",
+      durableDrafts.some((draft) => draft.id === current)
+        ? current
+        : durableDrafts[0]?.id ?? "",
     );
   }, []);
 
@@ -261,6 +270,16 @@ function WeeklyEditorPreview() {
       return;
     }
 
+    // v1.30.5 — static fallback rows are read-only public content; they
+    // cannot be edited via PATCH because no Supabase row exists for the
+    // synthetic id (e.g. "static-2026-05-17-weekly-brief").
+    if (selectedWeeklyDraft.id.startsWith("static-")) {
+      setWeeklyMessage(
+        "Static fallback weekly cannot be edited. Generate a durable weekly draft first.",
+      );
+      return;
+    }
+
     setIsWeeklySaving(true);
 
     try {
@@ -301,6 +320,15 @@ function WeeklyEditorPreview() {
 
   async function handlePublishWeekly() {
     if (!selectedWeeklyDraft) {
+      return;
+    }
+
+    // v1.30.5 — see patchWeeklyDraft for the same guard. Publish must
+    // target a real Supabase row.
+    if (selectedWeeklyDraft.id.startsWith("static-")) {
+      setWeeklyMessage(
+        "Static fallback weekly cannot be edited. Generate a durable weekly draft first.",
+      );
       return;
     }
 
@@ -369,7 +397,7 @@ function WeeklyEditorPreview() {
             </button>
             <button
               className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.68)] disabled:cursor-not-allowed disabled:opacity-45"
-              disabled={!selectedWeeklyDraft || isWeeklySaving}
+              disabled={!selectedWeeklyDraft || selectedIsStatic || isWeeklySaving}
               onClick={() => patchWeeklyDraft({}, "Weekly draft saved.")}
               type="button"
             >
@@ -377,7 +405,12 @@ function WeeklyEditorPreview() {
             </button>
             <button
               className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-[rgba(245,240,230,0.68)] disabled:cursor-not-allowed disabled:opacity-45"
-              disabled={!selectedWeeklyDraft || selectedWeeklyDraft.status === "published" || isWeeklySaving}
+              disabled={
+                !selectedWeeklyDraft ||
+                selectedIsStatic ||
+                selectedWeeklyDraft.status === "published" ||
+                isWeeklySaving
+              }
               onClick={() => patchWeeklyDraft({ status: "review" }, "Weekly draft marked as Review.")}
               type="button"
             >
