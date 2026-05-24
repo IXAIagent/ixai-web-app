@@ -176,16 +176,21 @@ async function supabaseFetch<T>(
 
 // Safe wrapper for read paths: log + return null on any error so a Supabase
 // outage degrades to "no published row" instead of throwing through the
-// public weekly page. Accepts the same 3-arg shape as the strict variant
-// (the trailing write flag is ignored — reads never need the service role).
+// public weekly page.
+//
+// v1.30.6 — the trailing flag now actually controls which auth key is used.
+// Public reads (anon key) only see rows the RLS policy permits, which is
+// status='published'. Admin reads pass write=true so the service role
+// bypasses RLS and the Editorial Studio can see drafts and reviews. Without
+// this, listAdminWeeklyDraftsAsync silently returned [] on a fresh Generate
+// because the new row had status='draft' and was invisible to the anon read.
 async function supabaseFetchSafe<T>(
   path: string,
   init: RequestInit = {},
-  _write = false,
+  write = false,
 ): Promise<T | null> {
-  void _write;
   try {
-    return await supabaseFetch<T>(path, init, false);
+    return await supabaseFetch<T>(path, init, write);
   } catch (error) {
     if (
       error instanceof WeeklyPersistenceError &&
@@ -288,10 +293,14 @@ function getStaticWeeklyDrafts() {
 // fallback intact so /weekly-brief still has a reading experience when
 // Supabase has no published row.
 export async function listAdminWeeklyDraftsAsync() {
+  // v1.30.6 — admin reads MUST go through the service role so they bypass
+  // RLS and can see status='draft' / 'review' rows. The anon key only sees
+  // status='published' per the public policy, which previously made the
+  // Editorial Studio look empty even after a successful Generate.
   const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&order=updated_at.desc`,
     {},
-    false,
+    true,
   );
 
   if (records?.length) {
@@ -377,11 +386,16 @@ export async function getPublishedWeeklyDraftBySlugAsync(slug: string) {
 }
 
 export async function getWeeklyDraftByIdAsync(id: string) {
+  // v1.30.6 — admin-side lookup. publishWeeklyDraftAsync /
+  // updateWeeklyDraftAsync and the admin GET-by-id route call through
+  // here, so we use the service role to see draft + review rows. If we
+  // stayed on the anon key, publish would think its own draft does not
+  // exist and return "not_found".
   const encodedId = encodeURIComponent(id);
   const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&id=eq.${encodedId}&limit=1`,
     {},
-    false,
+    true,
   );
 
   if (records?.[0]) {
@@ -600,10 +614,14 @@ function buildAiSuggestion(sections: WeeklyIntelligenceSections, intake: NewsInt
 }
 
 async function findWeeklyDraftByRange(weekStart: string, weekEnd: string) {
+  // v1.30.6 — generation-time lookup. Uses service role so a pre-existing
+  // draft for this week is correctly detected (otherwise the second
+  // Generate within a week would hit a unique_violation instead of
+  // returning the existing draft).
   const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&week_start=eq.${weekStart}&week_end=eq.${weekEnd}&limit=1`,
     {},
-    false,
+    true,
   );
 
   if (records?.[0]) {

@@ -183,6 +183,30 @@ function WeeklyEditorPreview() {
     );
   }, []);
 
+  // v1.30.6 — defensive re-fetch. Used when Generate returns a draft but
+  // the inline drafts array came back empty (RLS leak, stale cache, etc.).
+  // Reusing the same admin GET keeps the source of truth single.
+  const reloadWeeklyDrafts = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/weekly-briefs", { cache: "no-store" });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const payload = (await response.json()) as {
+        drafts: WeeklyIntelligenceDraft[];
+        persistence?: PersistenceMeta;
+      };
+
+      refreshWeeklyDrafts(payload.drafts ?? []);
+      setWeeklyPersistence(payload.persistence ?? null);
+      return payload.drafts ?? [];
+    } catch {
+      return null;
+    }
+  }, [refreshWeeklyDrafts]);
+
   useEffect(() => {
     let ignore = false;
 
@@ -243,13 +267,37 @@ function WeeklyEditorPreview() {
         summary?: { status: "generated" | "existing"; itemCount: number; sourceMode: string };
       };
 
-      refreshWeeklyDrafts(payload.drafts);
+      // v1.30.6 — defensive refresh path. If the inline drafts array is
+      // empty (e.g. RLS leak, response payload regression) but Generate
+      // returned a real draft, re-fetch the admin list so the Editorial
+      // Studio still shows the just-written row.
+      let resolvedDrafts = payload.drafts ?? [];
+
+      if (resolvedDrafts.length === 0 && payload.draft) {
+        const reloaded = await reloadWeeklyDrafts();
+        if (reloaded && reloaded.length > 0) {
+          resolvedDrafts = reloaded;
+        } else {
+          resolvedDrafts = [payload.draft];
+          refreshWeeklyDrafts(resolvedDrafts);
+        }
+      } else {
+        refreshWeeklyDrafts(resolvedDrafts);
+      }
+
       setWeeklyPersistence(payload.persistence ?? null);
       setSelectedWeeklyId(payload.draft.id);
-      setWeeklyMessage(
+
+      // v1.30.6 — surface draft id prefix + status + drafts count so
+      // operators can verify durability without opening the Table Editor.
+      const draftIdPrefix = payload.draft.id.slice(0, 8);
+      const draftCount = resolvedDrafts.filter((draft) => !draft.id.startsWith("static-")).length;
+      const baseMessage =
         payload.summary?.status === "existing"
           ? `Existing weekly draft loaded · ${payload.summary.itemCount} input items · ${payload.summary.sourceMode}`
-          : `Weekly draft generated · ${payload.summary?.itemCount ?? 0} input items · ${payload.summary?.sourceMode ?? "fallback"}`,
+          : `Weekly draft generated · ${payload.summary?.itemCount ?? 0} input items · ${payload.summary?.sourceMode ?? "fallback"}`;
+      setWeeklyMessage(
+        `${baseMessage} · id ${draftIdPrefix} · status ${payload.draft.status} · drafts ${draftCount}`,
       );
     } catch (error) {
       setWeeklyMessage(
