@@ -30,16 +30,54 @@ export async function POST(request: NextRequest, context: WeeklyPublishRouteCont
   const result = await publishWeeklyDraftAsync(id);
 
   if (result.error) {
+    const status =
+      result.error === "not_found"
+        ? 404
+        : result.error === "persistence_failed"
+          ? 502
+          : 400;
+
+    const message =
+      result.error === "validation_failed"
+        ? "Weekly content must include title, summary, market highlights, and IXAI Intelligence Summary before publishing."
+        : result.error === "persistence_failed"
+          ? `Supabase persistence unavailable — weekly publish was not written. ${
+              "message" in result && result.message ? result.message : ""
+            }`.trim()
+          : "Weekly draft cannot be published in its current state.";
+
     return Response.json(
       {
         status: result.error,
         draft: result.draft,
-        message:
-          result.error === "validation_failed"
-            ? "Weekly content must include title, summary, market highlights, and IXAI Intelligence Summary before publishing."
-            : "Weekly draft cannot be published in its current state.",
+        message,
+        persistence: {
+          readable: isWeeklyPersistenceReadable(),
+          writable: isWeeklyPersistenceWritable(),
+        },
       },
-      { status: result.error === "not_found" ? 404 : 400 },
+      { status },
+    );
+  }
+
+  // v1.30.3 — defense-in-depth: refuse to claim success unless the
+  // returned draft actually came back with status === "published". The
+  // saveWeeklyDraftAsync path should already throw on failure, but if
+  // anything in the chain regresses we want a loud, surfaced error
+  // instead of a silent fake success.
+  if (!result.draft || result.draft.status !== "published") {
+    return Response.json(
+      {
+        status: "persistence_failed",
+        draft: result.draft,
+        message:
+          "Weekly publish did not return a published row. Supabase write may not have landed.",
+        persistence: {
+          readable: isWeeklyPersistenceReadable(),
+          writable: isWeeklyPersistenceWritable(),
+        },
+      },
+      { status: 502 },
     );
   }
 

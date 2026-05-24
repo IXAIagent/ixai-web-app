@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { isAdminRequestAuthorized } from "@/src/lib/admin/auth";
 import {
+  WeeklyPersistenceError,
   getWeeklyDraftByIdAsync,
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
@@ -61,7 +62,31 @@ export async function PATCH(request: NextRequest, context: WeeklyRouteContext) {
       updatedBy: "editorial_studio",
     }).filter(([, value]) => value !== undefined),
   ) as Parameters<typeof updateWeeklyDraftAsync>[1];
-  const draft = await updateWeeklyDraftAsync(id, patch);
+
+  let draft: Awaited<ReturnType<typeof updateWeeklyDraftAsync>> = null;
+  try {
+    draft = await updateWeeklyDraftAsync(id, patch);
+  } catch (error) {
+    // v1.30.3 — Save / Mark as Review previously masked Supabase failures
+    // by silently writing to the in-memory layer. Now we surface the real
+    // failure so the admin UI can flag the row as not-yet-durable.
+    return Response.json(
+      {
+        status: "persistence_failed",
+        message:
+          error instanceof WeeklyPersistenceError
+            ? `Supabase persistence unavailable — weekly update was not written. ${error.message}`
+            : error instanceof Error
+              ? error.message
+              : "Supabase weekly update failed.",
+        persistence: {
+          readable: isWeeklyPersistenceReadable(),
+          writable: isWeeklyPersistenceWritable(),
+        },
+      },
+      { status: 502 },
+    );
+  }
 
   if (!draft) {
     return Response.json({ status: "not_found_or_locked" }, { status: 404 });

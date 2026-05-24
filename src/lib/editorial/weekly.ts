@@ -43,6 +43,20 @@ function logWeeklyPersistence(message: string, error?: unknown) {
   }
 }
 
+// v1.30.3 — distinguish "Supabase env not configured" (allow fallback for
+// reads, surface clear error for writes) from "Supabase is configured but
+// the request failed" (writes MUST fail loudly, never silently fall back
+// to in-memory drafts which previously masked publish bugs in production).
+export class WeeklyPersistenceError extends Error {
+  reason: "not_configured" | "request_failed";
+
+  constructor(message: string, reason: "not_configured" | "request_failed") {
+    super(message);
+    this.name = "WeeklyPersistenceError";
+    this.reason = reason;
+  }
+}
+
 function toDraft(record: WeeklyPersistenceRecord): WeeklyIntelligenceDraft {
   return {
     id: record.id,
@@ -89,11 +103,24 @@ function toRecord(draft: WeeklyIntelligenceDraft): WeeklyPersistenceRecord {
   };
 }
 
-async function supabaseFetch<T>(path: string, init: RequestInit = {}, write = false): Promise<T | null> {
+// v1.30.3 — strict variant. Throws WeeklyPersistenceError("not_configured")
+// when env is missing; throws WeeklyPersistenceError("request_failed") for
+// any HTTP/network failure when env IS configured. Used by write paths so
+// admin publish never silently falls back to in-memory state.
+async function supabaseFetch<T>(
+  path: string,
+  init: RequestInit = {},
+  write = false,
+): Promise<T | null> {
   const config = getSupabaseRestConfig({ write });
 
   if (!config) {
-    return null;
+    throw new WeeklyPersistenceError(
+      write
+        ? "Supabase service role key is not configured; cannot perform durable weekly write."
+        : "Supabase env is not configured; cannot read weekly persistence layer.",
+      "not_configured",
+    );
   }
 
   const controller = new AbortController();
@@ -114,7 +141,10 @@ async function supabaseFetch<T>(path: string, init: RequestInit = {}, write = fa
 
     if (!response.ok) {
       const body = await response.text().catch(() => "");
-      throw new Error(`Supabase weekly request failed: ${response.status} ${body.slice(0, 220)}`);
+      throw new WeeklyPersistenceError(
+        `Supabase weekly request failed: ${response.status} ${body.slice(0, 220)}`,
+        "request_failed",
+      );
     }
 
     if (response.status === 204) {
@@ -123,10 +153,42 @@ async function supabaseFetch<T>(path: string, init: RequestInit = {}, write = fa
 
     return (await response.json()) as T;
   } catch (error) {
-    logWeeklyPersistence("Supabase weekly request failed; using safe fallback.", error);
-    return null;
+    if (error instanceof WeeklyPersistenceError) {
+      throw error;
+    }
+
+    throw new WeeklyPersistenceError(
+      error instanceof Error ? error.message : "Unknown Supabase weekly failure",
+      "request_failed",
+    );
   } finally {
     clearTimeout(timeout);
+  }
+}
+
+// Safe wrapper for read paths: log + return null on any error so a Supabase
+// outage degrades to "no published row" instead of throwing through the
+// public weekly page. Accepts the same 3-arg shape as the strict variant
+// (the trailing write flag is ignored — reads never need the service role).
+async function supabaseFetchSafe<T>(
+  path: string,
+  init: RequestInit = {},
+  _write = false,
+): Promise<T | null> {
+  void _write;
+  try {
+    return await supabaseFetch<T>(path, init, false);
+  } catch (error) {
+    if (
+      error instanceof WeeklyPersistenceError &&
+      error.reason === "not_configured"
+    ) {
+      // Env not configured — normal in local dev, no log noise.
+      return null;
+    }
+
+    logWeeklyPersistence("Supabase weekly read failed; falling back.", error);
+    return null;
   }
 }
 
@@ -207,7 +269,7 @@ function getStaticWeeklyDrafts() {
 }
 
 export async function listWeeklyDraftsAsync() {
-  const records = await supabaseFetch<WeeklyPersistenceRecord[]>(
+  const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&order=updated_at.desc`,
     {},
     false,
@@ -221,7 +283,7 @@ export async function listWeeklyDraftsAsync() {
 }
 
 export async function listPublishedWeeklyDraftsAsync() {
-  const records = await supabaseFetch<WeeklyPersistenceRecord[]>(
+  const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&status=eq.published&order=published_at.desc.nullslast`,
     {},
     false,
@@ -231,7 +293,22 @@ export async function listPublishedWeeklyDraftsAsync() {
     return sortWeeklyDrafts(records.map(toDraft).filter((draft) => draft.status === "published"));
   }
 
-  return sortWeeklyDrafts([...serverWeeklyDrafts, ...getStaticWeeklyDrafts()].filter((draft) => draft.status === "published"));
+  // v1.30.3 — when Supabase is the source of truth (env configured), an
+  // empty published-rows query means the user has not yet published.
+  // Returning static fallback here previously masked the durable-publish
+  // bug because /weekly-brief looked unchanged even after the admin row
+  // failed to flip to status=published in Supabase.
+  if (isWeeklyPersistenceReadable()) {
+    return sortWeeklyDrafts(
+      serverWeeklyDrafts.filter((draft) => draft.status === "published"),
+    );
+  }
+
+  return sortWeeklyDrafts(
+    [...serverWeeklyDrafts, ...getStaticWeeklyDrafts()].filter(
+      (draft) => draft.status === "published",
+    ),
+  );
 }
 
 export async function getLatestPublishedWeeklyDraftAsync() {
@@ -240,7 +317,7 @@ export async function getLatestPublishedWeeklyDraftAsync() {
 
 export async function getPublishedWeeklyDraftBySlugAsync(slug: string) {
   const encodedSlug = encodeURIComponent(slug);
-  const records = await supabaseFetch<WeeklyPersistenceRecord[]>(
+  const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&slug=eq.${encodedSlug}&status=eq.published&limit=1`,
     {},
     false,
@@ -250,6 +327,14 @@ export async function getPublishedWeeklyDraftBySlugAsync(slug: string) {
     return toDraft(records[0]);
   }
 
+  // v1.30.3 — when Supabase is configured but does not return a published
+  // row for this slug, do NOT silently substitute a static/in-memory
+  // draft. Public /weekly-brief/[slug] should 404 rather than show stale
+  // content, and draft/review slugs must not become reachable.
+  if (isWeeklyPersistenceReadable()) {
+    return null;
+  }
+
   return [...serverWeeklyDrafts, ...getStaticWeeklyDrafts()].find(
     (draft) => draft.slug === slug && draft.status === "published",
   ) ?? null;
@@ -257,7 +342,7 @@ export async function getPublishedWeeklyDraftBySlugAsync(slug: string) {
 
 export async function getWeeklyDraftByIdAsync(id: string) {
   const encodedId = encodeURIComponent(id);
-  const records = await supabaseFetch<WeeklyPersistenceRecord[]>(
+  const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&id=eq.${encodedId}&limit=1`,
     {},
     false,
@@ -276,28 +361,54 @@ export async function saveWeeklyDraftAsync(draft: WeeklyIntelligenceDraft) {
     updatedAt: new Date().toISOString(),
   };
 
-  const saved = await supabaseFetch<WeeklyPersistenceRecord[]>(
-    WEEKLY_TABLE,
-    {
-      body: JSON.stringify(toRecord(nextDraft)),
-      headers: {
-        Prefer: "resolution=merge-duplicates,return=representation",
+  // v1.30.3 — when Supabase is configured we MUST persist there. If the
+  // write fails (network, RLS, schema mismatch), propagate the error so the
+  // API and admin UI surface a real failure instead of pretending the
+  // publish landed. The in-memory fallback only fires when Supabase env is
+  // absent (i.e. local dev without service role key).
+  try {
+    const saved = await supabaseFetch<WeeklyPersistenceRecord[]>(
+      WEEKLY_TABLE,
+      {
+        body: JSON.stringify(toRecord(nextDraft)),
+        headers: {
+          Prefer: "resolution=merge-duplicates,return=representation",
+        },
+        method: "POST",
       },
-      method: "POST",
-    },
-    true,
-  );
+      true,
+    );
 
-  if (saved?.[0]) {
-    return toDraft(saved[0]);
+    if (saved?.[0]) {
+      return toDraft(saved[0]);
+    }
+
+    // Supabase returned 204 / empty — treat as failure rather than silently
+    // success: durable write should always come back with the row.
+    throw new WeeklyPersistenceError(
+      "Supabase weekly write returned an empty response; row not confirmed.",
+      "request_failed",
+    );
+  } catch (error) {
+    if (
+      error instanceof WeeklyPersistenceError &&
+      error.reason === "not_configured"
+    ) {
+      // Local dev without Supabase env — fall back to in-memory store so
+      // editorial workflow remains testable, but the API layer will mark
+      // persistence as unwritable so the admin UI knows.
+      serverWeeklyDrafts = [
+        nextDraft,
+        ...serverWeeklyDrafts.filter(
+          (item) => item.id !== nextDraft.id && item.slug !== nextDraft.slug,
+        ),
+      ];
+
+      return nextDraft;
+    }
+
+    throw error;
   }
-
-  serverWeeklyDrafts = [
-    nextDraft,
-    ...serverWeeklyDrafts.filter((item) => item.id !== nextDraft.id && item.slug !== nextDraft.slug),
-  ];
-
-  return nextDraft;
 }
 
 function addDays(date: Date, days: number) {
@@ -439,7 +550,7 @@ function buildAiSuggestion(sections: WeeklyIntelligenceSections, intake: NewsInt
 }
 
 async function findWeeklyDraftByRange(weekStart: string, weekEnd: string) {
-  const records = await supabaseFetch<WeeklyPersistenceRecord[]>(
+  const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&week_start=eq.${weekStart}&week_end=eq.${weekEnd}&limit=1`,
     {},
     false,
@@ -561,6 +672,9 @@ export async function updateWeeklyDraftAsync(
     updatedBy: patch.updatedBy ?? "editorial_studio",
   };
 
+  // v1.30.3 — saveWeeklyDraftAsync now throws on durable persistence
+  // failure. We let the throw propagate so PATCH callers (admin Save /
+  // Mark as Review) surface a real error instead of fake success.
   return saveWeeklyDraftAsync(next);
 }
 
@@ -598,10 +712,23 @@ export async function publishWeeklyDraftAsync(id: string) {
     updatedBy: "editorial_studio",
   };
 
-  return {
-    draft: await saveWeeklyDraftAsync(next),
-    error: null,
-  };
+  // v1.30.3 — surface persistence failures so the API can return non-OK
+  // and the admin UI shows a real error instead of an optimistic success.
+  try {
+    return {
+      draft: await saveWeeklyDraftAsync(next),
+      error: null,
+    };
+  } catch (error) {
+    return {
+      draft: current,
+      error: "persistence_failed" as const,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Supabase weekly publish failed.",
+    };
+  }
 }
 
 export function weeklyDraftToBrief(draft: WeeklyIntelligenceDraft): WeeklyBrief {
