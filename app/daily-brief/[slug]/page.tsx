@@ -6,7 +6,6 @@ import {
   BreadcrumbStructuredData,
   NewsArticleStructuredData,
 } from "@/components/seo/structured-data";
-import { ShareActions } from "@/components/share/share-actions";
 import type { DailyBrief } from "@/content/daily-briefs";
 import {
   getAllDailyBriefs,
@@ -137,27 +136,18 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* v1.33 — Share This Daily Brief */}
-      <section className="rounded-2xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Share This Daily Brief
-            </p>
-            <p className="mt-1.5 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-              把今日 IXAI 市場 narrative 分享給你的網絡。
-            </p>
-          </div>
-          <ShareActions
-            copy={buildDailyShareCopy({
-              publishedAt: brief.publishedAt,
-              narrative: null,
-              url: `${ixaiSiteUrl}/daily-brief/${slug}`,
-            })}
-            surface="daily"
-          />
-        </div>
-      </section>
+      <IntelligenceCta
+        enableLine
+        enableShare
+        shareCopy={buildDailyShareCopy({
+          publishedAt: brief.publishedAt,
+          narrative: null,
+          url: `${ixaiSiteUrl}/daily-brief/${slug}`,
+        })}
+        shareSurface="daily"
+        surface="daily-slug-top"
+        variant="compact"
+      />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">

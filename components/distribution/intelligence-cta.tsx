@@ -13,7 +13,13 @@ import type { ShareCopy } from "@/src/lib/share/share-copy";
 // rendered CTA produces an attribution signal even when the visitor
 // does not interact.
 
-export type IntelligenceCtaSurface = "home" | "daily" | "weekly" | "market" | "fcn";
+export type IntelligenceCtaSurface =
+  | "home"
+  | "daily"
+  | "daily-slug-top"
+  | "weekly"
+  | "market"
+  | "fcn";
 export type IntelligenceCtaVariant = "hero" | "inline" | "article-bottom" | "compact";
 
 type IntelligenceCtaProps = {
@@ -21,6 +27,8 @@ type IntelligenceCtaProps = {
   variant?: IntelligenceCtaVariant;
   showEmailCapture?: boolean;
   showLineGateway?: boolean;
+  enableShare?: boolean;
+  enableLine?: boolean;
   shareCopy?: ShareCopy;
   shareSurface?: "home" | "weekly" | "daily" | "fcn";
   emailTitle?: string;
@@ -32,6 +40,8 @@ export function IntelligenceCta({
   variant = "inline",
   showEmailCapture = true,
   showLineGateway = true,
+  enableShare = false,
+  enableLine = false,
   shareCopy,
   shareSurface,
   emailTitle,
@@ -69,11 +79,41 @@ export function IntelligenceCta({
   const heading =
     surface === "weekly"
       ? "Subscribe to IXAI Weekly Intelligence"
-      : surface === "daily"
+      : surface === "daily" || surface === "daily-slug-top"
         ? "Subscribe to IXAI Daily Intelligence"
         : "Subscribe to IXAI Intelligence";
+  const resolvedShareSurface =
+    shareSurface ?? (surface === "market" ? "home" : surface === "daily-slug-top" ? "daily" : surface);
 
   if (variant === "compact") {
+    if (enableShare && shareCopy) {
+      return (
+        <section className={baseClass}>
+          {eyebrow}
+          <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-base font-semibold leading-6 text-[var(--ixai-forest)]">
+                Share This Daily Brief
+              </h3>
+              <p className="mt-1.5 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                把今日 IXAI 市場 narrative 分享給你的網絡。
+              </p>
+            </div>
+            <ShareActions
+              copy={shareCopy}
+              surface={resolvedShareSurface}
+              variant={heroTone ? "dark" : "light"}
+            />
+          </div>
+          {enableLine ? (
+            <p className="mt-2 text-xs leading-5 text-[var(--ixai-ink-muted)]">
+              LINE sharing is available in the share row.
+            </p>
+          ) : null}
+        </section>
+      );
+    }
+
     return (
       <section className={baseClass}>
         {eyebrow}
@@ -174,7 +214,7 @@ export function IntelligenceCta({
           </p>
           <ShareActions
             copy={shareCopy}
-            surface={shareSurface ?? (surface === "market" ? "home" : surface)}
+            surface={resolvedShareSurface}
             variant={heroTone ? "dark" : "light"}
           />
         </div>

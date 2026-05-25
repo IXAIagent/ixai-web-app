@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { AlertTriangle, ListChecks } from "lucide-react";
 import { useEffect, useState } from "react";
+import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
+import { ixaiSiteUrl } from "@/src/lib/brand/metadata";
+import { buildDailyShareCopy } from "@/src/lib/share/share-copy";
 import type { DailyBriefDraft } from "@/src/types/editorial";
 
 const categoryLabels: Record<string, string> = {
@@ -89,6 +92,19 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
           {brief.marketSummary}
         </p>
       </section>
+
+      <IntelligenceCta
+        enableLine
+        enableShare
+        shareCopy={buildDailyShareCopy({
+          publishedAt: brief.publishedAt,
+          narrative: intelligence?.narrative ?? null,
+          url: `${ixaiSiteUrl}/daily-brief/${slug}`,
+        })}
+        shareSurface="daily"
+        surface="daily-slug-top"
+        variant="compact"
+      />
 
       {brief.editorialNote ? (
         <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
