@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AlertTriangle, ArrowLeft, ArrowUpRight, Eye } from "lucide-react";
 import { DailyBriefLocalDetail } from "@/components/daily-brief/daily-brief-local-detail";
 import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
+import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import {
   BreadcrumbStructuredData,
   NewsArticleStructuredData,
@@ -265,6 +266,8 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
         surface="daily"
         variant="article-bottom"
       />
+
+      <ProUpgradeCard feature="premium_daily" surface="daily_slug_bottom" />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">

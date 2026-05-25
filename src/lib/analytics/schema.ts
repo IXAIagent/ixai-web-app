@@ -5,6 +5,9 @@ export type AnalyticsEventName =
   | "watchlist_open"
   | "pro_interest"
   | "pro_cta_click"
+  | "pro_waitlist_submit"
+  | "pro_waitlist_success"
+  | "pro_waitlist_error"
   | "push_enable"
   | "push_denied"
   | "feedback_click"
@@ -57,6 +60,9 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "watchlist_open",
   "pro_interest",
   "pro_cta_click",
+  "pro_waitlist_submit",
+  "pro_waitlist_success",
+  "pro_waitlist_error",
   "push_enable",
   "push_denied",
   "feedback_click",

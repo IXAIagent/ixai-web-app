@@ -11,7 +11,12 @@ type MembershipSnapshot = {
   trials: number;
   expired: number;
   conversionCandidates: number;
+  freeMembers: number;
+  proWaitlistCount: number;
+  proCandidates: number;
+  proConversionRate: number;
   topPlans: { label: string; count: number }[];
+  topRequestedProFeatures: { label: string; count: number }[];
 };
 
 type SnapshotResponse = {
@@ -28,7 +33,12 @@ const EMPTY_SNAPSHOT: MembershipSnapshot = {
   trials: 0,
   expired: 0,
   conversionCandidates: 0,
+  freeMembers: 0,
+  proWaitlistCount: 0,
+  proCandidates: 0,
+  proConversionRate: 0,
   topPlans: [],
+  topRequestedProFeatures: [],
 };
 
 type MetricProps = {
@@ -130,37 +140,67 @@ export function MembershipSnapshot() {
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         <Metric icon={Users} label="Total members" value={snapshot.totalMembers} />
+        <Metric icon={Users} label="Free members" value={snapshot.freeMembers} />
         <Metric icon={BadgeCheck} label="Active Pro" value={snapshot.activePro} />
         <Metric icon={Sparkles} label="Trials" value={snapshot.trials} />
-        <Metric icon={Clock} label="Expired" value={snapshot.expired} />
+        <Metric icon={Sparkles} label="Pro waitlist" value={snapshot.proWaitlistCount} />
+      </div>
+
+      <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <Metric icon={BarChart3} label="Pro candidates" value={snapshot.proCandidates} />
         <Metric
           icon={BarChart3}
           label="Conversion candidates"
           value={snapshot.conversionCandidates}
         />
+        <Metric icon={Clock} label="Expired" value={snapshot.expired} />
+        <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
+          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+            <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" />
+            Pro conversion rate
+          </div>
+          <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
+            {snapshot.proConversionRate.toLocaleString(undefined, {
+              maximumFractionDigits: 1,
+              minimumFractionDigits: 0,
+            })}
+            %
+          </p>
+        </article>
       </div>
 
-      <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.035] p-4">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-          Top plans
-        </p>
-        <ul className="mt-2 grid gap-1.5">
-          {snapshot.topPlans.length ? (
-            snapshot.topPlans.map((row) => (
-              <li
-                className="flex items-center justify-between rounded-md border border-white/10 bg-white/[0.045] px-3 py-2 font-mono text-xs text-[rgba(245,240,230,0.78)]"
-                key={row.label}
-              >
-                <span>{row.label}</span>
-                <span className="font-semibold text-[var(--ixai-cream)]">{row.count}</span>
-              </li>
-            ))
-          ) : (
-            <li className="rounded-md border border-white/10 bg-white/[0.045] px-3 py-2 text-xs text-[rgba(245,240,230,0.52)]">
-              No membership records yet.
-            </li>
-          )}
-        </ul>
+      <div className="mt-5 grid gap-3 lg:grid-cols-2">
+        {[
+          ["Top plans", snapshot.topPlans, "No membership records yet."],
+          [
+            "Top requested Pro features",
+            snapshot.topRequestedProFeatures,
+            "No Pro waitlist feature requests yet.",
+          ],
+        ].map(([title, rows, emptyLabel]) => (
+          <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4" key={title as string}>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              {title as string}
+            </p>
+            <ul className="mt-2 grid gap-1.5">
+              {(rows as { label: string; count: number }[]).length ? (
+                (rows as { label: string; count: number }[]).map((row) => (
+                  <li
+                    className="flex items-center justify-between rounded-md border border-white/10 bg-white/[0.045] px-3 py-2 font-mono text-xs text-[rgba(245,240,230,0.78)]"
+                    key={row.label}
+                  >
+                    <span>{row.label}</span>
+                    <span className="font-semibold text-[var(--ixai-cream)]">{row.count}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="rounded-md border border-white/10 bg-white/[0.045] px-3 py-2 text-xs text-[rgba(245,240,230,0.52)]">
+                  {emptyLabel as string}
+                </li>
+              )}
+            </ul>
+          </div>
+        ))}
       </div>
     </section>
   );

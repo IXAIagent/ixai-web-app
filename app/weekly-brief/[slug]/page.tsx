@@ -8,6 +8,7 @@ import {
 } from "@/components/seo/structured-data";
 import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import { IntelligenceQuoteCard } from "@/components/share/intelligence-quote-card";
+import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import { ShareActions } from "@/components/share/share-actions";
 import { buildPublicMetadata, ixaiSiteUrl } from "@/src/lib/brand/metadata";
 import { buildWeeklyShareCopy } from "@/src/lib/share/share-copy";
@@ -460,6 +461,8 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         surface="weekly"
         variant="article-bottom"
       />
+
+      <ProUpgradeCard feature="premium_weekly" surface="weekly_slug_bottom" />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">

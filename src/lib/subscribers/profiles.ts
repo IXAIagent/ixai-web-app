@@ -14,6 +14,7 @@ export type SubscriberSurface = "weekly" | "daily" | "market" | "fcn";
 
 export type SubscriberTag =
   | "line_connected"
+  | "pro_waitlist"
   | "high_engagement"
   | "pro_candidate"
   | "crypto_reader"
@@ -275,6 +276,7 @@ export function computeEngagementScore(record: ProfileRecord): {
 
 const TAG_DEFINITIONS: SubscriberTag[] = [
   "line_connected",
+  "pro_waitlist",
   "high_engagement",
   "pro_candidate",
   "crypto_reader",

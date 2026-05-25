@@ -1,6 +1,7 @@
 import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
 import { FcnIntroHint } from "@/components/onboarding/fcn-intro-hint";
 import { ProInterestCard } from "@/components/pro/pro-interest-card";
+import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import {
   AlertTriangle,
   ArrowDown,
@@ -598,6 +599,8 @@ export default async function FcnPage() {
           ))}
         </div>
       </section>
+
+      <ProUpgradeCard feature="fcn_risk_intelligence" surface="fcn_education" />
 
       {/* 3. Risk Concept Visualization — conceptual, no real engine. */}
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-4 sm:p-6">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Bug, MessageSquare } from "lucide-react";
 import { AccountPanel } from "@/components/auth/account-panel";
+import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import { PwaInstallCard } from "@/components/pwa/install-card";
 import { WatchlistAccountStatus } from "@/components/watchlist/watchlist-account-status";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -31,6 +32,8 @@ export default function AccountPage() {
       </section>
 
       <AccountPanel />
+
+      <ProUpgradeCard feature="portfolio_intelligence" surface="account" />
 
       <WatchlistAccountStatus />
 

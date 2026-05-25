@@ -39,7 +39,12 @@ export type MembershipSnapshot = {
   trials: number;
   expired: number;
   conversionCandidates: number;
+  freeMembers: number;
+  proWaitlistCount: number;
+  proCandidates: number;
+  proConversionRate: number;
   topPlans: { label: string; count: number }[];
+  topRequestedProFeatures: { label: string; count: number }[];
 };
 
 const TABLE_NAME = "ixai_memberships";
@@ -199,26 +204,44 @@ function toSnapshot(
   configured: boolean,
 ): MembershipSnapshot {
   const planCounts = new Map<string, number>();
+  const featureCounts = new Map<string, number>();
 
   for (const record of records) {
     planCounts.set(record.plan, (planCounts.get(record.plan) ?? 0) + 1);
+    const requestedFeature = String(record.metadata?.requested_feature ?? "").trim();
+    if (requestedFeature) {
+      featureCounts.set(requestedFeature, (featureCounts.get(requestedFeature) ?? 0) + 1);
+    }
   }
+  const activePro = records.filter(
+    (record) => isPaidPlan(record.plan) && !isExpired(record) && record.status === "active",
+  ).length;
+  const freeMembers = records.filter((record) => record.plan === "free").length;
+  const proWaitlistCount = records.filter(
+    (record) => record.metadata?.intent === "pro_waitlist",
+  ).length;
 
   return {
     persistence,
     configured,
     totalMembers: records.length,
-    activePro: records.filter(
-      (record) => isPaidPlan(record.plan) && !isExpired(record) && record.status === "active",
-    ).length,
+    activePro,
     trials: records.filter((record) => record.status === "trial" && !isExpired(record)).length,
     expired: records.filter((record) => isExpired(record)).length,
+    freeMembers,
+    proWaitlistCount,
+    proCandidates: proWaitlistCount,
+    proConversionRate: records.length ? Number(((activePro / records.length) * 100).toFixed(1)) : 0,
     conversionCandidates: records.filter(
       (record) => record.plan === "free" && record.status === "active" && !isExpired(record),
     ).length,
     topPlans: [...planCounts.entries()]
       .map(([label, count]) => ({ label, count }))
       .sort((a, b) => b.count - a.count),
+    topRequestedProFeatures: [...featureCounts.entries()]
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5),
   };
 }
 

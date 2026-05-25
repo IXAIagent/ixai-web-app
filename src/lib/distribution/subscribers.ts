@@ -7,6 +7,7 @@ export type SubscriberInput = {
   surface?: string;
   path?: string;
   attribution?: Record<string, string>;
+  metadata?: Record<string, string>;
   userAgent?: string;
   referrer?: string;
 };
@@ -85,6 +86,15 @@ function toMetadata(input: SubscriberInput) {
   const metadata: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(input.attribution ?? {})) {
+    const cleanKey = key.trim().slice(0, 48);
+    const cleanValue = sanitize(value, 220);
+
+    if (cleanKey && cleanValue) {
+      metadata[cleanKey] = cleanValue;
+    }
+  }
+
+  for (const [key, value] of Object.entries(input.metadata ?? {})) {
     const cleanKey = key.trim().slice(0, 48);
     const cleanValue = sanitize(value, 220);
 

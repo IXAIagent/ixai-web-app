@@ -32,11 +32,13 @@ export function EmailCapture({
   surface = "home",
   title = DEFAULT_TITLE,
   description = DEFAULT_DESCRIPTION,
+  metadata,
   variant = "card",
 }: {
   surface?: string;
   title?: string;
   description?: string;
+  metadata?: Record<string, string>;
   variant?: "card" | "inline";
 }) {
   const [email, setEmail] = useState("");
@@ -57,6 +59,18 @@ export function EmailCapture({
     setErrorMessage(null);
     setState("loading");
     trackEvent("email_capture_submit", { surface });
+    if (metadata?.intent === "pro_waitlist") {
+      trackEvent("pro_waitlist_submit", {
+        membership_plan: "free",
+        requested_feature: metadata.requested_feature,
+        surface,
+      });
+      trackEvent("pro_cta_click", {
+        membership_plan: "free",
+        requested_feature: metadata.requested_feature,
+        surface,
+      });
+    }
 
     try {
       const attribution = getAttributionPayload();
@@ -69,6 +83,7 @@ export function EmailCapture({
           surface,
           path,
           attribution,
+          metadata,
         }),
       });
 
@@ -96,6 +111,8 @@ export function EmailCapture({
         subscriber_status: "active",
         first_subscribed_surface: surface,
         subscribed_at: subscribedAt,
+        requested_feature: metadata?.requested_feature,
+        waitlist_intent: metadata?.intent,
         utm_source: attribution.utm_source,
         utm_medium: attribution.utm_medium,
         utm_campaign: attribution.utm_campaign,
@@ -103,11 +120,25 @@ export function EmailCapture({
       });
 
       trackEvent("email_capture_success", { surface });
+      if (metadata?.intent === "pro_waitlist") {
+        trackEvent("pro_waitlist_success", {
+          membership_plan: "free",
+          requested_feature: metadata.requested_feature,
+          surface,
+        });
+      }
     } catch (error) {
       setState("error");
       const reason = error instanceof Error ? error.message : "Subscribe failed.";
       setErrorMessage("Unable to subscribe right now. Please try again later.");
       trackEvent("email_capture_error", { surface, reason: reason.slice(0, 64) });
+      if (metadata?.intent === "pro_waitlist") {
+        trackEvent("pro_waitlist_error", {
+          membership_plan: "free",
+          requested_feature: metadata.requested_feature,
+          surface,
+        });
+      }
     }
   }
 

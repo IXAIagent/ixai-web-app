@@ -5,6 +5,7 @@ import { AlertTriangle, ListChecks } from "lucide-react";
 import { useEffect, useState } from "react";
 import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
+import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import { ixaiSiteUrl } from "@/src/lib/brand/metadata";
 import { buildDailyShareCopy } from "@/src/lib/share/share-copy";
 import type { DailyBriefDraft } from "@/src/types/editorial";
@@ -322,6 +323,8 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
           </div>
         </div>
       </section>
+
+      <ProUpgradeCard feature="premium_daily" surface="daily_slug_bottom" />
     </article>
   );
 }

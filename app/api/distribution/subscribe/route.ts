@@ -7,6 +7,7 @@ import {
 import { log } from "@/src/lib/log";
 import { upsertMembership } from "@/src/lib/membership/memberships";
 import { syncProfileFromIdentity } from "@/src/lib/subscribers/profile-sync";
+import { setProfileTag } from "@/src/lib/subscribers/profiles";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ type SubscribeBody = {
   surface?: unknown;
   path?: unknown;
   attribution?: unknown;
+  metadata?: unknown;
 };
 
 function sanitizeAttribution(value: unknown): Record<string, string> | undefined {
@@ -25,6 +27,18 @@ function sanitizeAttribution(value: unknown): Record<string, string> | undefined
   const entries = Object.entries(value as Record<string, unknown>)
     .filter(([, item]) => typeof item === "string")
     .map(([key, item]) => [key.slice(0, 48), String(item).slice(0, 240)]);
+
+  return entries.length ? Object.fromEntries(entries) : undefined;
+}
+
+function sanitizeMetadata(value: unknown): Record<string, string> | undefined {
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+
+  const entries = Object.entries(value as Record<string, unknown>)
+    .filter(([, item]) => typeof item === "string")
+    .map(([key, item]) => [key.slice(0, 48), String(item).slice(0, 220)]);
 
   return entries.length ? Object.fromEntries(entries) : undefined;
 }
@@ -58,11 +72,15 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const metadata = sanitizeMetadata(payload.metadata);
+    const isProWaitlist =
+      typeof payload.surface === "string" && payload.surface === "pro_waitlist";
     const subscriber = await saveSubscriber({
       email,
       surface: typeof payload.surface === "string" ? payload.surface : undefined,
       path: typeof payload.path === "string" ? payload.path : undefined,
       attribution: sanitizeAttribution(payload.attribution),
+      metadata,
       referrer: request.headers.get("referer") ?? undefined,
       userAgent: request.headers.get("user-agent") ?? undefined,
     });
@@ -73,6 +91,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         source: "distribution_capture",
         surface: typeof payload.surface === "string" ? payload.surface : undefined,
+        ...(metadata ?? {}),
       },
     });
 
@@ -87,12 +106,19 @@ export async function POST(request: NextRequest) {
     // gets an aggregate row immediately. Never blocks the subscribe
     // response; a failed profile write is logged inside the sync helper.
     const attribution = sanitizeAttribution(payload.attribution);
-    void syncProfileFromIdentity({
-      email,
-      utmSource: attribution?.utm_source,
-      utmMedium: attribution?.utm_medium,
-      utmCampaign: attribution?.utm_campaign,
-    });
+    void (async () => {
+      await syncProfileFromIdentity({
+        email,
+        utmSource: attribution?.utm_source,
+        utmMedium: attribution?.utm_medium,
+        utmCampaign: attribution?.utm_campaign,
+      });
+
+      if (isProWaitlist) {
+        await setProfileTag({ email, enabled: true, tag: "pro_waitlist" });
+        await setProfileTag({ email, enabled: true, tag: "pro_candidate" });
+      }
+    })();
 
     return Response.json({
       ok: true,
