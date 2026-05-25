@@ -1,4 +1,7 @@
-import { ArrowDown, ArrowRight, Activity } from "lucide-react";
+"use client";
+
+import { Activity, ArrowDown, ArrowRight, ChevronDown } from "lucide-react";
+import { useState } from "react";
 import type { WeeklyNarrativeBundle } from "@/src/types/editorial";
 
 const DEFAULT_FLOW: WeeklyNarrativeBundle["crossMarketLinks"] = [
@@ -29,11 +32,13 @@ const DEFAULT_FLOW: WeeklyNarrativeBundle["crossMarketLinks"] = [
   },
 ];
 
-// v1.32.2 — Cross-market intelligence flow card.
-//
-// Mobile: vertical timeline with ArrowDown between nodes.
-// Desktop: horizontal grid with ArrowRight separators.
-// Each node is a from → to pair with a one-sentence "why it matters".
+// v1.33.2 — Reading rhythm: mobile previews the first 3 stages of the
+// cross-market flow with a "查看完整 cross-market flow" toggle; desktop
+// keeps the full chain visible. Server-rendered fallback for crawlers
+// (no JS) still renders the full list because the toggle only affects
+// state after hydration.
+
+const MOBILE_PREVIEW_COUNT = 3;
 
 export function CrossMarketFlow({
   narrative,
@@ -44,6 +49,10 @@ export function CrossMarketFlow({
     narrative?.crossMarketLinks && narrative.crossMarketLinks.length > 0
       ? narrative.crossMarketLinks.slice(0, 5)
       : DEFAULT_FLOW;
+
+  const [expandedMobile, setExpandedMobile] = useState(false);
+  const visibleMobile = expandedMobile ? links : links.slice(0, MOBILE_PREVIEW_COUNT);
+  const hasMore = links.length > MOBILE_PREVIEW_COUNT;
 
   return (
     <section className="rounded-2xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 shadow-[0_14px_38px_rgba(9,41,31,0.045)] sm:p-6">
@@ -64,33 +73,71 @@ export function CrossMarketFlow({
         </p>
       ) : null}
 
-      <ol className="mt-5 grid gap-3">
-        {links.map((link, index) => (
+      {/* Mobile-only abbreviated list */}
+      <ol className="mt-5 grid gap-3 sm:hidden">
+        {visibleMobile.map((link, index) => (
           <li
-            className="rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3.5 sm:p-4"
-            key={`${link.from}-${link.to}`}
+            className="rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3.5"
+            key={`mobile-${link.from}-${link.to}`}
           >
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <span className="font-mono text-xs font-semibold text-[var(--ixai-forest)] sm:text-sm">
-                {link.from}
-              </span>
-              <span aria-hidden="true" className="text-[var(--ixai-gold)]">
-                <ArrowDown className="h-4 w-4 sm:hidden" />
-                <ArrowRight className="hidden h-4 w-4 sm:inline" />
-              </span>
-              <span className="font-mono text-xs font-semibold text-[var(--ixai-forest)] sm:text-sm">
-                {link.to}
-              </span>
-              <span className="ml-auto hidden font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)] sm:inline">
-                Stage {index + 1}
-              </span>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-semibold text-[var(--ixai-forest)]">
+                  {link.from}
+                </span>
+                <ArrowDown aria-hidden="true" className="h-3.5 w-3.5 text-[var(--ixai-gold)]" />
+                <span className="font-mono text-xs font-semibold text-[var(--ixai-forest)]">
+                  {link.to}
+                </span>
+                <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                  Stage {index + 1}
+                </span>
+              </div>
+              <p className="text-sm leading-7 text-[var(--ixai-forest-soft)]">{link.note}</p>
             </div>
-            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              {link.note}
-            </p>
           </li>
         ))}
       </ol>
+
+      {/* Desktop-only full list */}
+      <ol className="mt-5 hidden gap-3 sm:grid">
+        {links.map((link, index) => (
+          <li
+            className="rounded-xl border border-[var(--ixai-border)] bg-white/55 p-4"
+            key={`desktop-${link.from}-${link.to}`}
+          >
+            <div className="flex flex-row items-center gap-3">
+              <span className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
+                {link.from}
+              </span>
+              <ArrowRight aria-hidden="true" className="h-4 w-4 text-[var(--ixai-gold)]" />
+              <span className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
+                {link.to}
+              </span>
+              <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                Stage {index + 1}
+              </span>
+            </div>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">{link.note}</p>
+          </li>
+        ))}
+      </ol>
+
+      {hasMore ? (
+        <button
+          aria-expanded={expandedMobile}
+          className="mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-forest)] transition active:scale-[0.98] sm:hidden"
+          onClick={() => setExpandedMobile((current) => !current)}
+          type="button"
+        >
+          <ChevronDown
+            aria-hidden="true"
+            className={`h-3.5 w-3.5 transition-transform ${expandedMobile ? "rotate-180" : ""}`}
+          />
+          {expandedMobile ? "收合" : "查看完整 cross-market flow"}
+        </button>
+      ) : null}
+
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">
         每一個 stage 都是教育型市場 narrative；不構成投資建議或個別 FCN 風控。
       </p>

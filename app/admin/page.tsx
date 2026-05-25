@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-analytics-snapshot";
 
 export const metadata = {
   title: "Admin | IXAI",
@@ -38,6 +39,8 @@ export default function AdminPage() {
           進入 Daily Brief Pipeline
         </Link>
       </section>
+
+      <IntelligenceAnalyticsSnapshot />
     </div>
   );
 }

@@ -75,6 +75,10 @@ const FALLBACK_EVENTS: ImportantEvent[] = [
   },
 ];
 
+// v1.33.2 — Compact timeline style. Smaller importance badge, tighter
+// chip spacing, single-column timeline track on mobile so 390px viewport
+// reads as a calendar marker list rather than five tall cards.
+
 export function ImportantEvents({
   narrative,
   upcomingEvents,
@@ -84,10 +88,6 @@ export function ImportantEvents({
 }) {
   const fromUpcoming = selectFromUpcoming(upcomingEvents);
   const fromImportance = selectFromImportance(narrative?.importanceRanking);
-
-  // v1.32.2 — combine upcoming calendar (date-known events) + importance
-  // ranking (recent headlines) into a single top-5 list. Upcoming events
-  // take precedence so dated catalysts surface first.
   const combined: ImportantEvent[] = [...fromUpcoming, ...fromImportance].slice(0, 5);
   const events = combined.length > 0 ? combined : FALLBACK_EVENTS;
   const isFallback = combined.length === 0;
@@ -111,50 +111,52 @@ export function ImportantEvents({
         </p>
       ) : null}
 
-      <ol className="mt-4 grid gap-3 sm:gap-4">
+      <ol className="relative mt-4 grid gap-2.5 border-l border-[rgba(176,141,87,0.30)] pl-4 sm:gap-3 sm:pl-5">
         {events.map((event) => (
           <li
-            className="grid gap-3 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3.5 sm:grid-cols-[auto_1fr] sm:p-4"
+            className="relative rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2.5 sm:px-4 sm:py-3"
             key={event.key}
           >
-            <div className="flex flex-row items-center gap-2 sm:flex-col sm:items-start sm:gap-1.5">
+            <span
+              aria-hidden="true"
+              className="absolute -left-[7px] top-3 inline-block h-2 w-2 rounded-full border border-[rgba(176,141,87,0.55)] bg-[var(--ixai-forest)] sm:-left-[9px]"
+            />
+            <div className="flex flex-wrap items-center gap-1.5">
               {event.date ? (
-                <span className="inline-flex items-center gap-1 rounded-md border border-[var(--ixai-border)] bg-white/55 px-2 py-1 font-mono text-[10px] text-[var(--ixai-forest-soft)]">
+                <span className="inline-flex items-center gap-1 font-mono text-[10px] text-[var(--ixai-forest-soft)]">
                   <CalendarDays className="h-3 w-3" aria-hidden="true" />
                   {event.date}
                 </span>
               ) : null}
               {typeof event.importance === "number" ? (
                 <span
-                  className={`inline-flex h-7 shrink-0 items-center justify-center rounded-md border px-2 font-mono text-[11px] font-semibold ${importanceTone(event.importance)}`}
+                  className={`inline-flex h-5 items-center rounded-md border px-1.5 font-mono text-[10px] font-semibold ${importanceTone(event.importance)}`}
                 >
                   {event.importance}/10
                 </span>
               ) : null}
-              <span className="rounded-md border border-[var(--ixai-border)] bg-white/45 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
+              <span className="rounded-md border border-[var(--ixai-border)] bg-white/45 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
                 {event.category}
               </span>
             </div>
-            <div>
-              <p className="text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
-                {event.title}
-              </p>
-              <p className="mt-1.5 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                {event.whyItMatters}
-              </p>
-              {event.relatedAssets && event.relatedAssets.length > 0 ? (
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {event.relatedAssets.map((symbol) => (
-                    <span
-                      className="rounded-md border border-[var(--ixai-border)] bg-white/55 px-1.5 py-0.5 font-mono text-[10px] text-[var(--ixai-forest-soft)]"
-                      key={`${event.key}-${symbol}`}
-                    >
-                      {symbol}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-            </div>
+            <p className="mt-1.5 text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
+              {event.title}
+            </p>
+            <p className="mt-1 text-xs leading-6 text-[var(--ixai-forest-soft)] sm:text-sm sm:leading-7">
+              {event.whyItMatters}
+            </p>
+            {event.relatedAssets && event.relatedAssets.length > 0 ? (
+              <div className="mt-1.5 flex flex-wrap gap-1">
+                {event.relatedAssets.slice(0, 4).map((symbol) => (
+                  <span
+                    className="rounded-md border border-[var(--ixai-border)] bg-white/45 px-1.5 py-0.5 font-mono text-[10px] text-[var(--ixai-forest-soft)]"
+                    key={`${event.key}-${symbol}`}
+                  >
+                    {symbol}
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </li>
         ))}
       </ol>

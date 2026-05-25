@@ -9,6 +9,7 @@ import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview"
 import { ProEngineSurface } from "@/components/engines/pro-engine-surface";
 import { BriefGateway } from "@/components/home/brief-gateway";
 import { CrossMarketFlow } from "@/components/home/cross-market-flow";
+import { DailyIntelligenceLoop } from "@/components/home/daily-intelligence-loop";
 import { FcnGateway } from "@/components/home/fcn-gateway";
 import { ImportantEvents } from "@/components/home/important-events";
 import { IntelligenceHero } from "@/components/home/intelligence-hero";
@@ -100,6 +101,11 @@ export default async function Home() {
       {/* v1.29.5 — first-visit welcome banner. Dismissible, localStorage
           marker ixai_onboarding_seen_v1, never shown twice. */}
       <FirstVisitBanner />
+
+      {/* v1.33.2 — Daily Intelligence Loop. Sits between hero and the
+          pricing section so first-time readers immediately understand
+          the IXAI Public rhythm. */}
+      <DailyIntelligenceLoop />
 
       <PricingWhat narrative={narrativeContext.narrative} />
 

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
+import { useIdentity } from "@/components/auth/auth-provider";
 import { MobileDrawer } from "@/components/layout/mobile-drawer";
 import { getMobileSectionTitle } from "@/src/lib/navigation/section-title";
 
@@ -12,10 +13,38 @@ import { getMobileSectionTitle } from "@/src/lib/navigation/section-title";
 // MobileTopInsight strip. Hamburger opens the IXAI Intelligence OS
 // drawer; the center label tracks the current section; the right slot
 // keeps the IXAI logo mark as a home shortcut.
+function pickIdentityName(name: string | null | undefined): string | null {
+  if (!name) {
+    return null;
+  }
+  const trimmed = name.trim();
+  if (!trimmed) {
+    return null;
+  }
+  // Filter mechanical defaults so we never render "Hi user123".
+  if (/^user[\W_]?\d+$/i.test(trimmed) || trimmed.toLowerCase() === "user") {
+    return null;
+  }
+  return trimmed.slice(0, 18);
+}
+
 export function MobileHeader() {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const sectionTitle = getMobileSectionTitle(pathname);
+
+  // v1.33.2 — identity reinforcement. Authenticated users see a short
+  // "Welcome back, {name}" line under the IXAI eyebrow on the mobile
+  // header; guests see "IXAI Intelligence Workspace". We deliberately
+  // avoid generic templates like "Hi user".
+  const { mounted, session } = useIdentity();
+  const isAuthenticated = mounted && session.mode === "authenticated";
+  const identityName = pickIdentityName(session.user?.name ?? session.user?.email ?? null);
+  const identityLine = isAuthenticated
+    ? identityName
+      ? `Welcome back, ${identityName}`
+      : "Your intelligence workspace"
+    : "IXAI Intelligence Workspace";
 
   return (
     <>
@@ -34,9 +63,12 @@ export function MobileHeader() {
 
           <div className="min-w-0 flex-1 text-center">
             <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
-              IXAI
+              {identityLine}
             </p>
-            <p className="mt-0.5 truncate text-sm font-semibold leading-5 text-[var(--ixai-forest)]">
+            <p
+              className="mt-0.5 truncate text-sm font-semibold leading-5 text-[var(--ixai-forest)]"
+              suppressHydrationWarning
+            >
               {sectionTitle}
             </p>
           </div>
