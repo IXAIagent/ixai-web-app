@@ -16,8 +16,10 @@ import { PricingWhat } from "@/components/home/pricing-what";
 import { ProGuardrail } from "@/components/home/pro-guardrail";
 import { FirstVisitBanner } from "@/components/onboarding/first-visit-banner";
 import { OnboardingCard } from "@/components/onboarding/onboarding-card";
+import { ShareActions } from "@/components/share/share-actions";
 import { SectionDivider } from "@/components/ui/section-divider";
-import { buildPublicMetadata } from "@/src/lib/brand/metadata";
+import { buildPublicMetadata, ixaiSiteUrl } from "@/src/lib/brand/metadata";
+import { buildHomeShareCopy } from "@/src/lib/share/share-copy";
 import { getLatestPublishedBriefAsync } from "@/src/lib/editorial/repository";
 import { getFcnPortfolioSnapshot } from "@/src/lib/fcn/engine";
 import { getHomeNarrativeContext } from "@/src/lib/intelligence/home-narrative";
@@ -28,7 +30,20 @@ export const dynamic = "force-dynamic";
 export const metadata = buildPublicMetadata({
   title: "IXAI — AI Wealth Intelligence OS",
   description:
-    "Daily and weekly market intelligence for global investors, built with a risk-first perspective by I-Xuan Investment.",
+    "Daily and weekly market intelligence covering AI, macro, Taiwan semiconductors, crypto, and volatility regime.",
+  keywords: [
+    "IXAI",
+    "AI Wealth Intelligence",
+    "Daily Brief",
+    "Weekly Intelligence",
+    "Market Regime",
+    "Fed",
+    "Taiwan AI",
+    "Semiconductors",
+    "FCN Education",
+    "Risk-first Investing",
+  ],
+  canonical: "/",
 });
 
 function getNarrativeSourceLabel(source: string): string {
@@ -54,6 +69,7 @@ export default async function Home() {
 
   const sourceLabel = getNarrativeSourceLabel(narrativeContext.source);
   const weeklyForGateway = narrativeContext.weeklyBrief;
+  const homeShareCopy = buildHomeShareCopy(ixaiSiteUrl);
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-5 sm:py-4 lg:px-6 lg:py-6">
@@ -64,6 +80,22 @@ export default async function Home() {
         narrative={narrativeContext.narrative}
         sourceLabel={sourceLabel}
       />
+
+      {/* v1.33 — Share row directly under the hero so the regime read can
+          be redistributed in one tap. */}
+      <section className="rounded-2xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+              Share Intelligence
+            </p>
+            <p className="mt-1.5 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              一鍵把今日 IXAI 市場 regime 分享給你的網絡。
+            </p>
+          </div>
+          <ShareActions copy={homeShareCopy} surface="home" />
+        </div>
+      </section>
 
       {/* v1.29.5 — first-visit welcome banner. Dismissible, localStorage
           marker ixai_onboarding_seen_v1, never shown twice. */}

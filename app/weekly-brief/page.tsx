@@ -4,9 +4,22 @@ import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getAllWeeklyBriefsAsync, getLatestWeeklyBriefAsync } from "@/src/lib/weeklyBriefs";
 
 export const metadata = buildPublicMetadata({
-  title: "IXAI Weekly Intelligence — 每週市場 Intelligence",
+  title: "Weekly Intelligence — Market Strategist Note | IXAI",
   description:
-    "IXAI Weekly Intelligence 整理每週市場重點、重大事件、下週觀察、FCN 教育與市場正在 pricing 的核心脈絡。",
+    "IXAI Weekly Intelligence — past-week market recap, next-week calendar, and what the market is pricing across AI, Fed, Taiwan semiconductors and crypto.",
+  keywords: [
+    "Weekly Intelligence",
+    "IXAI",
+    "Market Regime",
+    "AI",
+    "Fed",
+    "Taiwan",
+    "Semiconductors",
+    "Crypto",
+    "Volatility",
+    "FCN Education",
+  ],
+  canonical: "/weekly-brief",
 });
 
 export default async function WeeklyBriefArchivePage() {

@@ -4,6 +4,10 @@ import { AuthEntryGate } from "@/components/auth/auth-entry-gate";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { AppShell } from "@/components/layout/app-shell";
 import {
+  OrganizationStructuredData,
+  WebSiteStructuredData,
+} from "@/components/seo/structured-data";
+import {
   ixaiDefaultDescription,
   ixaiDefaultTitle,
   ixaiMetadataBase,
@@ -85,6 +89,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
+        {/* v1.33 — site-wide structured data. Organization + WebSite JSON-LD
+            so search engines associate every IXAI page with the brand and
+            publisher entity without per-page boilerplate. */}
+        <OrganizationStructuredData />
+        <WebSiteStructuredData />
         <AuthProvider>
           <AuthEntryGate>
             <AppShell>{children}</AppShell>

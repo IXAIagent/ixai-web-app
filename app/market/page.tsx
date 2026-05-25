@@ -6,9 +6,20 @@ import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { MARKET_DATA_DISCLAIMER } from "@/src/lib/market-data/types";
 
 export const metadata = buildPublicMetadata({
-  title: "IXAI 市場總覽 — Market Overview",
+  title: "Market Overview — Macro, AI, Taiwan, Crypto | IXAI",
   description:
-    "IXAI 市場總覽追蹤宏觀資產、Crypto、美股 ETF、美股科技股與台股代表標的，並清楚標示資料狀態。",
+    "IXAI Market Overview — macro assets, US ETFs, AI semiconductors, Taiwan supply chain and crypto quotes with transparent data-status labels.",
+  keywords: [
+    "Market Overview",
+    "IXAI",
+    "Macro",
+    "AI",
+    "Taiwan Semiconductors",
+    "Crypto",
+    "ETF",
+    "Quotes",
+  ],
+  canonical: "/market",
 });
 
 export default function MarketPage() {

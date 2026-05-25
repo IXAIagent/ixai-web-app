@@ -2,7 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight, CalendarDays, ShieldCheck } from "lucide-react";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
-import { buildPublicMetadata } from "@/src/lib/brand/metadata";
+import {
+  BreadcrumbStructuredData,
+  NewsArticleStructuredData,
+} from "@/components/seo/structured-data";
+import { IntelligenceQuoteCard } from "@/components/share/intelligence-quote-card";
+import { ShareActions } from "@/components/share/share-actions";
+import { buildPublicMetadata, ixaiSiteUrl } from "@/src/lib/brand/metadata";
+import { buildWeeklyShareCopy } from "@/src/lib/share/share-copy";
 import {
   getAllWeeklyBriefs,
   getWeeklyBriefBySlugAsync,
@@ -37,9 +44,39 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
+  // v1.33 — Weekly metadata composes from coveragePeriod + executive
+  // summary + (when present) the narrative pricingWhat first line.
+  const pricingLine = brief.narrative?.pricingWhat?.[0];
+  const description = pricingLine
+    ? `${brief.executiveSummary} · 市場正在 pricing：${pricingLine}`
+    : brief.executiveSummary;
+
   return buildPublicMetadata({
-    title: `${brief.title} | IXAI Weekly Brief`,
-    description: brief.executiveSummary,
+    title: `Weekly Intelligence — ${brief.coveragePeriod} | IXAI`,
+    description,
+    keywords: [
+      "Weekly Intelligence",
+      "IXAI",
+      "Market Regime",
+      "AI",
+      "Fed",
+      "Taiwan",
+      "Semiconductors",
+      "Crypto",
+      "Volatility",
+    ],
+    canonical: `/weekly-brief/${slug}`,
+    ogImage: {
+      url: `/api/og/weekly?slug=${encodeURIComponent(slug)}`,
+      alt: `IXAI Weekly Intelligence — ${brief.coveragePeriod}`,
+    },
+    ogType: "article",
+    articleMeta: {
+      publishedTime: brief.publishedAt,
+      modifiedTime: brief.publishedAt,
+      section: "Weekly Intelligence",
+      tags: ["AI", "Fed", "Taiwan", "Crypto", "Volatility", "FCN"],
+    },
   });
 }
 
@@ -53,6 +90,24 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
 
   return (
     <article className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+      <NewsArticleStructuredData
+        headline={brief.title}
+        description={brief.executiveSummary}
+        url={`/weekly-brief/${slug}`}
+        imageUrl={`/api/og/weekly?slug=${encodeURIComponent(slug)}`}
+        publishedAt={brief.publishedAt}
+        modifiedAt={brief.publishedAt}
+        section="Weekly Intelligence"
+        keywords={["AI", "Fed", "Taiwan", "Crypto", "Volatility", "FCN"]}
+      />
+      <BreadcrumbStructuredData
+        items={[
+          { name: "IXAI", url: "/" },
+          { name: "Weekly Intelligence", url: "/weekly-brief" },
+          { name: brief.title, url: `/weekly-brief/${slug}` },
+        ]}
+      />
+
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
           Weekly Intelligence
@@ -77,8 +132,40 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         </div>
       </section>
 
+      {/* v1.33 — Share This Weekly Intelligence */}
+      <section className="rounded-2xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+              Share This Weekly Intelligence
+            </p>
+            <p className="mt-1.5 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              把本週 IXAI 市場 strategist note 分享給你的網絡。
+            </p>
+          </div>
+          <ShareActions
+            copy={buildWeeklyShareCopy({
+              coverage: brief.coveragePeriod,
+              narrative: brief.narrative ?? null,
+              url: `${ixaiSiteUrl}/weekly-brief/${slug}`,
+            })}
+            surface="weekly"
+          />
+        </div>
+      </section>
+
       {brief.narrative ? (
-        <NarrativeIntelligence narrative={brief.narrative} eyebrow="Weekly Narrative Intelligence" />
+        <>
+          <IntelligenceQuoteCard
+            narrative={brief.narrative}
+            eyebrow="IXAI Weekly Intelligence"
+            contextLine={`Coverage · ${brief.coveragePeriod}`}
+          />
+          <NarrativeIntelligence
+            narrative={brief.narrative}
+            eyebrow="Weekly Narrative Intelligence"
+          />
+        </>
       ) : null}
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">

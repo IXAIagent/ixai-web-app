@@ -38,9 +38,21 @@ import type { MarketDataStatus } from "@/src/lib/market-data/types";
 export const dynamic = "force-dynamic";
 
 export const metadata = buildPublicMetadata({
-  title: "IXAI FCN Education Hub — 從理解 FCN 開始",
+  title: "FCN Intelligence & Risk Education | IXAI",
   description:
-    "IXAI FCN Education Hub：用教育、視覺化與 FAQ，建立 coupon、worst-of、KI / KO 與波動率的正確認識。完整風控保留在 IXAI Pro。",
+    "Educational intelligence covering worst-of, volatility, KI/KO mechanics, and structured note risk — the FCN concepts most investors learn after they need them.",
+  keywords: [
+    "FCN",
+    "FCN Education",
+    "Worst-of",
+    "KI",
+    "KO",
+    "Volatility",
+    "Structured Note",
+    "Risk Management",
+    "IXAI",
+  ],
+  canonical: "/fcn",
 });
 
 const riskClasses: Record<FcnRiskLevel, string> = {

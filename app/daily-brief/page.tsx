@@ -5,9 +5,21 @@ import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getAllDailyBriefs } from "@/src/lib/dailyBriefs";
 
 export const metadata = buildPublicMetadata({
-  title: "IXAI Daily Brief — 每日市場情報",
+  title: "Daily Brief — Market Intelligence | IXAI",
   description:
-    "IXAI Daily Brief 提供每日市場情報、AI-assisted 風險觀察與重點市場摘要。",
+    "IXAI Daily Brief — AI-assisted daily market intelligence covering Fed, AI, Taiwan semiconductors, crypto and volatility regime.",
+  keywords: [
+    "Daily Brief",
+    "IXAI",
+    "AI",
+    "Fed",
+    "Taiwan",
+    "Crypto",
+    "Volatility",
+    "Market Regime",
+    "Intelligence",
+  ],
+  canonical: "/daily-brief",
 });
 
 export default function DailyBriefArchivePage() {

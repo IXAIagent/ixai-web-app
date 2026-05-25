@@ -19,14 +19,20 @@ export type AnalyticsEventName =
   | "page_view"
   | "watchlist_add"
   | "watchlist_remove"
+  | "watchlist_open"
   | "pro_interest"
+  | "pro_cta_click"
   | "push_enable"
   | "push_denied"
   | "feedback_click"
   | "onboarding_seen"
   | "onboarding_dismissed"
   | "install_prompt_shown"
-  | "install_prompt_accepted";
+  | "install_prompt_accepted"
+  | "daily_open"
+  | "weekly_open"
+  | "share_click"
+  | "cta_click";
 
 export type AnalyticsEventPayload = Record<string, string | number | boolean | undefined>;
 

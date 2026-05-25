@@ -1,14 +1,20 @@
 import Link from "next/link";
 import { AlertTriangle, ArrowLeft, ArrowUpRight, Eye } from "lucide-react";
 import { DailyBriefLocalDetail } from "@/components/daily-brief/daily-brief-local-detail";
+import {
+  BreadcrumbStructuredData,
+  NewsArticleStructuredData,
+} from "@/components/seo/structured-data";
+import { ShareActions } from "@/components/share/share-actions";
 import type { DailyBrief } from "@/content/daily-briefs";
 import {
   getAllDailyBriefs,
   getDailyBriefBySlug,
 } from "@/src/lib/dailyBriefs";
-import { buildPublicMetadata } from "@/src/lib/brand/metadata";
+import { buildPublicMetadata, ixaiSiteUrl } from "@/src/lib/brand/metadata";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 import { getPublishedBriefBySlugAsync } from "@/src/lib/editorial/repository";
+import { buildDailyShareCopy } from "@/src/lib/share/share-copy";
 
 export const dynamic = "force-dynamic";
 
@@ -39,9 +45,37 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
+  // v1.33 — derive a short market summary line for the title, build a
+  // dynamic OG image off /api/og/daily, and emit article-typed metadata
+  // with publishedTime so social platforms render the editorial card.
+  const shortSummary = (brief.marketSummary ?? "").replace(/\s+/g, " ").slice(0, 80);
+
   return buildPublicMetadata({
-    title: `${brief.title} | IXAI Daily Brief`,
+    title: `Daily Brief — ${shortSummary || brief.title} | IXAI`,
     description: brief.marketSummary,
+    keywords: [
+      "Daily Brief",
+      "IXAI",
+      "AI",
+      "Fed",
+      "Taiwan",
+      "Crypto",
+      "Volatility",
+      "Market Regime",
+      "Intelligence",
+    ],
+    canonical: `/daily-brief/${slug}`,
+    ogImage: {
+      url: `/api/og/daily?slug=${encodeURIComponent(slug)}`,
+      alt: `IXAI Daily Brief — ${brief.title}`,
+    },
+    ogType: "article",
+    articleMeta: {
+      publishedTime: "publishedAt" in brief && brief.publishedAt ? brief.publishedAt : undefined,
+      modifiedTime: "publishedAt" in brief && brief.publishedAt ? brief.publishedAt : undefined,
+      section: "Daily Brief",
+      tags: ["AI", "Fed", "Taiwan", "Crypto", "Volatility"],
+    },
   });
 }
 
@@ -61,6 +95,24 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
 
   return (
     <article className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+      <NewsArticleStructuredData
+        headline={brief.title}
+        description={brief.marketSummary}
+        url={`/daily-brief/${slug}`}
+        imageUrl={`/api/og/daily?slug=${encodeURIComponent(slug)}`}
+        publishedAt={brief.publishedAt}
+        modifiedAt={brief.publishedAt}
+        section="Daily Brief"
+        keywords={["AI", "Fed", "Taiwan", "Crypto", "Volatility"]}
+      />
+      <BreadcrumbStructuredData
+        items={[
+          { name: "IXAI", url: "/" },
+          { name: "Daily Brief", url: "/daily-brief" },
+          { name: brief.title, url: `/daily-brief/${slug}` },
+        ]}
+      />
+
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -81,6 +133,28 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             回到封存
           </Link>
+        </div>
+      </section>
+
+      {/* v1.33 — Share This Daily Brief */}
+      <section className="rounded-2xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+              Share This Daily Brief
+            </p>
+            <p className="mt-1.5 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              把今日 IXAI 市場 narrative 分享給你的網絡。
+            </p>
+          </div>
+          <ShareActions
+            copy={buildDailyShareCopy({
+              publishedAt: brief.publishedAt,
+              narrative: null,
+              url: `${ixaiSiteUrl}/daily-brief/${slug}`,
+            })}
+            surface="daily"
+          />
         </div>
       </section>
 

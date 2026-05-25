@@ -29,28 +29,70 @@ export const ixaiOgImage = {
   width: 1200,
 };
 
+// v1.33 — extend so per-page generators can pass keywords / canonical /
+// a dynamic OG image (e.g. /api/og/weekly?slug=...) and editorial article
+// metadata (publishedTime, modifiedTime, tags). All new fields optional
+// so existing call sites compile unchanged.
+export type BuildPublicMetadataOptions = {
+  description: string;
+  title: string;
+  keywords?: string[];
+  canonical?: string;
+  ogImage?: { url: string; alt: string; width?: number; height?: number };
+  ogType?: "website" | "article";
+  articleMeta?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    section?: string;
+    tags?: string[];
+  };
+};
+
 export function buildPublicMetadata({
   description,
   title,
-}: {
-  description: string;
-  title: string;
-}): Metadata {
+  keywords,
+  canonical,
+  ogImage,
+  ogType = "website",
+  articleMeta,
+}: BuildPublicMetadataOptions): Metadata {
+  const resolvedOgImage = ogImage
+    ? {
+        alt: ogImage.alt,
+        height: ogImage.height ?? 630,
+        url: ogImage.url,
+        width: ogImage.width ?? 1200,
+      }
+    : ixaiOgImage;
+
+  const openGraph: NonNullable<Metadata["openGraph"]> = {
+    description,
+    images: [resolvedOgImage],
+    locale: "zh_TW",
+    siteName: "IXAI",
+    title,
+    type: ogType,
+    ...(articleMeta && ogType === "article"
+      ? {
+          publishedTime: articleMeta.publishedTime,
+          modifiedTime: articleMeta.modifiedTime,
+          section: articleMeta.section,
+          tags: articleMeta.tags,
+        }
+      : {}),
+  };
+
   return {
     description,
-    openGraph: {
-      description,
-      images: [ixaiOgImage],
-      locale: "zh_TW",
-      siteName: "IXAI",
-      title,
-      type: "website",
-    },
+    keywords,
+    alternates: canonical ? { canonical } : undefined,
+    openGraph,
     title,
     twitter: {
       card: "summary_large_image",
       description,
-      images: [ixaiOgImage.url],
+      images: [resolvedOgImage.url],
       title,
     },
   };
