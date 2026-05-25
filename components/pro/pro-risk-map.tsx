@@ -1,8 +1,8 @@
 const RISK_ROWS = [
-  ["AI equities", "High relevance", "Watch concentration in AI supply chain exposure."],
-  ["Macro rates", "Medium pressure", "US 10Y and DXY remain key valuation inputs."],
-  ["Crypto", "Neutral", "Liquidity tone is monitored but not dominant in sample state."],
-  ["FCN basket", "Watch", "Worst-of sensitivity rises when volatility clusters."],
+  ["AI 股票", "高度相關", "觀察 AI 供應鏈曝險是否過度集中。"],
+  ["總經利率", "中度壓力", "US 10Y 與 DXY 仍是估值判讀的關鍵輸入。"],
+  ["Crypto", "中性", "流動性語氣納入監控，但在示意狀態下並非主導因子。"],
+  ["FCN basket", "觀察", "波動聚集時，Worst-of 敏感度會提高。"],
 ];
 
 export function ProRiskMap() {
@@ -10,10 +10,10 @@ export function ProRiskMap() {
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)]">
       <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Portfolio Intelligence Preview
+          Portfolio Intelligence 預覽
         </p>
         <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
-          Sample risk exposure map
+          風險曝險示意圖
         </h2>
       </div>
       <div className="divide-y divide-[var(--ixai-border)]">

@@ -5,11 +5,11 @@ import { useEffect } from "react";
 import { trackEvent } from "@/src/lib/analytics/analytics";
 
 const MOBILE_LINKS = [
-  ["Home", "/admin"],
-  ["Editorial", "/admin/daily-briefs"],
-  ["Audience", "/admin#audience"],
-  ["Membership", "/admin#membership"],
-  ["Distribution", "/admin#distribution"],
+  ["首頁", "/admin"],
+  ["內容", "/admin/daily-briefs"],
+  ["受眾", "/admin#audience"],
+  ["會員", "/admin#membership"],
+  ["分發", "/admin#distribution"],
 ] as const;
 
 export function AdminHeader() {
@@ -25,10 +25,10 @@ export function AdminHeader() {
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Internal Console
+            內部控制台
           </p>
           <h2 className="mt-1 text-sm font-semibold text-[var(--ixai-cream)]">
-            IXAI Operating Console
+            IXAI 營運控制台
           </h2>
         </div>
         <nav

@@ -1025,23 +1025,24 @@ export function DailyBriefsAdmin() {
 
           <StatusCard
             status={persistenceMeta?.writable ? "success" : supabaseReady ? "warning" : "warning"}
-            title="Supabase Persistence Status"
+            title="Supabase 持久化狀態"
           >
             <p>
-              Supabase env: <span className="text-[var(--ixai-cream)]">{supabaseReady ? "configured" : "not configured"}</span>
+              Supabase env: <span className="text-[var(--ixai-cream)]">{supabaseReady ? "已設定" : "未設定"}</span>
             </p>
             <p>
-              Persistence mode:{" "}
+              持久化模式：{" "}
               <span className="text-[var(--ixai-cream)]">
                 {persistenceMeta?.writable
                   ? "durable Supabase"
                   : supabaseReady
-                    ? "read-ready / write fallback"
-                    : "local fallback"}
+                    ? "可讀取 / 寫入 fallback"
+                    : "本機 fallback"}
               </span>
             </p>
             <p className="text-xs leading-5 text-[rgba(245,240,230,0.42)]">
-              Published state uses Supabase when the table and server write key are available; otherwise IXAI falls back safely without breaking review flow.
+              Published state 會在 table 與 server write key 可用時使用 Supabase；否則 IXAI
+              會安全 fallback，不中斷審閱流程。
             </p>
           </StatusCard>
 

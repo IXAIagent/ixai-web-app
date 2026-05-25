@@ -8,24 +8,24 @@ import { getUpgradeReason } from "@/src/lib/membership/entitlements";
 
 const featureCopy: Record<ProFeature, { title: string; copy: string }> = {
   ai_alerts: {
-    title: "Turn market intelligence into AI risk alerts.",
-    copy: "IXAI Pro will connect your watchlist and market memory to personal risk notifications.",
+    title: "將市場情報轉化為 AI 風險警示。",
+    copy: "IXAI Pro 將把你的 Watchlist 與 market memory 連接到個人風險通知。",
   },
   fcn_risk_intelligence: {
-    title: "Bring FCN monitoring into your personal risk workspace.",
-    copy: "Move from FCN education into worst-of, KI distance and coupon schedule monitoring.",
+    title: "把 FCN 監控帶入個人風險工作區。",
+    copy: "從 FCN 教育延伸到 Worst-of、KI 距離與 coupon schedule 監控。",
   },
   portfolio_intelligence: {
-    title: "Make IXAI personal.",
-    copy: "Portfolio Intelligence will connect market regime, concentration and watchlist behavior.",
+    title: "讓 IXAI 成為你的個人情報系統。",
+    copy: "Portfolio Intelligence 將連接市場結構、集中度與 Watchlist 行為。",
   },
   premium_daily: {
-    title: "Extend Daily Brief into a personal morning brief.",
-    copy: "IXAI Pro will turn public intelligence into a workflow tailored to your assets.",
+    title: "把 Daily Brief 延伸為個人晨間簡報。",
+    copy: "IXAI Pro 會把 public intelligence 轉化為貼近個人資產的工作流。",
   },
   premium_weekly: {
-    title: "Connect Weekly Intelligence to your own risk map.",
-    copy: "IXAI Pro will turn weekly narrative into personal portfolio and FCN monitoring.",
+    title: "將 Weekly Intelligence 連接到你的風險地圖。",
+    copy: "IXAI Pro 會把每週市場敘事延伸為 portfolio 與 FCN 監控。",
   },
 };
 
@@ -46,7 +46,7 @@ export function ProUpgradeCard({
           <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
             <LockKeyhole className="h-4 w-4" aria-hidden="true" />
             <p className="font-mono text-[11px] uppercase tracking-[0.22em]">
-              Available in IXAI Pro
+              IXAI Pro 開放能力
             </p>
           </div>
           <h2 className="mt-2 text-xl font-semibold leading-7">{copy.title}</h2>
@@ -66,14 +66,14 @@ export function ProUpgradeCard({
               })
             }
           >
-            Join Pro Waitlist
+            加入 Pro 等候名單
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76"
             href="/pro-preview"
           >
-            See sample Pro intelligence
+            查看 Pro 情報示意
           </Link>
         </div>
       </div>

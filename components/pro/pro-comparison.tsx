@@ -1,8 +1,8 @@
 const ROWS = [
-  ["Market intelligence", "Daily / Weekly Brief、Market Intelligence", "個人化市場記憶與風險脈絡"],
+  ["市場情報", "Daily / Weekly Brief、Market Intelligence", "個人化市場記憶與風險脈絡"],
   ["Watchlist", "基礎自選觀察", "Watchlist Intelligence 與主題提醒"],
   ["FCN", "教育與概念範例", "個人 FCN worst-of / KI / coupon 監控"],
-  ["Risk alerts", "公開市場風險觀察", "AI risk alerts 與個人化 threshold"],
+  ["風險警示", "公開市場風險觀察", "AI risk alerts 與個人化 threshold"],
 ];
 
 export function ProComparison() {
@@ -13,7 +13,7 @@ export function ProComparison() {
           Public vs Pro
         </p>
         <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
-          Free gives market intelligence. Pro gives personal intelligence.
+          Free 提供市場情報，Pro 提供個人化 intelligence。
         </h2>
       </div>
       <div className="divide-y divide-[var(--ixai-border)]">

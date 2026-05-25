@@ -11,20 +11,20 @@ export function ProWaitlistCta({
   return (
     <div className="grid gap-3">
       <EmailCapture
-        description="Join the IXAI Pro waitlist for personal portfolio intelligence, FCN risk monitoring and AI market memory. No payment is required at this preview stage."
+        description="加入 IXAI Pro 等候名單，取得 personal portfolio intelligence、FCN 風險監控與 AI market memory 的後續開放通知。此預覽階段不會收費。"
         metadata={{
           intent: "pro_waitlist",
           requested_feature: requestedFeature,
         }}
         surface={surface}
-        title="Join Pro Waitlist"
+        title="加入 Pro 等候名單"
         variant="inline"
       />
       <Link
         className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-white/45 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
         href="/pro-preview"
       >
-        View Pro Preview Dashboard
+        查看 Pro 預覽控制台
       </Link>
     </div>
   );

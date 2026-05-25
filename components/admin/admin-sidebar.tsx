@@ -6,45 +6,45 @@ import { trackEvent } from "@/src/lib/analytics/analytics";
 
 const GROUPS = [
   {
-    heading: "Overview",
+    heading: "總覽",
     items: [
-      ["Console Home", "/admin"],
-      ["Intelligence Snapshot", "/admin#intelligence"],
-      ["Audience Graph", "/admin#audience"],
-      ["Conversion Funnel", "/admin#funnel"],
+      ["控制台首頁", "/admin"],
+      ["情報快照", "/admin#intelligence"],
+      ["受眾圖譜", "/admin#audience"],
+      ["轉換漏斗", "/admin#funnel"],
     ],
   },
   {
-    heading: "Editorial",
+    heading: "內容營運",
     items: [
-      ["Daily Pipeline", "/admin/daily-briefs"],
-      ["Weekly Pipeline", "/admin/daily-briefs#weekly"],
-      ["Publishing Queue", "/admin/daily-briefs#queue"],
+      ["每日簡報流程", "/admin/daily-briefs"],
+      ["每週情報流程", "/admin/daily-briefs#weekly"],
+      ["發佈佇列", "/admin/daily-briefs#queue"],
     ],
   },
   {
-    heading: "Growth",
+    heading: "成長營運",
     items: [
-      ["Subscribers", "/admin#distribution"],
-      ["Membership", "/admin#membership"],
-      ["Pro Waitlist", "/admin#membership"],
-      ["Distribution", "/admin#distribution"],
+      ["訂閱者", "/admin#distribution"],
+      ["會員系統", "/admin#membership"],
+      ["Pro 等候名單", "/admin#membership"],
+      ["分發系統", "/admin#distribution"],
     ],
   },
   {
-    heading: "Analytics",
+    heading: "分析",
     items: [
-      ["PostHog Events", "/admin#intelligence"],
-      ["Search Console", "/admin#system"],
-      ["Source Attribution", "/admin#distribution"],
+      ["PostHog 事件", "/admin#intelligence"],
+      ["搜尋流量", "/admin#system"],
+      ["來源歸因", "/admin#distribution"],
     ],
   },
   {
-    heading: "System",
+    heading: "系統",
     items: [
-      ["Environment", "/admin#system"],
-      ["Health", "/admin#system"],
-      ["Logs", "/admin#system"],
+      ["環境變數", "/admin#system"],
+      ["系統健康", "/admin#system"],
+      ["系統紀錄", "/admin#system"],
     ],
   },
 ] as const;
@@ -65,10 +65,10 @@ export function AdminSidebar() {
           IXAI
         </p>
         <h1 className="mt-2 text-lg font-semibold text-[var(--ixai-cream)]">
-          Operating Console
+          營運控制台
         </h1>
         <p className="mt-2 text-xs leading-5 text-white/42">
-          Internal intelligence, audience, distribution and membership control layer.
+          內部情報、受眾、分發與會員營運控制層。
         </p>
       </div>
       <nav className="flex flex-1 flex-col gap-4 overflow-y-auto px-3 py-4">

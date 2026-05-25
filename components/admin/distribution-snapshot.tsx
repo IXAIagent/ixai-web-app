@@ -88,7 +88,7 @@ export function DistributionSnapshot() {
         });
 
         if (!response.ok) {
-          throw new Error("Unable to load subscriber stats.");
+          throw new Error("無法載入訂閱者統計。");
         }
 
         const payload = (await response.json()) as {
@@ -97,7 +97,7 @@ export function DistributionSnapshot() {
         };
 
         if (!payload.ok || !payload.stats) {
-          throw new Error("Invalid subscriber stats response.");
+          throw new Error("訂閱者統計回應格式不正確。");
         }
 
         if (!ignore) {
@@ -123,25 +123,25 @@ export function DistributionSnapshot() {
       ? "Supabase"
       : stats.configured
         ? "Memory fallback"
-        : "Memory / not configured"
-    : "Loading";
+        : "Memory / 未設定"
+    : "載入中";
 
   return (
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[#0a2119] p-5 text-[var(--ixai-cream)] sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Distribution Snapshot
+            分發快照
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7">
-            Subscribers · email captures · source attribution
+            訂閱者 · Email 捕捉 · 來源歸因
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
             {state === "loading"
-              ? "Loading subscriber telemetry from the distribution repository."
+              ? "正在從分發 repository 載入訂閱者 telemetry。"
               : state === "error"
-                ? "Subscriber telemetry is temporarily unavailable."
-                : "Aggregated subscriber telemetry only. Raw emails are not exposed in the admin snapshot."}
+                ? "訂閱者 telemetry 暫時無法取得。"
+                : "僅顯示聚合後的訂閱者 telemetry。原始 email 不會出現在 Admin 快照。"}
           </p>
         </div>
         <span className="hidden rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)] sm:inline-flex">
@@ -150,33 +150,33 @@ export function DistributionSnapshot() {
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-        <Metric icon={BarChart3} label="Subscribers" value={stats?.activeSubscribers ?? 0} />
-        <Metric icon={Mail} label="Email captures" value={stats?.totalCaptured ?? 0} />
-        <Metric icon={Database} label="Last 7 days" value={stats?.last7DaysCaptures ?? 0} />
-        <Metric icon={MessageCircle} label="LINE OA clicks" value={0} />
+        <Metric icon={BarChart3} label="訂閱者" value={stats?.activeSubscribers ?? 0} />
+        <Metric icon={Mail} label="Email 捕捉" value={stats?.totalCaptured ?? 0} />
+        <Metric icon={Database} label="近 7 日" value={stats?.last7DaysCaptures ?? 0} />
+        <Metric icon={MessageCircle} label="LINE OA 點擊" value={0} />
       </div>
 
       <div className="mt-5 grid gap-3 lg:grid-cols-2">
         <Rows
-          emptyLabel="No captured surfaces yet."
+          emptyLabel="尚無捕捉入口資料。"
           rows={stats?.topSurfaces ?? []}
-          title="Top surfaces"
+          title="熱門入口"
         />
         <Rows
-          emptyLabel="No UTM sources yet."
+          emptyLabel="尚無 UTM 來源資料。"
           rows={stats?.topUtmSources ?? []}
-          title="Top UTM sources"
+          title="主要 UTM 來源"
         />
       </div>
 
       <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
         <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
           <MousePointerClick className="h-3.5 w-3.5" aria-hidden="true" />
-          Persistence mode
+          持久化模式
         </div>
         <p className="mt-2">
-          {persistenceLabel}. Subscribe writes use Supabase service role when configured;
-          otherwise local development falls back to memory mode.
+          {persistenceLabel}。Subscribe writes 會在設定完成時使用 Supabase service role；
+          本機開發或未設定時會回落到 memory mode。
         </p>
       </div>
     </section>

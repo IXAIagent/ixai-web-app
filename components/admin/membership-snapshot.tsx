@@ -76,7 +76,7 @@ export function MembershipSnapshot() {
         const payload = (await response.json()) as SnapshotResponse;
 
         if (!response.ok || !payload.ok || !payload.snapshot) {
-          throw new Error(payload.message || "Unable to load membership snapshot.");
+          throw new Error(payload.message || "無法載入會員快照。");
         }
 
         if (!active) {
@@ -104,26 +104,26 @@ export function MembershipSnapshot() {
 
   const persistenceLabel =
     state === "loading"
-      ? "Loading"
+      ? "載入中"
       : snapshot.persistence === "supabase"
         ? "Supabase"
         : snapshot.configured
           ? "Memory fallback"
-          : "Memory / not configured";
+          : "Memory / 未設定";
 
   return (
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[#0a2119] p-5 text-[var(--ixai-cream)] sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Membership Snapshot
+            會員系統快照
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7">
-            Pro entitlement foundation
+            Pro 權限基礎
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-            Aggregated membership and conversion readiness only. Raw emails and
-            member records are not exposed in this admin surface.
+            僅顯示聚合後的會員與轉換準備狀態。原始 email 與會員 records
+            不會出現在此 Admin 介面。
           </p>
         </div>
         <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)]">
@@ -134,30 +134,30 @@ export function MembershipSnapshot() {
 
       {state === "error" ? (
         <div className="mt-5 rounded-lg border border-red-300/20 bg-red-950/20 p-4 text-sm leading-6 text-red-100/80">
-          Membership snapshot is temporarily unavailable.
+          會員快照暫時無法取得。
         </div>
       ) : null}
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <Metric icon={Users} label="Total members" value={snapshot.totalMembers} />
-        <Metric icon={Users} label="Free members" value={snapshot.freeMembers} />
+        <Metric icon={Users} label="總會員" value={snapshot.totalMembers} />
+        <Metric icon={Users} label="Free 會員" value={snapshot.freeMembers} />
         <Metric icon={BadgeCheck} label="Active Pro" value={snapshot.activePro} />
-        <Metric icon={Sparkles} label="Trials" value={snapshot.trials} />
-        <Metric icon={Sparkles} label="Pro waitlist" value={snapshot.proWaitlistCount} />
+        <Metric icon={Sparkles} label="試用" value={snapshot.trials} />
+        <Metric icon={Sparkles} label="Pro 等候名單" value={snapshot.proWaitlistCount} />
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <Metric icon={BarChart3} label="Pro candidates" value={snapshot.proCandidates} />
+        <Metric icon={BarChart3} label="Pro 候選" value={snapshot.proCandidates} />
         <Metric
           icon={BarChart3}
-          label="Conversion candidates"
+          label="轉換候選"
           value={snapshot.conversionCandidates}
         />
-        <Metric icon={Clock} label="Expired" value={snapshot.expired} />
+        <Metric icon={Clock} label="已過期" value={snapshot.expired} />
         <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" />
-            Pro conversion rate
+            Pro 轉換率
           </div>
           <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
             {snapshot.proConversionRate.toLocaleString(undefined, {
@@ -171,11 +171,11 @@ export function MembershipSnapshot() {
 
       <div className="mt-5 grid gap-3 lg:grid-cols-2">
         {[
-          ["Top plans", snapshot.topPlans, "No membership records yet."],
+          ["主要方案", snapshot.topPlans, "尚無會員紀錄。"],
           [
-            "Top requested Pro features",
+            "主要 Pro 功能需求",
             snapshot.topRequestedProFeatures,
-            "No Pro waitlist feature requests yet.",
+            "尚無 Pro 等候名單功能需求。",
           ],
         ].map(([title, rows, emptyLabel]) => (
           <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4" key={title as string}>

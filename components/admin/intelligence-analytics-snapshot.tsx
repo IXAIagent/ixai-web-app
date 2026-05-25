@@ -134,7 +134,7 @@ export function IntelligenceAnalyticsSnapshot() {
         const payload = (await response.json()) as SnapshotResponse;
 
         if (!response.ok || !payload.ok || !payload.snapshot) {
-          throw new Error(payload.message || "Unable to load analytics snapshot.");
+          throw new Error(payload.message || "無法載入分析快照。");
         }
 
         if (!active) {
@@ -150,7 +150,7 @@ export function IntelligenceAnalyticsSnapshot() {
         }
 
         setSnapshot(EMPTY_SNAPSHOT);
-        setNote(error instanceof Error ? error.message : "Unable to load analytics snapshot.");
+        setNote(error instanceof Error ? error.message : "無法載入分析快照。");
         setState("error");
       }
     }
@@ -169,14 +169,14 @@ export function IntelligenceAnalyticsSnapshot() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Intelligence Analytics Snapshot
+            情報分析快照
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7">
-            Public Intelligence usage overview
+            Public Intelligence 使用概況
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-            Real event aggregation for public intelligence usage. Raw events and
-            user-level analytics are not exposed in the admin console.
+            Public Intelligence 使用行為的真實事件聚合。原始事件與個別使用者層級資料
+            不會顯示在管理控制台。
           </p>
           {note ? (
             <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
@@ -186,40 +186,39 @@ export function IntelligenceAnalyticsSnapshot() {
         </div>
         <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)]">
           <Radio className="h-3 w-3 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {state === "loading" ? "Loading" : isDisabled ? "Disabled" : "PostHog"}
+          {state === "loading" ? "載入中" : isDisabled ? "未啟用" : "PostHog"}
         </span>
       </div>
 
       {state === "error" ? (
         <div className="mt-5 rounded-lg border border-red-300/20 bg-red-950/20 p-4 text-sm leading-6 text-red-100/80">
-          Analytics snapshot is temporarily unavailable. Public app analytics
-          continue to fail silently.
+          分析快照暫時無法取得。Public App analytics 仍會以 silent fail 處理。
         </div>
       ) : null}
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <SnapshotMetric icon={BarChart3} label="Weekly opens" value={snapshot.weeklyOpens} />
-        <SnapshotMetric icon={Activity} label="Daily opens" value={snapshot.dailyOpens} />
-        <SnapshotMetric icon={TrendingUp} label="Market opens" value={snapshot.marketOpens} />
-        <SnapshotMetric icon={Share2} label="Share clicks" value={snapshot.shareClicks} />
-        <SnapshotMetric icon={MousePointerClick} label="CTA clicks" value={snapshot.ctaClicks} />
+        <SnapshotMetric icon={BarChart3} label="每週開啟" value={snapshot.weeklyOpens} />
+        <SnapshotMetric icon={Activity} label="每日開啟" value={snapshot.dailyOpens} />
+        <SnapshotMetric icon={TrendingUp} label="市場開啟" value={snapshot.marketOpens} />
+        <SnapshotMetric icon={Share2} label="分享點擊" value={snapshot.shareClicks} />
+        <SnapshotMetric icon={MousePointerClick} label="CTA 點擊" value={snapshot.ctaClicks} />
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-3">
         <SnapshotMetric
           icon={Activity}
-          label="Known subscribers"
+          label="已識別訂閱者"
           value={snapshot.knownSubscribers}
         />
         <SnapshotMetric
           icon={Radio}
-          label="Anonymous visitors"
+          label="匿名訪客"
           value={snapshot.anonymousVisitors}
         />
         <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
-            Conversion rate
+            轉換率
           </div>
           <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
             {snapshot.subscriberConversionRate.toLocaleString(undefined, {
@@ -233,25 +232,25 @@ export function IntelligenceAnalyticsSnapshot() {
 
       <div className="mt-5 grid gap-3 lg:grid-cols-3">
         <SnapshotList
-          emptyLabel={isDisabled ? "PostHog aggregation is not configured." : "No surfaces yet."}
+          emptyLabel={isDisabled ? "PostHog 聚合尚未設定。" : "尚無入口資料。"}
           rows={snapshot.topSurfaces}
-          title="Top surfaces"
+          title="熱門入口"
         />
         <SnapshotList
-          emptyLabel="No referrer data yet."
+          emptyLabel="尚無來源資料。"
           rows={snapshot.topReferrers}
-          title="Top referrers"
+          title="主要來源"
         />
         <SnapshotList
-          emptyLabel="No UTM data yet."
+          emptyLabel="尚無 UTM 資料。"
           rows={snapshot.topUtmSources}
-          title="Top UTM sources"
+          title="主要 UTM 來源"
         />
       </div>
 
       <div className="mt-3 rounded-lg border border-white/10 bg-white/[0.035] p-4">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-          Last 7 days trend
+          近 7 日趨勢
         </p>
         <div className="mt-2 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-7">
           {snapshot.trends.length ? (
@@ -270,7 +269,7 @@ export function IntelligenceAnalyticsSnapshot() {
             ))
           ) : (
             <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 text-xs text-[rgba(245,240,230,0.52)] sm:col-span-2 lg:col-span-7">
-              No trend data available yet.
+              尚無趨勢資料。
             </p>
           )}
         </div>

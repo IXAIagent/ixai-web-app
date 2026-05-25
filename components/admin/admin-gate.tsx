@@ -97,16 +97,16 @@ export function AdminGate({
       <div className="mx-auto flex min-h-[70vh] w-full max-w-3xl items-center">
         <section className="w-full rounded-lg border border-white/10 bg-white/[0.035] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.24)] sm:p-7">
           <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-            Internal Editorial Access
+            內部內容營運權限
           </p>
           <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
-            IXAI Editorial Console
+            IXAI 內容營運控制台
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
             內部內容營運後台。
             {mode === "development"
               ? "目前未設定管理密碼，僅允許本機開發模式進入。"
-              : "請輸入管理密碼後進入 Daily Brief draft pipeline。"}
+              : "請輸入管理密碼後進入 Editorial Studio。"}
           </p>
 
           <form className="mt-7 grid gap-4" onSubmit={handleSubmit}>

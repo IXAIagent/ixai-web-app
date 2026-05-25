@@ -78,19 +78,19 @@ const EMPTY: Snapshot = {
 };
 
 const SURFACE_LABELS: Record<AudienceSurface, string> = {
-  weekly: "Weekly Intelligence",
-  daily: "Daily Brief",
-  market: "Market Overview",
-  fcn: "FCN Education",
+  weekly: "每週情報",
+  daily: "每日簡報",
+  market: "市場總覽",
+  fcn: "FCN 教育",
 };
 
 const TAG_LABELS: Record<string, string> = {
-  line_connected: "LINE connected",
-  high_engagement: "High engagement",
-  pro_candidate: "Pro candidate",
-  crypto_reader: "Crypto reader",
-  fcn_reader: "FCN reader",
-  macro_reader: "Macro reader",
+  line_connected: "LINE 已連接",
+  high_engagement: "高互動",
+  pro_candidate: "Pro 候選",
+  crypto_reader: "Crypto 讀者",
+  fcn_reader: "FCN 讀者",
+  macro_reader: "總經讀者",
 };
 
 type MetricProps = {
@@ -167,7 +167,7 @@ export function AudienceSnapshot() {
         });
         const payload = (await response.json()) as Response;
         if (!response.ok || !payload.ok || !payload.snapshot) {
-          throw new Error(payload.message || "Unable to load audience snapshot.");
+          throw new Error(payload.message || "無法載入受眾快照。");
         }
         if (!active) return;
         setSnapshot(payload.snapshot);
@@ -177,7 +177,7 @@ export function AudienceSnapshot() {
       } catch (error) {
         if (!active) return;
         setSnapshot(EMPTY);
-        setNote(error instanceof Error ? error.message : "Unable to load audience snapshot.");
+        setNote(error instanceof Error ? error.message : "無法載入受眾快照。");
         setState("error");
       }
     }
@@ -203,14 +203,13 @@ export function AudienceSnapshot() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Audience Snapshot
+            受眾快照
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7">
-            Subscriber engagement graph
+            訂閱者互動圖譜
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-            Aggregated counts from the IXAI subscriber profile layer. Raw rows
-            and email addresses stay in the database.
+            受眾資料已於伺服器端聚合。原始 rows 與 email 地址只保留於資料庫。
           </p>
           {note ? (
             <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
@@ -220,7 +219,7 @@ export function AudienceSnapshot() {
         </div>
         <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)]">
           {state === "loading"
-            ? "Loading"
+            ? "載入中"
             : snapshot.mode === "supabase"
               ? "Supabase"
               : "Memory"}
@@ -229,46 +228,46 @@ export function AudienceSnapshot() {
 
       {state === "error" ? (
         <div className="mt-5 rounded-lg border border-red-300/20 bg-red-950/20 p-4 text-sm leading-6 text-red-100/80">
-          Audience snapshot is temporarily unavailable. Subscriber capture continues to write durably.
+          受眾快照暫時無法取得。訂閱者捕捉仍會維持 durable write。
         </div>
       ) : null}
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <Metric icon={Users} label="Total profiles" value={snapshot.totalProfiles} />
-        <Metric icon={Sparkles} label="High engagement" value={snapshot.highEngagementCount} />
-        <Metric icon={TrendingUp} label="Pro candidates" value={snapshot.proCandidateCount} />
-        <Metric icon={Activity} label="Returning readers" value={snapshot.returningReaderCount} />
+        <Metric icon={Users} label="總受眾" value={snapshot.totalProfiles} />
+        <Metric icon={Sparkles} label="高互動" value={snapshot.highEngagementCount} />
+        <Metric icon={TrendingUp} label="Pro 候選" value={snapshot.proCandidateCount} />
+        <Metric icon={Activity} label="回訪讀者" value={snapshot.returningReaderCount} />
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <Metric icon={BookOpenCheck} label="Avg read depth %" value={snapshot.avgReadDepth} />
-        <Metric icon={Activity} label="Active (7d)" value={snapshot.recentlyActiveCount} />
-        <Metric icon={MessageCircle} label="LINE connected" value={line.linkedCount || snapshot.lineConnectedCount} />
-        <Metric icon={Users} label="Active subscribers" value={snapshot.activeProfiles} />
+        <Metric icon={BookOpenCheck} label="平均閱讀深度 %" value={snapshot.avgReadDepth} />
+        <Metric icon={Activity} label="近期活躍（7 日）" value={snapshot.recentlyActiveCount} />
+        <Metric icon={MessageCircle} label="LINE 已連接" value={line.linkedCount || snapshot.lineConnectedCount} />
+        <Metric icon={Users} label="活躍訂閱者" value={snapshot.activeProfiles} />
       </div>
 
       <div className="mt-5 grid gap-3 lg:grid-cols-2">
         <ListBlock
-          emptyLabel="No favorite surface yet — readers will appear here once profile reads accumulate."
+          emptyLabel="尚無偏好入口資料；累積閱讀行為後會出現在此。"
           rows={surfaceRows}
-          title="Favorite surface distribution"
+          title="偏好入口分布"
         />
         <ListBlock
-          emptyLabel="No segments assigned yet."
+          emptyLabel="尚未建立受眾分眾。"
           rows={segmentRows}
-          title="Top audience segments"
+          title="主要受眾分眾"
         />
       </div>
 
       <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.035] p-4">
         <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
           <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
-          LINE Identity Bridge
+          LINE 身分橋接
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div className="rounded-md border border-white/10 bg-white/[0.045] p-3">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.62)]">
-              Linked accounts
+              已連接帳戶
             </p>
             <p className="mt-1.5 font-mono text-xl font-semibold text-[var(--ixai-cream)]">
               {line.linkedCount.toLocaleString()}
@@ -276,7 +275,7 @@ export function AudienceSnapshot() {
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.045] p-3">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.62)]">
-              Connection rate
+              連接率
             </p>
             <p className="mt-1.5 font-mono text-xl font-semibold text-[var(--ixai-cream)]">
               {line.connectionRate.toFixed(1)}%
@@ -284,7 +283,7 @@ export function AudienceSnapshot() {
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.045] p-3">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.62)]">
-              Active (7d)
+              近期活躍（7 日）
             </p>
             <p className="mt-1.5 font-mono text-xl font-semibold text-[var(--ixai-cream)]">
               {line.recentlyActiveCount.toLocaleString()}
@@ -292,7 +291,8 @@ export function AudienceSnapshot() {
           </div>
         </div>
         <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
-          LINE bridge is a foundation — real LIFF / OAuth wiring will land in a follow-up. The endpoint is gated by IXAI_LINE_LINK_SECRET; no client OAuth is exposed.
+          LINE 身分橋接為基礎能力；正式 LIFF / OAuth 串接將於後續版本完成。Endpoint
+          由 IXAI_LINE_LINK_SECRET 保護，不在 client 暴露 OAuth 機制。
         </p>
       </div>
     </section>
