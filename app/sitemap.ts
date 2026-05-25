@@ -23,26 +23,36 @@ function buildUrl(path: string): string {
   return `${ixaiSiteUrl}${path}`;
 }
 
+function toSitemapDate(date: Date | string): string {
+  const value = date instanceof Date ? date : new Date(date);
+
+  if (Number.isNaN(value.getTime())) {
+    return new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+  }
+
+  return value.toISOString().replace(/\.\d{3}Z$/, "Z");
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date().toISOString();
+  const now = toSitemapDate(new Date());
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
     url: buildUrl(route.path),
-    lastModified: now,
+    lastModified: toSitemapDate(now),
     changeFrequency: route.changeFrequency,
     priority: route.priority,
   }));
 
   const dailyEntries: MetadataRoute.Sitemap = getAllDailyBriefs().map((brief) => ({
     url: buildUrl(`/daily-brief/${brief.slug}`),
-    lastModified: brief.publishedAt ?? now,
+    lastModified: toSitemapDate(brief.publishedAt ?? now),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 
   const weeklyEntries: MetadataRoute.Sitemap = getAllWeeklyBriefs().map((brief) => ({
     url: buildUrl(`/weekly-brief/${brief.slug}`),
-    lastModified: brief.publishedAt ?? now,
+    lastModified: toSitemapDate(brief.publishedAt ?? now),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
