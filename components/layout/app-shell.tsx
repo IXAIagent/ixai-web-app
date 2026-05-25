@@ -1,7 +1,6 @@
-import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { Footer } from "@/components/layout/footer";
+import { MobileHeader } from "@/components/layout/mobile-header";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { MobileTopInsight } from "@/components/layout/mobile-top-insight";
 import { Sidebar } from "@/components/layout/sidebar";
 import { OfflineStatus } from "@/components/pwa/offline-status";
 import { PwaRegister } from "@/components/pwa/pwa-register";
@@ -9,15 +8,11 @@ import { PwaRegister } from "@/components/pwa/pwa-register";
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="min-h-screen bg-[var(--ixai-cream)] text-[var(--foreground)]">
-      {/* v1.7: mobile top bar shows today's headline so the morning user gets
-          insight at first glance, before any scroll. Replaces the generic
-          "市場入口" label. Truncated to one line via line-clamp-1. */}
-      <div className="fixed inset-x-0 top-0 z-20 border-b border-[rgba(176,141,87,0.28)] bg-[rgba(245,240,230,0.90)] px-3.5 pb-2.5 pt-[calc(env(safe-area-inset-top)+0.6rem)] backdrop-blur md:hidden">
-        <div className="flex items-center justify-between gap-3">
-          <MobileTopInsight />
-          <IxaiLogoFrame className="h-8 w-12" logoSize="xs" priority />
-        </div>
-      </div>
+      {/* v1.32.1 — mobile top bar now carries hamburger + section title +
+          IXAI mark. The MobileHeader component owns the drawer so the
+          app-shell stays declarative and there is only ever one header
+          per breakpoint (mobile-only). Desktop sidebar is unchanged. */}
+      <MobileHeader />
 
       <Sidebar />
       <PwaRegister />
