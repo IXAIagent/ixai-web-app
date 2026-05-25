@@ -1,4 +1,5 @@
 import { weeklyBrief20260517 } from "@/content/weekly-briefs/2026-05-17-weekly-brief";
+import type { WeeklyNarrativeBundle } from "@/src/types/editorial";
 
 export type WeeklyBriefMajorEvent = {
   category: string;
@@ -86,6 +87,8 @@ export type WeeklyBrief = {
   riskNotes: string[];
   sources: WeeklyBriefSource[];
   cta: WeeklyBriefCta;
+  // v1.32 — optional narrative intelligence bundle for Public surfaces.
+  narrative?: WeeklyNarrativeBundle;
 };
 
 export const weeklyBriefs: WeeklyBrief[] = [weeklyBrief20260517];

@@ -15,6 +15,10 @@ import {
   selectUpcomingTaiwanEvents,
   type UpcomingEvent,
 } from "@/src/lib/editorial/weekly-calendar";
+import {
+  buildNarrativeBundle,
+  type NarrativeBundle,
+} from "@/src/lib/intelligence/narrative-engine";
 import type {
   WeeklyDraftGenerationSummary,
   WeeklyIntelligenceAiSuggestion,
@@ -797,6 +801,7 @@ function buildWeeklySections({
   upcomingFedMacro,
   sourcesUsed,
   categorization,
+  narrative,
 }: {
   intake: NewsIntakeResult;
   past: WeeklyPastWeekHighlights;
@@ -806,6 +811,7 @@ function buildWeeklySections({
   upcomingFedMacro: UpcomingEvent[];
   sourcesUsed: WeeklySourceUsed[];
   categorization: CategorizationResult;
+  narrative: NarrativeBundle;
 }): WeeklyIntelligenceSections {
   const fedRatesPast = past.fedRatesMacro[0];
   const taiwanPast = past.taiwanEquities[0];
@@ -862,6 +868,28 @@ function buildWeeklySections({
       duplicatesRemoved: categorization.duplicatesRemoved,
       upcomingEventsCount: upcoming.length,
       sourcesUsedCount: sourcesUsed.length,
+    },
+    // v1.32 — narrative intelligence bundle is persisted inside sections
+    // so existing jsonb storage continues to round-trip and old rows stay
+    // valid (the field is optional). Public surfaces render the bundle as
+    // narrative cards; admin can preview it without a separate fetch.
+    narrative: {
+      marketNarrative: narrative.marketNarrative,
+      pricingWhat: narrative.pricingWhat,
+      riskFocus: narrative.riskFocus,
+      crossMarketNarrative: narrative.crossMarketNarrative,
+      crossMarketLinks: narrative.crossMarketLinks,
+      volatilityNarrative: narrative.volatilityNarrative,
+      aiNarrative: narrative.aiNarrative,
+      taiwanNarrative: narrative.taiwanNarrative,
+      intelligenceTakeaway: narrative.intelligenceTakeaway,
+      regime: {
+        regime: narrative.regime.regime,
+        aiMomentum: narrative.regime.aiMomentum,
+        macroPressure: narrative.regime.macroPressure,
+        volatilityState: narrative.regime.volatilityState,
+      },
+      importanceRanking: narrative.importanceRanking,
     },
   };
 }
@@ -987,6 +1015,30 @@ export async function generateWeeklyIntelligenceDraft({
   const upcomingTaiwan = selectUpcomingTaiwanEvents(upcoming);
   const upcomingFedMacro = selectUpcomingFedMacro(upcoming);
   const sourcesUsed = buildSourcesUsed(categorization);
+
+  // v1.32 — narrative bundle: regime inference, importance ranking, and
+  // institutional-tone cross-market narrative. Built from the same
+  // intake.items the categorizer used so the narrative reflects the
+  // selected content, not raw news noise.
+  const narrative = buildNarrativeBundle({
+    items: intake.items,
+    upcomingEvents: upcoming.map((event) => ({
+      date: event.date,
+      title: event.title,
+      category: event.category,
+      whyItMatters: event.whyItMatters,
+      relatedAssets: event.relatedAssets,
+    })),
+    pastTopByCategory: {
+      fedMacro: categorization.sections.fedRatesMacro[0],
+      aiSemi: categorization.sections.aiSemiconductors[0],
+      taiwan: categorization.sections.taiwanEquities[0],
+      crypto: categorization.sections.crypto[0],
+      usEquities: categorization.sections.usEquities[0],
+      earnings: categorization.sections.earnings[0],
+    },
+  });
+
   const sections = buildWeeklySections({
     intake,
     past,
@@ -996,6 +1048,7 @@ export async function generateWeeklyIntelligenceDraft({
     upcomingFedMacro,
     sourcesUsed,
     categorization,
+    narrative,
   });
   const aiSuggestion = buildAiSuggestion(sections, intake, upcoming);
   const slug = force
@@ -1209,6 +1262,10 @@ export function weeklyDraftToBrief(draft: WeeklyIntelligenceDraft): WeeklyBrief 
       secondaryLabel: "閱讀每日簡報",
       secondaryHref: "/daily-brief",
     },
+    // v1.32 — narrative intelligence bundle pass-through. Optional so
+    // legacy static / v1.31 rows without narrative still render as
+    // event-list briefs.
+    narrative: draft.sections.narrative,
   };
 }
 

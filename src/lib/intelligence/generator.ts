@@ -12,6 +12,7 @@ import type {
   DailyIntelligenceProviderStatus,
 } from "@/src/types/editorial";
 import { log } from "@/src/lib/log";
+import { buildNarrativeBundle } from "@/src/lib/intelligence/narrative-engine";
 import type { NewsIntakeMode, NormalizedNewsItem } from "@/src/types/news";
 
 const COMPLIANCE_NOTE =
@@ -97,6 +98,22 @@ export function generateDailyIntelligenceFromNews(
   const macro = byCategory(newsItems, "macro");
   const generatedAt = nowIso();
 
+  // v1.32 — narrative intelligence bundle. Daily generation has no curated
+  // upcoming calendar (that lives in the Weekly editorial flow), so we
+  // pass an empty list — the engine still produces regime + importance
+  // ranking + market narrative + cross-market links derived purely from
+  // today's selected headlines.
+  const narrative = buildNarrativeBundle({
+    items: newsItems,
+    upcomingEvents: [],
+    pastTopByCategory: {
+      fedMacro: rates ?? macro,
+      aiSemi: ai,
+      taiwan,
+      crypto,
+    },
+  });
+
   return {
     todayHeadline: "利率仍是定價核心，AI 與 Crypto 風險偏好需要重新校準",
     riskFocus: {
@@ -146,6 +163,7 @@ export function generateDailyIntelligenceFromNews(
     inputNewsCount: newsItems.length,
     sourceLabels: options.sourceLabels,
     complianceNote: COMPLIANCE_NOTE,
+    narrative,
   };
 }
 
@@ -161,6 +179,28 @@ function generateDailyIntelligenceFromAI(
         providerMode,
         sourceMode: aiDraft.sourceMode,
       }).feedItems;
+
+  // v1.32 — even when OpenAI is the primary generator, the narrative
+  // bundle is derived deterministically from the same intake so admin /
+  // public surfaces always render the regime, importance ranking and
+  // cross-market narrative. Removes provider-dependency for the layer.
+  const fedItem = newsItems.find((item) => item.category === "rates")
+    ?? newsItems.find((item) => item.category === "macro");
+  const aiItem = newsItems.find(
+    (item) => item.category === "ai_tech" || item.category === "semiconductors",
+  );
+  const taiwanItem = newsItems.find((item) => item.category === "taiwan");
+  const cryptoItem = newsItems.find((item) => item.category === "crypto");
+  const narrative = buildNarrativeBundle({
+    items: newsItems,
+    upcomingEvents: [],
+    pastTopByCategory: {
+      fedMacro: fedItem,
+      aiSemi: aiItem,
+      taiwan: taiwanItem,
+      crypto: cryptoItem,
+    },
+  });
 
   return {
     todayHeadline: aiDraft.headline,
@@ -185,6 +225,7 @@ function generateDailyIntelligenceFromAI(
     inputNewsCount: newsItems.length,
     sourceLabels,
     complianceNote: COMPLIANCE_NOTE,
+    narrative,
   };
 }
 

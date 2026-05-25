@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight, CalendarDays, ShieldCheck } from "lucide-react";
+import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import {
   getAllWeeklyBriefs,
@@ -75,6 +76,10 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
           </span>
         </div>
       </section>
+
+      {brief.narrative ? (
+        <NarrativeIntelligence narrative={brief.narrative} eyebrow="Weekly Narrative Intelligence" />
+      ) : null}
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">

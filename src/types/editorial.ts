@@ -53,6 +53,8 @@ export type DailyIntelligenceDraft = {
   sourceLabels?: string[];
   complianceNote?: string;
   publishedAt?: string;
+  // v1.32 — narrative intelligence bundle (optional, jsonb-friendly).
+  narrative?: WeeklyNarrativeBundle;
 };
 
 export type DailyBriefDraft = {
@@ -160,6 +162,45 @@ export type WeeklyGeneratorStats = {
   sourcesUsedCount: number;
 };
 
+// v1.32 — Narrative Intelligence bundle. Persisted as part of the
+// sections jsonb so we don't need a new column. All fields optional for
+// back-compat with v1.31 rows.
+export type WeeklyNarrativeRegime = {
+  regime: "risk_on" | "neutral" | "risk_off";
+  aiMomentum: "strong" | "neutral" | "weak";
+  macroPressure: "high" | "medium" | "low";
+  volatilityState: "compressed" | "normal" | "stressed";
+};
+
+export type WeeklyNarrativeCrossMarketLink = {
+  from: string;
+  to: string;
+  note: string;
+};
+
+export type WeeklyRankedHeadline = {
+  title: string;
+  source: string;
+  category: string;
+  importance: number; // 1-10
+  importanceReason: string;
+  publishedAt?: string;
+};
+
+export type WeeklyNarrativeBundle = {
+  marketNarrative: string;
+  pricingWhat: string[];
+  riskFocus: string;
+  crossMarketNarrative: string;
+  crossMarketLinks: WeeklyNarrativeCrossMarketLink[];
+  volatilityNarrative: string;
+  aiNarrative: string;
+  taiwanNarrative: string;
+  intelligenceTakeaway: string;
+  regime: WeeklyNarrativeRegime;
+  importanceRanking: WeeklyRankedHeadline[];
+};
+
 export type WeeklyIntelligenceSections = {
   marketHighlights: {
     label: string;
@@ -198,6 +239,8 @@ export type WeeklyIntelligenceSections = {
   upcomingWeek?: WeeklyUpcomingEvent[];
   sourcesUsed?: WeeklySourceUsed[];
   generatorStats?: WeeklyGeneratorStats;
+  // v1.32 — narrative intelligence bundle.
+  narrative?: WeeklyNarrativeBundle;
 };
 
 export type WeeklyIntelligenceAiSuggestion = {

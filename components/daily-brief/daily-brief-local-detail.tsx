@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AlertTriangle, ListChecks } from "lucide-react";
 import { useEffect, useState } from "react";
+import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
 import type { DailyBriefDraft } from "@/src/types/editorial";
 
 const categoryLabels: Record<string, string> = {
@@ -175,6 +176,13 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
             {intelligence.marketRegimeNote}
           </p>
         </section>
+      ) : null}
+
+      {intelligence?.narrative ? (
+        <NarrativeIntelligence
+          eyebrow="Daily Narrative Intelligence"
+          narrative={intelligence.narrative}
+        />
       ) : null}
 
       {intelligence ? (
