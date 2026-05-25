@@ -3,6 +3,7 @@ import { AudienceSnapshot } from "@/components/admin/audience-snapshot";
 import { ConversionFunnel } from "@/components/admin/conversion-funnel";
 import { DistributionSnapshot } from "@/components/admin/distribution-snapshot";
 import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-analytics-snapshot";
+import { MembershipSnapshot } from "@/components/admin/membership-snapshot";
 
 export const metadata = {
   title: "Admin | IXAI",
@@ -46,6 +47,7 @@ export default function AdminPage() {
       <IntelligenceAnalyticsSnapshot />
       <AudienceSnapshot />
       <ConversionFunnel />
+      <MembershipSnapshot />
       <DistributionSnapshot />
     </div>
   );

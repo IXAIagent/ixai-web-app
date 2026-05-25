@@ -5,6 +5,7 @@ import {
   validateEmail,
 } from "@/src/lib/distribution/subscribers";
 import { log } from "@/src/lib/log";
+import { upsertMembership } from "@/src/lib/membership/memberships";
 import { syncProfileFromIdentity } from "@/src/lib/subscribers/profile-sync";
 
 export const dynamic = "force-dynamic";
@@ -64,6 +65,15 @@ export async function POST(request: NextRequest) {
       attribution: sanitizeAttribution(payload.attribution),
       referrer: request.headers.get("referer") ?? undefined,
       userAgent: request.headers.get("user-agent") ?? undefined,
+    });
+    await upsertMembership({
+      email,
+      plan: "free",
+      status: "active",
+      metadata: {
+        source: "distribution_capture",
+        surface: typeof payload.surface === "string" ? payload.surface : undefined,
+      },
     });
 
     log.info("[ixai.subscribe]", {
