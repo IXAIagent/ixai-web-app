@@ -98,6 +98,68 @@ export type DailyDraftGenerationSummary = {
 
 export type WeeklyIntelligenceStatus = "draft" | "review" | "published" | "archived";
 
+// v1.31 — Weekly sections gain richer optional shapes for past-week
+// dedup + curated upcoming calendar + real source tracking. Legacy
+// fields (marketHighlights, nextWeekFocus, earningsFocus, fedRates,
+// taiwanAi, majorEvents, intelligenceSummary) stay populated so the
+// existing public WeeklyBrief schema and any older Supabase rows keep
+// rendering. The new optional fields are pure additions; jsonb storage
+// happily round-trips extra keys.
+export type WeeklyPastWeekItem = {
+  label: string;
+  headline: string;
+  source: string;
+  summary?: string;
+  url?: string;
+  publishedAt?: string;
+};
+
+export type WeeklyPastWeekHighlights = {
+  usEquities: WeeklyPastWeekItem[];
+  taiwanEquities: WeeklyPastWeekItem[];
+  aiSemiconductors: WeeklyPastWeekItem[];
+  fedRatesMacro: WeeklyPastWeekItem[];
+  earnings: WeeklyPastWeekItem[];
+  crypto: WeeklyPastWeekItem[];
+  geopolitics: WeeklyPastWeekItem[];
+};
+
+export type WeeklyUpcomingEvent = {
+  date: string;
+  title: string;
+  category:
+    | "fed_rates"
+    | "macro_data"
+    | "us_earnings"
+    | "taiwan_event"
+    | "crypto_event"
+    | "geopolitics";
+  whyItMatters: string;
+  relatedAssets: string[];
+  marketImpact: string;
+};
+
+export type WeeklySourceUsed = {
+  label: string;
+  category:
+    | "official_data"
+    | "earnings_calendar"
+    | "market_news"
+    | "crypto_market"
+    | "company_ir"
+    | "editorial_review";
+  headlines: string[];
+  usedInSections: string[];
+};
+
+export type WeeklyGeneratorStats = {
+  inputNewsCount: number;
+  uniqueHeadlinesCount: number;
+  duplicatesRemoved: number;
+  upcomingEventsCount: number;
+  sourcesUsedCount: number;
+};
+
 export type WeeklyIntelligenceSections = {
   marketHighlights: {
     label: string;
@@ -131,6 +193,11 @@ export type WeeklyIntelligenceSections = {
     riskTone: string;
     whatChanged: string;
   };
+  // v1.31 — new optional richer surfaces.
+  pastWeekHighlights?: WeeklyPastWeekHighlights;
+  upcomingWeek?: WeeklyUpcomingEvent[];
+  sourcesUsed?: WeeklySourceUsed[];
+  generatorStats?: WeeklyGeneratorStats;
 };
 
 export type WeeklyIntelligenceAiSuggestion = {

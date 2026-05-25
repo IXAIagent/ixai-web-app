@@ -1,12 +1,30 @@
 import { weeklyBriefs, type WeeklyBrief } from "@/content/weekly-briefs";
 import { getSupabaseRestConfig } from "@/src/lib/supabase/server";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
+import {
+  SECTION_LABELS,
+  categorizeWeeklyHeadlines,
+  type CategorizationResult,
+  type WeeklySectionKey,
+} from "@/src/lib/editorial/weekly-categorize";
+import {
+  getNextWeekRange,
+  selectUpcomingEarnings,
+  selectUpcomingEvents,
+  selectUpcomingFedMacro,
+  selectUpcomingTaiwanEvents,
+  type UpcomingEvent,
+} from "@/src/lib/editorial/weekly-calendar";
 import type {
   WeeklyDraftGenerationSummary,
   WeeklyIntelligenceAiSuggestion,
   WeeklyIntelligenceDraft,
   WeeklyIntelligenceSections,
   WeeklyIntelligenceStatus,
+  WeeklyPastWeekHighlights,
+  WeeklyPastWeekItem,
+  WeeklySourceUsed,
+  WeeklyUpcomingEvent,
 } from "@/src/types/editorial";
 import type { NewsIntakeResult, NormalizedNewsItem } from "@/src/types/news";
 
@@ -499,111 +517,392 @@ export function getWeeklyGenerationRange(now = new Date()) {
   };
 }
 
-function itemMatches(items: NormalizedNewsItem[], pattern: RegExp) {
-  return items.find((item) => pattern.test(`${item.title} ${item.summary ?? ""} ${item.tags?.join(" ") ?? ""}`));
+// v1.31 — generator pipeline.
+//
+// 1. categorizeWeeklyHeadlines deduplicates and assigns each headline to
+//    exactly one section by priority (Fed > earnings > AI > Taiwan > US
+//    equities > crypto > geopolitics).
+// 2. selectUpcomingEvents pulls the curated calendar for the next-week
+//    window so upcomingFocus carries real dates, not "下週" placeholders.
+// 3. sourcesUsed tracks which feed contributed which headlines into which
+//    sections, replacing the previous generic source note.
+// 4. intelligenceSummary / risk focus / FCN sentiment / Taiwan AI tone
+//    are derived from the SELECTED content (not boilerplate), so each
+//    Weekly draft reads like a real market recap.
+
+function emptySectionSentinel(label: string): string {
+  return `本週 ${label} 未偵測到足夠高品質訊號；IXAI editorial 不重複塞入其他類別的新聞。`;
 }
 
-function buildWeeklySections(items: NormalizedNewsItem[], intake: NewsIntakeResult): WeeklyIntelligenceSections {
-  const fed = itemMatches(items, /fed|fomc|rate|yield|treasury|cpi|非農|利率|殖利率|聯準會/i);
-  const taiwan = itemMatches(items, /台積電|tsmc|2330|廣達|緯創|緯穎|技嘉|半導體|cowos|hbm|台股|ai server|ai 伺服器/i);
-  const ai = itemMatches(items, /nvidia|nvda|ai|server|gpu|semiconductor|晶片|半導體/i);
-  const crypto = itemMatches(items, /bitcoin|btc|ethereum|eth|crypto|coindesk|比特幣|以太坊/i);
-  const macro = itemMatches(items, /market|stocks|wall street|macro|tariff|china|geopolitics|市場|美股|地緣/i);
-  const sourceText = intake.mode === "real" ? "本週公開新聞來源" : "fallback editorial source";
+function toPastWeekItem(label: string, news: NormalizedNewsItem): WeeklyPastWeekItem {
+  return {
+    label,
+    headline: news.title,
+    source: news.sourceLabel,
+    summary: news.summary,
+    url: news.url,
+    publishedAt: news.publishedAt,
+  };
+}
+
+function buildPastWeekHighlights(
+  categorization: CategorizationResult,
+): WeeklyPastWeekHighlights {
+  const sections = categorization.sections;
+  const map = (key: WeeklySectionKey) =>
+    sections[key].map((item) => toPastWeekItem(SECTION_LABELS[key], item));
 
   return {
-    marketHighlights: [
-      {
-        label: "美股",
-        headline: macro?.title ?? "美股維持風險重新定價節奏",
-        summary: "市場焦點集中在利率路徑、科技股估值與大型權值股財報能否支撐風險偏好。",
-        ixaiView: "IXAI 觀察本週市場並非單一事件驅動，而是利率、美元與科技權重共同影響資金配置。",
-      },
-      {
-        label: "台股",
-        headline: taiwan?.title ?? "台股 AI 供應鏈維持市場主軸",
-        summary: "台積電、伺服器組裝、散熱與電源供應鏈仍是台股資金判讀重點。",
-        ixaiView: "台股 AI 供應鏈的重點不是短線漲跌，而是外資權重、法說展望與訂單能見度是否同步。",
-      },
-      {
-        label: "AI 科技",
-        headline: ai?.title ?? "AI infrastructure remains the central growth narrative",
-        summary: "AI 晶片、雲端資本支出與伺服器供應鏈仍是本週科技股定價核心。",
-        ixaiView: "若殖利率上行，AI 成長敘事仍可能面臨估值壓力；若資金回流，強者恆強格局會更明顯。",
-      },
-      {
-        label: "Crypto",
-        headline: crypto?.title ?? "Crypto remains a secondary risk appetite gauge",
-        summary: "BTC / ETH 仍可作為風險偏好與流動性情緒的輔助觀察。",
-        ixaiView: "Crypto 對本週主線不是主導因素，但有助判斷槓桿情緒是否重新升溫。",
-      },
-    ],
-    majorEvents: [
-      {
-        label: "FED / Rates",
-        title: fed?.title ?? "市場等待 FED 與通膨數據提供利率方向",
-        whyItMatters: "利率預期直接影響科技股估值、美元強弱與風險資產折現率。",
-      },
-      {
-        label: "AI / Semiconductors",
-        title: ai?.title ?? "AI 供應鏈財報與展望仍是市場主要事件",
-        whyItMatters: "AI 資本支出能否延續，決定半導體與伺服器供應鏈的資金集中度。",
-      },
-      {
-        label: "Taiwan",
-        title: taiwan?.title ?? "台股 AI 供應鏈觀察外資與法說脈絡",
-        whyItMatters: "台灣半導體與 AI server 供應鏈是全球 AI trade 的關鍵映射。",
-      },
-    ],
-    nextWeekFocus: [
-      "追蹤 FED 官員談話、通膨數據與美債殖利率是否改變科技股折現率。",
-      "觀察 NVIDIA、台積電與 AI server 供應鏈是否仍維持資金聚焦。",
-      "留意美元指數與 VIX 是否同步走強，這會影響風險資產承壓程度。",
-    ],
-    earningsFocus: [
-      "大型科技股財報與資本支出 guidance。",
-      "半導體與 AI server 供應鏈營收、毛利率與訂單展望。",
-      "台股法說與外資報告對 AI 供應鏈的評價變化。",
-    ],
+    usEquities: map("usEquities"),
+    taiwanEquities: map("taiwanEquities"),
+    aiSemiconductors: map("aiSemiconductors"),
+    fedRatesMacro: map("fedRatesMacro"),
+    earnings: map("earnings"),
+    crypto: map("crypto"),
+    geopolitics: map("geopolitics"),
+  };
+}
+
+function buildSourcesUsed(
+  categorization: CategorizationResult,
+): WeeklySourceUsed[] {
+  const accumulator = new Map<string, WeeklySourceUsed>();
+
+  for (const key of Object.keys(categorization.sections) as WeeklySectionKey[]) {
+    const sectionLabel = SECTION_LABELS[key];
+
+    for (const item of categorization.sections[key]) {
+      const existing = accumulator.get(item.sourceLabel);
+
+      if (existing) {
+        if (!existing.headlines.includes(item.title)) {
+          existing.headlines.push(item.title);
+        }
+
+        if (!existing.usedInSections.includes(sectionLabel)) {
+          existing.usedInSections.push(sectionLabel);
+        }
+
+        continue;
+      }
+
+      accumulator.set(item.sourceLabel, {
+        label: item.sourceLabel,
+        category: "market_news",
+        headlines: [item.title],
+        usedInSections: [sectionLabel],
+      });
+    }
+  }
+
+  return [...accumulator.values()];
+}
+
+function legacyMarketHighlights(
+  past: WeeklyPastWeekHighlights,
+): WeeklyIntelligenceSections["marketHighlights"] {
+  const pick = (label: string, items: WeeklyPastWeekItem[], fallbackIxaiView: string) => ({
+    label,
+    headline: items[0]?.headline ?? `本週 ${label} 未偵測到足夠高品質訊號`,
+    summary:
+      items.length > 0
+        ? items[0].summary ?? `${items[0].source}：${items[0].headline}`
+        : emptySectionSentinel(label),
+    ixaiView: fallbackIxaiView,
+  });
+
+  return [
+    pick(
+      "美股",
+      past.usEquities,
+      "美股本週需要同時觀察利率與大型權值股的領漲廣度，不能只看單一指數。",
+    ),
+    pick(
+      "台股",
+      past.taiwanEquities,
+      "台股 AI 供應鏈重點是外資權重、法說展望與訂單能見度是否同步。",
+    ),
+    pick(
+      "AI 科技",
+      past.aiSemiconductors,
+      "AI capex 是否延續，是半導體與伺服器供應鏈的核心定價依據。",
+    ),
+    pick(
+      "Crypto",
+      past.crypto,
+      "Crypto 仍是流動性與風險偏好的輔助溫度計，不是本週主導因素。",
+    ),
+  ];
+}
+
+function legacyMajorEvents(
+  past: WeeklyPastWeekHighlights,
+  upcomingFed: UpcomingEvent[],
+  upcomingTaiwan: UpcomingEvent[],
+): WeeklyIntelligenceSections["majorEvents"] {
+  const events: WeeklyIntelligenceSections["majorEvents"] = [];
+
+  const fedFromPast = past.fedRatesMacro[0];
+  const aiFromPast = past.aiSemiconductors[0];
+  const earningsFromPast = past.earnings[0];
+  const taiwanFromPast = past.taiwanEquities[0];
+
+  if (fedFromPast) {
+    events.push({
+      label: "FED / 利率 / 總經",
+      title: fedFromPast.headline,
+      whyItMatters: "利率預期直接影響科技股估值、美元強弱與風險資產折現率。",
+    });
+  } else if (upcomingFed[0]) {
+    events.push({
+      label: "FED / 利率 / 總經",
+      title: `下週聚焦：${upcomingFed[0].title}（${upcomingFed[0].date}）`,
+      whyItMatters: upcomingFed[0].whyItMatters,
+    });
+  }
+
+  if (aiFromPast) {
+    events.push({
+      label: "AI / 半導體",
+      title: aiFromPast.headline,
+      whyItMatters: "AI 資本支出能否延續，決定半導體與伺服器供應鏈的資金集中度。",
+    });
+  }
+
+  if (earningsFromPast) {
+    events.push({
+      label: "財報",
+      title: earningsFromPast.headline,
+      whyItMatters: "財報與 guidance 是科技股估值能否被基本面支撐的短線驗證。",
+    });
+  }
+
+  if (taiwanFromPast) {
+    events.push({
+      label: "Taiwan",
+      title: taiwanFromPast.headline,
+      whyItMatters: "台灣半導體與 AI server 供應鏈是全球 AI trade 的關鍵映射。",
+    });
+  } else if (upcomingTaiwan[0]) {
+    events.push({
+      label: "Taiwan",
+      title: `下週聚焦：${upcomingTaiwan[0].title}（${upcomingTaiwan[0].date}）`,
+      whyItMatters: upcomingTaiwan[0].whyItMatters,
+    });
+  }
+
+  return events;
+}
+
+function legacyNextWeekFocus(events: UpcomingEvent[]): string[] {
+  if (events.length === 0) {
+    return [
+      "本週未有重大 macro / earnings 事件於下週窗口；持續觀察利率、AI capex 與台股供應鏈節奏。",
+    ];
+  }
+
+  return events.map((event) => `${event.date}｜${event.title}`);
+}
+
+function buildIntelligenceSummary(
+  past: WeeklyPastWeekHighlights,
+  upcoming: UpcomingEvent[],
+  intake: NewsIntakeResult,
+): WeeklyIntelligenceSections["intelligenceSummary"] {
+  const fedSignal = past.fedRatesMacro[0];
+  const aiSignal = past.aiSemiconductors[0];
+  const taiwanSignal = past.taiwanEquities[0];
+  const upcomingMacro = upcoming.find(
+    (event) => event.category === "fed_rates" || event.category === "macro_data",
+  );
+  const upcomingEarnings = upcoming.find((event) => event.category === "us_earnings");
+
+  const pricingPieces: string[] = [];
+  if (fedSignal) {
+    pricingPieces.push(`利率端 pricing：${fedSignal.headline}`);
+  }
+  if (aiSignal) {
+    pricingPieces.push(`AI capex 端 pricing：${aiSignal.headline}`);
+  }
+  if (taiwanSignal) {
+    pricingPieces.push(`台股 AI 鏈 pricing：${taiwanSignal.headline}`);
+  }
+
+  const pricing =
+    pricingPieces.length > 0
+      ? `市場正在 pricing：${pricingPieces.join("；")}。`
+      : `市場本週 ${intake.mode === "real" ? "公開來源" : "fallback editorial"} 訊號偏分散，pricing 重點仍是利率路徑與 AI capex 延續性。`;
+
+  const riskParts: string[] = [];
+  if (fedSignal) {
+    riskParts.push("利率端：殖利率與美元強弱仍是風險資產折現率主軸。");
+  }
+  if (upcomingEarnings) {
+    riskParts.push(
+      `下週 ${upcomingEarnings.title}（${upcomingEarnings.date}）的 guidance 將驗證 AI capex 訊號。`,
+    );
+  }
+  if (upcomingMacro) {
+    riskParts.push(
+      `下週 ${upcomingMacro.title}（${upcomingMacro.date}）將重新校準利率預期。`,
+    );
+  }
+
+  const riskTone =
+    riskParts.length > 0
+      ? riskParts.join(" ")
+      : "整體風險基調偏中性到審慎；下週尚未有單一事件能決定方向。";
+
+  const whatChanged =
+    upcoming.length > 0
+      ? `相較前一週，本週開始為下週 ${upcoming
+          .slice(0, 2)
+          .map((event) => `${event.title}（${event.date}）`)
+          .join("、")} 重新校準預期；AI 主線仍需配合利率與財報雙重驗證。`
+      : "市場敘事仍圍繞利率、AI capex 與台股供應鏈兌現能力；本週無單一事件改變整體 regime。";
+
+  return {
+    pricing,
+    riskTone,
+    whatChanged,
+  };
+}
+
+function buildFcnObservation(
+  past: WeeklyPastWeekHighlights,
+): WeeklyIntelligenceSections["fcnMarketObservation"] {
+  const aiSignal = past.aiSemiconductors[0];
+  const taiwanSignal = past.taiwanEquities[0];
+
+  return {
+    volatility:
+      "FCN 教育觀察：波動率擴大時，worst-of 標的更容易接近 KI；應持續對齊本週標的波動度。",
+    aiBasket: aiSignal
+      ? `AI basket 觀察：${aiSignal.headline} 反映 AI 高 beta 籃子仍是 FCN issuer 主要 underlying 候選。`
+      : "AI basket 觀察：高 beta AI 個股仍是 FCN 結構主要素材，需檢視整籃集中度。",
+    worstOf: taiwanSignal
+      ? `Worst-of 觀察：${taiwanSignal.headline} 反映台股 AI 供應鏈個股表現分歧，可能成為 worst-of。`
+      : "Worst-of 觀察：FCN 風險由籃子中最弱標的主導，不應只看最強的 AI 題材。",
+    sentiment:
+      "整體 FCN sentiment：本週仍以教育觀察為主，個人化監控保留在 IXAI Pro。",
+  };
+}
+
+function buildWeeklySections({
+  intake,
+  past,
+  upcoming,
+  upcomingEarnings,
+  upcomingTaiwan,
+  upcomingFedMacro,
+  sourcesUsed,
+  categorization,
+}: {
+  intake: NewsIntakeResult;
+  past: WeeklyPastWeekHighlights;
+  upcoming: UpcomingEvent[];
+  upcomingEarnings: UpcomingEvent[];
+  upcomingTaiwan: UpcomingEvent[];
+  upcomingFedMacro: UpcomingEvent[];
+  sourcesUsed: WeeklySourceUsed[];
+  categorization: CategorizationResult;
+}): WeeklyIntelligenceSections {
+  const fedRatesPast = past.fedRatesMacro[0];
+  const taiwanPast = past.taiwanEquities[0];
+
+  const upcomingWeek: WeeklyUpcomingEvent[] = upcoming.map((event) => ({
+    date: event.date,
+    title: event.title,
+    category: event.category,
+    whyItMatters: event.whyItMatters,
+    relatedAssets: event.relatedAssets,
+    marketImpact: event.marketImpact,
+  }));
+
+  return {
+    marketHighlights: legacyMarketHighlights(past),
+    majorEvents: legacyMajorEvents(past, upcomingFedMacro, upcomingTaiwan),
+    nextWeekFocus: legacyNextWeekFocus(upcoming),
+    earningsFocus:
+      upcomingEarnings.length > 0
+        ? upcomingEarnings.map((event) => `${event.date}｜${event.title} — ${event.whyItMatters}`)
+        : [
+            "本週下週窗口無大型科技財報；持續追蹤 NVDA / AVGO / MU 出貨節奏與台股 AI server 法說。",
+          ],
     fedRates: {
-      headline: fed?.title ?? "FED / 利率仍是本週市場風險定價核心",
-      summary: "若美債殖利率維持高檔，科技股估值壓力可能延續；若利率回落，成長股與 AI trade 的風險偏好有機會改善。",
+      headline:
+        fedRatesPast?.headline ??
+        upcomingFedMacro[0]?.title ??
+        "FED / 利率仍是本週市場風險定價核心",
+      summary: fedRatesPast
+        ? `${fedRatesPast.source}：${fedRatesPast.summary ?? fedRatesPast.headline}`
+        : upcomingFedMacro[0]
+          ? `${upcomingFedMacro[0].date}｜${upcomingFedMacro[0].whyItMatters}`
+          : "若美債殖利率維持高檔，科技股估值壓力可能延續；若利率回落，成長股與 AI trade 的風險偏好有機會改善。",
     },
     taiwanAi: {
-      headline: taiwan?.title ?? "台股 AI supply chain remains in focus",
-      summary: "台積電與 AI server 相關供應鏈仍是台股風險偏好與外資配置的主要觀察窗口。",
+      headline:
+        taiwanPast?.headline ??
+        upcomingTaiwan[0]?.title ??
+        "台股 AI supply chain remains in focus",
+      summary: taiwanPast
+        ? `${taiwanPast.source}：${taiwanPast.summary ?? taiwanPast.headline}`
+        : upcomingTaiwan[0]
+          ? `${upcomingTaiwan[0].date}｜${upcomingTaiwan[0].whyItMatters}`
+          : "台積電與 AI server 相關供應鏈仍是台股風險偏好與外資配置的主要觀察窗口。",
     },
-    fcnMarketObservation: {
-      volatility: "FCN 教育觀察上，波動率升高會影響結構型商品的 worst-of 風險與提前出場機率。",
-      aiBasket: "AI basket 若集中於高 beta 科技股，需特別留意單一弱勢標的拖累整籃表現。",
-      worstOf: "Worst-of 結構代表最弱標的決定主要風險，不應只看籃子中最強的 AI 題材。",
-      sentiment: "本週 FCN sentiment 偏向觀察模式：利率與科技股波動是主要變數。",
-    },
-    intelligenceSummary: {
-      pricing: `市場目前正在 pricing ${sourceText} 中的利率路徑、AI 成長持續性與風險資產流動性。`,
-      riskTone: "整體風險基調偏中性到審慎，重點在利率是否壓制科技股估值。",
-      whatChanged: "相較前期，市場從單純追逐 AI 成長，轉向同時檢查利率、財報與供應鏈兌現能力。",
+    fcnMarketObservation: buildFcnObservation(past),
+    intelligenceSummary: buildIntelligenceSummary(past, upcoming, intake),
+    pastWeekHighlights: past,
+    upcomingWeek,
+    sourcesUsed,
+    generatorStats: {
+      inputNewsCount: intake.itemCount,
+      uniqueHeadlinesCount: categorization.uniqueHeadlinesCount,
+      duplicatesRemoved: categorization.duplicatesRemoved,
+      upcomingEventsCount: upcoming.length,
+      sourcesUsedCount: sourcesUsed.length,
     },
   };
 }
 
-function buildAiSuggestion(sections: WeeklyIntelligenceSections, intake: NewsIntakeResult): WeeklyIntelligenceAiSuggestion {
-  const sourceLabels = [
-    ...new Set(
-      (intake.sourceStatus ?? intake.sources)
-        .filter((source) => source.status === "success" && source.itemCount > 0)
-        .map((source) => source.label),
-    ),
-  ];
+function buildAiSuggestion(
+  sections: WeeklyIntelligenceSections,
+  intake: NewsIntakeResult,
+  upcoming: UpcomingEvent[],
+): WeeklyIntelligenceAiSuggestion {
+  const sourceLabels = (sections.sourcesUsed ?? []).map((source) => source.label);
+
+  const upcomingFedMacro = upcoming.filter(
+    (event) => event.category === "fed_rates" || event.category === "macro_data",
+  );
+  const upcomingEarnings = upcoming.filter((event) => event.category === "us_earnings");
+  const upcomingTaiwan = upcoming.filter((event) => event.category === "taiwan_event");
+
+  const riskFocus: string[] = [];
+  if (upcomingFedMacro[0]) {
+    riskFocus.push(
+      `${upcomingFedMacro[0].date}｜${upcomingFedMacro[0].title}：${upcomingFedMacro[0].marketImpact}`,
+    );
+  }
+  if (upcomingEarnings[0]) {
+    riskFocus.push(
+      `${upcomingEarnings[0].date}｜${upcomingEarnings[0].title}：${upcomingEarnings[0].marketImpact}`,
+    );
+  }
+  if (upcomingTaiwan[0]) {
+    riskFocus.push(
+      `${upcomingTaiwan[0].date}｜${upcomingTaiwan[0].title}：${upcomingTaiwan[0].marketImpact}`,
+    );
+  }
+  if (riskFocus.length === 0) {
+    riskFocus.push(sections.fedRates.summary);
+  }
 
   return {
     summarySuggestion: sections.intelligenceSummary.pricing,
     keyThemes: sections.marketHighlights.map((item) => item.label),
-    riskFocus: [
-      sections.fedRates.summary,
-      "若 VIX、美元與殖利率同步上升，風險資產可能進入更審慎的資金環境。",
-      "AI 供應鏈仍需檢查財報與訂單能見度，避免單純以題材推估風險承受度。",
-    ],
+    riskFocus,
     nextWeekWatchlist: sections.nextWeekFocus,
     intelligenceNarrative: sections.intelligenceSummary.whatChanged,
     sourceMode: intake.mode,
@@ -675,8 +974,30 @@ export async function generateWeeklyIntelligenceDraft({
   }
 
   const now = new Date().toISOString();
-  const sections = buildWeeklySections(intake.items, intake);
-  const aiSuggestion = buildAiSuggestion(sections, intake);
+
+  // v1.31 — assemble the past-week recap from a deduped + categorized
+  // selection of headlines, the upcoming-week section from the curated
+  // calendar, and a real sourcesUsed list so the draft reflects what was
+  // actually consumed instead of placeholder boilerplate.
+  const categorization = categorizeWeeklyHeadlines(intake.items);
+  const past = buildPastWeekHighlights(categorization);
+  const { nextWeekStart, nextWeekEnd } = getNextWeekRange(weekEnd);
+  const upcoming = selectUpcomingEvents({ nextWeekStart, nextWeekEnd });
+  const upcomingEarnings = selectUpcomingEarnings(upcoming);
+  const upcomingTaiwan = selectUpcomingTaiwanEvents(upcoming);
+  const upcomingFedMacro = selectUpcomingFedMacro(upcoming);
+  const sourcesUsed = buildSourcesUsed(categorization);
+  const sections = buildWeeklySections({
+    intake,
+    past,
+    upcoming,
+    upcomingEarnings,
+    upcomingTaiwan,
+    upcomingFedMacro,
+    sourcesUsed,
+    categorization,
+  });
+  const aiSuggestion = buildAiSuggestion(sections, intake, upcoming);
   const slug = force
     ? `weekly-intelligence-${weekEnd}-${now.replace(/[:.]/g, "-")}`
     : `weekly-intelligence-${weekEnd}`;
@@ -800,13 +1121,60 @@ export async function publishWeeklyDraftAsync(id: string) {
 }
 
 export function weeklyDraftToBrief(draft: WeeklyIntelligenceDraft): WeeklyBrief {
+  // v1.31 — emit real upcoming dates and real sources used. Falls back to
+  // the legacy nextWeekFocus list only when no curated upcoming events
+  // resolved for this draft's week window.
+  const upcomingEvents = draft.sections.upcomingWeek ?? [];
+  const sourcesUsed = draft.sections.sourcesUsed ?? [];
+  const nextWeekStart = getNextWeekRange(draft.weekEnd).nextWeekStart;
+  const nextWeekEnd = getNextWeekRange(draft.weekEnd).nextWeekEnd;
+  const upcomingPeriod =
+    upcomingEvents.length > 0
+      ? `${nextWeekStart} – ${nextWeekEnd}`
+      : "下週市場觀察";
+
+  const upcomingFocus =
+    upcomingEvents.length > 0
+      ? upcomingEvents.map((event) => ({
+          date: event.date,
+          event: event.title,
+          whyItMatters: event.whyItMatters,
+          marketImpact: event.marketImpact,
+          category: event.category,
+          relatedAssets: event.relatedAssets,
+        }))
+      : draft.sections.nextWeekFocus.map((focus) => ({
+          date: nextWeekStart,
+          event: focus,
+          whyItMatters: "此項目可能影響下週市場風險偏好與資產輪動。",
+          marketImpact: "需觀察對利率、AI 科技、台股供應鏈與風險資產的同步影響。",
+        }));
+
+  const sources =
+    sourcesUsed.length > 0
+      ? sourcesUsed.map((source) => ({
+          label: source.label,
+          type: source.category,
+          note:
+            source.headlines.length > 0
+              ? `${source.usedInSections.join(" / ")}：${source.headlines.slice(0, 2).join("；")}`
+              : "本週此來源未使用外部 headline，採用 editorial fallback。",
+        }))
+      : [
+          {
+            label: "Editorial Fallback",
+            type: "editorial_review" as const,
+            note: "本週此分類未使用外部來源，採用 editorial fallback。",
+          },
+        ];
+
   return {
     slug: draft.slug,
     title: draft.title,
     date: draft.weekEnd,
     publishedAt: draft.publishedAt ?? draft.publishDate ?? draft.updatedAt,
     coveragePeriod: `${draft.weekStart} – ${draft.weekEnd}`,
-    upcomingPeriod: "下週市場觀察",
+    upcomingPeriod,
     editorialNote: draft.editorialNotes ?? "本週報由 IXAI Editorial Studio 審閱發布。",
     executiveSummary: draft.summary ?? draft.aiSuggestion.summarySuggestion,
     marketHighlights: draft.sections.marketHighlights,
@@ -832,18 +1200,9 @@ export function weeklyDraftToBrief(draft: WeeklyIntelligenceDraft): WeeklyBrief 
         text: `${draft.sections.fcnMarketObservation.sentiment} 此處為教育型市場觀察，不包含個人化 FCN 風控或交易建議。`,
       },
     ],
-    upcomingFocus: draft.sections.nextWeekFocus.map((focus, index) => ({
-      date: index === 0 ? draft.weekEnd : "下週",
-      event: focus,
-      whyItMatters: "此項目可能影響下週市場風險偏好與資產輪動。",
-      marketImpact: "需觀察對利率、AI 科技、台股供應鏈與風險資產的同步影響。",
-    })),
+    upcomingFocus,
     riskNotes: draft.aiSuggestion.riskFocus,
-    sources: draft.aiSuggestion.sourceLabels.map((label) => ({
-      label,
-      type: "market_news",
-      note: "Public source headline / summary used for editorial intelligence draft.",
-    })),
+    sources,
     cta: {
       primaryLabel: "了解 IXAI Pro",
       primaryHref: "/pro",

@@ -24,6 +24,15 @@ export type WeeklyBriefUpcomingFocus = {
   event: string;
   whyItMatters: string;
   marketImpact: string;
+  // v1.31 — optional fields produced by the curated upcoming calendar.
+  category?:
+    | "fed_rates"
+    | "macro_data"
+    | "us_earnings"
+    | "taiwan_event"
+    | "crypto_event"
+    | "geopolitics";
+  relatedAssets?: string[];
 };
 
 export type WeeklyBriefIntelligenceSummary = {

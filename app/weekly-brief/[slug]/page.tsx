@@ -248,9 +248,14 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
               className="grid gap-3 px-4 py-3.5 sm:px-5 sm:py-4 lg:grid-cols-[8rem_1fr_1fr]"
               key={`${item.date}-${item.event}`}
             >
-              <p className="font-mono text-xs text-[var(--ixai-gold)]">
-                {item.date}
-              </p>
+              <div className="flex flex-col gap-1.5">
+                <p className="font-mono text-xs text-[var(--ixai-gold)]">{item.date}</p>
+                {item.category ? (
+                  <span className="w-fit rounded-md border border-[var(--ixai-border)] bg-white/45 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
+                    {item.category.replace(/_/g, " ")}
+                  </span>
+                ) : null}
+              </div>
               <div>
                 <h3 className="text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
                   {item.event}
@@ -258,6 +263,18 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
                 <p className="mt-1 text-sm leading-7 text-[var(--ixai-ink-muted)]">
                   {item.whyItMatters}
                 </p>
+                {item.relatedAssets && item.relatedAssets.length > 0 ? (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {item.relatedAssets.map((symbol) => (
+                      <span
+                        className="rounded-md border border-[var(--ixai-border)] bg-white/55 px-1.5 py-0.5 font-mono text-[10px] text-[var(--ixai-forest-soft)]"
+                        key={`${item.date}-${symbol}`}
+                      >
+                        {symbol}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
               </div>
               <p className="text-sm leading-7 text-[var(--ixai-forest-soft)]">
                 {item.marketImpact}

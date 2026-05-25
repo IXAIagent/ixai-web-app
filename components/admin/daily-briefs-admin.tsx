@@ -585,6 +585,46 @@ function WeeklyEditorPreview() {
                   </p>
                 </div>
 
+                {selectedWeeklyDraft.sections.generatorStats ? (
+                  <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                      Generator Stats
+                    </p>
+                    <div className="mt-2 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.62)] sm:grid-cols-2 lg:grid-cols-3">
+                      <p>
+                        Input news count:{" "}
+                        <span className="font-mono text-[rgba(245,240,230,0.85)]">
+                          {selectedWeeklyDraft.sections.generatorStats.inputNewsCount}
+                        </span>
+                      </p>
+                      <p>
+                        Unique headlines:{" "}
+                        <span className="font-mono text-[rgba(245,240,230,0.85)]">
+                          {selectedWeeklyDraft.sections.generatorStats.uniqueHeadlinesCount}
+                        </span>
+                      </p>
+                      <p>
+                        Duplicates removed:{" "}
+                        <span className="font-mono text-[rgba(245,240,230,0.85)]">
+                          {selectedWeeklyDraft.sections.generatorStats.duplicatesRemoved}
+                        </span>
+                      </p>
+                      <p>
+                        Upcoming events:{" "}
+                        <span className="font-mono text-[rgba(245,240,230,0.85)]">
+                          {selectedWeeklyDraft.sections.generatorStats.upcomingEventsCount}
+                        </span>
+                      </p>
+                      <p>
+                        Sources used:{" "}
+                        <span className="font-mono text-[rgba(245,240,230,0.85)]">
+                          {selectedWeeklyDraft.sections.generatorStats.sourcesUsedCount}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
+
                 <div className="rounded-lg border border-white/10 bg-black/16 p-4">
                   <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                     Summary
