@@ -12,6 +12,8 @@ const exemptPathPrefixes = [
   "/app-preview",
   "/feedback",
   "/login",
+  "/pro",
+  "/pro-preview",
   "/register",
 ];
 

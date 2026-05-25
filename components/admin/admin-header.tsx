@@ -1,0 +1,58 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect } from "react";
+import { trackEvent } from "@/src/lib/analytics/analytics";
+
+const MOBILE_LINKS = [
+  ["Home", "/admin"],
+  ["Editorial", "/admin/daily-briefs"],
+  ["Audience", "/admin#audience"],
+  ["Membership", "/admin#membership"],
+  ["Distribution", "/admin#distribution"],
+] as const;
+
+export function AdminHeader() {
+  useEffect(() => {
+    trackEvent("admin_console_open", {
+      path: window.location.pathname,
+      surface: "admin_console",
+    });
+  }, []);
+
+  return (
+    <header className="sticky top-0 z-20 border-b border-white/10 bg-[#061811]/96 px-3 py-3 backdrop-blur lg:px-6">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Internal Console
+          </p>
+          <h2 className="mt-1 text-sm font-semibold text-[var(--ixai-cream)]">
+            IXAI Operating Console
+          </h2>
+        </div>
+        <nav
+          aria-label="Admin quick navigation"
+          className="flex gap-2 overflow-x-auto pb-1 lg:hidden"
+        >
+          {MOBILE_LINKS.map(([label, href]) => (
+            <Link
+              className="shrink-0 rounded-md border border-white/10 bg-white/[0.045] px-3 py-2 font-mono text-[11px] text-white/68"
+              href={href}
+              key={label}
+              onClick={() =>
+                trackEvent("admin_section_click", {
+                  path: window.location.pathname,
+                  section: label,
+                  surface: "admin_mobile_header",
+                })
+              }
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </header>
+  );
+}

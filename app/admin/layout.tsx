@@ -1,3 +1,4 @@
+import { AdminShell } from "@/components/admin/admin-shell";
 import { AdminGate } from "@/components/admin/admin-gate";
 import { getAdminAccessState } from "@/src/lib/admin/auth";
 
@@ -35,6 +36,8 @@ export default function AdminLayout({
   }
 
   return (
-    <AdminGate mode={accessState.mode}>{children}</AdminGate>
+    <AdminGate mode={accessState.mode}>
+      <AdminShell>{children}</AdminShell>
+    </AdminGate>
   );
 }

@@ -6,49 +6,75 @@ import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-a
 import { MembershipSnapshot } from "@/components/admin/membership-snapshot";
 
 export const metadata = {
-  title: "Admin | IXAI",
-  description: "IXAI internal editorial operation layer.",
+  title: "IXAI Operating Console | Admin",
+  description: "IXAI internal intelligence, audience, distribution and membership control layer.",
 };
 
 export default function AdminPage() {
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
-        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          Internal Admin
+    <div className="flex flex-col gap-5">
+      <section className="rounded-lg border border-white/10 bg-white/[0.045] p-4 shadow-[0_24px_80px_rgba(0,0,0,0.18)] sm:p-6">
+        <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
+          Admin Console Home
         </p>
-        <h1 className="mt-3 max-w-3xl font-serif text-3xl font-semibold leading-snug sm:text-5xl">
-          內容營運系統的第一層。
+        <h1 className="mt-3 max-w-4xl font-serif text-3xl font-semibold leading-tight sm:text-5xl">
+          IXAI Operating Console
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-white/72">
-          v1.6 先建立 Daily Brief draft pipeline，讓 IXAI 從 local TS content
-          走向可審稿、可發布、可自動更新的 editorial layer。
+        <p className="mt-4 max-w-3xl text-sm leading-7 text-white/62 sm:text-base">
+          Internal intelligence, audience, distribution and membership control layer.
+          Public routes stay consumer-facing; this console is for editorial operations,
+          growth telemetry and Pro conversion readiness.
         </p>
       </section>
 
-      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Editorial
-        </p>
-        <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-          Daily Briefs
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--ixai-ink-muted)]">
-          管理 AI generated draft、review queue 與 publish workflow。這頁目前不放入公開導覽。
-        </p>
-        <Link
-          className="ixai-cta-forest mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold"
-          href="/admin/daily-briefs"
-        >
-          進入 Daily Brief Pipeline
-        </Link>
+      <section className="grid gap-3 md:grid-cols-3">
+        {[
+          ["Daily Pipeline", "Review, preview and publish Daily Briefs.", "/admin/daily-briefs"],
+          ["Weekly Pipeline", "Operate Weekly Intelligence draft and publish workflow.", "/admin/daily-briefs#weekly"],
+          ["Publishing Queue", "Human-in-the-loop review remains required.", "/admin/daily-briefs#queue"],
+        ].map(([title, copy, href]) => (
+          <Link
+            className="rounded-lg border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]"
+            href={href}
+            key={title}
+          >
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Editorial
+            </p>
+            <h2 className="mt-2 text-base font-semibold text-[var(--ixai-cream)]">{title}</h2>
+            <p className="mt-2 text-sm leading-6 text-white/52">{copy}</p>
+          </Link>
+        ))}
       </section>
 
-      <IntelligenceAnalyticsSnapshot />
-      <AudienceSnapshot />
-      <ConversionFunnel />
-      <MembershipSnapshot />
-      <DistributionSnapshot />
+      <section id="intelligence">
+        <IntelligenceAnalyticsSnapshot />
+      </section>
+      <section id="audience">
+        <AudienceSnapshot />
+      </section>
+      <section id="funnel">
+        <ConversionFunnel />
+      </section>
+      <section id="membership">
+        <MembershipSnapshot />
+      </section>
+      <section id="distribution">
+        <DistributionSnapshot />
+      </section>
+      <section
+        className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/52 sm:p-5"
+        id="system"
+      >
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+          System
+        </p>
+        <p className="mt-2">
+          Environment, health and log surfaces are reserved for future internal
+          operations. No public navigation or consumer app shell is rendered on
+          admin routes.
+        </p>
+      </section>
     </div>
   );
 }

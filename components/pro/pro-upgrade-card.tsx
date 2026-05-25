@@ -71,9 +71,9 @@ export function ProUpgradeCard({
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76"
-            href="/daily-brief"
+            href="/pro-preview"
           >
-            Continue Public Intelligence
+            See sample Pro intelligence
           </Link>
         </div>
       </div>

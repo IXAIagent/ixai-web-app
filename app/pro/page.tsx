@@ -48,6 +48,12 @@ export default function ProPage() {
                 <FileText className="h-4 w-4" aria-hidden="true" />
                 Continue with Public Intelligence
               </Link>
+              <Link
+                className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
+                href="/pro-preview"
+              >
+                View Pro Preview Dashboard
+              </Link>
             </div>
           </div>
 
