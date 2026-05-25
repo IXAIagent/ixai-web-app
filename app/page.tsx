@@ -2,49 +2,96 @@ import { IntelligenceFeed } from "@/components/dashboard/intelligence-feed";
 import { LaunchIntro } from "@/components/dashboard/launch-intro";
 import { MarketOverview } from "@/components/dashboard/market-overview";
 import { MarketPulse } from "@/components/dashboard/market-pulse";
-import { ProCta } from "@/components/dashboard/pro-cta";
 import { RiskFocus } from "@/components/dashboard/risk-focus";
 import { TodaysBrief } from "@/components/dashboard/todays-brief";
 import { Watchlist } from "@/components/dashboard/watchlist";
 import { WeeklyBriefPreview } from "@/components/dashboard/weekly-brief-preview";
 import { ProEngineSurface } from "@/components/engines/pro-engine-surface";
-import { EcosystemBridge } from "@/components/layout/ecosystem-bridge";
+import { BriefGateway } from "@/components/home/brief-gateway";
+import { CrossMarketFlow } from "@/components/home/cross-market-flow";
+import { FcnGateway } from "@/components/home/fcn-gateway";
+import { ImportantEvents } from "@/components/home/important-events";
+import { IntelligenceHero } from "@/components/home/intelligence-hero";
+import { PricingWhat } from "@/components/home/pricing-what";
+import { ProGuardrail } from "@/components/home/pro-guardrail";
 import { FirstVisitBanner } from "@/components/onboarding/first-visit-banner";
 import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { SectionDivider } from "@/components/ui/section-divider";
-import { proFeatures } from "@/lib/mock-data";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getLatestPublishedBriefAsync } from "@/src/lib/editorial/repository";
 import { getFcnPortfolioSnapshot } from "@/src/lib/fcn/engine";
+import { getHomeNarrativeContext } from "@/src/lib/intelligence/home-narrative";
 import { getLatestWeeklyBrief } from "@/src/lib/weeklyBriefs";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = buildPublicMetadata({
-  title: "IXAI — AI Financial Intelligence & Risk Monitoring Platform",
+  title: "IXAI — AI Wealth Intelligence OS",
   description:
-    "IXAI 是免費市場 intelligence 與 AI 風險觀察平台，提供 Daily Brief、Market Pulse、FCN 教育與 IXAI Pro 入口。",
+    "Daily and weekly market intelligence for global investors, built with a risk-first perspective by I-Xuan Investment.",
 });
 
+function getNarrativeSourceLabel(source: string): string {
+  switch (source) {
+    case "daily":
+      return "Daily Intelligence · Live";
+    case "weekly":
+      return "Weekly Intelligence · Live";
+    case "fresh":
+      return "Live Intake · Editorial";
+    default:
+      return "IXAI Editorial";
+  }
+}
+
 export default async function Home() {
-  const latestDailyBrief = await getLatestPublishedBriefAsync();
-  const latestWeeklyBrief = getLatestWeeklyBrief();
-  const fcnSnapshot = await getFcnPortfolioSnapshot();
+  const [narrativeContext, fcnSnapshot, latestWeeklyBrief, latestDailyBrief] = await Promise.all([
+    getHomeNarrativeContext(),
+    getFcnPortfolioSnapshot(),
+    Promise.resolve(getLatestWeeklyBrief()),
+    getLatestPublishedBriefAsync(),
+  ]);
+
+  const sourceLabel = getNarrativeSourceLabel(narrativeContext.source);
+  const weeklyForGateway = narrativeContext.weeklyBrief;
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-3 py-3 sm:gap-6 sm:px-5 sm:py-4 lg:px-6 lg:py-6">
-      {/* v1.7: five-tier daily intelligence workflow.
-          Tier 1 — Today's headline (insight first, data second)
-          Tier 2 — Free intelligence (curated + editorial morning note)
-          Tier 3 — Personal monitoring (with soft Pro seeding)
-          Tier 4 — This week (deeper editorial + reference data)
-          Tier 5 — Premium membership */}
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-5 sm:py-4 lg:px-6 lg:py-6">
+      {/* v1.32.2 — Intelligence Dashboard above the legacy tiers. The first
+          screen now communicates regime + narrative + cross-market context
+          before any individual data widget. */}
+      <IntelligenceHero
+        narrative={narrativeContext.narrative}
+        sourceLabel={sourceLabel}
+      />
 
       {/* v1.29.5 — first-visit welcome banner. Dismissible, localStorage
           marker ixai_onboarding_seen_v1, never shown twice. */}
       <FirstVisitBanner />
 
-      {/* Tier 1: insight headline first, market data immediately below. */}
+      <PricingWhat narrative={narrativeContext.narrative} />
+
+      <CrossMarketFlow narrative={narrativeContext.narrative} />
+
+      <ImportantEvents
+        narrative={narrativeContext.narrative}
+        upcomingEvents={narrativeContext.upcomingEvents}
+      />
+
+      <BriefGateway
+        dailyTitle={latestDailyBrief.title}
+        dailyExcerpt={latestDailyBrief.marketSummary}
+        weeklyTitle={weeklyForGateway?.title}
+        weeklyExcerpt={
+          weeklyForGateway?.summary ?? weeklyForGateway?.sections.intelligenceSummary.pricing
+        }
+        weeklySlug={weeklyForGateway?.slug}
+      />
+
+      {/* Legacy v1.7 tiers retained below the Intelligence Dashboard so the
+          existing market widgets stay reachable. The new top of the page
+          owns the narrative framing. */}
+      <SectionDivider label="今日市場觀察" hint="Today's read" />
       <RiskFocus />
       <MarketPulse />
       <div className="grid gap-3 sm:gap-4 lg:grid-cols-[0.92fr_1.08fr]">
@@ -52,7 +99,6 @@ export default async function Home() {
         <OnboardingCard />
       </div>
 
-      {/* Tier 2: free intelligence layer. */}
       <SectionDivider label="免費情報" hint="Daily intelligence" />
       <div
         className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]"
@@ -62,9 +108,6 @@ export default async function Home() {
         <TodaysBrief brief={latestDailyBrief} />
       </div>
 
-      {/* Tier 3: personal monitoring layer — Watchlist gets its own band so
-          it visually reads as MY monitoring, not as another piece of free
-          content. The Pro hint inside Watchlist seeds conversion here. */}
       <SectionDivider label="個人監控" hint="Your watchlist" />
       <div
         className="grid gap-4 xl:grid-cols-[1fr]"
@@ -73,13 +116,9 @@ export default async function Home() {
         <Watchlist />
       </div>
 
-      {/* Tier 3.5: first visible personal intelligence engine surface.
-          This keeps the v1.7 hierarchy intact while clarifying the leap from
-          free market intelligence to Pro personal monitoring. */}
       <SectionDivider label="個人情報引擎" hint="Your IXAI Intelligence" />
       <ProEngineSurface fcnSnapshot={fcnSnapshot} />
 
-      {/* Tier 4: this-week depth + reference data. */}
       <SectionDivider label="本週深度" hint="This week" />
       <div className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
         <div id="weekly-brief">
@@ -88,12 +127,12 @@ export default async function Home() {
         <MarketOverview />
       </div>
 
-      {/* Tier 5: premium funnel. Stronger divider variant marks the leap
-          from free workflow to IXAI Pro. */}
-      <SectionDivider label="IXAI Pro" hint="Membership" variant="premium" />
+      <SectionDivider label="FCN Education" hint="Risk-first" />
+      <FcnGateway />
+
+      <SectionDivider label="IXAI Pro" hint="Personalization" variant="premium" />
       <div id="ixai-pro">
-        <EcosystemBridge className="mb-4" />
-        <ProCta features={proFeatures} />
+        <ProGuardrail />
       </div>
     </div>
   );
