@@ -3,12 +3,16 @@
 import { useState } from "react";
 import { ArrowRight, Check, Mail } from "lucide-react";
 import { trackEvent } from "@/src/lib/analytics/analytics";
+import {
+  getAnonymousDistinctId,
+  safeAlias,
+  safeIdentify,
+} from "@/src/lib/analytics/identity";
 import { getAttributionPayload } from "@/src/lib/distribution/attribution";
 
-// v1.34 — Email Capture foundation. Institutional cream card; no
-// newsletter / spam tone. Posts to /api/distribution/subscribe (mock
-// in-memory). Track email_capture_submit on click and either
-// email_capture_success or email_capture_error on response.
+// v1.34+ — Email Capture foundation. Institutional cream card; no
+// newsletter / spam tone. Posts to /api/distribution/subscribe and
+// stitches anonymous analytics into a known subscriber after success.
 
 type CaptureState = "idle" | "loading" | "success" | "error";
 
@@ -18,6 +22,10 @@ const DEFAULT_DESCRIPTION =
 
 function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+}
+
+function normalizeEmail(value: string): string {
+  return value.trim().toLowerCase();
 }
 
 export function EmailCapture({
@@ -51,14 +59,16 @@ export function EmailCapture({
     trackEvent("email_capture_submit", { surface });
 
     try {
+      const attribution = getAttributionPayload();
+      const path = `${window.location.pathname}${window.location.search || ""}`;
       const response = await fetch("/api/distribution/subscribe", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           email: value,
           surface,
-          path: `${window.location.pathname}${window.location.search || ""}`,
-          attribution: getAttributionPayload(),
+          path,
+          attribution,
         }),
       });
 
@@ -72,6 +82,26 @@ export function EmailCapture({
       }
 
       setState("success");
+
+      const normalizedEmail = normalizeEmail(value);
+      const anonymousId = getAnonymousDistinctId();
+      const subscribedAt = new Date().toISOString();
+
+      if (anonymousId) {
+        safeAlias(anonymousId, normalizedEmail);
+      }
+
+      safeIdentify(normalizedEmail, {
+        email: normalizedEmail,
+        subscriber_status: "active",
+        first_subscribed_surface: surface,
+        subscribed_at: subscribedAt,
+        utm_source: attribution.utm_source,
+        utm_medium: attribution.utm_medium,
+        utm_campaign: attribution.utm_campaign,
+        referrer: attribution.referrer,
+      });
+
       trackEvent("email_capture_success", { surface });
     } catch (error) {
       setState("error");

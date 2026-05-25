@@ -24,6 +24,8 @@ export type AnalyticsProvider = {
   enabled: boolean;
   track(event: AnalyticsEventName, payload?: AnalyticsPayload): void | Promise<void>;
   identify?(identity: AnalyticsIdentity): void | Promise<void>;
+  alias?(previousId: string, nextId: string): void | Promise<void>;
+  getDistinctId?(): string | null;
   page?(path: string, metadata?: AnalyticsPayload): void | Promise<void>;
 };
 

@@ -4,9 +4,16 @@ import type {
   AnalyticsProvider,
 } from "@/src/lib/analytics/provider";
 import { sanitizeAnalyticsPayload } from "@/src/lib/analytics/provider";
+import { sanitizeIdentifyPayload } from "@/src/lib/analytics/identity";
 import type { AnalyticsEventName, AnalyticsPayload } from "@/src/lib/analytics/schema";
 
 let initialized = false;
+
+function warnInDev(message: string, error?: unknown) {
+  if (process.env.NODE_ENV !== "production") {
+    console.warn(message, error ?? "");
+  }
+}
 
 function getPosthogConfig() {
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
@@ -72,7 +79,34 @@ export function createPosthogProvider(): AnalyticsProvider {
         return;
       }
 
-      posthog.identify(identity.userId, sanitizeAnalyticsPayload(identity.traits));
+      try {
+        posthog.identify(identity.userId, sanitizeIdentifyPayload(identity.traits));
+      } catch (error) {
+        warnInDev("[IXAI ANALYTICS] PostHog identify failed", error);
+      }
+    },
+    alias(previousId: string, nextId: string) {
+      if (!initPosthog()) {
+        return;
+      }
+
+      try {
+        posthog.alias(nextId, previousId);
+      } catch (error) {
+        warnInDev("[IXAI ANALYTICS] PostHog alias failed", error);
+      }
+    },
+    getDistinctId() {
+      if (!initPosthog()) {
+        return null;
+      }
+
+      try {
+        return posthog.get_distinct_id();
+      } catch (error) {
+        warnInDev("[IXAI ANALYTICS] PostHog distinct id unavailable", error);
+        return null;
+      }
     },
     page(path: string, metadata?: AnalyticsPayload) {
       if (!initPosthog()) {

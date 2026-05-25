@@ -23,3 +23,9 @@ export {
   type AnalyticsIdentity,
   type AnalyticsProvider,
 } from "@/src/lib/analytics/provider";
+export {
+  getAnonymousDistinctId,
+  safeAlias,
+  safeIdentify as safeIdentifySubscriber,
+  sanitizeIdentifyPayload,
+} from "@/src/lib/analytics/identity";

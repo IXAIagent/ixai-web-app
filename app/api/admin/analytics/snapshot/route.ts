@@ -13,6 +13,8 @@ type HogQlRow = [
   number,
 ];
 
+type IdentityHogQlRow = [number, number];
+
 const TRACKED_EVENTS = [
   "weekly_open",
   "daily_open",
@@ -47,11 +49,41 @@ function emptySnapshot(mode: "disabled" | "posthog") {
     marketOpens: 0,
     shareClicks: 0,
     ctaClicks: 0,
+    knownSubscribers: 0,
+    anonymousVisitors: 0,
+    subscriberConversionRate: 0,
     topSurfaces: [] as { label: string; count: number }[],
     topReferrers: [] as { label: string; count: number }[],
     topUtmSources: [] as { label: string; count: number }[],
     trends: [] as { date: string; count: number }[],
   };
+}
+
+async function queryPosthog<T>(
+  config: NonNullable<ReturnType<typeof getPosthogServerConfig>>,
+  query: string,
+) {
+  const response = await fetch(`${config.host}/api/projects/${config.projectId}/query/`, {
+    body: JSON.stringify({
+      query: {
+        kind: "HogQLQuery",
+        query,
+      },
+    }),
+    cache: "no-store",
+    headers: {
+      authorization: `Bearer ${config.personalApiKey}`,
+      "content-type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(`PostHog query failed: ${response.status} ${body.slice(0, 160)}`);
+  }
+
+  return (await response.json()) as { results?: T[] };
 }
 
 function increment(map: Map<string, number>, key: string | null | undefined, count: number) {
@@ -93,7 +125,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const query = `
+    const eventQuery = `
       SELECT
         event,
         toString(properties['surface']),
@@ -109,28 +141,19 @@ export async function GET(request: NextRequest) {
       LIMIT 500
     `;
 
-    const response = await fetch(`${config.host}/api/projects/${config.projectId}/query/`, {
-      body: JSON.stringify({
-        query: {
-          kind: "HogQLQuery",
-          query,
-        },
-      }),
-      cache: "no-store",
-      headers: {
-        authorization: `Bearer ${config.personalApiKey}`,
-        "content-type": "application/json",
-      },
-      method: "POST",
-    });
+    const identityQuery = `
+      SELECT
+        count(DISTINCT distinct_id),
+        count(DISTINCT CASE WHEN event = 'email_capture_success' THEN distinct_id ELSE NULL END)
+      FROM events
+      WHERE event IN (${[...TRACKED_EVENTS, "page_view"].map((event) => `'${event}'`).join(",")})
+        AND timestamp >= now() - INTERVAL 7 DAY
+    `;
 
-    if (!response.ok) {
-      const body = await response.text().catch(() => "");
-      throw new Error(`PostHog query failed: ${response.status} ${body.slice(0, 160)}`);
-    }
-
-    const payload = (await response.json()) as { results?: HogQlRow[] };
+    const payload = await queryPosthog<HogQlRow>(config, eventQuery);
+    const identityPayload = await queryPosthog<IdentityHogQlRow>(config, identityQuery);
     const rows = payload.results ?? [];
+    const identityRow = identityPayload.results?.[0];
     const surfaces = new Map<string, number>();
     const referrers = new Map<string, number>();
     const utmSources = new Map<string, number>();
@@ -156,6 +179,15 @@ export async function GET(request: NextRequest) {
     snapshot.trends = [...trends.entries()]
       .map(([date, count]) => ({ date, count }))
       .sort((a, b) => a.date.localeCompare(b.date));
+
+    if (identityRow) {
+      const [uniqueVisitors, knownSubscribers] = identityRow;
+      snapshot.knownSubscribers = knownSubscribers;
+      snapshot.anonymousVisitors = Math.max(uniqueVisitors - knownSubscribers, 0);
+      snapshot.subscriberConversionRate = uniqueVisitors
+        ? Number(((knownSubscribers / uniqueVisitors) * 100).toFixed(1))
+        : 0;
+    }
 
     return Response.json({
       ok: true,

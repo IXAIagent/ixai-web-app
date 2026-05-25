@@ -27,6 +27,9 @@ type AnalyticsSnapshot = {
   marketOpens: number;
   shareClicks: number;
   ctaClicks: number;
+  knownSubscribers: number;
+  anonymousVisitors: number;
+  subscriberConversionRate: number;
   topSurfaces: SnapshotRow[];
   topReferrers: SnapshotRow[];
   topUtmSources: SnapshotRow[];
@@ -47,6 +50,9 @@ const EMPTY_SNAPSHOT: AnalyticsSnapshot = {
   marketOpens: 0,
   shareClicks: 0,
   ctaClicks: 0,
+  knownSubscribers: 0,
+  anonymousVisitors: 0,
+  subscriberConversionRate: 0,
   topSurfaces: [],
   topReferrers: [],
   topUtmSources: [],
@@ -197,6 +203,32 @@ export function IntelligenceAnalyticsSnapshot() {
         <SnapshotMetric icon={TrendingUp} label="Market opens" value={snapshot.marketOpens} />
         <SnapshotMetric icon={Share2} label="Share clicks" value={snapshot.shareClicks} />
         <SnapshotMetric icon={MousePointerClick} label="CTA clicks" value={snapshot.ctaClicks} />
+      </div>
+
+      <div className="mt-3 grid gap-3 md:grid-cols-3">
+        <SnapshotMetric
+          icon={Activity}
+          label="Known subscribers"
+          value={snapshot.knownSubscribers}
+        />
+        <SnapshotMetric
+          icon={Radio}
+          label="Anonymous visitors"
+          value={snapshot.anonymousVisitors}
+        />
+        <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
+          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+            <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
+            Conversion rate
+          </div>
+          <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
+            {snapshot.subscriberConversionRate.toLocaleString(undefined, {
+              maximumFractionDigits: 1,
+              minimumFractionDigits: 0,
+            })}
+            %
+          </p>
+        </article>
       </div>
 
       <div className="mt-5 grid gap-3 lg:grid-cols-3">
