@@ -5,6 +5,7 @@ import {
   validateEmail,
 } from "@/src/lib/distribution/subscribers";
 import { log } from "@/src/lib/log";
+import { syncProfileFromIdentity } from "@/src/lib/subscribers/profile-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -69,6 +70,18 @@ export async function POST(request: NextRequest) {
       email: normalizeEmail(email),
       persistence: subscriber.persistence,
       surface: typeof payload.surface === "string" ? payload.surface : undefined,
+    });
+
+    // v1.36.2 — fire-and-forget subscriber profile creation. Sits one
+    // level above the raw distribution capture so the audience graph
+    // gets an aggregate row immediately. Never blocks the subscribe
+    // response; a failed profile write is logged inside the sync helper.
+    const attribution = sanitizeAttribution(payload.attribution);
+    void syncProfileFromIdentity({
+      email,
+      utmSource: attribution?.utm_source,
+      utmMedium: attribution?.utm_medium,
+      utmCampaign: attribution?.utm_campaign,
     });
 
     return Response.json({

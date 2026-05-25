@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { AudienceSnapshot } from "@/components/admin/audience-snapshot";
+import { ConversionFunnel } from "@/components/admin/conversion-funnel";
 import { DistributionSnapshot } from "@/components/admin/distribution-snapshot";
 import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-analytics-snapshot";
 
@@ -42,6 +44,8 @@ export default function AdminPage() {
       </section>
 
       <IntelligenceAnalyticsSnapshot />
+      <AudienceSnapshot />
+      <ConversionFunnel />
       <DistributionSnapshot />
     </div>
   );

@@ -1,21 +1,28 @@
 "use client";
 
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, MessageCircle } from "lucide-react";
 import { trackEvent } from "@/src/lib/analytics/analytics";
 
 // v1.34 — LINE Official Account gateway. Reads NEXT_PUBLIC_LINE_OA_URL
 // at module scope (Next inlines NEXT_PUBLIC_* values into the client
 // bundle) so we never hardcode the LINE link. Until that env is set the
 // CTA renders a "Coming soon" disabled state.
+//
+// v1.36.4 — adds an optional `connected` state. The real LINE OAuth /
+// LIFF flow has not landed; this is a placeholder for the future LINE
+// identity bridge so consumers can pass `connected` once they know an
+// IXAI subscriber is linked to a LINE user id via /api/line/link.
 
 const LINE_OA_URL = process.env.NEXT_PUBLIC_LINE_OA_URL?.trim() ?? "";
 
 export function LineOaGateway({
   surface = "home",
   variant = "card",
+  connected = false,
 }: {
   surface?: string;
   variant?: "card" | "inline";
+  connected?: boolean;
 }) {
   const isEnabled = LINE_OA_URL.length > 0;
 
@@ -47,7 +54,17 @@ export function LineOaGateway({
         <li>Future IXAI Pro alerts（不發送買賣指令）。</li>
       </ul>
 
-      {isEnabled ? (
+      {connected ? (
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <span className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-emerald-200/35 bg-emerald-300/[0.10] px-4 py-2.5 text-sm font-semibold text-emerald-100">
+            <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+            LINE connected
+          </span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-ink-muted)]">
+            LINE intelligence sync coming soon
+          </span>
+        </div>
+      ) : isEnabled ? (
         <a
           className="ixai-cta-forest mt-4 inline-flex min-h-11 w-fit items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold"
           href={LINE_OA_URL}
