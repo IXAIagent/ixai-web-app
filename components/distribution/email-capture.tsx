@@ -57,6 +57,7 @@ export function EmailCapture({
         body: JSON.stringify({
           email: value,
           surface,
+          path: `${window.location.pathname}${window.location.search || ""}`,
           attribution: getAttributionPayload(),
         }),
       });
@@ -74,9 +75,9 @@ export function EmailCapture({
       trackEvent("email_capture_success", { surface });
     } catch (error) {
       setState("error");
-      const message = error instanceof Error ? error.message : "Subscribe failed.";
-      setErrorMessage(message);
-      trackEvent("email_capture_error", { surface, reason: message.slice(0, 64) });
+      const reason = error instanceof Error ? error.message : "Subscribe failed.";
+      setErrorMessage("Unable to subscribe right now. Please try again later.");
+      trackEvent("email_capture_error", { surface, reason: reason.slice(0, 64) });
     }
   }
 
@@ -106,7 +107,7 @@ export function EmailCapture({
         <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-3.5 text-sm leading-7 text-[var(--ixai-forest)]">
           <Check className="mt-1 h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           <p>
-            You&rsquo;re on the list. IXAI Weekly Intelligence 將於下一輪審稿後送出；目前 mock-only，不會寄出真實 email。
+            You&rsquo;re on the list. IXAI Intelligence 會在後續開放時優先通知你。
           </p>
         </div>
       ) : (

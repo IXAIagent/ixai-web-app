@@ -1,32 +1,34 @@
 import type { NextRequest } from "next/server";
+import {
+  normalizeEmail,
+  saveSubscriber,
+  validateEmail,
+} from "@/src/lib/distribution/subscribers";
 import { log } from "@/src/lib/log";
 
-// v1.34 — Mock subscribe API.
-//
-// Foundation only — accepts an email + optional surface / attribution
-// payload, validates the email shape, stores a row in an in-memory
-// array, and returns `{ ok: true }`. No database, no email provider, no
-// CRM SaaS, no production email send.
-//
-// The in-memory buffer survives only for the lifetime of a single
-// Vercel function instance; the goal is to expose the call site
-// contract that a real provider (Resend / Mailchimp / Postmark / etc.)
-// will land against later.
+export const dynamic = "force-dynamic";
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const MAX_BUFFER = 200;
-
-type SubscribeRecord = {
-  email: string;
-  surface?: string;
-  attribution?: Record<string, string>;
-  capturedAt: string;
+type SubscribeBody = {
+  email?: unknown;
+  surface?: unknown;
+  path?: unknown;
+  attribution?: unknown;
 };
 
-const buffer: SubscribeRecord[] = [];
+function sanitizeAttribution(value: unknown): Record<string, string> | undefined {
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+
+  const entries = Object.entries(value as Record<string, unknown>)
+    .filter(([, item]) => typeof item === "string")
+    .map(([key, item]) => [key.slice(0, 48), String(item).slice(0, 240)]);
+
+  return entries.length ? Object.fromEntries(entries) : undefined;
+}
 
 export async function POST(request: NextRequest) {
-  let payload: { email?: unknown; surface?: unknown; attribution?: unknown } = {};
+  let payload: SubscribeBody = {};
 
   try {
     payload = await request.json();
@@ -37,7 +39,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const email = typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "";
+  const email = typeof payload.email === "string" ? payload.email.trim() : "";
+
   if (!email) {
     return Response.json(
       { ok: false, message: "Email is required." },
@@ -45,55 +48,53 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!EMAIL_PATTERN.test(email)) {
+  if (!validateEmail(email)) {
     return Response.json(
       { ok: false, message: "Email format is not valid." },
       { status: 400 },
     );
   }
 
-  const surface =
-    typeof payload.surface === "string" ? payload.surface.slice(0, 32) : undefined;
-  const attribution =
-    payload.attribution && typeof payload.attribution === "object"
-      ? (Object.fromEntries(
-          Object.entries(payload.attribution as Record<string, unknown>)
-            .filter(([, value]) => typeof value === "string")
-            .map(([key, value]) => [key.slice(0, 32), String(value).slice(0, 200)]),
-        ) as Record<string, string>)
-      : undefined;
-
-  // Dedupe: if the same email is already buffered, return ok without
-  // appending so the mock never blows up its in-memory ring buffer.
-  const existing = buffer.find((record) => record.email === email);
-  if (!existing) {
-    if (buffer.length >= MAX_BUFFER) {
-      buffer.shift();
-    }
-    buffer.push({
+  try {
+    const subscriber = await saveSubscriber({
       email,
-      surface,
-      attribution,
-      capturedAt: new Date().toISOString(),
+      surface: typeof payload.surface === "string" ? payload.surface : undefined,
+      path: typeof payload.path === "string" ? payload.path : undefined,
+      attribution: sanitizeAttribution(payload.attribution),
+      referrer: request.headers.get("referer") ?? undefined,
+      userAgent: request.headers.get("user-agent") ?? undefined,
     });
+
+    log.info("[ixai.subscribe]", {
+      email: normalizeEmail(email),
+      persistence: subscriber.persistence,
+      surface: typeof payload.surface === "string" ? payload.surface : undefined,
+    });
+
+    return Response.json({
+      ok: true,
+      subscriber: {
+        email: subscriber.email,
+        status: subscriber.status,
+      },
+      persistence: subscriber.persistence,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "invalid_email") {
+      return Response.json(
+        { ok: false, message: "Email format is not valid." },
+        { status: 400 },
+      );
+    }
+
+    log.warn("[ixai.subscribe] durable write failed", error);
+
+    return Response.json(
+      {
+        ok: false,
+        message: "Unable to subscribe right now.",
+      },
+      { status: 502 },
+    );
   }
-
-  log.info("[ixai.subscribe.mock]", {
-    email,
-    surface,
-    attribution,
-    bufferSize: buffer.length,
-  });
-
-  return Response.json({ ok: true });
-}
-
-export async function GET() {
-  // Internal mock — exposes only counts, not raw rows, so a future
-  // admin snapshot can render numbers without leaking email addresses.
-  return Response.json({
-    ok: true,
-    bufferSize: buffer.length,
-    note: "In-memory mock buffer; resets on every server restart.",
-  });
 }
