@@ -21,6 +21,12 @@ const TRACKED_EVENTS = [
   "market_open",
   "share_click",
   "cta_click",
+  "pro_cta_click",
+  "pro_preview_open",
+  "pro_intelligence_open",
+  "gated_surface_view",
+  "gated_upgrade_click",
+  "preview_badge_view",
   "distribution_cta_click",
   "email_capture_submit",
   "email_capture_success",
@@ -165,7 +171,14 @@ export async function GET(request: NextRequest) {
       if (event === "daily_open") snapshot.dailyOpens += count;
       if (event === "market_open") snapshot.marketOpens += count;
       if (event.startsWith("share_") || event === "share_click") snapshot.shareClicks += count;
-      if (event === "cta_click" || event === "distribution_cta_click") snapshot.ctaClicks += count;
+      if (
+        event === "cta_click" ||
+        event === "distribution_cta_click" ||
+        event === "pro_cta_click" ||
+        event === "gated_upgrade_click"
+      ) {
+        snapshot.ctaClicks += count;
+      }
 
       increment(surfaces, surface, count);
       increment(referrers, referrer, count);

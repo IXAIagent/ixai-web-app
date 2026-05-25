@@ -4,6 +4,7 @@ import { ConversionFunnel } from "@/components/admin/conversion-funnel";
 import { DistributionSnapshot } from "@/components/admin/distribution-snapshot";
 import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-analytics-snapshot";
 import { MembershipSnapshot } from "@/components/admin/membership-snapshot";
+import { ProReadinessSnapshot } from "@/components/admin/pro-readiness-snapshot";
 
 export const metadata = {
   title: "IXAI 營運控制台 | Admin",
@@ -57,6 +58,9 @@ export default function AdminPage() {
       </section>
       <section id="membership">
         <MembershipSnapshot />
+      </section>
+      <section id="pro-readiness">
+        <ProReadinessSnapshot />
       </section>
       <section id="distribution">
         <DistributionSnapshot />

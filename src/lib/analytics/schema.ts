@@ -9,6 +9,10 @@ export type AnalyticsEventName =
   | "pro_waitlist_success"
   | "pro_waitlist_error"
   | "pro_preview_open"
+  | "pro_intelligence_open"
+  | "gated_surface_view"
+  | "gated_upgrade_click"
+  | "preview_badge_view"
   | "admin_console_open"
   | "admin_section_click"
   | "push_enable"
@@ -67,6 +71,10 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "pro_waitlist_success",
   "pro_waitlist_error",
   "pro_preview_open",
+  "pro_intelligence_open",
+  "gated_surface_view",
+  "gated_upgrade_click",
+  "preview_badge_view",
   "admin_console_open",
   "admin_section_click",
   "push_enable",

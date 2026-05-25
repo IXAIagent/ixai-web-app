@@ -7,6 +7,8 @@ import { ProAlertPreview } from "@/components/pro/pro-alert-preview";
 import { ProPreviewCard } from "@/components/pro/pro-preview-card";
 import { ProRiskMap } from "@/components/pro/pro-risk-map";
 import { ProWaitlistCta } from "@/components/pro/pro-waitlist-cta";
+import { PreviewBadge } from "@/components/pro/preview-badge";
+import { UpgradeIntelligenceCta } from "@/components/pro/upgrade-intelligence-cta";
 import { trackEvent } from "@/src/lib/analytics/analytics";
 
 export function ProPreviewDashboard() {
@@ -23,6 +25,9 @@ export function ProPreviewDashboard() {
         <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
           僅供展示的 Pro 介面
         </p>
+        <div className="mt-3">
+          <PreviewBadge />
+        </div>
         <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
           IXAI Pro 預覽控制台
         </h1>
@@ -66,9 +71,12 @@ export function ProPreviewDashboard() {
       <ProRiskMap />
 
       <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5">
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          FCN 風險情報預覽
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            FCN 風險情報預覽
+          </p>
+          <PreviewBadge surface="pro_fcn_risk" />
+        </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {[
             ["Worst-of 監控", "TSLA 為示意 basket 落後標的"],
@@ -109,6 +117,12 @@ export function ProPreviewDashboard() {
             返回 Public Intelligence
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
+          <UpgradeIntelligenceCta
+            className="mt-3"
+            source="pro_preview_dashboard"
+            surface="pro_portfolio"
+            tone="light"
+          />
         </div>
         <ProWaitlistCta requestedFeature="portfolio_intelligence" surface="pro_preview" />
       </section>

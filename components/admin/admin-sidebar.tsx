@@ -27,7 +27,7 @@ const GROUPS = [
     items: [
       ["訂閱者", "/admin#distribution"],
       ["會員系統", "/admin#membership"],
-      ["Pro 等候名單", "/admin#membership"],
+      ["Pro 等候名單", "/admin#pro-readiness"],
       ["分發系統", "/admin#distribution"],
     ],
   },

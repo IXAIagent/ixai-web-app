@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { PreviewBadge } from "@/components/pro/preview-badge";
 
 export function ProPreviewCard({
   eyebrow,
@@ -15,13 +16,14 @@ export function ProPreviewCard({
 }) {
   return (
     <article className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5">
-      <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-2.5">
         <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
           <Icon className="h-4 w-4" aria-hidden="true" />
         </span>
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
           {eyebrow}
         </p>
+        <PreviewBadge />
       </div>
       <h3 className="mt-3 text-base font-semibold leading-6 text-[var(--ixai-forest)]">
         {title}

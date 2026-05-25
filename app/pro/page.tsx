@@ -53,6 +53,12 @@ export default function ProPage() {
               >
                 查看 Pro 預覽控制台
               </Link>
+              <Link
+                className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
+                href="/pro-intelligence"
+              >
+                Upgrade Intelligence
+              </Link>
             </div>
           </div>
 

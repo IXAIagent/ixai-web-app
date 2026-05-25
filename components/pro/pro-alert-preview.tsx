@@ -1,4 +1,5 @@
 import { AlertTriangle, BellRing, Cpu, Landmark } from "lucide-react";
+import { PreviewBadge } from "@/components/pro/preview-badge";
 
 const ALERTS = [
   {
@@ -26,9 +27,12 @@ const ALERTS = [
 export function ProAlertPreview() {
   return (
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-4 sm:p-5">
-      <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-        AI 警示預覽
-      </p>
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          AI 警示預覽
+        </p>
+        <PreviewBadge />
+      </div>
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         {ALERTS.map((alert) => {
           const Icon = alert.icon;

@@ -9,9 +9,12 @@ export function ProRiskMap() {
   return (
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)]">
       <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5">
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Portfolio Intelligence 預覽
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Portfolio Intelligence 預覽
+          </p>
+          <PreviewBadge />
+        </div>
         <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
           風險曝險示意圖
         </h2>
@@ -35,3 +38,4 @@ export function ProRiskMap() {
     </section>
   );
 }
+import { PreviewBadge } from "@/components/pro/preview-badge";
