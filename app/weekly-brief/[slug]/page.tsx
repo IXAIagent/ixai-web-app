@@ -6,6 +6,7 @@ import {
   BreadcrumbStructuredData,
   NewsArticleStructuredData,
 } from "@/components/seo/structured-data";
+import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import { IntelligenceQuoteCard } from "@/components/share/intelligence-quote-card";
 import { ShareActions } from "@/components/share/share-actions";
 import { buildPublicMetadata, ixaiSiteUrl } from "@/src/lib/brand/metadata";
@@ -444,6 +445,21 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
           ))}
         </div>
       </section>
+
+      {/* v1.34 — Bottom intelligence distribution CTA: email capture +
+          LINE OA gateway in a single institutional card. */}
+      <IntelligenceCta
+        emailDescription="Receive the IXAI Weekly Intelligence — past-week recap, next-week catalysts and cross-market narrative — in your inbox."
+        emailTitle="Subscribe to IXAI Weekly Intelligence"
+        shareCopy={buildWeeklyShareCopy({
+          coverage: brief.coveragePeriod,
+          narrative: brief.narrative ?? null,
+          url: `${ixaiSiteUrl}/weekly-brief/${slug}`,
+        })}
+        shareSurface="weekly"
+        surface="weekly"
+        variant="article-bottom"
+      />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AlertTriangle, ArrowLeft, ArrowUpRight, Eye } from "lucide-react";
 import { DailyBriefLocalDetail } from "@/components/daily-brief/daily-brief-local-detail";
+import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import {
   BreadcrumbStructuredData,
   NewsArticleStructuredData,
@@ -259,6 +260,21 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
           </div>
         </section>
       </div>
+
+      {/* v1.34 — Bottom intelligence distribution CTA: email capture +
+          LINE OA gateway in a single institutional card. */}
+      <IntelligenceCta
+        emailDescription="Receive the IXAI Daily Brief — AI-assisted daily market intelligence — in your inbox."
+        emailTitle="Subscribe to IXAI Daily Intelligence"
+        shareCopy={buildDailyShareCopy({
+          publishedAt: brief.publishedAt,
+          narrative: null,
+          url: `${ixaiSiteUrl}/daily-brief/${slug}`,
+        })}
+        shareSurface="daily"
+        surface="daily"
+        variant="article-bottom"
+      />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">

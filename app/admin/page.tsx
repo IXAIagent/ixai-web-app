@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DistributionSnapshot } from "@/components/admin/distribution-snapshot";
 import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-analytics-snapshot";
 
 export const metadata = {
@@ -41,6 +42,7 @@ export default function AdminPage() {
       </section>
 
       <IntelligenceAnalyticsSnapshot />
+      <DistributionSnapshot />
     </div>
   );
 }

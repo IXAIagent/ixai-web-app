@@ -32,7 +32,16 @@ export type AnalyticsEventName =
   | "daily_open"
   | "weekly_open"
   | "share_click"
-  | "cta_click";
+  | "cta_click"
+  // v1.34 — distribution foundation
+  | "email_capture_submit"
+  | "email_capture_success"
+  | "email_capture_error"
+  | "line_oa_click"
+  | "distribution_cta_click"
+  | "share_to_line"
+  | "share_to_x"
+  | "share_to_linkedin";
 
 export type AnalyticsEventPayload = Record<string, string | number | boolean | undefined>;
 

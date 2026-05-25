@@ -15,6 +15,7 @@ import { ImportantEvents } from "@/components/home/important-events";
 import { IntelligenceHero } from "@/components/home/intelligence-hero";
 import { PricingWhat } from "@/components/home/pricing-what";
 import { ProGuardrail } from "@/components/home/pro-guardrail";
+import { IntelligenceDistributionStrip } from "@/components/distribution/intelligence-distribution-strip";
 import { FirstVisitBanner } from "@/components/onboarding/first-visit-banner";
 import { OnboardingCard } from "@/components/onboarding/onboarding-card";
 import { ShareActions } from "@/components/share/share-actions";
@@ -101,6 +102,11 @@ export default async function Home() {
       {/* v1.29.5 — first-visit welcome banner. Dismissible, localStorage
           marker ixai_onboarding_seen_v1, never shown twice. */}
       <FirstVisitBanner />
+
+      {/* v1.34 — Three-column intelligence distribution strip. Daily /
+          Weekly / LINE OA — first impression of how to subscribe to
+          IXAI Public Intelligence. */}
+      <IntelligenceDistributionStrip />
 
       {/* v1.33.2 — Daily Intelligence Loop. Sits between hero and the
           pricing section so first-time readers immediately understand

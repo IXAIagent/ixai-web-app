@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AuthEntryGate } from "@/components/auth/auth-entry-gate";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { AppShell } from "@/components/layout/app-shell";
+import { DistributionProvider } from "@/components/distribution/distribution-provider";
 import {
   OrganizationStructuredData,
   WebSiteStructuredData,
@@ -94,6 +95,10 @@ export default function RootLayout({
             publisher entity without per-page boilerplate. */}
         <OrganizationStructuredData />
         <WebSiteStructuredData />
+        {/* v1.34 — Distribution attribution. Captures UTM params once
+            per session into sessionStorage before any distribution
+            CTA reads them. No third-party tracking. */}
+        <DistributionProvider />
         <AuthProvider>
           <AuthEntryGate>
             <AppShell>{children}</AppShell>
