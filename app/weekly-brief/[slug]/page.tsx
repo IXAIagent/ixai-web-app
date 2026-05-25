@@ -160,6 +160,14 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
             narrative={brief.narrative}
             eyebrow="IXAI Weekly Intelligence"
             contextLine={`Coverage · ${brief.coveragePeriod}`}
+            events={brief.upcomingFocus.map((focus) => ({
+              date: focus.date,
+              title: focus.event,
+              category: focus.category ?? "macro_data",
+              whyItMatters: focus.whyItMatters,
+              relatedAssets: focus.relatedAssets ?? [],
+              marketImpact: focus.marketImpact,
+            }))}
           />
           <NarrativeIntelligence
             narrative={brief.narrative}
