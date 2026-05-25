@@ -8,8 +8,18 @@
 // inside this module without touching call sites.
 
 export {
-  registerAnalyticsHandler,
   trackEvent,
-  type AnalyticsEventName,
   type AnalyticsEventPayload,
 } from "@/src/lib/analytics/events";
+export type { AnalyticsEventName, AnalyticsPayload } from "@/src/lib/analytics/schema";
+export {
+  getAnalyticsProvider,
+  identify,
+  registerAnalyticsProvider,
+  safeIdentify,
+  safePage,
+  safeTrack,
+  track,
+  type AnalyticsIdentity,
+  type AnalyticsProvider,
+} from "@/src/lib/analytics/provider";

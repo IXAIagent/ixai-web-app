@@ -14,36 +14,9 @@
 // Do not add network calls here without explicit user/PM sign-off.
 
 import { log } from "@/src/lib/log";
+import type { AnalyticsEventName, AnalyticsPayload } from "@/src/lib/analytics/schema";
 
-export type AnalyticsEventName =
-  | "page_view"
-  | "watchlist_add"
-  | "watchlist_remove"
-  | "watchlist_open"
-  | "pro_interest"
-  | "pro_cta_click"
-  | "push_enable"
-  | "push_denied"
-  | "feedback_click"
-  | "onboarding_seen"
-  | "onboarding_dismissed"
-  | "install_prompt_shown"
-  | "install_prompt_accepted"
-  | "daily_open"
-  | "weekly_open"
-  | "share_click"
-  | "cta_click"
-  // v1.34 — distribution foundation
-  | "email_capture_submit"
-  | "email_capture_success"
-  | "email_capture_error"
-  | "line_oa_click"
-  | "distribution_cta_click"
-  | "share_to_line"
-  | "share_to_x"
-  | "share_to_linkedin";
-
-export type AnalyticsEventPayload = Record<string, string | number | boolean | undefined>;
+export type AnalyticsEventPayload = AnalyticsPayload;
 
 type AnalyticsHandler = (
   event: AnalyticsEventName,

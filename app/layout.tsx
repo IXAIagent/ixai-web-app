@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthEntryGate } from "@/components/auth/auth-entry-gate";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import { AppShell } from "@/components/layout/app-shell";
 import { DistributionProvider } from "@/components/distribution/distribution-provider";
 import {
@@ -99,6 +100,7 @@ export default function RootLayout({
             per session into sessionStorage before any distribution
             CTA reads them. No third-party tracking. */}
         <DistributionProvider />
+        <PageViewTracker />
         <AuthProvider>
           <AuthEntryGate>
             <AppShell>{children}</AppShell>

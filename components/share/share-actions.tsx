@@ -81,6 +81,15 @@ export function ShareActions({
 
   function externalShare(channel: string, href: string) {
     trackEvent("share_click", { surface, channel });
+    if (channel === "x") {
+      trackEvent("share_to_x", { surface });
+    }
+    if (channel === "linkedin") {
+      trackEvent("share_to_linkedin", { surface });
+    }
+    if (channel === "line") {
+      trackEvent("share_to_line", { surface });
+    }
     window.open(href, "_blank", "noopener,noreferrer");
   }
 
