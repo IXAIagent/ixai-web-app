@@ -15,10 +15,10 @@ export function ProLockCard({
   const access = getSurfaceAccessState(surface);
 
   return (
-    <article className="relative overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5">
+    <article className="relative min-w-0 overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <PreviewBadge label="Locked Preview" surface={surface} />
-        <LockKeyhole className="h-4 w-4 shrink-0 text-[var(--ixai-gold)]" aria-hidden="true" />
+        <LockKeyhole className="h-4 w-4 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
       </div>
       <h3 className="mt-4 text-base font-semibold leading-6 text-[var(--ixai-forest)]">
         {title}

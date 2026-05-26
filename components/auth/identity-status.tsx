@@ -46,7 +46,7 @@ export function IdentityStatus({ compact = false }: { compact?: boolean }) {
           <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">
             Welcome back · Your intelligence workspace
           </p>
-          <p className="mt-1 font-mono text-xs text-[var(--ixai-ink-muted)]">
+          <p className="mt-1 break-all font-mono text-xs text-[var(--ixai-ink-muted)]">
             {identity?.normalized_email}
           </p>
         </div>

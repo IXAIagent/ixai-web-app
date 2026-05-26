@@ -76,7 +76,7 @@ function SnapshotList({
 }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
         {title}
       </p>
       <ul className="mt-2 grid gap-1.5">
@@ -197,8 +197,8 @@ export function IntelligenceAnalyticsSnapshot() {
           label="匿名訪客"
           value={snapshot.anonymousVisitors}
         />
-        <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
-          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+        <article className="min-w-0 rounded-lg border border-white/10 bg-white/[0.045] p-4">
+          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
             <TrendingUp className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
             轉換率
           </div>
@@ -231,7 +231,7 @@ export function IntelligenceAnalyticsSnapshot() {
       </div>
 
       <div className="mt-3 rounded-lg border border-white/10 bg-white/[0.035] p-4">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
           近 7 日趨勢
         </p>
         <div className="mt-2 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-7">

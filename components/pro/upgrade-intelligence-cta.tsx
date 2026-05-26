@@ -35,7 +35,7 @@ export function UpgradeIntelligenceCta({
   return (
     <div className={`flex flex-col gap-2 sm:flex-row sm:flex-wrap ${className}`}>
       <Link
-        className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
+        className="ixai-cta-cream inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--ixai-forest)] sm:w-auto"
         href="/pro#pro-waitlist"
         onClick={() => trackUpgradeClick("pro_waitlist")}
       >
@@ -43,7 +43,7 @@ export function UpgradeIntelligenceCta({
         加入 Pro 等候名單
       </Link>
       <Link
-        className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition ${secondaryClass}`}
+        className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-center text-sm font-medium transition sm:w-auto ${secondaryClass}`}
         href="/pro-preview"
         onClick={() => trackUpgradeClick("pro_preview")}
       >
@@ -51,7 +51,7 @@ export function UpgradeIntelligenceCta({
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
       <Link
-        className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition ${secondaryClass}`}
+        className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-center text-sm font-medium transition sm:w-auto ${secondaryClass}`}
         href="/pro-intelligence"
         onClick={() => trackUpgradeClick("pro_intelligence")}
       >

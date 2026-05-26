@@ -18,10 +18,10 @@ export default function ProPage() {
       <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <div className="grid gap-5 p-4 sm:gap-8 sm:p-8 lg:grid-cols-[1.08fr_0.92fr] lg:p-10">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-[var(--ixai-gold)]">
+            <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.3em]">
               IXAI Pro 預覽
             </p>
-            <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:mt-4 sm:text-5xl">
+            <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:mt-4 sm:text-5xl">
               IXAI Pro — Personal Intelligence Layer
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72 sm:mt-6 sm:text-base sm:leading-8">
@@ -35,7 +35,7 @@ export default function ProPage() {
             </p>
             <div className="mt-5 grid gap-2 sm:mt-7 sm:flex sm:flex-wrap sm:gap-3">
               <a
-                className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold"
+                className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-center text-sm font-semibold"
                 href="#pro-waitlist"
               >
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
@@ -99,10 +99,10 @@ export default function ProPage() {
         id="pro-waitlist"
       >
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.22em]">
             等候名單 / 預覽
           </p>
-          <h2 className="mt-2 font-serif text-3xl font-semibold leading-tight text-[var(--ixai-forest)]">
+          <h2 className="mt-2 font-serif text-2xl font-semibold leading-tight text-[var(--ixai-forest)] sm:text-3xl">
             IXAI Pro 開放時，優先取得通知。
           </h2>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">

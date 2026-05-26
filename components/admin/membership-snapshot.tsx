@@ -128,8 +128,8 @@ export function MembershipSnapshot() {
           value={snapshot.conversionCandidates}
         />
         <ShellMetricCard icon={Clock} label="已過期" value={snapshot.expired} />
-        <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
-          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+        <article className="min-w-0 rounded-lg border border-white/10 bg-white/[0.045] p-4">
+          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
             <BarChart3 className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
             Pro 轉換率
           </div>
@@ -153,7 +153,7 @@ export function MembershipSnapshot() {
           ],
         ].map(([title, rows, emptyLabel]) => (
           <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4" key={title as string}>
-            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
               {title as string}
             </p>
             <ul className="mt-2 grid gap-1.5">

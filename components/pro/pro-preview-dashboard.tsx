@@ -23,13 +23,13 @@ export function ProPreviewDashboard() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.28em]">
           僅供展示的 Pro 介面
         </p>
         <div className="mt-3">
           <PreviewBadge />
         </div>
-        <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
+        <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:text-5xl">
           IXAI Pro 預覽控制台
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
@@ -78,7 +78,7 @@ export function ProPreviewDashboard() {
 
       <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.22em]">
             FCN 風險情報預覽
           </p>
           <PreviewBadge surface="pro_fcn_risk" />
@@ -117,7 +117,7 @@ export function ProPreviewDashboard() {
             與符合人工審閱原則的風險控管。此階段尚未進行任何收費。
           </p>
           <Link
-            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest)] sm:w-auto"
             href="/daily-brief"
           >
             返回 Public Intelligence

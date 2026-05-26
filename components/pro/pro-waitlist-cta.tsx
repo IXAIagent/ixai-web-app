@@ -21,7 +21,7 @@ export function ProWaitlistCta({
         variant="inline"
       />
       <Link
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-white/45 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-white/45 px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest)]"
         href="/pro-preview"
       >
         查看 Pro 預覽控制台

@@ -37,7 +37,7 @@ export function GatedSurface({
       <div className="pointer-events-none select-none opacity-48 blur-[1.5px]">
         {children}
       </div>
-      <div className="absolute inset-x-3 top-6 z-10 sm:inset-x-6">
+      <div className="relative z-10 mt-3 sm:absolute sm:inset-x-6 sm:top-6 sm:mt-0">
         <GatedOverlay membership={membership} source={source} surface={surface} />
       </div>
     </div>

@@ -42,16 +42,16 @@ export function IdentifySessionCard({
     return (
       <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] p-4 sm:p-5">
         <IdentityStatus />
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 grid gap-2 sm:flex sm:flex-wrap">
           <Link
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-sm font-semibold text-[var(--ixai-cream)]"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-cream)]"
             href="/pro-preview"
           >
             Continue with IXAI Pro Preview
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)]"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-forest)]"
             href="/pro-intelligence"
           >
             Pro Intelligence shell
@@ -67,8 +67,8 @@ export function IdentifySessionCard({
         <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.32)] bg-white/58 text-[var(--ixai-gold)]">
           <ShieldCheck className="h-5 w-5" aria-hidden="true" />
         </span>
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
+        <div className="min-w-0">
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.2em]">
             Identity Persistence
           </p>
           <h2 className="mt-1 text-lg font-semibold leading-7 text-[var(--ixai-forest)]">
@@ -101,7 +101,7 @@ export function IdentifySessionCard({
           />
         </div>
         <button
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[#123a2d] disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[#123a2d] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           disabled={formState === "submitting"}
           type="submit"
         >

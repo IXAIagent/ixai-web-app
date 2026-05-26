@@ -36,7 +36,7 @@ function Rows({
 }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
         {title}
       </p>
       <ul className="mt-2 grid gap-1.5">
@@ -149,8 +149,8 @@ export function DistributionSnapshot() {
       </div>
 
       <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-          <MousePointerClick className="h-3.5 w-3.5" aria-hidden="true" />
+        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+          <MousePointerClick className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
           持久化模式
         </div>
         <p className="mt-2">

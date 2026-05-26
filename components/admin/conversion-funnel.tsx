@@ -75,7 +75,7 @@ function StageCard({ stage, isLast }: { stage: FunnelStage; isLast: boolean }) {
   return (
     <article className={`flex w-full flex-col gap-2 rounded-lg border p-4 ${accent}`}>
       <div className="flex items-center justify-between gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
           {STAGE_LABELS[stage.key] ?? stage.label}
         </p>
         {isLast ? (
@@ -143,7 +143,7 @@ export function ConversionFunnel() {
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[#0a2119] p-5 text-[var(--ixai-cream)] sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
             轉換漏斗
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7">
@@ -159,7 +159,7 @@ export function ConversionFunnel() {
             </p>
           ) : null}
         </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)]">
+        <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(245,240,230,0.66)]">
           <Filter className="h-3 w-3 text-[var(--ixai-gold)]" aria-hidden="true" />
           {state === "loading" ? "載入中" : snapshot.mode === "posthog" ? "PostHog" : "未啟用"}
         </span>
@@ -203,7 +203,7 @@ export function ConversionFunnel() {
 
       <div className="mt-5 grid gap-3 lg:grid-cols-2">
         <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
             主要捕捉入口
           </p>
           <ul className="mt-2 grid gap-1.5">
@@ -228,7 +228,7 @@ export function ConversionFunnel() {
         </div>
 
         <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
             總計
           </p>
           <div className="mt-2 grid gap-1.5 font-mono text-xs text-[rgba(245,240,230,0.78)]">

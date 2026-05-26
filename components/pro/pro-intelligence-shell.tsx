@@ -61,7 +61,7 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <PreviewBadge label="Future Pro Intelligence" surface="pro_portfolio" />
-        <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
+        <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:text-5xl">
           IXAI Pro Intelligence Layer
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
@@ -92,7 +92,7 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
 
             return (
               <article
-                className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5"
+                className="min-w-0 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5"
                 key={module.title}
               >
                 <div className="flex items-center gap-2 text-[var(--ixai-gold)]">

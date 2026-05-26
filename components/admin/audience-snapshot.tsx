@@ -101,9 +101,9 @@ type MetricProps = {
 
 function Metric({ label, value, icon: Icon }: MetricProps) {
   return (
-    <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
-      <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+    <article className="min-w-0 rounded-lg border border-white/10 bg-white/[0.045] p-4">
+      <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+        <Icon className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
         {label}
       </div>
       <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
@@ -124,7 +124,7 @@ function ListBlock({
 }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
         {title}
       </p>
       <ul className="mt-2 grid gap-1.5">
@@ -202,7 +202,7 @@ export function AudienceSnapshot() {
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[#0a2119] p-5 text-[var(--ixai-cream)] sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
             受眾快照
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7">
@@ -217,7 +217,7 @@ export function AudienceSnapshot() {
             </p>
           ) : null}
         </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)]">
+        <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(245,240,230,0.66)]">
           {state === "loading"
             ? "載入中"
             : snapshot.mode === "supabase"
@@ -260,13 +260,13 @@ export function AudienceSnapshot() {
       </div>
 
       <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.035] p-4">
-        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-          <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
+        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+          <MessageCircle className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
           LINE 身分橋接
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div className="rounded-md border border-white/10 bg-white/[0.045] p-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.62)]">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(245,240,230,0.62)]">
               已連接帳戶
             </p>
             <p className="mt-1.5 font-mono text-xl font-semibold text-[var(--ixai-cream)]">
@@ -274,7 +274,7 @@ export function AudienceSnapshot() {
             </p>
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.045] p-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.62)]">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(245,240,230,0.62)]">
               連接率
             </p>
             <p className="mt-1.5 font-mono text-xl font-semibold text-[var(--ixai-cream)]">
@@ -282,7 +282,7 @@ export function AudienceSnapshot() {
             </p>
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.045] p-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.62)]">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(245,240,230,0.62)]">
               近期活躍（7 日）
             </p>
             <p className="mt-1.5 font-mono text-xl font-semibold text-[var(--ixai-cream)]">

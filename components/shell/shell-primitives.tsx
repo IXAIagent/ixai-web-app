@@ -54,7 +54,7 @@ export function ShellNavButton({
   return (
     <Link
       className={cx(
-        "inline-flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 font-mono text-xs leading-none transition",
+        "inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg px-3 py-2 font-mono text-xs leading-none transition",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ixai-gold)]/60",
         active
           ? "bg-white/10 text-emerald-100"
@@ -83,7 +83,7 @@ export function ShellCard({
   return (
     <section
       className={cx(
-        "rounded-lg border p-4 sm:p-5",
+        "min-w-0 max-w-full rounded-lg border p-4 sm:p-5",
         tone === "dark"
           ? "border-white/10 bg-white/[0.04] text-[var(--ixai-cream)]"
           : "border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] text-[var(--ixai-forest)]",
@@ -109,8 +109,8 @@ export function ShellHeader({
   title: string;
 }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-      <div>
+    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="min-w-0">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           {eyebrow}
         </p>
@@ -122,7 +122,7 @@ export function ShellHeader({
         ) : null}
         {children}
       </div>
-      {action}
+      {action ? <div className="shrink-0">{action}</div> : null}
     </div>
   );
 }
@@ -142,7 +142,7 @@ export function ShellMetricCard({
     typeof value === "number" ? value.toLocaleString(undefined, { maximumFractionDigits: 1 }) : value;
 
   return (
-    <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
+    <article className="min-w-0 rounded-lg border border-white/10 bg-white/[0.045] p-4">
       <div className="flex min-h-4 items-center gap-2 font-mono text-[11px] uppercase leading-none tracking-[0.18em] text-[var(--ixai-gold)]">
         <Icon className="h-3.5 w-3.5 shrink-0 stroke-current" aria-hidden />
         <span className="translate-y-px truncate">{label}</span>
