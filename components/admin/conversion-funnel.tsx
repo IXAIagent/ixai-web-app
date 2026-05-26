@@ -160,7 +160,7 @@ export function ConversionFunnel() {
           ) : null}
         </div>
         <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(245,240,230,0.66)]">
-          <Filter className="h-3 w-3 text-[var(--ixai-gold)]" aria-hidden="true" />
+          <Filter className="h-3 w-3 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           {state === "loading" ? "載入中" : snapshot.mode === "posthog" ? "PostHog" : "未啟用"}
         </span>
       </div>
@@ -179,7 +179,7 @@ export function ConversionFunnel() {
             {index < stages.length - 1 ? (
               <ArrowDown
                 aria-hidden="true"
-                className="h-4 w-4 text-[var(--ixai-gold)]"
+                className="h-4 w-4 stroke-current text-[var(--ixai-gold)]"
               />
             ) : null}
           </div>
@@ -194,7 +194,7 @@ export function ConversionFunnel() {
             {index < stages.length - 1 ? (
               <ArrowRight
                 aria-hidden="true"
-                className="hidden h-4 w-4 shrink-0 text-[var(--ixai-gold)] lg:inline"
+                className="hidden h-4 w-4 shrink-0 stroke-current text-[var(--ixai-gold)] lg:inline"
               />
             ) : null}
           </div>

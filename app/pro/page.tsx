@@ -29,7 +29,7 @@ export default function ProPage() {
               將把這些情報連接到投資組合、FCN exposure、Watchlist memory
               與個人風險工作流。
             </p>
-            <p className="mt-3 max-w-2xl text-xs leading-6 text-white/52 sm:text-sm">
+            <p className="mt-3 max-w-2xl text-xs leading-6 text-zinc-400/90 sm:text-sm">
               IXAI Pro 目前處於等候名單 / 預覽階段。此頁不收費，也不提供投資建議、
               目標價、買賣訊號或報酬承諾。
             </p>
@@ -38,15 +38,15 @@ export default function ProPage() {
                 className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-center text-sm font-semibold"
                 href="#pro-waitlist"
               >
-                <Sparkles className="h-4 w-4" aria-hidden="true" />
-                加入 Pro 等候名單
+                <Sparkles className="h-4 w-4 stroke-current" aria-hidden="true" />
+                <span className="translate-y-px">加入 Pro 等候名單</span>
               </a>
               <Link
                 className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
                 href="/daily-brief"
               >
-                <FileText className="h-4 w-4" aria-hidden="true" />
-                繼續使用 Public Intelligence
+                <FileText className="h-4 w-4 stroke-current" aria-hidden="true" />
+                <span className="translate-y-px">繼續使用 Public Intelligence</span>
               </Link>
               <Link
                 className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
@@ -74,7 +74,7 @@ export default function ProPage() {
                 ["Pro", "Personal portfolio intelligence、FCN 監控、AI alerts。"],
               ].map(([label, copy]) => (
                 <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4" key={label}>
-                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-white/42">
+                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-zinc-400/80">
                     {label}
                   </p>
                   <p className="mt-2 text-sm leading-7 text-white/72">{copy}</p>
@@ -122,7 +122,7 @@ export default function ProPage() {
           href="/daily-brief"
         >
           返回 Public Intelligence
-          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          <ArrowRight className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
         </Link>
       </section>
     </div>

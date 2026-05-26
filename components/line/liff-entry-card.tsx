@@ -47,9 +47,9 @@ export function LiffEntryCard({
           <div className="flex flex-wrap items-center gap-2">
             <ShellStatusPill icon={Smartphone}>LIFF Foundation</ShellStatusPill>
             {liffReady ? (
-              <span className="inline-flex items-center gap-2 rounded-md border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-700">
+              <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.16em] text-emerald-700">
                 <CheckCircle2 className="h-3 w-3 stroke-current" aria-hidden="true" />
-                LIFF ready
+                <span className="translate-y-px">LIFF ready</span>
               </span>
             ) : null}
           </div>
@@ -84,15 +84,15 @@ export function LiffEntryCard({
               rel="noopener noreferrer"
               target="_blank"
             >
-              <MessageCircle className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
-              開啟 LINE OA
+              <MessageCircle className="h-3.5 w-3.5 shrink-0 stroke-current" aria-hidden="true" />
+              <span className="translate-y-px">開啟 LINE OA</span>
             </Link>
           ) : null}
         </div>
       </div>
       <div className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
         <div className="flex items-start gap-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-          <Sparkles className="mt-1 h-4 w-4 shrink-0 text-[var(--ixai-gold)]" aria-hidden="true" />
+          <Sparkles className="mt-1 h-4 w-4 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           <p>
             成功登入後，IXAI 會回復 identity session、合併 LINE identity bridge，並顯示
             LINE connected / unified identity ready / intelligence sync ready。

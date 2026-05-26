@@ -18,19 +18,19 @@ export function LineLoginButton({
   if (disabled) {
     return (
       <button
-        className={`inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/35 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-ink-muted)] ${className}`}
+        className={`inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/35 px-4 py-2.5 text-sm font-semibold leading-none text-[var(--ixai-ink-muted)] ${className}`}
         disabled
         type="button"
       >
         <MessageCircle className="h-4 w-4 stroke-current" aria-hidden="true" />
-        LINE Login 尚未設定
+        <span className="translate-y-px">LINE Login 尚未設定</span>
       </button>
     );
   }
 
   return (
     <Link
-      className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.45)] bg-[var(--ixai-gold)] px-4 py-2.5 text-sm font-semibold text-[#10251c] transition hover:brightness-105 ${className}`}
+      className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.45)] bg-[var(--ixai-gold)] px-4 py-2.5 text-sm font-semibold leading-none text-[var(--ixai-forest)] transition hover:brightness-105 ${className}`}
       href="/api/line/login"
       onClick={() =>
         trackEvent("line_login_open", {
@@ -40,7 +40,7 @@ export function LineLoginButton({
       }
     >
       <LogIn className="h-4 w-4 stroke-current" aria-hidden="true" />
-      {label}
+      <span className="translate-y-px">{label}</span>
     </Link>
   );
 }

@@ -24,7 +24,7 @@ export default function AdminPage() {
         <h1 className="mt-3 max-w-4xl font-serif text-3xl font-semibold leading-tight sm:text-5xl">
           IXAI 營運控制台
         </h1>
-        <p className="mt-4 max-w-3xl text-sm leading-7 text-white/62 sm:text-base">
+        <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-400 sm:text-base">
           內部情報、受眾、分發與會員營運控制層。Public routes 維持對外使用者體驗；
           此控制台用於內容營運、成長數據與 Pro 轉換準備。
         </p>
@@ -45,7 +45,7 @@ export default function AdminPage() {
               內容營運
             </p>
             <h2 className="mt-2 text-base font-semibold text-[var(--ixai-cream)]">{title}</h2>
-            <p className="mt-2 text-sm leading-6 text-white/52">{copy}</p>
+            <p className="mt-2 text-sm leading-6 text-zinc-400/90">{copy}</p>
           </Link>
         ))}
       </section>
@@ -78,7 +78,7 @@ export default function AdminPage() {
         <DistributionSnapshot />
       </section>
       <section
-        className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/52 sm:p-5"
+        className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-zinc-400/90 sm:p-5"
         id="system"
       >
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">

@@ -113,9 +113,9 @@ export function ConnectLineCard({
           <div className="flex flex-wrap items-center gap-2">
             <ShellStatusPill icon={MessageCircle}>LINE Intelligence Sync</ShellStatusPill>
             {connected ? (
-              <span className="inline-flex w-fit items-center gap-2 rounded-md border border-emerald-200/30 bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-100">
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-emerald-200/30 bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.16em] text-emerald-100">
                 <CheckCircle2 className="h-3 w-3 stroke-current" aria-hidden="true" />
-                LINE connected
+                <span className="translate-y-px">LINE connected</span>
               </span>
             ) : null}
           </div>
@@ -137,7 +137,7 @@ export function ConnectLineCard({
           {identity?.normalized_email ? (
             <p
               className={`mt-2 break-all font-mono text-xs ${
-                isDark ? "text-zinc-500" : "text-[var(--ixai-ink-muted)]"
+                isDark ? "text-zinc-400/80" : "text-[var(--ixai-ink-muted)]"
               }`}
             >
               {identity.normalized_email}
@@ -161,32 +161,34 @@ export function ConnectLineCard({
             <>
               <LineLoginButton source={source} />
               <Link
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold text-current transition hover:bg-white/10"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold leading-none text-current transition hover:bg-white/10"
                 href="/pro-preview"
               >
-                先建立 identity session
                 <ShieldCheck className="h-4 w-4 stroke-current" aria-hidden="true" />
+                <span className="translate-y-px">先建立 identity session</span>
               </Link>
             </>
           ) : (
             <button
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.45)] bg-[var(--ixai-gold)] px-4 py-2.5 text-sm font-semibold text-[#10251c] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.45)] bg-[var(--ixai-gold)] px-4 py-2.5 text-sm font-semibold leading-none text-[var(--ixai-forest)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
               disabled={connecting || connected}
               onClick={() => void connectLine()}
               type="button"
             >
               <Link2 className="h-4 w-4 stroke-current" aria-hidden="true" />
-              {connected ? "LINE 已連接" : connecting ? "建立中" : "Connect LINE"}
+              <span className="translate-y-px">
+                {connected ? "LINE 已連接" : connecting ? "建立中" : "Connect LINE"}
+              </span>
             </button>
           )}
           {lineUrl ? (
             <Link
-              className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-xs font-semibold text-current transition hover:bg-white/10"
+              className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-xs font-semibold leading-none text-current transition hover:bg-white/10"
               href={lineUrl}
               rel="noopener noreferrer"
               target="_blank"
             >
-              開啟 LINE Official Account
+              <span className="translate-y-px">開啟 LINE Official Account</span>
               <ArrowUpRight className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
             </Link>
           ) : null}

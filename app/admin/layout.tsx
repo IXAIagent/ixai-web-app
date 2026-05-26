@@ -15,7 +15,7 @@ function AdminLockedPage() {
           <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-5xl">
             後台已安全鎖定。
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/62">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400">
             Production 環境尚未設定 IXAI_ADMIN_PASSWORD，因此不允許進入內部內容營運後台。
           </p>
         </section>

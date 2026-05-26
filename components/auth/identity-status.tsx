@@ -44,7 +44,7 @@ export function IdentityStatus({ compact = false }: { compact?: boolean }) {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-md border border-[rgba(176,141,87,0.34)] bg-white/52 px-2 py-1 text-[11px] font-semibold text-[var(--ixai-forest)]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[var(--ixai-gold)]" aria-hidden="true" />
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
               {getPlanLabel(membership?.plan)}
             </span>
             {proCandidate ? (
@@ -54,13 +54,13 @@ export function IdentityStatus({ compact = false }: { compact?: boolean }) {
             ) : null}
             {lineConnected ? (
               <span className="inline-flex items-center gap-1 rounded-md border border-[rgba(176,141,87,0.34)] bg-white/52 px-2 py-1 text-[11px] font-semibold text-[var(--ixai-forest)]">
-                <Link2 className="h-3.5 w-3.5 text-[var(--ixai-gold)]" aria-hidden="true" />
+                <Link2 className="h-3.5 w-3.5 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
                 LINE 已連接
               </span>
             ) : null}
             {intelligenceSyncReady ? (
               <span className="inline-flex items-center gap-1 rounded-md border border-[rgba(176,141,87,0.34)] bg-white/52 px-2 py-1 text-[11px] font-semibold text-[var(--ixai-forest)]">
-                <Sparkles className="h-3.5 w-3.5 text-[var(--ixai-gold)]" aria-hidden="true" />
+                <Sparkles className="h-3.5 w-3.5 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
                 Intelligence Sync Ready
               </span>
             ) : null}
@@ -82,8 +82,8 @@ export function IdentityStatus({ compact = false }: { compact?: boolean }) {
           onClick={() => void logout()}
           type="button"
         >
-          <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-          清除 session
+          <LogOut className="h-3.5 w-3.5 shrink-0 stroke-current" aria-hidden="true" />
+          <span className="translate-y-px">清除 session</span>
         </button>
       </div>
     </div>

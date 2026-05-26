@@ -58,7 +58,7 @@ export function ShellNavButton({
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ixai-gold)]/60",
         active
           ? "bg-white/10 text-emerald-100"
-          : "text-zinc-400 hover:bg-white/[0.06] hover:text-emerald-100",
+          : "text-zinc-400/90 hover:bg-white/[0.06] hover:text-emerald-100",
       )}
       href={href}
       onClick={onClick}
@@ -163,9 +163,9 @@ export function ShellStatusPill({
   icon?: IconComponent;
 }) {
   return (
-    <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-zinc-400">
+    <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-zinc-400/90">
       {Icon ? (
-        <Icon className="h-3 w-3 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden />
+        <Icon className="h-3 w-3 shrink-0 stroke-current" aria-hidden />
       ) : null}
       <span className="translate-y-px">{children}</span>
     </span>

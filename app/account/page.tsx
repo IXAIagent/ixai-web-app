@@ -59,7 +59,7 @@ export default function AccountPage() {
               <MessageSquare className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               提供意見
             </span>
-            <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
+            <ArrowUpRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-between gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
@@ -69,7 +69,7 @@ export default function AccountPage() {
               <Bug className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               回報問題
             </span>
-            <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
+            <ArrowUpRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
       </section>

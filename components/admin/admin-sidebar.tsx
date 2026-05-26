@@ -69,7 +69,7 @@ export function AdminSidebar() {
         <h1 className="mt-2 text-lg font-semibold text-[var(--ixai-cream)]">
           營運控制台
         </h1>
-        <p className="mt-2 text-xs leading-5 text-white/42">
+        <p className="mt-2 text-xs leading-5 text-zinc-400/80">
           內部情報、受眾、分發與會員營運控制層。
         </p>
       </div>
