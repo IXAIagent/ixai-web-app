@@ -9,6 +9,7 @@ export function IdentityStatus({ compact = false }: { compact?: boolean }) {
     identity,
     intelligenceSyncReady,
     lineConnected,
+    lineDisplayName,
     loading,
     logout,
     membership,
@@ -67,6 +68,11 @@ export function IdentityStatus({ compact = false }: { compact?: boolean }) {
           <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">
             Welcome back · Your intelligence workspace
           </p>
+          {lineConnected ? (
+            <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
+              LINE {lineDisplayName ? `· ${lineDisplayName}` : "已連接"} · Future AI Alerts Enabled
+            </p>
+          ) : null}
           <p className="mt-1 break-all font-mono text-xs text-[var(--ixai-ink-muted)]">
             {identity?.normalized_email}
           </p>

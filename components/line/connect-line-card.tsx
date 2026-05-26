@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, CheckCircle2, Link2, MessageCircle, ShieldCheck } from "lucide-react";
 import { useIdentitySession } from "@/components/auth/identity-provider";
+import { LineLoginButton } from "@/components/line/line-login-button";
 import { ShellCard, ShellStatusPill } from "@/components/shell/shell-primitives";
 import { trackEvent } from "@/src/lib/analytics/analytics";
 
@@ -157,13 +158,16 @@ export function ConnectLineCard({
         </div>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-48">
           {state === "anonymous" ? (
-            <Link
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold text-current transition hover:bg-white/10"
-              href="/pro-preview"
-            >
-              先建立 identity session
-              <ShieldCheck className="h-4 w-4 stroke-current" aria-hidden="true" />
-            </Link>
+            <>
+              <LineLoginButton source={source} />
+              <Link
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold text-current transition hover:bg-white/10"
+                href="/pro-preview"
+              >
+                先建立 identity session
+                <ShieldCheck className="h-4 w-4 stroke-current" aria-hidden="true" />
+              </Link>
+            </>
           ) : (
             <button
               className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.45)] bg-[var(--ixai-gold)] px-4 py-2.5 text-sm font-semibold text-[#10251c] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"

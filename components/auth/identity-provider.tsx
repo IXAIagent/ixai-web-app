@@ -16,6 +16,7 @@ import type { MembershipPlan, MembershipStatus } from "@/src/lib/membership/memb
 export type LightweightIdentityState =
   | "loading"
   | "anonymous"
+  | "line_connected"
   | "identified"
   | "pro"
   | "enterprise";
@@ -37,7 +38,11 @@ type IdentityResponse = {
   authenticated?: boolean;
   identity?: LightweightIdentity | null;
   intelligence_sync_ready?: boolean;
+  line_display_name?: string | null;
   line_connected?: boolean;
+  line_login_ready?: boolean;
+  line_user_id?: string | null;
+  liff_ready?: boolean;
   membership?: LightweightMembership | null;
   ok?: boolean;
   pro_candidate?: boolean;
@@ -48,7 +53,11 @@ type IdentityContextValue = {
   identify: (email: string, source?: string) => Promise<boolean>;
   identity: LightweightIdentity | null;
   intelligenceSyncReady: boolean;
+  lineDisplayName: string | null;
   lineConnected: boolean;
+  lineLoginReady: boolean;
+  lineUserId: string | null;
+  liffReady: boolean;
   loading: boolean;
   logout: () => Promise<void>;
   membership: LightweightMembership | null;
@@ -73,6 +82,10 @@ function deriveState(response: IdentityResponse | null): LightweightIdentityStat
     return "pro";
   }
 
+  if (response.line_connected) {
+    return "line_connected";
+  }
+
   return "identified";
 }
 
@@ -84,6 +97,7 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
   const [payload, setPayload] = useState<IdentityResponse | null>(null);
   const [state, setState] = useState<LightweightIdentityState>("loading");
   const restoredTrackedRef = useRef(false);
+  const lineLoginTrackedRef = useRef(false);
 
   const applyPayload = useCallback((nextPayload: IdentityResponse | null) => {
     setPayload(nextPayload);
@@ -117,6 +131,16 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
             membership: toEventMembership(nextPayload.membership ?? null),
             path: window.location.pathname,
             source: "identity_provider",
+          });
+        }
+        if (nextPayload.line_connected && !lineLoginTrackedRef.current) {
+          lineLoginTrackedRef.current = true;
+          const params = new URLSearchParams(window.location.search);
+          trackEvent(params.get("line_login") === "success" ? "line_login_success" : "liff_identity_restored", {
+            line_connected: true,
+            membership: toEventMembership(nextPayload.membership ?? null),
+            path: window.location.pathname,
+            source: params.get("line_login") === "success" ? "line_callback" : "identity_provider",
           });
         }
       }
@@ -180,6 +204,7 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
         source: "identity_status",
       });
       restoredTrackedRef.current = false;
+      lineLoginTrackedRef.current = false;
       applyPayload(null);
     }
   }, [applyPayload, payload?.membership]);
@@ -189,7 +214,11 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
       identify,
       identity: payload?.identity ?? null,
       intelligenceSyncReady: payload?.intelligence_sync_ready ?? false,
+      lineDisplayName: payload?.line_display_name ?? null,
       lineConnected: payload?.line_connected ?? false,
+      lineLoginReady: payload?.line_login_ready ?? false,
+      lineUserId: payload?.line_user_id ?? null,
+      liffReady: payload?.liff_ready ?? false,
       loading: state === "loading",
       logout,
       membership: payload?.membership ?? null,

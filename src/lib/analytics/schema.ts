@@ -22,6 +22,12 @@ export type AnalyticsEventName =
   | "line_connect_click"
   | "line_connect_pending"
   | "line_identity_merged"
+  | "line_login_open"
+  | "line_login_success"
+  | "line_login_error"
+  | "liff_open"
+  | "liff_ready"
+  | "liff_identity_restored"
   | "unified_identity_restored"
   | "admin_console_open"
   | "admin_section_click"
@@ -94,6 +100,12 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "line_connect_click",
   "line_connect_pending",
   "line_identity_merged",
+  "line_login_open",
+  "line_login_success",
+  "line_login_error",
+  "liff_open",
+  "liff_ready",
+  "liff_identity_restored",
   "unified_identity_restored",
   "admin_console_open",
   "admin_section_click",

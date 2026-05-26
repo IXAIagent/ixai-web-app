@@ -1,0 +1,46 @@
+"use client";
+
+import Link from "next/link";
+import { LogIn, MessageCircle } from "lucide-react";
+import { trackEvent } from "@/src/lib/analytics/analytics";
+
+export function LineLoginButton({
+  className = "",
+  disabled = false,
+  label = "使用 LINE 繼續",
+  source = "line_login_button",
+}: {
+  className?: string;
+  disabled?: boolean;
+  label?: string;
+  source?: string;
+}) {
+  if (disabled) {
+    return (
+      <button
+        className={`inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/35 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-ink-muted)] ${className}`}
+        disabled
+        type="button"
+      >
+        <MessageCircle className="h-4 w-4 stroke-current" aria-hidden="true" />
+        LINE Login 尚未設定
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.45)] bg-[var(--ixai-gold)] px-4 py-2.5 text-sm font-semibold text-[#10251c] transition hover:brightness-105 ${className}`}
+      href="/api/line/login"
+      onClick={() =>
+        trackEvent("line_login_open", {
+          path: window.location.pathname,
+          source,
+        })
+      }
+    >
+      <LogIn className="h-4 w-4 stroke-current" aria-hidden="true" />
+      {label}
+    </Link>
+  );
+}

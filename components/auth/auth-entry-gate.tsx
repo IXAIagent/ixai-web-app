@@ -11,6 +11,7 @@ const exemptPathPrefixes = [
   "/admin",
   "/app-preview",
   "/feedback",
+  "/liff",
   "/login",
   "/pro",
   "/pro-intelligence",

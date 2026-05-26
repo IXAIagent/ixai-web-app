@@ -7,6 +7,7 @@ import {
   validateEmail,
 } from "@/src/lib/distribution/subscribers";
 import { log } from "@/src/lib/log";
+import { getLineConfigState } from "@/src/lib/line/config";
 import { isLineConnected, resolveUnifiedIdentity } from "@/src/lib/line/identity-merge";
 import {
   getMembershipByEmail,
@@ -102,6 +103,7 @@ export async function POST(request: NextRequest) {
   });
   const unified = await resolveUnifiedIdentity(session);
   const lineConnected = Boolean(unified.line_identity || session.line_connected);
+  const lineConfig = getLineConfigState();
 
   return Response.json({
     authenticated: true,
@@ -109,7 +111,11 @@ export async function POST(request: NextRequest) {
       normalized_email: session.normalized_email,
     },
     intelligence_sync_ready: lineConnected,
+    line_display_name: unified.line_identity?.display_name ?? null,
     line_connected: lineConnected,
+    line_login_ready: lineConfig.loginReady,
+    line_user_id: unified.line_identity?.line_user_id ?? null,
+    liff_ready: lineConfig.liffReady,
     membership: {
       plan: unified.membership?.plan ?? session.membership_plan,
       status: unified.membership?.status ?? session.membership_status,
