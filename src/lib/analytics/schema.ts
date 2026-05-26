@@ -13,6 +13,11 @@ export type AnalyticsEventName =
   | "gated_surface_view"
   | "gated_upgrade_click"
   | "preview_badge_view"
+  | "identity_session_created"
+  | "identity_session_restored"
+  | "identity_session_cleared"
+  | "identity_surface_view"
+  | "identified_return_visit"
   | "admin_console_open"
   | "admin_section_click"
   | "push_enable"
@@ -75,6 +80,11 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "gated_surface_view",
   "gated_upgrade_click",
   "preview_badge_view",
+  "identity_session_created",
+  "identity_session_restored",
+  "identity_session_cleared",
+  "identity_surface_view",
+  "identified_return_visit",
   "admin_console_open",
   "admin_section_click",
   "push_enable",

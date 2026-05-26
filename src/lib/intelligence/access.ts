@@ -27,7 +27,7 @@ export type IntelligenceAccessResult = {
 
 type AccessContext = {
   membership?: Pick<MembershipRecord, "plan" | "status" | "expires_at"> | null;
-  plan?: MembershipPlan;
+  plan?: MembershipPlan | "anonymous";
 };
 
 const PUBLIC_SURFACES = new Set<IntelligenceSurface>([
@@ -84,8 +84,8 @@ function hasActiveAccess(membership?: AccessContext["membership"]) {
   return Number.isFinite(expiresAt) && expiresAt > Date.now();
 }
 
-function getPlan(context: AccessContext = {}): MembershipPlan {
-  return context.membership?.plan ?? context.plan ?? "free";
+function getPlan(context: AccessContext = {}): MembershipPlan | "anonymous" {
+  return context.membership?.plan ?? context.plan ?? "anonymous";
 }
 
 function hasProAccess(context: AccessContext = {}) {

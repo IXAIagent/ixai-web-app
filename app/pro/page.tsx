@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, FileText, Sparkles } from "lucide-react";
+import { IdentifySessionCard } from "@/components/auth/identify-session-card";
 import { ProComparison } from "@/components/pro/pro-comparison";
 import { ProFeatureGrid } from "@/components/pro/pro-feature-grid";
 import { ProWaitlistCta } from "@/components/pro/pro-waitlist-cta";
@@ -87,6 +88,11 @@ export default function ProPage() {
       <ProFeatureGrid />
 
       <ProComparison />
+
+      <IdentifySessionCard
+        source="pro_page"
+        title="建立你的 IXAI intelligence identity"
+      />
 
       <section
         className="grid gap-4 rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-center"

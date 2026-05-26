@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import { Brain, CalendarClock, ChartNoAxesCombined, Radar, ShieldCheck } from "lucide-react";
+import { IdentifySessionCard } from "@/components/auth/identify-session-card";
+import { useIdentitySession } from "@/components/auth/identity-provider";
 import { GatedSurface } from "@/components/pro/gated-surface";
 import { PreviewBadge } from "@/components/pro/preview-badge";
 import { ProLockCard } from "@/components/pro/pro-lock-card";
@@ -43,14 +45,17 @@ const SAMPLE_MODULES = [
 ];
 
 export function ProIntelligenceShell({ membership = "free" }: { membership?: MembershipPlan }) {
+  const { membership: sessionMembership } = useIdentitySession();
+  const activeMembership = sessionMembership?.plan ?? membership;
+
   useEffect(() => {
     trackEvent("pro_intelligence_open", {
-      membership,
+      membership: activeMembership,
       path: window.location.pathname,
       source: "pro_intelligence_route",
       surface: "pro_intelligence",
     });
-  }, [membership]);
+  }, [activeMembership]);
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
@@ -65,14 +70,19 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
         </p>
         <UpgradeIntelligenceCta
           className="mt-5"
-          membership={membership}
+          membership={activeMembership}
           source="pro_intelligence_hero"
           surface="pro_portfolio"
         />
       </section>
 
+      <IdentifySessionCard
+        source="pro_intelligence"
+        title="連接你的 Pro Intelligence context"
+      />
+
       <GatedSurface
-        membership={membership}
+        membership={activeMembership}
         source="pro_intelligence_page"
         surface="pro_portfolio"
       >

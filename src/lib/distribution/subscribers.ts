@@ -48,6 +48,11 @@ type SubscriberRecord = {
   metadata: Record<string, string>;
 };
 
+export type SubscriberLookup = Pick<
+  SubscriberRecord,
+  "email" | "normalized_email" | "status" | "source_surface" | "metadata"
+>;
+
 const TABLE_NAME = "ixai_distribution_subscribers";
 const SUPABASE_TIMEOUT_MS = 6000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -279,6 +284,24 @@ export async function saveSubscriber(input: SubscriberInput): Promise<SavedSubsc
     status: subscriber.status,
     persistence: "supabase",
   };
+}
+
+export async function getSubscriberByEmail(email: string): Promise<SubscriberLookup | null> {
+  if (!validateEmail(email)) {
+    return null;
+  }
+
+  const normalizedEmail = normalizeEmail(email);
+
+  if (!isDistributionSupabaseConfigured()) {
+    const record =
+      memorySubscribers.find((subscriber) => subscriber.normalized_email === normalizedEmail) ??
+      null;
+
+    return record;
+  }
+
+  return (await findSupabaseSubscriber(normalizedEmail)) ?? null;
 }
 
 export async function listSubscriberStats(): Promise<SubscriberStats> {

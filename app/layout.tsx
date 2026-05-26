@@ -5,6 +5,7 @@ import { AuthProvider } from "@/components/auth/auth-provider";
 import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import { AppShell } from "@/components/layout/app-shell";
 import { DistributionProvider } from "@/components/distribution/distribution-provider";
+import { IdentityProvider } from "@/components/auth/identity-provider";
 import {
   OrganizationStructuredData,
   WebSiteStructuredData,
@@ -102,9 +103,11 @@ export default function RootLayout({
         <DistributionProvider />
         <PageViewTracker />
         <AuthProvider>
-          <AuthEntryGate>
-            <AppShell>{children}</AppShell>
-          </AuthEntryGate>
+          <IdentityProvider>
+            <AuthEntryGate>
+              <AppShell>{children}</AppShell>
+            </AuthEntryGate>
+          </IdentityProvider>
         </AuthProvider>
       </body>
     </html>

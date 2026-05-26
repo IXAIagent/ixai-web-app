@@ -1,4 +1,4 @@
-import type { MembershipRecord } from "@/src/lib/membership/memberships";
+import type { MembershipPlan, MembershipRecord } from "@/src/lib/membership/memberships";
 
 export type ProFeature =
   | "portfolio_intelligence"
@@ -9,6 +9,7 @@ export type ProFeature =
 
 type EntitlementContext = {
   membership?: MembershipRecord | null;
+  plan?: MembershipPlan | "anonymous";
 };
 
 function hasActiveAccess(membership?: MembershipRecord | null) {
@@ -28,8 +29,14 @@ function isPaidPlan(membership?: MembershipRecord | null) {
   return membership?.plan === "pro" || membership?.plan === "enterprise";
 }
 
-export function canAccessPro({ membership }: EntitlementContext) {
-  return hasActiveAccess(membership) && isPaidPlan(membership);
+export function canAccessPro(context: EntitlementContext) {
+  const plan = context.membership?.plan ?? context.plan;
+
+  if (context.membership) {
+    return hasActiveAccess(context.membership) && isPaidPlan(context.membership);
+  }
+
+  return plan === "pro" || plan === "enterprise";
 }
 
 export function canAccessFCN({ membership }: EntitlementContext) {
@@ -44,22 +51,27 @@ export function canAccessWeeklyPremium({ membership }: EntitlementContext) {
   return canAccessPro({ membership });
 }
 
-export function getPlanLabel(plan?: MembershipRecord["plan"] | null) {
+function readPlan(context: EntitlementContext) {
+  return context.membership?.plan ?? context.plan ?? "anonymous";
+}
+
+export function getPlanLabel(plan?: MembershipRecord["plan"] | "anonymous" | null) {
+  if (plan === "anonymous") return "Anonymous";
   if (plan === "pro") return "IXAI Pro";
   if (plan === "enterprise") return "IXAI Enterprise";
   return "IXAI Public";
 }
 
-export function getEntitlementSummary({ membership }: EntitlementContext) {
-  const plan = membership?.plan ?? "free";
+export function getEntitlementSummary(context: EntitlementContext) {
+  const plan = readPlan(context);
 
   return {
     plan,
     label: getPlanLabel(plan),
-    canAccessPro: canAccessPro({ membership }),
-    canAccessFCN: canAccessFCN({ membership }),
-    canAccessDailyPremium: canAccessDailyPremium({ membership }),
-    canAccessWeeklyPremium: canAccessWeeklyPremium({ membership }),
+    canAccessPro: canAccessPro(context),
+    canAccessFCN: canAccessFCN(context),
+    canAccessDailyPremium: canAccessDailyPremium(context),
+    canAccessWeeklyPremium: canAccessWeeklyPremium(context),
   };
 }
 
