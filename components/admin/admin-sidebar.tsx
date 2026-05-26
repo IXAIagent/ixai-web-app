@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ShellNavButton, ShellSidebarSection, shellTokens } from "@/components/shell/shell-primitives";
 import { trackEvent } from "@/src/lib/analytics/analytics";
 
 const GROUPS = [
@@ -59,7 +59,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-white/10 bg-[#071a14] lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
+    <aside className={`hidden ${shellTokens.adminSidebarWidth} shrink-0 border-r border-white/10 bg-[#071a14] lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col`}>
       <div className="border-b border-white/10 px-4 py-5">
         <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
           IXAI
@@ -73,21 +73,15 @@ export function AdminSidebar() {
       </div>
       <nav className="flex flex-1 flex-col gap-4 overflow-y-auto px-3 py-4">
         {GROUPS.map((group) => (
-          <div className="grid gap-1" key={group.heading}>
-            <p className="px-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]/80">
-              {group.heading}
-            </p>
+          <ShellSidebarSection key={group.heading} title={group.heading}>
             {group.items.map(([label, href]) => {
               const active = isActive(pathname, href);
               return (
-                <Link
-                  className={`rounded-md px-2.5 py-2 font-mono text-xs transition ${
-                    active
-                      ? "bg-white/10 text-[var(--ixai-cream)]"
-                      : "text-white/48 hover:bg-white/[0.055] hover:text-white/78"
-                  }`}
+                <ShellNavButton
+                  active={active}
                   href={href}
                   key={`${group.heading}-${label}`}
+                  label={label}
                   onClick={() =>
                     trackEvent("admin_section_click", {
                       path: pathname,
@@ -95,12 +89,10 @@ export function AdminSidebar() {
                       surface: "admin_sidebar",
                     })
                   }
-                >
-                  {label}
-                </Link>
+                />
               );
             })}
-          </div>
+          </ShellSidebarSection>
         ))}
       </nav>
     </aside>

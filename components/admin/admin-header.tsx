@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
+import { ShellNavButton } from "@/components/shell/shell-primitives";
 import { trackEvent } from "@/src/lib/analytics/analytics";
 
 const MOBILE_LINKS = [
@@ -36,10 +36,10 @@ export function AdminHeader() {
           className="flex gap-2 overflow-x-auto pb-1 lg:hidden"
         >
           {MOBILE_LINKS.map(([label, href]) => (
-            <Link
-              className="shrink-0 rounded-md border border-white/10 bg-white/[0.045] px-3 py-2 font-mono text-[11px] text-white/68"
+            <ShellNavButton
               href={href}
               key={label}
+              label={label}
               onClick={() =>
                 trackEvent("admin_section_click", {
                   path: window.location.pathname,
@@ -47,9 +47,7 @@ export function AdminHeader() {
                   surface: "admin_mobile_header",
                 })
               }
-            >
-              {label}
-            </Link>
+            />
           ))}
         </nav>
       </div>

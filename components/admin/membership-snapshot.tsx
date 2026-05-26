@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { BadgeCheck, BarChart3, Clock, Database, Sparkles, Users } from "lucide-react";
+import {
+  ShellCard,
+  ShellHeader,
+  ShellMetricCard,
+  ShellStatusPill,
+} from "@/components/shell/shell-primitives";
 
 type MembershipSnapshot = {
   persistence: "supabase" | "memory";
@@ -40,26 +46,6 @@ const EMPTY_SNAPSHOT: MembershipSnapshot = {
   topPlans: [],
   topRequestedProFeatures: [],
 };
-
-type MetricProps = {
-  icon: typeof BarChart3;
-  label: string;
-  value: number;
-};
-
-function Metric({ icon: Icon, label, value }: MetricProps) {
-  return (
-    <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
-      <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-        {label}
-      </div>
-      <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
-        {value.toLocaleString()}
-      </p>
-    </article>
-  );
-}
 
 export function MembershipSnapshot() {
   const [snapshot, setSnapshot] = useState<MembershipSnapshot>(EMPTY_SNAPSHOT);
@@ -112,25 +98,13 @@ export function MembershipSnapshot() {
           : "Memory / 未設定";
 
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[#0a2119] p-5 text-[var(--ixai-cream)] sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            會員系統快照
-          </p>
-          <h2 className="mt-2 text-xl font-semibold leading-7">
-            Pro 權限基礎
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-            僅顯示聚合後的會員與轉換準備狀態。原始 email 與會員 records
-            不會出現在此 Admin 介面。
-          </p>
-        </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)]">
-          <Database className="h-3 w-3 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {persistenceLabel}
-        </span>
-      </div>
+    <ShellCard className="border-[var(--ixai-border)] bg-[#0a2119] p-5 sm:p-6">
+      <ShellHeader
+        action={<ShellStatusPill icon={Database}>{persistenceLabel}</ShellStatusPill>}
+        eyebrow="會員系統快照"
+        subtitle="僅顯示聚合後的會員與轉換準備狀態。原始 email 與會員 records 不會出現在此 Admin 介面。"
+        title="Pro 權限基礎"
+      />
 
       {state === "error" ? (
         <div className="mt-5 rounded-lg border border-red-300/20 bg-red-950/20 p-4 text-sm leading-6 text-red-100/80">
@@ -139,24 +113,24 @@ export function MembershipSnapshot() {
       ) : null}
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <Metric icon={Users} label="總會員" value={snapshot.totalMembers} />
-        <Metric icon={Users} label="Free 會員" value={snapshot.freeMembers} />
-        <Metric icon={BadgeCheck} label="Active Pro" value={snapshot.activePro} />
-        <Metric icon={Sparkles} label="試用" value={snapshot.trials} />
-        <Metric icon={Sparkles} label="Pro 等候名單" value={snapshot.proWaitlistCount} />
+        <ShellMetricCard icon={Users} label="總會員" value={snapshot.totalMembers} />
+        <ShellMetricCard icon={Users} label="Free 會員" value={snapshot.freeMembers} />
+        <ShellMetricCard icon={BadgeCheck} label="Active Pro" value={snapshot.activePro} />
+        <ShellMetricCard icon={Sparkles} label="試用" value={snapshot.trials} />
+        <ShellMetricCard icon={Sparkles} label="Pro 等候名單" value={snapshot.proWaitlistCount} />
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <Metric icon={BarChart3} label="Pro 候選" value={snapshot.proCandidates} />
-        <Metric
+        <ShellMetricCard icon={BarChart3} label="Pro 候選" value={snapshot.proCandidates} />
+        <ShellMetricCard
           icon={BarChart3}
           label="轉換候選"
           value={snapshot.conversionCandidates}
         />
-        <Metric icon={Clock} label="已過期" value={snapshot.expired} />
+        <ShellMetricCard icon={Clock} label="已過期" value={snapshot.expired} />
         <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-            <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" />
+            <BarChart3 className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
             Pro 轉換率
           </div>
           <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
@@ -202,6 +176,6 @@ export function MembershipSnapshot() {
           </div>
         ))}
       </div>
-    </section>
+    </ShellCard>
   );
 }

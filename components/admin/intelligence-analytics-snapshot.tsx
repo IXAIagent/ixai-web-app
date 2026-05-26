@@ -9,6 +9,12 @@ import {
   Share2,
   TrendingUp,
 } from "lucide-react";
+import {
+  ShellCard,
+  ShellHeader,
+  ShellMetricCard,
+  ShellStatusPill,
+} from "@/components/shell/shell-primitives";
 
 type SnapshotRow = {
   label: string;
@@ -58,26 +64,6 @@ const EMPTY_SNAPSHOT: AnalyticsSnapshot = {
   topUtmSources: [],
   trends: [],
 };
-
-type SnapshotMetricProps = {
-  label: string;
-  value: number;
-  icon: typeof BarChart3;
-};
-
-function SnapshotMetric({ label, value, icon: Icon }: SnapshotMetricProps) {
-  return (
-    <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
-      <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-        {label}
-      </div>
-      <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
-        {value.toLocaleString()}
-      </p>
-    </article>
-  );
-}
 
 function SnapshotList({
   emptyLabel,
@@ -165,16 +151,17 @@ export function IntelligenceAnalyticsSnapshot() {
   const isDisabled = snapshot.mode === "disabled";
 
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[#0a2119] p-5 text-[var(--ixai-cream)] sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            情報分析快照
-          </p>
-          <h2 className="mt-2 text-xl font-semibold leading-7">
-            Public Intelligence 使用概況
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
+    <ShellCard className="border-[var(--ixai-border)] bg-[#0a2119] p-5 sm:p-6">
+      <ShellHeader
+        action={
+          <ShellStatusPill icon={Radio}>
+            {state === "loading" ? "載入中" : isDisabled ? "未啟用" : "PostHog"}
+          </ShellStatusPill>
+        }
+        eyebrow="情報分析快照"
+        title="Public Intelligence 使用概況"
+      >
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
             Public Intelligence 使用行為的真實事件聚合。原始事件與個別使用者層級資料
             不會顯示在管理控制台。
           </p>
@@ -183,12 +170,7 @@ export function IntelligenceAnalyticsSnapshot() {
               {note}
             </p>
           ) : null}
-        </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)]">
-          <Radio className="h-3 w-3 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {state === "loading" ? "載入中" : isDisabled ? "未啟用" : "PostHog"}
-        </span>
-      </div>
+      </ShellHeader>
 
       {state === "error" ? (
         <div className="mt-5 rounded-lg border border-red-300/20 bg-red-950/20 p-4 text-sm leading-6 text-red-100/80">
@@ -197,27 +179,27 @@ export function IntelligenceAnalyticsSnapshot() {
       ) : null}
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <SnapshotMetric icon={BarChart3} label="每週開啟" value={snapshot.weeklyOpens} />
-        <SnapshotMetric icon={Activity} label="每日開啟" value={snapshot.dailyOpens} />
-        <SnapshotMetric icon={TrendingUp} label="市場開啟" value={snapshot.marketOpens} />
-        <SnapshotMetric icon={Share2} label="分享點擊" value={snapshot.shareClicks} />
-        <SnapshotMetric icon={MousePointerClick} label="CTA 點擊" value={snapshot.ctaClicks} />
+        <ShellMetricCard icon={BarChart3} label="每週開啟" value={snapshot.weeklyOpens} />
+        <ShellMetricCard icon={Activity} label="每日開啟" value={snapshot.dailyOpens} />
+        <ShellMetricCard icon={TrendingUp} label="市場開啟" value={snapshot.marketOpens} />
+        <ShellMetricCard icon={Share2} label="分享點擊" value={snapshot.shareClicks} />
+        <ShellMetricCard icon={MousePointerClick} label="CTA 點擊" value={snapshot.ctaClicks} />
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-3">
-        <SnapshotMetric
+        <ShellMetricCard
           icon={Activity}
           label="已識別訂閱者"
           value={snapshot.knownSubscribers}
         />
-        <SnapshotMetric
+        <ShellMetricCard
           icon={Radio}
           label="匿名訪客"
           value={snapshot.anonymousVisitors}
         />
         <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-            <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
+            <TrendingUp className="h-3.5 w-3.5 stroke-current" aria-hidden="true" />
             轉換率
           </div>
           <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
@@ -274,6 +256,6 @@ export function IntelligenceAnalyticsSnapshot() {
           )}
         </div>
       </div>
-    </section>
+    </ShellCard>
   );
 }

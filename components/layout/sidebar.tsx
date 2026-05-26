@@ -1,7 +1,9 @@
-import Link from "next/link";
+"use client";
 
+import { usePathname } from "next/navigation";
 import { AccountStatus } from "@/components/auth/account-status";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
+import { ShellNavButton, ShellSidebarSection, shellTokens } from "@/components/shell/shell-primitives";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
@@ -49,8 +51,10 @@ const navGroups: Array<{
 ];
 
 export function Sidebar() {
+  const pathname = usePathname();
+
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-[rgba(176,141,87,0.22)] bg-[#071f17] text-[var(--ixai-cream)] md:flex md:flex-col">
+    <aside className={`fixed inset-y-0 left-0 z-30 hidden ${shellTokens.publicSidebarWidth} border-r border-[rgba(176,141,87,0.22)] bg-[#071f17] text-[var(--ixai-cream)] md:flex md:flex-col`}>
       <div className="border-b border-white/10 px-4 py-5">
         <div className="flex items-center gap-3">
           <IxaiLogoFrame className="h-10 w-[4.75rem]" logoSize="sm" priority tone="dark" />
@@ -70,31 +74,17 @@ export function Sidebar() {
 
       <nav className="flex flex-1 flex-col gap-4 px-2.5 py-4">
         {navGroups.map((group) => (
-          <div className="flex flex-col gap-1" key={group.heading}>
-            <Eyebrow
-              mono
-              density="wide"
-              tone="gold"
-              className="px-3 pb-1 text-[10px] opacity-72"
-            >
-              {group.heading}
-            </Eyebrow>
+          <ShellSidebarSection key={group.heading} title={group.heading}>
             {group.items.map((item) => (
-              <Link
-                className={`rounded-md px-3 py-2 font-mono text-xs transition ${
-                  item.primary
-                    ? "bg-white/10 text-[var(--ixai-cream)]"
-                    : "text-[rgba(245,240,230,0.54)] hover:bg-white/[0.06] hover:text-[var(--ixai-cream)]"
-                }`}
+              <ShellNavButton
+                active={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)}
+                external={item.external}
                 href={item.href}
                 key={item.label}
-                rel={item.external ? "noopener noreferrer" : undefined}
-                target={item.external ? "_blank" : undefined}
-              >
-                {item.label}
-              </Link>
+                label={item.label}
+              />
             ))}
-          </div>
+          </ShellSidebarSection>
         ))}
       </nav>
 

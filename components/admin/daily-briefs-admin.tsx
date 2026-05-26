@@ -483,7 +483,7 @@ function WeeklyEditorPreview() {
         </div>
         <div className="mt-4 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.58)] md:grid-cols-4">
           {(["draft", "review", "published", "archived"] as WeeklyIntelligenceStatus[]).map((status) => (
-            <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2" key={status}>
+            <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2" key={status}>
               {weeklyStatusLabels[status]}: {weeklyCounts[status]}
             </p>
           ))}
@@ -561,7 +561,7 @@ function WeeklyEditorPreview() {
               </div>
 
               <div className="grid gap-4 p-5">
-                <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
                   <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                     Publish Guardrail
                   </p>
@@ -586,7 +586,7 @@ function WeeklyEditorPreview() {
                 </div>
 
                 {selectedWeeklyDraft.sections.generatorStats ? (
-                  <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                  <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                       Generator Stats
                     </p>
@@ -625,7 +625,7 @@ function WeeklyEditorPreview() {
                   </div>
                 ) : null}
 
-                <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
                   <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                     Summary
                   </p>
@@ -661,7 +661,7 @@ function WeeklyEditorPreview() {
                   ))}
                 </div>
 
-                <div className="rounded-lg border border-white/10 bg-black/16 p-4 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
+                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4 text-sm leading-7 text-[rgba(245,240,230,0.62)]">
                   <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
                     AI-assisted Suggestion
                   </p>
@@ -866,7 +866,7 @@ export function DailyBriefsAdmin() {
                 審閱、預覽與發布。日報與週報分流，不做自動發布。
               </p>
             </div>
-            <div className="grid gap-3 rounded-lg border border-white/10 bg-black/18 p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)] lg:min-w-[300px]">
+            <div className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.045] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)] lg:min-w-[300px]">
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                 {activeDesk === "daily" ? "Daily Generate" : "Weekly Assist"}
               </p>
@@ -952,13 +952,13 @@ export function DailyBriefsAdmin() {
             </div>
           </div>
           <div className="mt-4 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.58)] md:grid-cols-4">
-            <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+            <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
               Brief type: Daily Brief
             </p>
-            <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+            <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
               Status: {selectedDraft ? statusLabels[selectedDraft.status] : "No draft"}
             </p>
-            <p className="rounded-md border border-white/10 bg-black/14 px-3 py-2">
+            <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
               Review: {canPublishSelectedDraft ? "ready to publish" : "human review required"}
             </p>
             <p className="rounded-md border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-amber-100/82">
@@ -1128,7 +1128,7 @@ export function DailyBriefsAdmin() {
             <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
               {intakeSources.map((source) => (
                 <div
-                  className="rounded-md border border-white/10 bg-black/14 px-3 py-2"
+                  className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2"
                   key={source.id}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -1282,7 +1282,7 @@ export function DailyBriefsAdmin() {
                   ) : null}
                 </div>
                 <div className="grid gap-5 p-5">
-                  <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                  <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                       Compliance Note
                     </p>
@@ -1291,7 +1291,7 @@ export function DailyBriefsAdmin() {
                       Editorial owner controls final content.
                     </p>
                   </div>
-                  <div className="rounded-lg border border-white/10 bg-black/16 p-4">
+                  <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                       Market Summary
                     </p>
@@ -1376,7 +1376,7 @@ export function DailyBriefsAdmin() {
           </div>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {publishedBriefs.map((brief) => (
-              <div className="rounded-lg border border-white/10 bg-black/14 p-4" key={brief.id}>
+              <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4" key={brief.id}>
                 <p className="font-mono text-xs text-[var(--ixai-gold)]">
                   {formatDate(brief.publishedAt)}
                 </p>

@@ -8,6 +8,12 @@ import {
   MessageCircle,
   MousePointerClick,
 } from "lucide-react";
+import {
+  ShellCard,
+  ShellHeader,
+  ShellMetricCard,
+  ShellStatusPill,
+} from "@/components/shell/shell-primitives";
 
 type SubscriberStats = {
   persistence: "supabase" | "memory";
@@ -18,26 +24,6 @@ type SubscriberStats = {
   topSurfaces: { label: string; count: number }[];
   topUtmSources: { label: string; count: number }[];
 };
-
-type MetricProps = {
-  label: string;
-  value: number;
-  icon: typeof BarChart3;
-};
-
-function Metric({ label, value, icon: Icon }: MetricProps) {
-  return (
-    <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
-      <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-        {label}
-      </div>
-      <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
-        {value}
-      </p>
-    </article>
-  );
-}
 
 function Rows({
   title,
@@ -127,33 +113,26 @@ export function DistributionSnapshot() {
     : "載入中";
 
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[#0a2119] p-5 text-[var(--ixai-cream)] sm:p-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            分發快照
-          </p>
-          <h2 className="mt-2 text-xl font-semibold leading-7">
-            訂閱者 · Email 捕捉 · 來源歸因
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
+    <ShellCard className="border-[var(--ixai-border)] bg-[#0a2119] p-5 sm:p-6">
+      <ShellHeader
+        action={<ShellStatusPill>{persistenceLabel}</ShellStatusPill>}
+        eyebrow="分發快照"
+        title="訂閱者 · Email 捕捉 · 來源歸因"
+      >
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
             {state === "loading"
               ? "正在從分發 repository 載入訂閱者 telemetry。"
               : state === "error"
                 ? "訂閱者 telemetry 暫時無法取得。"
                 : "僅顯示聚合後的訂閱者 telemetry。原始 email 不會出現在 Admin 快照。"}
           </p>
-        </div>
-        <span className="hidden rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)] sm:inline-flex">
-          {persistenceLabel}
-        </span>
-      </div>
+      </ShellHeader>
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-        <Metric icon={BarChart3} label="訂閱者" value={stats?.activeSubscribers ?? 0} />
-        <Metric icon={Mail} label="Email 捕捉" value={stats?.totalCaptured ?? 0} />
-        <Metric icon={Database} label="近 7 日" value={stats?.last7DaysCaptures ?? 0} />
-        <Metric icon={MessageCircle} label="LINE OA 點擊" value={0} />
+        <ShellMetricCard icon={BarChart3} label="訂閱者" value={stats?.activeSubscribers ?? 0} />
+        <ShellMetricCard icon={Mail} label="Email 捕捉" value={stats?.totalCaptured ?? 0} />
+        <ShellMetricCard icon={Database} label="近 7 日" value={stats?.last7DaysCaptures ?? 0} />
+        <ShellMetricCard icon={MessageCircle} label="LINE OA 點擊" value={0} />
       </div>
 
       <div className="mt-5 grid gap-3 lg:grid-cols-2">
@@ -179,6 +158,6 @@ export function DistributionSnapshot() {
           本機開發或未設定時會回落到 memory mode。
         </p>
       </div>
-    </section>
+    </ShellCard>
   );
 }

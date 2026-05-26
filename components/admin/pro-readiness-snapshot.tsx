@@ -2,6 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Activity, BarChart3, Eye, MessageCircle, Sparkles, Users } from "lucide-react";
+import {
+  ShellCard,
+  ShellHeader,
+  ShellMetricCard,
+  ShellStatusPill,
+} from "@/components/shell/shell-primitives";
 
 type MembershipSnapshot = {
   activePro: number;
@@ -46,26 +52,6 @@ const EMPTY_ANALYTICS: AnalyticsSnapshot = {
   ctaClicks: 0,
   topSurfaces: [],
 };
-
-type MetricProps = {
-  icon: typeof Users;
-  label: string;
-  value: number;
-};
-
-function Metric({ icon: Icon, label, value }: MetricProps) {
-  return (
-    <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4">
-      <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-        {label}
-      </div>
-      <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-cream)]">
-        {value.toLocaleString()}
-      </p>
-    </article>
-  );
-}
 
 async function fetchSnapshot<T>(path: string, fallback: T): Promise<T> {
   const response = await fetch(path, { cache: "no-store" });
@@ -132,37 +118,26 @@ export function ProReadinessSnapshot() {
   }, [analytics.topSurfaces]);
 
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[#0a2119] p-5 text-[var(--ixai-cream)] sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Pro Readiness Snapshot
-          </p>
-          <h2 className="mt-2 text-xl font-semibold leading-7">
-            Pro 轉換準備狀態
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-            匯總既有 membership、audience graph 與 analytics 訊號，不顯示個別 email
-            或原始事件。
-          </p>
-        </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(245,240,230,0.66)]">
-          {state === "loading" ? "載入中" : state === "error" ? "部分資料不可用" : "Ready"}
-        </span>
-      </div>
+    <ShellCard className="border-[var(--ixai-border)] bg-[#0a2119] p-5 sm:p-6">
+      <ShellHeader
+        action={<ShellStatusPill>{state === "loading" ? "載入中" : state === "error" ? "部分資料不可用" : "Ready"}</ShellStatusPill>}
+        eyebrow="Pro Readiness Snapshot"
+        subtitle="匯總既有 membership、audience graph 與 analytics 訊號，不顯示個別 email 或原始事件。"
+        title="Pro 轉換準備狀態"
+      />
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <Metric icon={Sparkles} label="Pro 等候名單" value={membership.proWaitlistCount} />
-        <Metric icon={Users} label="Pro 候選" value={membership.proCandidates} />
-        <Metric icon={Activity} label="回訪讀者" value={audience.returningReaderCount} />
-        <Metric icon={BarChart3} label="高互動使用者" value={audience.highEngagementCount} />
+        <ShellMetricCard icon={Sparkles} label="Pro 等候名單" value={membership.proWaitlistCount} />
+        <ShellMetricCard icon={Users} label="Pro 候選" value={membership.proCandidates} />
+        <ShellMetricCard icon={Activity} label="回訪讀者" value={audience.returningReaderCount} />
+        <ShellMetricCard icon={BarChart3} label="高互動使用者" value={audience.highEngagementCount} />
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-3">
-        <Metric icon={MessageCircle} label="LINE 已連接" value={audience.lineConnectedCount} />
-        <Metric icon={Eye} label="Pro 預覽開啟" value={proPreviewOpens} />
-        <Metric icon={Sparkles} label="Upgrade CTA 點擊" value={analytics.ctaClicks} />
+        <ShellMetricCard icon={MessageCircle} label="LINE 已連接" value={audience.lineConnectedCount} />
+        <ShellMetricCard icon={Eye} label="Pro 預覽開啟" value={proPreviewOpens} />
+        <ShellMetricCard icon={Sparkles} label="Upgrade CTA 點擊" value={analytics.ctaClicks} />
       </div>
-    </section>
+    </ShellCard>
   );
 }

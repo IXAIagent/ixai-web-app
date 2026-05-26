@@ -114,7 +114,7 @@ export function AdminGate({
               <label className="grid gap-2 text-sm font-medium text-[rgba(245,240,230,0.76)]">
                 請輸入管理密碼
                 <input
-                  className="rounded-lg border border-white/12 bg-black/22 px-4 py-3 text-sm text-[var(--ixai-cream)] outline-none transition placeholder:text-[rgba(245,240,230,0.28)] focus:border-[var(--ixai-gold)]"
+                  className="rounded-lg border border-white/12 bg-white/[0.06] px-4 py-3 text-sm text-[var(--ixai-cream)] outline-none transition placeholder:text-[rgba(245,240,230,0.28)] focus:border-[var(--ixai-gold)]"
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Admin password"
                   type="password"
