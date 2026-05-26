@@ -11,6 +11,7 @@ const GROUPS = [
       ["控制台首頁", "/admin"],
       ["情報快照", "/admin#intelligence"],
       ["受眾圖譜", "/admin#audience"],
+      ["LINE 身分合併", "/admin#line-identity"],
       ["轉換漏斗", "/admin#funnel"],
     ],
   },

@@ -7,6 +7,7 @@ import {
   validateEmail,
 } from "@/src/lib/distribution/subscribers";
 import { log } from "@/src/lib/log";
+import { isLineConnected, resolveUnifiedIdentity } from "@/src/lib/line/identity-merge";
 import {
   getMembershipByEmail,
   upsertMembership,
@@ -93,24 +94,30 @@ export async function POST(request: NextRequest) {
   }
 
   const session = await createIdentitySession({
-    lineConnected: false,
+    lineConnected: await isLineConnected(normalizedEmail),
     membershipPlan: membership.plan,
     membershipStatus: membership.status,
     normalizedEmail,
     proCandidate: isProCandidate(membership, subscriber?.metadata),
   });
+  const unified = await resolveUnifiedIdentity(session);
+  const lineConnected = Boolean(unified.line_identity || session.line_connected);
 
   return Response.json({
     authenticated: true,
     identity: {
       normalized_email: session.normalized_email,
     },
-    line_connected: session.line_connected,
+    intelligence_sync_ready: lineConnected,
+    line_connected: lineConnected,
     membership: {
-      plan: session.membership_plan,
-      status: session.membership_status,
+      plan: unified.membership?.plan ?? session.membership_plan,
+      status: unified.membership?.status ?? session.membership_status,
     },
     ok: true,
     pro_candidate: session.pro_candidate,
+    unified_identity: {
+      tags: unified.unified_tags,
+    },
   });
 }

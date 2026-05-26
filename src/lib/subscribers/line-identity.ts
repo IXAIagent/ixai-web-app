@@ -147,6 +147,27 @@ async function findExisting(lineUserId: string): Promise<LineIdentityRecord | nu
   }
 }
 
+export async function getLineIdentityByEmail(email: string): Promise<LineIdentityRecord | null> {
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail) {
+    return null;
+  }
+
+  if (!isLineIdentityPersistenceConfigured()) {
+    return memoryIdentities.find((row) => row.normalized_email === normalizedEmail) ?? null;
+  }
+
+  try {
+    const records = await supabaseFetch<LineIdentityRecord[]>(
+      `${TABLE_NAME}?select=*&normalized_email=eq.${encodeURIComponent(normalizedEmail)}&limit=1`,
+    );
+    return records[0] ?? null;
+  } catch (error) {
+    log.warn("[ixai.lineIdentity] email lookup failed", error);
+    return null;
+  }
+}
+
 export async function upsertLineIdentity(
   input: UpsertLineIdentityInput,
 ): Promise<LineIdentityRecord | null> {

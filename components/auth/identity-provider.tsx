@@ -29,18 +29,25 @@ export type LightweightMembership = {
   status: MembershipStatus;
 };
 
+export type LightweightUnifiedIdentity = {
+  tags: string[];
+};
+
 type IdentityResponse = {
   authenticated?: boolean;
   identity?: LightweightIdentity | null;
+  intelligence_sync_ready?: boolean;
   line_connected?: boolean;
   membership?: LightweightMembership | null;
   ok?: boolean;
   pro_candidate?: boolean;
+  unified_identity?: LightweightUnifiedIdentity | null;
 };
 
 type IdentityContextValue = {
   identify: (email: string, source?: string) => Promise<boolean>;
   identity: LightweightIdentity | null;
+  intelligenceSyncReady: boolean;
   lineConnected: boolean;
   loading: boolean;
   logout: () => Promise<void>;
@@ -48,6 +55,7 @@ type IdentityContextValue = {
   proCandidate: boolean;
   refresh: () => Promise<void>;
   state: LightweightIdentityState;
+  unifiedIdentity: LightweightUnifiedIdentity | null;
 };
 
 const IdentityContext = createContext<IdentityContextValue | null>(null);
@@ -103,6 +111,14 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
           path: window.location.pathname,
           source: "identity_provider",
         });
+        if (nextPayload.unified_identity) {
+          trackEvent("unified_identity_restored", {
+            line_connected: nextPayload.line_connected ?? false,
+            membership: toEventMembership(nextPayload.membership ?? null),
+            path: window.location.pathname,
+            source: "identity_provider",
+          });
+        }
       }
     } catch {
       applyPayload(null);
@@ -172,6 +188,7 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
     () => ({
       identify,
       identity: payload?.identity ?? null,
+      intelligenceSyncReady: payload?.intelligence_sync_ready ?? false,
       lineConnected: payload?.line_connected ?? false,
       loading: state === "loading",
       logout,
@@ -179,6 +196,7 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
       proCandidate: payload?.pro_candidate ?? false,
       refresh,
       state,
+      unifiedIdentity: payload?.unified_identity ?? null,
     }),
     [identify, logout, payload, refresh, state],
   );

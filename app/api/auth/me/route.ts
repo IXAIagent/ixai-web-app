@@ -1,4 +1,5 @@
 import { readIdentitySession } from "@/src/lib/auth/session";
+import { resolveUnifiedIdentity } from "@/src/lib/line/identity-merge";
 
 export const dynamic = "force-dynamic";
 
@@ -9,22 +10,31 @@ export async function GET() {
     return Response.json({
       authenticated: false,
       identity: null,
+      intelligence_sync_ready: false,
       line_connected: false,
       membership: null,
       pro_candidate: false,
+      unified_identity: null,
     });
   }
+
+  const unified = await resolveUnifiedIdentity(session);
+  const lineConnected = Boolean(unified.line_identity || session.line_connected);
 
   return Response.json({
     authenticated: true,
     identity: {
       normalized_email: session.normalized_email,
     },
-    line_connected: session.line_connected,
+    intelligence_sync_ready: lineConnected,
+    line_connected: lineConnected,
     membership: {
-      plan: session.membership_plan,
-      status: session.membership_status,
+      plan: unified.membership?.plan ?? session.membership_plan,
+      status: unified.membership?.status ?? session.membership_status,
     },
     pro_candidate: session.pro_candidate,
+    unified_identity: {
+      tags: unified.unified_tags,
+    },
   });
 }

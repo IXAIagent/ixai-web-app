@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { ArrowRight, BarChart3, CalendarClock, Radar, ShieldCheck } from "lucide-react";
 import { IdentifySessionCard } from "@/components/auth/identify-session-card";
+import { ConnectLineCard } from "@/components/line/connect-line-card";
 import { ProAlertPreview } from "@/components/pro/pro-alert-preview";
 import { ProPreviewCard } from "@/components/pro/pro-preview-card";
 import { ProRiskMap } from "@/components/pro/pro-risk-map";
@@ -42,6 +43,8 @@ export function ProPreviewDashboard() {
         source="pro_preview"
         title="保留你的 Pro preview context"
       />
+
+      <ConnectLineCard source="pro_preview" />
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <ProPreviewCard

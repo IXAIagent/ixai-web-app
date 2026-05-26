@@ -18,6 +18,11 @@ export type AnalyticsEventName =
   | "identity_session_cleared"
   | "identity_surface_view"
   | "identified_return_visit"
+  | "line_connect_view"
+  | "line_connect_click"
+  | "line_connect_pending"
+  | "line_identity_merged"
+  | "unified_identity_restored"
   | "admin_console_open"
   | "admin_section_click"
   | "push_enable"
@@ -85,6 +90,11 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "identity_session_cleared",
   "identity_surface_view",
   "identified_return_visit",
+  "line_connect_view",
+  "line_connect_click",
+  "line_connect_pending",
+  "line_identity_merged",
+  "unified_identity_restored",
   "admin_console_open",
   "admin_section_click",
   "push_enable",

@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { getLineLinkSecret } from "@/src/lib/line/config";
 import { log } from "@/src/lib/log";
 import { upsertLineIdentity } from "@/src/lib/subscribers/line-identity";
 import {
@@ -31,7 +32,7 @@ type LinkPayload = {
 };
 
 function isAuthorized(request: NextRequest): boolean {
-  const expected = process.env.IXAI_LINE_LINK_SECRET?.trim();
+  const expected = getLineLinkSecret();
   if (!expected) {
     return false;
   }

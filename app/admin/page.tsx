@@ -4,6 +4,7 @@ import { ConversionFunnel } from "@/components/admin/conversion-funnel";
 import { DistributionSnapshot } from "@/components/admin/distribution-snapshot";
 import { IdentitySnapshot } from "@/components/admin/identity-snapshot";
 import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-analytics-snapshot";
+import { LineIdentitySnapshot } from "@/components/admin/line-identity-snapshot";
 import { MembershipSnapshot } from "@/components/admin/membership-snapshot";
 import { ProReadinessSnapshot } from "@/components/admin/pro-readiness-snapshot";
 
@@ -56,6 +57,9 @@ export default function AdminPage() {
       </section>
       <section id="identity">
         <IdentitySnapshot />
+      </section>
+      <section id="line-identity">
+        <LineIdentitySnapshot />
       </section>
       <section id="funnel">
         <ConversionFunnel />

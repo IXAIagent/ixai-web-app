@@ -1,11 +1,20 @@
 "use client";
 
-import { LogOut, ShieldCheck } from "lucide-react";
+import { Link2, LogOut, ShieldCheck, Sparkles } from "lucide-react";
 import { useIdentitySession } from "@/components/auth/identity-provider";
 import { getPlanLabel } from "@/src/lib/membership/entitlements";
 
 export function IdentityStatus({ compact = false }: { compact?: boolean }) {
-  const { identity, loading, logout, membership, proCandidate, state } = useIdentitySession();
+  const {
+    identity,
+    intelligenceSyncReady,
+    lineConnected,
+    loading,
+    logout,
+    membership,
+    proCandidate,
+    state,
+  } = useIdentitySession();
 
   if (loading) {
     return (
@@ -40,6 +49,18 @@ export function IdentityStatus({ compact = false }: { compact?: boolean }) {
             {proCandidate ? (
               <span className="rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.12)] px-2 py-1 text-[11px] font-semibold text-[var(--ixai-forest)]">
                 Pro candidate
+              </span>
+            ) : null}
+            {lineConnected ? (
+              <span className="inline-flex items-center gap-1 rounded-md border border-[rgba(176,141,87,0.34)] bg-white/52 px-2 py-1 text-[11px] font-semibold text-[var(--ixai-forest)]">
+                <Link2 className="h-3.5 w-3.5 text-[var(--ixai-gold)]" aria-hidden="true" />
+                LINE 已連接
+              </span>
+            ) : null}
+            {intelligenceSyncReady ? (
+              <span className="inline-flex items-center gap-1 rounded-md border border-[rgba(176,141,87,0.34)] bg-white/52 px-2 py-1 text-[11px] font-semibold text-[var(--ixai-forest)]">
+                <Sparkles className="h-3.5 w-3.5 text-[var(--ixai-gold)]" aria-hidden="true" />
+                Intelligence Sync Ready
               </span>
             ) : null}
           </div>
