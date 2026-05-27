@@ -2,18 +2,15 @@
 
 import { ArrowUpRight, CheckCircle2, MessageCircle } from "lucide-react";
 import { trackEvent } from "@/src/lib/analytics/analytics";
+import { LINE_CONSULTATION_URL } from "@/src/lib/line/public-links";
 
-// v1.34 — LINE Official Account gateway. Reads NEXT_PUBLIC_LINE_OA_URL
-// at module scope (Next inlines NEXT_PUBLIC_* values into the client
-// bundle) so we never hardcode the LINE link. Until that env is set the
-// CTA renders a "Coming soon" disabled state.
-//
-// v1.36.4 — adds an optional `connected` state. The real LINE OAuth /
-// LIFF flow has not landed; this is a placeholder for the future LINE
-// identity bridge so consumers can pass `connected` once they know an
-// IXAI subscriber is linked to a LINE user id via /api/line/link.
-
-const LINE_OA_URL = process.env.NEXT_PUBLIC_LINE_OA_URL?.trim() ?? "";
+// v1.34 — LINE Official Account gateway.
+// v1.36.4 — adds an optional `connected` state for the future LINE
+// identity bridge so consumers can mark a subscriber as already linked.
+// v1.39.2 — switches off the env-driven NEXT_PUBLIC_LINE_OA_URL fallback
+// in favour of the centralized LINE_CONSULTATION_URL constant. The
+// public consultation CTA is now always available; the "Coming soon"
+// disabled state was a historical placeholder we no longer need.
 
 export function LineOaGateway({
   surface = "home",
@@ -24,8 +21,6 @@ export function LineOaGateway({
   variant?: "card" | "inline";
   connected?: boolean;
 }) {
-  const isEnabled = LINE_OA_URL.length > 0;
-
   function handleClick() {
     trackEvent("line_oa_click", { surface });
   }
@@ -39,7 +34,7 @@ export function LineOaGateway({
     <section className={wrapperClass}>
       <div className="flex items-center gap-2.5">
         <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
-          <MessageCircle className="h-4 w-4" aria-hidden="true" />
+          <MessageCircle className="h-4 w-4 stroke-current" aria-hidden="true" />
         </span>
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           LINE Intelligence
@@ -57,33 +52,24 @@ export function LineOaGateway({
       {connected ? (
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <span className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-emerald-200/35 bg-emerald-300/[0.10] px-4 py-2.5 text-sm font-semibold text-emerald-100">
-            <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+            <CheckCircle2 className="h-4 w-4 stroke-current" aria-hidden="true" />
             LINE connected
           </span>
           <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-ink-muted)]">
             LINE intelligence sync coming soon
           </span>
         </div>
-      ) : isEnabled ? (
+      ) : (
         <a
           className="ixai-cta-forest mt-4 inline-flex min-h-11 w-fit items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold"
-          href={LINE_OA_URL}
+          href={LINE_CONSULTATION_URL}
           onClick={handleClick}
           rel="noopener noreferrer"
           target="_blank"
         >
-          Open LINE OA
-          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          加入 LINE 諮詢
+          <ArrowUpRight className="h-4 w-4 stroke-current" aria-hidden="true" />
         </a>
-      ) : (
-        <button
-          aria-disabled="true"
-          className="mt-4 inline-flex min-h-11 w-fit cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/45 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-ink-muted)]"
-          disabled
-          type="button"
-        >
-          Coming soon
-        </button>
       )}
 
       <p className="mt-3 text-[11px] leading-5 text-[var(--ixai-ink-muted)]">

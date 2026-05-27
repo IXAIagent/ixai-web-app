@@ -9,13 +9,16 @@ import {
   Newspaper,
 } from "lucide-react";
 import { trackEvent } from "@/src/lib/analytics/analytics";
-
-const LINE_OA_URL = process.env.NEXT_PUBLIC_LINE_OA_URL?.trim() ?? "";
+import { LINE_CONSULTATION_URL } from "@/src/lib/line/public-links";
 
 // v1.34 — Three-column intelligence distribution strip. Lives right
 // under the Intelligence Hero so the home page communicates the three
 // surfaces a reader can subscribe through (Daily / Weekly / LINE OA)
 // before any deeper data widget.
+//
+// v1.39.2 — LINE column now points to the centralized public LINE
+// consultation URL and is always available; the env-driven gate has
+// been retired here.
 //
 // Mobile: stacked. Desktop: 3-column grid.
 // Institutional cream cards; no marketing hype, no popups, no spam tone.
@@ -41,8 +44,6 @@ export function IntelligenceDistributionStrip() {
       impression: true,
     });
   }, []);
-
-  const lineEnabled = LINE_OA_URL.length > 0;
 
   const columns: Column[] = [
     {
@@ -70,11 +71,10 @@ export function IntelligenceDistributionStrip() {
       eyebrow: "LINE Intelligence",
       title: "IXAI LINE 官方帳號",
       copy: "Receive daily intelligence、weekly intelligence 與未來 IXAI Pro alerts。",
-      ctaLabel: lineEnabled ? "Open LINE OA" : "Coming soon",
-      href: lineEnabled ? LINE_OA_URL : "#",
-      external: lineEnabled,
+      ctaLabel: "加入 LINE 諮詢",
+      href: LINE_CONSULTATION_URL,
+      external: true,
       icon: MessageCircle,
-      disabled: !lineEnabled,
       analyticsTarget: "line_oa",
     },
   ];
@@ -104,7 +104,7 @@ export function IntelligenceDistributionStrip() {
             <article className={cardClass} key={column.key}>
               <div className="flex items-center gap-2.5">
                 <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
-                  <Icon className="h-4 w-4" aria-hidden="true" />
+                  <Icon className="h-4 w-4 stroke-current" aria-hidden="true" />
                 </span>
                 <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                   {column.eyebrow}
@@ -142,7 +142,7 @@ export function IntelligenceDistributionStrip() {
                     target="_blank"
                   >
                     {column.ctaLabel}
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    <ArrowRight className="h-4 w-4 stroke-current" aria-hidden="true" />
                   </a>
                 ) : (
                   <Link
@@ -156,7 +156,7 @@ export function IntelligenceDistributionStrip() {
                     }
                   >
                     {column.ctaLabel}
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    <ArrowRight className="h-4 w-4 stroke-current" aria-hidden="true" />
                   </Link>
                 )}
               </div>

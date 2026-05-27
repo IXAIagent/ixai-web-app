@@ -1,3 +1,5 @@
+import { LINE_CONSULTATION_URL } from "@/src/lib/line/public-links";
+
 export type BrandContactChannel = {
   label: "LINE" | "Facebook" | "Instagram" | "Email";
   value: string;
@@ -9,7 +11,7 @@ export const brandContact = {
   email: "ixuan.winning@gmail.com",
   facebookUrl: "https://www.facebook.com/profile.php?id=61578789500837",
   instagramUrl: "https://instagram.com/ixuan.winning",
-  lineUrl: "https://line.me/ti/p/uVB26n5UfC",
+  lineUrl: LINE_CONSULTATION_URL,
 };
 
 function isValidPublicEmail(value: string) {
