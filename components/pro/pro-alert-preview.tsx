@@ -39,7 +39,7 @@ export function ProAlertPreview() {
           return (
             <article className="rounded-lg border border-[var(--ixai-border)] bg-white/48 p-4" key={alert.title}>
               <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
-                <Icon className="h-4 w-4 stroke-current" aria-hidden="true" fill="none" />
+                <Icon className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
                 <h3 className="text-sm font-semibold text-[var(--ixai-forest)]">
                   {alert.title}
                 </h3>

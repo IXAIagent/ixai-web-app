@@ -44,7 +44,7 @@ export function ProUpgradeCard({
       <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
           <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
-            <LockKeyhole className="h-4 w-4 stroke-current" aria-hidden="true" fill="none" />
+            <LockKeyhole className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
             <p className="font-mono text-[11px] uppercase tracking-[0.22em]">
               IXAI Pro 開放能力
             </p>
@@ -67,7 +67,7 @@ export function ProUpgradeCard({
             }
           >
             加入 Pro 等候名單
-            <ArrowUpRight className="h-4 w-4 stroke-current" aria-hidden="true" fill="none" />
+            <ArrowUpRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-white/76"

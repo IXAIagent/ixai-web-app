@@ -22,7 +22,7 @@ export function PreviewBadge({
 
   return (
     <span className="inline-flex max-w-full items-center gap-1.5 rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.1)] px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.12em] text-[var(--ixai-gold)] sm:tracking-[0.14em]">
-      <Eye className="h-3 w-3 shrink-0 stroke-current" aria-hidden="true" />
+      <Eye className="h-3 w-3 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
       <span className="truncate">{label}</span>
     </span>
   );

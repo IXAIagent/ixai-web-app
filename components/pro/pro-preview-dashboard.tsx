@@ -124,7 +124,7 @@ export function ProPreviewDashboard() {
             href="/daily-brief"
           >
             返回 Public Intelligence
-            <ArrowRight className="h-4 w-4 stroke-current" aria-hidden="true" fill="none" />
+            <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
           </Link>
           <UpgradeIntelligenceCta
             className="mt-3"

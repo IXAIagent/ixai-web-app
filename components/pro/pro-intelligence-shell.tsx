@@ -99,7 +99,7 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
                 key={module.title}
               >
                 <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
-                  <Icon className="h-4 w-4 stroke-current" aria-hidden="true" fill="none" />
+                  <Icon className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
                   <PreviewBadge label="Sample-only" surface={module.surface} />
                 </div>
                 <h2 className="mt-3 text-base font-semibold leading-6 text-[var(--ixai-forest)]">

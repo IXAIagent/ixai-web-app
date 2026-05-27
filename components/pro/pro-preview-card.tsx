@@ -18,7 +18,7 @@ export function ProPreviewCard({
     <article className="min-w-0 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5">
       <div className="flex flex-wrap items-center gap-2.5">
         <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
-          <Icon className="h-4 w-4 stroke-current" aria-hidden="true" fill="none" />
+          <Icon className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
         </span>
         <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.18em]">
           {eyebrow}

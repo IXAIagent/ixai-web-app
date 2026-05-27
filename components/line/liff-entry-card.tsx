@@ -48,7 +48,7 @@ export function LiffEntryCard({
             <ShellStatusPill icon={Smartphone}>LIFF Foundation</ShellStatusPill>
             {liffReady ? (
               <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.16em] text-emerald-700">
-                <CheckCircle2 className="h-3 w-3 stroke-current" aria-hidden="true" />
+                <CheckCircle2 className="h-3 w-3 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
                 <span className="translate-y-px">LIFF ready</span>
               </span>
             ) : null}
@@ -84,7 +84,7 @@ export function LiffEntryCard({
               rel="noopener noreferrer"
               target="_blank"
             >
-              <MessageCircle className="h-3.5 w-3.5 shrink-0 stroke-current" aria-hidden="true" />
+              <MessageCircle className="h-3.5 w-3.5 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
               <span className="translate-y-px">開啟 LINE OA</span>
             </Link>
           ) : null}

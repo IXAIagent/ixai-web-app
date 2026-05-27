@@ -34,7 +34,7 @@ export function LineOaGateway({
     <section className={wrapperClass}>
       <div className="flex items-center gap-2.5">
         <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
-          <MessageCircle className="h-4 w-4 stroke-current" aria-hidden="true" />
+          <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
         </span>
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           LINE Intelligence
@@ -52,7 +52,7 @@ export function LineOaGateway({
       {connected ? (
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <span className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-emerald-200/35 bg-emerald-300/[0.10] px-4 py-2.5 text-sm font-semibold text-emerald-100">
-            <CheckCircle2 className="h-4 w-4 stroke-current" aria-hidden="true" />
+            <CheckCircle2 className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
             LINE connected
           </span>
           <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-ink-muted)]">
@@ -68,7 +68,7 @@ export function LineOaGateway({
           target="_blank"
         >
           加入 LINE 諮詢
-          <ArrowUpRight className="h-4 w-4 stroke-current" aria-hidden="true" />
+          <ArrowUpRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
         </a>
       )}
 

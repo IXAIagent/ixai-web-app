@@ -22,7 +22,7 @@ export function LineLoginButton({
         disabled
         type="button"
       >
-        <MessageCircle className="h-4 w-4 stroke-current" aria-hidden="true" />
+        <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
         <span className="translate-y-px">LINE Login 尚未設定</span>
       </button>
     );
@@ -39,7 +39,7 @@ export function LineLoginButton({
         })
       }
     >
-      <LogIn className="h-4 w-4 stroke-current" aria-hidden="true" />
+      <LogIn className="h-4 w-4 stroke-current text-[var(--ixai-forest)]" aria-hidden="true" />
       <span className="translate-y-px">{label}</span>
     </Link>
   );
