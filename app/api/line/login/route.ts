@@ -5,6 +5,7 @@ import {
   createLineLoginState,
   isLineConfigured,
 } from "@/src/lib/line/login";
+import { getLineLoginSecrets } from "@/src/lib/line/config";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,13 @@ export async function GET(request: NextRequest) {
   if (!loginUrl) {
     return fallbackRedirect(request);
   }
+
+  const { channelId, redirectUri } = getLineLoginSecrets();
+  console.log({
+    app_url: process.env.NEXT_PUBLIC_APP_URL,
+    line_channel_id: channelId,
+    line_redirect_uri: redirectUri,
+  });
 
   return NextResponse.redirect(loginUrl);
 }
