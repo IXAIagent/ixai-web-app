@@ -25,6 +25,8 @@ Public and admin surfaces must remain separated:
 
 Do not merge these shells without an explicit architecture audit.
 
+The root route `/` is the public product landing surface. It should explain IXAI and route users into onboarding, Pro preview, LINE, or account flows. Do not convert it back into a login-only gate without explicit product approval.
+
 ## B. Design System Rules
 
 CTA and icon color rules:

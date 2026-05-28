@@ -22,6 +22,10 @@ const exemptPathPrefixes = [
 ];
 
 function isExemptPath(pathname: string) {
+  if (pathname === "/") {
+    return true;
+  }
+
   return exemptPathPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
