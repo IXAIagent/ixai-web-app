@@ -64,6 +64,14 @@ const DELIVERY_CARDS = [
   ["Macro Risk", "追蹤利率、美元、VIX 與市場風險偏好對科技與台股的影響。"],
 ] as const;
 
+const PRODUCT_FLOW = [
+  ["Public Landing", "先理解 IXAI 的 intelligence value。"],
+  ["Intelligence Preview", "看到 Public → Pro 的未來情報樣貌。"],
+  ["Onboarding", "建立市場偏好、風險偏好與 Watchlist seed。"],
+  ["AI Intelligence Workspace", "在 Account / LINE / delivery surfaces 形成每日關係。"],
+  ["Future Pro Intelligence", "未來接上 portfolio、FCN 與個人化風險工作流。"],
+] as const;
+
 function trackLandingClick(event: "landing_primary_cta_click" | "landing_preview_click" | "landing_line_cta_click", target: string) {
   trackEvent(event, {
     path: window.location.pathname,
@@ -82,12 +90,16 @@ export function IntelligenceLanding() {
       path: window.location.pathname,
       surface: "home_landing",
     });
+    trackEvent("ux_cohesion_preview_view", {
+      path: window.location.pathname,
+      surface: "home_landing",
+    });
   }, []);
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
-        <div className="grid gap-6 p-4 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:p-10">
+        <div className="grid gap-5 p-4 sm:gap-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:p-10">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
               IXAI Intelligence Layer
@@ -155,6 +167,23 @@ export function IntelligenceLanding() {
         </div>
       </section>
 
+      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
+          Product Flow
+        </p>
+        <div className="mt-3 grid gap-2 md:grid-cols-5">
+          {PRODUCT_FLOW.map(([title, copy], index) => (
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/48 p-3" key={title}>
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+                {String(index + 1).padStart(2, "0")}
+              </p>
+              <h2 className="mt-2 text-sm font-semibold leading-5 text-[var(--ixai-forest)]">{title}</h2>
+              <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="grid gap-3 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6 lg:grid-cols-[0.85fr_1.15fr]">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
@@ -202,11 +231,17 @@ export function IntelligenceLanding() {
             <Link
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-white/8"
               href={LINE_CONSULTATION_URL}
-              onClick={() => trackLandingClick("landing_line_cta_click", "line_oa_delivery")}
+              onClick={() => {
+                trackLandingClick("landing_line_cta_click", "line_oa_delivery");
+                trackEvent("line_intelligence_cta_click", {
+                  path: window.location.pathname,
+                  source: "home_delivery",
+                });
+              }}
               rel="noopener noreferrer"
               target="_blank"
             >
-              連接 LINE
+              連接 LINE 接收情報
               <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
             </Link>
           </div>
@@ -255,7 +290,7 @@ export function IntelligenceLanding() {
             href="/pro-preview"
             onClick={() => trackLandingClick("landing_preview_click", "/pro-preview_bottom")}
           >
-            先看 Pro Preview
+            查看 Intelligence Preview
             <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>

@@ -21,29 +21,33 @@ export function ProPreviewDashboard() {
       path: window.location.pathname,
       surface: "pro_preview",
     });
+    trackEvent("pro_preview_flow_view", {
+      path: window.location.pathname,
+      surface: "pro_preview",
+    });
   }, []);
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.28em]">
-          僅供展示的 Pro 介面
+          Intelligence Preview · Sample-only
         </p>
         <div className="mt-3">
           <PreviewBadge />
         </div>
         <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:text-5xl">
-          IXAI Pro 預覽控制台
+          IXAI Intelligence Preview
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
-          未來 IXAI Pro 會員可能看到的情報控制台展示，用於呈現投資組合關聯性、
-          FCN 風險、市場記憶與 AI 警示的可能工作流。本頁僅使用示意資料。
+          這裡展示 Public intelligence 如何逐步延伸為 future personalized intelligence：
+          portfolio awareness、FCN risk awareness、watchlist memory 與 AI alert workflow。本頁僅使用示意資料。
         </p>
       </section>
 
       <IdentifySessionCard
         source="pro_preview"
-        title="保留你的 Pro preview context"
+        title="保留你的 Intelligence Preview context"
       />
 
       <ConnectLineCard source="pro_preview" />
@@ -119,11 +123,11 @@ export function ProPreviewDashboard() {
             升級路徑
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
-            加入 Pro 等候名單，取得未來開放通知。
+            從 Preview 進入未來 Pro Intelligence。
           </h2>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            此控制台為示意預覽。未來 Pro access 將需要 membership entitlement
-            與符合人工審閱原則的風險控管。此階段尚未進行任何收費。
+            此頁是示意預覽。未來 Pro access 將需要 membership entitlement
+            與清楚的風險控管；此階段尚未進行任何收費。
           </p>
           <Link
               className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest)] sm:w-auto"

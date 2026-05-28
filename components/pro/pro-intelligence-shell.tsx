@@ -58,6 +58,12 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
       source: "pro_intelligence_route",
       surface: "pro_intelligence",
     });
+    trackEvent("pro_preview_flow_view", {
+      membership: activeMembership,
+      path: window.location.pathname,
+      source: "pro_intelligence_route",
+      surface: "pro_intelligence",
+    });
   }, [activeMembership]);
 
   return (
@@ -65,11 +71,11 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <PreviewBadge label="Future Pro Intelligence" surface="pro_portfolio" />
         <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:text-5xl">
-          IXAI Pro Intelligence Layer
+          Future Pro Intelligence Layer
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
-          這是未來真正的 Pro Intelligence route。現階段不啟用個人資料、不做
-          paywall，也不提供投資建議；僅展示 entitlement-aware intelligence shell。
+          這是未來 personalized intelligence 的入口示意。現階段不啟用個人資料、不做
+          paywall，也不提供投資建議；僅展示 entitlement-aware intelligence workflow。
         </p>
         <UpgradeIntelligenceCta
           className="mt-5"
@@ -81,7 +87,7 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
 
       <IdentifySessionCard
         source="pro_intelligence"
-        title="連接你的 Pro Intelligence context"
+        title="連接你的 AI Intelligence Workspace"
       />
 
       <ConnectLineCard source="pro_intelligence" />

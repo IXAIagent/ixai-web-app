@@ -34,7 +34,7 @@ export function MorningIntelligencePreview({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
-            Morning Delivery Preview
+            Morning Intelligence Preview
           </p>
           <h2 className="mt-2 flex items-center gap-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
             <Sunrise className="h-5 w-5 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />

@@ -46,15 +46,29 @@ export function IdentifySessionCard({
           <Link
             className="ixai-cta-forest inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-cream)]"
             href="/pro-preview"
+            onClick={() =>
+              trackEvent("intelligence_workspace_cta_click", {
+                path: window.location.pathname,
+                source,
+                target: "pro_preview",
+              })
+            }
           >
-            <span className="translate-y-px">Continue with IXAI Pro Preview</span>
+            <span className="translate-y-px">查看 Intelligence Preview</span>
             <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-cream)]/90" aria-hidden="true" />
           </Link>
           <Link
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-forest)]"
             href="/pro-intelligence"
+            onClick={() =>
+              trackEvent("intelligence_workspace_cta_click", {
+                path: window.location.pathname,
+                source,
+                target: "pro_intelligence",
+              })
+            }
           >
-            Pro Intelligence shell
+            開啟 AI Intelligence Workspace
           </Link>
         </div>
       </section>
@@ -75,8 +89,8 @@ export function IdentifySessionCard({
             {title}
           </h2>
           <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            輸入 email 後，IXAI 會以安全 cookie 保留你的 membership context。這不是密碼登入，
-            也不會啟用付費或正式 Pro 權限。
+            輸入 email 後，IXAI 會以安全 cookie 保留你的 intelligence context。這不是密碼登入，
+            也不會啟用付費或正式 Pro 權限；它只是讓你的 AI intelligence layer 開始有連續性。
           </p>
         </div>
       </div>
@@ -106,7 +120,7 @@ export function IdentifySessionCard({
           disabled={formState === "submitting"}
           type="submit"
         >
-          <span className="translate-y-px">{formState === "submitting" ? "建立中" : "Continue"}</span>
+          <span className="translate-y-px">{formState === "submitting" ? "建立中" : "開啟 Workspace"}</span>
           <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-cream)]/90" aria-hidden="true" />
         </button>
       </form>

@@ -55,6 +55,12 @@ export function ConnectLineCard({
       path: window.location.pathname,
       source,
     });
+    trackEvent("line_intelligence_cta_click", {
+      line_connected: connected,
+      membership: membership?.plan ?? "anonymous",
+      path: window.location.pathname,
+      source,
+    });
 
     try {
       const response = await fetch("/api/line/connect", {
@@ -177,7 +183,7 @@ export function ConnectLineCard({
             >
               <Link2 className="h-4 w-4 stroke-current text-[var(--ixai-forest)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
               <span className="translate-y-px">
-                {connected ? "LINE 已連接" : connecting ? "建立中" : "Connect LINE"}
+                {connected ? "LINE 已連接" : connecting ? "建立中" : "連接 LINE 接收情報"}
               </span>
             </button>
           )}
@@ -188,7 +194,7 @@ export function ConnectLineCard({
               rel="noopener noreferrer"
               target="_blank"
             >
-              <span className="translate-y-px">開啟 LINE Official Account</span>
+              <span className="translate-y-px">加入 LINE 諮詢</span>
               <ArrowUpRight className="h-3.5 w-3.5 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
             </Link>
           ) : null}

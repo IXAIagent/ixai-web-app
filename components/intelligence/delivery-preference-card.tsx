@@ -94,12 +94,13 @@ export function DeliveryPreferenceCard({ source = "delivery_preferences" }: { so
             選擇 IXAI 每天要優先提醒你的情報。
           </h2>
           <p className="mt-2 text-sm leading-6 text-[var(--ixai-ink-muted)]">
-            此版本先使用本機 / session-first preference。未來會接會員、LINE opt-in 與 Pro entitlement。
+            此版本先使用本機 / session-first preference。未來會接會員、LINE opt-in 與 Pro entitlement，
+            形成你的 AI intelligence layer。
           </p>
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ixai-border)] bg-white/55 px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
           <Bell className="h-3.5 w-3.5 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
-          {preferences.enabled ? "Enabled" : "Preview"}
+          {preferences.enabled ? "已啟用預覽" : "偏好預覽"}
         </span>
       </div>
 
@@ -138,14 +139,14 @@ export function DeliveryPreferenceCard({ source = "delivery_preferences" }: { so
       <div className="mt-4 grid gap-2 sm:flex sm:items-center sm:justify-between">
         <p className="inline-flex items-center gap-2 text-xs leading-5 text-[var(--ixai-ink-muted)]">
           <MessageCircle className="h-3.5 w-3.5 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
-          LINE 狀態：{lineConnected ? "可連接 delivery readiness" : "尚未連接，先保留 app delivery preference"}
+          LINE 狀態：{lineConnected ? "已具備 intelligence delivery readiness" : "尚未連接，先保留 app delivery preference"}
         </p>
         <button
           className="ixai-cta-forest inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold"
           onClick={enableDelivery}
           type="button"
         >
-          {saved ? "已保存 preference" : "啟用 Delivery Preview"}
+          {saved ? "已保存 intelligence preference" : "啟用 Intelligence Preview"}
         </button>
       </div>
     </section>

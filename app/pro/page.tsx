@@ -25,7 +25,7 @@ export default function ProPage() {
               IXAI Pro 預覽
             </p>
             <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:mt-4 sm:text-5xl">
-              IXAI Pro — Personal Intelligence Layer
+              IXAI Pro — Personalized Intelligence Layer
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72 sm:mt-6 sm:text-base sm:leading-8">
               Public Intelligence 告訴你市場正在 pricing 什麼。IXAI Pro
@@ -42,39 +42,39 @@ export default function ProPage() {
                 href="#pro-waitlist"
               >
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
-                <span className="translate-y-px">加入 Pro 等候名單</span>
+                <span className="translate-y-px">建立 Intelligence Layer</span>
               </a>
               <Link
                 className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
                 href="/daily-brief"
               >
                 <FileText className="h-4 w-4" aria-hidden="true" />
-                <span className="translate-y-px">繼續使用 Public Intelligence</span>
+                <span className="translate-y-px">查看 Public Intelligence</span>
               </Link>
               <Link
                 className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
                 href="/pro-preview"
               >
-                查看 Pro 預覽控制台
+                查看 Intelligence Preview
               </Link>
               <Link
                 className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
                 href="/pro-intelligence"
               >
-                Upgrade Intelligence
+                開啟 AI Intelligence Workspace
               </Link>
             </div>
           </div>
 
           <div className="rounded-lg border border-white/10 bg-white/[0.045] p-4 sm:p-5">
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-              升級邏輯
+              Public → Preview → Pro
             </p>
             <div className="mt-4 grid gap-3">
               {[
-                ["Public", "Daily / Weekly Intelligence、Market Signals、FCN 教育。"],
-                ["Subscriber", "Email capture、identity stitching、membership foundation。"],
-                ["Pro", "Personal portfolio intelligence、FCN 監控、AI alerts。"],
+                ["Public", "Daily / Weekly Intelligence、Market context、FCN awareness。"],
+                ["Preview", "Watchlist memory、delivery preference、LINE intelligence entry。"],
+                ["Pro", "Personal portfolio relevance、FCN risk intelligence、AI alerts。"],
               ].map(([label, copy]) => (
                 <article className="rounded-lg border border-white/10 bg-white/[0.045] p-4" key={label}>
                   <p className="font-mono text-xs uppercase tracking-[0.14em] text-zinc-400/80">
@@ -100,7 +100,7 @@ export default function ProPage() {
 
       <IdentifySessionCard
         source="pro_page"
-        title="建立你的 IXAI intelligence identity"
+        title="建立你的 AI Intelligence Workspace"
       />
 
       <section
@@ -112,12 +112,11 @@ export default function ProPage() {
             等候名單 / 預覽
           </p>
           <h2 className="mt-2 font-serif text-2xl font-semibold leading-tight text-[var(--ixai-forest)] sm:text-3xl">
-            IXAI Pro 開放時，優先取得通知。
+            IXAI Pro 開放時，優先取得 intelligence access 通知。
           </h2>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            加入 Pro 等候名單後，你會成為 IXAI membership foundation 中的
-            conversion candidate。系統會建立 free member record，並將 Pro intent
-            連接到同一個 subscriber identity graph。
+            加入後，IXAI 會把你的 Pro intent 連接到同一個 subscriber identity graph。
+            這只是未來 personalized intelligence 的開放通知，不代表已啟用付費或投資建議。
           </p>
         </div>
         <ProWaitlistCta requestedFeature="portfolio_intelligence" />

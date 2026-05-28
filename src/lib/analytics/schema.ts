@@ -52,6 +52,10 @@ export type AnalyticsEventName =
   | "landing_preview_click"
   | "landing_line_cta_click"
   | "intelligence_landing_preview_view"
+  | "ux_cohesion_preview_view"
+  | "intelligence_workspace_cta_click"
+  | "line_intelligence_cta_click"
+  | "pro_preview_flow_view"
   | "install_prompt_shown"
   | "install_prompt_accepted"
   | "weekly_open"
@@ -146,6 +150,10 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "landing_preview_click",
   "landing_line_cta_click",
   "intelligence_landing_preview_view",
+  "ux_cohesion_preview_view",
+  "intelligence_workspace_cta_click",
+  "line_intelligence_cta_click",
+  "pro_preview_flow_view",
   "install_prompt_shown",
   "install_prompt_accepted",
   "weekly_open",

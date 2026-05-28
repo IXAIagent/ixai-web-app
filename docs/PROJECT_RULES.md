@@ -27,6 +27,14 @@ Do not merge these shells without an explicit architecture audit.
 
 The root route `/` is the public product landing surface. It should explain IXAI and route users into onboarding, Pro preview, LINE, or account flows. Do not convert it back into a login-only gate without explicit product approval.
 
+Public, preview, account, LINE, and Pro surfaces should share one user journey:
+
+```text
+Public Landing → Intelligence Preview → Onboarding → AI Intelligence Workspace → Future Pro Intelligence
+```
+
+Prefer CTA wording such as "建立 Intelligence Layer", "查看 Intelligence Preview", "開始 Onboarding", "連接 LINE 接收情報", and "開啟 AI Intelligence Workspace".
+
 ## B. Design System Rules
 
 CTA and icon color rules:

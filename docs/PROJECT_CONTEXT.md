@@ -24,6 +24,7 @@ Completed product capabilities include:
 
 - Public app live with responsive public UI.
 - Public root landing system that explains IXAI before login, routes users into onboarding, Pro preview, and LINE intelligence entry.
+- UX cohesion pass aligning Public Landing → Intelligence Preview → Onboarding → AI Intelligence Workspace → Future Pro Intelligence.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
 - Vercel deployment and production metadata / PWA installability foundation.
@@ -65,6 +66,7 @@ Near-term direction should focus on Intelligence Activation and operational reli
 - Daily intelligence relationship: help users establish what IXAI should monitor first.
 - Intelligence delivery foundation: Morning Intelligence preview, LINE delivery readiness, and opt-in delivery architecture.
 - Public acquisition landing: the root route should communicate IXAI value before asking for account creation.
+- UX cohesion: keep CTA language and product narrative aligned across landing, onboarding, account, LINE, preview, and Pro surfaces.
 - Membership entitlement activation.
 - Pro intelligence delivery mechanics.
 - Portfolio onboarding foundation.
@@ -116,6 +118,7 @@ Known areas that require care:
 - Onboarding profile state is local/session-first in v1.40; durable persistence and portfolio-intelligence promotion remain future work.
 - Intelligence delivery is foundation-only in v1.40.1; real push requires explicit opt-in persistence, queueing, delivery logs, and unsubscribe controls.
 - Root landing should remain public and product-led; do not turn `/` back into a login-only gate without explicit product approval.
+- CTA and product wording should reinforce one flow: Public Landing → Intelligence Preview → Onboarding → AI Intelligence Workspace → Future Pro Intelligence.
 
 ## G. AI Collaboration Workflow
 

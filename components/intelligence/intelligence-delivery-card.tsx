@@ -51,7 +51,7 @@ export function IntelligenceDeliveryCard({
             Daily Intelligence Habit Loop
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--ixai-ink-muted)]">
-            IXAI delivery foundation 會把晨間情報、總經風險、Watchlist preview 與 LINE readiness
+            IXAI delivery foundation 會把晨間情報、總經風險、Watchlist memory 與 LINE readiness
             組成可排程、可 opt-in、可升級到 Pro 的情報遞送架構。
           </p>
         </div>
@@ -66,14 +66,14 @@ export function IntelligenceDeliveryCard({
           <Clock className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">Morning Intelligence</p>
           <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
-            Foundation schedule: 08:00 local time. No real push until opt-in and queue are added.
+            每天 08:00 的 Morning Intelligence 節奏預覽；正式推送需 opt-in 與 delivery queue。
           </p>
         </article>
         <article className="rounded-lg border border-[var(--ixai-border)] bg-white/48 p-3">
           <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">LINE Readiness</p>
           <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
-            {lineConnected ? "LINE identity connected. Future delivery still requires opt-in." : "LINE connection is available through existing connect/login flow."}
+            {lineConnected ? "LINE 已連接；未來情報遞送仍需明確 opt-in。" : "可透過既有 LINE entry 建立未來情報遞送基礎。"}
           </p>
         </article>
         <article className="rounded-lg border border-[var(--ixai-border)] bg-white/48 p-3">
@@ -91,7 +91,7 @@ export function IntelligenceDeliveryCard({
           className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 font-semibold text-[var(--ixai-forest)]"
           href="/pro-intelligence"
         >
-          查看 delivery shell
+          查看 Pro Intelligence 預覽
           <ArrowRight className="h-3.5 w-3.5 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
         </Link>
       </div>

@@ -1,18 +1,18 @@
 import Link from "next/link";
-import { ArrowRight, LineChart, ListChecks, MessageCircle, ShieldCheck } from "lucide-react";
+import { ArrowRight, LineChart, ListChecks, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 const WELCOME_CARDS = [
   [LineChart, "市場偏好", "美股、台股、Crypto、FCN 與 ETF 的情報優先權。"],
-  [ListChecks, "Watchlist Setup", "先用本機狀態建立觀察名單，未來可接 Pro memory。"],
-  [MessageCircle, "LINE Intelligence", "使用既有 LINE entry，為未來 opt-in delivery 做準備。"],
+  [ListChecks, "Watchlist Memory", "先用本機狀態建立觀察名單，未來可接 Pro memory。"],
+  [MessageCircle, "LINE Intelligence", "連接 LINE 接收情報，為未來 opt-in delivery 做準備。"],
   [ShieldCheck, "Risk-first", "IXAI 提供市場資訊與風險觀察，不提供保證報酬或買賣指令。"],
 ] as const;
 
 export const metadata = buildPublicMetadata({
   title: "Welcome to IXAI",
   description:
-    "建立你的 IXAI intelligence workspace，從市場偏好、自選觀察與 LINE intelligence entry 開始。",
+    "建立你的 IXAI intelligence layer，從市場偏好、自選觀察與 LINE intelligence entry 開始。",
 });
 
 export default function WelcomePage() {
@@ -36,14 +36,15 @@ export default function WelcomePage() {
                 className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold"
                 href="/onboarding"
               >
-                建立 Intelligence Profile
+                開始 Onboarding
                 <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-forest)]" aria-hidden="true" />
               </Link>
               <Link
-                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/15 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-white/8"
-                href="/daily-brief"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-white/8"
+                href="/pro-preview"
               >
-                先看 Daily Brief
+                查看 Intelligence Preview
+                <Sparkles className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
               </Link>
             </div>
           </div>

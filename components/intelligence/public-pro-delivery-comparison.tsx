@@ -7,7 +7,7 @@ const TIERS = [
     label: "Public",
   },
   {
-    copy: "Watchlist alert 與 Pro dashboard sample。用於理解未來工作流，不代表正式權限。",
+    copy: "Watchlist alert 與 personalized intelligence sample。用於理解未來工作流，不代表正式權限。",
     icon: BellRing,
     label: "Preview",
   },

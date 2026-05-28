@@ -21,14 +21,14 @@ export default function AccountPage() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          My IXAI
+          AI Intelligence Workspace
         </p>
         <h1 className="mt-2 max-w-3xl font-serif text-2xl font-semibold leading-8 sm:mt-3 sm:text-5xl sm:leading-snug">
-          個人化 AI wealth intelligence 的起點。
+          你的 AI intelligence layer 從這裡開始。
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:leading-7">
-          我的 IXAI 是個人身份層、偏好中心、watchlist 同步中心，也是未來 IXAI Pro
-          個人情報工作區的入口。
+          這裡整理你的身份狀態、Watchlist memory、LINE intelligence readiness 與未來 IXAI Pro
+          personal intelligence 的入口。
         </p>
         <p className="mt-3 max-w-3xl text-xs leading-6 text-white/56">
           {ixaiIdentity.sharedAccountMessage}
@@ -90,11 +90,11 @@ export default function AccountPage() {
           IXAI Pro connection
         </p>
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-          Public Account 先建立，Pro 連接分階段開放。
+          Public intelligence 先建立，Pro 連接分階段開放。
         </h2>
         <div className="mt-5 grid gap-3 text-sm leading-6 text-[var(--ixai-forest-soft)] sm:grid-cols-2 lg:grid-cols-4">
           {[
-            ["Public App", "使用 IXAI Account 進入 Public Intelligence Layer。"],
+            ["Public", "使用 IXAI Account 建立每日情報關係。"],
             ["Shared login", "未來支援 Public App 與 IXAI Pro 共用登入。"],
             ["Watchlist sync", "目前此裝置保存；登入後將逐步支援跨裝置同步。"],
             ["Notifications", "Daily Brief、風險與 FCN 通知需使用者明確開啟。"],
@@ -139,7 +139,7 @@ export default function AccountPage() {
           Why account?
         </p>
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-          IXAI Account 是建立個人市場記憶與未來 Pro continuity 的起點。
+          IXAI Account 是建立市場記憶與未來 Pro intelligence continuity 的起點。
         </h2>
         <div className="mt-5 grid gap-3 text-sm leading-7 text-[var(--ixai-forest-soft)] md:grid-cols-2">
           {[

@@ -451,7 +451,7 @@ export function OnboardingFlow() {
                 className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
                 href="/pro-preview"
               >
-                查看 Pro Preview
+                查看 Intelligence Preview
               </Link>
             ) : null}
             {currentStep < STEPS.length - 1 ? (
