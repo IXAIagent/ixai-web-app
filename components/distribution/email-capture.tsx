@@ -204,7 +204,7 @@ export function EmailCapture({
             type="submit"
           >
             {state === "loading" ? "Subscribing…" : "Subscribe"}
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-cream)]/90" aria-hidden="true" />
           </button>
         </form>
       )}

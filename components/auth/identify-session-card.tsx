@@ -44,11 +44,11 @@ export function IdentifySessionCard({
         <IdentityStatus />
         <div className="mt-4 grid gap-2 sm:flex sm:flex-wrap">
           <Link
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-cream)]"
+            className="ixai-cta-forest inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-cream)]"
             href="/pro-preview"
           >
             <span className="translate-y-px">Continue with IXAI Pro Preview</span>
-            <ArrowRight className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
+            <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-cream)]/90" aria-hidden="true" />
           </Link>
           <Link
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-forest)]"
@@ -102,12 +102,12 @@ export function IdentifySessionCard({
           />
         </div>
         <button
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[#123a2d] disabled:cursor-not-allowed disabled:saturate-75 sm:w-auto"
+          className="ixai-cta-forest inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[#123a2d] disabled:cursor-not-allowed disabled:saturate-75 sm:w-auto"
           disabled={formState === "submitting"}
           type="submit"
         >
           <span className="translate-y-px">{formState === "submitting" ? "建立中" : "Continue"}</span>
-          <ArrowRight className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
+          <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-cream)]/90" aria-hidden="true" />
         </button>
       </form>
 
