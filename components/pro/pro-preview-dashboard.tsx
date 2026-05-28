@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { ArrowRight, BarChart3, CalendarClock, Radar, ShieldCheck } from "lucide-react";
 import { IdentifySessionCard } from "@/components/auth/identify-session-card";
+import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
+import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
 import { ConnectLineCard } from "@/components/line/connect-line-card";
 import { ProAlertPreview } from "@/components/pro/pro-alert-preview";
 import { ProPreviewCard } from "@/components/pro/pro-preview-card";
@@ -45,6 +47,10 @@ export function ProPreviewDashboard() {
       />
 
       <ConnectLineCard source="pro_preview" />
+
+      <IntelligenceDeliveryCard source="pro_preview" tier="preview" />
+
+      <MorningIntelligencePreview source="pro_preview" tier="preview" />
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <ProPreviewCard

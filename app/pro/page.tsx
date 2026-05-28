@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, FileText, Sparkles } from "lucide-react";
 import { IdentifySessionCard } from "@/components/auth/identify-session-card";
+import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
+import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
+import { PublicProDeliveryComparison } from "@/components/intelligence/public-pro-delivery-comparison";
 import { ProComparison } from "@/components/pro/pro-comparison";
 import { ProFeatureGrid } from "@/components/pro/pro-feature-grid";
 import { ProWaitlistCta } from "@/components/pro/pro-waitlist-cta";
@@ -86,6 +89,12 @@ export default function ProPage() {
       </section>
 
       <ProFeatureGrid />
+
+      <PublicProDeliveryComparison />
+
+      <IntelligenceDeliveryCard source="pro_page" tier="preview" />
+
+      <MorningIntelligencePreview source="pro_page" tier="public" />
 
       <ProComparison />
 

@@ -41,6 +41,12 @@ export type AnalyticsEventName =
   | "onboarding_watchlist_added"
   | "onboarding_line_connect_open"
   | "onboarding_completed"
+  | "intelligence_delivery_enabled"
+  | "intelligence_delivery_preview_open"
+  | "intelligence_delivery_line_connect"
+  | "intelligence_push_preview_view"
+  | "morning_intelligence_view"
+  | "pro_intelligence_preview_view"
   | "install_prompt_shown"
   | "install_prompt_accepted"
   | "weekly_open"
@@ -124,6 +130,12 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "onboarding_watchlist_added",
   "onboarding_line_connect_open",
   "onboarding_completed",
+  "intelligence_delivery_enabled",
+  "intelligence_delivery_preview_open",
+  "intelligence_delivery_line_connect",
+  "intelligence_push_preview_view",
+  "morning_intelligence_view",
+  "pro_intelligence_preview_view",
   "install_prompt_shown",
   "install_prompt_accepted",
   "weekly_open",

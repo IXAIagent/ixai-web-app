@@ -10,6 +10,7 @@ const GROUPS = [
     items: [
       ["控制台首頁", "/admin"],
       ["情報快照", "/admin#intelligence"],
+      ["情報遞送", "/admin#intelligence-delivery"],
       ["受眾圖譜", "/admin#audience"],
       ["LINE 身分合併", "/admin#line-identity"],
       ["LINE Login / LIFF", "/admin#line-login"],

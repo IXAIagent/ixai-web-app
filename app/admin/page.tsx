@@ -3,6 +3,7 @@ import { AudienceSnapshot } from "@/components/admin/audience-snapshot";
 import { ConversionFunnel } from "@/components/admin/conversion-funnel";
 import { DistributionSnapshot } from "@/components/admin/distribution-snapshot";
 import { IdentitySnapshot } from "@/components/admin/identity-snapshot";
+import { IntelligenceDeliverySnapshot } from "@/components/admin/intelligence-delivery-snapshot";
 import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-analytics-snapshot";
 import { LineIdentitySnapshot } from "@/components/admin/line-identity-snapshot";
 import { LineLoginSnapshot } from "@/components/admin/line-login-snapshot";
@@ -62,6 +63,9 @@ export default function AdminPage() {
       </section>
       <section id="onboarding">
         <OnboardingSnapshot />
+      </section>
+      <section id="intelligence-delivery">
+        <IntelligenceDeliverySnapshot />
       </section>
       <section id="line-identity">
         <LineIdentitySnapshot />

@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowUpRight, Bug, MessageSquare } from "lucide-react";
 import { AccountPanel } from "@/components/auth/account-panel";
+import { DeliveryPreferenceCard } from "@/components/intelligence/delivery-preference-card";
+import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
+import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
 import { ConnectLineCard } from "@/components/line/connect-line-card";
 import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import { PwaInstallCard } from "@/components/pwa/install-card";
@@ -35,6 +38,12 @@ export default function AccountPage() {
       <AccountPanel />
 
       <ConnectLineCard source="account" />
+
+      <DeliveryPreferenceCard source="account" />
+
+      <IntelligenceDeliveryCard source="account" tier="preview" />
+
+      <MorningIntelligencePreview source="account" tier="public" />
 
       <ProUpgradeCard feature="portfolio_intelligence" surface="account" />
 

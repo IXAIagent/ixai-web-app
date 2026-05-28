@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { Brain, CalendarClock, ChartNoAxesCombined, Radar, ShieldCheck } from "lucide-react";
 import { IdentifySessionCard } from "@/components/auth/identify-session-card";
 import { useIdentitySession } from "@/components/auth/identity-provider";
+import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
+import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
 import { ConnectLineCard } from "@/components/line/connect-line-card";
 import { GatedSurface } from "@/components/pro/gated-surface";
 import { PreviewBadge } from "@/components/pro/preview-badge";
@@ -83,6 +85,10 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
       />
 
       <ConnectLineCard source="pro_intelligence" />
+
+      <IntelligenceDeliveryCard source="pro_intelligence" tier="pro" />
+
+      <MorningIntelligencePreview source="pro_intelligence" tier="pro" />
 
       <GatedSurface
         membership={activeMembership}

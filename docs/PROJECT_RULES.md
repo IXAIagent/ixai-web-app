@@ -15,6 +15,7 @@ Do not break or casually rewrite these systems:
 - Editorial publish / review workflow.
 - Market quote and news provider pipelines.
 - Onboarding profile foundation and local/session-first state model unless a persistence migration is explicitly requested.
+- Intelligence delivery foundation, especially opt-in boundaries and Public / Pro tier separation.
 
 Public and admin surfaces must remain separated:
 
@@ -118,6 +119,8 @@ Never:
 Analytics must sanitize payloads. Subscriber and identity analytics should avoid raw personal data unless explicitly required and safe.
 
 Onboarding analytics must not send raw watchlist symbols, phone numbers, auth tokens, LINE user IDs, or other sensitive identifiers. It may send aggregate counts, option IDs, surface names, and non-sensitive preference categories.
+
+Delivery analytics must not send raw LINE user IDs, email addresses, watchlist symbols, portfolio holdings, auth tokens, or notification tokens. Real push delivery must require explicit opt-in, pause/unsubscribe controls, and a server-side delivery log before production automation.
 
 ## G. Monetization Rules
 

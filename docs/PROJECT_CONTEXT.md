@@ -24,6 +24,7 @@ Completed product capabilities include:
 
 - Public app live with responsive public UI.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
+- Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
 - Vercel deployment and production metadata / PWA installability foundation.
 - Daily Brief and Weekly Intelligence editorial surfaces.
 - Editorial Studio and admin/public shell separation.
@@ -61,6 +62,7 @@ Near-term direction should focus on Intelligence Activation and operational reli
 
 - Onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Daily intelligence relationship: help users establish what IXAI should monitor first.
+- Intelligence delivery foundation: Morning Intelligence preview, LINE delivery readiness, and opt-in delivery architecture.
 - Membership entitlement activation.
 - Pro intelligence delivery mechanics.
 - Portfolio onboarding foundation.
@@ -110,6 +112,7 @@ Known areas that require care:
 - Need for future design-system cleanup around buttons, icon color rules, shell primitives, and card variants.
 - Some older components still contain legacy force-icon classes and should be cleaned only through audited, scoped changes.
 - Onboarding profile state is local/session-first in v1.40; durable persistence and portfolio-intelligence promotion remain future work.
+- Intelligence delivery is foundation-only in v1.40.1; real push requires explicit opt-in persistence, queueing, delivery logs, and unsubscribe controls.
 
 ## G. AI Collaboration Workflow
 
