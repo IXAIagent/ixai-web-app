@@ -36,6 +36,11 @@ export type AnalyticsEventName =
   | "feedback_click"
   | "onboarding_seen"
   | "onboarding_dismissed"
+  | "onboarding_started"
+  | "onboarding_step_completed"
+  | "onboarding_watchlist_added"
+  | "onboarding_line_connect_open"
+  | "onboarding_completed"
   | "install_prompt_shown"
   | "install_prompt_accepted"
   | "weekly_open"
@@ -114,6 +119,11 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "feedback_click",
   "onboarding_seen",
   "onboarding_dismissed",
+  "onboarding_started",
+  "onboarding_step_completed",
+  "onboarding_watchlist_added",
+  "onboarding_line_connect_open",
+  "onboarding_completed",
   "install_prompt_shown",
   "install_prompt_accepted",
   "weekly_open",

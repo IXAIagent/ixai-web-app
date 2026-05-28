@@ -13,10 +13,12 @@ const exemptPathPrefixes = [
   "/feedback",
   "/liff",
   "/login",
+  "/onboarding",
   "/pro",
   "/pro-intelligence",
   "/pro-preview",
   "/register",
+  "/welcome",
 ];
 
 function isExemptPath(pathname: string) {

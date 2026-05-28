@@ -7,6 +7,7 @@ import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-a
 import { LineIdentitySnapshot } from "@/components/admin/line-identity-snapshot";
 import { LineLoginSnapshot } from "@/components/admin/line-login-snapshot";
 import { MembershipSnapshot } from "@/components/admin/membership-snapshot";
+import { OnboardingSnapshot } from "@/components/admin/onboarding-snapshot";
 import { ProReadinessSnapshot } from "@/components/admin/pro-readiness-snapshot";
 
 export const metadata = {
@@ -58,6 +59,9 @@ export default function AdminPage() {
       </section>
       <section id="identity">
         <IdentitySnapshot />
+      </section>
+      <section id="onboarding">
+        <OnboardingSnapshot />
       </section>
       <section id="line-identity">
         <LineIdentitySnapshot />

@@ -23,6 +23,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 Completed product capabilities include:
 
 - Public app live with responsive public UI.
+- Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Vercel deployment and production metadata / PWA installability foundation.
 - Daily Brief and Weekly Intelligence editorial surfaces.
 - Editorial Studio and admin/public shell separation.
@@ -56,8 +57,10 @@ The app intentionally separates public user-facing intelligence from internal ad
 
 ### v1.40
 
-Near-term direction should focus on monetization activation and operational reliability:
+Near-term direction should focus on Intelligence Activation and operational reliability:
 
+- Onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
+- Daily intelligence relationship: help users establish what IXAI should monitor first.
 - Membership entitlement activation.
 - Pro intelligence delivery mechanics.
 - Portfolio onboarding foundation.
@@ -106,6 +109,7 @@ Known areas that require care:
 - CSS utility layering complexity after multiple visual cleanup passes.
 - Need for future design-system cleanup around buttons, icon color rules, shell primitives, and card variants.
 - Some older components still contain legacy force-icon classes and should be cleaned only through audited, scoped changes.
+- Onboarding profile state is local/session-first in v1.40; durable persistence and portfolio-intelligence promotion remain future work.
 
 ## G. AI Collaboration Workflow
 

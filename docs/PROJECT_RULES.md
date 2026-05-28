@@ -14,6 +14,7 @@ Do not break or casually rewrite these systems:
 - Analytics event schema and provider abstraction.
 - Editorial publish / review workflow.
 - Market quote and news provider pipelines.
+- Onboarding profile foundation and local/session-first state model unless a persistence migration is explicitly requested.
 
 Public and admin surfaces must remain separated:
 
@@ -115,6 +116,8 @@ Never:
 - Return raw database errors to public UI.
 
 Analytics must sanitize payloads. Subscriber and identity analytics should avoid raw personal data unless explicitly required and safe.
+
+Onboarding analytics must not send raw watchlist symbols, phone numbers, auth tokens, LINE user IDs, or other sensitive identifiers. It may send aggregate counts, option IDs, surface names, and non-sensitive preference categories.
 
 ## G. Monetization Rules
 
