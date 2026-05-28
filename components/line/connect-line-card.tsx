@@ -114,7 +114,7 @@ export function ConnectLineCard({
             <ShellStatusPill icon={MessageCircle}>LINE Intelligence Sync</ShellStatusPill>
             {connected ? (
               <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-emerald-200/30 bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.16em] text-emerald-100">
-                <CheckCircle2 className="h-3 w-3 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+                <CheckCircle2 className="h-3 w-3 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
                 <span className="translate-y-px">LINE connected</span>
               </span>
             ) : null}
@@ -164,18 +164,18 @@ export function ConnectLineCard({
                 className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold leading-none text-current transition hover:bg-white/10"
                 href="/pro-preview"
               >
-                <ShieldCheck className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+                <ShieldCheck className="h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
                 <span className="translate-y-px">先建立 identity session</span>
               </Link>
             </>
           ) : (
             <button
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.45)] bg-[var(--ixai-gold)] px-4 py-2.5 text-sm font-semibold leading-none text-[var(--ixai-forest)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.45)] bg-[var(--ixai-gold)] px-4 py-2.5 text-sm font-semibold leading-none text-[var(--ixai-forest)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:saturate-75"
               disabled={connecting || connected}
               onClick={() => void connectLine()}
               type="button"
             >
-              <Link2 className="h-4 w-4 stroke-current text-[var(--ixai-forest)]" aria-hidden="true" />
+              <Link2 className="h-4 w-4 stroke-current text-[var(--ixai-forest)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
               <span className="translate-y-px">
                 {connected ? "LINE 已連接" : connecting ? "建立中" : "Connect LINE"}
               </span>
@@ -189,7 +189,7 @@ export function ConnectLineCard({
               target="_blank"
             >
               <span className="translate-y-px">開啟 LINE Official Account</span>
-              <ArrowUpRight className="h-3.5 w-3.5 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+              <ArrowUpRight className="h-3.5 w-3.5 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
             </Link>
           ) : null}
         </div>

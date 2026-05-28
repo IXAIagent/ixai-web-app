@@ -150,8 +150,8 @@ export function EmailCapture({
   return (
     <section className={wrapperClass}>
       <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
-          <Mail className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
+        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)] opacity-100">
+          <Mail className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
         </span>
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           IXAI Intelligence
@@ -166,7 +166,7 @@ export function EmailCapture({
 
       {state === "success" ? (
         <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-3.5 text-sm leading-7 text-[var(--ixai-forest)]">
-          <Check className="mt-1 h-4 w-4 shrink-0 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
+          <Check className="ixai-force-icon-gold mt-1 h-4 w-4 shrink-0 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
           <p>
             You&rsquo;re on the list. IXAI Intelligence 會在後續開放時優先通知你。
           </p>
@@ -199,12 +199,12 @@ export function EmailCapture({
             value={email}
           />
           <button
-            className="ixai-cta-forest inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+            className="ixai-cta-forest inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:saturate-75"
             disabled={state === "loading"}
             type="submit"
           >
             {state === "loading" ? "Subscribing…" : "Subscribe"}
-            <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
+            <ArrowRight className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
           </button>
         </form>
       )}

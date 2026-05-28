@@ -96,6 +96,38 @@ a {
   stroke: currentColor;
 }
 
+.ixai-force-icon-gold {
+  color: var(--ixai-gold) !important;
+  opacity: 1 !important;
+  stroke: currentColor;
+  stroke-width: 2.25;
+}
+
+.ixai-force-icon-forest {
+  color: var(--ixai-forest) !important;
+  opacity: 1 !important;
+  stroke: currentColor;
+  stroke-width: 2.25;
+}
+
+.ixai-cta-cream svg.ixai-force-icon-gold,
+.ixai-cta-forest svg.ixai-force-icon-gold,
+.ixai-cta-outline-dark svg.ixai-force-icon-gold {
+  color: var(--ixai-gold) !important;
+  opacity: 1 !important;
+  stroke: currentColor;
+  stroke-width: 2.25;
+}
+
+.ixai-cta-cream svg.ixai-force-icon-forest,
+.ixai-cta-forest svg.ixai-force-icon-forest,
+.ixai-cta-outline-dark svg.ixai-force-icon-forest {
+  color: var(--ixai-forest) !important;
+  opacity: 1 !important;
+  stroke: currentColor;
+  stroke-width: 2.25;
+}
+
 .ixai-cta-outline-dark {
   color: rgba(245, 240, 230, 0.82) !important;
 }

@@ -38,14 +38,14 @@ export default function ProPage() {
                 className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-center text-sm font-semibold"
                 href="#pro-waitlist"
               >
-                <Sparkles className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+                <Sparkles className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
                 <span className="translate-y-px">加入 Pro 等候名單</span>
               </a>
               <Link
                 className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
                 href="/daily-brief"
               >
-                <FileText className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+                <FileText className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
                 <span className="translate-y-px">繼續使用 Public Intelligence</span>
               </Link>
               <Link
@@ -122,7 +122,7 @@ export default function ProPage() {
           href="/daily-brief"
         >
           返回 Public Intelligence
-          <ArrowRight className="h-3.5 w-3.5 stroke-current text-[var(--ixai-forest)]" aria-hidden="true" />
+          <ArrowRight className="ixai-force-icon-forest h-3.5 w-3.5 stroke-current text-[var(--ixai-forest)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
         </Link>
       </section>
     </div>

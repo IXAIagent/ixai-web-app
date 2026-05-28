@@ -18,11 +18,11 @@ export function LineLoginButton({
   if (disabled) {
     return (
       <button
-        className={`inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/35 px-4 py-2.5 text-sm font-semibold leading-none text-[var(--ixai-ink-muted)] ${className}`}
+        className={`inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/35 px-4 py-2.5 text-sm font-semibold leading-none text-[var(--ixai-forest-soft)] ${className}`}
         disabled
         type="button"
       >
-        <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+        <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
         <span className="translate-y-px">LINE Login 尚未設定</span>
       </button>
     );
@@ -39,7 +39,7 @@ export function LineLoginButton({
         })
       }
     >
-      <LogIn className="h-4 w-4 stroke-current text-[var(--ixai-forest)]" aria-hidden="true" />
+      <LogIn className="h-4 w-4 stroke-current text-[var(--ixai-forest)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
       <span className="translate-y-px">{label}</span>
     </Link>
   );

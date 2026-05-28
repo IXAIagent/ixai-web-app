@@ -98,8 +98,8 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
                 className="min-w-0 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5"
                 key={module.title}
               >
-                <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
-                  <Icon className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
+                <div className="flex items-center gap-2 text-[var(--ixai-gold)] opacity-100">
+                  <Icon className="h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
                   <PreviewBadge label="Sample-only" surface={module.surface} />
                 </div>
                 <h2 className="mt-3 text-base font-semibold leading-6 text-[var(--ixai-forest)]">

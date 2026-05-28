@@ -39,7 +39,7 @@ export function UpgradeIntelligenceCta({
         href="/pro#pro-waitlist"
         onClick={() => trackUpgradeClick("pro_waitlist")}
       >
-        <Sparkles className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
+        <Sparkles className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
         加入 Pro 等候名單
       </Link>
       <Link
@@ -48,7 +48,7 @@ export function UpgradeIntelligenceCta({
         onClick={() => trackUpgradeClick("pro_preview")}
       >
         查看 Pro 預覽控制台
-        <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
+        <ArrowRight className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
       </Link>
       <Link
         className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-center text-sm font-medium transition sm:w-auto ${secondaryClass}`}
@@ -56,7 +56,7 @@ export function UpgradeIntelligenceCta({
         onClick={() => trackUpgradeClick("pro_intelligence")}
       >
         Upgrade Intelligence
-        <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" fill="none" />
+        <ArrowRight className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
       </Link>
     </div>
   );

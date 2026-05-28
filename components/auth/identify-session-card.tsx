@@ -48,7 +48,7 @@ export function IdentifySessionCard({
             href="/pro-preview"
           >
             <span className="translate-y-px">Continue with IXAI Pro Preview</span>
-            <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+            <ArrowRight className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
           </Link>
           <Link
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-forest)]"
@@ -64,8 +64,8 @@ export function IdentifySessionCard({
   return (
     <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)] p-4 shadow-[0_18px_48px_rgba(9,41,31,0.08)] sm:p-5">
       <div className="flex items-start gap-3">
-        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.32)] bg-white/58 text-[var(--ixai-gold)]">
-          <ShieldCheck className="h-5 w-5 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.32)] bg-white/58 text-[var(--ixai-gold)] opacity-100">
+          <ShieldCheck className="ixai-force-icon-gold h-5 w-5 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
         </span>
         <div className="min-w-0">
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.2em]">
@@ -87,8 +87,9 @@ export function IdentifySessionCard({
         </label>
         <div className="relative">
           <Mail
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 stroke-current text-[var(--ixai-gold)]"
+            className="ixai-force-icon-gold pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 stroke-current text-[var(--ixai-gold)] opacity-100"
             aria-hidden="true"
+            strokeWidth={2.25}
           />
           <input
             className="min-h-11 w-full rounded-lg border border-[var(--ixai-border)] bg-white/72 px-9 py-2.5 text-sm text-[var(--ixai-forest)] outline-none transition placeholder:text-[var(--ixai-ink-muted)] focus:border-[var(--ixai-gold)]"
@@ -101,12 +102,12 @@ export function IdentifySessionCard({
           />
         </div>
         <button
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[#123a2d] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[#123a2d] disabled:cursor-not-allowed disabled:saturate-75 sm:w-auto"
           disabled={formState === "submitting"}
           type="submit"
         >
           <span className="translate-y-px">{formState === "submitting" ? "建立中" : "Continue"}</span>
-          <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+          <ArrowRight className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" strokeWidth={2.25} />
         </button>
       </form>
 
