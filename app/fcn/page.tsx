@@ -56,10 +56,17 @@ export const metadata = buildPublicMetadata({
   canonical: "/fcn",
 });
 
+// v1.39.3 Phase 1A — risk badge tones now route through the existing
+// --ixai-risk-* tokens (clear / watch / elevated / critical) instead of
+// hard-coded hex / off-brand emerald. Color-mix keeps the token as the
+// single source of truth and preserves cream-surface contrast.
 const riskClasses: Record<FcnRiskLevel, string> = {
-  breached: "border-[#8f3326]/24 bg-[#8f3326]/10 text-[#6b241b]",
-  highRisk: "border-[#9f5530]/24 bg-[#9f5530]/10 text-[#6f351f]",
-  safe: "border-emerald-900/12 bg-emerald-900/[0.06] text-emerald-950",
+  breached:
+    "border-[color-mix(in_srgb,var(--ixai-risk-critical)_30%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_12%,white)] text-[color-mix(in_srgb,var(--ixai-risk-critical)_72%,var(--ixai-forest))]",
+  highRisk:
+    "border-[color-mix(in_srgb,var(--ixai-risk-elevated)_30%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-elevated)_12%,white)] text-[color-mix(in_srgb,var(--ixai-risk-elevated)_72%,var(--ixai-forest))]",
+  safe:
+    "border-[color-mix(in_srgb,var(--ixai-risk-clear)_28%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-clear)_12%,white)] text-[color-mix(in_srgb,var(--ixai-risk-clear)_62%,var(--ixai-forest))]",
   unavailable: "border-[var(--ixai-border)] bg-white/45 text-[var(--ixai-ink-muted)]",
   watch: "border-[rgba(176,141,87,0.3)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-forest)]",
 };

@@ -91,7 +91,7 @@ export default function AccountPage() {
             ["Notifications", "Daily Brief、風險與 FCN 通知需使用者明確開啟。"],
           ].map(([label, copy]) => (
             <article
-              className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4"
+              className="flex h-full flex-col rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4"
               key={label}
             >
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">

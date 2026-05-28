@@ -24,7 +24,7 @@ export function FcnGateway() {
       </p>
 
       <div className="mt-5 grid gap-3 sm:gap-4 md:grid-cols-3">
-        <article className="rounded-xl border border-white/12 bg-white/[0.045] p-3.5 text-sm leading-7 text-[rgba(245,240,230,0.72)] sm:p-4">
+        <article className="flex h-full flex-col rounded-xl border border-white/12 bg-white/[0.045] p-3.5 text-sm leading-7 text-[rgba(245,240,230,0.72)] sm:p-4">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
             Worst-of
@@ -33,7 +33,7 @@ export function FcnGateway() {
             多標的 FCN 的最終風險由「最弱的那一檔」主導，配息再高也無法翻轉這個結構。
           </p>
         </article>
-        <article className="rounded-xl border border-white/12 bg-white/[0.045] p-3.5 text-sm leading-7 text-[rgba(245,240,230,0.72)] sm:p-4">
+        <article className="flex h-full flex-col rounded-xl border border-white/12 bg-white/[0.045] p-3.5 text-sm leading-7 text-[rgba(245,240,230,0.72)] sm:p-4">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
             KI / KO
@@ -42,7 +42,7 @@ export function FcnGateway() {
             KI 是風險觸發，KO 是條件出場；理解這兩個障礙就理解 FCN 的兩面性。
           </p>
         </article>
-        <article className="rounded-xl border border-white/12 bg-white/[0.045] p-3.5 text-sm leading-7 text-[rgba(245,240,230,0.72)] sm:p-4">
+        <article className="flex h-full flex-col rounded-xl border border-white/12 bg-white/[0.045] p-3.5 text-sm leading-7 text-[rgba(245,240,230,0.72)] sm:p-4">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
             Volatility

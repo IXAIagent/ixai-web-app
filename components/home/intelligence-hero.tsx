@@ -12,10 +12,16 @@ const REGIME_LABELS: Record<WeeklyNarrativeBundle["regime"]["regime"], string> =
   risk_off: "RISK-OFF",
 };
 
+// v1.39.3 Phase 1A — regime tones now route through --ixai-risk-* tokens
+// (clear / critical) instead of off-brand emerald / red. Mixed with cream
+// via color-mix() to keep readable contrast on the dark forest hero
+// background while preserving the token as the single source of truth.
 const REGIME_TONES: Record<WeeklyNarrativeBundle["regime"]["regime"], string> = {
-  risk_on: "border-emerald-200/30 bg-emerald-300/[0.12] text-emerald-100",
+  risk_on:
+    "border-[color-mix(in_srgb,var(--ixai-risk-clear)_44%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-clear)_18%,transparent)] text-[color-mix(in_srgb,var(--ixai-risk-clear)_24%,var(--ixai-cream))]",
   neutral: "border-white/15 bg-white/[0.07] text-[rgba(245,240,230,0.86)]",
-  risk_off: "border-red-200/30 bg-red-300/[0.12] text-red-100",
+  risk_off:
+    "border-[color-mix(in_srgb,var(--ixai-risk-critical)_46%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_18%,transparent)] text-[color-mix(in_srgb,var(--ixai-risk-critical)_24%,var(--ixai-cream))]",
 };
 
 const AI_LABELS: Record<WeeklyNarrativeBundle["regime"]["aiMomentum"], string> = {

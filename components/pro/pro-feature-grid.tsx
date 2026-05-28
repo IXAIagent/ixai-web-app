@@ -26,7 +26,7 @@ export function ProFeatureGrid() {
 
         return (
           <article
-            className="min-w-0 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5"
+            className="flex h-full min-w-0 flex-col rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5"
             key={feature.title}
           >
             <div className="flex items-center gap-2.5">

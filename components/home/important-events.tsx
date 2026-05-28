@@ -14,12 +14,15 @@ type ImportantEvent = {
   date?: string;
 };
 
+// v1.39.3 Phase 1A — high-importance branch routes through
+// --ixai-risk-critical instead of off-brand Tailwind red. Mid (>=6) and
+// neutral branches were already token-based and stay unchanged.
 function importanceTone(importance?: number): string {
   if (!importance) {
     return "border-[var(--ixai-border)] bg-white/55 text-[var(--ixai-forest-soft)]";
   }
   if (importance >= 9) {
-    return "border-red-900/20 bg-red-50/75 text-red-900";
+    return "border-[color-mix(in_srgb,var(--ixai-risk-critical)_32%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_14%,white)] text-[color-mix(in_srgb,var(--ixai-risk-critical)_70%,var(--ixai-forest))]";
   }
   if (importance >= 6) {
     return "border-[rgba(176,141,87,0.36)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-forest)]";
