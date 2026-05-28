@@ -78,63 +78,61 @@ a {
   border-radius: 6px;
 }
 
+/* v1.39.3 — CTA design tokens. Pairing rules:
+   - forest button (deep green bg)  → cream text + cream icon
+   - cream  button (warm bg)        → forest text + GOLD icon (forest is
+     so dark it reads as black against cream — gold provides the readable
+     warm accent the design system needs)
+   - gold   button (gold accent bg) → forest text + forest icon
+   - outline-dark (on dark hero)    → cream-soft text + gold icon
+   We wrap the descendant selector in :where() so the rule contributes
+   zero specificity — any per-icon Tailwind utility (text-[...]) wins
+   naturally without !important escalation. */
 .ixai-cta-forest {
-  color: var(--ixai-cream) !important;
+  color: var(--ixai-cream);
 }
-
-.ixai-cta-forest svg {
-  color: var(--ixai-cream) !important;
+:where(.ixai-cta-forest) :where(.lucide, svg) {
+  color: var(--ixai-cream);
   stroke: currentColor;
+  fill: none;
 }
 
 .ixai-cta-cream {
-  color: var(--ixai-forest) !important;
+  color: var(--ixai-forest);
+}
+:where(.ixai-cta-cream) :where(.lucide, svg) {
+  color: var(--ixai-gold);
+  stroke: currentColor;
+  fill: none;
 }
 
-.ixai-cta-cream svg {
-  color: var(--ixai-forest) !important;
-  stroke: currentColor;
+.ixai-cta-gold {
+  color: var(--ixai-forest);
 }
-
-.ixai-force-icon-gold {
-  color: var(--ixai-gold) !important;
-  opacity: 1 !important;
+:where(.ixai-cta-gold) :where(.lucide, svg) {
+  color: var(--ixai-forest);
   stroke: currentColor;
-  stroke-width: 2.25;
-}
-
-.ixai-force-icon-forest {
-  color: var(--ixai-forest) !important;
-  opacity: 1 !important;
-  stroke: currentColor;
-  stroke-width: 2.25;
-}
-
-.ixai-cta-cream svg.ixai-force-icon-gold,
-.ixai-cta-forest svg.ixai-force-icon-gold,
-.ixai-cta-outline-dark svg.ixai-force-icon-gold {
-  color: var(--ixai-gold) !important;
-  opacity: 1 !important;
-  stroke: currentColor;
-  stroke-width: 2.25;
-}
-
-.ixai-cta-cream svg.ixai-force-icon-forest,
-.ixai-cta-forest svg.ixai-force-icon-forest,
-.ixai-cta-outline-dark svg.ixai-force-icon-forest {
-  color: var(--ixai-forest) !important;
-  opacity: 1 !important;
-  stroke: currentColor;
-  stroke-width: 2.25;
+  fill: none;
 }
 
 .ixai-cta-outline-dark {
-  color: rgba(245, 240, 230, 0.82) !important;
+  color: rgba(245, 240, 230, 0.82);
+}
+:where(.ixai-cta-outline-dark) :where(.lucide, svg) {
+  color: var(--ixai-gold);
+  stroke: currentColor;
+  fill: none;
 }
 
-.ixai-cta-outline-dark svg {
-  color: var(--ixai-gold) !important;
+/* v1.39.3 — global lucide guard. Lucide-react ships every icon with the
+   `lucide` class and stroke="currentColor", but a few build pipelines /
+   resets can drop the stroke attribute. Make currentColor + fill:none
+   the explicit default at the global layer (no !important) so every
+   icon inherits the parent text color and any text-[...] utility
+   continues to override per-icon. */
+.lucide {
   stroke: currentColor;
+  fill: none;
 }
 
 /* v1.18 typography tokens — Bloomberg × Apple × Linear × Notion scale.

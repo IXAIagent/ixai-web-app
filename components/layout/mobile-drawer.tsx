@@ -173,7 +173,7 @@ export function MobileDrawer({
             onClick={onClose}
             type="button"
           >
-            <X className="h-4 w-4" aria-hidden="true" />
+            <X className="h-4 w-4 text-[rgba(245,240,230,0.78)]" aria-hidden="true" />
           </button>
         </header>
 
@@ -204,12 +204,12 @@ export function MobileDrawer({
                     >
                       <Icon
                         aria-hidden="true"
-                        className={`h-4 w-4 ${active ? "text-[var(--ixai-gold)]" : "text-[rgba(245,240,230,0.62)]"}`}
+                        className={`h-4 w-4 ${active ? "text-[var(--ixai-gold)]" : "text-[rgba(245,240,230,0.78)]"}`}
                       />
                       <span className="flex-1">{entry.label}</span>
                       <ArrowRight
                         aria-hidden="true"
-                        className="h-3.5 w-3.5 text-[rgba(245,240,230,0.34)]"
+                        className="h-3.5 w-3.5 text-[rgba(245,240,230,0.55)]"
                       />
                     </Link>
                   );

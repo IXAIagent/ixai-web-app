@@ -167,9 +167,9 @@ export function ShellStatusPill({
   icon?: IconComponent;
 }) {
   return (
-    <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-[var(--ixai-gold)] opacity-100">
+    <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-[var(--ixai-gold)]">
       {Icon ? (
-        <Icon className="h-3 w-3 shrink-0 stroke-current text-[var(--ixai-gold)] opacity-100" strokeWidth={2.25} aria-hidden />
+        <Icon className="h-3 w-3 shrink-0" aria-hidden />
       ) : null}
       <span className="translate-y-px">{children}</span>
     </span>

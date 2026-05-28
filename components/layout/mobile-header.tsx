@@ -58,7 +58,7 @@ export function MobileHeader() {
             onClick={() => setDrawerOpen(true)}
             type="button"
           >
-            <Menu className="h-4 w-4" aria-hidden="true" />
+            <Menu className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
           </button>
 
           <div className="min-w-0 flex-1 text-center">

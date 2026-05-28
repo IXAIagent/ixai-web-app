@@ -151,7 +151,7 @@ export function MobileNav() {
               <Icon
                 aria-hidden="true"
                 className={`h-[18px] w-[18px] ${
-                  isActive ? "text-[var(--ixai-gold)]" : "text-[rgba(245,240,230,0.62)]"
+                  isActive ? "text-[var(--ixai-gold)]" : "text-[rgba(245,240,230,0.78)]"
                 }`}
               />
               <span className="text-[10px] font-medium leading-none">{item.label}</span>

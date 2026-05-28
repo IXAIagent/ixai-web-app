@@ -150,8 +150,8 @@ export function EmailCapture({
   return (
     <section className={wrapperClass}>
       <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)] opacity-100">
-          <Mail className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
+        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
+          <Mail className="h-4 w-4" aria-hidden="true" />
         </span>
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           IXAI Intelligence
@@ -166,7 +166,7 @@ export function EmailCapture({
 
       {state === "success" ? (
         <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-3.5 text-sm leading-7 text-[var(--ixai-forest)]">
-          <Check className="ixai-force-icon-gold mt-1 h-4 w-4 shrink-0 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
+          <Check className="mt-1 h-4 w-4 shrink-0 text-[var(--ixai-gold)]" aria-hidden="true" />
           <p>
             You&rsquo;re on the list. IXAI Intelligence 會在後續開放時優先通知你。
           </p>
@@ -204,7 +204,7 @@ export function EmailCapture({
             type="submit"
           >
             {state === "loading" ? "Subscribing…" : "Subscribe"}
-            <ArrowRight className="ixai-force-icon-gold h-4 w-4 stroke-current text-[var(--ixai-gold)] opacity-100" aria-hidden="true" fill="none" strokeWidth={2.25} />
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </button>
         </form>
       )}
