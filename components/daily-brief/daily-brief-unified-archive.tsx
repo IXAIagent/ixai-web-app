@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import type { DailyBrief } from "@/content/daily-briefs";
 import { subscribeToEditorialUpdates } from "@/src/lib/editorial/repository";
 import type { DailyBriefDraft } from "@/src/types/editorial";
@@ -128,6 +129,8 @@ export function DailyBriefUnifiedArchive({
           </p>
         </section>
       ) : null}
+
+      <PublicIntelligenceEngine density="compact" surface="daily_archive" />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
         <div className="grid gap-5 p-5 lg:grid-cols-[1fr_16rem] lg:p-6">

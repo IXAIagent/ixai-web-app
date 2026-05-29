@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight, CalendarDays, ShieldCheck } from "lucide-react";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
 import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
+import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import {
   BreadcrumbStructuredData,
   NewsArticleStructuredData,
@@ -472,6 +473,8 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
       />
 
       <ProUpgradeCard feature="premium_weekly" surface="weekly_slug_bottom" />
+
+      <PublicIntelligenceEngine density="compact" surface="weekly_slug" />
 
       <PublicIntelligenceCta surface="weekly_slug_bottom" />
 

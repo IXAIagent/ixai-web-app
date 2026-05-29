@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock3 } from "lucide-react";
+import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getAllWeeklyBriefsAsync, getLatestWeeklyBriefAsync } from "@/src/lib/weeklyBriefs";
 
@@ -58,6 +59,8 @@ export default async function WeeklyBriefArchivePage() {
           不是新聞列表，而是市場研究摘要。
         </p>
       </section>
+
+      <PublicIntelligenceEngine density="compact" surface="weekly_archive" />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
         <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[1fr_16rem] lg:p-6">

@@ -15,6 +15,7 @@ import {
   Zap,
 } from "lucide-react";
 import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
+import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import { PublicProDeliveryComparison } from "@/components/intelligence/public-pro-delivery-comparison";
 import { trackEvent } from "@/src/lib/analytics/analytics";
 import { LINE_CONSULTATION_URL } from "@/src/lib/line/public-links";
@@ -174,6 +175,8 @@ export function IntelligenceLanding() {
           ))}
         </div>
       </section>
+
+      <PublicIntelligenceEngine surface="home_landing" />
 
       <section className="grid gap-3 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6 lg:grid-cols-[0.85fr_1.15fr]">
         <div>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, BookOpen, CircleDot, Share2 } from "lucide-react";
 import type { Metadata } from "next";
+import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
 import { ShareActions } from "@/components/share/share-actions";
 import { ShareIntelligenceCard } from "@/components/share/share-intelligence-card";
@@ -161,6 +162,8 @@ export default async function ShareIntelligencePage({
           <ShareActions copy={shareCopy} surface="share" variant="dark" />
         </div>
       </section>
+
+      <PublicIntelligenceEngine density="compact" surface={`share_detail_${item.slug}`} />
 
       <section className="grid gap-4 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5 lg:grid-cols-[1fr_auto] lg:items-center">
         <div>

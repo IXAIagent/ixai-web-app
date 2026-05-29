@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
 import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
+import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import { ixaiSiteUrl } from "@/src/lib/brand/metadata";
 import { buildDailyShareCopy } from "@/src/lib/share/share-copy";
@@ -334,6 +335,8 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
       </section>
 
       <ProUpgradeCard feature="premium_daily" surface="daily_slug_bottom" />
+
+      <PublicIntelligenceEngine density="compact" surface="daily_slug" />
 
       <PublicIntelligenceCta surface="daily_slug_bottom" />
     </article>

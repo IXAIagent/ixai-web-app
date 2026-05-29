@@ -174,6 +174,12 @@ Public surfaces may provide:
 - Awareness content.
 - General risk context.
 - Daily and weekly market interpretation.
+- Market Pulse.
+- Macro Watch.
+- AI / Tech Watch.
+- Crypto Watch.
+- FCN Awareness.
+- Risk Regime.
 
 Public surfaces must never provide:
 
@@ -200,6 +206,14 @@ Pro surfaces may provide, once implemented:
 - Personalized market relevance.
 
 Keep Public, Account, and Pro product value clearly separated.
+
+Public Intelligence Engine governance:
+
+- Market Pulse, Macro Watch, AI / Tech Watch, Crypto Watch, FCN Awareness, and Risk Regime are public trust-building modules.
+- These modules may provide general market awareness, education, and risk context.
+- These modules should route users toward onboarding and account setup, not direct trading.
+- These modules must not provide personalized portfolio analysis, personalized FCN risk conclusions, buy/sell recommendations, target prices, return promises, or automated trading instructions.
+- Any future dynamic provider integration must preserve Public / Account / Pro separation.
 
 ## I. Growth Rules
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Share2 } from "lucide-react";
+import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import { ShareIntelligenceCard } from "@/components/share/share-intelligence-card";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { SHARE_INTELLIGENCE_ITEMS } from "@/src/lib/share/intelligence";
@@ -39,6 +40,8 @@ export default function SharePage() {
           <ShareIntelligenceCard compact item={item} key={item.slug} />
         ))}
       </section>
+
+      <PublicIntelligenceEngine density="compact" surface="share_index" />
 
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5">
         <div className="flex items-center gap-2 text-[var(--ixai-gold)]">

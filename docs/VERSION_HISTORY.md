@@ -194,3 +194,34 @@ Out of Scope:
 - Portfolio DB.
 - Supabase schema changes.
 - Large UI redesign.
+
+## v1.40.3 — Public Intelligence Engine
+
+Why:
+
+- IXAI needed to move beyond public readable content into a structured public intelligence engine.
+- Public users should understand IXAI's market interpretation framework before entering account or Pro workflows.
+
+What Changed:
+
+- Added Public Intelligence Engine foundation.
+- Introduced public-safe modules for Market Pulse, Macro Watch, AI / Tech Watch, Crypto Watch, FCN Awareness, and Risk Regime.
+- Strengthened Daily / Weekly / Share Intelligence continuity into onboarding and account flows.
+- Clarified that public intelligence is general market awareness and education, not personalized advice.
+
+Key Decisions:
+
+- Public Intelligence should become more useful before deeper account or Pro workflows are requested.
+- Public modules remain educational, risk-aware, and non-personalized.
+- FCN content remains awareness and education only unless future Pro workflows are explicitly approved.
+
+Out of Scope:
+
+- Supabase schema changes.
+- Market/news provider pipeline rewrite.
+- LINE push automation.
+- Portfolio DB.
+- Stripe / paid entitlement.
+- Personalized portfolio or FCN risk conclusions.
+- Buy/sell recommendations.
+- Automated trading.

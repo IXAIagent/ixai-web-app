@@ -24,7 +24,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.40.2f`
+`v1.40.3`
 
 Current Core Flow:
 
@@ -51,12 +51,14 @@ Product Layers:
 - Account Intelligence: identity continuity, future Watchlist Intelligence Lite, preference memory, LINE readiness.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, FCN risk workflow.
 
+Public Intelligence Engine now includes foundation-level modules for Market Pulse, Macro Watch, AI / Tech Watch, Crypto Watch, FCN Awareness, and Risk Regime.
+
 Current Highest Priorities:
 
-1. Public Intelligence Engine.
-2. Watchlist Intelligence Lite.
-3. LINE Delivery.
-4. Portfolio Intelligence.
+1. Watchlist Intelligence Lite.
+2. LINE Delivery Foundation.
+3. Portfolio Intelligence.
+4. AI Alert Engine.
 
 Growth Strategy:
 
@@ -70,6 +72,7 @@ Completed product capabilities include:
 - Public root landing system that explains IXAI before login and now prioritizes onboarding before preview or LINE decisions.
 - UX cohesion pass aligning the simplified core path: Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest.
 - Public Intelligence access layer: Daily Brief, Weekly Intelligence, and Share Intelligence are publicly readable before account creation, then convert through onboarding / LINE / preview CTAs.
+- Public Intelligence Engine foundation: Market Pulse, Macro Watch, AI / Tech Watch, Crypto Watch, FCN Awareness, and Risk Regime modules on public surfaces.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -167,6 +170,7 @@ Known areas that require care:
 - Intelligence delivery is foundation-only in v1.40.1; real push requires explicit opt-in persistence, queueing, delivery logs, and unsubscribe controls.
 - Root landing should remain public and product-led; do not turn `/` back into a login-only gate without explicit product approval.
 - Daily Brief, Weekly Intelligence, and Share Intelligence are trust-building public surfaces. Do not put an auth wall in front of public article reading.
+- Public Intelligence modules are foundation-level and may still use static / editorial-safe data until provider integration is explicitly approved.
 - CTA and product wording should reinforce one flow: Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest. Intelligence Preview is secondary, not the default next step after onboarding.
 - Share pages are acquisition surfaces; keep them educational, intelligence-first, and clearly connected to onboarding / preview / LINE.
 

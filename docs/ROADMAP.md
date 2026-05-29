@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.2f`
+`v1.40.3`
 
 ## Current Product Flow
 
@@ -43,6 +43,7 @@ Includes:
 - Share Intelligence.
 - Public landing.
 - General market awareness.
+- Public Intelligence Engine modules.
 
 Does not include:
 
@@ -82,11 +83,11 @@ Current status:
 - `/pro-intelligence` is future gated shell.
 - No Stripe or paid entitlement is live yet.
 
-## Next Version
+## Current Product Capabilities
 
-`v1.40.3 — Public Intelligence Engine`
+### v1.40.3 — Public Intelligence Engine
 
-Goals:
+Completed foundation:
 
 - Daily Intelligence Upgrade.
 - Weekly Intelligence Upgrade.
@@ -101,15 +102,17 @@ Principle:
 
 Public Intelligence should become more useful before IXAI asks users to create deeper personal or Pro workflows.
 
-## Future Roadmap
+## Next Version
 
-### v1.40.4 — Watchlist Intelligence Lite
+`v1.40.4 — Watchlist Intelligence Lite`
 
 Goal:
 
 - Turn basic watchlist setup into lightweight intelligence memory.
 - Preserve local/session-first model unless persistence is explicitly requested.
 - Avoid portfolio-style claims.
+
+## Future Roadmap
 
 ### v1.40.5 — LINE Delivery Foundation
 
