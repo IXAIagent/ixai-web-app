@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { SocialIntelligencePackStudio } from "@/components/admin/social-intelligence-pack-studio";
 import { getDrafts } from "@/src/lib/editorial/repository";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
 import type {
@@ -685,6 +686,8 @@ function WeeklyEditorPreview() {
           )}
         </section>
       </div>
+
+      <SocialIntelligencePackStudio defaultKind="weekly" weeklyDraft={selectedWeeklyDraft} />
     </div>
   );
 }
@@ -1358,6 +1361,8 @@ export function DailyBriefsAdmin() {
             ) : null}
           </section>
         </div>
+
+        <SocialIntelligencePackStudio dailyDraft={selectedDraft} />
 
         <section className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

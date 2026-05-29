@@ -67,6 +67,11 @@ const routeSpecs = [
     kind: "internal",
     visibleText: ["IXAI 營運控制台", "Admin", "控制台"],
   },
+  {
+    path: "/admin/daily-briefs",
+    kind: "internal",
+    visibleText: ["IXAI Editorial Studio", "Social Intelligence Engine", "內部內容營運權限"],
+  },
 ];
 
 function sleep(ms) {

@@ -232,6 +232,16 @@ LINE Delivery Foundation Rules:
 - Future Pro delivery may be designed but not represented as active unless implemented.
 - Delivery analytics must not send raw LINE user IDs, watchlist symbols, portfolio holdings, auth tokens, email addresses, or notification tokens.
 
+Social Intelligence Engine Rules:
+
+- Social Intelligence content must be generated from reviewed Daily / Weekly Intelligence content or a clearly marked editorial-safe fallback.
+- Social packs are promotional distribution assets, not standalone investment advice.
+- All social packs must include disclaimer language.
+- Social packs must not include buy/sell recommendations, target prices, return promises, or personalized portfolio/FCN conclusions.
+- FB / IG / LINE publishing must remain manual unless a future Publish Center with explicit approval is implemented.
+- Automated publishing requires human review, audit trail, platform API governance, and compliance approval.
+- Social visual templates should use 一玄 / IXAI institutional brand language: forest green, muted gold, cream, premium editorial density, and no crypto-hype effects.
+
 Pro surfaces may provide, once implemented:
 
 - Portfolio Intelligence.

@@ -382,3 +382,39 @@ Out of Scope:
 - Portfolio Intelligence.
 - AI Alert Engine.
 - App Store / Google Play submission flow.
+
+## v1.40.6 — Social Intelligence Engine
+
+Why:
+
+- IXAI already had Daily / Weekly Intelligence generation and publication into the public app.
+- The next growth bottleneck was turning reviewed intelligence into reusable FB / IG / LINE promotional assets.
+- Daily and weekly content needed brand-consistent 9:16 social templates based on actual brief content, not generic app advertising.
+
+What Changed:
+
+- Added Social Intelligence Engine foundation.
+- Added Daily Social Pack and Weekly Social Pack structure.
+- Added 9:16 story-style preview cards for up to five slides.
+- Added caption drafts for manual FB / IG / LINE publishing.
+- Added 一玄 / IXAI brand-oriented visual direction with deep green, champagne gold, and institutional research tone.
+- Reinforced disclaimer and non-advisory language.
+
+Key Decisions:
+
+- Social packs are generated from reviewed intelligence content or clear editorial-safe fallback content.
+- Publishing remains manual for now.
+- The system should support human review before any external distribution.
+- Social content should promote the intelligence, not hype the app.
+
+Out of Scope:
+
+- Facebook Graph API integration.
+- Instagram Graph API integration.
+- LINE OA broadcast integration.
+- Automatic publishing.
+- Supabase schema changes.
+- Market/news provider pipeline changes.
+- Portfolio Intelligence.
+- Personalized recommendations.
+- Trading signals.

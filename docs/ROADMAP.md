@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.5a`
+`v1.40.6`
 
 ## Current Product Flow
 
@@ -150,9 +150,30 @@ Completed:
 - Verified Public Intelligence, Watchlist Intelligence Lite, and LINE Delivery Foundation mobile behavior at smoke-test level.
 - Preserved product architecture and protected systems.
 
-## Next Version
+### v1.40.6 — Social Intelligence Engine
 
-`v1.41 — Portfolio Intelligence`
+Completed:
+
+- Added Daily / Weekly Social Pack foundation.
+- Added 9:16 social story template preview.
+- Added social caption drafts.
+- Supported manual FB / IG / LINE publishing workflow.
+- Preserved human review and avoided auto publishing.
+
+## Next Suggested Version
+
+`v1.40.7 — Publish Center`
+
+Goal:
+
+- Prepare reviewed social packs for manual or semi-automated publishing.
+- Keep human approval before publishing.
+- Explore FB / IG / LINE integration only after compliance review.
+
+## Future Roadmap
+
+### v1.41 — Portfolio Intelligence
+
 
 Goal:
 
@@ -160,8 +181,6 @@ Goal:
 - Keep it informational and risk-aware.
 - Do not implement broker integration or automated trading.
 - Before v1.41, mobile QA should remain part of done criteria for Account and Pro surfaces.
-
-## Future Roadmap
 
 ### v1.42 — AI Alert Engine
 

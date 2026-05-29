@@ -24,7 +24,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.40.5a`
+`v1.40.6`
 
 Current Core Flow:
 
@@ -59,12 +59,14 @@ LINE Delivery Foundation now adds local/session-first delivery preferences, Acco
 
 Mobile Visual QA readiness now adds a lightweight 390px browser smoke check for public, account/pro gated, and admin surfaces. The QA script verifies route load, no obvious application/hydration error text, no horizontal overflow, and route-specific key UI text.
 
+Social Intelligence Engine foundation now turns reviewed Daily / Weekly Intelligence into manual FB / IG / LINE social content packs. The current implementation provides 9:16 story-style preview cards, caption drafts, 一玄 / IXAI visual framing, and compliance footnotes for human-reviewed manual publishing only.
+
 Current Highest Priorities:
 
-1. Portfolio Intelligence.
-2. AI Alert Engine.
-3. Dynamic Intelligence Provider Integration.
-4. Durable Preference Persistence.
+1. Social Pack Export / Publish Center.
+2. Portfolio Intelligence.
+3. AI Alert Engine.
+4. Dynamic Intelligence Provider Integration.
 
 Growth Strategy:
 
@@ -86,6 +88,8 @@ Completed product capabilities include:
 - Public Intelligence modules can be mapped to user interests without personalization claims.
 - LINE Delivery Foundation: Account delivery readiness UI, local/session-first delivery preference model, opt-in / pause / unsubscribe concept layer, and Public / Account / Future Pro delivery separation.
 - Mobile Visual QA readiness: 390px mobile smoke check foundation and Playwright / browser QA readiness for public, account, Pro, and admin surfaces.
+- Social Intelligence Engine foundation: Daily / Weekly Social Pack generation, 9:16 social story template preview, copy-ready caption drafts, and manual FB / IG / LINE publishing workflow support.
+- 一玄品牌化 Daily / Weekly visual content framework for social distribution using forest green, muted gold, cream, and institutional editorial tone.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -194,6 +198,9 @@ Known areas that require care:
 - Delivery preferences remain local/session-first unless persistence migration is explicitly approved.
 - Visual QA is smoke-level and should be expanded before App Store / Google Play submission.
 - Browser binaries should not be committed.
+- Social packs are manual publishing assets.
+- Automatic FB / IG / LINE publishing is not active.
+- Formal logo asset integration may still require final brand asset placement if repo lacks an approved logo file in future channels.
 - CTA and product wording should reinforce one flow: Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest. Intelligence Preview is secondary, not the default next step after onboarding.
 - Share pages are acquisition surfaces; keep them educational, intelligence-first, and clearly connected to onboarding / preview / LINE.
 
