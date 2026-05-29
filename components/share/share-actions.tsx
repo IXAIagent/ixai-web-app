@@ -20,7 +20,7 @@ import {
 // trackEvent("share_click") fires with channel + surface so analytics
 // can see which network drives distribution.
 
-type ShareSurface = "home" | "weekly" | "daily" | "fcn";
+type ShareSurface = "home" | "weekly" | "daily" | "fcn" | "share";
 
 type ChannelButtonProps = {
   label: string;

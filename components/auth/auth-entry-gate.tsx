@@ -18,6 +18,7 @@ const exemptPathPrefixes = [
   "/pro-intelligence",
   "/pro-preview",
   "/register",
+  "/share",
   "/welcome",
 ];
 

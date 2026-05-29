@@ -35,6 +35,8 @@ Public Landing → Intelligence Preview → Onboarding → AI Intelligence Works
 
 Prefer CTA wording such as "建立 Intelligence Layer", "查看 Intelligence Preview", "開始 Onboarding", "連接 LINE 接收情報", and "開啟 AI Intelligence Workspace".
 
+Share routes under `/share` are public acquisition surfaces. They must stay educational, risk-aware, and connected to onboarding / preview / LINE without implying investment advice or live personalized monitoring.
+
 ## B. Design System Rules
 
 CTA and icon color rules:
