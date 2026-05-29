@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.4`
+`v1.40.5`
 
 ## Current Product Flow
 
@@ -65,7 +65,7 @@ Current status:
 - Account is the AI Intelligence Workspace.
 - Onboarding state is local/session-first.
 - Watchlist Intelligence Lite surfaces onboarding seed, markets, and interests as lightweight market memory.
-- Delivery preferences are foundation-level.
+- LINE Delivery Foundation provides readiness-only delivery preferences, opt-in / pause / unsubscribe concepts, and Public / Account / Future Pro delivery separation.
 
 ### Pro Intelligence
 
@@ -131,25 +131,27 @@ Completed:
 - Mapped user interests to Public Intelligence modules.
 - Preserved local/session-first model and non-advisory positioning.
 
+### v1.40.5 — LINE Delivery Foundation
+
+Completed:
+
+- Added LINE delivery readiness foundation.
+- Added local/session-first delivery preference model.
+- Added opt-in / pause / unsubscribe concept.
+- Clarified Public / Account / Future Pro delivery separation.
+- Kept real push automation out of scope.
+
 ## Next Version
 
-`v1.40.5 — LINE Delivery Foundation`
-
-Goal:
-
-- Move from LINE readiness to explicit opt-in delivery design.
-- Prepare delivery logs, unsubscribe/pause controls, and safe public intelligence templates.
-- Do not launch push automation without explicit approval.
-
-## Future Roadmap
-
-### v1.41 — Portfolio Intelligence
+`v1.41 — Portfolio Intelligence`
 
 Goal:
 
 - Establish future portfolio onboarding and relevance model.
 - Keep it informational and risk-aware.
 - Do not implement broker integration or automated trading.
+
+## Future Roadmap
 
 ### v1.42 — AI Alert Engine
 
@@ -158,6 +160,20 @@ Goal:
 - Design event-driven alert architecture.
 - Separate public alerts from Pro personalized alerts.
 - Require user opt-in and safe delivery controls.
+
+### Dynamic Intelligence Provider Integration
+
+Goal:
+
+- Connect foundation-level public modules to approved provider data.
+- Preserve Public / Account / Pro separation.
+
+### Durable Preference Persistence
+
+Goal:
+
+- Move local/session-first preferences to durable persistence only after explicit approval.
+- Include auditability, opt-in records, pause/unsubscribe state, and delivery logs.
 
 ## Do Not Touch Without Explicit Approval
 

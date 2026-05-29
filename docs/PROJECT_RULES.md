@@ -214,6 +214,16 @@ Watchlist Intelligence Lite Rules:
 - It must preserve local/session-first behavior unless a persistence migration is explicitly approved.
 - It should route users toward Account Intelligence, LINE readiness, and Future Pro Interest without implying paid advice.
 
+LINE Delivery Foundation Rules:
+
+- LINE delivery must remain opt-in.
+- Delivery preferences must not imply active push automation unless the delivery system is actually implemented.
+- Pause and unsubscribe concepts must be present before any production push delivery.
+- Public delivery must remain general and educational.
+- Account delivery may use preference memory but must not imply personalized portfolio advice.
+- Future Pro delivery may be designed but not represented as active unless implemented.
+- Delivery analytics must not send raw LINE user IDs, watchlist symbols, portfolio holdings, auth tokens, email addresses, or notification tokens.
+
 Pro surfaces may provide, once implemented:
 
 - Portfolio Intelligence.

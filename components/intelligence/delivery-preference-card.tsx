@@ -91,7 +91,7 @@ export function DeliveryPreferenceCard({ source = "delivery_preferences" }: { so
             Delivery Preferences
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
-            選擇 IXAI 每天要優先提醒你的情報。
+            選擇 IXAI 未來要優先準備的情報。
           </h2>
           <p className="mt-2 text-sm leading-6 text-[var(--ixai-ink-muted)]">
             此版本先使用本機 / session-first preference。未來會接會員、LINE opt-in 與 Pro entitlement，
@@ -100,7 +100,7 @@ export function DeliveryPreferenceCard({ source = "delivery_preferences" }: { so
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ixai-border)] bg-white/55 px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
           <Bell className="h-3.5 w-3.5 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
-          {preferences.enabled ? "已啟用預覽" : "偏好預覽"}
+          {preferences.enabled ? "偏好已保存" : "偏好預覽"}
         </span>
       </div>
 
@@ -146,7 +146,7 @@ export function DeliveryPreferenceCard({ source = "delivery_preferences" }: { so
           onClick={enableDelivery}
           type="button"
         >
-          {saved ? "已保存 intelligence preference" : "啟用 Intelligence Preview"}
+          {saved ? "已保存 intelligence preference" : "保存 Intelligence Preference"}
         </button>
       </div>
     </section>

@@ -4,6 +4,7 @@ import { WatchlistIntelligenceLite } from "@/components/account/watchlist-intell
 import { AccountPanel } from "@/components/auth/account-panel";
 import { DeliveryPreferenceCard } from "@/components/intelligence/delivery-preference-card";
 import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
+import { LineDeliveryFoundationCard } from "@/components/intelligence/line-delivery-foundation-card";
 import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
 import { ConnectLineCard } from "@/components/line/connect-line-card";
 import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
@@ -41,6 +42,8 @@ export default function AccountPage() {
       <WatchlistIntelligenceLite />
 
       <ConnectLineCard source="account" />
+
+      <LineDeliveryFoundationCard source="account" />
 
       <DeliveryPreferenceCard source="account" />
 

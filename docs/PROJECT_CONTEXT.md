@@ -24,7 +24,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.40.4`
+`v1.40.5`
 
 Current Core Flow:
 
@@ -55,12 +55,14 @@ Public Intelligence Engine now includes foundation-level modules for Market Puls
 
 Watchlist Intelligence Lite now surfaces onboarding watchlist seed, selected markets, and intelligence preferences inside the Account Intelligence Workspace. It maps user interests to Public Intelligence modules without implying holdings, portfolio analysis, personal FCN risk conclusions, or trading recommendations.
 
+LINE Delivery Foundation now adds local/session-first delivery preferences, Account delivery readiness UI, and opt-in / pause / unsubscribe concepts without activating real LINE push automation. Delivery language separates Public, Account, and Future Pro intelligence delivery.
+
 Current Highest Priorities:
 
-1. LINE Delivery Foundation.
-2. Portfolio Intelligence.
-3. AI Alert Engine.
-4. Dynamic Intelligence Provider Integration.
+1. Portfolio Intelligence.
+2. AI Alert Engine.
+3. Dynamic Intelligence Provider Integration.
+4. Durable Preference Persistence.
 
 Growth Strategy:
 
@@ -80,6 +82,7 @@ Completed product capabilities include:
 - Watchlist Intelligence Lite foundation: Account Intelligence Workspace now reflects onboarding watchlist seed and intelligence preferences.
 - Local/session-first intelligence memory layer for selected markets, symbols, and interests.
 - Public Intelligence modules can be mapped to user interests without personalization claims.
+- LINE Delivery Foundation: Account delivery readiness UI, local/session-first delivery preference model, opt-in / pause / unsubscribe concept layer, and Public / Account / Future Pro delivery separation.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -183,6 +186,9 @@ Known areas that require care:
 - Watchlist Intelligence Lite remains local/session-first.
 - Durable watchlist persistence remains future work unless explicitly approved.
 - Watchlist relevance is topic-level and not personalized investment advice.
+- LINE Delivery remains readiness-only.
+- Real push automation requires explicit opt-in persistence, delivery logs, unsubscribe/pause controls, and approval before production launch.
+- Delivery preferences remain local/session-first unless persistence migration is explicitly approved.
 - CTA and product wording should reinforce one flow: Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest. Intelligence Preview is secondary, not the default next step after onboarding.
 - Share pages are acquisition surfaces; keep them educational, intelligence-first, and clearly connected to onboarding / preview / LINE.
 

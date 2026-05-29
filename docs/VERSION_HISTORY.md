@@ -317,3 +317,38 @@ Out of Scope:
 - Personal FCN risk conclusions.
 - LINE push automation.
 - Stripe or paid entitlement.
+
+## v1.40.5 — LINE Delivery Foundation
+
+Why:
+
+- IXAI needed to move from LINE readiness messaging toward an explicit delivery preference foundation.
+- Future delivery must be opt-in, reversible, and clearly separated between Public, Account, and Pro intelligence.
+
+What Changed:
+
+- Added LINE Delivery Foundation.
+- Added local/session-first delivery preference model.
+- Added Account delivery readiness UI.
+- Added opt-in, pause, and unsubscribe concept layer.
+- Clarified that automated LINE push delivery is not active yet.
+- Reinforced delivery compliance language.
+
+Key Decisions:
+
+- Delivery preferences prepare future intelligence workflows but do not trigger push automation.
+- Public delivery remains general and educational.
+- Account delivery may organize preferences but remains non-advisory.
+- Real push requires durable opt-in persistence, delivery logs, unsubscribe/pause controls, and explicit approval.
+
+Out of Scope:
+
+- Real LINE push automation.
+- LINE Login / LIFF architecture changes.
+- Supabase schema changes.
+- Notification scheduler.
+- Portfolio-specific alerts.
+- Personalized recommendations.
+- Stripe / paid entitlement.
+- FCN engine changes.
+- Market/news provider changes.
