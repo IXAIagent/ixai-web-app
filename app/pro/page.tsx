@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, FileText, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { IdentifySessionCard } from "@/components/auth/identify-session-card";
 import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
 import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
@@ -42,26 +42,13 @@ export default function ProPage() {
                 href="#pro-waitlist"
               >
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
-                <span className="translate-y-px">建立 Intelligence Layer</span>
+                <span className="translate-y-px">加入 Pro 等候名單</span>
               </a>
               <Link
                 className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
-                href="/daily-brief"
+                href="/account"
               >
-                <FileText className="h-4 w-4" aria-hidden="true" />
-                <span className="translate-y-px">查看 Public Intelligence</span>
-              </Link>
-              <Link
-                className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
-                href="/pro-preview"
-              >
-                查看 Intelligence Preview
-              </Link>
-              <Link
-                className="ixai-cta-outline-dark inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:bg-white/8 hover:text-white"
-                href="/pro-intelligence"
-              >
-                開啟 AI Intelligence Workspace
+                回到 AI Intelligence Workspace
               </Link>
             </div>
           </div>
@@ -127,9 +114,9 @@ export default function ProPage() {
         不提供保證報酬、買賣指令、目標價或個別化投資建議。
         <Link
           className="ml-1 inline-flex items-center gap-1 font-semibold text-[var(--ixai-forest)]"
-          href="/daily-brief"
+          href="/account"
         >
-          返回 Public Intelligence
+          回到 AI Intelligence Workspace
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </Link>
       </section>

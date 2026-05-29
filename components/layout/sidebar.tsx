@@ -5,7 +5,6 @@ import { AccountStatus } from "@/components/auth/account-status";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { ShellNavButton, ShellSidebarSection, shellTokens } from "@/components/shell/shell-primitives";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 
 // v1.7: nav grouped into workflow tiers instead of 7 flat peers.
 // Mirrors the homepage hierarchy: daily workflow → market reference →
@@ -39,7 +38,7 @@ const navGroups: Array<{
     heading: "Membership",
     items: [
       { label: "FCN", href: "/fcn" },
-      { label: "IXAI Pro", href: ixaiEcosystem.proPreviewUrl },
+      { label: "IXAI Pro", href: "/pro" },
     ],
   },
   {

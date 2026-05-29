@@ -131,9 +131,9 @@ export function ProPreviewDashboard() {
           </p>
           <Link
               className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest)] sm:w-auto"
-            href="/daily-brief"
+            href="/account"
           >
-            返回 Public Intelligence
+            回到 AI Intelligence Workspace
             <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
           <UpgradeIntelligenceCta

@@ -66,9 +66,10 @@ const DELIVERY_CARDS = [
 
 const PRODUCT_FLOW = [
   ["Public Landing", "先理解 IXAI 的 intelligence value。"],
-  ["Intelligence Preview", "看到 Public → Pro 的未來情報樣貌。"],
   ["Onboarding", "建立市場偏好、風險偏好與 Watchlist seed。"],
   ["AI Intelligence Workspace", "在 Account / LINE / delivery surfaces 形成每日關係。"],
+  ["Future Pro Interest", "完成基礎輪廓後，再判斷是否加入 Pro 等候名單。"],
+  ["Intelligence Preview", "需要更深 context 時，再查看 sample-only Pro preview。"],
   ["Future Pro Intelligence", "未來接上 portfolio、FCN 與個人化風險工作流。"],
 ] as const;
 
@@ -114,10 +115,10 @@ export function IntelligenceLanding() {
             <div className="mt-6 grid gap-2 sm:flex sm:flex-wrap">
               <Link
                 className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold"
-                href="/welcome"
-                onClick={() => trackLandingClick("landing_primary_cta_click", "/welcome")}
+                href="/onboarding"
+                onClick={() => trackLandingClick("landing_primary_cta_click", "/onboarding")}
               >
-                開始建立我的 Intelligence Layer
+                開始 Onboarding
                 <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-forest)]" aria-hidden="true" />
               </Link>
               <Link
@@ -127,16 +128,6 @@ export function IntelligenceLanding() {
               >
                 查看 Intelligence Preview
                 <Sparkles className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
-              </Link>
-              <Link
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-white/8"
-                href={LINE_CONSULTATION_URL}
-                onClick={() => trackLandingClick("landing_line_cta_click", "line_oa")}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                加入 LINE 接收情報
-                <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
               </Link>
             </div>
             <p className="mt-5 max-w-2xl text-xs leading-6 text-white/52">
@@ -228,22 +219,6 @@ export function IntelligenceLanding() {
               設定我的 Intelligence Preferences
               <BellRing className="h-4 w-4 stroke-current text-[var(--ixai-forest)]" aria-hidden="true" />
             </Link>
-            <Link
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-white/8"
-              href={LINE_CONSULTATION_URL}
-              onClick={() => {
-                trackLandingClick("landing_line_cta_click", "line_oa_delivery");
-                trackEvent("line_intelligence_cta_click", {
-                  path: window.location.pathname,
-                  source: "home_delivery",
-                });
-              }}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              連接 LINE 接收情報
-              <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
-            </Link>
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -257,6 +232,36 @@ export function IntelligenceLanding() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="grid gap-4 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5 lg:grid-cols-[1fr_auto] lg:items-center">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
+            LINE Intelligence
+          </p>
+          <h2 className="mt-2 text-xl font-semibold leading-tight text-[var(--ixai-forest)] sm:text-2xl">
+            需要真人諮詢或未來情報推送，可先連接 LINE。
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+            LINE 是未來 intelligence delivery 的入口；目前以諮詢與連接準備為主，不會自動推播或提供交易指令。
+          </p>
+        </div>
+        <Link
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
+          href={LINE_CONSULTATION_URL}
+          onClick={() => {
+            trackLandingClick("landing_line_cta_click", "line_oa_single");
+            trackEvent("line_intelligence_cta_click", {
+              path: window.location.pathname,
+              source: "home_line_section",
+            });
+          }}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          連接 LINE 接收情報
+          <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+        </Link>
       </section>
 
       <MorningIntelligencePreview source="home_landing" tier="public" />
@@ -282,16 +287,8 @@ export function IntelligenceLanding() {
             href="/onboarding"
             onClick={() => trackLandingClick("landing_primary_cta_click", "/onboarding_bottom")}
           >
-            開始 Onboarding
+            進入 Onboarding
             <Zap className="h-4 w-4 stroke-current text-[var(--ixai-cream)]" aria-hidden="true" />
-          </Link>
-          <Link
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
-            href="/pro-preview"
-            onClick={() => trackLandingClick("landing_preview_click", "/pro-preview_bottom")}
-          >
-            查看 Intelligence Preview
-            <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
       </section>

@@ -317,3 +317,37 @@ Understand IXAI
 ```
 
 That is the simplest durable path from public awareness to future monetization.
+
+## v1.40.2e Simplification Fix Results
+
+Implemented follow-up: `v1.40.2e — Product Flow Simplification Fix`.
+
+Changes made:
+
+- Onboarding completion now routes to `/account`, not `/pro-preview`.
+- Sidebar `IXAI Pro` now routes to `/pro`, not the preview URL.
+- Homepage hero is reduced to two primary choices: `開始 Onboarding` and `查看 Intelligence Preview`.
+- Homepage LINE CTA is kept once in a dedicated LINE Intelligence section.
+- Homepage product flow order now emphasizes `Landing → Onboarding → Account → Future Pro Interest`.
+- `/pro` hero is reduced to two CTAs: `加入 Pro 等候名單` and `回到 AI Intelligence Workspace`.
+- `/pro-preview` now has a clear exit back to `/account`.
+- `/pro-intelligence` now has a clear workspace exit back to `/account`.
+- Deprecated unused `components/onboarding/first-visit-banner.tsx` was removed after confirming no consumer.
+
+Current intended flow after v1.40.2e:
+
+```text
+Landing (/)
+→ Onboarding (/onboarding)
+→ Account / AI Intelligence Workspace (/account)
+→ Future Pro Interest (/pro)
+→ Optional Preview (/pro-preview)
+```
+
+Acquisition share pages remain secondary:
+
+```text
+Share Intelligence (/share/intelligence/*)
+→ Onboarding (/onboarding)
+→ Account (/account)
+```

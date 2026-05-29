@@ -30,10 +30,12 @@ The root route `/` is the public product landing surface. It should explain IXAI
 Public, preview, account, LINE, and Pro surfaces should share one user journey:
 
 ```text
-Public Landing → Intelligence Preview → Onboarding → AI Intelligence Workspace → Future Pro Intelligence
+Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest
 ```
 
-Prefer CTA wording such as "建立 Intelligence Layer", "查看 Intelligence Preview", "開始 Onboarding", "連接 LINE 接收情報", and "開啟 AI Intelligence Workspace".
+Intelligence Preview is a secondary route for users who ask for deeper context, not the default next step after onboarding.
+
+Prefer CTA wording such as "開始 Onboarding", "建立 Intelligence Layer", "回到 AI Intelligence Workspace", "查看 Intelligence Preview", "連接 LINE 接收情報", and "加入 Pro 等候名單".
 
 Share routes under `/share` are public acquisition surfaces. They must stay educational, risk-aware, and connected to onboarding / preview / LINE without implying investment advice or live personalized monitoring.
 

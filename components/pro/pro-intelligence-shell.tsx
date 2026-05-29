@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
-import { Brain, CalendarClock, ChartNoAxesCombined, Radar, ShieldCheck } from "lucide-react";
+import { ArrowRight, Brain, CalendarClock, ChartNoAxesCombined, Radar, ShieldCheck } from "lucide-react";
 import { IdentifySessionCard } from "@/components/auth/identify-session-card";
 import { useIdentitySession } from "@/components/auth/identity-provider";
 import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
@@ -142,6 +143,27 @@ export function ProIntelligenceShell({ membership = "free" }: { membership?: Mem
           surface="pro_ai_alerts"
           title="AI Alert Layer"
         />
+      </section>
+
+      <section className="grid gap-4 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5 lg:grid-cols-[1fr_auto] lg:items-center">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
+            Workspace Exit
+          </p>
+          <h2 className="mt-2 text-xl font-semibold leading-tight text-[var(--ixai-forest)]">
+            這裡是未來 Pro shell，日常 intelligence 先回到 Account。
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+            Account 是目前的 AI Intelligence Workspace，用於管理 identity、LINE readiness 與未來 Pro intent。
+          </p>
+        </div>
+        <Link
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
+          href="/account"
+        >
+          回到 AI Intelligence Workspace
+          <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
+        </Link>
       </section>
     </div>
   );

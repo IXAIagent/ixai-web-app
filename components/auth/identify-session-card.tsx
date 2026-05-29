@@ -59,16 +59,16 @@ export function IdentifySessionCard({
           </Link>
           <Link
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-center text-sm font-semibold text-[var(--ixai-forest)]"
-            href="/pro-intelligence"
+            href="/account"
             onClick={() =>
               trackEvent("intelligence_workspace_cta_click", {
                 path: window.location.pathname,
                 source,
-                target: "pro_intelligence",
+                target: "account",
               })
             }
           >
-            開啟 AI Intelligence Workspace
+            回到 AI Intelligence Workspace
           </Link>
         </div>
       </section>

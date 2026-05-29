@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -127,6 +128,7 @@ function ProgressIndicator({ currentStep }: { currentStep: number }) {
 }
 
 export function OnboardingFlow() {
+  const router = useRouter();
   const identity = useIdentitySession();
   const [profile, setProfile] = useState<OnboardingProfile>(() => createInitialOnboardingProfile());
   const [mounted, setMounted] = useState(false);
@@ -244,6 +246,7 @@ export function OnboardingFlow() {
       risk_preference: completedProfile.riskPreference ?? "unset",
       watchlist_count: completedProfile.watchlist.length,
     });
+    router.push("/account");
   }
 
   const stepContent = [
@@ -449,9 +452,9 @@ export function OnboardingFlow() {
             {profile.completedAt ? (
               <Link
                 className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
-                href="/pro-preview"
+                href="/account"
               >
-                查看 Intelligence Preview
+                回到 AI Intelligence Workspace
               </Link>
             ) : null}
             {currentStep < STEPS.length - 1 ? (
