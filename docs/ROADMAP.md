@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.5`
+`v1.40.5a`
 
 ## Current Product Flow
 
@@ -141,6 +141,15 @@ Completed:
 - Clarified Public / Account / Future Pro delivery separation.
 - Kept real push automation out of scope.
 
+### v1.40.5a — Mobile Visual QA Readiness
+
+Completed:
+
+- Added mobile visual QA readiness.
+- Added 390px route smoke checks.
+- Verified Public Intelligence, Watchlist Intelligence Lite, and LINE Delivery Foundation mobile behavior at smoke-test level.
+- Preserved product architecture and protected systems.
+
 ## Next Version
 
 `v1.41 — Portfolio Intelligence`
@@ -150,6 +159,7 @@ Goal:
 - Establish future portfolio onboarding and relevance model.
 - Keep it informational and risk-aware.
 - Do not implement broker integration or automated trading.
+- Before v1.41, mobile QA should remain part of done criteria for Account and Pro surfaces.
 
 ## Future Roadmap
 

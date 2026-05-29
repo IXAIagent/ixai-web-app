@@ -352,3 +352,33 @@ Out of Scope:
 - Stripe / paid entitlement.
 - FCN engine changes.
 - Market/news provider changes.
+
+## v1.40.5a — Mobile Visual QA Readiness
+
+Why:
+
+- Public Intelligence, Watchlist Intelligence Lite, and LINE Delivery Foundation added new visible surfaces that require mobile QA before expanding into Portfolio Intelligence.
+- Previous validation passed lint/build and HTTP route checks, but browser-level 390px QA was blocked by missing Playwright browser binaries.
+
+What Changed:
+
+- Added mobile visual QA readiness.
+- Added lightweight 390px route smoke checks for public, account, Pro, and admin surfaces.
+- Verified checks for no horizontal overflow, CTA wrapping, and key intelligence sections at smoke-test level.
+- Kept browser binaries out of source control.
+
+Key Decisions:
+
+- Mobile QA should be part of Definition of Done before major product expansion.
+- QA readiness should remain lightweight and not become a product refactor.
+- Visual QA should validate public acquisition routes and account intelligence surfaces first.
+
+Out of Scope:
+
+- Full E2E test suite.
+- Auth rewrite.
+- LINE / LIFF changes.
+- Supabase schema changes.
+- Portfolio Intelligence.
+- AI Alert Engine.
+- App Store / Google Play submission flow.

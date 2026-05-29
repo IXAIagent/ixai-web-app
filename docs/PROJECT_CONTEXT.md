@@ -24,7 +24,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.40.5`
+`v1.40.5a`
 
 Current Core Flow:
 
@@ -57,6 +57,8 @@ Watchlist Intelligence Lite now surfaces onboarding watchlist seed, selected mar
 
 LINE Delivery Foundation now adds local/session-first delivery preferences, Account delivery readiness UI, and opt-in / pause / unsubscribe concepts without activating real LINE push automation. Delivery language separates Public, Account, and Future Pro intelligence delivery.
 
+Mobile Visual QA readiness now adds a lightweight 390px browser smoke check for public, account/pro gated, and admin surfaces. The QA script verifies route load, no obvious application/hydration error text, no horizontal overflow, and route-specific key UI text.
+
 Current Highest Priorities:
 
 1. Portfolio Intelligence.
@@ -83,6 +85,7 @@ Completed product capabilities include:
 - Local/session-first intelligence memory layer for selected markets, symbols, and interests.
 - Public Intelligence modules can be mapped to user interests without personalization claims.
 - LINE Delivery Foundation: Account delivery readiness UI, local/session-first delivery preference model, opt-in / pause / unsubscribe concept layer, and Public / Account / Future Pro delivery separation.
+- Mobile Visual QA readiness: 390px mobile smoke check foundation and Playwright / browser QA readiness for public, account, Pro, and admin surfaces.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -189,6 +192,8 @@ Known areas that require care:
 - LINE Delivery remains readiness-only.
 - Real push automation requires explicit opt-in persistence, delivery logs, unsubscribe/pause controls, and approval before production launch.
 - Delivery preferences remain local/session-first unless persistence migration is explicitly approved.
+- Visual QA is smoke-level and should be expanded before App Store / Google Play submission.
+- Browser binaries should not be committed.
 - CTA and product wording should reinforce one flow: Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest. Intelligence Preview is secondary, not the default next step after onboarding.
 - Share pages are acquisition surfaces; keep them educational, intelligence-first, and clearly connected to onboarding / preview / LINE.
 

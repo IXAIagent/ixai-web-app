@@ -93,6 +93,14 @@ Required:
 
 Do not make desktop-only fixes that break mobile, and do not make mobile-only markup drift away from desktop behavior without documenting why.
 
+Mobile Visual QA Rules:
+
+- Public, account, Pro, and admin surfaces must pass 390px mobile smoke checks before major release.
+- No horizontal overflow is allowed on public acquisition or account intelligence surfaces.
+- CTA groups must wrap or stack safely.
+- Browser binaries must not be committed.
+- QA scripts should remain lightweight and should not rewrite product architecture.
+
 ## D. Commit Rules
 
 Use small commits.
