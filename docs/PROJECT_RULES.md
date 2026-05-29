@@ -259,6 +259,14 @@ Social Pack Export Rules:
 - Export assets remain subject to editorial review.
 - Export tooling should stay browser-based and lightweight unless a future Publish Center is explicitly approved.
 
+Social Layout Rules:
+
+- Social Packs prioritize readability over decorative UI.
+- Content hierarchy must be optimized for mobile social consumption.
+- Intelligence insights should be concise.
+- Visual design should resemble institutional research content rather than app marketing.
+- Avoid oversized headers, dominant page numbers, and border-heavy app-card layouts inside 9:16 Social Packs.
+
 Pro surfaces may provide, once implemented:
 
 - Portfolio Intelligence.

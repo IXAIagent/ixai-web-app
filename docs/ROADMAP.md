@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.6b`
+`v1.40.6c`
 
 ## Current Product Flow
 
@@ -177,6 +177,15 @@ Completed:
 - Added download-ready social assets.
 - Preserved brand identity and disclaimer layer.
 - Removed dependency on manual screenshots.
+
+### v1.40.6c — Social Pack Layout Redesign
+
+Completed:
+
+- Reduced visual clutter.
+- Improved mobile readability.
+- Added institutional research presentation style.
+- Optimized content hierarchy.
 
 ## Next Suggested Version
 

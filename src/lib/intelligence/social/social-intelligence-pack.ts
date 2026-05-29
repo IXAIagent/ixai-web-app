@@ -140,7 +140,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
     kind: "daily",
     sourceBriefId: source?.id,
     subtitle: "Daily Intelligence",
-    title: "每日 AI 投資日報",
+    title: "今日市場最重要的事",
     slides: [
       {
         bullets: [
@@ -151,14 +151,14 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
         footer: "Daily Intelligence · Market Interpretation · Risk Awareness",
         id: "cover",
         subtitle: "一玄資訊",
-        title: "每日 AI 投資日報",
+        title: "今日市場最重要的事",
       },
       {
         bullets: topNews,
         eyebrow: "Market Pulse",
         footer: "人工審閱後供手動發布",
         id: "top_news",
-        title: "今日三大新聞",
+        title: "Market Pulse",
       },
       {
         bullets: [
@@ -178,7 +178,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
         ],
         eyebrow: "FCN Awareness",
         id: "fcn_risk_watch",
-        title: "FCN 與風險環境",
+        title: "Risk Regime",
       },
       {
         bullets: [compactText(dailyInsight, "今日最重要的一句話：先整理風險，再判讀機會。", 50)],
@@ -221,7 +221,7 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
     kind: "weekly",
     sourceBriefId: source?.id,
     subtitle: "Weekly Intelligence",
-    title: "每週 AI 投資週報",
+    title: "本週市場正在 pricing 什麼",
     slides: [
       {
         bullets: [
@@ -232,13 +232,13 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
         footer: "Institutional Research · Weekly Intelligence",
         id: "cover",
         subtitle: "一玄資訊",
-        title: "Weekly Intelligence",
+        title: "本週市場正在 pricing 什麼",
       },
       {
         bullets: marketReview,
         eyebrow: "Market Review",
         id: "market_review",
-        title: "本週市場回顧",
+        title: "Market Review",
       },
       {
         bullets: [
@@ -258,7 +258,7 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
         ],
         eyebrow: "FCN / Risk Weekly",
         id: "fcn_risk_watch",
-        title: "FCN / Risk 週觀察",
+        title: "Risk Regime",
       },
       {
         bullets: [compactText(weeklyView, "本週核心觀點：理解市場正在 pricing 什麼，比追逐單點新聞更重要。", 50)],

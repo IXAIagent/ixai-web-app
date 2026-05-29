@@ -1,6 +1,16 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import {
+  Cloud,
+  Cpu,
+  Gauge,
+  Globe2,
+  Landmark,
+  Quote,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { IxaiLogo } from "@/components/brand/ixai-logo";
 import {
   generateDailySocialPack,
@@ -19,6 +29,9 @@ type SocialIntelligencePackStudioProps = {
 
 const EXPORT_WIDTH = 1080;
 const EXPORT_HEIGHT = 1920;
+const DAILY_TECH_SYMBOLS = ["NVDA", "MSFT", "AMD", "AVGO", "PLTR"];
+const WEEKLY_TECH_SYMBOLS = ["AI Infra", "Semis", "Cloud", "Data Center", "Software"];
+const RISK_STAGES = ["Low", "Moderate", "Elevated", "High"];
 
 function packSourceLabel(pack: SocialIntelligencePack) {
   if (!pack.sourceBriefId) {
@@ -39,6 +52,320 @@ function downloadDataUrl(dataUrl: string, fileName: string) {
   link.click();
 }
 
+function compactSlideText(value: string, maxLength: number) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, maxLength - 1)}…`;
+}
+
+function splitBullet(value: string) {
+  const parts = value.split("｜");
+  const heading = compactSlideText(parts[0] ?? value, 24);
+  const detail = compactSlideText(parts.slice(1).join("｜") || value, 42);
+
+  return { detail, heading };
+}
+
+function renderSlideIcon(id: string) {
+  if (id === "top_news" || id === "market_review") {
+    return <Globe2 className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />;
+  }
+
+  if (id === "ai_tech_watch") {
+    return <Cpu className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />;
+  }
+
+  if (id === "fcn_risk_watch") {
+    return <Gauge className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />;
+  }
+
+  if (id === "ixuan_view" || id === "weekly_view") {
+    return <Quote className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />;
+  }
+
+  return <Sparkles className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />;
+}
+
+function techSymbolsFor(kind: SocialPackKind) {
+  return kind === "daily" ? DAILY_TECH_SYMBOLS : WEEKLY_TECH_SYMBOLS;
+}
+
+function riskStageFor(kind: SocialPackKind) {
+  return kind === "daily" ? "Elevated" : "Moderate";
+}
+
+function SlideHeader({ index, pack }: { index: number; pack: SocialIntelligencePack }) {
+  return (
+    <div className="relative z-10 flex items-start justify-between gap-4">
+      <div className="flex h-7 w-11 items-center justify-center">
+        <IxaiLogo size="xs" />
+      </div>
+      <div className="min-w-0 text-right">
+        <p
+          className="whitespace-nowrap font-mono text-[7px] uppercase leading-3 tracking-[0.1em]"
+          style={{ color: socialBrandTokens.gold }}
+        >
+          IXAI Intelligence
+        </p>
+        <p className="mt-0.5 whitespace-nowrap font-mono text-[7px] uppercase leading-3 tracking-[0.07em] text-[rgba(244,240,230,0.5)]">
+          {index === 0 ? (pack.kind === "daily" ? "Daily Intelligence" : "Weekly Intelligence") : pack.dateLabel}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function SlideFooter({ index, pack }: { index: number; pack: SocialIntelligencePack }) {
+  return (
+    <footer className="absolute bottom-5 left-5 right-5 z-10 border-t pt-3" style={{ borderColor: "rgba(185,154,99,0.34)" }}>
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <p className="whitespace-nowrap font-mono text-[6px] leading-3 tracking-normal" style={{ color: socialBrandTokens.gold }}>
+            I-Xuan Investment Co., Ltd.
+          </p>
+          <p className="mt-0.5 whitespace-nowrap font-mono text-[6px] leading-3 tracking-normal text-[rgba(244,240,230,0.5)]">
+            app.ixuan.ai
+          </p>
+        </div>
+        <p className="whitespace-nowrap font-mono text-[6px] leading-3 tracking-normal text-[rgba(244,240,230,0.54)]">
+          {index + 1} of {pack.slides.length}
+        </p>
+      </div>
+      <p className="mt-2 text-[6px] leading-3 text-[rgba(244,240,230,0.46)]">
+        Market intelligence and education only. Not personalized investment advice.
+      </p>
+    </footer>
+  );
+}
+
+function CoverSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+  const lead = compactSlideText(slide.bullets[0] ?? "市場脈絡與風險環境已整理完成。", 22);
+  const title = pack.kind === "daily" ? "今日市場最重要的事" : "本週市場焦點";
+
+  return (
+    <div className="relative z-10 mt-7">
+      <p className="font-mono text-[8px] uppercase tracking-[0.16em]" style={{ color: socialBrandTokens.gold }}>
+        {pack.kind === "daily" ? "Daily Intelligence" : "Weekly Intelligence"}
+      </p>
+      <h3 className="mt-3 max-w-[9ch] text-[1.18rem] font-semibold leading-[1.08] tracking-normal">
+        {title}
+      </h3>
+      <p className="mt-4 border-l pl-3 text-[9px] font-medium leading-4 text-[rgba(244,240,230,0.82)]" style={{ borderColor: socialBrandTokens.gold }}>
+        {lead}
+      </p>
+    </div>
+  );
+}
+
+function MarketPulseSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
+  const Icon = slide.id === "market_review" ? Landmark : Globe2;
+
+  return (
+    <div className="relative z-10 mt-9">
+      <div className="flex items-center justify-between gap-3 border-b pb-3" style={{ borderColor: "rgba(185,154,99,0.36)" }}>
+        <div>
+          <p className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
+            {slide.eyebrow}
+          </p>
+          <h3 className="mt-1 text-2xl font-semibold leading-tight">
+            {slide.id === "market_review" ? "Market Review" : "Market Pulse"}
+          </h3>
+        </div>
+        <Icon className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />
+      </div>
+      <div className="mt-6 grid gap-5">
+        {slide.bullets.slice(0, 3).map((bullet, bulletIndex) => {
+          const item = splitBullet(bullet);
+
+          return (
+            <div className="grid grid-cols-[2.25rem_1fr] gap-3" key={`${bullet}-${bulletIndex}`}>
+              <p className="font-mono text-lg leading-none" style={{ color: socialBrandTokens.gold }}>
+                {String(bulletIndex + 1).padStart(2, "0")}
+              </p>
+              <div className="border-b border-white/10 pb-4">
+                <p className="text-lg font-semibold leading-6">{item.heading}</p>
+                <p className="mt-1 text-[13px] leading-5 text-[rgba(244,240,230,0.68)]">{item.detail}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="mt-6 text-[11px] leading-5 text-[rgba(244,240,230,0.46)]">
+        Reviewed intelligence for manual social distribution.
+      </p>
+    </div>
+  );
+}
+
+function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+  return (
+    <div className="relative z-10 mt-9">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
+            {slide.eyebrow}
+          </p>
+          <h3 className="mt-1 text-[1.65rem] font-semibold leading-tight">AI / Tech Watch</h3>
+        </div>
+        <div className="flex gap-2">
+          <Cpu className="h-6 w-6 text-[var(--ixai-gold)]" strokeWidth={1.8} />
+          <Cloud className="h-6 w-6 text-[rgba(244,240,230,0.76)]" strokeWidth={1.8} />
+        </div>
+      </div>
+      <div className="mt-6 flex flex-wrap gap-2">
+        {techSymbolsFor(pack.kind).map((symbol) => (
+          <span
+            className="border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.08em]"
+            key={symbol}
+            style={{ borderColor: "rgba(185,154,99,0.45)", color: socialBrandTokens.gold }}
+          >
+            {symbol}
+          </span>
+        ))}
+      </div>
+      <div className="mt-7 grid gap-4">
+        {slide.bullets.slice(0, 3).map((bullet, bulletIndex) => (
+          <div className="border-l pl-3" key={`${bullet}-${bulletIndex}`} style={{ borderColor: "rgba(185,154,99,0.52)" }}>
+            <p className="text-[17px] font-semibold leading-6">
+              {compactSlideText(splitBullet(bullet).heading, 20)}
+            </p>
+            <p className="mt-1 text-[13px] leading-5 text-[rgba(244,240,230,0.66)]">
+              {compactSlideText(splitBullet(bullet).detail, 44)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+  const activeStage = riskStageFor(pack.kind);
+  const fcnLine = compactSlideText(slide.bullets.find((bullet) => /FCN|KO|KI|Worst/i.test(bullet)) ?? slide.bullets[1] ?? "FCN 結構需理解 KO / KI / Worst Performer。", 54);
+
+  return (
+    <div className="relative z-10 mt-9">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
+            FCN / Risk Watch
+          </p>
+          <h3 className="mt-1 text-[1.65rem] font-semibold leading-tight">Risk Regime</h3>
+        </div>
+        <ShieldCheck className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />
+      </div>
+      <div className="mt-7 grid gap-2">
+        {RISK_STAGES.map((stage) => {
+          const isActive = stage === activeStage;
+
+          return (
+            <div
+              className="grid grid-cols-[5.5rem_1fr] items-center gap-3 border-b py-2"
+              key={stage}
+              style={{ borderColor: "rgba(244,240,230,0.1)" }}
+            >
+              <p
+                className="font-mono text-[10px] uppercase tracking-[0.12em]"
+                style={{ color: isActive ? socialBrandTokens.gold : "rgba(244,240,230,0.42)" }}
+              >
+                {stage}
+              </p>
+              <div className="h-1.5 bg-white/10">
+                <div
+                  className="h-full"
+                  style={{
+                    backgroundColor: isActive ? socialBrandTokens.gold : "rgba(244,240,230,0.22)",
+                    width: isActive ? "100%" : "34%",
+                  }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-7 border-l pl-4" style={{ borderColor: socialBrandTokens.gold }}>
+        <p className="font-mono text-[9px] uppercase tracking-[0.16em]" style={{ color: socialBrandTokens.gold }}>
+          FCN Awareness
+        </p>
+        <p className="mt-2 text-lg font-semibold leading-6">{fcnLine}</p>
+        <p className="mt-2 text-[12px] leading-5 text-[rgba(244,240,230,0.58)]">
+          FCN structures should be understood with licensed professionals and official documents.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function IxuanViewSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
+  const main = compactSlideText(slide.bullets[0] ?? "先整理風險，再判讀機會。", 28);
+
+  return (
+    <div className="relative z-10 mt-12">
+      <Quote className="h-8 w-8 text-[var(--ixai-gold)]" strokeWidth={1.7} />
+      <p className="mt-5 font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
+        {slide.id === "weekly_view" ? "I-Xuan Weekly View" : "I-Xuan View"}
+      </p>
+      <h3 className="mt-4 max-w-[11ch] text-[2.15rem] font-semibold leading-[1.08]">
+        {main}
+      </h3>
+      <p className="mt-6 border-t pt-4 text-[14px] leading-6 text-[rgba(244,240,230,0.68)]" style={{ borderColor: "rgba(185,154,99,0.38)" }}>
+        完整內容請見 IXAI App。此內容為市場資訊與教育分享。
+      </p>
+    </div>
+  );
+}
+
+function StandardSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
+  return (
+    <div className="relative z-10 mt-9">
+      <div className="flex items-center justify-between gap-3 border-b pb-3" style={{ borderColor: "rgba(185,154,99,0.34)" }}>
+        <div>
+          <p className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
+            {slide.eyebrow}
+          </p>
+          <h3 className="mt-1 text-2xl font-semibold leading-tight">{slide.title}</h3>
+        </div>
+        {renderSlideIcon(slide.id)}
+      </div>
+      <div className="mt-6 grid gap-4">
+        {slide.bullets.slice(0, 3).map((bullet) => (
+          <p className="border-l pl-3 text-[14px] leading-6 text-[rgba(244,240,230,0.74)]" key={bullet} style={{ borderColor: "rgba(185,154,99,0.5)" }}>
+            {compactSlideText(bullet, 52)}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SlideBody({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+  if (slide.id === "cover") {
+    return <CoverSlide pack={pack} slide={slide} />;
+  }
+
+  if (slide.id === "top_news" || slide.id === "market_review") {
+    return <MarketPulseSlide slide={slide} />;
+  }
+
+  if (slide.id === "ai_tech_watch") {
+    return <AiTechSlide pack={pack} slide={slide} />;
+  }
+
+  if (slide.id === "fcn_risk_watch") {
+    return <RiskSlide pack={pack} slide={slide} />;
+  }
+
+  if (slide.id === "ixuan_view" || slide.id === "weekly_view") {
+    return <IxuanViewSlide slide={slide} />;
+  }
+
+  return <StandardSlide slide={slide} />;
+}
+
 function SlidePreview({
   index,
   pack,
@@ -54,96 +381,31 @@ function SlidePreview({
     return null;
   }
 
-  const isCover = slide.id === "cover";
-  const logoSize = isCover ? "md" : "xs";
-
   return (
     <article
-      className="relative flex w-full max-w-[280px] flex-col overflow-hidden rounded-lg border p-5 shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
+      className="relative flex w-full max-w-[280px] flex-col overflow-hidden border px-5 pb-24 pt-5 shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
       data-social-slide={`${pack.kind}-${index + 1}`}
       ref={slideRef}
       style={{
         aspectRatio: "9 / 16",
         backgroundColor: socialBrandTokens.forest,
-        borderColor: "rgba(185,154,99,0.34)",
+        borderColor: "rgba(185,154,99,0.26)",
         color: socialBrandTokens.cream,
       }}
     >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-36"
         style={{
-          background: `linear-gradient(180deg, rgba(185,154,99,0.24), rgba(185,154,99,0))`,
+          background: `linear-gradient(180deg, rgba(185,154,99,0.18), rgba(185,154,99,0))`,
         }}
       />
-      <div className="relative flex items-start justify-between gap-4">
-        <div
-          className={`flex items-center justify-center rounded-md border bg-[rgba(244,240,230,0.08)] ${
-            isCover ? "h-16 w-24" : "h-12 w-16"
-          }`}
-          style={{ borderColor: "rgba(244,240,230,0.14)" }}
-        >
-          <IxaiLogo size={logoSize} />
-        </div>
-        <div className="text-right">
-          <p
-            className="font-mono text-[10px] uppercase tracking-[0.16em]"
-            style={{ color: socialBrandTokens.gold }}
-          >
-            IXAI Intelligence
-          </p>
-          <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(244,240,230,0.46)]">
-            {String(index + 1).padStart(2, "0")} / {pack.slides.length}
-          </p>
-        </div>
-      </div>
-
-      <div className={`relative ${isCover ? "mt-12" : "mt-9"}`}>
-        <p
-          className="font-mono text-[10px] uppercase tracking-[0.18em]"
-          style={{ color: socialBrandTokens.gold }}
-        >
-          {slide.eyebrow}
-        </p>
-        <h3
-          className={`mt-3 font-semibold leading-tight ${
-            isCover ? "text-[2rem]" : "text-2xl"
-          }`}
-        >
-          {slide.title}
-        </h3>
-        {slide.subtitle ? (
-          <p className="mt-3 text-sm leading-6 text-[rgba(245,240,230,0.68)]">{slide.subtitle}</p>
-        ) : null}
-      </div>
-
-      <div className="relative mt-7 grid gap-3">
-        {slide.bullets.map((bullet) => (
-          <p
-            className="rounded-md border bg-[rgba(244,240,230,0.06)] px-3 py-2 text-sm leading-6 text-[rgba(244,240,230,0.8)]"
-            style={{ borderColor: "rgba(244,240,230,0.11)" }}
-            key={bullet}
-          >
-            {bullet}
-          </p>
-        ))}
-      </div>
-
-      <div className="relative mt-auto border-t border-white/10 pt-4">
-        {slide.footer ? (
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-[rgba(244,240,230,0.52)]">
-            {slide.footer}
-          </p>
-        ) : null}
-        <p className="text-[11px] leading-5 text-[rgba(244,240,230,0.56)]">
-          {pack.disclaimer}
-        </p>
-        <p
-          className="mt-2 font-mono text-[10px] uppercase tracking-[0.15em]"
-          style={{ color: socialBrandTokens.gold }}
-        >
-          I-Xuan Investment Co., Ltd. · app.ixuan.ai
-        </p>
-      </div>
+      <div
+        className="pointer-events-none absolute bottom-20 right-[-54px] h-44 w-44 rounded-full border"
+        style={{ borderColor: "rgba(185,154,99,0.12)" }}
+      />
+      <SlideHeader index={index} pack={pack} />
+      <SlideBody pack={pack} slide={slide} />
+      <SlideFooter index={index} pack={pack} />
     </article>
   );
 }

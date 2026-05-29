@@ -476,3 +476,31 @@ Out of Scope:
 - LINE Broadcast API integration.
 - Portfolio Intelligence.
 - AI Alert Engine.
+
+## v1.40.6c — Social Pack Layout Redesign
+
+Why:
+
+- Initial Social Pack output was functionally correct but visually resembled application UI and presentation slides.
+- Social distribution requires stronger information hierarchy and faster readability.
+
+What Changed:
+
+- Redesigned layout system.
+- Reduced oversized headers.
+- Reduced visual weight of cards.
+- Introduced social-first content hierarchy.
+- Improved brand presentation.
+
+Key Decisions:
+
+- Readability over decoration.
+- Institutional research tone over app-marketing aesthetics.
+- Short-form insights over long-form text.
+
+Out of Scope:
+
+- Publish Center.
+- Auto publishing.
+- Portfolio Intelligence.
+- AI Alert Engine.
