@@ -20,6 +20,50 @@ I-Xuan remains the trust brand behind the product. IXAI is the AI operating laye
 
 The current IXAI public app is live and deployed on Vercel, with `https://app.ixuan.ai` as the production public domain.
 
+## Current Product State
+
+Current Version:
+
+`v1.40.2f`
+
+Current Core Flow:
+
+```text
+Landing
+→ Onboarding
+→ Account
+→ Future Pro Interest
+```
+
+Public Intelligence Funnel:
+
+```text
+LINE / Social / Share
+→ Daily / Weekly / Share Intelligence
+→ Onboarding
+→ Account
+→ Personal Intelligence
+```
+
+Product Layers:
+
+- Public Intelligence: acquisition, trust building, daily/weekly market awareness, shareable intelligence.
+- Account Intelligence: identity continuity, future Watchlist Intelligence Lite, preference memory, LINE readiness.
+- Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, FCN risk workflow.
+
+Current Highest Priorities:
+
+1. Public Intelligence Engine.
+2. Watchlist Intelligence Lite.
+3. LINE Delivery.
+4. Portfolio Intelligence.
+
+Growth Strategy:
+
+- Current focus: seed users.
+- Not current focus: paid ads or aggressive monetization.
+- Primary channels: LINE, Facebook, Threads, existing FCN clients.
+
 Completed product capabilities include:
 
 - Public app live with responsive public UI.
@@ -135,5 +179,7 @@ IXAI uses a multi-agent collaboration model:
 - GitHub: source of truth for implementation history.
 - `docs/PROJECT_CONTEXT.md`: persistent project memory layer.
 - `docs/PROJECT_RULES.md`: governance layer and development constitution.
+- `docs/ROADMAP.md`: current and future product direction.
+- `docs/VERSION_HISTORY.md`: concise implementation history for handoff.
 
-Before major work, AI agents should read both project documents, audit the relevant files, and only then patch. The goal is to prevent context loss, version drift, accidental architecture rewrites, and product misalignment.
+Before major work, AI agents should read `PROJECT_CONTEXT.md`, `PROJECT_RULES.md`, `ROADMAP.md`, and `VERSION_HISTORY.md`, audit the relevant files, and only then patch. The goal is to prevent context loss, version drift, accidental architecture rewrites, and product misalignment.

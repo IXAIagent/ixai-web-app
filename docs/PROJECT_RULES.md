@@ -165,7 +165,87 @@ IXAI should emphasize:
 
 Membership is more important than signals.
 
-## H. Definition of Done
+## H. Product Strategy Rules
+
+Public surfaces may provide:
+
+- Market Intelligence.
+- Educational content.
+- Awareness content.
+- General risk context.
+- Daily and weekly market interpretation.
+
+Public surfaces must never provide:
+
+- Personalized portfolio analysis.
+- Personal FCN risk conclusions.
+- Buy / sell recommendations.
+- Target prices.
+- Return promises.
+
+Account surfaces may provide:
+
+- Watchlist Intelligence Lite.
+- Preference memory.
+- Identity continuity.
+- LINE readiness.
+- Future delivery setup.
+
+Pro surfaces may provide, once implemented:
+
+- Portfolio Intelligence.
+- Risk Intelligence.
+- AI Alerts.
+- Personal FCN workflow.
+- Personalized market relevance.
+
+Keep Public, Account, and Pro product value clearly separated.
+
+## I. Growth Rules
+
+Current stage:
+
+- Seed user acquisition.
+
+Focus:
+
+- Content.
+- Daily Intelligence.
+- Weekly Intelligence.
+- LINE distribution.
+- Existing relationship channels.
+
+Not focus:
+
+- Paid ads.
+- Aggressive monetization.
+- Premature checkout.
+- Signal-selling funnels.
+
+Primary channels:
+
+- LINE.
+- Facebook.
+- Threads.
+- Existing FCN clients.
+
+## J. AI Agent Handoff Rules
+
+Every new AI session should read these files before making roadmap, architecture, or product-flow decisions:
+
+1. `docs/PROJECT_CONTEXT.md`
+2. `docs/PROJECT_RULES.md`
+3. `docs/ROADMAP.md`
+4. `docs/VERSION_HISTORY.md`
+
+After reading, the agent should:
+
+- Inspect `git status`.
+- Check the relevant implementation files.
+- Confirm whether the request is docs-only, UI-only, data-layer, auth, LINE, analytics, or product strategy.
+- Avoid touching protected systems unless explicitly requested.
+
+## K. Definition of Done
 
 For any functional or UI change:
 
