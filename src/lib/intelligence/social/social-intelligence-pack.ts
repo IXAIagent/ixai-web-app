@@ -37,6 +37,12 @@ export type SocialIntelligencePack = {
 
 const APP_URL = "app.ixuan.ai";
 const DISCLAIMER = "市場資訊與教育分享，非個人化投資建議。";
+export const socialBrandTokens = {
+  cream: "#F4F0E6",
+  dark: "#071A16",
+  forest: "#0F2E27",
+  gold: "#B99A63",
+};
 
 function formatDateLabel(value?: string) {
   if (!value) {
@@ -141,14 +147,14 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
           "市場資訊與教育分享，不構成個人化投資建議。",
         ],
         eyebrow: "Daily Intelligence",
-        footer: "I-Xuan Investment co. Ltd · IXAI",
+        footer: "Daily Intelligence · Market Interpretation · Risk Awareness",
         id: "cover",
-        subtitle: "今日市場重點",
+        subtitle: "一玄資訊",
         title: "每日 AI 投資日報",
       },
       {
         bullets: topNews,
-        eyebrow: "Market News",
+        eyebrow: "Market Pulse",
         footer: "人工審閱後供手動發布",
         id: "top_news",
         title: "今日三大新聞",
@@ -159,7 +165,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
           compactText(aiTech?.summary, "觀察資金是否仍聚焦 AI supply chain 與高成長科技股。", 62),
           crypto ? `補充觀察：${compactText(crypto.headline, "Crypto volatility watch", 34)}` : "Symbols / themes 僅作公開市場觀察，不作交易指令。",
         ],
-        eyebrow: "AI / Tech Watch",
+        eyebrow: "IXAI Tech Intelligence",
         id: "ai_tech_watch",
         title: "AI / 科技觀察",
       },
@@ -169,7 +175,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
           "FCN Awareness：留意 KO / KI / Worst Performer / Observation Date 等結構概念。",
           "FCN 應搭配合格專業人員與正式產品文件理解。",
         ],
-        eyebrow: "FCN & Risk Watch",
+        eyebrow: "FCN Awareness",
         id: "fcn_risk_watch",
         title: "FCN 與風險環境",
       },
@@ -178,7 +184,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
         eyebrow: "I-Xuan View",
         footer: "完整日報請見 IXAI App · app.ixuan.ai",
         id: "ixuan_view",
-        title: "一玄觀點",
+        title: "I-Xuan View / 一玄觀點",
       },
     ],
   };
@@ -222,10 +228,10 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
           "公開情報與教育分享，不提供個人化投資建議。",
         ],
         eyebrow: "Weekly Intelligence",
-        footer: "I-Xuan Investment co. Ltd · IXAI",
+        footer: "Institutional Research · Weekly Intelligence",
         id: "cover",
-        subtitle: "日期區間",
-        title: "每週 AI 投資週報",
+        subtitle: "一玄資訊",
+        title: "Weekly Intelligence",
       },
       {
         bullets: marketReview,

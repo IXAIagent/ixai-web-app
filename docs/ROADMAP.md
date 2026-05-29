@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.6`
+`v1.40.6a`
 
 ## Current Product Flow
 
@@ -160,13 +160,23 @@ Completed:
 - Supported manual FB / IG / LINE publishing workflow.
 - Preserved human review and avoided auto publishing.
 
+### v1.40.6a — Social Pack Brand Asset Integration
+
+Completed:
+
+- Integrated official brand identity into Social Pack templates.
+- Added reusable brand tokens.
+- Added institutional research visual language.
+- Standardized footer, disclaimer, and logo placement.
+
 ## Next Suggested Version
 
-`v1.40.7 — Publish Center`
+`v1.40.7 — Publish Center Foundation`
 
 Goal:
 
-- Prepare reviewed social packs for manual or semi-automated publishing.
+- Prepare reviewed Social Packs for manual publishing workflow.
+- Create approval-ready publishing queue.
 - Keep human approval before publishing.
 - Explore FB / IG / LINE integration only after compliance review.
 

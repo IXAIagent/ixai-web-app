@@ -418,3 +418,32 @@ Out of Scope:
 - Portfolio Intelligence.
 - Personalized recommendations.
 - Trading signals.
+
+## v1.40.6a — Social Pack Brand Asset Integration
+
+Why:
+
+- Social Intelligence Packs needed a recognizable 一玄 / IXAI identity before becoming a repeatable distribution asset.
+- Generic templates were insufficient for long-term brand building.
+
+What Changed:
+
+- Added brand asset integration.
+- Added reusable brand tokens.
+- Added institutional research visual language.
+- Standardized logo, footer, and disclaimer placement.
+- Reinforced 一玄觀點 as a recurring intelligence section.
+
+Key Decisions:
+
+- Brand consistency is more important than visual complexity.
+- Social packs should promote intelligence credibility, not app hype.
+- Institutional tone should remain consistent across Daily and Weekly content.
+
+Out of Scope:
+
+- PNG export.
+- Publish Center.
+- Auto publishing.
+- Portfolio Intelligence.
+- AI Alert Engine.

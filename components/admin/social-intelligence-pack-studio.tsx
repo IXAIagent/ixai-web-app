@@ -5,6 +5,7 @@ import { IxaiLogo } from "@/components/brand/ixai-logo";
 import {
   generateDailySocialPack,
   generateWeeklySocialPack,
+  socialBrandTokens,
   type SocialIntelligencePack,
   type SocialPackKind,
 } from "@/src/lib/intelligence/social";
@@ -32,29 +33,56 @@ function SlidePreview({ pack, index }: { pack: SocialIntelligencePack; index: nu
   }
 
   const isCover = slide.id === "cover";
+  const logoSize = isCover ? "md" : "xs";
 
   return (
     <article
-      className="relative flex w-full max-w-[280px] flex-col overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[#09251c] p-5 shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
-      style={{ aspectRatio: "9 / 16" }}
+      className="relative flex w-full max-w-[280px] flex-col overflow-hidden rounded-lg border p-5 shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
+      style={{
+        aspectRatio: "9 / 16",
+        backgroundColor: socialBrandTokens.forest,
+        borderColor: "rgba(185,154,99,0.34)",
+        color: socialBrandTokens.cream,
+      }}
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(176,141,87,0.24),rgba(176,141,87,0))]" />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-36"
+        style={{
+          background: `linear-gradient(180deg, rgba(185,154,99,0.24), rgba(185,154,99,0))`,
+        }}
+      />
       <div className="relative flex items-start justify-between gap-4">
-        <div className="rounded-md border border-[rgba(176,141,87,0.28)] bg-[rgba(245,240,230,0.08)] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-          {String(index + 1).padStart(2, "0")} / {pack.slides.length}
+        <div
+          className={`flex items-center justify-center rounded-md border bg-[rgba(244,240,230,0.08)] ${
+            isCover ? "h-16 w-24" : "h-12 w-16"
+          }`}
+          style={{ borderColor: "rgba(244,240,230,0.14)" }}
+        >
+          <IxaiLogo size={logoSize} />
         </div>
-        <div className="flex h-12 w-16 items-center justify-center rounded-md border border-white/10 bg-[rgba(245,240,230,0.08)]">
-          <IxaiLogo size="xs" />
+        <div className="text-right">
+          <p
+            className="font-mono text-[10px] uppercase tracking-[0.16em]"
+            style={{ color: socialBrandTokens.gold }}
+          >
+            IXAI Intelligence
+          </p>
+          <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(244,240,230,0.46)]">
+            {String(index + 1).padStart(2, "0")} / {pack.slides.length}
+          </p>
         </div>
       </div>
 
-      <div className="relative mt-10">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+      <div className={`relative ${isCover ? "mt-12" : "mt-9"}`}>
+        <p
+          className="font-mono text-[10px] uppercase tracking-[0.18em]"
+          style={{ color: socialBrandTokens.gold }}
+        >
           {slide.eyebrow}
         </p>
         <h3
-          className={`mt-3 font-semibold leading-tight text-[var(--ixai-cream)] ${
-            isCover ? "text-3xl" : "text-2xl"
+          className={`mt-3 font-semibold leading-tight ${
+            isCover ? "text-[2rem]" : "text-2xl"
           }`}
         >
           {slide.title}
@@ -67,7 +95,8 @@ function SlidePreview({ pack, index }: { pack: SocialIntelligencePack; index: nu
       <div className="relative mt-7 grid gap-3">
         {slide.bullets.map((bullet) => (
           <p
-            className="rounded-md border border-white/10 bg-[rgba(245,240,230,0.055)] px-3 py-2 text-sm leading-6 text-[rgba(245,240,230,0.78)]"
+            className="rounded-md border bg-[rgba(244,240,230,0.06)] px-3 py-2 text-sm leading-6 text-[rgba(244,240,230,0.8)]"
+            style={{ borderColor: "rgba(244,240,230,0.11)" }}
             key={bullet}
           >
             {bullet}
@@ -76,11 +105,19 @@ function SlidePreview({ pack, index }: { pack: SocialIntelligencePack; index: nu
       </div>
 
       <div className="relative mt-auto border-t border-white/10 pt-4">
-        <p className="text-[11px] leading-5 text-[rgba(245,240,230,0.5)]">
-          {slide.footer ?? pack.disclaimer}
+        {slide.footer ? (
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-[rgba(244,240,230,0.52)]">
+            {slide.footer}
+          </p>
+        ) : null}
+        <p className="text-[11px] leading-5 text-[rgba(244,240,230,0.56)]">
+          {pack.disclaimer}
         </p>
-        <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--ixai-gold)]">
-          {pack.cta.label}
+        <p
+          className="mt-2 font-mono text-[10px] uppercase tracking-[0.15em]"
+          style={{ color: socialBrandTokens.gold }}
+        >
+          I-Xuan Investment Co., Ltd. · app.ixuan.ai
         </p>
       </div>
     </article>
@@ -121,25 +158,31 @@ export function SocialIntelligencePackStudio({
   }
 
   return (
-    <section className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.07)] p-4 sm:p-5">
+    <section
+      className="rounded-lg border p-4 sm:p-5"
+      style={{
+        backgroundColor: "rgba(185,154,99,0.07)",
+        borderColor: "rgba(185,154,99,0.24)",
+      }}
+    >
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             Social Intelligence Engine
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-8 text-[var(--ixai-cream)]">
-            Daily / Weekly Social Content Pack
+            一玄 / IXAI Social Content Pack
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
-            產生供 FB / IG / LINE 手動發布的 9:16 圖文素材。素材來自已審閱的
-            Daily / Weekly Intelligence 或安全 fallback，不自動發文、不串接平台 API。
+            產生供 FB / IG / LINE 手動發布的 9:16 圖文素材。每張卡片固定使用正式一玄
+            Logo、IXAI Intelligence header、統一 footer 與 disclaimer，不自動發文、不串接平台 API。
           </p>
         </div>
         <div className="grid gap-2 sm:flex sm:flex-wrap xl:justify-end">
           <button
             className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
               activeKind === "daily"
-                ? "bg-[var(--ixai-gold)] text-[#071a14]"
+                ? "bg-[var(--ixai-gold)] text-[var(--ixai-forest)]"
                 : "border border-white/10 text-[rgba(245,240,230,0.72)] hover:bg-white/[0.055]"
             }`}
             onClick={() => {
@@ -153,7 +196,7 @@ export function SocialIntelligencePackStudio({
           <button
             className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
               activeKind === "weekly"
-                ? "bg-[var(--ixai-gold)] text-[#071a14]"
+                ? "bg-[var(--ixai-gold)] text-[var(--ixai-forest)]"
                 : "border border-white/10 text-[rgba(245,240,230,0.72)] hover:bg-white/[0.055]"
             }`}
             onClick={() => {
@@ -172,14 +215,23 @@ export function SocialIntelligencePackStudio({
           Format: <span className="text-[var(--ixai-cream)]">9:16 · 1080 × 1920 target</span>
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Brand: <span className="text-[var(--ixai-cream)]">/logo/ixuan-logo.png · IXAI Intelligence</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Source: <span className="text-[var(--ixai-cream)]">{packSourceLabel(activePack)}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Footer: <span className="text-[var(--ixai-cream)]">I-Xuan Investment Co., Ltd. · app.ixuan.ai</span>
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Publish mode: <span className="text-[var(--ixai-cream)]">manual review only</span>
         </p>
       </div>
 
-      <div className="mt-5 rounded-lg border border-white/10 bg-[#071a14] p-4">
+      <div
+        className="mt-5 rounded-lg border border-white/10 p-4"
+        style={{ backgroundColor: socialBrandTokens.dark }}
+      >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
@@ -205,14 +257,17 @@ export function SocialIntelligencePackStudio({
               Copy Caption
             </p>
             <button
-              className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[#071a14]"
+              className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[var(--ixai-forest)]"
               onClick={copyCaption}
               type="button"
             >
               Copy caption
             </button>
           </div>
-          <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap rounded-md border border-white/10 bg-[#061610] p-3 text-xs leading-6 text-[rgba(245,240,230,0.72)]">
+          <pre
+            className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap rounded-md border border-white/10 p-3 text-xs leading-6 text-[rgba(245,240,230,0.72)]"
+            style={{ backgroundColor: socialBrandTokens.dark }}
+          >
             {activePack.caption}
           </pre>
           <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.46)]">{copyState}</p>
@@ -226,6 +281,10 @@ export function SocialIntelligencePackStudio({
             PNG export is pending for the future Publish Center. This version provides fixed
             9:16 preview cards that are ready for browser screenshot or design review.
           </p>
+          <div className="mt-3 grid gap-2 rounded-md border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
+            <p>Future: PNG Export.</p>
+            <p>Future: Publish Center with approval-ready publishing queue.</p>
+          </div>
           <p className="mt-3 rounded-md border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
             {activePack.disclaimer} Automated FB / IG / LINE publishing remains off.
           </p>

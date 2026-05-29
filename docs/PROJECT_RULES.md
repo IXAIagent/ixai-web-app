@@ -242,6 +242,15 @@ Social Intelligence Engine Rules:
 - Automated publishing requires human review, audit trail, platform API governance, and compliance approval.
 - Social visual templates should use 一玄 / IXAI institutional brand language: forest green, muted gold, cream, premium editorial density, and no crypto-hype effects.
 
+Social Brand Rules:
+
+- Social Intelligence assets must use approved 一玄 / IXAI branding.
+- Social packs must preserve institutional and educational positioning.
+- Logo placement should remain consistent across cover and non-cover slides.
+- Disclaimer must remain visible.
+- Marketing assets must not resemble trading signal advertisements.
+- The official brand logo source for Social Pack templates is `/logo/ixuan-logo.png`.
+
 Pro surfaces may provide, once implemented:
 
 - Portfolio Intelligence.
