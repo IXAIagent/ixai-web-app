@@ -225,3 +225,34 @@ Out of Scope:
 - Personalized portfolio or FCN risk conclusions.
 - Buy/sell recommendations.
 - Automated trading.
+
+## v1.40.3a — Public Intelligence Engine Polish
+
+Why:
+
+- Public Intelligence Engine foundation required consistency, compliance, and conversion optimization before expanding intelligence capabilities.
+
+What Changed:
+
+- Added Public Intelligence disclaimer layer.
+- Improved mobile UX and CTA hierarchy.
+- Refined Public → Account → Future Pro narrative.
+- Strengthened FCN and Risk Regime educational positioning.
+- Audited Public Intelligence modules for compliance consistency.
+
+Key Decisions:
+
+- Public Intelligence remains educational and risk-aware.
+- Public modules should increase trust and onboarding conversion rather than act as trading tools.
+- Compliance clarity is more important than feature expansion.
+
+Out of Scope:
+
+- Dynamic market providers.
+- Portfolio intelligence.
+- Personalized alerts.
+- LINE push automation.
+- Portfolio DB.
+- Stripe.
+- Automated trading.
+- Personalized recommendations.

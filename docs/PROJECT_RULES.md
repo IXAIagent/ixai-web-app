@@ -215,6 +215,14 @@ Public Intelligence Engine governance:
 - These modules must not provide personalized portfolio analysis, personalized FCN risk conclusions, buy/sell recommendations, target prices, return promises, or automated trading instructions.
 - Any future dynamic provider integration must preserve Public / Account / Pro separation.
 
+Public Intelligence Compliance Layer:
+
+- Public Intelligence must clearly distinguish education from personalized advice.
+- Public Intelligence modules should include appropriate disclaimer language when discussing FCN, Crypto, Macro, or Risk topics.
+- Risk Regime is educational context only and must not be framed as a market prediction tool.
+- FCN Awareness is educational context only and must not imply personal FCN risk assessment, knock-in probability, product recommendation, guaranteed coupon, or principal protection.
+- Public Intelligence surfaces should reinforce onboarding and account journeys rather than direct trading actions.
+
 ## I. Growth Rules
 
 Current stage:

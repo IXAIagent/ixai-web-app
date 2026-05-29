@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.3`
+`v1.40.3a`
 
 ## Current Product Flow
 
@@ -101,6 +101,17 @@ Completed foundation:
 Principle:
 
 Public Intelligence should become more useful before IXAI asks users to create deeper personal or Pro workflows.
+
+### v1.40.3a — Public Intelligence Engine Polish
+
+Completed:
+
+- Public Intelligence disclaimer layer.
+- Mobile UX polish.
+- CTA hierarchy audit.
+- Compliance review.
+- Public-to-Account narrative alignment.
+- Risk Regime explanatory layer.
 
 ## Next Version
 

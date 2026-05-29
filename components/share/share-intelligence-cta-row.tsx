@@ -49,7 +49,7 @@ export function ShareIntelligenceCtaRow({ slug }: { slug: string }) {
         rel="noopener noreferrer"
         target="_blank"
       >
-        加入 LINE Intelligence
+        加入 LINE 接收情報
         <MessageCircle className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
       </Link>
     </div>

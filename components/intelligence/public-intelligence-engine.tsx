@@ -15,6 +15,7 @@ import {
   PUBLIC_INTELLIGENCE_MODULES,
   type PublicIntelligenceModuleId,
 } from "@/src/lib/intelligence/public-engine";
+import { PublicIntelligenceDisclaimer } from "@/components/intelligence/public-intelligence-disclaimer";
 
 const moduleIcons: Record<PublicIntelligenceModuleId, typeof LineChart> = {
   ai_tech_watch: Cpu,
@@ -37,21 +38,24 @@ export function PublicIntelligenceEngine({
   const compact = density === "compact";
 
   return (
-    <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.88)] p-4 sm:p-6">
-      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+    <section className="overflow-hidden rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.88)] p-4 sm:p-6">
+      <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
             Public Intelligence Engine
           </p>
-          <h2 className="mt-2 text-2xl font-semibold leading-tight text-[var(--ixai-forest)] sm:text-3xl">
+          <h2 className="mt-2 text-balance text-2xl font-semibold leading-tight text-[var(--ixai-forest)] sm:text-3xl">
             IXAI 的公開市場情報架構。
           </h2>
-          <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:max-w-xl">
             v1.40.3 將 Daily、Weekly 與 Share Intelligence 連接到更清楚的
             Market Pulse、Macro Watch、AI / Tech Watch、Crypto Watch、FCN Awareness 與 Risk Regime。
           </p>
-          <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.26)] bg-white/50 p-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+          <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.26)] bg-white/50 p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
             {PUBLIC_INTELLIGENCE_ENGINE_NOTE}
+          </div>
+          <div className="mt-3">
+            <PublicIntelligenceDisclaimer compact />
           </div>
           {!compact ? (
             <div className="mt-4 grid gap-2 sm:flex sm:flex-wrap">
@@ -73,13 +77,13 @@ export function PublicIntelligenceEngine({
           ) : null}
         </div>
 
-        <div className={`grid gap-3 ${compact ? "sm:grid-cols-2" : "md:grid-cols-2"}`}>
+        <div className={`grid min-w-0 gap-3 ${compact ? "sm:grid-cols-2" : "md:grid-cols-2"}`}>
           {PUBLIC_INTELLIGENCE_MODULES.map((module) => {
             const Icon = moduleIcons[module.id];
 
             return (
               <article
-                className="min-w-0 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4"
+                className="min-w-0 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 shadow-[0_10px_30px_rgba(9,41,31,0.04)]"
                 key={`${surface}-${module.id}`}
               >
                 <div className="flex items-start gap-3">
@@ -90,7 +94,7 @@ export function PublicIntelligenceEngine({
                     <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
                       {module.eyebrow}
                     </p>
-                    <h3 className="mt-1 text-base font-semibold leading-6 text-[var(--ixai-forest)]">
+                    <h3 className="mt-1 break-words text-base font-semibold leading-6 text-[var(--ixai-forest)]">
                       {module.title}
                     </h3>
                   </div>
@@ -98,8 +102,22 @@ export function PublicIntelligenceEngine({
                 <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
                   {module.summary}
                 </p>
-                {!compact ? (
+                {compact ? (
+                  <p className="mt-2 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+                    {module.whyItMatters}
+                  </p>
+                ) : (
                   <>
+                    <div className="mt-3 grid gap-2 rounded-lg border border-[rgba(176,141,87,0.18)] bg-[rgba(255,250,240,0.5)] p-3">
+                      <p className="text-xs leading-6 text-[var(--ixai-forest-soft)]">
+                        <span className="font-semibold text-[var(--ixai-forest)]">What it means: </span>
+                        {module.meaning}
+                      </p>
+                      <p className="text-xs leading-6 text-[var(--ixai-forest-soft)]">
+                        <span className="font-semibold text-[var(--ixai-forest)]">Why it matters: </span>
+                        {module.whyItMatters}
+                      </p>
+                    </div>
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {module.watchExamples.map((item) => (
                         <span
@@ -119,7 +137,7 @@ export function PublicIntelligenceEngine({
                       ))}
                     </ul>
                   </>
-                ) : null}
+                )}
               </article>
             );
           })}

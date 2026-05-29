@@ -51,7 +51,7 @@ export default function SharePage() {
           </p>
         </div>
         <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          Share Page → Intelligence Education → Onboarding → Account → Future Intelligence Delivery。
+          Share Page → Intelligence Education → Onboarding → Account → Future Personal Intelligence。
           此版本不做 dynamic image generation，也不接資料庫。
         </p>
       </section>
