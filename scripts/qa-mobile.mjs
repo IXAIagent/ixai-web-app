@@ -70,7 +70,7 @@ const routeSpecs = [
   {
     path: "/admin/daily-briefs",
     kind: "internal",
-    visibleText: ["IXAI Editorial Studio", "Social Intelligence Engine", "內部內容營運權限"],
+    visibleText: ["IXAI Editorial Studio", "Social Intelligence Engine", "Export Controls", "內部內容營運權限"],
   },
 ];
 
@@ -169,6 +169,18 @@ async function runRouteCheck(browser, spec) {
     timeout: 30000,
     waitUntil: "domcontentloaded",
   });
+
+  if (spec.path === "/admin/daily-briefs") {
+    const localUnlock = page.getByText("以本機開發模式進入", { exact: false }).first();
+    try {
+      if ((await localUnlock.count()) > 0 && (await localUnlock.isVisible({ timeout: 750 }))) {
+        await localUnlock.click();
+      }
+    } catch {
+      // Password-protected or locked admin environments are still valid for smoke QA.
+    }
+  }
+
   await page.waitForLoadState("networkidle", { timeout: 10000 }).catch(() => undefined);
   await page.waitForTimeout(500);
 

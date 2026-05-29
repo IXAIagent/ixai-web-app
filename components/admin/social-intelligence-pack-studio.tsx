@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { IxaiLogo } from "@/components/brand/ixai-logo";
 import {
   generateDailySocialPack,
@@ -17,6 +17,9 @@ type SocialIntelligencePackStudioProps = {
   defaultKind?: SocialPackKind;
 };
 
+const EXPORT_WIDTH = 1080;
+const EXPORT_HEIGHT = 1920;
+
 function packSourceLabel(pack: SocialIntelligencePack) {
   if (!pack.sourceBriefId) {
     return "safe editorial fallback";
@@ -25,7 +28,26 @@ function packSourceLabel(pack: SocialIntelligencePack) {
   return `${pack.kind} source · ${pack.sourceBriefId.slice(0, 18)}`;
 }
 
-function SlidePreview({ pack, index }: { pack: SocialIntelligencePack; index: number }) {
+function createFileName(kind: SocialPackKind, index: number) {
+  return `${kind}-social-pack-${String(index + 1).padStart(2, "0")}.png`;
+}
+
+function downloadDataUrl(dataUrl: string, fileName: string) {
+  const link = document.createElement("a");
+  link.download = fileName;
+  link.href = dataUrl;
+  link.click();
+}
+
+function SlidePreview({
+  index,
+  pack,
+  slideRef,
+}: {
+  index: number;
+  pack: SocialIntelligencePack;
+  slideRef?: (node: HTMLElement | null) => void;
+}) {
   const slide = pack.slides[index];
 
   if (!slide) {
@@ -38,6 +60,8 @@ function SlidePreview({ pack, index }: { pack: SocialIntelligencePack; index: nu
   return (
     <article
       className="relative flex w-full max-w-[280px] flex-col overflow-hidden rounded-lg border p-5 shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
+      data-social-slide={`${pack.kind}-${index + 1}`}
+      ref={slideRef}
       style={{
         aspectRatio: "9 / 16",
         backgroundColor: socialBrandTokens.forest,
@@ -124,12 +148,31 @@ function SlidePreview({ pack, index }: { pack: SocialIntelligencePack; index: nu
   );
 }
 
-function SocialPackPreview({ pack }: { pack: SocialIntelligencePack }) {
+function SocialPackPreview({
+  onDownload,
+  pack,
+  registerSlide,
+}: {
+  onDownload: (index: number) => void;
+  pack: SocialIntelligencePack;
+  registerSlide: (index: number, node: HTMLElement | null) => void;
+}) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
       {pack.slides.map((slide, index) => (
-        <div className="flex justify-center" key={slide.id}>
-          <SlidePreview index={index} pack={pack} />
+        <div className="grid justify-items-center gap-3" key={slide.id}>
+          <SlidePreview
+            index={index}
+            pack={pack}
+            slideRef={(node) => registerSlide(index, node)}
+          />
+          <button
+            className="w-full max-w-[280px] rounded-lg border border-[rgba(176,141,87,0.28)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] transition hover:bg-[rgba(176,141,87,0.1)]"
+            onClick={() => onDownload(index)}
+            type="button"
+          >
+            Download PNG
+          </button>
         </div>
       ))}
     </div>
@@ -143,10 +186,17 @@ export function SocialIntelligencePackStudio({
 }: SocialIntelligencePackStudioProps) {
   const [activeKind, setActiveKind] = useState<SocialPackKind>(defaultKind);
   const [copyState, setCopyState] = useState("Caption ready for manual publishing.");
+  const [exportState, setExportState] = useState("PNG export ready.");
+  const [isExporting, setIsExporting] = useState(false);
+  const slideRefs = useRef<Array<HTMLElement | null>>([]);
 
   const dailyPack = useMemo(() => generateDailySocialPack(dailyDraft), [dailyDraft]);
   const weeklyPack = useMemo(() => generateWeeklySocialPack(weeklyDraft), [weeklyDraft]);
   const activePack = activeKind === "daily" ? dailyPack : weeklyPack;
+
+  function registerSlide(index: number, node: HTMLElement | null) {
+    slideRefs.current[index] = node;
+  }
 
   async function copyCaption() {
     try {
@@ -154,6 +204,66 @@ export function SocialIntelligencePackStudio({
       setCopyState("Caption copied. Review before posting to FB / IG / LINE.");
     } catch {
       setCopyState("Copy unavailable in this browser. Select the caption text manually.");
+    }
+  }
+
+  async function exportSlide(index: number) {
+    const node = slideRefs.current[index];
+
+    if (!node) {
+      setExportState("Slide is not ready yet. Open the preview and try again.");
+      return;
+    }
+
+    setIsExporting(true);
+    setExportState(`Exporting ${createFileName(activePack.kind, index)}...`);
+
+    try {
+      const { toPng } = await import("html-to-image");
+      const dataUrl = await toPng(node, {
+        backgroundColor: socialBrandTokens.forest,
+        cacheBust: true,
+        canvasHeight: EXPORT_HEIGHT,
+        canvasWidth: EXPORT_WIDTH,
+        pixelRatio: 1,
+      });
+      downloadDataUrl(dataUrl, createFileName(activePack.kind, index));
+      setExportState(`${createFileName(activePack.kind, index)} exported at ${EXPORT_WIDTH} × ${EXPORT_HEIGHT}.`);
+    } catch {
+      setExportState("PNG export failed in this browser. Please retry after images finish loading.");
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
+  async function exportCurrentPack() {
+    setIsExporting(true);
+    setExportState(`Exporting ${activePack.kind} pack...`);
+
+    try {
+      const { toPng } = await import("html-to-image");
+
+      for (const [index, node] of slideRefs.current.entries()) {
+        if (!node || index >= activePack.slides.length) {
+          continue;
+        }
+
+        const dataUrl = await toPng(node, {
+          backgroundColor: socialBrandTokens.forest,
+          cacheBust: true,
+          canvasHeight: EXPORT_HEIGHT,
+          canvasWidth: EXPORT_WIDTH,
+          pixelRatio: 1,
+        });
+        downloadDataUrl(dataUrl, createFileName(activePack.kind, index));
+        await new Promise((resolve) => window.setTimeout(resolve, 180));
+      }
+
+      setExportState(`${activePack.title} exported as ${EXPORT_WIDTH} × ${EXPORT_HEIGHT} PNG slides.`);
+    } catch {
+      setExportState("Export Current Pack failed. Try downloading slides individually.");
+    } finally {
+      setIsExporting(false);
     }
   }
 
@@ -242,12 +352,35 @@ export function SocialIntelligencePackStudio({
             </p>
           </div>
           <span className="w-fit rounded-md border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.1)] px-3 py-1 text-xs text-[var(--ixai-gold)]">
-            Screenshot-ready preview
+            1080 × 1920 PNG export
           </span>
         </div>
-        <div className="mt-5 overflow-x-hidden">
-          <SocialPackPreview pack={activePack} />
+        <div className="mt-4 flex flex-col gap-3 rounded-lg border border-[rgba(176,141,87,0.22)] bg-[rgba(176,141,87,0.08)] p-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+              Export Controls
+            </p>
+            <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.56)]">
+              Export PNG preserves logo, IXAI Intelligence header, footer, and disclaimer. Publishing remains manual.
+            </p>
+          </div>
+          <button
+            className="rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[var(--ixai-forest)] disabled:cursor-wait disabled:opacity-60"
+            disabled={isExporting}
+            onClick={exportCurrentPack}
+            type="button"
+          >
+            {isExporting ? "Exporting..." : "Export Current Pack"}
+          </button>
         </div>
+        <div className="mt-5 overflow-x-hidden">
+          <SocialPackPreview
+            onDownload={exportSlide}
+            pack={activePack}
+            registerSlide={registerSlide}
+          />
+        </div>
+        <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.5)]">{exportState}</p>
       </div>
 
       <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_0.62fr]">
@@ -278,12 +411,12 @@ export function SocialIntelligencePackStudio({
             Export Status
           </p>
           <p className="mt-2">
-            PNG export is pending for the future Publish Center. This version provides fixed
-            9:16 preview cards that are ready for browser screenshot or design review.
+            Export produces download-ready PNG files for manual FB / IG / LINE publishing.
+            The current pack exports each card at 1080 × 1920.
           </p>
           <div className="mt-3 grid gap-2 rounded-md border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
-            <p>Future: PNG Export.</p>
             <p>Future: Publish Center with approval-ready publishing queue.</p>
+            <p>Future: optional ZIP packaging after compliance review.</p>
           </div>
           <p className="mt-3 rounded-md border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
             {activePack.disclaimer} Automated FB / IG / LINE publishing remains off.

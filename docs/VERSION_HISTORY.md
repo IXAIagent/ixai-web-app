@@ -447,3 +447,32 @@ Out of Scope:
 - Auto publishing.
 - Portfolio Intelligence.
 - AI Alert Engine.
+
+## v1.40.6b — Social Pack PNG Export
+
+Why:
+
+- Social Packs were already previewable but still required manual screenshots.
+- Export-ready PNG assets reduce friction for daily FB, IG, and LINE distribution.
+
+What Changed:
+
+- Added PNG export capability.
+- Added download-ready Daily and Weekly Social Pack assets.
+- Preserved logo, footer, disclaimer, and brand identity.
+- Improved editorial workflow efficiency.
+
+Key Decisions:
+
+- Export assets remain manual publishing assets.
+- Human review remains mandatory.
+- Export should be lightweight and browser-based.
+
+Out of Scope:
+
+- Auto publishing.
+- Publish Center.
+- Meta API integration.
+- LINE Broadcast API integration.
+- Portfolio Intelligence.
+- AI Alert Engine.

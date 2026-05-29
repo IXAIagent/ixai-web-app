@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.6a`
+`v1.40.6b`
 
 ## Current Product Flow
 
@@ -169,16 +169,25 @@ Completed:
 - Added institutional research visual language.
 - Standardized footer, disclaimer, and logo placement.
 
+### v1.40.6b — Social Pack PNG Export
+
+Completed:
+
+- Added PNG export capability.
+- Added download-ready social assets.
+- Preserved brand identity and disclaimer layer.
+- Removed dependency on manual screenshots.
+
 ## Next Suggested Version
 
 `v1.40.7 — Publish Center Foundation`
 
 Goal:
 
-- Prepare reviewed Social Packs for manual publishing workflow.
+- Prepare approved Social Packs for publication workflow.
 - Create approval-ready publishing queue.
 - Keep human approval before publishing.
-- Explore FB / IG / LINE integration only after compliance review.
+- Do not auto-publish.
 
 ## Future Roadmap
 

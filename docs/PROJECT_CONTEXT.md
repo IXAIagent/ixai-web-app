@@ -24,7 +24,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.40.6a`
+`v1.40.6b`
 
 Current Core Flow:
 
@@ -59,11 +59,11 @@ LINE Delivery Foundation now adds local/session-first delivery preferences, Acco
 
 Mobile Visual QA readiness now adds a lightweight 390px browser smoke check for public, account/pro gated, and admin surfaces. The QA script verifies route load, no obvious application/hydration error text, no horizontal overflow, and route-specific key UI text.
 
-Social Intelligence Engine foundation now turns reviewed Daily / Weekly Intelligence into manual FB / IG / LINE social content packs. The current implementation provides 9:16 story-style preview cards, caption drafts, 一玄 / IXAI visual framing, official logo usage, reusable brand tokens, and compliance footnotes for human-reviewed manual publishing only.
+Social Intelligence Engine foundation now turns reviewed Daily / Weekly Intelligence into manual FB / IG / LINE social content packs. The current implementation provides 9:16 story-style preview cards, caption drafts, 一玄 / IXAI visual framing, official logo usage, reusable brand tokens, client-side PNG export, and compliance footnotes for human-reviewed manual publishing only.
 
 Current Highest Priorities:
 
-1. Social Pack Export / Publish Center.
+1. Publish Center Foundation.
 2. Portfolio Intelligence.
 3. AI Alert Engine.
 4. Dynamic Intelligence Provider Integration.
@@ -92,6 +92,8 @@ Completed product capabilities include:
 - 一玄品牌化 Daily / Weekly visual content framework for social distribution using forest green, muted gold, cream, and institutional editorial tone.
 - Brand asset integration for Social Intelligence Engine using the official `/logo/ixuan-logo.png` asset.
 - Consistent 一玄 / IXAI visual identity, institutional research branding, standardized Social Pack footer, and reusable social brand token structure.
+- Social Pack PNG Export: Daily / Weekly Social Pack slides can be downloaded as 1080 × 1920 PNG assets.
+- Screenshot workflow is no longer required for Social Pack distribution assets.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -202,7 +204,7 @@ Known areas that require care:
 - Browser binaries should not be committed.
 - Social packs are manual publishing assets.
 - Automatic FB / IG / LINE publishing is not active.
-- Social Pack PNG export and Publish Center remain future work.
+- Publish Center remains future work.
 - CTA and product wording should reinforce one flow: Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest. Intelligence Preview is secondary, not the default next step after onboarding.
 - Share pages are acquisition surfaces; keep them educational, intelligence-first, and clearly connected to onboarding / preview / LINE.
 

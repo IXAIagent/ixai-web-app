@@ -251,6 +251,14 @@ Social Brand Rules:
 - Marketing assets must not resemble trading signal advertisements.
 - The official brand logo source for Social Pack templates is `/logo/ixuan-logo.png`.
 
+Social Pack Export Rules:
+
+- Exported PNG assets must preserve approved branding.
+- Logo, footer, and disclaimer must remain visible.
+- PNG export must not imply automated publishing.
+- Export assets remain subject to editorial review.
+- Export tooling should stay browser-based and lightweight unless a future Publish Center is explicitly approved.
+
 Pro surfaces may provide, once implemented:
 
 - Portfolio Intelligence.

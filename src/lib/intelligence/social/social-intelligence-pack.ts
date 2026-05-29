@@ -36,7 +36,8 @@ export type SocialIntelligencePack = {
 };
 
 const APP_URL = "app.ixuan.ai";
-const DISCLAIMER = "市場資訊與教育分享，非個人化投資建議。";
+const DISCLAIMER =
+  "市場資訊與教育分享，非個人化投資建議。Market intelligence and education only. Not personalized investment advice.";
 export const socialBrandTokens = {
   cream: "#F4F0E6",
   dark: "#071A16",
