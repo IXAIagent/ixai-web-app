@@ -27,6 +27,15 @@ function inferOpenEvent(pathname: string): AnalyticsEventName | null {
   return null;
 }
 
+function isPublicIntelligencePath(pathname: string) {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/daily-brief") ||
+    pathname.startsWith("/share") ||
+    pathname.startsWith("/weekly-brief")
+  );
+}
+
 function shouldTrackReadDepth(pathname: string) {
   return pathname.startsWith("/daily-brief/") || pathname.startsWith("/weekly-brief/");
 }
@@ -71,6 +80,17 @@ export function PageViewTracker() {
 
     if (openEvent) {
       safeTrack(openEvent, {
+        surface,
+        path,
+        timestamp,
+        attribution,
+        deviceType,
+        referrer,
+      });
+    }
+
+    if (isPublicIntelligencePath(pathname)) {
+      safeTrack("public_intelligence_view", {
         surface,
         path,
         timestamp,

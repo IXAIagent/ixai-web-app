@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AlertTriangle, ArrowLeft, ArrowUpRight, Eye } from "lucide-react";
 import { DailyBriefLocalDetail } from "@/components/daily-brief/daily-brief-local-detail";
 import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
+import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
 import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import {
   BreadcrumbStructuredData,
@@ -120,6 +121,14 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
               Daily Brief / {brief.publishedAt}
             </p>
+            <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70">
+              <span className="rounded-lg border border-white/12 px-2.5 py-1">
+                Public Intelligence
+              </span>
+              <span className="rounded-lg border border-white/12 px-2.5 py-1">
+                General Market Awareness
+              </span>
+            </div>
             <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
               {brief.title}
             </h1>
@@ -268,6 +277,8 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
       />
 
       <ProUpgradeCard feature="premium_daily" surface="daily_slug_bottom" />
+
+      <PublicIntelligenceCta surface="daily_slug_bottom" />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">

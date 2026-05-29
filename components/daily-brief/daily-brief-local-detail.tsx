@@ -5,6 +5,7 @@ import { AlertTriangle, ListChecks } from "lucide-react";
 import { useEffect, useState } from "react";
 import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
+import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
 import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import { ixaiSiteUrl } from "@/src/lib/brand/metadata";
 import { buildDailyShareCopy } from "@/src/lib/share/share-copy";
@@ -86,6 +87,14 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
           Daily Brief / {brief.publishedAt}
         </p>
+        <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70">
+          <span className="rounded-lg border border-white/12 px-2.5 py-1">
+            Public Intelligence
+          </span>
+          <span className="rounded-lg border border-white/12 px-2.5 py-1">
+            General Market Awareness
+          </span>
+        </div>
         <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">
           {brief.title}
         </h1>
@@ -325,6 +334,8 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
       </section>
 
       <ProUpgradeCard feature="premium_daily" surface="daily_slug_bottom" />
+
+      <PublicIntelligenceCta surface="daily_slug_bottom" />
     </article>
   );
 }

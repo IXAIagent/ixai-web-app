@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, BookOpen, CircleDot, Share2 } from "lucide-react";
 import type { Metadata } from "next";
+import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
 import { ShareActions } from "@/components/share/share-actions";
 import { ShareIntelligenceCard } from "@/components/share/share-intelligence-card";
 import { ShareIntelligenceCtaRow } from "@/components/share/share-intelligence-cta-row";
@@ -66,6 +67,14 @@ export default async function ShareIntelligencePage({
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
               {item.category}
             </p>
+            <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70">
+              <span className="rounded-lg border border-white/12 px-2.5 py-1">
+                Public Intelligence
+              </span>
+              <span className="rounded-lg border border-white/12 px-2.5 py-1">
+                Sample / General Market Awareness
+              </span>
+            </div>
             <h1 className="mt-3 max-w-3xl font-serif text-3xl font-semibold leading-tight sm:text-5xl">
               {item.title}
             </h1>
@@ -173,6 +182,8 @@ export default async function ShareIntelligencePage({
           <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-cream)]" aria-hidden="true" />
         </Link>
       </section>
+
+      <PublicIntelligenceCta surface={`share_intelligence_${item.slug}`} />
     </div>
   );
 }

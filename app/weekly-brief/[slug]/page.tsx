@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight, CalendarDays, ShieldCheck } from "lucide-react";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
+import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
 import {
   BreadcrumbStructuredData,
   NewsArticleStructuredData,
@@ -114,6 +115,14 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
           Weekly Intelligence
         </p>
+        <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70">
+          <span className="rounded-lg border border-white/12 px-2.5 py-1">
+            Public Intelligence
+          </span>
+          <span className="rounded-lg border border-white/12 px-2.5 py-1">
+            General Market Awareness
+          </span>
+        </div>
         <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
           {brief.title}
         </h1>
@@ -463,6 +472,8 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
       />
 
       <ProUpgradeCard feature="premium_weekly" surface="weekly_slug_bottom" />
+
+      <PublicIntelligenceCta surface="weekly_slug_bottom" />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">

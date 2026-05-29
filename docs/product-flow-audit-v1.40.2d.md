@@ -351,3 +351,28 @@ Share Intelligence (/share/intelligence/*)
 → Onboarding (/onboarding)
 → Account (/account)
 ```
+
+## v1.40.2f Public Intelligence Access Result
+
+Implemented follow-up: `v1.40.2f — Public Intelligence Access Layer`.
+
+Product funnel adjustment:
+
+```text
+LINE / Social / Share
+→ Daily Brief / Weekly Intelligence / Share Intelligence
+→ Onboarding
+→ Account / AI Intelligence Workspace
+→ Personal Intelligence / Future Pro
+```
+
+Changes made:
+
+- Daily Brief and Weekly Intelligence routes are public readable before login.
+- Share Intelligence routes remain public acquisition surfaces.
+- Account, Pro, Pro Preview, Pro Intelligence, and admin surfaces remain gated/protected.
+- Public content detail pages now include a bottom `PublicIntelligenceCta`.
+- Public content detail pages now label content as `Public Intelligence` and `General Market Awareness`.
+- Public intelligence analytics events were added for views and CTA clicks.
+
+This keeps the highest-trust content visible from LINE / social links while still moving users toward onboarding and account setup after they have read the intelligence.

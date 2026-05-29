@@ -39,6 +39,14 @@ Prefer CTA wording such as "開始 Onboarding", "建立 Intelligence Layer", "�
 
 Share routes under `/share` are public acquisition surfaces. They must stay educational, risk-aware, and connected to onboarding / preview / LINE without implying investment advice or live personalized monitoring.
 
+Public Intelligence access rule:
+
+```text
+LINE / Social / Share → Daily / Weekly / Share Intelligence → Onboarding → Account → Personal Intelligence
+```
+
+Daily Brief, Weekly Intelligence, Share Intelligence, and the root landing are public trust-building surfaces. Do not put an account wall before public content reading. Account, Pro, Pro Preview, Pro Intelligence, admin, and sensitive APIs must remain protected or gated according to their existing route policy.
+
 ## B. Design System Rules
 
 CTA and icon color rules:

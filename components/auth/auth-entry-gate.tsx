@@ -7,18 +7,16 @@ import { useIdentity } from "@/components/auth/auth-provider";
 
 const exemptPathPrefixes = [
   "/about",
-  "/account",
   "/admin",
   "/app-preview",
+  "/daily-brief",
   "/feedback",
   "/liff",
   "/login",
   "/onboarding",
-  "/pro",
-  "/pro-intelligence",
-  "/pro-preview",
   "/register",
   "/share",
+  "/weekly-brief",
   "/welcome",
 ];
 

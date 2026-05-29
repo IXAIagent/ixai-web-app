@@ -127,6 +127,9 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
         pathname === "/about" ||
         pathname === "/feedback" ||
         pathname === "/app-preview" ||
+        pathname.startsWith("/daily-brief") ||
+        pathname.startsWith("/share") ||
+        pathname.startsWith("/weekly-brief") ||
         pathname.startsWith("/admin") ||
         pathname.startsWith("/auth");
 
