@@ -47,6 +47,14 @@ LINE / Social / Share → Daily / Weekly / Share Intelligence → Onboarding →
 
 Daily Brief, Weekly Intelligence, Share Intelligence, and the root landing are public trust-building surfaces. Do not put an account wall before public content reading. Account, Pro, Pro Preview, Pro Intelligence, admin, and sensitive APIs must remain protected or gated according to their existing route policy.
 
+Public Route Gate rules:
+
+- Public Intelligence routes must not be blocked by `AuthEntryGate` or session hydration.
+- Public content routes should render before account creation.
+- Auth/session checks may enhance CTA state but must not prevent public content reading.
+- Protected routes such as account, admin, Pro Intelligence, and sensitive APIs must remain gated through their existing route-specific protection.
+- Public route allowlists must be kept explicit and audited when new public acquisition routes are added.
+
 ## B. Design System Rules
 
 CTA and icon color rules:

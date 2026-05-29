@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.3a`
+`v1.40.3b`
 
 ## Current Product Flow
 
@@ -112,6 +112,14 @@ Completed:
 - Compliance review.
 - Public-to-Account narrative alignment.
 - Risk Regime explanatory layer.
+
+### v1.40.3b — Public Route Gate Hydration Fix
+
+Completed:
+
+- Fixed public route gate / hydration behavior for Public Intelligence routes.
+- Preserved public readability for Landing, Daily Brief, Weekly Brief, and Share Intelligence.
+- Preserved protected access boundaries for Account, Admin, and Pro Intelligence.
 
 ## Next Version
 

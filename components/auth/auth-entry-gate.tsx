@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { useIdentity } from "@/components/auth/auth-provider";
 
-const exemptPathPrefixes = [
+const publicRoutePrefixes = [
   "/about",
   "/admin",
   "/app-preview",
@@ -14,18 +14,48 @@ const exemptPathPrefixes = [
   "/liff",
   "/login",
   "/onboarding",
+  "/pro",
+  "/pro-preview",
   "/register",
   "/share",
   "/weekly-brief",
   "/welcome",
 ];
 
-function isExemptPath(pathname: string) {
-  if (pathname === "/") {
+function normalizePathname(pathname: string | null | undefined) {
+  if (!pathname) {
+    return null;
+  }
+
+  if (pathname.startsWith("http://") || pathname.startsWith("https://")) {
+    return new URL(pathname).pathname;
+  }
+
+  return pathname.startsWith("/") ? pathname : `/${pathname}`;
+}
+
+function getHydrationSafePathname(pathname: string | null) {
+  if (typeof window !== "undefined") {
+    return normalizePathname(window.location.pathname);
+  }
+
+  return normalizePathname(pathname);
+}
+
+function isPublicRoute(pathname: string | null | undefined) {
+  const normalizedPathname = normalizePathname(pathname);
+
+  if (normalizedPathname === "/") {
     return true;
   }
 
-  return exemptPathPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  if (!normalizedPathname) {
+    return false;
+  }
+
+  return publicRoutePrefixes.some(
+    (prefix) => normalizedPathname === prefix || normalizedPathname.startsWith(`${prefix}/`),
+  );
 }
 
 function AuthEntryShell({
@@ -45,8 +75,9 @@ function AuthEntryShell({
 export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
   const { mounted, session } = useIdentity();
+  const currentPathname = getHydrationSafePathname(pathname);
 
-  if (isExemptPath(pathname)) {
+  if (isPublicRoute(currentPathname)) {
     return <>{children}</>;
   }
 

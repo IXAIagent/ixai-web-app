@@ -256,3 +256,32 @@ Out of Scope:
 - Stripe.
 - Automated trading.
 - Personalized recommendations.
+
+## v1.40.3b — Public Route Gate Hydration Fix
+
+Why:
+
+- Public Intelligence Engine must remain readable from LINE, social, and share links before account creation.
+- Browser QA found existing AuthEntryGate / hydration behavior could show an entry shell on public routes.
+
+What Changed:
+
+- Audited public route gating and session hydration behavior.
+- Ensured Public Intelligence and Share routes render public content without auth blocking.
+- Preserved protected boundaries for Account, Admin, Pro Intelligence, and sensitive routes.
+
+Key Decisions:
+
+- Public Intelligence is a trust-building acquisition surface and must not be account-gated.
+- Auth/session hydration may personalize CTA state but must not block public reading.
+- Protected product areas remain gated.
+
+Out of Scope:
+
+- Auth architecture rewrite.
+- LINE / LIFF changes.
+- Supabase schema changes.
+- Portfolio DB.
+- Stripe.
+- Market/news provider changes.
+- FCN engine changes.
