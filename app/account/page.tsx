@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, Bug, MessageSquare } from "lucide-react";
+import { WatchlistIntelligenceLite } from "@/components/account/watchlist-intelligence-lite";
 import { AccountPanel } from "@/components/auth/account-panel";
 import { DeliveryPreferenceCard } from "@/components/intelligence/delivery-preference-card";
 import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
@@ -36,6 +37,8 @@ export default function AccountPage() {
       </section>
 
       <AccountPanel />
+
+      <WatchlistIntelligenceLite />
 
       <ConnectLineCard source="account" />
 

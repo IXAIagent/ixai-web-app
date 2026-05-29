@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.3b`
+`v1.40.4`
 
 ## Current Product Flow
 
@@ -55,7 +55,7 @@ Does not include:
 
 Purpose:
 
-- Future Watchlist Intelligence Lite.
+- Watchlist Intelligence Lite.
 - Identity continuity.
 - Preference memory.
 - LINE readiness.
@@ -64,7 +64,8 @@ Current status:
 
 - Account is the AI Intelligence Workspace.
 - Onboarding state is local/session-first.
-- Watchlist and delivery preferences are foundation-level.
+- Watchlist Intelligence Lite surfaces onboarding seed, markets, and interests as lightweight market memory.
+- Delivery preferences are foundation-level.
 
 ### Pro Intelligence
 
@@ -121,25 +122,26 @@ Completed:
 - Preserved public readability for Landing, Daily Brief, Weekly Brief, and Share Intelligence.
 - Preserved protected access boundaries for Account, Admin, and Pro Intelligence.
 
+### v1.40.4 — Watchlist Intelligence Lite
+
+Completed:
+
+- Account Intelligence Workspace now surfaces onboarding watchlist seed.
+- Added lightweight intelligence memory for selected markets, symbols, and interests.
+- Mapped user interests to Public Intelligence modules.
+- Preserved local/session-first model and non-advisory positioning.
+
 ## Next Version
 
-`v1.40.4 — Watchlist Intelligence Lite`
-
-Goal:
-
-- Turn basic watchlist setup into lightweight intelligence memory.
-- Preserve local/session-first model unless persistence is explicitly requested.
-- Avoid portfolio-style claims.
-
-## Future Roadmap
-
-### v1.40.5 — LINE Delivery Foundation
+`v1.40.5 — LINE Delivery Foundation`
 
 Goal:
 
 - Move from LINE readiness to explicit opt-in delivery design.
 - Prepare delivery logs, unsubscribe/pause controls, and safe public intelligence templates.
 - Do not launch push automation without explicit approval.
+
+## Future Roadmap
 
 ### v1.41 — Portfolio Intelligence
 

@@ -285,3 +285,35 @@ Out of Scope:
 - Stripe.
 - Market/news provider changes.
 - FCN engine changes.
+
+## v1.40.4 — Watchlist Intelligence Lite
+
+Why:
+
+- IXAI needed to make the Account surface feel like an AI Intelligence Workspace rather than a static profile page.
+- Onboarding preferences and watchlist seed needed to become visible as lightweight market memory.
+
+What Changed:
+
+- Added Watchlist Intelligence Lite foundation.
+- Surfaced onboarding watchlist seed and intelligence preferences in the Account workspace.
+- Mapped selected markets, symbols, and interests to relevant Public Intelligence modules.
+- Added empty state for users who have not completed onboarding.
+- Reinforced that Watchlist Intelligence Lite is topic organization, not personalized advice.
+
+Key Decisions:
+
+- Watchlist Intelligence Lite remains local/session-first.
+- Watchlist memory is about relevance and workflow, not portfolio analysis.
+- Account Intelligence is the bridge between Public Intelligence and future Pro Intelligence.
+
+Out of Scope:
+
+- Supabase persistence migration.
+- Portfolio DB.
+- Broker integration.
+- Buy/sell recommendations.
+- Target prices.
+- Personal FCN risk conclusions.
+- LINE push automation.
+- Stripe or paid entitlement.

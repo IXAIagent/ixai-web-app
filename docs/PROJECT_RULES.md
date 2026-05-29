@@ -205,6 +205,15 @@ Account surfaces may provide:
 - LINE readiness.
 - Future delivery setup.
 
+Watchlist Intelligence Lite Rules:
+
+- Watchlist Intelligence Lite may organize user-selected symbols, markets, and themes.
+- It must not imply holdings, position size, cost basis, or portfolio risk.
+- It must not generate buy/sell recommendations, target prices, or trading instructions.
+- It should connect user interests to public intelligence modules.
+- It must preserve local/session-first behavior unless a persistence migration is explicitly approved.
+- It should route users toward Account Intelligence, LINE readiness, and Future Pro Interest without implying paid advice.
+
 Pro surfaces may provide, once implemented:
 
 - Portfolio Intelligence.
