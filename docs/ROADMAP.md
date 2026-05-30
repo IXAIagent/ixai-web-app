@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.6d`
+`v1.41.0`
 
 ## Current Product Flow
 
@@ -197,13 +197,41 @@ Completed:
 - Added content compression rules.
 - Improved export readiness for FB / IG / LINE.
 
+### v1.41.0 — Daily Intelligence Content Engine Upgrade
+
+Completed:
+
+- Executive Summary section.
+- Macro Watch.
+- AI Tech Watch.
+- Crypto Watch.
+- Risk Regime reasoning.
+- FCN Awareness.
+- I-Xuan View.
+- Provider Health.
+- Coverage Score.
+- Content Quality Score.
+
 Next:
 
-`v1.40.7 — Publish Center Foundation`
+`v1.41.1 — Provider Expansion & Source Recovery`
 
 ## Next Suggested Version
 
-`v1.40.7 — Publish Center Foundation`
+`v1.41.1 — Provider Expansion & Source Recovery`
+
+Goal:
+
+- Recover Reuters.
+- Recover CNBC.
+- Recover Seeking Alpha.
+- Recover Nasdaq.
+- Recover Taiwan providers.
+- Improve provider health and coverage reliability before expanding personalization.
+
+## Future Roadmap
+
+### v1.40.7 — Publish Center Foundation
 
 Goal:
 
@@ -212,9 +240,7 @@ Goal:
 - Keep human approval before publishing.
 - Do not auto-publish.
 
-## Future Roadmap
-
-### v1.41 — Portfolio Intelligence
+### Portfolio Intelligence
 
 
 Goal:
@@ -222,7 +248,7 @@ Goal:
 - Establish future portfolio onboarding and relevance model.
 - Keep it informational and risk-aware.
 - Do not implement broker integration or automated trading.
-- Before v1.41, mobile QA should remain part of done criteria for Account and Pro surfaces.
+- Mobile QA should remain part of done criteria for Account and Pro surfaces before portfolio expansion.
 
 ### v1.42 — AI Alert Engine
 

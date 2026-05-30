@@ -481,19 +481,75 @@ async function fetchWithTimeout(url: string) {
   }
 }
 
+function normalizeHeadline(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokenSet(value: string) {
+  return new Set(normalizeHeadline(value).split(/\s+/).filter((token) => token.length > 1));
+}
+
+function headlineSimilarity(left: string, right: string) {
+  const leftTokens = tokenSet(left);
+  const rightTokens = tokenSet(right);
+
+  if (!leftTokens.size || !rightTokens.size) {
+    return 0;
+  }
+
+  let overlap = 0;
+
+  for (const token of leftTokens) {
+    if (rightTokens.has(token)) {
+      overlap += 1;
+    }
+  }
+
+  return overlap / Math.max(leftTokens.size, rightTokens.size);
+}
+
+function priorityScore(item: NormalizedNewsItem) {
+  const text = `${item.title} ${item.summary ?? ""} ${item.tags?.join(" ") ?? ""}`.toLowerCase();
+  let score = 0;
+
+  if (item.category === "rates" || item.category === "macro") score += 25;
+  if (item.category === "ai_tech" || item.category === "semiconductors") score += 22;
+  if (item.category === "crypto") score += 16;
+  if (item.category === "risk") score += 18;
+  if (item.category === "taiwan") score += 14;
+  if (containsAny(text, ["fed", "fomc", "treasury", "yield", "rates", "inflation"])) score += 18;
+  if (containsAny(text, ["nvidia", "nvda", "microsoft", "msft", "amd", "avgo", "pltr"])) score += 18;
+  if (containsAny(text, ["bitcoin", "btc", "ethereum", "eth", "stablecoin", "etf flow"])) score += 14;
+  if (containsAny(text, ["fcn", "knock-in", "knock out", "worst-of", "ki", "ko"])) score += 10;
+
+  return score;
+}
+
 function dedupeItems(items: NormalizedNewsItem[]) {
   const seen = new Set<string>();
+  const selected: NormalizedNewsItem[] = [];
 
-  return items.filter((item) => {
-    const key = `${item.url ?? ""}:${item.title.toLowerCase()}`;
+  for (const item of [...items].sort((a, b) => priorityScore(b) - priorityScore(a))) {
+    const normalizedTitle = normalizeHeadline(item.title);
+    const urlKey = item.url ? item.url.replace(/[#?].*$/, "").toLowerCase() : "";
+    const exactKey = `${urlKey}:${normalizedTitle}`;
 
-    if (seen.has(key)) {
-      return false;
+    if (
+      seen.has(exactKey) ||
+      selected.some((candidate) => headlineSimilarity(candidate.title, item.title) >= 0.82)
+    ) {
+      continue;
     }
 
-    seen.add(key);
-    return true;
-  });
+    seen.add(exactKey);
+    selected.push(item);
+  }
+
+  return selected;
 }
 
 function asSourceStatus(
@@ -502,6 +558,8 @@ function asSourceStatus(
   itemCount: number,
   reason?: string,
 ): NewsSourceStatus {
+  const checkedAt = new Date().toISOString();
+
   return {
     id: source.id,
     label: source.label,
@@ -509,6 +567,9 @@ function asSourceStatus(
     status,
     itemCount,
     reason,
+    errorReason: status === "failed" || status === "disabled" ? reason : undefined,
+    lastCheckedAt: checkedAt,
+    lastSuccessAt: status === "success" ? checkedAt : undefined,
   };
 }
 
@@ -528,6 +589,8 @@ export function getFallbackNewsIntakeResult(previousSources: NewsSourceStatus[] 
       status: "fallback",
       itemCount: items.length,
       reason: "All real intake sources were unavailable or returned no usable items.",
+      errorReason: "All real intake sources were unavailable or returned no usable items.",
+      lastCheckedAt: fetchedAt,
     },
   ];
 
@@ -535,6 +598,8 @@ export function getFallbackNewsIntakeResult(previousSources: NewsSourceStatus[] 
     items,
     mode: "fallback",
     itemCount: items.length,
+    rawItemCount: items.length,
+    duplicatesRemoved: 0,
     fetchedAt,
     sources: sourceStatus,
     sourceStatus,
@@ -579,6 +644,7 @@ export async function getLatestNewsIntakeResult(): Promise<NewsIntakeResult> {
     }
   }
 
+  const rawItemCount = realItems.length;
   const deduped = dedupeItems(realItems).sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
   );
@@ -592,6 +658,8 @@ export async function getLatestNewsIntakeResult(): Promise<NewsIntakeResult> {
     items: deduped,
     mode: "real",
     itemCount: deduped.length,
+    rawItemCount,
+    duplicatesRemoved: Math.max(0, rawItemCount - deduped.length),
     fetchedAt: new Date().toISOString(),
     sources: sourceResults,
     sourceStatus: sourceResults,

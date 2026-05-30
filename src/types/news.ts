@@ -38,6 +38,9 @@ export type NewsSourceStatus = {
   status: "success" | "failed" | "disabled" | "fallback";
   itemCount: number;
   reason?: string;
+  lastSuccessAt?: string;
+  lastCheckedAt?: string;
+  errorReason?: string;
 };
 
 export type NormalizedNewsItem = {
@@ -65,6 +68,8 @@ export type NewsIntakeResult = {
   items: NormalizedNewsItem[];
   mode: NewsIntakeMode;
   itemCount: number;
+  rawItemCount?: number;
+  duplicatesRemoved?: number;
   fetchedAt: string;
   sources: NewsSourceStatus[];
   sourceStatus: NewsSourceStatus[];

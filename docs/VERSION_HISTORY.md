@@ -532,3 +532,38 @@ Out of Scope:
 - Auto publishing.
 - Portfolio Intelligence.
 - AI Alert Engine.
+
+## v1.41.0 — Daily Intelligence Content Engine Upgrade
+
+Why:
+
+- Daily Brief quality became the primary bottleneck for retention.
+- Content depth was more important than additional UI work.
+- Editors needed source health, coverage, and draft quality visibility before manual publish.
+
+What Changed:
+
+- Added structured Daily Intelligence sections.
+- Expanded content depth through Executive Summary, Macro Watch, AI / Tech Watch, Crypto Watch, Risk Regime reasoning, FCN Awareness, and I-Xuan View.
+- Added Provider Health monitoring.
+- Added Coverage Score for Macro, AI Tech, Crypto, Taiwan, and Risk.
+- Added Content Quality Score based on source count, coverage, diversity, content length, and insight depth.
+- Upgraded news deduplication and priority scoring around Fed, Treasury, NVDA, MSFT, BTC, and FCN-related terms.
+
+Key Decisions:
+
+- Content quality before UI.
+- Insight before summary.
+- Reading value before social distribution.
+- Provider coverage gaps should be visible to editors instead of hidden behind generic fallback drafts.
+
+Out of Scope:
+
+- Publish Center.
+- Auto publishing.
+- Portfolio Intelligence.
+- AI Alert Engine.
+- Supabase schema changes.
+- LINE / LIFF changes.
+- FCN engine changes.
+- PNG export or Social Pack UI changes.

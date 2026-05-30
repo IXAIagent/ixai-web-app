@@ -305,6 +305,18 @@ Public Intelligence Compliance Layer:
 - FCN Awareness is educational context only and must not imply personal FCN risk assessment, knock-in probability, product recommendation, guaranteed coupon, or principal protection.
 - Public Intelligence surfaces should reinforce onboarding and account journeys rather than direct trading actions.
 
+Daily Intelligence Rules:
+
+- Daily Brief must prioritize insight over summary.
+- Daily Brief should target 3-5 minute reading value.
+- Daily drafts should target 800-2000 words or equivalent CJK content depth.
+- Risk Regime must include reasoning, not only a single status label.
+- I-Xuan View must be present in every Daily Brief draft.
+- Executive Summary should surface the five most important points in concise form.
+- Macro Watch, AI / Tech Watch, Crypto Watch, Risk Regime, FCN Awareness, and I-Xuan View are required Daily Intelligence sections.
+- Daily Brief content must not include buy/sell recommendations, target prices, return promises, or personalized portfolio / FCN conclusions.
+- Editorial drafts that lack source coverage, content length, or insight depth should be visibly flagged before manual publish.
+
 ## I. Growth Rules
 
 Current stage:

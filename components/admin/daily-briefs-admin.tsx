@@ -8,9 +8,12 @@ import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
 import type {
   DailyBriefDraft,
   DailyBriefDraftStatus,
+  DailyContentQualityScore,
+  DailyCoverageScore,
   DailyIntelligenceProviderErrorReason,
   DailyIntelligenceProviderMode,
   DailyIntelligenceProviderStatus,
+  DailyProviderHealth,
   DailyDraftGenerationSummary,
   WeeklyIntelligenceDraft,
   WeeklyIntelligenceStatus,
@@ -51,6 +54,8 @@ type GenerationMeta = {
   errorReason?: DailyIntelligenceProviderErrorReason;
   errorMessage?: string;
   inputNewsCount: number;
+  coverageScore?: DailyCoverageScore;
+  contentQuality?: DailyContentQualityScore;
   sourceMode: "real" | "fallback";
   generatedAt: string;
   complianceNote?: string;
@@ -720,6 +725,9 @@ export function DailyBriefsAdmin() {
   const supabaseReady = isSupabaseClientConfigured();
   const intakeSources = intakeMeta?.sourceStatus ?? intakeMeta?.sources ?? [];
   const openAIStatus = generationMeta?.providerStatus ?? null;
+  const selectedCoverage = selectedDraft?.intelligence?.coverageScore ?? generationMeta?.coverageScore;
+  const selectedQuality = selectedDraft?.intelligence?.contentQuality ?? generationMeta?.contentQuality;
+  const selectedProviderHealth = selectedDraft?.intelligence?.providerHealth;
 
   const refresh = useCallback((nextDrafts?: DailyBriefDraft[]) => {
     const next = nextDrafts ?? getDrafts();
@@ -840,6 +848,8 @@ export function DailyBriefsAdmin() {
           providerMode: ai.providerMode,
           providerStatus: ai.providerStatus,
           inputNewsCount: ai.inputNewsCount,
+          coverageScore: ai.coverageScore,
+          contentQuality: ai.contentQuality,
           sourceStatus: intake.sourceStatus ?? intake.sources,
           schedulerConfigured: current?.schedulerConfigured ?? false,
           forced: false,
@@ -970,7 +980,7 @@ export function DailyBriefsAdmin() {
           </div>
         </section>
 
-        <div className="grid gap-4 xl:grid-cols-4">
+        <div className="grid gap-4 xl:grid-cols-5">
           <StatusCard
             status={intakeMeta?.mode === "real" ? "success" : intakeMeta ? "warning" : "muted"}
             title="News Intake Status"
@@ -1072,7 +1082,67 @@ export function DailyBriefsAdmin() {
               </span>
             </p>
           </StatusCard>
+
+          <StatusCard
+            status={selectedQuality?.status === "Insufficient Content Depth" ? "warning" : selectedQuality ? "success" : "muted"}
+            title="Content Quality Score"
+          >
+            {selectedQuality ? (
+              <>
+                <p>
+                  Score: <span className="text-[var(--ixai-cream)]">{selectedQuality.score} / 100</span>
+                </p>
+                <p>
+                  Depth: <span className="text-[var(--ixai-cream)]">{selectedQuality.status}</span>
+                </p>
+                <p>
+                  Content units: <span className="text-[var(--ixai-cream)]">{selectedQuality.contentLength}</span>
+                </p>
+              </>
+            ) : (
+              <p>Generate 後會顯示內容深度與品質分數。</p>
+            )}
+          </StatusCard>
         </div>
+
+        {selectedCoverage ? (
+          <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                  Coverage Score
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.46)]">
+                  Macro / AI Tech / Crypto / Taiwan / Risk coverage for editorial review.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+              {[
+                ["Macro", selectedCoverage.macro],
+                ["AI Tech", selectedCoverage.aiTech],
+                ["Crypto", selectedCoverage.crypto],
+                ["Taiwan", selectedCoverage.taiwan],
+                ["Risk", selectedCoverage.risk],
+              ].map(([label, score]) => (
+                <div className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2" key={label}>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[rgba(245,240,230,0.72)]">
+                      {label}
+                    </span>
+                    <span className="font-mono text-xs text-[var(--ixai-cream)]">{score}%</span>
+                  </div>
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full rounded-full bg-[var(--ixai-gold)]"
+                      style={{ width: `${Number(score)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {generationMeta ? (
           <section className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.07)] p-4 text-sm leading-6 text-[rgba(245,240,230,0.64)]">
@@ -1114,7 +1184,7 @@ export function DailyBriefsAdmin() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                  News Intake
+                  Provider Health
                 </p>
                 <p className="mt-1">
                   Source mode: <span className="text-[var(--ixai-cream)]">{intakeMeta.mode}</span> · Items used:{" "}
@@ -1129,14 +1199,19 @@ export function DailyBriefsAdmin() {
               </div>
             ) : null}
             <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-              {intakeSources.map((source) => (
+              {(selectedProviderHealth?.length ? selectedProviderHealth : intakeSources.map<DailyProviderHealth>((source) => ({
+                provider: source.label,
+                status: source.status,
+                lastSuccess: source.lastSuccessAt,
+                errorReason: source.errorReason ?? source.reason,
+              }))).map((source) => (
                 <div
                   className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2"
-                  key={source.id}
+                  key={source.provider}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[rgba(245,240,230,0.72)]">
-                      {source.label}
+                      {source.provider}
                     </span>
                     <span
                       className={`rounded px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${
@@ -1151,10 +1226,10 @@ export function DailyBriefsAdmin() {
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-[rgba(245,240,230,0.46)]">
-                    {source.enabled ? "Real source" : "Disabled slot"} · {source.itemCount} items
+                    Last success: {source.lastSuccess ? formatDate(source.lastSuccess) : "-"}
                   </p>
-                  {source.reason ? (
-                    <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.38)]">{source.reason}</p>
+                  {source.errorReason ? (
+                    <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.38)]">{source.errorReason}</p>
                   ) : null}
                 </div>
               ))}
@@ -1330,6 +1405,19 @@ export function DailyBriefsAdmin() {
                           {selectedDraft.intelligence.marketRegime}
                         </span>
                       </div>
+                    </div>
+                  ) : null}
+
+                  {selectedDraft.intelligence?.contentQuality ? (
+                    <div className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] p-4">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                        Content Quality Score
+                      </p>
+                      <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.72)]">
+                        {selectedDraft.intelligence.contentQuality.score} / 100 ·{" "}
+                        {selectedDraft.intelligence.contentQuality.status} ·{" "}
+                        {selectedDraft.intelligence.contentQuality.reasons.join(" · ")}
+                      </p>
                     </div>
                   ) : null}
 

@@ -24,7 +24,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.40.6d`
+`v1.41.0`
 
 Current Core Flow:
 
@@ -61,12 +61,14 @@ Mobile Visual QA readiness now adds a lightweight 390px browser smoke check for 
 
 Social Intelligence Engine foundation now turns reviewed Daily / Weekly Intelligence into manual FB / IG / LINE social content packs. The current implementation provides 9:16 story-style preview cards, caption drafts, 一玄 / IXAI visual framing, official logo usage, reusable brand tokens, client-side PNG export, and compliance footnotes for human-reviewed manual publishing only. v1.40.6c redesigned the pack layout toward institutional research and social-first readability. v1.40.6d adds Social Pack Layout Safety: a fixed header / main / footer safe-area structure, capped social typography ceilings, render-layer text compression helpers, and a simplified single-state risk panel so exported PNGs no longer suffer footer / disclaimer overlap, oversized headlines, or symbol-tag clipping.
 
+Daily Intelligence Content Engine now upgrades generated Daily Brief drafts into a fixed editorial structure: Executive Summary, Macro Watch, AI / Tech Watch, Crypto Watch, Risk Regime reasoning, FCN Awareness, and I-Xuan View. Drafts now carry Provider Health, Coverage Score, and Content Quality Score metadata so the Editorial Studio can judge source health and content depth before manual publish.
+
 Current Highest Priorities:
 
-1. Publish Center Foundation.
-2. Portfolio Intelligence.
-3. AI Alert Engine.
-4. Dynamic Intelligence Provider Integration.
+1. Provider Expansion & Source Recovery.
+2. Publish Center Foundation.
+3. Portfolio Intelligence.
+4. AI Alert Engine.
 
 Growth Strategy:
 
@@ -96,6 +98,7 @@ Completed product capabilities include:
 - Screenshot workflow is no longer required for Social Pack distribution assets.
 - Social Pack Layout Redesign: improved information hierarchy, institutional research style visual system, and social-first content presentation for Daily / Weekly Social Packs.
 - Social Pack Layout Safety: fixed header / main / footer safe-area layout, capped social typography ceilings, render-layer text compression helpers, simplified single-state risk panel, and footer/disclaimer overlap prevention for exported 1080×1920 PNGs.
+- Daily Intelligence Content Engine: Executive Summary, Macro Watch, AI Tech Watch, Crypto Watch, Risk Regime Reasoning, FCN Awareness, I-Xuan View, Provider Health, Coverage Score, and Content Quality Score.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -210,6 +213,7 @@ Known areas that require care:
 - Social Pack layouts are optimized for readability first; visual complexity and app-card styling should remain limited.
 - CTA and product wording should reinforce one flow: Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest. Intelligence Preview is secondary, not the default next step after onboarding.
 - Share pages are acquisition surfaces; keep them educational, intelligence-first, and clearly connected to onboarding / preview / LINE.
+- Daily Intelligence quality is now a retention bottleneck priority. Drafts should target 3-5 minute reading value, with provider health and coverage gaps visible to editors.
 
 ## G. AI Collaboration Workflow
 

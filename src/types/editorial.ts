@@ -34,6 +34,60 @@ export type DailyIntelligenceProviderStatus = {
   errorMessage?: string;
 };
 
+export type DailyWatchBlock = {
+  headline: string;
+  whatHappened: string;
+  whyItMatters: string;
+  marketMeaning: string;
+};
+
+export type DailyAiTechWatch = {
+  headline: string;
+  symbols: string[];
+  observations: string[];
+};
+
+export type DailyCryptoWatch = {
+  headline: string;
+  observations: string[];
+};
+
+export type DailyRiskRegimeReasoning = {
+  current: "Low" | "Moderate" | "Elevated" | "High";
+  reasons: string[];
+};
+
+export type DailyFcnAwareness = {
+  topic: "KO" | "KI" | "Strike" | "Coupon Observation";
+  explanation: string;
+  reminder: string;
+};
+
+export type DailyCoverageScore = {
+  macro: number;
+  aiTech: number;
+  crypto: number;
+  taiwan: number;
+  risk: number;
+};
+
+export type DailyContentQualityScore = {
+  score: number;
+  contentLength: number;
+  sourceCount: number;
+  categoryDiversity: number;
+  insightDepth: number;
+  status: "Strong" | "Adequate" | "Insufficient Content Depth";
+  reasons: string[];
+};
+
+export type DailyProviderHealth = {
+  provider: string;
+  status: "success" | "failed" | "disabled" | "fallback";
+  lastSuccess?: string;
+  errorReason?: string;
+};
+
 export type DailyIntelligenceDraft = {
   todayHeadline: string;
   riskFocus: DailyRiskFocus;
@@ -53,6 +107,16 @@ export type DailyIntelligenceDraft = {
   sourceLabels?: string[];
   complianceNote?: string;
   publishedAt?: string;
+  executiveSummary?: string[];
+  macroWatch?: DailyWatchBlock;
+  aiTechWatch?: DailyAiTechWatch;
+  cryptoWatch?: DailyCryptoWatch;
+  riskRegimeReasoning?: DailyRiskRegimeReasoning;
+  fcnAwareness?: DailyFcnAwareness;
+  ixuanView?: string;
+  coverageScore?: DailyCoverageScore;
+  contentQuality?: DailyContentQualityScore;
+  providerHealth?: DailyProviderHealth[];
   // v1.32 — narrative intelligence bundle (optional, jsonb-friendly).
   narrative?: WeeklyNarrativeBundle;
 };
@@ -86,6 +150,8 @@ export type DailyDraftGenerationSummary = {
   providerMode?: DailyIntelligenceProviderMode;
   providerStatus?: DailyIntelligenceProviderStatus;
   inputNewsCount?: number;
+  coverageScore?: DailyCoverageScore;
+  contentQuality?: DailyContentQualityScore;
   sourceStatus: {
     id: string;
     label: string;

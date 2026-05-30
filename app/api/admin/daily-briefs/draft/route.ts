@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
   const draft = await generateDailyIntelligenceDraftFromNews(intake.items, {
     sourceMode: intake.mode,
     sourceLabels,
+    sourceStatus: intake.sourceStatus ?? intake.sources,
   });
   const drafts = await saveDraftAsync(draft);
   const intelligence = draft.intelligence;
@@ -52,6 +53,8 @@ export async function POST(request: NextRequest) {
       errorReason: intelligence?.providerStatus?.errorReason,
       errorMessage: intelligence?.providerStatus?.errorMessage,
       inputNewsCount: intelligence?.inputNewsCount ?? intake.itemCount,
+      coverageScore: intelligence?.coverageScore,
+      contentQuality: intelligence?.contentQuality,
       sourceMode: intelligence?.sourceMode ?? intake.mode,
       generatedAt: intelligence?.generatedAt ?? draft.createdAt,
       complianceNote: intelligence?.complianceNote,

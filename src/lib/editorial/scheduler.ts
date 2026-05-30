@@ -27,6 +27,8 @@ function buildSummary({
   providerMode,
   providerStatus,
   inputNewsCount,
+  coverageScore,
+  contentQuality,
 }: {
   status: DailyDraftGenerationSummary["status"];
   draftSlug: string;
@@ -37,6 +39,8 @@ function buildSummary({
   providerMode?: DailyDraftGenerationSummary["providerMode"];
   providerStatus?: DailyDraftGenerationSummary["providerStatus"];
   inputNewsCount?: number;
+  coverageScore?: DailyDraftGenerationSummary["coverageScore"];
+  contentQuality?: DailyDraftGenerationSummary["contentQuality"];
 }): DailyDraftGenerationSummary {
   return {
     status,
@@ -47,6 +51,8 @@ function buildSummary({
     providerMode,
     providerStatus,
     inputNewsCount: inputNewsCount ?? intake.itemCount,
+    coverageScore,
+    contentQuality,
     sourceStatus: intake.sourceStatus ?? intake.sources,
     schedulerConfigured,
     forced,
@@ -86,6 +92,8 @@ export async function generateScheduledDailyDraft({
       providerMode: existingDraft.intelligence?.providerMode,
       providerStatus: existingDraft.intelligence?.providerStatus,
       inputNewsCount: existingDraft.intelligence?.inputNewsCount,
+      coverageScore: existingDraft.intelligence?.coverageScore,
+      contentQuality: existingDraft.intelligence?.contentQuality,
     });
 
     return lastGenerationSummary;
@@ -104,6 +112,7 @@ export async function generateScheduledDailyDraft({
                 .map((source) => source.label),
             ),
           ],
+          sourceStatus: intake.sourceStatus ?? intake.sources,
         }
       : {
           sourceMode: intake.mode,
@@ -114,6 +123,7 @@ export async function generateScheduledDailyDraft({
                 .map((source) => source.label),
             ),
           ],
+          sourceStatus: intake.sourceStatus ?? intake.sources,
         },
   );
   const savedDrafts = await saveDraftAsync(draft);
@@ -129,6 +139,8 @@ export async function generateScheduledDailyDraft({
     providerMode: savedDraft.intelligence?.providerMode,
     providerStatus: savedDraft.intelligence?.providerStatus,
     inputNewsCount: savedDraft.intelligence?.inputNewsCount,
+    coverageScore: savedDraft.intelligence?.coverageScore,
+    contentQuality: savedDraft.intelligence?.contentQuality,
   });
 
   return lastGenerationSummary;
