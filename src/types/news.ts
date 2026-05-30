@@ -13,6 +13,7 @@ export type NewsSourceId =
   | "yahoo-finance"
   | "yahoo-tw-stock"
   | "cnbc"
+  | "cnbc-tech"
   | "reuters"
   | "bloomberg"
   | "coindesk"
@@ -31,11 +32,18 @@ export type NewsSourceId =
 
 export type NewsParserType = "rss";
 
+export type NewsProviderClassification =
+  | "production_active"
+  | "recoverable"
+  | "experimental"
+  | "deprecated";
+
 export type NewsSourceStatus = {
   id: NewsSourceId;
   label: string;
   enabled: boolean;
-  status: "success" | "failed" | "disabled" | "fallback";
+  classification?: NewsProviderClassification;
+  status: "success" | "failed" | "disabled" | "fallback" | "empty";
   itemCount: number;
   reason?: string;
   lastSuccessAt?: string;

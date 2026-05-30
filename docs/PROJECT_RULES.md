@@ -218,6 +218,15 @@ Public surfaces must never provide:
 - Target prices.
 - Return promises.
 
+News Provider Recovery Rules:
+
+- Only enable providers that are publicly accessible, technically stable, and appropriate for headline / summary intake.
+- Do not mark a provider as active if it is reachable but contributes zero usable items.
+- Empty feeds, 403 / 404 responses, rate limits, and compliance uncertainty must remain visible in Provider Health.
+- Provider recovery should improve source, category, and symbol diversity without inflating Coverage Score synthetically.
+- Reuters, Bloomberg, Yahoo Finance, Taiwan financial sources, or any third-party source must stay disabled when legal access, RSS stability, or endpoint reliability is not verified.
+- IXAI uses headlines, links, timestamps, and short feed summaries for editorial intelligence; it must not scrape full article text unless explicitly approved.
+
 Account surfaces may provide:
 
 - Watchlist Intelligence Lite.

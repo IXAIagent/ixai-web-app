@@ -83,7 +83,8 @@ export type DailyContentQualityScore = {
 
 export type DailyProviderHealth = {
   provider: string;
-  status: "success" | "failed" | "disabled" | "fallback";
+  classification?: import("@/src/types/news").NewsProviderClassification;
+  status: "success" | "failed" | "disabled" | "fallback" | "empty";
   lastSuccess?: string;
   errorReason?: string;
 };
@@ -156,7 +157,8 @@ export type DailyDraftGenerationSummary = {
     id: string;
     label: string;
     enabled: boolean;
-    status: "success" | "failed" | "disabled" | "fallback";
+    classification?: import("@/src/types/news").NewsProviderClassification;
+    status: "success" | "failed" | "disabled" | "fallback" | "empty";
     itemCount: number;
     reason?: string;
   }[];

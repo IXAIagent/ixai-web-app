@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.41.2`
+`v1.41.3`
 
 ## Current Product Flow
 
@@ -231,22 +231,31 @@ Completed:
 - Improved Cover, Market Pulse, AI / Tech Watch, FCN / Risk Watch, and I-Xuan View social copy hierarchy.
 - Preserved manual publishing, disclaimer visibility, and non-advisory positioning.
 
+### v1.41.3 — News Provider Recovery & US Equity Coverage Expansion
+
+Completed:
+
+- Recovered verified public RSS providers for CNBC, CNBC Technology, Nasdaq, Seeking Alpha, The Block, and Decrypt.
+- Expanded US equity, AI / semiconductor, macro / rates, crypto, and Taiwan technology supply-chain coverage.
+- Added provider classification for Production Active, Recoverable, Experimental, and Deprecated states.
+- Added empty-feed diagnostics so reachable providers with zero usable items are not shown as successful.
+- Adjusted Coverage Score to reflect actual category/source coverage instead of synthetic provider inflation.
+- Kept unstable, blocked, empty, or unverified providers disabled with explicit reasons.
+
 Next:
 
-`v1.41.3 — Provider Expansion & Source Recovery`
+`v1.42.0 — Intelligence Distribution Layer`
 
 ## Next Suggested Version
 
-`v1.41.3 — Provider Expansion & Source Recovery`
+`v1.42.0 — Intelligence Distribution Layer`
 
 Goal:
 
-- Recover Reuters.
-- Recover CNBC.
-- Recover Seeking Alpha.
-- Recover Nasdaq.
-- Recover Taiwan providers.
-- Improve provider health and coverage reliability before expanding personalization.
+- Turn stronger Daily Intelligence coverage into distribution-ready workflows.
+- Preserve human review before external delivery or publishing.
+- Keep public / account / future Pro delivery boundaries clear.
+- Do not add automated trading, paid entitlement, or unreviewed push automation.
 
 ## Future Roadmap
 

@@ -4,6 +4,7 @@ import type {
   NewsIntakeProvider,
   NewsIntakeResult,
   NewsParserType,
+  NewsProviderClassification,
   NewsSourceId,
   NewsSourceStatus,
   NormalizedNewsItem,
@@ -24,6 +25,7 @@ type RssSourceConfig = {
   maxItems: number;
   tags: string[];
   notes: string;
+  classification: NewsProviderClassification;
   disabledReason?: string;
   includeKeywords?: string[];
 };
@@ -41,6 +43,7 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 5,
     tags: ["crypto", "digital-assets"],
     notes: "Public RSS feed used for crypto market headlines only.",
+    classification: "production_active",
   },
   {
     id: "federal-reserve",
@@ -52,6 +55,7 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 3,
     tags: ["rates", "macro", "fomc", "official-source"],
     notes: "Official Federal Reserve monetary policy RSS feed.",
+    classification: "production_active",
   },
   {
     id: "marketwatch",
@@ -63,6 +67,7 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 6,
     tags: ["us-market", "equities"],
     notes: "Public top-stories RSS feed. IXAI only uses headlines, links, timestamps, and short feed descriptions.",
+    classification: "production_active",
     includeKeywords: [
       "ai",
       "anthropic",
@@ -96,6 +101,7 @@ const rssSources: RssSourceConfig[] = [
     tags: ["taiwan", "tw-stock", "semiconductors", "ai-supply-chain"],
     notes:
       "Public Yahoo Taiwan stock RSS. IXAI only uses headlines, links, timestamps, and feed descriptions.",
+    classification: "production_active",
     includeKeywords: [
       "台積電",
       "tsmc",
@@ -136,19 +142,90 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 4,
     tags: ["markets", "equities"],
     notes: "Provider slot retained for future Yahoo-style market feed integration.",
+    classification: "recoverable",
     disabledReason: "Disabled after repeated 429/rate-limit responses during intake checks.",
   },
   {
     id: "cnbc",
     label: "CNBC",
     url: "https://www.cnbc.com/id/100003114/device/rss/rss.html",
-    enabled: false,
-    categories: ["macro", "equities"],
+    enabled: true,
+    categories: ["macro", "equities", "rates"],
     parserType: "rss",
-    maxItems: 4,
-    tags: ["us-market", "macro"],
-    notes: "Provider slot retained for future use if RSS access is stable.",
-    disabledReason: "Disabled because the RSS endpoint returned 403 Access Denied in local verification.",
+    maxItems: 5,
+    tags: ["us-market", "macro", "equities"],
+    notes: "Recovered public CNBC top news RSS in v1.41.3 after endpoint returned stable RSS with usable items.",
+    classification: "production_active",
+    includeKeywords: [
+      "amazon",
+      "amzn",
+      "apple",
+      "avgo",
+      "bitcoin",
+      "broadcom",
+      "cpi",
+      "dollar",
+      "earnings",
+      "fed",
+      "fomc",
+      "google",
+      "googl",
+      "inflation",
+      "jobs",
+      "labor",
+      "market",
+      "meta",
+      "microsoft",
+      "msft",
+      "nasdaq",
+      "nvidia",
+      "rates",
+      "stocks",
+      "tesla",
+      "treasury",
+      "yield",
+    ],
+  },
+  {
+    id: "cnbc-tech",
+    label: "CNBC Technology",
+    url: "https://www.cnbc.com/id/19854910/device/rss/rss.html",
+    enabled: true,
+    categories: ["ai_tech", "equities"],
+    parserType: "rss",
+    maxItems: 5,
+    tags: ["us-market", "ai-tech", "technology", "software"],
+    notes: "Recovered public CNBC technology RSS for US equity / AI / software coverage.",
+    classification: "production_active",
+    includeKeywords: [
+      "ai",
+      "amazon",
+      "amzn",
+      "anthropic",
+      "apple",
+      "avgo",
+      "broadcom",
+      "chip",
+      "cloud",
+      "cybersecurity",
+      "data center",
+      "google",
+      "googl",
+      "hyperscaler",
+      "meta",
+      "microsoft",
+      "msft",
+      "nvidia",
+      "openai",
+      "oracle",
+      "orcl",
+      "palantir",
+      "pltr",
+      "semiconductor",
+      "software",
+      "tesla",
+      "tsla",
+    ],
   },
   {
     id: "bloomberg",
@@ -160,6 +237,7 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 4,
     tags: ["macro", "institutional"],
     notes: "Source seed only. Enable only after confirming stable public RSS terms and access.",
+    classification: "recoverable",
     disabledReason: "Provider seed retained; not enabled to avoid relying on unverified RSS access.",
   },
   {
@@ -172,19 +250,45 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 4,
     tags: ["macro", "global"],
     notes: "Source seed only. IXAI should use legal RSS/API access without copying full articles.",
-    disabledReason: "Provider seed retained pending stable and compliant feed verification.",
+    classification: "recoverable",
+    disabledReason: "Endpoint currently returns 404 in verification; keep disabled until Reuters provides stable legal RSS/API access.",
   },
   {
     id: "seeking-alpha",
     label: "Seeking Alpha",
     url: "https://seekingalpha.com/market_currents.xml",
-    enabled: false,
+    enabled: true,
     categories: ["equities", "ai_tech"],
     parserType: "rss",
-    maxItems: 4,
-    tags: ["us-market", "earnings"],
-    notes: "Source seed for future market-current integration.",
-    disabledReason: "Provider seed retained pending compliance and endpoint stability check.",
+    maxItems: 5,
+    tags: ["us-market", "earnings", "equities"],
+    notes: "Recovered public market-current RSS in v1.41.3 for US equity headlines. IXAI uses only headline, link, timestamp and short feed description.",
+    classification: "production_active",
+    includeKeywords: [
+      "amazon",
+      "amzn",
+      "amd",
+      "avgo",
+      "broadcom",
+      "earnings",
+      "fed",
+      "googl",
+      "market",
+      "meta",
+      "microsoft",
+      "mongodb",
+      "mdb",
+      "nasdaq",
+      "nvidia",
+      "nvda",
+      "palantir",
+      "pltr",
+      "semiconductor",
+      "software",
+      "stocks",
+      "tesla",
+      "tsla",
+    ],
   },
   {
     id: "cnyes",
@@ -196,6 +300,7 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 4,
     tags: ["taiwan", "semiconductors"],
     notes: "Taiwan market provider slot for a future legal and stable RSS/API source.",
+    classification: "recoverable",
     disabledReason: "Endpoint is reachable but returned an empty RSS channel during local verification.",
   },
   {
@@ -208,7 +313,8 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 4,
     tags: ["taiwan", "semiconductors"],
     notes: "Taiwan business news source seed. Do not fetch full article text.",
-    disabledReason: "Provider seed retained pending RSS stability and legal review.",
+    classification: "recoverable",
+    disabledReason: "Endpoint currently returns 403 in verification; keep disabled until stable public RSS access is confirmed.",
   },
   {
     id: "economic-daily",
@@ -220,7 +326,8 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 4,
     tags: ["taiwan", "macro"],
     notes: "Taiwan market source seed. Enable only after endpoint verification.",
-    disabledReason: "Provider seed retained pending RSS stability and legal review.",
+    classification: "recoverable",
+    disabledReason: "Endpoint is reachable but returned an empty RSS channel during local verification.",
   },
   {
     id: "moneydj",
@@ -232,43 +339,97 @@ const rssSources: RssSourceConfig[] = [
     maxItems: 4,
     tags: ["taiwan", "supply-chain"],
     notes: "Taiwan market source seed. Enable only after endpoint verification.",
-    disabledReason: "Provider seed retained pending RSS stability and legal review.",
+    classification: "experimental",
+    disabledReason: "Verification returned HTML with zero RSS items; keep disabled until a stable RSS/API endpoint is confirmed.",
   },
   {
     id: "nasdaq",
     label: "Nasdaq",
     url: "https://www.nasdaq.com/feed/rssoutbound?category=Markets",
-    enabled: false,
+    enabled: true,
     categories: ["equities", "ai_tech"],
     parserType: "rss",
-    maxItems: 4,
-    tags: ["us-market", "equities"],
-    notes: "Provider slot retained pending stable RSS verification.",
-    disabledReason: "Disabled until the feed endpoint can be verified reliably.",
+    maxItems: 6,
+    tags: ["us-market", "equities", "nasdaq"],
+    notes: "Recovered public Nasdaq markets RSS in v1.41.3 for US equity and AI / Tech context.",
+    classification: "production_active",
+    includeKeywords: [
+      "ai",
+      "amazon",
+      "amzn",
+      "amd",
+      "avgo",
+      "broadcom",
+      "cloud",
+      "earnings",
+      "fed",
+      "googl",
+      "market",
+      "meta",
+      "microsoft",
+      "msft",
+      "nasdaq",
+      "nvidia",
+      "nvda",
+      "palantir",
+      "pltr",
+      "semiconductor",
+      "stocks",
+      "tesla",
+      "treasury",
+      "yield",
+    ],
   },
   {
     id: "the-block",
     label: "The Block",
     url: "https://www.theblock.co/rss.xml",
-    enabled: false,
+    enabled: true,
     categories: ["crypto", "risk"],
     parserType: "rss",
-    maxItems: 4,
+    maxItems: 5,
     tags: ["crypto", "digital-assets"],
-    notes: "Crypto source seed for future legal RSS/API integration.",
-    disabledReason: "Provider seed retained pending endpoint stability check.",
+    notes: "Recovered public crypto RSS in v1.41.3 for BTC / ETH / institutional digital asset coverage.",
+    classification: "production_active",
+    includeKeywords: [
+      "bitcoin",
+      "btc",
+      "crypto",
+      "custody",
+      "ethereum",
+      "eth",
+      "etf",
+      "institutional",
+      "liquidity",
+      "regulation",
+      "stablecoin",
+      "tokenized",
+    ],
   },
   {
     id: "decrypt",
     label: "Decrypt",
     url: "https://decrypt.co/feed",
-    enabled: false,
+    enabled: true,
     categories: ["crypto", "risk"],
     parserType: "rss",
-    maxItems: 4,
+    maxItems: 5,
     tags: ["crypto", "digital-assets"],
-    notes: "Crypto source seed for future legal RSS/API integration.",
-    disabledReason: "Provider seed retained pending endpoint stability check.",
+    notes: "Recovered public crypto RSS in v1.41.3 for BTC / ETH / regulation / adoption headlines.",
+    classification: "production_active",
+    includeKeywords: [
+      "bitcoin",
+      "btc",
+      "crypto",
+      "custody",
+      "ethereum",
+      "eth",
+      "etf",
+      "institutional",
+      "regulation",
+      "stablecoin",
+      "token",
+    ],
   },
 ];
 
@@ -281,18 +442,14 @@ export const mockNewsIntakeProvider: NewsIntakeProvider = {
 };
 
 export const rssProviderPlaceholders = [
-  "CNBC",
   "Reuters",
   "Bloomberg",
   "Yahoo Finance",
-  "Seeking Alpha",
   "CNYES",
   "工商時報",
   "經濟日報",
   "MoneyDJ",
   "Futu",
-  "The Block",
-  "Decrypt",
 ];
 
 function decodeXml(value: string) {
@@ -350,7 +507,7 @@ function inferCategory(source: RssSourceConfig, headline: string): NewsCategory 
     return "rates";
   }
 
-  if (containsAny(text, ["bitcoin", "btc", "crypto", "ether", "ethereum", "stablecoin", "tokenized", "solana", "xrp"])) {
+  if (containsAny(text, ["bitcoin", "btc", "crypto", "ether", "ethereum", "stablecoin", "tokenized", "solana", "xrp", "custody"])) {
     return "crypto";
   }
 
@@ -404,11 +561,39 @@ function inferCategory(source: RssSourceConfig, headline: string): NewsCategory 
     return "rates";
   }
 
-  if (containsAny(text, ["ai", "nvidia", "openai", "anthropic", "tesla"])) {
+  if (
+    containsAny(text, [
+      "ai",
+      "amazon",
+      "amzn",
+      "anthropic",
+      "avgo",
+      "broadcom",
+      "cloud",
+      "cybersecurity",
+      "data center",
+      "googl",
+      "google",
+      "hyperscaler",
+      "meta",
+      "microsoft",
+      "mongodb",
+      "msft",
+      "nvidia",
+      "nvda",
+      "openai",
+      "oracle",
+      "palantir",
+      "pltr",
+      "software",
+      "tesla",
+      "tsla",
+    ])
+  ) {
     return "ai_tech";
   }
 
-  if (containsAny(text, ["inflation", "gdp", "tariff", "economy"])) {
+  if (containsAny(text, ["inflation", "cpi", "gdp", "tariff", "economy", "labor", "jobs", "employment", "dollar", "liquidity"])) {
     return "macro";
   }
 
@@ -522,8 +707,34 @@ function priorityScore(item: NormalizedNewsItem) {
   if (item.category === "risk") score += 18;
   if (item.category === "taiwan") score += 14;
   if (containsAny(text, ["fed", "fomc", "treasury", "yield", "rates", "inflation"])) score += 18;
-  if (containsAny(text, ["nvidia", "nvda", "microsoft", "msft", "amd", "avgo", "pltr"])) score += 18;
-  if (containsAny(text, ["bitcoin", "btc", "ethereum", "eth", "stablecoin", "etf flow"])) score += 14;
+  if (
+    containsAny(text, [
+      "nvidia",
+      "nvda",
+      "microsoft",
+      "msft",
+      "avgo",
+      "broadcom",
+      "amd",
+      "pltr",
+      "palantir",
+      "mdb",
+      "mongodb",
+      "tsla",
+      "tesla",
+      "meta",
+      "amzn",
+      "amazon",
+      "googl",
+      "google",
+      "cloud",
+      "data center",
+      "semiconductor",
+      "software",
+      "cybersecurity",
+    ])
+  ) score += 22;
+  if (containsAny(text, ["bitcoin", "btc", "ethereum", "eth", "stablecoin", "etf flow", "custody", "institutional adoption"])) score += 16;
   if (containsAny(text, ["fcn", "knock-in", "knock out", "worst-of", "ki", "ko"])) score += 10;
 
   return score;
@@ -564,6 +775,7 @@ function asSourceStatus(
     id: source.id,
     label: source.label,
     enabled: source.enabled,
+    classification: source.classification,
     status,
     itemCount,
     reason,
@@ -633,7 +845,14 @@ export async function getLatestNewsIntakeResult(): Promise<NewsIntakeResult> {
       const xml = await response.text();
       const items = parseRssItems(xml, source);
       realItems.push(...items);
-      sourceResults.push(asSourceStatus(source, "success", items.length));
+      sourceResults.push(asSourceStatus(
+        source,
+        items.length > 0 ? "success" : "empty",
+        items.length,
+        items.length > 0
+          ? undefined
+          : "Reachable feed returned zero usable items after parser and relevance filters.",
+      ));
     } catch (error) {
       sourceResults.push(asSourceStatus(
         source,

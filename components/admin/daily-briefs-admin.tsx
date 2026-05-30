@@ -46,6 +46,13 @@ const weeklyStatusStyles: Record<WeeklyIntelligenceStatus, string> = {
   archived: "border-white/10 bg-white/[0.035] text-[rgba(245,240,230,0.38)]",
 };
 
+const providerClassificationLabels = {
+  production_active: "Production Active",
+  recoverable: "Recoverable",
+  experimental: "Experimental",
+  deprecated: "Deprecated",
+} as const;
+
 type GenerationMeta = {
   providerMode: DailyIntelligenceProviderMode;
   providerStatus?: DailyIntelligenceProviderStatus;
@@ -724,6 +731,9 @@ export function DailyBriefsAdmin() {
   const canPublishSelectedDraft = selectedDraft?.status === "review";
   const supabaseReady = isSupabaseClientConfigured();
   const intakeSources = intakeMeta?.sourceStatus ?? intakeMeta?.sources ?? [];
+  const activeProviderCount = intakeSources.filter((source) => source.status === "success" && source.itemCount > 0).length;
+  const recoverableProviderCount = intakeSources.filter((source) => source.classification === "recoverable").length;
+  const disabledProviderCount = intakeSources.filter((source) => source.status === "disabled").length;
   const openAIStatus = generationMeta?.providerStatus ?? null;
   const selectedCoverage = selectedDraft?.intelligence?.coverageScore ?? generationMeta?.coverageScore;
   const selectedQuality = selectedDraft?.intelligence?.contentQuality ?? generationMeta?.contentQuality;
@@ -1191,6 +1201,11 @@ export function DailyBriefsAdmin() {
                   <span className="text-[var(--ixai-cream)]">{intakeMeta.itemCount}</span> · Last fetch:{" "}
                   <span className="text-[var(--ixai-cream)]">{formatDate(intakeMeta.fetchedAt)}</span>
                 </p>
+                <p className="mt-1 text-xs text-[rgba(245,240,230,0.48)]">
+                  Active providers: <span className="text-[var(--ixai-cream)]">{activeProviderCount}</span> · Recoverable:{" "}
+                  <span className="text-[var(--ixai-cream)]">{recoverableProviderCount}</span> · Disabled:{" "}
+                  <span className="text-[var(--ixai-cream)]">{disabledProviderCount}</span>
+                </p>
               </div>
             </div>
             {intakeMeta.mode === "fallback" ? (
@@ -1201,6 +1216,7 @@ export function DailyBriefsAdmin() {
             <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
               {(selectedProviderHealth?.length ? selectedProviderHealth : intakeSources.map<DailyProviderHealth>((source) => ({
                 provider: source.label,
+                classification: source.classification,
                 status: source.status,
                 lastSuccess: source.lastSuccessAt,
                 errorReason: source.errorReason ?? source.reason,
@@ -1217,7 +1233,7 @@ export function DailyBriefsAdmin() {
                       className={`rounded px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${
                         source.status === "success"
                           ? "bg-emerald-400/10 text-emerald-200"
-                          : source.status === "failed" || source.status === "fallback"
+                          : source.status === "failed" || source.status === "fallback" || source.status === "empty"
                             ? "bg-amber-300/10 text-amber-100"
                             : "bg-white/8 text-[rgba(245,240,230,0.42)]"
                       }`}
@@ -1228,6 +1244,11 @@ export function DailyBriefsAdmin() {
                   <p className="mt-1 text-xs text-[rgba(245,240,230,0.46)]">
                     Last success: {source.lastSuccess ? formatDate(source.lastSuccess) : "-"}
                   </p>
+                  {source.classification ? (
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-[rgba(245,240,230,0.36)]">
+                      {providerClassificationLabels[source.classification]}
+                    </p>
+                  ) : null}
                   {source.errorReason ? (
                     <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.38)]">{source.errorReason}</p>
                   ) : null}

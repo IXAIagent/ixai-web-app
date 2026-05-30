@@ -629,3 +629,42 @@ Out of Scope:
 - Auto publishing.
 - PNG export architecture rewrite.
 - FCN engine changes.
+
+## v1.41.3 — News Provider Recovery & US Equity Coverage Expansion
+
+Why:
+
+- Daily Intelligence quality depends on usable real coverage, not just a polished Provider Health display.
+- US equity, AI / semiconductor, macro, crypto, and Taiwan technology supply-chain coverage were still too dependent on a small set of active sources.
+- Editors needed clearer differentiation between active, recoverable, experimental, disabled, failed, and empty-feed providers.
+
+What Changed:
+
+- Recovered verified public RSS providers: CNBC, CNBC Technology, Nasdaq, Seeking Alpha, The Block, and Decrypt.
+- Expanded US equity and AI / Tech symbol/theme coverage for NVDA, MSFT, AVGO, AMD, PLTR, MDB, TSLA, META, AMZN, GOOGL, cloud, semiconductors, enterprise software, cybersecurity, hyperscalers, and data centers.
+- Expanded crypto coverage for BTC, ETH, stablecoins, ETF developments, regulation, custody, institutional adoption, and liquidity themes.
+- Added provider classification metadata for Production Active, Recoverable, Experimental, and Deprecated states.
+- Added empty-feed diagnostics so reachable feeds with zero usable items are not displayed as successful.
+- Adjusted Coverage Score to reflect actual item/category/source coverage rather than synthetic provider inflation.
+- Improved Admin Provider Health summary with active, recoverable, and disabled counts.
+
+Key Decisions:
+
+- Do not simply enable every provider slot.
+- Reuters remains disabled because the configured endpoint returns 404.
+- MoneyDJ remains experimental/disabled because verification returned HTML with zero RSS items.
+- CNYES and 經濟日報 remain disabled because their configured RSS endpoints returned empty channels.
+- 工商時報 remains disabled because the configured endpoint returned 403.
+- Coverage quality is source/category/symbol diversity, not raw headline volume.
+
+Out of Scope:
+
+- News provider architecture rewrite.
+- Scraping full article text.
+- Supabase schema changes.
+- Auth changes.
+- LINE / LIFF changes.
+- FCN engine changes.
+- Market quote provider changes.
+- Portfolio Intelligence.
+- Automated publishing or push delivery.

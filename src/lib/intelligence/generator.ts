@@ -102,18 +102,23 @@ function getItemsByCategory(items: NormalizedNewsItem[], categories: NormalizedN
 function sourceHealthFromStatus(sourceStatus: NewsSourceStatus[] = []): DailyProviderHealth[] {
   return sourceStatus.map((source) => ({
     provider: source.label,
+    classification: source.classification,
     status: source.status,
     lastSuccess: source.lastSuccessAt,
     errorReason: source.errorReason ?? source.reason,
   }));
 }
 
-function buildCoverageScore(items: NormalizedNewsItem[], sourceStatus: NewsSourceStatus[] = []): DailyCoverageScore {
-  const successfulSources = sourceStatus.filter((source) => source.status === "success" && source.itemCount > 0).length;
-  const sourceBoost = Math.min(20, successfulSources * 5);
+function buildCoverageScore(items: NormalizedNewsItem[]): DailyCoverageScore {
   const scoreFor = (categories: NormalizedNewsItem["category"][]) => {
-    const count = getItemsByCategory(items, categories).length;
-    return Math.min(100, Math.round(count * 28 + sourceBoost));
+    const matchingItems = getItemsByCategory(items, categories);
+    const sourceCount = new Set(matchingItems.map((item) => item.sourceLabel)).size;
+
+    if (matchingItems.length === 0) {
+      return 0;
+    }
+
+    return Math.min(100, Math.round(matchingItems.length * 26 + sourceCount * 8));
   };
 
   return {
@@ -257,7 +262,7 @@ function attachDailyContentEngine(
   const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const risk = byCategory(newsItems, "risk");
   const executiveSummary = buildExecutiveSummary(newsItems, intelligence);
-  const coverageScore = buildCoverageScore(newsItems, sourceStatus);
+  const coverageScore = buildCoverageScore(newsItems);
   const riskRegimeReasoning = buildRiskRegimeReasoning(newsItems, intelligence.marketRegime);
   const fcnAwareness = buildFcnAwareness(intelligence.generatedAt);
   const macroWatch = {
