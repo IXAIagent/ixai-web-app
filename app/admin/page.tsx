@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AudienceSnapshot } from "@/components/admin/audience-snapshot";
 import { ConversionFunnel } from "@/components/admin/conversion-funnel";
 import { DistributionSnapshot } from "@/components/admin/distribution-snapshot";
+import { DistributionQueueSnapshot } from "@/components/admin/distribution-queue-snapshot";
 import { IdentitySnapshot } from "@/components/admin/identity-snapshot";
 import { IntelligenceDeliverySnapshot } from "@/components/admin/intelligence-delivery-snapshot";
 import { IntelligenceAnalyticsSnapshot } from "@/components/admin/intelligence-analytics-snapshot";
@@ -66,6 +67,9 @@ export default function AdminPage() {
       </section>
       <section id="intelligence-delivery">
         <IntelligenceDeliverySnapshot />
+      </section>
+      <section id="distribution-queue">
+        <DistributionQueueSnapshot />
       </section>
       <section id="line-identity">
         <LineIdentitySnapshot />

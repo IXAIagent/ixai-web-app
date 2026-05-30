@@ -44,6 +44,8 @@ export type AnalyticsEventName =
   | "intelligence_delivery_enabled"
   | "intelligence_delivery_preview_open"
   | "intelligence_delivery_line_connect"
+  | "intelligence_distribution_published"
+  | "intelligence_distribution_viewed"
   | "intelligence_push_preview_view"
   | "morning_intelligence_view"
   | "pro_intelligence_preview_view"
@@ -152,6 +154,8 @@ const VALID_EVENTS: ReadonlySet<string> = new Set<AnalyticsEventName>([
   "intelligence_delivery_enabled",
   "intelligence_delivery_preview_open",
   "intelligence_delivery_line_connect",
+  "intelligence_distribution_published",
+  "intelligence_distribution_viewed",
   "intelligence_push_preview_view",
   "morning_intelligence_view",
   "pro_intelligence_preview_view",

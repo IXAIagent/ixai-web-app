@@ -2,6 +2,52 @@
 
 This document is a concise continuity layer for AI handoff. It captures why each recent version existed, what changed, key decisions, and what stayed out of scope.
 
+## Historical Context
+
+- `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
+
+## Pre-App Origin / AI Morning Brief Era
+
+Why:
+
+- 一玄AI / IXAI began as an internal intelligence workflow, not a generic web app.
+- The original need was to compress daily market noise into a morning briefing that could support risk-aware reading before market decisions.
+- The earliest product behavior lived closer to a Telegram Morning Brief and personal monitoring system than to a public SaaS landing page.
+
+What Existed:
+
+- Telegram-style AI Morning Brief: daily macro, US equity, Taiwan market, crypto, and risk notes delivered in a concise morning format.
+- FCN risk monitor prototypes: tracking KO, KI, strike, coupon observation, worst performer, volatility, observation dates, and structured-product risk context.
+- Binance Grid / Dual monitoring prototypes: tracking BTC / ETH market ranges, dual-investment states, volatility, liquidity, and risk-regime context.
+- Stock / AI supply-chain monitoring: tracking US AI / semiconductor names, Taiwan AI supply-chain names, macro/rates, and market-moving headlines.
+- Market news module: early ingestion and classification of market news into a readable daily intelligence narrative.
+
+Key Decisions:
+
+- The product center should be intelligence and risk workflow, not buy/sell calls.
+- FCN, crypto, grid, dual, stock, and portfolio concepts should be treated as monitoring and education layers unless a compliant Pro workflow is explicitly approved.
+- Daily intelligence habit comes before advanced personalization.
+- Public Intelligence should earn trust before asking users to create deeper account or Pro workflows.
+
+How It Became IXAI:
+
+```text
+Telegram Morning Brief
+→ Personal FCN / Crypto Grid / Dual / stock monitoring
+→ Daily / Weekly Public Intelligence
+→ Account Intelligence and watchlist memory
+→ IXAI Pro preview and future portfolio / FCN / AI alert workflows
+→ Social Intelligence Engine and distribution-ready content assets
+```
+
+Out of Scope Then and Now:
+
+- Automated trading.
+- Buy/sell recommendations.
+- Guaranteed returns.
+- Personal FCN conclusions without a future compliant Pro workflow.
+- Portfolio execution or broker integration.
+
 ## v1.40.0 — Onboarding Foundation
 
 Why:
@@ -668,3 +714,44 @@ Out of Scope:
 - Market quote provider changes.
 - Portfolio Intelligence.
 - Automated publishing or push delivery.
+
+## v1.42.0 — Intelligence Distribution Layer
+
+Why:
+
+- IXAI needed to connect stronger Daily / Weekly intelligence output to a distribution-ready operating layer.
+- The next product step was not more intelligence generation, but the workflow between Generate Intelligence, Review Intelligence, Distribute Intelligence, and Measure Intelligence.
+- Account users needed clearer delivery preferences without implying real LINE, email, or push automation.
+
+What Changed:
+
+- Added local/session-first Distribution Preference model.
+- Extended Account Delivery Preferences with Daily / Weekly / Daily + Weekly frequency.
+- Added distribution categories for Macro, AI / Tech, Crypto, Taiwan Market, FCN Awareness, and Risk Regime.
+- Kept In-App as the only active channel while showing LINE, Email, and Push as future disabled channels.
+- Added a read-only Admin Distribution Queue with Draft, Reviewed, and Published foundation states.
+- Added lightweight analytics event names for intelligence distribution viewed and published states.
+- Updated docs to define distribution as a foundation layer, not an external sending system.
+
+Key Decisions:
+
+- Distribution preferences remain local/session-first.
+- Distribution Queue is operational visibility only, not a persistence-backed send queue.
+- In-App is the only active channel in v1.42.0.
+- External delivery requires future opt-in persistence, delivery logs, unsubscribe / pause controls, human review, and compliance approval.
+- Distribution should measure intelligence operations, not create marketing automation or user profiling.
+
+Out of Scope:
+
+- LINE Push.
+- Email delivery.
+- Push notifications.
+- Stripe or paid entitlement.
+- Portfolio Intelligence.
+- AI Alert Engine.
+- Broker integration.
+- Portfolio monitoring.
+- Personal FCN monitoring.
+- Auto trading.
+- Robo-advisor behavior.
+- Buy/sell recommendations.

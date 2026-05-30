@@ -4,7 +4,12 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.41.3`
+`v1.42.0`
+
+## Related Strategic Documents
+
+- `docs/PRODUCT_ORIGIN.md`
+- `docs/IXAI_VISION.md`
 
 ## Current Product Flow
 
@@ -26,6 +31,30 @@ LINE / Social / Share
 ```
 
 ## Current Product Positioning
+
+## Long Product Arc
+
+IXAI's roadmap should preserve the long arc from internal 一玄AI tooling into a public and Pro intelligence product:
+
+```text
+AI Morning Brief
+→ Telegram-style morning intelligence
+→ FCN / Crypto Grid / Dual / stock monitoring prototypes
+→ Public Intelligence
+→ Account Intelligence
+→ Future Pro Intelligence
+→ Intelligence Distribution Layer
+```
+
+The early Morning Brief era proved the daily habit loop: users need a calm, structured market interpretation before they need more dashboards. FCN monitoring, Crypto Grid / Dual monitoring, stock watch monitoring, and market-news intake proved the core intelligence primitives: risk context, market regime, instrument-specific awareness, and human-readable summaries. The public app now turns those primitives into Public Intelligence, while Account and Pro surfaces gradually restore the personal monitoring depth in a compliant product architecture.
+
+Roadmap decisions should therefore follow this principle:
+
+- Public Intelligence builds trust and daily reading habit.
+- Account Intelligence remembers preferences and watchlist context.
+- Pro Intelligence may later add portfolio, FCN, alert, and risk workflows.
+- Distribution turns reviewed intelligence into LINE / social / publish workflows.
+- None of these layers should become buy/sell signals, automated trading, or return promises.
 
 ### Public Intelligence
 
@@ -242,17 +271,29 @@ Completed:
 - Adjusted Coverage Score to reflect actual category/source coverage instead of synthetic provider inflation.
 - Kept unstable, blocked, empty, or unverified providers disabled with explicit reasons.
 
+### v1.42.0 — Intelligence Distribution Layer
+
+Completed:
+
+- Added local/session-first Distribution Preference model.
+- Added Account Delivery Preferences for Daily / Weekly / Daily + Weekly frequency.
+- Added Macro, AI / Tech, Crypto, Taiwan Market, FCN Awareness, and Risk Regime distribution categories.
+- Enabled In-App as the only active channel while reserving LINE, Email, and Push as future disabled channels.
+- Added read-only Admin Distribution Queue with Draft / Reviewed / Published foundation states.
+- Added lightweight distribution viewed / published analytics event names.
+- Preserved no-push, no-email, no-notification, no-marketing-automation boundaries.
+
 Next:
 
-`v1.42.0 — Intelligence Distribution Layer`
+`v1.42.1 — Publish Center Foundation`
 
 ## Next Suggested Version
 
-`v1.42.0 — Intelligence Distribution Layer`
+`v1.42.1 — Publish Center Foundation`
 
 Goal:
 
-- Turn stronger Daily Intelligence coverage into distribution-ready workflows.
+- Turn reviewed Daily / Weekly / Social Pack output into an approval-ready Publish Center path.
 - Preserve human review before external delivery or publishing.
 - Keep public / account / future Pro delivery boundaries clear.
 - Do not add automated trading, paid entitlement, or unreviewed push automation.
@@ -270,13 +311,14 @@ Goal:
 
 ### Portfolio Intelligence
 
-
 Goal:
 
-- Establish future portfolio onboarding and relevance model.
-- Keep it informational and risk-aware.
-- Do not implement broker integration or automated trading.
-- Mobile QA should remain part of done criteria for Account and Pro surfaces before portfolio expansion.
+- Reintroduce the depth of the early personal monitoring workflows in a compliant product layer.
+- Use onboarding, watchlist memory, and future durable preferences to organize portfolio relevance.
+- Keep the first version informational, risk-aware, and non-advisory.
+- Do not implement broker integration, automatic trading, individual execution instructions, or performance promises.
+
+Mobile QA should remain part of done criteria for Account and Pro surfaces before portfolio expansion.
 
 ### v1.42 — AI Alert Engine
 
@@ -285,6 +327,7 @@ Goal:
 - Design event-driven alert architecture.
 - Separate public alerts from Pro personalized alerts.
 - Require user opt-in and safe delivery controls.
+- Treat FCN / Crypto / Portfolio alerts as risk-awareness monitoring, not trade instructions.
 
 ### Dynamic Intelligence Provider Integration
 

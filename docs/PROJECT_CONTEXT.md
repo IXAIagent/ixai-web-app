@@ -16,6 +16,32 @@ The core product layers are:
 
 I-Xuan remains the trust brand behind the product. IXAI is the AI operating layer that extends that trust into a durable market intelligence system.
 
+## A1. Product Origin: AI Morning Brief Era
+
+IXAI did not begin as a generic SaaS app. It evolved from an internal "一玄AI" operating workflow built to help monitor markets, risk, and structured-product exposure every day.
+
+The earliest product shape was an AI Morning Brief: a daily Telegram-style market briefing that organized macro, US equities, Taiwan market themes, crypto, and FCN-related risk observations into a morning decision-support ritual. The point was not to create trading signals; it was to compress market noise into a structured daily awareness layer.
+
+Several early monitoring systems became the practical product prototypes behind IXAI:
+
+- FCN monitoring: tracking structured-product concepts such as KO, KI, worst performer, observation dates, volatility, and underlying asset sensitivity. This became the seed for IXAI's risk-first FCN education and future Pro FCN workflow.
+- Crypto Grid / Dual monitoring: tracking Binance-style grid ranges, dual-investment states, BTC / ETH volatility, liquidity, and market regime changes. This became the seed for Crypto Watch, risk regime awareness, and future alert architecture.
+- Stock and market monitoring: tracking US technology names, Taiwan AI supply-chain names, macro/rates, and market news. This became the seed for Public Intelligence, Daily Intelligence, Watchlist Intelligence Lite, and future Portfolio Intelligence.
+- Market news module: ingesting and organizing public market headlines into daily narrative form. This became the seed for the Daily Intelligence Content Engine, Provider Health, Coverage Score, and News Provider Recovery work.
+
+The product therefore moved through this arc:
+
+```text
+AI Morning Brief / Telegram-style daily intelligence
+→ FCN / Crypto Grid / Dual / stock monitoring prototypes
+→ Public Intelligence and Daily / Weekly Briefs
+→ Account Intelligence and watchlist memory
+→ IXAI Pro preview and future portfolio / FCN / alert workflows
+→ Social Intelligence Engine and distribution-ready intelligence assets
+```
+
+This origin matters because IXAI's product center is not "content marketing" or "signals." The durable product center is an AI-native investment intelligence workflow: remember what matters, monitor risk context, organize daily reading, and eventually support deeper personal and Pro intelligence layers while preserving compliance boundaries.
+
 ## B. Current Product Status
 
 The current IXAI public app is live and deployed on Vercel, with `https://app.ixuan.ai` as the production public domain.
@@ -24,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.41.3`
+`v1.42.0`
 
 Current Core Flow:
 
@@ -50,6 +76,19 @@ Product Layers:
 - Public Intelligence: acquisition, trust building, daily/weekly market awareness, shareable intelligence.
 - Account Intelligence: identity continuity, Watchlist Intelligence Lite, preference memory, LINE readiness.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, FCN risk workflow.
+- Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
+
+Current surface relationship:
+
+```text
+Public App
+├─ Landing / Share / Daily / Weekly: trust-building Public Intelligence
+├─ Onboarding: captures markets, watchlist seed, risk preference, and intelligence interests
+├─ Account: lightweight AI Intelligence Workspace with preference memory and LINE readiness
+├─ IXAI Pro / Pro Preview / Pro Intelligence: future paid/intensive intelligence path
+├─ Admin Editorial Studio: internal human-in-the-loop content operations
+└─ Social Intelligence Engine: converts reviewed Daily / Weekly briefs into manual FB / IG / LINE assets
+```
 
 Public Intelligence Engine now includes foundation-level modules for Market Pulse, Macro Watch, AI / Tech Watch, Crypto Watch, FCN Awareness, and Risk Regime. v1.40.3a adds production polish for compliance language, mobile rhythm, CTA hierarchy, and Public-to-Account narrative continuity.
 
@@ -69,12 +108,14 @@ Social Pack Renderer Hardening now makes Daily Intelligence Social Pack PNG outp
 
 News Provider Recovery & US Equity Coverage Expansion now increases real Daily Intelligence intake coverage by enabling verified public RSS sources for CNBC, CNBC Technology, Nasdaq, Seeking Alpha, The Block, and Decrypt while keeping unstable or legally unverified sources disabled with explicit reasons. Provider Health now distinguishes production active, recoverable, experimental, disabled, failed, and empty-feed states.
 
+Intelligence Distribution Layer foundation now connects Account Intelligence preferences to a local/session-first Distribution Preference model and a read-only Admin Distribution Queue. The flow is Generate Intelligence → Review Intelligence → Distribute Intelligence → Measure Intelligence, with only In-App channel enabled. LINE, Email, and Push remain future disabled channels; no external delivery or automation is active.
+
 Current Highest Priorities:
 
-1. Intelligence Distribution Layer.
-2. Publish Center Foundation.
-3. Portfolio Intelligence.
-4. AI Alert Engine.
+1. Publish Center Foundation.
+2. Portfolio Intelligence.
+3. AI Alert Engine.
+4. Dynamic Intelligence Provider Integration.
 
 Growth Strategy:
 
@@ -108,6 +149,8 @@ Completed product capabilities include:
 - Daily Brief Public Preview QA / UI Polish: public Daily Brief API diagnostics sanitization, stronger generated Daily Brief reading hierarchy, compliance wording cleanup, and admin-only diagnostic boundary confirmation.
 - Social Pack Renderer Hardening: Daily Social Pack cover, Market Pulse, AI / Tech Watch, FCN / Risk Watch, and I-Xuan View now use content-aware social copy and reliable footer safe zones for PNG export.
 - News Provider Recovery & Coverage Expansion: verified public sources now improve US equities, AI / semiconductor, macro, crypto, and Taiwan technology supply-chain coverage while preserving provider health diagnostics and disabled-source reasons.
+- Intelligence Distribution Layer foundation: Account Delivery Preferences now support Daily / Weekly / Daily + Weekly frequency, Macro / AI Tech / Crypto / Taiwan Market / FCN Awareness / Risk Regime categories, and In-App-only channel preferences with LINE / Email / Push reserved as future disabled channels.
+- Admin Distribution Queue foundation: read-only Draft / Reviewed / Published status visibility for future delivery channels without persistence queue, push automation, or marketing workflow.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -166,8 +209,9 @@ Long-term IXAI direction:
 
 - AI operating system for investors.
 - Multi-asset intelligence layer across US equities, Taiwan AI supply chain, macro, crypto, rates, and structured products.
-- FCN intelligence with risk-first education and future personal monitoring workflows.
-- Portfolio risk workflow and personal market memory.
+- FCN intelligence with risk-first education and future personal monitoring workflows, descended from the early FCN monitor prototypes.
+- Crypto grid / dual / liquidity awareness as a risk-monitoring and education layer, not automated trading.
+- Portfolio risk workflow and personal market memory, descended from the early stock / crypto / FCN monitoring workflows.
 - Institutional-grade investment OS for daily interpretation, risk awareness, and decision support.
 
 IXAI should evolve from public intelligence into a personal AI wealth intelligence platform while preserving compliance discipline and human review where needed.
@@ -239,3 +283,9 @@ IXAI uses a multi-agent collaboration model:
 - `docs/VERSION_HISTORY.md`: concise implementation history for handoff.
 
 Before major work, AI agents should read `PROJECT_CONTEXT.md`, `PROJECT_RULES.md`, `ROADMAP.md`, and `VERSION_HISTORY.md`, audit the relevant files, and only then patch. The goal is to prevent context loss, version drift, accidental architecture rewrites, and product misalignment.
+
+## H. See Also
+
+- `docs/PRODUCT_ORIGIN.md`: origin layer for why IXAI exists and how 一玄 advisory, monitoring, Morning Brief, Public Intelligence, Account Intelligence, and Future Pro Intelligence connect.
+- `docs/AI_MORNING_BRIEF_HISTORY.md`: historical record of the pre-app AI Morning Brief, FCN monitoring, Crypto Grid / Dual monitoring, IXAI Agent, and Public App evolution.
+- `docs/IXAI_VISION.md`: long-term vision layer for IXAI as an AI-native Wealth Intelligence Operating System.

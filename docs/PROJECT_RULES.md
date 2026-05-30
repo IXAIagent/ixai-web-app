@@ -218,6 +218,17 @@ Public surfaces must never provide:
 - Target prices.
 - Return promises.
 
+Public Intelligence must not be written as individual investment advice. It may explain market context, risk awareness, education, and general scenario observation, but it must not tell a specific user what to buy, sell, hold, size, hedge, subscribe to, redeem, or execute.
+
+FCN / Portfolio / Crypto Boundary Rules:
+
+- FCN, portfolio, crypto, grid, dual, and watchlist content may provide risk awareness, monitoring, education, and scenario context.
+- These surfaces must not provide buy/sell instructions, automatic trading instructions, exact position sizing, target prices, guaranteed returns, guaranteed coupon language, or personalized execution recommendations.
+- FCN content must not imply personal knock-in probability, personal knock-out expectation, principal protection, or product suitability unless a future compliant Pro workflow explicitly supports it.
+- Crypto Grid / Dual content must not imply automated Binance execution, grid parameter recommendations, guaranteed yield, or leverage instructions.
+- Portfolio Intelligence and Pro Intelligence must preserve compliance boundaries: no brokerage execution, no individualized investment advice, no performance promises, and no automated trading.
+- Any future Pro workflow that touches portfolio, FCN, crypto, or AI alerts must be framed as intelligence, risk context, monitoring, and workflow support unless separately approved by legal/compliance review.
+
 News Provider Recovery Rules:
 
 - Only enable providers that are publicly accessible, technically stable, and appropriate for headline / summary intake.
@@ -327,6 +338,16 @@ Daily Intelligence Rules:
 - Daily Brief content must not include buy/sell recommendations, target prices, return promises, or personalized portfolio / FCN conclusions.
 - Editorial drafts that lack source coverage, content length, or insight depth should be visibly flagged before manual publish.
 - Provider Health, Coverage Score, Content Quality Score, raw provider errors, and source debug metadata are admin-only diagnostics and must not be exposed through public Daily Brief responses.
+
+Intelligence Distribution Layer Rules:
+
+- Distribution preferences may organize frequency, categories, and channels for future intelligence delivery.
+- v1.42.0 enables In-App preference only; LINE, Email, and Push channels must remain future / disabled until a later approved delivery system exists.
+- Distribution Queue is an operational foundation view, not a sending queue.
+- Draft / Reviewed / Published status may be shown in Admin, but it must not imply external delivery has occurred.
+- No LINE push, email, push notification, marketing automation, conversion attribution, or user profiling may be added without explicit approval.
+- Distribution analytics may record lightweight published / viewed operational events only. They must not include raw email, LINE user ID, watchlist symbols, portfolio holdings, auth tokens, or notification tokens.
+- Any future external delivery requires explicit opt-in persistence, delivery logs, pause/unsubscribe controls, human review, and compliance approval.
 
 ## I. Growth Rules
 
