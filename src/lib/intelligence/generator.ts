@@ -15,6 +15,7 @@ import type {
   DailyIntelligenceProviderStatus,
   DailyProviderHealth,
   DailyRiskRegimeReasoning,
+  DailyTopStory,
 } from "@/src/types/editorial";
 import { log } from "@/src/lib/log";
 import { buildNarrativeBundle } from "@/src/lib/intelligence/narrative-engine";
@@ -95,6 +96,36 @@ function compactText(value: string | undefined, fallback: string, maxLength: num
   return `${normalized.slice(0, maxLength - 1)}…`;
 }
 
+function isMostlyEnglishText(value: string) {
+  const letters = (value.match(/[A-Za-z]/g) ?? []).length;
+  const cjk = (value.match(/[\u4e00-\u9fff]/g) ?? []).length;
+
+  return letters > 20 && cjk < Math.max(8, letters * 0.22);
+}
+
+function looksLikeRawNewsSnippet(value: string) {
+  return /記者|綜合報導|新聞網|報導|全文|\\.\\.\\.|…/.test(value);
+}
+
+function cleanIntelligenceSentence(value: string | undefined, fallback: string, maxLength = 160) {
+  const normalized = (value ?? fallback)
+    .replace(/\*\*/g, "")
+    .replace(/Short Insight|Observation\s*\d+/gi, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/buy now|must buy|sell now/gi, "monitor")
+    .replace(/guaranteed return/gi, "risk-awareness context")
+    .replace(/買進|買入|必買/g, "觀察")
+    .replace(/賣出|必賣/g, "風險控管")
+    .replace(/保證收益|保證報酬|穩賺|必漲/g, "風險情境");
+
+  if (!normalized || isMostlyEnglishText(normalized) || looksLikeRawNewsSnippet(normalized)) {
+    return compactText(fallback, fallback, maxLength);
+  }
+
+  return compactText(normalized, fallback, maxLength);
+}
+
 function getItemsByCategory(items: NormalizedNewsItem[], categories: NormalizedNewsItem["category"][]) {
   return items.filter((item) => categories.includes(item.category));
 }
@@ -130,23 +161,176 @@ function buildCoverageScore(items: NormalizedNewsItem[]): DailyCoverageScore {
   };
 }
 
-function buildExecutiveSummary(items: NormalizedNewsItem[], intelligence: Pick<DailyIntelligenceDraft, "macroRatesObservation" | "aiTechObservation" | "cryptoObservation" | "marketRegimeNote">) {
-  const selected = balancedFeedItems(items).slice(0, 5);
-  const fallback = [
-    compactText(intelligence.macroRatesObservation, "利率與美元仍是今日市場定價核心。", 40),
-    compactText(intelligence.aiTechObservation, "AI / Tech 主線仍需觀察資金集中度。", 40),
-    compactText(intelligence.cryptoObservation, "BTC / ETH 仍反映風險偏好與流動性。", 40),
-    compactText(intelligence.marketRegimeNote, "Risk regime 偏混合，需確認多資產訊號。", 40),
-    "FCN 觀察聚焦 KO / KI / Worst Performer 結構。",
+function buildTodaySignal({
+  ai,
+  macro,
+  rates,
+  risk,
+}: {
+  ai?: NormalizedNewsItem;
+  macro?: NormalizedNewsItem;
+  rates?: NormalizedNewsItem;
+  risk?: NormalizedNewsItem;
+}) {
+  const macroSignal = rates?.summary ?? macro?.summary;
+  const aiSignal = ai?.summary;
+  const riskSignal = risk?.summary;
+
+  if (aiSignal && macroSignal) {
+    return "今日最重要的訊號是：AI 需求仍是市場主線，但利率與估值壓力正在限制風險偏好的擴散。";
+  }
+
+  if (aiSignal) {
+    return "今日最重要的訊號是：資金仍圍繞 AI 與科技效率題材，但市場需要確認這條主線是否能擴散到更多產業。";
+  }
+
+  if (macroSignal || riskSignal) {
+    return "今日最重要的訊號是：市場重新把利率、美元與波動率放回定價核心，風險資產需要更多確認訊號。";
+  }
+
+  return "今日最重要的訊號是：市場缺少單一強催化，應先觀察 AI 主線、利率壓力與風險偏好是否重新同向。";
+}
+
+function buildTopThreeThings({
+  macro,
+  rates,
+  taiwan,
+}: {
+  macro?: NormalizedNewsItem;
+  rates?: NormalizedNewsItem;
+  taiwan?: NormalizedNewsItem;
+}): DailyTopStory[] {
+  const macroAnchor = rates ?? macro;
+  const items: DailyTopStory[] = [
+    {
+      headline: "Macro：利率與美元仍牽動風險偏好",
+      whatHappened: cleanIntelligenceSentence(
+        macroAnchor?.summary,
+        "Fed、Treasury yield、美元與通膨訊號仍是今日市場定價核心。",
+        96,
+      ),
+      whyItMatters: "長端利率與美元會影響科技股估值、Crypto 流動性與高 beta 資產的容錯率。",
+      watchpoint: "觀察美債殖利率、美元與 VIX 是否同步轉強。",
+    },
+    {
+      headline: "AI：資金主線從晶片延伸到軟體與雲端",
+      whatHappened: "AI infrastructure、semiconductors、cloud 與 enterprise software 仍是資金關注核心。",
+      whyItMatters: "AI 行情若從單一晶片股擴散到軟體與雲端，代表企業 AI 支出敘事仍有延伸空間。",
+      watchpoint: "觀察大型科技、企業軟體、資料中心與半導體供應鏈是否同向。",
+    },
+    {
+      headline: taiwan ? "Taiwan：AI 供應鏈仍是全球 AI trade 延伸" : "Risk：高估值環境下波動率容易放大",
+      whatHappened: taiwan
+        ? "台股 AI supply chain 仍受全球 AI 資本支出、匯率與外資節奏影響。"
+        : "市場風險偏好尚未全面擴散，高 beta 資產仍容易受到利率與流動性變化牽動。",
+      whyItMatters: taiwan
+        ? "台灣 AI 供應鏈是全球 AI 資本支出的實體延伸，會同時受美股科技股與匯率變化影響。"
+        : "高估值環境下，只要利率或美元重新走強，波動率就可能先在高 beta 資產放大。",
+      watchpoint: taiwan
+        ? "觀察台積電、AI server、外資流向與美股科技股廣度。"
+        : "觀察 VIX、BTC / ETH、信用壓力與市場廣度。",
+    },
   ];
 
-  return Array.from({ length: 5 }, (_, index) =>
-    compactText(
-      selected[index]?.title,
-      fallback[index],
-      40,
-    ),
-  );
+  return items;
+}
+
+function buildMarketInterpretation({
+  ai,
+  crypto,
+  macro,
+  rates,
+  risk,
+}: {
+  ai?: NormalizedNewsItem;
+  crypto?: NormalizedNewsItem;
+  macro?: NormalizedNewsItem;
+  rates?: NormalizedNewsItem;
+  risk?: NormalizedNewsItem;
+}) {
+  const hasAi = Boolean(ai);
+  const hasMacro = Boolean(rates ?? macro ?? risk);
+  const cryptoContext = crypto
+    ? "Crypto 則繼續扮演流動性與風險偏好的高 beta 溫度計。"
+    : "Crypto 今日若缺少明確催化，仍適合作為流動性與槓桿情緒的輔助觀察。";
+
+  if (hasAi && hasMacro) {
+    return [
+      "今日市場不是單純的新聞輪動，而是 AI 成長敘事與利率折現壓力的拉扯。",
+      "若 AI 需求從晶片擴散到雲端、資料庫與企業軟體，代表資本支出敘事仍有延伸；但只要長端利率維持高檔，估值容錯率就會下降。",
+      cryptoContext,
+    ].join(" ");
+  }
+
+  if (hasAi) {
+    return [
+      "今日市場解讀的核心是 AI 主線是否從少數大型科技股擴散到更廣的軟體、雲端與供應鏈。",
+      "若擴散成立，市場會把 AI 視為企業效率與資本支出的長週期題材；若擴散失敗，集中度風險會重新浮現。",
+    ].join(" ");
+  }
+
+  return [
+    "今日市場解讀的重點是風險資產是否有足夠理由擴散，而不是單看指數漲跌。",
+    "利率、美元、波動率與市場廣度需要一起觀察；若這些訊號不同步，短線風險偏好可能反覆。",
+    cryptoContext,
+  ].join(" ");
+}
+
+function buildInvestorWatchpoints({
+  ai,
+  crypto,
+  macro,
+  rates,
+  risk,
+  taiwan,
+}: {
+  ai?: NormalizedNewsItem;
+  crypto?: NormalizedNewsItem;
+  macro?: NormalizedNewsItem;
+  rates?: NormalizedNewsItem;
+  risk?: NormalizedNewsItem;
+  taiwan?: NormalizedNewsItem;
+}) {
+  const watchpoints = [
+    ai ? "AI demand：觀察 AI infrastructure、enterprise software 與 cloud spending 是否延續。" : "AI demand：確認 AI 主線是否仍有資金與基本面支撐。",
+    rates || macro ? "Rates / Treasury yields：觀察長端利率是否限制科技股估值擴張。" : "Rates / Treasury yields：若利率回升，風險資產容錯率會下降。",
+    "Enterprise software spending：確認 AI 需求是否從晶片擴散到企業軟體與資料庫。",
+    crypto ? "Crypto liquidity：觀察 BTC / ETH、ETF flow 與 stablecoin liquidity 是否支持風險偏好。" : "Crypto liquidity：沒有重大催化時，仍作為風險偏好溫度計。",
+    taiwan ? "Taiwan AI supply chain：觀察台股 AI 供應鏈是否跟上全球 AI 資本支出。" : "Taiwan AI supply chain：觀察半導體供應鏈與美股科技股連動。",
+    risk ? "Risk regime：觀察 VIX、美元、利率與市場廣度是否同向。" : "Risk regime：確認低波動是否掩蓋集中度風險。",
+  ];
+
+  return watchpoints.slice(0, 6);
+}
+
+function buildExecutiveSummary({
+  intelligence,
+  marketInterpretation,
+  todaySignal,
+  topThreeThings,
+  watchpoints,
+}: {
+  intelligence: Pick<DailyIntelligenceDraft, "macroRatesObservation" | "aiTechObservation" | "cryptoObservation" | "marketRegimeNote">;
+  marketInterpretation: string;
+  todaySignal: string;
+  topThreeThings: DailyTopStory[];
+  watchpoints: string[];
+}) {
+  const fallback = [
+    cleanIntelligenceSentence(intelligence.macroRatesObservation, "利率與美元仍是今日市場定價核心。", 44),
+    cleanIntelligenceSentence(intelligence.aiTechObservation, "AI / Tech 主線需觀察資金是否擴散。", 44),
+    cleanIntelligenceSentence(intelligence.cryptoObservation, "BTC / ETH 反映流動性與風險偏好。", 44),
+    cleanIntelligenceSentence(intelligence.marketRegimeNote, "Risk regime 需確認利率、美元與波動率。", 44),
+    "FCN 觀察聚焦 KO / KI / Worst Performer 結構。",
+  ];
+  const primary = [
+    cleanIntelligenceSentence(todaySignal.replace(/^今日最重要的訊號是[:：]\s*/, ""), fallback[0], 44),
+    ...topThreeThings.map((item) => cleanIntelligenceSentence(`${item.headline}，${item.watchpoint}`, item.headline, 44)),
+    cleanIntelligenceSentence(marketInterpretation, fallback[3], 44),
+    cleanIntelligenceSentence(watchpoints[0], fallback[4], 44),
+  ].filter(Boolean);
+
+  return Array.from({ length: 5 }, (_, index) => compactText(primary[index] ?? fallback[index], fallback[index], 44));
 }
 
 function buildRiskRegimeReasoning(items: NormalizedNewsItem[], marketRegime: DailyIntelligenceDraft["marketRegime"]): DailyRiskRegimeReasoning {
@@ -158,9 +342,9 @@ function buildRiskRegimeReasoning(items: NormalizedNewsItem[], marketRegime: Dai
   return {
     current,
     reasons: [
-      compactText(rates?.summary, "VIX / volatility signal 尚未全面失控，但利率與美元仍可能壓抑風險資產估值。", 86),
-      compactText(risk?.summary, "Treasury yield 若維持高檔，科技股估值容錯率下降。", 86),
-      compactText(crypto?.summary, "USD liquidity 與 BTC / ETH beta 仍是判斷風險偏好的輔助訊號。", 86),
+      cleanIntelligenceSentence(rates?.summary, "VIX / volatility signal 尚未全面失控，但利率與美元仍可能壓抑風險資產估值。", 86),
+      cleanIntelligenceSentence(risk?.summary, "美債殖利率若維持高檔，科技股估值容錯率下降。", 86),
+      cleanIntelligenceSentence(crypto?.summary, "USD liquidity 與 BTC / ETH beta 仍是判斷風險偏好的輔助訊號。", 86),
     ],
   };
 }
@@ -195,17 +379,20 @@ function buildIxuanView({
   rates?: NormalizedNewsItem;
   risk?: NormalizedNewsItem;
 }) {
-  const macroAnchor = rates?.summary ?? macro?.summary ?? "利率、美元與通膨仍是今日市場最需要放在前面的背景。";
-  const techAnchor = ai?.summary ?? "AI / Tech 仍是資金最容易聚焦的主線，但估值與集中度需要同步檢查。";
-  const cryptoAnchor = crypto?.summary ?? "Crypto 沒有重大催化時，仍可作為流動性與風險偏好的觀察溫度計。";
-  const riskAnchor = risk?.summary ?? "風險管理上，今日不應只看單一指數方向，而要確認利率、美元、波動率與市場廣度是否一致。";
+  const aiContext = ai
+    ? "本輪 AI 行情已不只是晶片股行情，而是逐步擴散到雲端、資料庫與企業軟體。"
+    : "今日市場主線仍需要從資金流、利率與產業能見度三個角度同時判讀。";
+  const macroContext = rates ?? macro
+    ? "短期仍需留意利率與估值壓力，因為長端利率會直接影響高成長資產的容錯率。"
+    : "如果缺少明確總經催化，市場更容易回到風險偏好與估值位置的拉扯。";
+  const cryptoContext = crypto
+    ? "Crypto 的角色仍偏向流動性與風險偏好的溫度計，不宜把單日波動解讀成獨立趨勢。"
+    : "Crypto 若沒有重大催化，仍可用來觀察市場對流動性與槓桿風險的敏感度。";
+  const riskContext = risk
+    ? "風險上，重點不是預測單一方向，而是確認利率、美元、波動率與市場廣度是否同向。"
+    : "一玄會優先觀察市場正在 pricing 什麼，再決定哪些主題值得持續追蹤。";
 
-  return [
-    `今日一玄觀點：${compactText(macroAnchor, macroAnchor, 92)}`,
-    compactText(techAnchor, techAnchor, 86),
-    compactText(cryptoAnchor, cryptoAnchor, 78),
-    `${compactText(riskAnchor, riskAnchor, 92)} 這份 Daily Intelligence 的重點，是先建立市場正在 pricing 什麼，再決定哪些風險需要被持續追蹤。`,
-  ].join(" ");
+  return [aiContext, macroContext, cryptoContext, riskContext].join("");
 }
 
 function estimateContentLength(parts: string[]) {
@@ -261,13 +448,16 @@ function attachDailyContentEngine(
   const macro = byCategory(newsItems, "macro");
   const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const risk = byCategory(newsItems, "risk");
-  const executiveSummary = buildExecutiveSummary(newsItems, intelligence);
   const coverageScore = buildCoverageScore(newsItems);
   const riskRegimeReasoning = buildRiskRegimeReasoning(newsItems, intelligence.marketRegime);
   const fcnAwareness = buildFcnAwareness(intelligence.generatedAt);
+  const todaySignal = buildTodaySignal({ ai, macro, rates, risk });
+  const topThreeThings = buildTopThreeThings({ macro, rates, taiwan });
+  const marketInterpretation = buildMarketInterpretation({ ai, crypto, macro, rates, risk });
+  const investorWatchpoints = buildInvestorWatchpoints({ ai, crypto, macro, rates, risk, taiwan });
   const macroWatch = {
     headline: "Macro Watch",
-    whatHappened: compactText(rates?.summary ?? macro?.summary, "Fed、Treasury yield、美元與通膨資料仍是今日風險資產的定價核心。", 120),
+    whatHappened: cleanIntelligenceSentence(rates?.summary ?? macro?.summary, "Fed、Treasury yield、美元與通膨資料仍是今日風險資產的定價核心。", 120),
     whyItMatters: "利率與美元會影響科技股估值、Crypto 流動性與高 beta 資產的風險承受度。",
     marketMeaning: "若長端殖利率與美元同步走強，市場可能降低對高估值資產的容錯率；若兩者降溫，risk appetite 才更容易擴散。",
   };
@@ -278,8 +468,8 @@ function attachDailyContentEngine(
       return text.includes(symbol.toLowerCase()) || ["NVDA", "MSFT", "AMD", "AVGO", "PLTR"].includes(symbol);
     }).slice(0, 5),
     observations: [
-      compactText(ai?.summary, "AI infrastructure、semiconductors、cloud 與 software 仍是資金關注主軸。", 96),
-      compactText(taiwan?.summary, "台灣 AI supply chain 需同步觀察美股科技股、外資流向與匯率壓力。", 96),
+      "AI infrastructure、semiconductors、cloud 與 software 仍是資金關注主軸。",
+      "台灣 AI supply chain 需同步觀察美股科技股、外資流向與匯率壓力。",
       "AI / Tech 的重點不是單一 headline，而是資本支出、供應鏈能見度與估值容錯率是否同向。",
       "若領漲只集中在少數 megacap，市場廣度不足會放大回撤敏感度。",
     ],
@@ -288,17 +478,28 @@ function attachDailyContentEngine(
     headline: crypto ? "Crypto Watch" : "No major crypto catalyst today.",
     observations: crypto
       ? [
-          compactText(crypto.summary, "BTC / ETH 仍是流動性與風險偏好的高 beta 觀察區。", 96),
+          cleanIntelligenceSentence(crypto.summary, "BTC / ETH 仍是流動性與風險偏好的高 beta 觀察區。", 96),
           "ETF flow、stablecoin liquidity 與槓桿資金變化是今日 crypto risk appetite 的主要觀察方向。",
           "若美元與實質利率走強，Crypto beta 可能先於股票市場反映壓力。",
         ]
       : ["No major crypto catalyst today.", "仍需觀察 BTC / ETH、ETF flow、stablecoin liquidity 與高槓桿資金是否出現風險偏好轉折。"],
   };
   const ixuanView = buildIxuanView({ ai, crypto, macro, rates, risk });
+  const executiveSummary = buildExecutiveSummary({
+    intelligence,
+    marketInterpretation,
+    todaySignal,
+    topThreeThings,
+    watchpoints: investorWatchpoints,
+  });
   const textParts = [
+    todaySignal,
     intelligence.todayHeadline,
     intelligence.marketRegimeNote,
     ...executiveSummary,
+    ...topThreeThings.flatMap((item) => [item.headline, item.whatHappened, item.whyItMatters, item.watchpoint]),
+    marketInterpretation,
+    ...investorWatchpoints,
     macroWatch.whatHappened,
     macroWatch.whyItMatters,
     macroWatch.marketMeaning,
@@ -315,6 +516,10 @@ function attachDailyContentEngine(
 
   return {
     ...intelligence,
+    todaySignal,
+    topThreeThings,
+    marketInterpretation,
+    investorWatchpoints,
     executiveSummary,
     macroWatch,
     aiTechWatch,
@@ -570,13 +775,47 @@ export async function generateDailyIntelligenceDraftFromNews(
   const baseSlug = `daily-intelligence-${now.slice(0, 10)}`;
   const slug = options.slugSuffix ? `${baseSlug}-${options.slugSuffix}` : baseSlug;
   const engineMarketSummary = [
-    "今日 Daily Intelligence 以公開新聞 intake 為基礎，固定整理 Executive Summary、Macro Watch、AI / Tech Watch、Crypto Watch、Risk Regime、FCN Awareness 與 I-Xuan View。",
+    intelligence.todaySignal,
+    intelligence.marketInterpretation,
     intelligence.macroWatch?.marketMeaning,
     intelligence.riskRegimeReasoning
       ? `Current Risk Regime: ${intelligence.riskRegimeReasoning.current}。${intelligence.riskRegimeReasoning.reasons.join(" ")}`
       : intelligence.marketRegimeNote,
   ].filter(Boolean).join(" ");
   const sections: DailyBriefDraft["sections"] = [
+    {
+      category: "today_signal",
+      headline: "今日一句話：今天市場最重要的訊號。",
+      summary: intelligence.todaySignal ?? intelligence.todayHeadline,
+      ixaiView: "Daily Brief 先回答今天市場最重要的訊號，再進入新聞、風險與觀察點。",
+    },
+    {
+      category: "top_three_things",
+      headline: "今日最重要的三件事。",
+      summary: (intelligence.topThreeThings ?? [])
+        .map((item, index) => [
+          `${index + 1}. ${item.headline}`,
+          `發生什麼：${item.whatHappened}`,
+          `為何重要：${item.whyItMatters}`,
+          `觀察重點：${item.watchpoint}`,
+        ].join(" "))
+        .join(" "),
+      ixaiView: "三大重點將新聞轉成市場解讀，讓讀者知道該觀察什麼，而不是只讀分類摘要。",
+    },
+    {
+      category: "market_interpretation",
+      headline: "Market Interpretation：把新聞轉成市場解讀。",
+      summary: intelligence.marketInterpretation ?? intelligence.marketRegimeNote,
+      ixaiView: "Market Interpretation 聚焦市場正在 pricing 的主線、限制條件與風險脈絡。",
+    },
+    {
+      category: "investor_watchpoints",
+      headline: "Investor Watchpoints：非個人化觀察清單。",
+      summary: (intelligence.investorWatchpoints ?? intelligence.whatToMonitor)
+        .map((item) => `・${item}`)
+        .join(" "),
+      ixaiView: "Investor Watchpoints 是公開市場觀察清單，不是個人化投資建議或交易指令。",
+    },
     {
       category: "executive_summary",
       headline: "Executive Summary：今日最重要的五件事。",
@@ -635,8 +874,11 @@ export async function generateDailyIntelligenceDraftFromNews(
       category: "taiwan_market",
       headline: "台灣 AI Supply Chain 補充觀察。",
       summary:
-        taiwan?.summary ??
-        "台股與半導體供應鏈仍受 AI 資本支出與外資流向影響，短線需同步觀察美股科技股與美元走勢。",
+        cleanIntelligenceSentence(
+          taiwan?.summary,
+          "台股與半導體供應鏈仍受 AI 資本支出、外資流向與匯率節奏影響，短線需同步觀察美股科技股與美元走勢。",
+          150,
+        ),
       ixaiView:
         "IXAI 會把台積電與供應鏈視為全球 AI trade 的延伸，而不是只看單一台股行情。",
     },

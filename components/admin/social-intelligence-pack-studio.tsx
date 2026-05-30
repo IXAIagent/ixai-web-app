@@ -370,7 +370,7 @@ function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soc
               ? splitBullet(bullet)
               : {
                   detail: fitReadableText(bullet, COPY_LIMITS.bodyBullet, "觀察 AI supply chain 與科技資金節奏。"),
-                  heading: bulletIndex === 0 ? "Short Insight" : `Observation ${bulletIndex + 1}`,
+                  heading: ["Key Signal", "Why It Matters", "Watch Next"][bulletIndex] ?? "Watch Next",
                 };
           return (
             <div
@@ -379,7 +379,7 @@ function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soc
               style={{ borderColor: "rgba(185,154,99,0.52)" }}
             >
               <p className="text-[9px] font-semibold leading-[1.35]">
-                {item.heading.replace(/^AI \/ Tech Watch[:：]?\s*/i, "Short Insight")}
+                {item.heading.replace(/^AI \/ Tech Watch[:：]?\s*/i, "Key Signal")}
               </p>
               <p className="mt-0.5 text-[8px] leading-[1.4] text-[rgba(244,240,230,0.66)]">
                 {item.detail}

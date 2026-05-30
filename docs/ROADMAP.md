@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.42.0`
+`v1.42.2`
 
 ## Related Strategic Documents
 
@@ -283,13 +283,22 @@ Completed:
 - Added lightweight distribution viewed / published analytics event names.
 - Preserved no-push, no-email, no-notification, no-marketing-automation boundaries.
 
+### v1.42.2 — Daily Intelligence Experience Upgrade
+
+Completed:
+
+- Upgraded Daily Brief from summary-first news grouping into interpretation-first Market Intelligence Brief.
+- Added stronger Daily reading hierarchy around 今日一句話, 今日最重要的三件事, Market Interpretation, Investor Watchpoints, and complete I-Xuan View.
+- Upgraded Daily Social Pack copy from template shortening into social intelligence extraction and rewrite.
+- Added guardrails against generic repeated filler, template residue, clipped English fragments, and non-advisory boundary drift.
+
 Next:
 
-`v1.42.1 — Publish Center Foundation`
+`v1.42.3 — Publish Center Foundation`
 
 ## Next Suggested Version
 
-`v1.42.1 — Publish Center Foundation`
+`v1.42.3 — Publish Center Foundation`
 
 Goal:
 

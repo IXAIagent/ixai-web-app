@@ -215,7 +215,8 @@ function buildSystemPrompt() {
     "只能使用使用者提供的 headlines、summaries、source labels、categories 與 timestamps，不得發明新事實、數字、報價、事件或來源。",
     "不得提供買賣指令、投資建議、報酬承諾、喊單語氣或誇張 hype。",
     "如果來源覆蓋不足或偏向單一題材，必須明確說明 coverage weak / 來源覆蓋有限，並降低推論強度。",
-    "首頁不是新聞列表；請產出 curated intelligence，而不是重寫新聞。",
+    "Daily Brief 不是新聞列表；請先回答今天市場最重要的訊號，再把新聞轉成市場解讀。",
+    "I-Xuan View 風格應是 2 到 4 句完整繁體中文觀點，不得貼新聞標題、英文殘句或模板文字。",
     "只回傳 JSON object，不要 markdown，不要額外說明。",
   ].join("\n");
 }
@@ -244,12 +245,15 @@ function buildUserPrompt(newsItems: ReturnType<typeof sanitizeNewsItems>, contex
         whatToMonitor: ["string"],
       },
       rules: [
-        "MarketSummary should be 3 to 5 dense sentences and should connect macro, AI/Tech, Crypto and risk regime.",
-        "Keep each feed item summary to 1 concise sentence, but include why it matters.",
+        "MarketSummary should start with today's most important market signal, then connect macro, AI/Tech, Crypto and risk regime.",
+        "RiskFocus should explain the core risk awareness point, not a trading action.",
+        "Keep each feed item summary to 1 concise sentence, but include why it matters and what to watch.",
         "Return 3 to 5 intelligenceFeed items.",
         "Return 3 to 5 whatToMonitor items.",
         "Use weak coverage language if newsItems are sparse or concentrated.",
-        "Daily Intelligence should prioritize insight over summary and support a 3 to 5 minute reading experience after deterministic sections are added.",
+        "Daily Intelligence should be interpretation-first: market signal, three important things, market interpretation, investor watchpoints, then source details.",
+        "Avoid generic filler such as 今日市場焦點已整理為公開情報與風險觀察.",
+        "Never output Short Insight, Observation 1, Observation 2, or Observation 3.",
         "Never use buy, sell, add exposure, reduce exposure, target price, guaranteed return, or trading signal language.",
       ],
       context,

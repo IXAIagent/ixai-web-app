@@ -755,3 +755,39 @@ Out of Scope:
 - Auto trading.
 - Robo-advisor behavior.
 - Buy/sell recommendations.
+
+## v1.42.2 — Daily Intelligence Experience Upgrade
+
+Why:
+
+- Daily Briefs had become structurally deeper, but the reading experience still felt too much like a news summarizer.
+- Users needed to understand the day's market signal in the first 30 seconds.
+- Daily Social Pack PNGs were layout-safe, but the content still felt too template-driven for external LINE / FB / IG distribution.
+
+What Changed:
+
+- Shifted Daily Brief from summary-first to interpretation-first.
+- Added 今日一句話, 今日最重要的三件事, Market Interpretation, and Investor Watchpoints into Daily Intelligence output.
+- Strengthened I-Xuan View so it reads as complete branded commentary rather than a clipped source summary.
+- Upgraded Daily Social Pack copy generation from Brief → Shorten → Image to Brief → Extract Insight → Rewrite for Social → Image.
+- Removed Social Pack template residue such as Short Insight / Observation labels and improved fallback copy quality.
+
+Key Decisions:
+
+- Daily Intelligence should answer what the market is signaling before it lists categories.
+- Social Pack slides should each be shareable as standalone market insight cards.
+- Fewer complete, readable insights are better than many generic or clipped points.
+- All Daily and Social Intelligence remains public, educational, non-personalized, and non-advisory.
+
+Out of Scope:
+
+- New news providers.
+- Provider pipeline changes.
+- Supabase schema changes.
+- Auth, LINE Login, or LIFF changes.
+- Distribution Layer changes.
+- FCN engine changes.
+- Portfolio Intelligence.
+- AI Alert Engine.
+- Real push delivery.
+- Automated trading or personalized investment advice.

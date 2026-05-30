@@ -13,6 +13,10 @@ import { buildDailyShareCopy } from "@/src/lib/share/share-copy";
 import type { DailyBriefDraft } from "@/src/types/editorial";
 
 const categoryLabels: Record<string, string> = {
+  today_signal: "今日一句話",
+  top_three_things: "今日三大重點",
+  market_interpretation: "Market Interpretation",
+  investor_watchpoints: "Investor Watchpoints",
   executive_summary: "Executive Summary",
   macro_watch: "Macro Watch",
   ai_tech_watch: "AI / Tech Watch",
@@ -28,6 +32,10 @@ const categoryLabels: Record<string, string> = {
 };
 
 const featureSectionOrder = new Set([
+  "today_signal",
+  "top_three_things",
+  "market_interpretation",
+  "investor_watchpoints",
   "executive_summary",
   "risk_regime",
   "fcn_awareness",
@@ -133,6 +141,87 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
         surface="daily-slug-top"
         variant="compact"
       />
+
+      {intelligence?.todaySignal ? (
+        <section className="rounded-lg border border-[rgba(176,141,87,0.36)] bg-[rgba(176,141,87,0.09)] p-5 sm:p-6">
+          <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
+            <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+              今日一句話
+            </p>
+          </div>
+          <p className="mt-3 text-xl font-semibold leading-9 text-[var(--ixai-forest)] sm:text-2xl sm:leading-10">
+            {intelligence.todaySignal}
+          </p>
+        </section>
+      ) : null}
+
+      {intelligence?.topThreeThings?.length ? (
+        <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            今日最重要的三件事
+          </p>
+          <div className="mt-4 grid gap-4">
+            {intelligence.topThreeThings.slice(0, 3).map((item, index) => (
+              <article
+                className="rounded-lg border border-[rgba(176,141,87,0.22)] bg-white/55 p-4"
+                key={`${item.headline}-${index}`}
+              >
+                <p className="font-mono text-xs font-semibold text-[var(--ixai-gold)]">
+                  {String(index + 1).padStart(2, "0")}
+                </p>
+                <h2 className="mt-1 text-lg font-semibold leading-7 text-[var(--ixai-forest)]">
+                  {item.headline}
+                </h2>
+                <div className="mt-3 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)] md:grid-cols-3">
+                  <p>
+                    <span className="font-semibold text-[var(--ixai-forest)]">發生什麼：</span>
+                    {item.whatHappened}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-[var(--ixai-forest)]">為何重要：</span>
+                    {item.whyItMatters}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-[var(--ixai-forest)]">觀察重點：</span>
+                    {item.watchpoint}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {(intelligence?.marketInterpretation || intelligence?.investorWatchpoints?.length) ? (
+        <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+          {intelligence?.marketInterpretation ? (
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.82)] p-5 sm:p-6">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+                Market Interpretation
+              </p>
+              <p className="mt-3 text-base leading-8 text-[var(--ixai-forest-soft)]">
+                {intelligence.marketInterpretation}
+              </p>
+            </article>
+          ) : null}
+          {intelligence?.investorWatchpoints?.length ? (
+            <article className="rounded-lg border border-[rgba(9,41,31,0.14)] bg-[rgba(9,41,31,0.045)] p-5 sm:p-6">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+                Investor Watchpoints
+              </p>
+              <ul className="mt-3 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {intelligence.investorWatchpoints.slice(0, 6).map((item) => (
+                  <li className="flex gap-2" key={item}>
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--ixai-gold)]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ) : null}
+        </section>
+      ) : null}
 
       {intelligence?.executiveSummary?.length ? (
         <section className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(255,250,240,0.9)] p-5 shadow-[0_18px_44px_rgba(9,41,31,0.06)] sm:p-6">

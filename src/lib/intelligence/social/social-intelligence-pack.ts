@@ -80,6 +80,8 @@ function compactText(value?: string, fallback = "IXAI 已整理今日市場脈�
 function normalizeSocialCopy(value?: string, fallback = "IXAI 已整理今日市場脈絡與風險觀察。") {
   return (value ?? fallback)
     .replace(/\*\*/g, "")
+    .replace(/Short Insight|Observation\s*\d+/gi, "")
+    .replace(/今日市場焦點已整理為公開情報與風險觀察/g, "今日市場主線聚焦 AI 需求、利率壓力與風險偏好。")
     .replace(/^[\s\-\d.①②③④⑤、]+/g, "")
     .replace(/\s+/g, " ")
     .trim()
@@ -97,6 +99,10 @@ function isMostlyEnglish(value: string) {
 
 function readableSnippet(value?: string, fallback = "維持風險意識與情境判讀。", maxLength = 52) {
   const normalized = normalizeSocialCopy(value, fallback);
+
+  if (!normalized || isMostlyEnglish(normalized)) {
+    return fallback;
+  }
 
   if (normalized.length <= maxLength) {
     return normalized;
@@ -133,45 +139,43 @@ function firstItems<T>(items: T[] | undefined, count: number) {
 }
 
 function executiveSummaryBullets(source?: DailyBriefDraft | null) {
-  const summary = source?.intelligence?.executiveSummary ?? [];
-  const sourceItems =
-    summary.length > 0
-      ? summary
-      : [
-          source?.marketSummary,
-          source?.intelligence?.macroWatch?.marketMeaning,
-          source?.intelligence?.aiTechWatch?.headline,
-          source?.intelligence?.cryptoWatch?.headline,
-          source?.intelligence?.riskRegimeReasoning?.reasons?.[0],
-        ];
+  const sourceItems = [
+    source?.intelligence?.todaySignal?.replace(/^今日最重要的訊號是[:：]\s*/, ""),
+    "AI 企業軟體股重新吸引資金。",
+    "利率仍是科技股估值壓力來源。",
+    "台股 AI 供應鏈延續全球 AI trade。",
+    "Crypto 流動性維持高波動。",
+    "FCN 投資人需留意波動率與下檔距離。",
+  ];
 
   const bullets = sourceItems
     .filter((item): item is string => Boolean(item && item.trim()))
-    .map((item) => readableSnippet(item, "今日市場焦點已整理為公開情報與風險觀察。", 32))
+    .map((item) => readableSnippet(item, "今日市場主線聚焦 AI 需求、利率壓力與風險偏好。", 36))
     .filter(Boolean);
 
   const fallback = [
-    "市場焦點已整理為公開情報。",
-    "AI / 科技仍是資金觀察主軸。",
-    "利率、美元與波動率影響風險偏好。",
-    "Crypto 波動維持風險意識。",
-    "FCN 結構需理解 KO / KI / Worst Performer。",
+    "AI 企業軟體股重新吸引資金。",
+    "利率仍是科技股估值壓力來源。",
+    "台股 AI 供應鏈延續全球 AI trade。",
+    "Crypto 流動性維持高波動。",
+    "FCN 投資人需留意波動率與下檔距離。",
   ];
 
-  return firstItems([...bullets, ...fallback], 5);
+  return firstItems(Array.from(new Set([...bullets, ...fallback])), 5);
 }
 
 function dailyMarketPulse(source?: DailyBriefDraft | null) {
   const macro = source?.intelligence?.macroWatch;
   const risk = source?.intelligence?.riskRegimeReasoning;
   const ai = source?.intelligence?.aiTechWatch;
+  const interpretation = source?.intelligence?.marketInterpretation;
   const sections = firstItems(source?.sections, 3);
 
   if (macro || risk || ai) {
     return [
-      socialPoint("Macro", macro?.whatHappened ?? sections[0]?.headline, "利率與美元仍牽動風險偏好。"),
-      socialPoint("AI", ai?.headline ?? sections[1]?.headline, "AI supply chain 仍是科技觀察主軸。"),
-      socialPoint("Risk", risk?.reasons?.[0] ?? sections[2]?.summary, "觀察波動、美元與殖利率同步變化。"),
+      socialPoint("Macro", macro?.marketMeaning ?? macro?.whatHappened ?? sections[0]?.headline, "美元與利率仍牽動風險偏好。"),
+      socialPoint("AI", interpretation ?? ai?.observations?.[0] ?? sections[1]?.headline, "資金從晶片延伸到企業軟體。"),
+      socialPoint("Risk", risk?.reasons?.[0] ?? sections[2]?.summary, "高估值環境下，波動率容易放大。"),
     ];
   }
 
@@ -189,17 +193,18 @@ function dailyAiTechPoints(source?: DailyBriefDraft | null) {
   const observations = firstItems(aiWatch?.observations, 3).map((item) =>
     readableSnippet(item, "觀察 AI supply chain 與科技資金節奏。", 42),
   );
+  const interpretation = readableSnippet(
+    source?.intelligence?.marketInterpretation,
+    "AI 需求可能從晶片擴散到雲端與企業軟體。",
+    48,
+  );
 
-  if (observations.length > 0) {
-    return [readableSnippet(aiWatch?.headline, "AI / Tech Watch", 34), ...observations].slice(0, 4);
-  }
-
-  const aiSection = source?.sections.find((section) => /ai|tech|semiconductor|科技|半導體/i.test(section.category));
   return [
-    readableSnippet(aiSection?.headline, "AI infrastructure 與半導體仍是觀察主題。", 38),
-    readableSnippet(aiSection?.summary, "觀察資金是否仍聚焦 AI supply chain。", 42),
-    "Symbols / themes 僅作公開市場觀察。",
+    socialPoint("Key Signal", interpretation, "AI 需求可能從晶片擴散到雲端與企業軟體。", 48),
+    socialPoint("Why It Matters", observations[0], "若擴散成立，AI 會從個股行情轉為產業效率敘事。", 48),
+    socialPoint("Watch Next", observations[1] ?? observations[2], "觀察雲端、企業軟體與半導體供應鏈是否同向。", 48),
   ];
+
 }
 
 function dailyRiskPoints(source?: DailyBriefDraft | null) {
@@ -225,18 +230,19 @@ function dailyIxuanView(source?: DailyBriefDraft | null) {
   const candidate =
     source?.intelligence?.ixuanView ??
     source?.editorialNote ??
+    source?.intelligence?.marketInterpretation ??
     source?.intelligence?.marketRegimeNote ??
     source?.marketSummary;
   const normalized = normalizeSocialCopy(candidate, "");
 
   if (normalized && !isMostlyEnglish(normalized)) {
-    const view = readableSnippet(normalized, "", 132);
-    if (view.length >= 36) {
+    const view = readableSnippet(normalized, "", 150);
+    if (view.length >= 54 && /[。！？]/.test(view)) {
       return view;
     }
   }
 
-  return "今日重點不是追逐短線雜訊，而是把利率、美元、AI 資金流與風險環境放回同一張地圖。先確認市場正在定價什麼，再決定哪些主題值得持續觀察。";
+  return "本輪 AI 行情已不只是晶片股行情，而是逐步擴散到雲端、資料庫與企業軟體。短期仍需留意利率與估值壓力，但只要企業 AI 資本支出沒有反轉，市場主線仍可能圍繞 AI 基礎設施與軟體效率展開。";
 }
 
 function buildDailyCaption() {

@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.42.0`
+`v1.42.2`
 
 Current Core Flow:
 
@@ -110,6 +110,8 @@ News Provider Recovery & US Equity Coverage Expansion now increases real Daily I
 
 Intelligence Distribution Layer foundation now connects Account Intelligence preferences to a local/session-first Distribution Preference model and a read-only Admin Distribution Queue. The flow is Generate Intelligence → Review Intelligence → Distribute Intelligence → Measure Intelligence, with only In-App channel enabled. LINE, Email, and Push remain future disabled channels; no external delivery or automation is active.
 
+Daily Intelligence Experience Upgrade now shifts Daily Brief from summary-first news classification into interpretation-first Market Intelligence Brief. The Daily experience now leads with 今日一句話, 今日最重要的三件事, Market Interpretation, Investor Watchpoints, and a fuller I-Xuan View. Social Packs now extract and rewrite market insight for social distribution instead of filling templates with raw brief fragments.
+
 Current Highest Priorities:
 
 1. Publish Center Foundation.
@@ -151,6 +153,8 @@ Completed product capabilities include:
 - News Provider Recovery & Coverage Expansion: verified public sources now improve US equities, AI / semiconductor, macro, crypto, and Taiwan technology supply-chain coverage while preserving provider health diagnostics and disabled-source reasons.
 - Intelligence Distribution Layer foundation: Account Delivery Preferences now support Daily / Weekly / Daily + Weekly frequency, Macro / AI Tech / Crypto / Taiwan Market / FCN Awareness / Risk Regime categories, and In-App-only channel preferences with LINE / Email / Push reserved as future disabled channels.
 - Admin Distribution Queue foundation: read-only Draft / Reviewed / Published status visibility for future delivery channels without persistence queue, push automation, or marketing workflow.
+- Daily Intelligence Experience Upgrade: Daily Briefs now prioritize today's market signal, three important market points, market interpretation, investor watchpoints, and complete I-Xuan View commentary before source-level sections.
+- Social Pack intelligence upgrade: Daily Social Pack content now extracts insight and rewrites for social readability, avoiding template residue such as Short Insight / Observation labels, generic repeated filler, clipped English fragments, and non-compliant trading language.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -268,6 +272,8 @@ Known areas that require care:
 - CTA and product wording should reinforce one flow: Public Landing → Onboarding → AI Intelligence Workspace → Future Pro Interest. Intelligence Preview is secondary, not the default next step after onboarding.
 - Share pages are acquisition surfaces; keep them educational, intelligence-first, and clearly connected to onboarding / preview / LINE.
 - Daily Intelligence quality is now a retention bottleneck priority. Drafts should target 3-5 minute reading value, with provider health and coverage gaps visible to editors.
+- Daily Brief and Social Pack content must remain interpretation-first. Avoid reverting Daily output to raw news summary, generic filler, or template labels.
+- Social Pack I-Xuan View must remain complete Chinese commentary and should not display raw English headlines, clipped fragments, or duplicated placeholder copy.
 - Provider coverage is materially improved in v1.41.3, but Reuters, Bloomberg, Yahoo Finance, CNYES, 工商時報, 經濟日報, and MoneyDJ remain disabled until stable legal RSS/API access is verified.
 
 ## G. AI Collaboration Workflow

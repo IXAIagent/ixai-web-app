@@ -63,6 +63,13 @@ export type DailyFcnAwareness = {
   reminder: string;
 };
 
+export type DailyTopStory = {
+  headline: string;
+  whatHappened: string;
+  whyItMatters: string;
+  watchpoint: string;
+};
+
 export type DailyCoverageScore = {
   macro: number;
   aiTech: number;
@@ -108,6 +115,10 @@ export type DailyIntelligenceDraft = {
   sourceLabels?: string[];
   complianceNote?: string;
   publishedAt?: string;
+  todaySignal?: string;
+  topThreeThings?: DailyTopStory[];
+  marketInterpretation?: string;
+  investorWatchpoints?: string[];
   executiveSummary?: string[];
   macroWatch?: DailyWatchBlock;
   aiTechWatch?: DailyAiTechWatch;
