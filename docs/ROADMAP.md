@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.42.2`
+`v1.42.3`
 
 ## Related Strategic Documents
 
@@ -292,13 +292,23 @@ Completed:
 - Upgraded Daily Social Pack copy from template shortening into social intelligence extraction and rewrite.
 - Added guardrails against generic repeated filler, template residue, clipped English fragments, and non-advisory boundary drift.
 
+### v1.42.3 — Market Memory Layer
+
+Completed:
+
+- Added lightweight Daily Intelligence memory foundation.
+- Added What Changed Since Last Brief as a market continuity layer.
+- Added continuity tags for Daily Brief, Social Pack, future Weekly Intelligence, and Account Intelligence reuse.
+- Made I-Xuan View reflect market narrative continuity instead of single-day isolation.
+- Kept memory local / editorial-first without Supabase schema changes, user-specific memory, portfolio memory, or personal recommendations.
+
 Next:
 
-`v1.42.3 — Publish Center Foundation`
+`v1.42.4 — Publish Center Foundation`
 
 ## Next Suggested Version
 
-`v1.42.3 — Publish Center Foundation`
+`v1.42.4 — Publish Center Foundation`
 
 Goal:
 

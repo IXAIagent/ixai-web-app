@@ -126,6 +126,9 @@ export type DailyIntelligenceDraft = {
   riskRegimeReasoning?: DailyRiskRegimeReasoning;
   fcnAwareness?: DailyFcnAwareness;
   ixuanView?: string;
+  marketMemory?: import("@/src/lib/intelligence/memory/types").MarketMemorySnapshot;
+  whatChangedSinceLastBrief?: string;
+  continuityTags?: string[];
   coverageScore?: DailyCoverageScore;
   contentQuality?: DailyContentQualityScore;
   providerHealth?: DailyProviderHealth[];

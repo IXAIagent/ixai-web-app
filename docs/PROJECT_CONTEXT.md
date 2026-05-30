@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.42.2`
+`v1.42.3`
 
 Current Core Flow:
 
@@ -112,6 +112,8 @@ Intelligence Distribution Layer foundation now connects Account Intelligence pre
 
 Daily Intelligence Experience Upgrade now shifts Daily Brief from summary-first news classification into interpretation-first Market Intelligence Brief. The Daily experience now leads with 今日一句話, 今日最重要的三件事, Market Interpretation, Investor Watchpoints, and a fuller I-Xuan View. Social Packs now extract and rewrite market insight for social distribution instead of filling templates with raw brief fragments.
 
+Market Memory Layer now adds a lightweight Daily Intelligence memory foundation. Generated Daily Briefs can compare today's market signal against recent generated / published briefs, surface What Changed Since Last Brief, attach continuity tags, and make I-Xuan View read with market continuity rather than single-day isolation. This is editorial-first market narrative memory only, not user-specific portfolio memory.
+
 Current Highest Priorities:
 
 1. Publish Center Foundation.
@@ -155,6 +157,7 @@ Completed product capabilities include:
 - Admin Distribution Queue foundation: read-only Draft / Reviewed / Published status visibility for future delivery channels without persistence queue, push automation, or marketing workflow.
 - Daily Intelligence Experience Upgrade: Daily Briefs now prioritize today's market signal, three important market points, market interpretation, investor watchpoints, and complete I-Xuan View commentary before source-level sections.
 - Social Pack intelligence upgrade: Daily Social Pack content now extracts insight and rewrites for social readability, avoiding template residue such as Short Insight / Observation labels, generic repeated filler, clipped English fragments, and non-compliant trading language.
+- Market Memory Layer: Daily Briefs now include What Changed Since Last Brief, continuity tags, and memory-aware I-Xuan View language based on recent editorial briefs.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.
@@ -275,6 +278,7 @@ Known areas that require care:
 - Daily Brief and Social Pack content must remain interpretation-first. Avoid reverting Daily output to raw news summary, generic filler, or template labels.
 - Social Pack I-Xuan View must remain complete Chinese commentary and should not display raw English headlines, clipped fragments, or duplicated placeholder copy.
 - Provider coverage is materially improved in v1.41.3, but Reuters, Bloomberg, Yahoo Finance, CNYES, 工商時報, 經濟日報, and MoneyDJ remain disabled until stable legal RSS/API access is verified.
+- Market Memory Layer is local / editorial-first and uses recent Daily Briefs as narrative context. It must not be represented as personal market memory, portfolio memory, or individualized investment advice.
 
 ## G. AI Collaboration Workflow
 

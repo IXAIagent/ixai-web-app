@@ -18,6 +18,7 @@ import type {
   DailyTopStory,
 } from "@/src/types/editorial";
 import { log } from "@/src/lib/log";
+import { attachMarketMemoryToDailyIntelligence } from "@/src/lib/intelligence/memory";
 import { buildNarrativeBundle } from "@/src/lib/intelligence/narrative-engine";
 import type { NewsIntakeMode, NewsSourceStatus, NormalizedNewsItem } from "@/src/types/news";
 
@@ -718,7 +719,13 @@ export async function generateDailyIntelligenceDraft(): Promise<DailyBriefDraft>
 
 export async function generateDailyIntelligenceDraftFromNews(
   newsItems: NormalizedNewsItem[],
-  options: { slugSuffix?: string; sourceMode?: NewsIntakeMode; sourceLabels?: string[]; sourceStatus?: NewsSourceStatus[] } = {},
+  options: {
+    previousBriefs?: DailyBriefDraft[];
+    slugSuffix?: string;
+    sourceMode?: NewsIntakeMode;
+    sourceLabels?: string[];
+    sourceStatus?: NewsSourceStatus[];
+  } = {},
 ): Promise<DailyBriefDraft> {
   const hasOpenAIKey = getOpenAIProviderConfig().openAIKeyDetected;
   let providerMode: DailyIntelligenceProviderMode = hasOpenAIKey ? "openai" : "fallback";
@@ -770,6 +777,8 @@ export async function generateDailyIntelligenceDraftFromNews(
     });
   }
 
+  intelligence = attachMarketMemoryToDailyIntelligence(intelligence, options.previousBriefs);
+
   const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const now = nowIso();
   const baseSlug = `daily-intelligence-${now.slice(0, 10)}`;
@@ -807,6 +816,20 @@ export async function generateDailyIntelligenceDraftFromNews(
       headline: "Market Interpretation：把新聞轉成市場解讀。",
       summary: intelligence.marketInterpretation ?? intelligence.marketRegimeNote,
       ixaiView: "Market Interpretation 聚焦市場正在 pricing 的主線、限制條件與風險脈絡。",
+    },
+    {
+      category: "what_changed",
+      headline: "What Changed Since Last Brief：市場敘事是否延續或轉向。",
+      summary: intelligence.whatChangedSinceLastBrief ?? "IXAI 正在建立 Daily Intelligence 的市場記憶層，追蹤主線延續、升溫與降溫。",
+      ixaiView: "Market Memory 只追蹤公開市場敘事與風險脈絡，不做個人化投資建議、買賣指令或報酬承諾。",
+    },
+    {
+      category: "continuity_tags",
+      headline: "Continuity Tags：後續 Brief 將持續追蹤的市場主題。",
+      summary: (intelligence.continuityTags ?? [])
+        .map((tag) => `#${tag}`)
+        .join(" "),
+      ixaiView: "Continuity Tags 用來把 Daily、Social Pack 與未來 Weekly Intelligence 接上同一組市場敘事。",
     },
     {
       category: "investor_watchpoints",

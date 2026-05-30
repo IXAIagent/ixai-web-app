@@ -791,3 +791,38 @@ Out of Scope:
 - AI Alert Engine.
 - Real push delivery.
 - Automated trading or personalized investment advice.
+
+## v1.42.3 — Market Memory Layer
+
+Why:
+
+- Daily Intelligence had become more interpretation-first, but each brief still behaved too much like an isolated daily artifact.
+- IXAI needed a lightweight market continuity layer so Daily Briefs could explain what changed since the previous brief.
+- The product origin from AI Morning Brief and monitoring workflows requires memory of market narratives, not just daily summaries.
+
+What Changed:
+
+- Added Market Memory Layer foundation for Daily Intelligence.
+- Added What Changed Since Last Brief to generated Daily Briefs.
+- Added continuity tags such as AI infrastructure, enterprise software, rates pressure, Taiwan AI supply chain, crypto liquidity, and risk regime.
+- Made I-Xuan View include market continuity language when previous generated / published briefs are available.
+- Allowed Daily Social Pack I-Xuan View to reuse a concise memory point without crowding slides.
+
+Key Decisions:
+
+- Market Memory is editorial-first and local / session-aware through existing draft history.
+- Memory tracks public market narratives, rising / fading themes, and continuity tags.
+- This is not user-specific memory, portfolio memory, personal FCN monitoring, or personal investment advice.
+
+Out of Scope:
+
+- Supabase schema changes.
+- Auth, LINE Login, or LIFF changes.
+- Distribution Layer changes.
+- News provider pipeline changes.
+- New providers.
+- Portfolio Intelligence.
+- Personal Market Memory.
+- AI Alert Engine.
+- Buy/sell recommendations.
+- Automated trading.

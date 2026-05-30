@@ -4,7 +4,7 @@ import {
   isDailyIntelligencePersistenceReadable,
   isDailyIntelligencePersistenceWritable,
 } from "@/src/lib/editorial/persistence";
-import { saveDraftAsync } from "@/src/lib/editorial/repository";
+import { getDraftsAsync, saveDraftAsync } from "@/src/lib/editorial/repository";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
 
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
   }
 
   const intake = await getLatestNewsIntakeResult();
+  const previousBriefs = await getDraftsAsync();
   const sourceLabels = [
     ...new Set(
       (intake.sourceStatus ?? intake.sources)
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
     ),
   ];
   const draft = await generateDailyIntelligenceDraftFromNews(intake.items, {
+    previousBriefs,
     sourceMode: intake.mode,
     sourceLabels,
     sourceStatus: intake.sourceStatus ?? intake.sources,

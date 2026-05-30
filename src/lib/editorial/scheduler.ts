@@ -1,5 +1,6 @@
 import {
   findDraftForDateAsync,
+  getDraftsAsync,
   saveDraftAsync,
 } from "@/src/lib/editorial/repository";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
@@ -80,6 +81,7 @@ export async function generateScheduledDailyDraft({
   const existingDraft = await findDraftForDateAsync(dateKey);
   const intake = await getLatestNewsIntakeResult();
   const schedulerConfigured = isSchedulerConfigured();
+  const previousBriefs = await getDraftsAsync();
 
   if (existingDraft && !force) {
     lastGenerationSummary = buildSummary({
@@ -104,6 +106,7 @@ export async function generateScheduledDailyDraft({
     force
       ? {
           slugSuffix: forceSuffix(),
+          previousBriefs,
           sourceMode: intake.mode,
           sourceLabels: [
             ...new Set(
@@ -116,6 +119,7 @@ export async function generateScheduledDailyDraft({
         }
       : {
           sourceMode: intake.mode,
+          previousBriefs,
           sourceLabels: [
             ...new Set(
               (intake.sourceStatus ?? intake.sources)

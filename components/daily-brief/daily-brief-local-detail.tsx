@@ -16,6 +16,8 @@ const categoryLabels: Record<string, string> = {
   today_signal: "今日一句話",
   top_three_things: "今日三大重點",
   market_interpretation: "Market Interpretation",
+  what_changed: "What Changed",
+  continuity_tags: "Continuity Tags",
   investor_watchpoints: "Investor Watchpoints",
   executive_summary: "Executive Summary",
   macro_watch: "Macro Watch",
@@ -35,6 +37,8 @@ const featureSectionOrder = new Set([
   "today_signal",
   "top_three_things",
   "market_interpretation",
+  "what_changed",
+  "continuity_tags",
   "investor_watchpoints",
   "executive_summary",
   "risk_regime",
@@ -190,6 +194,37 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
               </article>
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {(intelligence?.whatChangedSinceLastBrief || intelligence?.continuityTags?.length) ? (
+        <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.88)] p-5 sm:p-6">
+          <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
+            <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+              Market Memory
+            </p>
+          </div>
+          <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
+            What Changed Since Last Brief
+          </h2>
+          {intelligence.whatChangedSinceLastBrief ? (
+            <p className="mt-3 text-base leading-8 text-[var(--ixai-forest-soft)]">
+              {intelligence.whatChangedSinceLastBrief}
+            </p>
+          ) : null}
+          {intelligence.continuityTags?.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {intelligence.continuityTags.slice(0, 5).map((tag) => (
+                <span
+                  className="rounded-md border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.1)] px-2.5 py-1 text-xs font-medium text-[var(--ixai-forest)]"
+                  key={tag}
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </section>
       ) : null}
 

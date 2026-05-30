@@ -109,7 +109,7 @@ function readableSnippet(value?: string, fallback = "維持風險意識與情境
   }
 
   const clauses = normalized
-    .split(/(?<=[。！？.!?；;])|\s[|／/]\s|，|,/)
+    .split(/(?<=[。！？.!?；;])|\s[|]\s|，|,/)
     .map((part) => part.trim())
     .filter(Boolean);
   let output = "";
@@ -173,7 +173,7 @@ function dailyMarketPulse(source?: DailyBriefDraft | null) {
 
   if (macro || risk || ai) {
     return [
-      socialPoint("Macro", macro?.marketMeaning ?? macro?.whatHappened ?? sections[0]?.headline, "美元與利率仍牽動風險偏好。"),
+      socialPoint("Macro", macro?.whatHappened ?? macro?.marketMeaning ?? sections[0]?.headline, "美元與利率仍牽動風險偏好。"),
       socialPoint("AI", interpretation ?? ai?.observations?.[0] ?? sections[1]?.headline, "資金從晶片延伸到企業軟體。"),
       socialPoint("Risk", risk?.reasons?.[0] ?? sections[2]?.summary, "高估值環境下，波動率容易放大。"),
     ];
@@ -245,6 +245,16 @@ function dailyIxuanView(source?: DailyBriefDraft | null) {
   return "本輪 AI 行情已不只是晶片股行情，而是逐步擴散到雲端、資料庫與企業軟體。短期仍需留意利率與估值壓力，但只要企業 AI 資本支出沒有反轉，市場主線仍可能圍繞 AI 基礎設施與軟體效率展開。";
 }
 
+function dailyMemoryPoint(source?: DailyBriefDraft | null) {
+  const memory = source?.intelligence?.whatChangedSinceLastBrief?.replace(/^相較前一份 Brief[，：:]\s*/, "");
+
+  if (!memory) {
+    return "相較前一份 Brief：IXAI 正在建立市場主線記憶，持續追蹤 AI、利率與風險偏好。";
+  }
+
+  return `相較前一份 Brief：${readableSnippet(memory, "市場主線仍需觀察延續與轉向。", 70)}`;
+}
+
 function buildDailyCaption() {
   return [
     "【一玄每日 AI 投資日報】",
@@ -280,6 +290,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   const aiTech = dailyAiTechPoints(source);
   const riskPoints = dailyRiskPoints(source);
   const dailyInsight = dailyIxuanView(source);
+  const memoryPoint = dailyMemoryPoint(source);
 
   return {
     caption: buildDailyCaption(),
@@ -322,7 +333,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
         title: "Risk Regime",
       },
       {
-        bullets: [dailyInsight, "完整內容請見 IXAI App。"],
+        bullets: [dailyInsight, memoryPoint, "完整內容請見 IXAI App。"],
         eyebrow: "I-Xuan View",
         footer: "完整日報請見 IXAI App · app.ixuan.ai",
         id: "ixuan_view",
