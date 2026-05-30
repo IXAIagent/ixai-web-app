@@ -16,6 +16,8 @@ import {
   generateDailySocialPack,
   generateWeeklySocialPack,
   socialBrandTokens,
+  socialExportFormats,
+  type SocialExportFormat,
   type SocialIntelligencePack,
   type SocialPackKind,
 } from "@/src/lib/intelligence/social";
@@ -27,24 +29,39 @@ type SocialIntelligencePackStudioProps = {
   defaultKind?: SocialPackKind;
 };
 
-const EXPORT_WIDTH = 1080;
-const EXPORT_HEIGHT = 1920;
 const DAILY_TECH_SYMBOLS = ["NVDA", "MSFT", "AMD", "AVGO", "PLTR"];
 const WEEKLY_TECH_SYMBOLS = ["AI Infra", "Semis", "Cloud", "Data Center", "Software"];
+const DEFAULT_FORMAT: SocialExportFormat = "ig_feed_4_5";
 
-// v1.40.6d — Social pack export scaling reference.
-// Preview cards render at 280px wide with a fixed 9:16 aspect ratio
-// (~498px tall). html-to-image scales that DOM up to 1080 × 1920 for
-// PNG export, so the effective scaling factor is 1080 / 280 ≈ 3.857.
-// All typography caps below are picked so the export hits the ceilings
-// specified in PROJECT_RULES Social Pack Layout Safety:
-//   Cover H1 ≤ 72px export   → ≤ 18px preview
-//   Content H1 ≤ 64px export → ≤ 16px preview
-//   Body ≤ 34px export       → ≤ 8.8px preview
-//   Footer 22-26px export    → 6px preview
-//   Disclaimer 18-22px export → 5px preview
-const HEADER_HEIGHT_CLASS = "h-[8.854%]"; // 170 / 1920
-const FOOTER_HEIGHT_CLASS = "h-[12.5%]"; // 240 / 1920
+// v1.42.4 — Platform-aware social format layer. Preview cards share
+// the same safe-area renderer, then export to either IG Feed 4:5
+// (1080 × 1350) or Story / Reels 9:16 (1080 × 1920). Typography stays
+// conservative because html-to-image scales the DOM to platform size.
+const FORMAT_LAYOUT: Record<
+  SocialExportFormat,
+  {
+    bodyClass: string;
+    footerPct: string;
+    headerPct: string;
+    previewWidthClass: string;
+    title: string;
+  }
+> = {
+  ig_feed_4_5: {
+    bodyClass: "px-5 py-1.5",
+    footerPct: "10.5%",
+    headerPct: "8%",
+    previewWidthClass: "w-[300px]",
+    title: "IG Feed / Carousel",
+  },
+  story_9_16: {
+    bodyClass: "px-5 py-2",
+    footerPct: "12.5%",
+    headerPct: "8.854%",
+    previewWidthClass: "w-[280px]",
+    title: "Story / Reels",
+  },
+};
 
 // Per-slide copy selection caps (CJK glyphs). The render layer picks
 // concise clauses and reduces item count instead of showing clipped
@@ -88,8 +105,9 @@ function packSourceLabel(pack: SocialIntelligencePack) {
   return `${pack.kind} source · ${pack.sourceBriefId.slice(0, 18)}`;
 }
 
-function createFileName(kind: SocialPackKind, index: number) {
-  return `${kind}-social-pack-${String(index + 1).padStart(2, "0")}.png`;
+function createFileName(kind: SocialPackKind, index: number, format: SocialExportFormat) {
+  const prefix = format === "ig_feed_4_5" ? "ig-feed" : "story";
+  return `${kind}-${prefix}-social-pack-${String(index + 1).padStart(2, "0")}.png`;
 }
 
 function downloadDataUrl(dataUrl: string, fileName: string) {
@@ -192,21 +210,34 @@ function riskStageFor(kind: SocialPackKind) {
 // v1.40.6d — Header safe area. Compact logo + IXAI Intelligence /
 // date stack. Never grows beyond HEADER_HEIGHT_CLASS, so it cannot
 // push into the main content area.
-function SlideHeader({ index, pack }: { index: number; pack: SocialIntelligencePack }) {
+function SlideHeader({
+  format,
+  index,
+  pack,
+}: {
+  format: SocialExportFormat;
+  index: number;
+  pack: SocialIntelligencePack;
+}) {
+  const isFeed = format === "ig_feed_4_5";
+
   return (
-    <div className={`${HEADER_HEIGHT_CLASS} relative z-10 flex shrink-0 items-center justify-between gap-3 px-5 pt-4`}>
-      <div className="flex h-6 w-9 items-center justify-center">
+    <div
+      className={`relative z-10 flex shrink-0 items-center justify-between gap-3 px-5 ${isFeed ? "pt-3" : "pt-4"}`}
+      style={{ height: FORMAT_LAYOUT[format].headerPct }}
+    >
+      <div className={`${isFeed ? "h-5 w-8" : "h-6 w-9"} flex items-center justify-center`}>
         <IxaiLogo size="xs" />
       </div>
       <div className="min-w-0 text-right">
         <p
-          className="whitespace-nowrap font-mono text-[6px] uppercase leading-[1.05] tracking-[0.1em]"
+          className={`${isFeed ? "text-[5.8px]" : "text-[6px]"} whitespace-nowrap font-mono uppercase leading-[1.05] tracking-[0.1em]`}
           style={{ color: socialBrandTokens.gold }}
         >
           IXAI Intelligence
         </p>
-        <p className="mt-0.5 whitespace-nowrap font-mono text-[6px] uppercase leading-[1.05] tracking-[0.07em] text-[rgba(244,240,230,0.5)]">
-          {index === 0 ? (pack.kind === "daily" ? "Daily Intelligence" : "Weekly Intelligence") : pack.dateLabel}
+        <p className={`${isFeed ? "text-[5.8px]" : "text-[6px]"} mt-0.5 whitespace-nowrap font-mono uppercase leading-[1.05] tracking-[0.07em] text-[rgba(244,240,230,0.5)]`}>
+          {isFeed ? pack.dateLabel : index === 0 ? (pack.kind === "daily" ? "Daily Intelligence" : "Weekly Intelligence") : pack.dateLabel}
         </p>
       </div>
     </div>
@@ -216,11 +247,21 @@ function SlideHeader({ index, pack }: { index: number; pack: SocialIntelligenceP
 // v1.40.6d — Footer safe area. Three rows: brand line + page number,
 // then disclaimer underneath. Lives inside the flex column flow so it
 // cannot overlap the main content area regardless of body length.
-function SlideFooter({ index, pack }: { index: number; pack: SocialIntelligencePack }) {
+function SlideFooter({
+  format,
+  index,
+  pack,
+}: {
+  format: SocialExportFormat;
+  index: number;
+  pack: SocialIntelligencePack;
+}) {
+  const isFeed = format === "ig_feed_4_5";
+
   return (
     <footer
-      className={`${FOOTER_HEIGHT_CLASS} relative z-10 flex shrink-0 flex-col justify-end gap-1 border-t px-5 pb-5 pt-3`}
-      style={{ borderColor: "rgba(185,154,99,0.34)" }}
+      className={`relative z-10 flex shrink-0 flex-col justify-end gap-1 border-t px-5 ${isFeed ? "pb-3 pt-2" : "pb-5 pt-3"}`}
+      style={{ borderColor: "rgba(185,154,99,0.34)", height: FORMAT_LAYOUT[format].footerPct }}
     >
       <div className="flex items-end justify-between gap-3">
         <div>
@@ -247,38 +288,53 @@ function SlideFooter({ index, pack }: { index: number; pack: SocialIntelligenceP
 
 // v1.41.2 — Slide 1 Cover. Lead with the five-point executive
 // summary so the cover carries useful intelligence, not just a title.
-function CoverSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
-  const title = pack.kind === "daily" ? "今日市場最重要的 5 件事" : "本週市場焦點";
+function CoverSlide({
+  format,
+  pack,
+  slide,
+}: {
+  format: SocialExportFormat;
+  pack: SocialIntelligencePack;
+  slide: SocialIntelligencePack["slides"][number];
+}) {
+  const isFeed = format === "ig_feed_4_5";
+  const title = pack.kind === "daily"
+    ? isFeed
+      ? "AI 行情還沒結束？今天市場透露 3 個訊號"
+      : "今日市場最重要的 5 件事"
+    : isFeed
+      ? "本週市場正在 pricing 什麼"
+      : "本週市場焦點";
   const bullets = slide.bullets
-    .slice(0, pack.kind === "daily" ? 5 : 4)
-    .map((bullet) => fitReadableText(bullet, COPY_LIMITS.coverBullet, "市場脈絡與風險環境已整理完成。"));
+    .slice(0, isFeed ? 4 : pack.kind === "daily" ? 5 : 4)
+    .map((bullet) => fitReadableText(bullet, isFeed ? 30 : COPY_LIMITS.coverBullet, "市場脈絡與風險環境已整理完成。"));
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div>
         <p
-          className="font-mono text-[7px] uppercase tracking-[0.16em]"
+          className={`${isFeed ? "text-[7.4px]" : "text-[7px]"} font-mono uppercase tracking-[0.16em]`}
           style={{ color: socialBrandTokens.gold }}
         >
           {pack.kind === "daily" ? "Daily Intelligence" : "Weekly Intelligence"}
         </p>
-        <h3 className="mt-2 text-[18px] font-semibold leading-[1.1] tracking-normal">
+        <h3 className={`${isFeed ? "mt-1.5 text-[20px]" : "mt-2 text-[18px]"} font-semibold leading-[1.08] tracking-normal`}>
           {title}
         </h3>
       </div>
       <div
-        className="mt-3 grid min-h-0 flex-1 content-start gap-1.5 border-l pl-3"
+        className={`${isFeed ? "mt-2.5 gap-1.5 pl-3" : "mt-3 gap-1.5 pl-3"} grid min-h-0 flex-1 content-start border-l`}
         style={{ borderColor: socialBrandTokens.gold }}
       >
         {bullets.map((line, lineIndex) => (
           <div className="grid grid-cols-[1rem_1fr] gap-1.5" key={`cover-lead-${lineIndex}`}>
             <span
-              className="font-mono text-[7px] leading-[1.45]"
+              className={`${isFeed ? "text-[7.4px]" : "text-[7px]"} font-mono leading-[1.45]`}
               style={{ color: socialBrandTokens.gold }}
             >
               {lineIndex + 1}
             </span>
-            <p className="text-[7.8px] font-medium leading-[1.45] text-[rgba(244,240,230,0.82)]">
+            <p className={`${isFeed ? "text-[8.4px]" : "text-[7.8px]"} font-medium leading-[1.42] text-[rgba(244,240,230,0.82)]`}>
               {line}
             </p>
           </div>
@@ -291,7 +347,14 @@ function CoverSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soci
 // v1.40.6d — Slide 2 Market Pulse. Exactly three news items in three
 // rows, each row capped at title 14 + summary 22 chars to guarantee
 // two lines max per item.
-function MarketPulseSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
+function MarketPulseSlide({
+  format,
+  slide,
+}: {
+  format: SocialExportFormat;
+  slide: SocialIntelligencePack["slides"][number];
+}) {
+  const isFeed = format === "ig_feed_4_5";
   const Icon = slide.id === "market_review" ? Landmark : Globe2;
   const items = slide.bullets.slice(0, 3);
 
@@ -303,18 +366,18 @@ function MarketPulseSlide({ slide }: { slide: SocialIntelligencePack["slides"][n
       >
         <div>
           <p
-            className="font-mono text-[7px] uppercase tracking-[0.18em]"
+            className={`${isFeed ? "text-[7.4px]" : "text-[7px]"} font-mono uppercase tracking-[0.18em]`}
             style={{ color: socialBrandTokens.gold }}
           >
             {slide.eyebrow}
           </p>
-          <h3 className="mt-1 text-[16px] font-semibold leading-tight">
+          <h3 className={`${isFeed ? "text-[18px]" : "text-[16px]"} mt-1 font-semibold leading-tight`}>
             {slide.id === "market_review" ? "Market Review" : "Market Pulse"}
           </h3>
         </div>
         <Icon className="h-5 w-5 text-[var(--ixai-gold)]" strokeWidth={1.8} />
       </div>
-      <div className="mt-3 flex flex-1 flex-col justify-between gap-2">
+      <div className={`${isFeed ? "mt-2.5 gap-1.5" : "mt-3 gap-2"} flex flex-1 flex-col justify-between`}>
         {items.map((bullet, bulletIndex) => {
           const item = splitBullet(bullet);
 
@@ -327,8 +390,8 @@ function MarketPulseSlide({ slide }: { slide: SocialIntelligencePack["slides"][n
                 {String(bulletIndex + 1).padStart(2, "0")}
               </p>
               <div>
-                <p className="text-[9px] font-semibold leading-[1.35]">{item.heading}</p>
-                <p className="mt-0.5 text-[8px] leading-[1.4] text-[rgba(244,240,230,0.68)]">
+                <p className={`${isFeed ? "text-[9.6px]" : "text-[9px]"} font-semibold leading-[1.3]`}>{item.heading}</p>
+                <p className={`${isFeed ? "text-[8.4px]" : "text-[8px]"} mt-0.5 leading-[1.35] text-[rgba(244,240,230,0.68)]`}>
                   {item.detail}
                 </p>
               </div>
@@ -343,7 +406,16 @@ function MarketPulseSlide({ slide }: { slide: SocialIntelligencePack["slides"][n
 // v1.40.6d — Slide 3 AI / Tech Watch. Symbol tags live in the main
 // safe area at the bottom of the body — they cannot creep toward the
 // footer because the footer is its own flex sibling.
-function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+function AiTechSlide({
+  format,
+  pack,
+  slide,
+}: {
+  format: SocialExportFormat;
+  pack: SocialIntelligencePack;
+  slide: SocialIntelligencePack["slides"][number];
+}) {
+  const isFeed = format === "ig_feed_4_5";
   const points = slide.bullets.slice(0, 3);
 
   return (
@@ -351,19 +423,19 @@ function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soc
       <div className="flex items-center justify-between gap-3">
         <div>
           <p
-            className="font-mono text-[7px] uppercase tracking-[0.18em]"
+            className={`${isFeed ? "text-[7.4px]" : "text-[7px]"} font-mono uppercase tracking-[0.18em]`}
             style={{ color: socialBrandTokens.gold }}
           >
             {slide.eyebrow}
           </p>
-          <h3 className="mt-1 text-[16px] font-semibold leading-tight">AI / Tech Watch</h3>
+          <h3 className={`${isFeed ? "text-[18px]" : "text-[16px]"} mt-1 font-semibold leading-tight`}>AI / Tech Watch</h3>
         </div>
         <div className="flex gap-1.5">
           <Cpu className="h-4 w-4 text-[var(--ixai-gold)]" strokeWidth={1.8} />
           <Cloud className="h-4 w-4 text-[rgba(244,240,230,0.76)]" strokeWidth={1.8} />
         </div>
       </div>
-      <div className="mt-4 flex flex-1 flex-col gap-2.5">
+      <div className={`${isFeed ? "mt-3 gap-2" : "mt-4 gap-2.5"} flex flex-1 flex-col`}>
         {points.map((bullet, bulletIndex) => {
           const item =
             bullet.includes("｜")
@@ -378,22 +450,22 @@ function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soc
               key={`${bullet}-${bulletIndex}`}
               style={{ borderColor: "rgba(185,154,99,0.52)" }}
             >
-              <p className="text-[9px] font-semibold leading-[1.35]">
+              <p className={`${isFeed ? "text-[9.5px]" : "text-[9px]"} font-semibold leading-[1.35]`}>
                 {item.heading.replace(/^AI \/ Tech Watch[:：]?\s*/i, "Key Signal")}
               </p>
-              <p className="mt-0.5 text-[8px] leading-[1.4] text-[rgba(244,240,230,0.66)]">
+              <p className={`${isFeed ? "text-[8.4px]" : "text-[8px]"} mt-0.5 leading-[1.35] text-[rgba(244,240,230,0.66)]`}>
                 {item.detail}
               </p>
             </div>
           );
         })}
       </div>
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className={`${isFeed ? "mt-2 gap-1" : "mt-3 gap-1.5"} flex flex-wrap`}>
         {techSymbolsFor(pack.kind)
           .slice(0, 5)
           .map((symbol) => (
             <span
-              className="border px-1.5 py-0.5 font-mono text-[6.5px] uppercase tracking-[0.08em]"
+              className={`${isFeed ? "text-[6.8px]" : "text-[6.5px]"} border px-1.5 py-0.5 font-mono uppercase tracking-[0.08em]`}
               key={symbol}
               style={{ borderColor: "rgba(185,154,99,0.45)", color: socialBrandTokens.gold }}
             >
@@ -407,13 +479,22 @@ function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soc
 
 // v1.41.2 — Slide 4 FCN / Risk Watch. Keeps the clear risk state card
 // and adds up to three short reasons plus a readable FCN education line.
-function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+function RiskSlide({
+  format,
+  pack,
+  slide,
+}: {
+  format: SocialExportFormat;
+  pack: SocialIntelligencePack;
+  slide: SocialIntelligencePack["slides"][number];
+}) {
+  const isFeed = format === "ig_feed_4_5";
   const riskStateBullet = slide.bullets.find((bullet) => /^Risk State/i.test(bullet));
   const activeStage = riskStateBullet?.split("｜")[1]?.trim() || riskStageFor(pack.kind);
   const copy = RISK_REGIME_COPY[activeStage] ?? RISK_REGIME_COPY.Moderate;
   const reasonItems = slide.bullets
     .filter((bullet) => /^Reason/i.test(bullet))
-    .slice(0, 3)
+    .slice(0, isFeed ? 2 : 3)
     .map(splitRiskBullet);
   const fcnAwareness = splitRiskBullet(
     slide.bullets.find((bullet) => /FCN|KO|KI|Worst/i.test(bullet)) ?? `FCN Awareness｜${copy.fcn}`,
@@ -424,18 +505,18 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
       <div className="flex items-center justify-between gap-3">
         <div>
           <p
-            className="font-mono text-[7px] uppercase tracking-[0.18em]"
+            className={`${isFeed ? "text-[7.4px]" : "text-[7px]"} font-mono uppercase tracking-[0.18em]`}
             style={{ color: socialBrandTokens.gold }}
           >
             FCN / Risk Watch
           </p>
-          <h3 className="mt-1 text-[16px] font-semibold leading-tight">Risk Regime</h3>
+          <h3 className={`${isFeed ? "text-[18px]" : "text-[16px]"} mt-1 font-semibold leading-tight`}>Risk Regime</h3>
         </div>
         <ShieldCheck className="h-5 w-5 text-[var(--ixai-gold)]" strokeWidth={1.8} />
       </div>
-      <div className="mt-3 flex min-h-0 flex-1 flex-col justify-start gap-2.5">
+      <div className={`${isFeed ? "mt-2.5 gap-2" : "mt-3 gap-2.5"} flex min-h-0 flex-1 flex-col justify-start`}>
         <div
-          className="rounded-sm border px-3 py-2"
+            className={`${isFeed ? "px-3 py-1.5" : "px-3 py-2"} rounded-sm border`}
           style={{
             borderColor: socialBrandTokens.gold,
             backgroundColor: "rgba(185,154,99,0.1)",
@@ -448,7 +529,7 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
             Current Risk State
           </p>
           <p
-            className="mt-1 font-mono text-[20px] font-semibold leading-[1.05]"
+            className={`${isFeed ? "text-[20px]" : "text-[20px]"} mt-1 font-mono font-semibold leading-[1.05]`}
             style={{ color: socialBrandTokens.gold }}
           >
             {activeStage}
@@ -463,7 +544,7 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
           </p>
           <div className="mt-1 grid gap-1.5">
             {(reasonItems.length > 0 ? reasonItems : [{ detail: copy.meaning, heading: "Reason" }]).map((item, index) => (
-              <p className="text-[7.8px] leading-[1.4] text-[rgba(244,240,230,0.78)]" key={`${item.detail}-${index}`}>
+              <p className={`${isFeed ? "text-[8.2px]" : "text-[7.8px]"} leading-[1.35] text-[rgba(244,240,230,0.78)]`} key={`${item.detail}-${index}`}>
                 <span style={{ color: socialBrandTokens.gold }}>{index + 1}.</span> {item.detail}
               </p>
             ))}
@@ -476,7 +557,7 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
           >
             FCN Awareness
           </p>
-          <p className="mt-1 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.82)]">
+          <p className={`${isFeed ? "text-[8.7px]" : "text-[8.5px]"} mt-1 leading-[1.38] text-[rgba(244,240,230,0.82)]`}>
             {fcnAwareness.detail}
           </p>
         </div>
@@ -488,12 +569,19 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
 // v1.41.2 — Slide 5 I-Xuan View. Complete branded viewpoint instead
 // of a clipped headline fragment. The paragraph is concise enough for
 // story viewing and remains inside the main safe area.
-function IxuanViewSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
+function IxuanViewSlide({
+  format,
+  slide,
+}: {
+  format: SocialExportFormat;
+  slide: SocialIntelligencePack["slides"][number];
+}) {
+  const isFeed = format === "ig_feed_4_5";
   const mainRaw = slide.bullets[0] ?? "先整理風險，再判讀機會。";
-  const main = fitReadableText(mainRaw, COPY_LIMITS.viewMain, "今日重點不是追逐短線雜訊，而是先整理風險，再判讀哪些主題值得持續觀察。");
+  const main = fitReadableText(mainRaw, isFeed ? 96 : COPY_LIMITS.viewMain, "今日重點不是追逐短線雜訊，而是先整理風險，再判讀哪些主題值得持續觀察。");
   const supplement = fitReadableText(
     slide.bullets[1] ?? "完整內容請見 IXAI App。此為市場資訊與教育分享。",
-    COPY_LIMITS.viewSupplement,
+    isFeed ? 50 : COPY_LIMITS.viewSupplement,
     "完整內容請見 IXAI App。",
   );
 
@@ -507,12 +595,12 @@ function IxuanViewSlide({ slide }: { slide: SocialIntelligencePack["slides"][num
         >
           {slide.id === "weekly_view" ? "I-Xuan Weekly View" : "I-Xuan View"}
         </p>
-        <h3 className="mt-2 text-[14px] font-semibold leading-[1.18]">
+        <h3 className={`${isFeed ? "text-[16px]" : "text-[14px]"} mt-2 font-semibold leading-[1.16]`}>
           {main}
         </h3>
       </div>
       <p
-        className="border-t pt-3 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.68)]"
+        className={`${isFeed ? "text-[9px]" : "text-[8.5px]"} border-t pt-3 leading-[1.4] text-[rgba(244,240,230,0.68)]`}
         style={{ borderColor: "rgba(185,154,99,0.38)" }}
       >
         {supplement}
@@ -523,7 +611,15 @@ function IxuanViewSlide({ slide }: { slide: SocialIntelligencePack["slides"][num
 
 // v1.40.6d — Fallback layout for any slide id we don't have a custom
 // template for. Bullets capped to bodyBullet length.
-function StandardSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
+function StandardSlide({
+  format,
+  slide,
+}: {
+  format: SocialExportFormat;
+  slide: SocialIntelligencePack["slides"][number];
+}) {
+  const isFeed = format === "ig_feed_4_5";
+
   return (
     <div className="flex h-full flex-col">
       <div
@@ -537,14 +633,14 @@ function StandardSlide({ slide }: { slide: SocialIntelligencePack["slides"][numb
           >
             {slide.eyebrow}
           </p>
-          <h3 className="mt-1 text-[16px] font-semibold leading-tight">{slide.title}</h3>
+          <h3 className={`${isFeed ? "text-[18px]" : "text-[16px]"} mt-1 font-semibold leading-tight`}>{slide.title}</h3>
         </div>
         {renderSlideIcon(slide.id)}
       </div>
       <div className="mt-3 flex flex-1 flex-col gap-2">
-        {slide.bullets.slice(0, 3).map((bullet) => (
+        {slide.bullets.slice(0, isFeed ? 3 : 3).map((bullet) => (
           <p
-            className="border-l pl-2 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.74)]"
+            className={`${isFeed ? "text-[9px]" : "text-[8.5px]"} border-l pl-2 leading-[1.4] text-[rgba(244,240,230,0.74)]`}
             key={bullet}
             style={{ borderColor: "rgba(185,154,99,0.5)" }}
           >
@@ -556,28 +652,36 @@ function StandardSlide({ slide }: { slide: SocialIntelligencePack["slides"][numb
   );
 }
 
-function SlideBody({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+function SlideBody({
+  format,
+  pack,
+  slide,
+}: {
+  format: SocialExportFormat;
+  pack: SocialIntelligencePack;
+  slide: SocialIntelligencePack["slides"][number];
+}) {
   if (slide.id === "cover") {
-    return <CoverSlide pack={pack} slide={slide} />;
+    return <CoverSlide format={format} pack={pack} slide={slide} />;
   }
 
   if (slide.id === "top_news" || slide.id === "market_review") {
-    return <MarketPulseSlide slide={slide} />;
+    return <MarketPulseSlide format={format} slide={slide} />;
   }
 
   if (slide.id === "ai_tech_watch") {
-    return <AiTechSlide pack={pack} slide={slide} />;
+    return <AiTechSlide format={format} pack={pack} slide={slide} />;
   }
 
   if (slide.id === "fcn_risk_watch") {
-    return <RiskSlide pack={pack} slide={slide} />;
+    return <RiskSlide format={format} pack={pack} slide={slide} />;
   }
 
   if (slide.id === "ixuan_view" || slide.id === "weekly_view") {
-    return <IxuanViewSlide slide={slide} />;
+    return <IxuanViewSlide format={format} slide={slide} />;
   }
 
-  return <StandardSlide slide={slide} />;
+  return <StandardSlide format={format} slide={slide} />;
 }
 
 // v1.40.6d — Slide preview wrapper. Replaces the previous
@@ -585,15 +689,19 @@ function SlideBody({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
 // siblings: header / main / footer. Only the decorative gradient and
 // the soft border ring remain absolute; nothing content-bearing is.
 function SlidePreview({
+  format,
   index,
   pack,
   slideRef,
 }: {
+  format: SocialExportFormat;
   index: number;
   pack: SocialIntelligencePack;
   slideRef?: (node: HTMLElement | null) => void;
 }) {
   const slide = pack.slides[index];
+  const layout = FORMAT_LAYOUT[format];
+  const exportConfig = socialExportFormats[format];
 
   if (!slide) {
     return null;
@@ -601,11 +709,12 @@ function SlidePreview({
 
   return (
     <article
-      className="relative flex w-[280px] max-w-full flex-col overflow-hidden border shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
+      className={`relative flex ${layout.previewWidthClass} max-w-full flex-col overflow-hidden border shadow-[0_24px_90px_rgba(0,0,0,0.28)]`}
       data-social-slide={`${pack.kind}-${index + 1}`}
+      data-social-format={format}
       ref={slideRef}
       style={{
-        aspectRatio: "9 / 16",
+        aspectRatio: exportConfig.aspectRatio,
         backgroundColor: socialBrandTokens.forest,
         borderColor: "rgba(185,154,99,0.26)",
         color: socialBrandTokens.cream,
@@ -623,20 +732,22 @@ function SlidePreview({
         className="pointer-events-none absolute right-4 top-1/3 h-36 w-36 rounded-full border"
         style={{ borderColor: "rgba(185,154,99,0.12)" }}
       />
-      <SlideHeader index={index} pack={pack} />
-      <main className="relative z-10 min-h-0 flex-1 overflow-hidden px-5 py-2">
-        <SlideBody pack={pack} slide={slide} />
+      <SlideHeader format={format} index={index} pack={pack} />
+      <main className={`relative z-10 min-h-0 flex-1 overflow-hidden ${layout.bodyClass}`}>
+        <SlideBody format={format} pack={pack} slide={slide} />
       </main>
-      <SlideFooter index={index} pack={pack} />
+      <SlideFooter format={format} index={index} pack={pack} />
     </article>
   );
 }
 
 function SocialPackPreview({
+  format,
   onDownload,
   pack,
   registerSlide,
 }: {
+  format: SocialExportFormat;
   onDownload: (index: number) => void;
   pack: SocialIntelligencePack;
   registerSlide: (index: number, node: HTMLElement | null) => void;
@@ -646,12 +757,13 @@ function SocialPackPreview({
       {pack.slides.map((slide, index) => (
         <div className="grid justify-items-center gap-3" key={slide.id}>
           <SlidePreview
+            format={format}
             index={index}
             pack={pack}
             slideRef={(node) => registerSlide(index, node)}
           />
           <button
-            className="w-[280px] max-w-full rounded-lg border border-[rgba(176,141,87,0.28)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] transition hover:bg-[rgba(176,141,87,0.1)]"
+            className={`${FORMAT_LAYOUT[format].previewWidthClass} max-w-full rounded-lg border border-[rgba(176,141,87,0.28)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] transition hover:bg-[rgba(176,141,87,0.1)]`}
             onClick={() => onDownload(index)}
             type="button"
           >
@@ -669,6 +781,7 @@ export function SocialIntelligencePackStudio({
   weeklyDraft,
 }: SocialIntelligencePackStudioProps) {
   const [activeKind, setActiveKind] = useState<SocialPackKind>(defaultKind);
+  const [activeFormat, setActiveFormat] = useState<SocialExportFormat>(DEFAULT_FORMAT);
   const [copyState, setCopyState] = useState("Caption ready for manual publishing.");
   const [exportState, setExportState] = useState("PNG export ready.");
   const [isExporting, setIsExporting] = useState(false);
@@ -677,6 +790,7 @@ export function SocialIntelligencePackStudio({
   const dailyPack = useMemo(() => generateDailySocialPack(dailyDraft), [dailyDraft]);
   const weeklyPack = useMemo(() => generateWeeklySocialPack(weeklyDraft), [weeklyDraft]);
   const activePack = activeKind === "daily" ? dailyPack : weeklyPack;
+  const activeFormatConfig = socialExportFormats[activeFormat];
 
   function registerSlide(index: number, node: HTMLElement | null) {
     slideRefs.current[index] = node;
@@ -700,19 +814,19 @@ export function SocialIntelligencePackStudio({
     }
 
     setIsExporting(true);
-    setExportState(`Exporting ${createFileName(activePack.kind, index)}...`);
+    setExportState(`Exporting ${createFileName(activePack.kind, index, activeFormat)}...`);
 
     try {
       const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(node, {
         backgroundColor: socialBrandTokens.forest,
         cacheBust: true,
-        canvasHeight: EXPORT_HEIGHT,
-        canvasWidth: EXPORT_WIDTH,
+        canvasHeight: activeFormatConfig.height,
+        canvasWidth: activeFormatConfig.width,
         pixelRatio: 1,
       });
-      downloadDataUrl(dataUrl, createFileName(activePack.kind, index));
-      setExportState(`${createFileName(activePack.kind, index)} exported at ${EXPORT_WIDTH} × ${EXPORT_HEIGHT}.`);
+      downloadDataUrl(dataUrl, createFileName(activePack.kind, index, activeFormat));
+      setExportState(`${createFileName(activePack.kind, index, activeFormat)} exported at ${activeFormatConfig.width} × ${activeFormatConfig.height}.`);
     } catch {
       setExportState("PNG export failed in this browser. Please retry after images finish loading.");
     } finally {
@@ -735,15 +849,15 @@ export function SocialIntelligencePackStudio({
         const dataUrl = await toPng(node, {
           backgroundColor: socialBrandTokens.forest,
           cacheBust: true,
-          canvasHeight: EXPORT_HEIGHT,
-          canvasWidth: EXPORT_WIDTH,
+          canvasHeight: activeFormatConfig.height,
+          canvasWidth: activeFormatConfig.width,
           pixelRatio: 1,
         });
-        downloadDataUrl(dataUrl, createFileName(activePack.kind, index));
+        downloadDataUrl(dataUrl, createFileName(activePack.kind, index, activeFormat));
         await new Promise((resolve) => window.setTimeout(resolve, 180));
       }
 
-      setExportState(`${activePack.title} exported as ${EXPORT_WIDTH} × ${EXPORT_HEIGHT} PNG slides.`);
+      setExportState(`${activePack.title} exported as ${activeFormatConfig.width} × ${activeFormatConfig.height} PNG slides.`);
     } catch {
       setExportState("Export Current Pack failed. Try downloading slides individually.");
     } finally {
@@ -768,7 +882,7 @@ export function SocialIntelligencePackStudio({
             一玄 / IXAI Social Content Pack
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
-            產生供 FB / IG / LINE 手動發布的 9:16 圖文素材。每張卡片固定使用正式一玄
+            產生供 IG Feed / Carousel、FB / Threads 與 Story / LINE 手動發布的平台化圖文素材。每張卡片固定使用正式一玄
             Logo、IXAI Intelligence header、統一 footer 與 disclaimer，不自動發文、不串接平台 API。
           </p>
         </div>
@@ -806,7 +920,7 @@ export function SocialIntelligencePackStudio({
 
       <div className="mt-5 grid gap-3 text-xs leading-5 text-[rgba(245,240,230,0.58)] md:grid-cols-3">
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
-          Format: <span className="text-[var(--ixai-cream)]">9:16 · 1080 × 1920 target</span>
+          Format: <span className="text-[var(--ixai-cream)]">{activeFormatConfig.label} · {activeFormatConfig.width} × {activeFormatConfig.height}</span>
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Brand: <span className="text-[var(--ixai-cream)]">/logo/ixuan-logo.png · IXAI Intelligence</span>
@@ -826,18 +940,37 @@ export function SocialIntelligencePackStudio({
         className="mt-5 rounded-lg border border-white/10 p-4"
         style={{ backgroundColor: socialBrandTokens.dark }}
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
               Preview Social Pack
             </p>
             <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-              {activePack.title} · {activePack.dateLabel} · 最多 5 張 story 卡片。
+              {activePack.title} · {activePack.dateLabel} · 最多 5 張 {FORMAT_LAYOUT[activeFormat].title} 卡片。
             </p>
           </div>
-          <span className="w-fit rounded-md border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.1)] px-3 py-1 text-xs text-[var(--ixai-gold)]">
-            1080 × 1920 PNG export
-          </span>
+          <div className="grid gap-2 sm:grid-cols-2 xl:min-w-[26rem]">
+            {(Object.keys(socialExportFormats) as SocialExportFormat[]).map((format) => (
+              <button
+                className={`rounded-lg px-3 py-2 text-left text-xs font-semibold transition ${
+                  activeFormat === format
+                    ? "bg-[var(--ixai-gold)] text-[var(--ixai-forest)]"
+                    : "border border-white/10 text-[rgba(245,240,230,0.72)] hover:bg-white/[0.055]"
+                }`}
+                key={format}
+                onClick={() => {
+                  setActiveFormat(format);
+                  setExportState(`${socialExportFormats[format].label} export ready.`);
+                }}
+                type="button"
+              >
+                <span className="block">{socialExportFormats[format].label}</span>
+                <span className="mt-0.5 block font-normal opacity-70">
+                  {socialExportFormats[format].width} × {socialExportFormats[format].height}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
         <div className="mt-4 flex flex-col gap-3 rounded-lg border border-[rgba(176,141,87,0.22)] bg-[rgba(176,141,87,0.08)] p-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -845,7 +978,7 @@ export function SocialIntelligencePackStudio({
               Export Controls
             </p>
             <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.56)]">
-              Export PNG preserves logo, IXAI Intelligence header, footer, and disclaimer. Publishing remains manual.
+              Export PNG preserves logo, IXAI Intelligence header, footer, and disclaimer. Current format: {activeFormatConfig.platform}. Publishing remains manual.
             </p>
           </div>
           <button
@@ -859,6 +992,7 @@ export function SocialIntelligencePackStudio({
         </div>
         <div className="mt-5 overflow-x-hidden">
           <SocialPackPreview
+            format={activeFormat}
             onDownload={exportSlide}
             pack={activePack}
             registerSlide={registerSlide}
@@ -896,7 +1030,7 @@ export function SocialIntelligencePackStudio({
           </p>
           <p className="mt-2">
             Export produces download-ready PNG files for manual FB / IG / LINE publishing.
-            The current pack exports each card at 1080 × 1920.
+            The current pack exports each card at {activeFormatConfig.width} × {activeFormatConfig.height}.
           </p>
           <div className="mt-3 grid gap-2 rounded-md border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
             <p>Future: Publish Center with approval-ready publishing queue.</p>

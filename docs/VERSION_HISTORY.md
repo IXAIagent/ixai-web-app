@@ -826,3 +826,39 @@ Out of Scope:
 - AI Alert Engine.
 - Buy/sell recommendations.
 - Automated trading.
+
+## v1.42.4 — Social Media Optimization Layer
+
+Why:
+
+- Social Packs had become content-safe and exportable, but the visual system still treated every platform like a 9:16 story slide.
+- IG Feed / Carousel needs faster visual impact, tighter copy, and a 4:5 layout that occupies more mobile feed space.
+- The same reviewed intelligence content needed platform-aware export modes without adding auto-publishing or platform APIs.
+
+What Changed:
+
+- Added Social Export Format Layer.
+- Added IG Feed / Carousel 4:5 export at 1080 × 1350.
+- Preserved Story / Reels 9:16 export at 1080 × 1920.
+- Added Admin Social Pack format selector.
+- Added format-specific preview aspect ratio, export dimensions, file names, safe areas, and copy density.
+- Kept Daily / Weekly Social Pack content sourced from reviewed intelligence content.
+
+Key Decisions:
+
+- IG Feed / Carousel 4:5 is the primary social feed format.
+- Story / Reels 9:16 remains the distribution / traffic-driving format.
+- Platform optimization should improve social readability without changing the Daily Brief content engine or publishing workflow.
+- Publishing remains manual and human-reviewed.
+
+Out of Scope:
+
+- Facebook / Instagram / Threads API integration.
+- LINE broadcast.
+- Auto publishing.
+- News provider changes.
+- Market Memory changes.
+- Supabase schema changes.
+- Auth, LINE Login, or LIFF changes.
+- Portfolio Intelligence.
+- Buy/sell recommendations or return promises.

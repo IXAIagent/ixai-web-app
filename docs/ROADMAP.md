@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.42.3`
+`v1.42.4`
 
 ## Related Strategic Documents
 
@@ -302,13 +302,23 @@ Completed:
 - Made I-Xuan View reflect market narrative continuity instead of single-day isolation.
 - Kept memory local / editorial-first without Supabase schema changes, user-specific memory, portfolio memory, or personal recommendations.
 
+### v1.42.4 — Social Media Optimization Layer
+
+Completed:
+
+- Added Social Export Format Layer.
+- Added IG Feed / Carousel 4:5 format at 1080 × 1350 as the primary feed / carousel output.
+- Preserved Story / Reels 9:16 format at 1080 × 1920 for LINE / Story / Reels distribution.
+- Added admin format selector and export dimension mapping.
+- Optimized Social Pack preview density so feed cards feel more platform-native and less like report slides.
+
 Next:
 
-`v1.42.4 — Publish Center Foundation`
+`v1.42.5 — Publish Center Foundation`
 
 ## Next Suggested Version
 
-`v1.42.4 — Publish Center Foundation`
+`v1.42.5 — Publish Center Foundation`
 
 Goal:
 

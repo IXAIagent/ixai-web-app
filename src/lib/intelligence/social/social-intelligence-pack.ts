@@ -1,6 +1,7 @@
 import type { DailyBriefDraft, WeeklyIntelligenceDraft } from "@/src/types/editorial";
 
 export type SocialPackKind = "daily" | "weekly";
+export type SocialExportFormat = "ig_feed_4_5" | "story_9_16";
 
 export type SocialPackSlide =
   | "cover"
@@ -43,6 +44,35 @@ export const socialBrandTokens = {
   dark: "#071A16",
   forest: "#0F2E27",
   gold: "#B99A63",
+};
+
+export const socialExportFormats: Record<
+  SocialExportFormat,
+  {
+    aspectRatio: "4 / 5" | "9 / 16";
+    description: string;
+    height: number;
+    label: string;
+    platform: string;
+    width: number;
+  }
+> = {
+  ig_feed_4_5: {
+    aspectRatio: "4 / 5",
+    description: "IG Feed / Carousel 主力格式，適合 Facebook / Threads 直式貼文。",
+    height: 1350,
+    label: "IG Feed / Carousel 4:5",
+    platform: "Instagram Feed · Facebook · Threads",
+    width: 1080,
+  },
+  story_9_16: {
+    aspectRatio: "9 / 16",
+    description: "Story / Reels / LINE 導流格式，適合大 hook 與完整日報 CTA。",
+    height: 1920,
+    label: "Story / Reels 9:16",
+    platform: "IG Story · Reels · LINE",
+    width: 1080,
+  },
 };
 
 function formatDateLabel(value?: string) {
