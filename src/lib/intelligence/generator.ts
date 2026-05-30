@@ -515,7 +515,7 @@ export async function generateDailyIntelligenceDraftFromNews(
   let providerStatus = buildProviderStatus(providerMode, hasOpenAIKey ? undefined : "missing_key");
   let intelligence: DailyIntelligenceDraft;
   let generatedMarketSummary =
-    "IXAI 根據今日 intake layer 的市場訊號，整理利率、總經、美股、AI 科技、Crypto 與台灣半導體的風險脈絡。這是一份待編輯審核的 daily intelligence draft。";
+    "IXAI 根據今日 intake layer 的市場訊號，整理利率、總經、美股、AI 科技、Crypto 與台灣半導體的風險脈絡。內容用於市場資訊、教育分享與風險 awareness。";
   const sourceLabels =
     options.sourceLabels ??
     [...new Set(newsItems.map((item) => item.sourceLabel).filter(Boolean))];

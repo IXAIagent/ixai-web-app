@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.41.0`
+`v1.41.1`
 
 ## Current Product Flow
 
@@ -212,13 +212,22 @@ Completed:
 - Coverage Score.
 - Content Quality Score.
 
+### v1.41.1 — Daily Brief Public Preview QA / UI Polish
+
+Completed:
+
+- Sanitized public Daily Brief API responses so provider diagnostics remain admin-only.
+- Improved generated Daily Brief reading hierarchy after the v1.41.0 content engine upgrade.
+- Made Executive Summary, Risk Regime reasoning, FCN Awareness, I-Xuan View, and public compliance boundaries easier to read.
+- Confirmed public preview surfaces do not expose Provider Health, Coverage Score, Content Quality Score, or raw provider errors.
+
 Next:
 
-`v1.41.1 — Provider Expansion & Source Recovery`
+`v1.41.2 — Provider Expansion & Source Recovery`
 
 ## Next Suggested Version
 
-`v1.41.1 — Provider Expansion & Source Recovery`
+`v1.41.2 — Provider Expansion & Source Recovery`
 
 Goal:
 

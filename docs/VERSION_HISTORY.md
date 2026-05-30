@@ -567,3 +567,32 @@ Out of Scope:
 - LINE / LIFF changes.
 - FCN engine changes.
 - PNG export or Social Pack UI changes.
+
+## v1.41.1 — Daily Brief Public Preview QA / UI Polish
+
+Why:
+
+- v1.41.0 expanded Daily Brief content depth, but the public preview needed reading hierarchy, mobile spacing, and diagnostic visibility checks.
+- Provider Health, Coverage Score, Content Quality Score, and raw provider errors should support editors without leaking into public Daily Brief surfaces.
+
+What Changed:
+
+- Sanitized public Daily Brief API responses to remove admin-only diagnostics.
+- Polished generated Daily Brief reading hierarchy for Executive Summary, Risk Regime, FCN Awareness, I-Xuan View, and Daily Intelligence sections.
+- Replaced public source/debug metadata display with a public intelligence boundary note.
+- Cleaned risky wording in static Daily Brief fallback content.
+
+Key Decisions:
+
+- Public Daily Briefs should feel like finished intelligence, not an admin diagnostic payload.
+- Admin diagnostics remain available in Editorial Studio.
+- Compliance and readability polish should not rewrite the v1.41.0 content engine architecture.
+
+Out of Scope:
+
+- Provider architecture changes.
+- Scoring logic changes.
+- Auth changes.
+- Supabase schema changes.
+- Social Pack engine changes.
+- FCN engine changes.

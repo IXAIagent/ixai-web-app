@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, ListChecks } from "lucide-react";
+import { AlertTriangle, ListChecks, ShieldCheck, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
@@ -13,12 +13,30 @@ import { buildDailyShareCopy } from "@/src/lib/share/share-copy";
 import type { DailyBriefDraft } from "@/src/types/editorial";
 
 const categoryLabels: Record<string, string> = {
+  executive_summary: "Executive Summary",
+  macro_watch: "Macro Watch",
+  ai_tech_watch: "AI / Tech Watch",
+  crypto_watch: "Crypto Watch",
+  risk_regime: "Risk Regime",
+  fcn_awareness: "FCN Awareness",
+  ixuan_view: "I-Xuan View",
   us_market: "美股",
   taiwan_market: "台股",
   crypto: "Crypto",
   rates: "利率",
   ai_market: "AI 科技",
 };
+
+const featureSectionOrder = new Set([
+  "executive_summary",
+  "risk_regime",
+  "fcn_awareness",
+  "ixuan_view",
+]);
+
+function isPublicSection(category: string) {
+  return !featureSectionOrder.has(category);
+}
 
 export function DailyBriefLocalDetail({ slug }: { slug: string }) {
   const [brief, setBrief] = useState<DailyBriefDraft | null>(null);
@@ -48,7 +66,6 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
     };
   }, [slug]);
   const intelligence = brief?.intelligence;
-  const sourceLabels = intelligence?.sourceLabels ?? [];
 
   if (!loaded) {
     return (
@@ -117,31 +134,119 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
         variant="compact"
       />
 
-      {brief.editorialNote ? (
-        <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            一玄觀點
-          </p>
-          <p className="mt-3 text-base leading-8 text-[var(--ixai-forest-soft)]">
-            {brief.editorialNote}
-          </p>
+      {intelligence?.executiveSummary?.length ? (
+        <section className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(255,250,240,0.9)] p-5 shadow-[0_18px_44px_rgba(9,41,31,0.06)] sm:p-6">
+          <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
+            <ListChecks className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+              Executive Summary
+            </p>
+          </div>
+          <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
+            今日最重要的五件事
+          </h2>
+          <ol className="mt-4 grid gap-3">
+            {intelligence.executiveSummary.slice(0, 5).map((item, index) => (
+              <li
+                className="grid gap-3 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-3.5 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:grid-cols-[2.5rem_1fr] sm:items-start sm:p-4"
+                key={`${index}-${item}`}
+              >
+                <span className="font-mono text-lg font-semibold leading-7 text-[var(--ixai-gold)]">
+                  {["①", "②", "③", "④", "⑤"][index]}
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+
+      {intelligence?.riskRegimeReasoning ? (
+        <section className="rounded-lg border border-[#9f5530]/24 bg-[#9f5530]/[0.08] p-5 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-[#6f351f]">
+                <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+                  Risk Regime
+                </p>
+              </div>
+              <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+                Current Risk Regime：{intelligence.riskRegimeReasoning.current}
+              </h2>
+            </div>
+            <span className="w-fit rounded-md border border-[#9f5530]/24 bg-white/45 px-3 py-1.5 font-mono text-xs font-semibold text-[#6f351f]">
+              Public risk context
+            </span>
+          </div>
+          <ol className="mt-4 grid gap-3">
+            {intelligence.riskRegimeReasoning.reasons.slice(0, 3).map((reason, index) => (
+              <li
+                className="rounded-lg border border-[#9f5530]/18 bg-white/45 p-3.5 text-sm leading-7 text-[#5f2e1c]"
+                key={`${index}-${reason}`}
+              >
+                <span className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-[#8b4528]">
+                  Reason {index + 1}
+                </span>
+                <span className="mt-1 block">{reason}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+
+      {intelligence?.fcnAwareness || brief.editorialNote ? (
+        <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+          {intelligence?.fcnAwareness ? (
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-5 sm:p-6">
+              <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
+                <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+                  FCN Awareness
+                </p>
+              </div>
+              <h2 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
+                {intelligence.fcnAwareness.topic}
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {intelligence.fcnAwareness.explanation}
+              </p>
+              <p className="mt-3 rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] p-3.5 text-xs leading-6 text-[var(--ixai-ink-muted)]">
+                {intelligence.fcnAwareness.reminder}
+              </p>
+            </article>
+          ) : null}
+
+          {brief.editorialNote ? (
+            <article className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.08)] p-5 sm:p-6">
+              <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
+                <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">
+                  I-Xuan View / 一玄觀點
+                </p>
+              </div>
+              <p className="mt-3 text-base leading-8 text-[var(--ixai-forest-soft)]">
+                {brief.editorialNote}
+              </p>
+            </article>
+          ) : null}
         </section>
       ) : null}
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)]">
         <div className="border-b border-[var(--ixai-border)] px-5 py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            市場摘要
+            Daily Intelligence Sections
           </p>
           <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
-            一玄編輯審閱後發布
+            Macro、AI / Tech、Crypto 與台灣市場脈絡
           </h2>
         </div>
         <div className="divide-y divide-[var(--ixai-border)]">
-          {brief.sections.map((section) => (
+          {brief.sections.filter((section) => isPublicSection(section.category)).map((section) => (
             <details
               open
-              className="grid gap-4 px-5 py-5 md:grid-cols-[10rem_1fr]"
+              className="grid gap-4 px-5 py-5 md:grid-cols-[11rem_1fr]"
               key={`${section.category}-${section.headline}`}
             >
               <summary className="cursor-pointer list-none text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ixai-forest)] md:pt-1">
@@ -303,35 +408,13 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)]">
         <div className="border-b border-[var(--ixai-border)] px-5 py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            News Sources Used
+            Public Intelligence Boundary
           </p>
         </div>
-        <div className="grid gap-4 p-5 md:grid-cols-[1fr_15rem]">
-          <div>
-            <div className="flex flex-wrap gap-2">
-              {(sourceLabels.length ? sourceLabels : ["IXAI 編輯備援"]).map((source) => (
-                <span
-                  className="rounded-lg border border-[var(--ixai-border)] bg-white/45 px-3 py-1.5 text-xs font-medium text-[var(--ixai-forest-soft)]"
-                  key={source}
-                >
-                  {source}
-                </span>
-              ))}
-            </div>
-            <p className="mt-4 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-              本簡報由 IXAI 根據公開新聞標題、摘要與市場資料整理，並需經人工審閱。
-              來源摘要僅顯示來源名稱，不顯示 RSS URL 或全文內容。
-            </p>
-          </div>
-          <div className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4">
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--ixai-ink-muted)]">
-              Input News Count
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
-              {intelligence?.inputNewsCount ?? 0}
-            </p>
-          </div>
-        </div>
+        <p className="p-5 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+          本簡報由 IXAI 根據公開新聞標題、摘要與市場資料整理，並需經人工審閱。內容用於市場資訊、
+          教育分享與風險 awareness，不構成個人化投資建議、買賣指令、報酬承諾或個人 FCN 風險結論。
+        </p>
       </section>
 
       <ProUpgradeCard feature="premium_daily" surface="daily_slug_bottom" />

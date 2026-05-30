@@ -24,7 +24,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.41.0`
+`v1.41.1`
 
 Current Core Flow:
 
@@ -63,6 +63,8 @@ Social Intelligence Engine foundation now turns reviewed Daily / Weekly Intellig
 
 Daily Intelligence Content Engine now upgrades generated Daily Brief drafts into a fixed editorial structure: Executive Summary, Macro Watch, AI / Tech Watch, Crypto Watch, Risk Regime reasoning, FCN Awareness, and I-Xuan View. Drafts now carry Provider Health, Coverage Score, and Content Quality Score metadata so the Editorial Studio can judge source health and content depth before manual publish.
 
+Daily Brief Public Preview QA / UI Polish now keeps v1.41.0 diagnostics admin-only, sanitizes public Daily Brief API responses, and improves generated Daily Brief reading hierarchy for Executive Summary, Risk Regime reasoning, FCN Awareness, I-Xuan View, and Taiwan Market continuity.
+
 Current Highest Priorities:
 
 1. Provider Expansion & Source Recovery.
@@ -99,6 +101,7 @@ Completed product capabilities include:
 - Social Pack Layout Redesign: improved information hierarchy, institutional research style visual system, and social-first content presentation for Daily / Weekly Social Packs.
 - Social Pack Layout Safety: fixed header / main / footer safe-area layout, capped social typography ceilings, render-layer text compression helpers, simplified single-state risk panel, and footer/disclaimer overlap prevention for exported 1080×1920 PNGs.
 - Daily Intelligence Content Engine: Executive Summary, Macro Watch, AI Tech Watch, Crypto Watch, Risk Regime Reasoning, FCN Awareness, I-Xuan View, Provider Health, Coverage Score, and Content Quality Score.
+- Daily Brief Public Preview QA / UI Polish: public Daily Brief API diagnostics sanitization, stronger generated Daily Brief reading hierarchy, compliance wording cleanup, and admin-only diagnostic boundary confirmation.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.

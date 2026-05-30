@@ -316,6 +316,7 @@ Daily Intelligence Rules:
 - Macro Watch, AI / Tech Watch, Crypto Watch, Risk Regime, FCN Awareness, and I-Xuan View are required Daily Intelligence sections.
 - Daily Brief content must not include buy/sell recommendations, target prices, return promises, or personalized portfolio / FCN conclusions.
 - Editorial drafts that lack source coverage, content length, or insight depth should be visibly flagged before manual publish.
+- Provider Health, Coverage Score, Content Quality Score, raw provider errors, and source debug metadata are admin-only diagnostics and must not be exposed through public Daily Brief responses.
 
 ## I. Growth Rules
 
