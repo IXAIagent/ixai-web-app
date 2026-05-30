@@ -596,3 +596,36 @@ Out of Scope:
 - Supabase schema changes.
 - Social Pack engine changes.
 - FCN engine changes.
+
+## v1.41.2 — Social Pack Renderer Hardening
+
+Why:
+
+- v1.41.0 made Daily Intelligence drafts deeper, but the Daily Social Pack renderer still assumed very short source copy.
+- Exported PNGs could show clipped headings, unreadable I-Xuan View fragments, truncated FCN / AI Tech content, and unsafe spacing near the footer.
+- Social assets need to be reliable enough for external LINE, FB, IG, and Threads distribution.
+
+What Changed:
+
+- Hardened the Daily Social Pack generator and renderer for content-aware short-form social output.
+- Reworked the cover slide to show concise Executive Summary bullets instead of a low-information title page.
+- Reworked Market Pulse, AI / Tech Watch, FCN / Risk Watch, and I-Xuan View to prioritize complete readable points over clipped source text.
+- Reserved safer header / main / footer zones so page number, company name, URL, and disclaimer stay separated from content.
+- Kept PNG export workflow, brand identity, logo, and manual publishing model intact.
+
+Key Decisions:
+
+- Daily Social Pack slides should summarize Daily Intelligence into complete social copy instead of rendering raw long-form brief text.
+- Fewer readable points are better than many clipped points.
+- Footer and disclaimer readability are part of compliance, not decoration.
+
+Out of Scope:
+
+- Provider recovery.
+- Admin redesign.
+- Auth changes.
+- Supabase schema changes.
+- Publish Center.
+- Auto publishing.
+- PNG export architecture rewrite.
+- FCN engine changes.

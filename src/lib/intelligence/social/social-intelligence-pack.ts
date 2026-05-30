@@ -77,8 +77,166 @@ function compactText(value?: string, fallback = "IXAI 已整理今日市場脈�
   return `${normalized.slice(0, maxLength - 1)}…`;
 }
 
+function normalizeSocialCopy(value?: string, fallback = "IXAI 已整理今日市場脈絡與風險觀察。") {
+  return (value ?? fallback)
+    .replace(/\*\*/g, "")
+    .replace(/^[\s\-\d.①②③④⑤、]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/buy now|must buy|sell now/gi, "monitor")
+    .replace(/guaranteed return/gi, "risk-awareness context")
+    .replace(/買進|買入|必買/g, "觀察")
+    .replace(/賣出|必賣/g, "風險控管")
+    .replace(/保證收益|保證報酬|穩賺|必漲/g, "風險情境");
+}
+
+function isMostlyEnglish(value: string) {
+  const cjkCount = (value.match(/[\u4e00-\u9fff]/g) ?? []).length;
+  return cjkCount < Math.max(6, value.length * 0.18);
+}
+
+function readableSnippet(value?: string, fallback = "維持風險意識與情境判讀。", maxLength = 52) {
+  const normalized = normalizeSocialCopy(value, fallback);
+
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  const clauses = normalized
+    .split(/(?<=[。！？.!?；;])|\s[|／/]\s|，|,/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  let output = "";
+
+  for (const clause of clauses) {
+    const separator = /[。！？.!?；;]$/.test(output) ? "" : "，";
+    const next = output ? `${output}${separator}${clause}` : clause;
+    if (next.length > maxLength) {
+      break;
+    }
+    output = next;
+  }
+
+  if (output) {
+    return /[。！？.!?；;]$/.test(output) ? output : `${output}。`;
+  }
+
+  return fallback;
+}
+
+function socialPoint(label: string, value?: string, fallback = "維持市場脈絡與風險觀察。", maxLength = 38) {
+  return `${label}｜${readableSnippet(value, fallback, maxLength)}`;
+}
+
 function firstItems<T>(items: T[] | undefined, count: number) {
   return Array.isArray(items) ? items.slice(0, count) : [];
+}
+
+function executiveSummaryBullets(source?: DailyBriefDraft | null) {
+  const summary = source?.intelligence?.executiveSummary ?? [];
+  const sourceItems =
+    summary.length > 0
+      ? summary
+      : [
+          source?.marketSummary,
+          source?.intelligence?.macroWatch?.marketMeaning,
+          source?.intelligence?.aiTechWatch?.headline,
+          source?.intelligence?.cryptoWatch?.headline,
+          source?.intelligence?.riskRegimeReasoning?.reasons?.[0],
+        ];
+
+  const bullets = sourceItems
+    .filter((item): item is string => Boolean(item && item.trim()))
+    .map((item) => readableSnippet(item, "今日市場焦點已整理為公開情報與風險觀察。", 32))
+    .filter(Boolean);
+
+  const fallback = [
+    "市場焦點已整理為公開情報。",
+    "AI / 科技仍是資金觀察主軸。",
+    "利率、美元與波動率影響風險偏好。",
+    "Crypto 波動維持風險意識。",
+    "FCN 結構需理解 KO / KI / Worst Performer。",
+  ];
+
+  return firstItems([...bullets, ...fallback], 5);
+}
+
+function dailyMarketPulse(source?: DailyBriefDraft | null) {
+  const macro = source?.intelligence?.macroWatch;
+  const risk = source?.intelligence?.riskRegimeReasoning;
+  const ai = source?.intelligence?.aiTechWatch;
+  const sections = firstItems(source?.sections, 3);
+
+  if (macro || risk || ai) {
+    return [
+      socialPoint("Macro", macro?.whatHappened ?? sections[0]?.headline, "利率與美元仍牽動風險偏好。"),
+      socialPoint("AI", ai?.headline ?? sections[1]?.headline, "AI supply chain 仍是科技觀察主軸。"),
+      socialPoint("Risk", risk?.reasons?.[0] ?? sections[2]?.summary, "觀察波動、美元與殖利率同步變化。"),
+    ];
+  }
+
+  return sections.length > 0
+    ? sections.map((section) => socialPoint(section.category || "Market", section.ixaiView ?? section.summary ?? section.headline))
+    : [
+        "Macro｜利率、美元與波動率影響風險偏好。",
+        "AI｜半導體與 data center 仍是資金觀察主軸。",
+        "Risk｜公開情報以情境觀察為主，不作交易指令。",
+      ];
+}
+
+function dailyAiTechPoints(source?: DailyBriefDraft | null) {
+  const aiWatch = source?.intelligence?.aiTechWatch;
+  const observations = firstItems(aiWatch?.observations, 3).map((item) =>
+    readableSnippet(item, "觀察 AI supply chain 與科技資金節奏。", 42),
+  );
+
+  if (observations.length > 0) {
+    return [readableSnippet(aiWatch?.headline, "AI / Tech Watch", 34), ...observations].slice(0, 4);
+  }
+
+  const aiSection = source?.sections.find((section) => /ai|tech|semiconductor|科技|半導體/i.test(section.category));
+  return [
+    readableSnippet(aiSection?.headline, "AI infrastructure 與半導體仍是觀察主題。", 38),
+    readableSnippet(aiSection?.summary, "觀察資金是否仍聚焦 AI supply chain。", 42),
+    "Symbols / themes 僅作公開市場觀察。",
+  ];
+}
+
+function dailyRiskPoints(source?: DailyBriefDraft | null) {
+  const risk = source?.intelligence?.riskRegimeReasoning;
+  const fcn = source?.intelligence?.fcnAwareness;
+  const reasons = firstItems(risk?.reasons, 3).map((reason) =>
+    readableSnippet(reason, "觀察波動率、美元與利率同步變化。", 42),
+  );
+
+  return [
+    `Risk State｜${risk?.current ?? "Elevated"}`,
+    ...(reasons.length > 0
+      ? reasons.map((reason, index) => `Reason ${index + 1}｜${reason}`)
+      : [
+          "Reason 1｜觀察波動率、美元與利率同步變化。",
+          "Reason 2｜高 beta 資產對風險偏好更敏感。",
+        ]),
+    `FCN Awareness｜${fcn?.topic ?? "KO / KI"}：${readableSnippet(fcn?.explanation ?? fcn?.reminder, "理解 KO / KI / Worst Performer 等結構概念。", 46)}`,
+  ];
+}
+
+function dailyIxuanView(source?: DailyBriefDraft | null) {
+  const candidate =
+    source?.intelligence?.ixuanView ??
+    source?.editorialNote ??
+    source?.intelligence?.marketRegimeNote ??
+    source?.marketSummary;
+  const normalized = normalizeSocialCopy(candidate, "");
+
+  if (normalized && !isMostlyEnglish(normalized)) {
+    const view = readableSnippet(normalized, "", 132);
+    if (view.length >= 36) {
+      return view;
+    }
+  }
+
+  return "今日重點不是追逐短線雜訊，而是把利率、美元、AI 資金流與風險環境放回同一張地圖。先確認市場正在定價什麼，再決定哪些主題值得持續觀察。";
 }
 
 function buildDailyCaption() {
@@ -111,23 +269,11 @@ function buildWeeklyCaption() {
 
 export function generateDailySocialPack(source?: DailyBriefDraft | null): SocialIntelligencePack {
   const dateLabel = formatDateLabel(source?.publishedAt ?? source?.updatedAt);
-  const sections = firstItems(source?.sections, 3);
-  const topNews =
-    sections.length > 0
-      ? sections.map((section) =>
-          `${compactText(section.headline, "市場焦點更新", 34)}｜${compactText(section.ixaiView ?? section.summary, "維持風險意識與情境判讀。", 38)}`,
-        )
-      : [
-          "市場焦點新聞｜以公開資訊整理今日風險脈絡。",
-          "AI / 科技觀察｜半導體與 data center 仍是資金關注主軸。",
-          "總經環境｜利率、美元與波動率影響風險偏好。",
-        ];
-  const aiTech = source?.sections.find((section) => /ai|tech|semiconductor|科技|半導體/i.test(section.category));
-  const crypto = source?.sections.find((section) => /crypto|btc|eth|幣/i.test(section.category));
-  const dailyInsight =
-    source?.editorialNote ??
-    source?.intelligence?.marketRegimeNote ??
-    "今日重點不是追逐短線雜訊，而是把市場脈絡、風險環境與個人關注主題放回同一張地圖。";
+  const executiveSummary = executiveSummaryBullets(source);
+  const topNews = dailyMarketPulse(source);
+  const aiTech = dailyAiTechPoints(source);
+  const riskPoints = dailyRiskPoints(source);
+  const dailyInsight = dailyIxuanView(source);
 
   return {
     caption: buildDailyCaption(),
@@ -143,10 +289,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
     title: "今日市場最重要的事",
     slides: [
       {
-        bullets: [
-          compactText(source?.marketSummary, "今日市場焦點已整理為公開情報與風險觀察。", 58),
-          "市場資訊與教育分享，不構成個人化投資建議。",
-        ],
+        bullets: executiveSummary,
         eyebrow: "Daily Intelligence",
         footer: "Daily Intelligence · Market Interpretation · Risk Awareness",
         id: "cover",
@@ -161,27 +304,19 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
         title: "Market Pulse",
       },
       {
-        bullets: [
-          compactText(aiTech?.headline, "AI infrastructure、semiconductors、cloud 與 software 是本日觀察主題。", 46),
-          compactText(aiTech?.summary, "觀察資金是否仍聚焦 AI supply chain 與高成長科技股。", 62),
-          crypto ? `補充觀察：${compactText(crypto.headline, "Crypto volatility watch", 34)}` : "Symbols / themes 僅作公開市場觀察，不作交易指令。",
-        ],
+        bullets: aiTech,
         eyebrow: "IXAI Tech Intelligence",
         id: "ai_tech_watch",
         title: "AI / 科技觀察",
       },
       {
-        bullets: [
-          "Risk Regime：觀察波動率、美元、利率與高 beta 資產同步變化。",
-          "FCN Awareness：留意 KO / KI / Worst Performer / Observation Date 等結構概念。",
-          "FCN 應搭配合格專業人員與正式產品文件理解。",
-        ],
+        bullets: riskPoints,
         eyebrow: "FCN Awareness",
         id: "fcn_risk_watch",
         title: "Risk Regime",
       },
       {
-        bullets: [compactText(dailyInsight, "今日最重要的一句話：先整理風險，再判讀機會。", 50)],
+        bullets: [dailyInsight, "完整內容請見 IXAI App。"],
         eyebrow: "I-Xuan View",
         footer: "完整日報請見 IXAI App · app.ixuan.ai",
         id: "ixuan_view",

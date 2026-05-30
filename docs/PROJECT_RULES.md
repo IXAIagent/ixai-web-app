@@ -106,12 +106,13 @@ Social Pack Layout Safety Rules:
 - Every 9:16 social slide must reserve header, main, and footer safe areas.
 - Footer and disclaimer must never overlap with main content.
 - Social pack copy must be compressed for mobile social reading.
-- Long source content must be truncated or summarized before rendering.
+- Long source content must be summarized before rendering; core headings and primary insights must not show clipped ellipsis fragments.
 - PNG export must be visually inspected after layout changes.
 - Slide content must use flex column flow (`header / main flex-1 / footer`); only background decoration may be absolutely positioned.
 - Social typography must respect the export ceilings: cover H1 ≤ 72px, content H1 ≤ 64px, body ≤ 34px, footer 22–26px, disclaimer 18–22px at 1080×1920 export scale.
-- Per-slide copy caps: cover headline ≤ 18 chars, insight line ≤ 24, body bullet ≤ 28, news title ≤ 14 + summary ≤ 22, I-Xuan View main ≤ 20 + supplement ≤ 36 (CJK glyphs).
-- Risk Watch slide must use a single regime state + one-line meaning + one-line FCN awareness, not a multi-row bar chart.
+- Per-slide copy should prefer fewer complete points over many clipped points. Cover should surface 3-5 concise Executive Summary bullets when available.
+- Risk Watch slide may show one regime state, 2-3 short reasons, and one readable FCN Awareness line. It must not collide with the footer.
+- I-Xuan View should be a complete concise branded viewpoint, not a clipped headline fragment.
 
 ## D. Commit Rules
 

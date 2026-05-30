@@ -43,20 +43,19 @@ const WEEKLY_TECH_SYMBOLS = ["AI Infra", "Semis", "Cloud", "Data Center", "Softw
 //   Body ≤ 34px export       → ≤ 8.8px preview
 //   Footer 22-26px export    → 6px preview
 //   Disclaimer 18-22px export → 5px preview
-const HEADER_HEIGHT_CLASS = "h-[9.375%]"; // 180 / 1920
-const FOOTER_HEIGHT_CLASS = "h-[13.542%]"; // 260 / 1920
+const HEADER_HEIGHT_CLASS = "h-[8.854%]"; // 170 / 1920
+const FOOTER_HEIGHT_CLASS = "h-[12.5%]"; // 240 / 1920
 
-// Per-slide copy compression caps (CJK glyphs). Hard upper bounds —
-// the render layer truncates above them even if the data layer let
-// longer copy through. Small intentionally; social readers scan.
+// Per-slide copy selection caps (CJK glyphs). The render layer picks
+// concise clauses and reduces item count instead of showing clipped
+// ellipsis fragments. Small intentionally; social readers scan.
 const COPY_LIMITS = {
-  coverHeadline: 18,
-  insightLine: 24,
-  bodyBullet: 28,
-  newsTitle: 14,
-  newsSummary: 22,
-  viewMain: 20,
-  viewSupplement: 36,
+  coverBullet: 34,
+  bodyBullet: 48,
+  newsTitle: 20,
+  newsSummary: 48,
+  viewMain: 136,
+  viewSupplement: 42,
 } as const;
 
 const RISK_REGIME_COPY: Record<
@@ -100,45 +99,66 @@ function downloadDataUrl(dataUrl: string, fileName: string) {
   link.click();
 }
 
-// v1.40.6d — Render-layer compression helper. Trims trailing
-// whitespace, collapses runs, and adds an ellipsis when the string
-// exceeds the cap. The function name mirrors the spec.
-function compactText(value: string, maxLength: number) {
-  const normalized = value.replace(/\s+/g, " ").trim();
+function normalizeDisplayText(value: string) {
+  return value
+    .replace(/\*\*/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^[-\d.①②③④⑤、\s]+/g, "");
+}
+
+// v1.41.2 — Render-layer fit helper. It selects a short sentence or
+// clause instead of slicing text with an ellipsis, so exported social
+// cards never show clipped fragments such as "AI / Tech Wat...".
+function fitReadableText(value: string, maxLength: number, fallback: string) {
+  const normalized = normalizeDisplayText(value);
 
   if (normalized.length <= maxLength) {
     return normalized;
   }
 
-  return `${normalized.slice(0, maxLength - 1)}…`;
-}
+  const clauses = normalized
+    .split(/(?<=[。！？.!?；;])|，|,/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  let selected = "";
 
-// v1.40.6d — Split a long Chinese line into shorter visual lines so
-// the cover headline and the I-Xuan view main quote do not break
-// awkwardly inside fixed-width safe areas.
-function splitIntoShortLines(value: string, maxCharsPerLine: number): string[] {
-  const normalized = value.replace(/\s+/g, " ").trim();
-
-  if (!normalized) {
-    return [];
+  for (const clause of clauses) {
+    const separator = /[。！？.!?；;]$/.test(selected) ? "" : "，";
+    const next = selected ? `${selected}${separator}${clause}` : clause;
+    if (next.length > maxLength) {
+      break;
+    }
+    selected = next;
   }
 
-  const lines: string[] = [];
-
-  for (let i = 0; i < normalized.length; i += maxCharsPerLine) {
-    lines.push(normalized.slice(i, i + maxCharsPerLine));
+  if (selected) {
+    return /[。！？.!?；;]$/.test(selected) ? selected : `${selected}。`;
   }
 
-  return lines;
+  return fallback;
 }
 
 // Split a "headline｜detail" bullet payload into two compacted pieces.
 function splitBullet(value: string) {
-  const parts = value.split("｜");
-  const heading = compactText(parts[0] ?? value, COPY_LIMITS.newsTitle);
-  const detail = compactText(parts.slice(1).join("｜") || value, COPY_LIMITS.newsSummary);
+  const normalized = normalizeDisplayText(value);
+  const parts = normalized.split("｜");
+  const heading = fitReadableText(parts[0] ?? normalized, COPY_LIMITS.newsTitle, "Market Pulse");
+  const detail = fitReadableText(
+    parts.slice(1).join("｜") || normalized,
+    COPY_LIMITS.newsSummary,
+    "維持情境觀察與風險意識。",
+  );
 
   return { detail, heading };
+}
+
+function splitRiskBullet(value: string) {
+  const item = splitBullet(value);
+  return {
+    detail: item.detail.replace(/^Reason\s+\d+\s*[:：]?/i, "").trim(),
+    heading: item.heading.replace(/^Risk State$/i, "Current Risk State"),
+  };
 }
 
 function renderSlideIcon(id: string) {
@@ -225,17 +245,16 @@ function SlideFooter({ index, pack }: { index: number; pack: SocialIntelligenceP
   );
 }
 
-// v1.40.6d — Slide 1 Cover. One short insight line, no long copy.
+// v1.41.2 — Slide 1 Cover. Lead with the five-point executive
+// summary so the cover carries useful intelligence, not just a title.
 function CoverSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
-  const title = pack.kind === "daily" ? "今日市場最重要的事" : "本週市場焦點";
-  const leadRaw = compactText(slide.bullets[0] ?? "市場脈絡與風險環境已整理完成。", COPY_LIMITS.insightLine);
-  // v1.40.6d — Break the lead insight into ≤12-char visual lines so a
-  // long Chinese sentence never wraps mid-phrase against the fixed
-  // safe-area width.
-  const leadLines = splitIntoShortLines(leadRaw, 12);
+  const title = pack.kind === "daily" ? "今日市場最重要的 5 件事" : "本週市場焦點";
+  const bullets = slide.bullets
+    .slice(0, pack.kind === "daily" ? 5 : 4)
+    .map((bullet) => fitReadableText(bullet, COPY_LIMITS.coverBullet, "市場脈絡與風險環境已整理完成。"));
 
   return (
-    <div className="flex h-full flex-col justify-between">
+    <div className="flex h-full min-h-0 flex-col">
       <div>
         <p
           className="font-mono text-[7px] uppercase tracking-[0.16em]"
@@ -248,16 +267,21 @@ function CoverSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soci
         </h3>
       </div>
       <div
-        className="mt-3 border-l pl-3"
+        className="mt-3 grid min-h-0 flex-1 content-start gap-1.5 border-l pl-3"
         style={{ borderColor: socialBrandTokens.gold }}
       >
-        {leadLines.map((line, lineIndex) => (
-          <p
-            className="text-[8.5px] font-medium leading-[1.45] text-[rgba(244,240,230,0.82)]"
-            key={`cover-lead-${lineIndex}`}
-          >
-            {line}
-          </p>
+        {bullets.map((line, lineIndex) => (
+          <div className="grid grid-cols-[1rem_1fr] gap-1.5" key={`cover-lead-${lineIndex}`}>
+            <span
+              className="font-mono text-[7px] leading-[1.45]"
+              style={{ color: socialBrandTokens.gold }}
+            >
+              {lineIndex + 1}
+            </span>
+            <p className="text-[7.8px] font-medium leading-[1.45] text-[rgba(244,240,230,0.82)]">
+              {line}
+            </p>
+          </div>
         ))}
       </div>
     </div>
@@ -341,7 +365,13 @@ function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soc
       </div>
       <div className="mt-4 flex flex-1 flex-col gap-2.5">
         {points.map((bullet, bulletIndex) => {
-          const item = splitBullet(bullet);
+          const item =
+            bullet.includes("｜")
+              ? splitBullet(bullet)
+              : {
+                  detail: fitReadableText(bullet, COPY_LIMITS.bodyBullet, "觀察 AI supply chain 與科技資金節奏。"),
+                  heading: bulletIndex === 0 ? "Short Insight" : `Observation ${bulletIndex + 1}`,
+                };
           return (
             <div
               className="border-l pl-2"
@@ -349,10 +379,10 @@ function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soc
               style={{ borderColor: "rgba(185,154,99,0.52)" }}
             >
               <p className="text-[9px] font-semibold leading-[1.35]">
-                {compactText(item.heading, COPY_LIMITS.newsTitle)}
+                {item.heading.replace(/^AI \/ Tech Watch[:：]?\s*/i, "Short Insight")}
               </p>
               <p className="mt-0.5 text-[8px] leading-[1.4] text-[rgba(244,240,230,0.66)]">
-                {compactText(item.detail, COPY_LIMITS.bodyBullet)}
+                {item.detail}
               </p>
             </div>
           );
@@ -375,20 +405,22 @@ function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Soc
   );
 }
 
-// v1.40.6d — Slide 4 FCN / Risk Watch. No multi-row risk bar. Single
-// state + one-line meaning + one-line FCN awareness, exactly as the
-// v1.40.6d spec asks for.
+// v1.41.2 — Slide 4 FCN / Risk Watch. Keeps the clear risk state card
+// and adds up to three short reasons plus a readable FCN education line.
 function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
-  const activeStage = riskStageFor(pack.kind);
+  const riskStateBullet = slide.bullets.find((bullet) => /^Risk State/i.test(bullet));
+  const activeStage = riskStateBullet?.split("｜")[1]?.trim() || riskStageFor(pack.kind);
   const copy = RISK_REGIME_COPY[activeStage] ?? RISK_REGIME_COPY.Moderate;
-  const fcnAwareness = compactText(
-    slide.bullets.find((bullet) => /FCN|KO|KI|Worst/i.test(bullet)) ?? copy.fcn,
-    COPY_LIMITS.viewSupplement,
+  const reasonItems = slide.bullets
+    .filter((bullet) => /^Reason/i.test(bullet))
+    .slice(0, 3)
+    .map(splitRiskBullet);
+  const fcnAwareness = splitRiskBullet(
+    slide.bullets.find((bullet) => /FCN|KO|KI|Worst/i.test(bullet)) ?? `FCN Awareness｜${copy.fcn}`,
   );
-  const meaning = compactText(copy.meaning, COPY_LIMITS.viewSupplement);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p
@@ -401,7 +433,7 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
         </div>
         <ShieldCheck className="h-5 w-5 text-[var(--ixai-gold)]" strokeWidth={1.8} />
       </div>
-      <div className="mt-5 flex flex-1 flex-col justify-center gap-3">
+      <div className="mt-3 flex min-h-0 flex-1 flex-col justify-start gap-2.5">
         <div
           className="rounded-sm border px-3 py-2"
           style={{
@@ -422,16 +454,20 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
             {activeStage}
           </p>
         </div>
-        <div>
+        <div className="min-h-0">
           <p
             className="font-mono text-[6.5px] uppercase tracking-[0.16em]"
             style={{ color: socialBrandTokens.gold }}
           >
-            Risk Meaning
+            Why It Matters
           </p>
-          <p className="mt-1 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.82)]">
-            {meaning}
-          </p>
+          <div className="mt-1 grid gap-1.5">
+            {(reasonItems.length > 0 ? reasonItems : [{ detail: copy.meaning, heading: "Reason" }]).map((item, index) => (
+              <p className="text-[7.8px] leading-[1.4] text-[rgba(244,240,230,0.78)]" key={`${item.detail}-${index}`}>
+                <span style={{ color: socialBrandTokens.gold }}>{index + 1}.</span> {item.detail}
+              </p>
+            ))}
+          </div>
         </div>
         <div>
           <p
@@ -441,7 +477,7 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
             FCN Awareness
           </p>
           <p className="mt-1 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.82)]">
-            {fcnAwareness}
+            {fcnAwareness.detail}
           </p>
         </div>
       </div>
@@ -449,19 +485,20 @@ function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
   );
 }
 
-// v1.40.6d — Slide 5 I-Xuan View. Main quote ≤ 20 chars, supplement
-// line ≤ 36 chars. Quote sits high, supplement sits low; both inside
-// the main safe area.
+// v1.41.2 — Slide 5 I-Xuan View. Complete branded viewpoint instead
+// of a clipped headline fragment. The paragraph is concise enough for
+// story viewing and remains inside the main safe area.
 function IxuanViewSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
   const mainRaw = slide.bullets[0] ?? "先整理風險，再判讀機會。";
-  const main = compactText(mainRaw, COPY_LIMITS.viewMain);
-  const supplement = compactText(
+  const main = fitReadableText(mainRaw, COPY_LIMITS.viewMain, "今日重點不是追逐短線雜訊，而是先整理風險，再判讀哪些主題值得持續觀察。");
+  const supplement = fitReadableText(
     slide.bullets[1] ?? "完整內容請見 IXAI App。此為市場資訊與教育分享。",
     COPY_LIMITS.viewSupplement,
+    "完整內容請見 IXAI App。",
   );
 
   return (
-    <div className="flex h-full flex-col justify-between">
+    <div className="flex h-full min-h-0 flex-col justify-between">
       <div>
         <Quote className="h-6 w-6 text-[var(--ixai-gold)]" strokeWidth={1.7} />
         <p
@@ -470,7 +507,7 @@ function IxuanViewSlide({ slide }: { slide: SocialIntelligencePack["slides"][num
         >
           {slide.id === "weekly_view" ? "I-Xuan Weekly View" : "I-Xuan View"}
         </p>
-        <h3 className="mt-2 text-[18px] font-semibold leading-[1.1]">
+        <h3 className="mt-2 text-[14px] font-semibold leading-[1.18]">
           {main}
         </h3>
       </div>
@@ -511,7 +548,7 @@ function StandardSlide({ slide }: { slide: SocialIntelligencePack["slides"][numb
             key={bullet}
             style={{ borderColor: "rgba(185,154,99,0.5)" }}
           >
-            {compactText(bullet, COPY_LIMITS.bodyBullet)}
+            {fitReadableText(bullet, COPY_LIMITS.bodyBullet, "維持情境觀察與風險意識。")}
           </p>
         ))}
       </div>
@@ -564,7 +601,7 @@ function SlidePreview({
 
   return (
     <article
-      className="relative flex w-full max-w-[280px] flex-col overflow-hidden border shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
+      className="relative flex w-[280px] max-w-full flex-col overflow-hidden border shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
       data-social-slide={`${pack.kind}-${index + 1}`}
       ref={slideRef}
       style={{
@@ -583,11 +620,11 @@ function SlidePreview({
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute right-[-54px] top-1/3 h-44 w-44 rounded-full border"
+        className="pointer-events-none absolute right-4 top-1/3 h-36 w-36 rounded-full border"
         style={{ borderColor: "rgba(185,154,99,0.12)" }}
       />
       <SlideHeader index={index} pack={pack} />
-      <main className="relative z-10 flex-1 overflow-hidden px-5 py-2">
+      <main className="relative z-10 min-h-0 flex-1 overflow-hidden px-5 py-2">
         <SlideBody pack={pack} slide={slide} />
       </main>
       <SlideFooter index={index} pack={pack} />
@@ -605,7 +642,7 @@ function SocialPackPreview({
   registerSlide: (index: number, node: HTMLElement | null) => void;
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
       {pack.slides.map((slide, index) => (
         <div className="grid justify-items-center gap-3" key={slide.id}>
           <SlidePreview
@@ -614,7 +651,7 @@ function SocialPackPreview({
             slideRef={(node) => registerSlide(index, node)}
           />
           <button
-            className="w-full max-w-[280px] rounded-lg border border-[rgba(176,141,87,0.28)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] transition hover:bg-[rgba(176,141,87,0.1)]"
+            className="w-[280px] max-w-full rounded-lg border border-[rgba(176,141,87,0.28)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] transition hover:bg-[rgba(176,141,87,0.1)]"
             onClick={() => onDownload(index)}
             type="button"
           >

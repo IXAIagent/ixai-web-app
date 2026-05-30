@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.41.1`
+`v1.41.2`
 
 ## Current Product Flow
 
@@ -221,13 +221,23 @@ Completed:
 - Made Executive Summary, Risk Regime reasoning, FCN Awareness, I-Xuan View, and public compliance boundaries easier to read.
 - Confirmed public preview surfaces do not expose Provider Health, Coverage Score, Content Quality Score, or raw provider errors.
 
+### v1.41.2 — Social Pack Renderer Hardening
+
+Completed:
+
+- Hardened Daily Intelligence Social Pack renderer after the v1.41.0 content engine upgrade.
+- Removed clipped core headings and unreadable truncated main content from Daily Social Pack slides.
+- Reserved reliable header / main / footer safe zones for exported PNGs.
+- Improved Cover, Market Pulse, AI / Tech Watch, FCN / Risk Watch, and I-Xuan View social copy hierarchy.
+- Preserved manual publishing, disclaimer visibility, and non-advisory positioning.
+
 Next:
 
-`v1.41.2 — Provider Expansion & Source Recovery`
+`v1.41.3 — Provider Expansion & Source Recovery`
 
 ## Next Suggested Version
 
-`v1.41.2 — Provider Expansion & Source Recovery`
+`v1.41.3 — Provider Expansion & Source Recovery`
 
 Goal:
 
