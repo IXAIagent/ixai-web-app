@@ -101,6 +101,18 @@ Mobile Visual QA Rules:
 - Browser binaries must not be committed.
 - QA scripts should remain lightweight and should not rewrite product architecture.
 
+Social Pack Layout Safety Rules:
+
+- Every 9:16 social slide must reserve header, main, and footer safe areas.
+- Footer and disclaimer must never overlap with main content.
+- Social pack copy must be compressed for mobile social reading.
+- Long source content must be truncated or summarized before rendering.
+- PNG export must be visually inspected after layout changes.
+- Slide content must use flex column flow (`header / main flex-1 / footer`); only background decoration may be absolutely positioned.
+- Social typography must respect the export ceilings: cover H1 ≤ 72px, content H1 ≤ 64px, body ≤ 34px, footer 22–26px, disclaimer 18–22px at 1080×1920 export scale.
+- Per-slide copy caps: cover headline ≤ 18 chars, insight line ≤ 24, body bullet ≤ 28, news title ≤ 14 + summary ≤ 22, I-Xuan View main ≤ 20 + supplement ≤ 36 (CJK glyphs).
+- Risk Watch slide must use a single regime state + one-line meaning + one-line FCN awareness, not a multi-row bar chart.
+
 ## D. Commit Rules
 
 Use small commits.

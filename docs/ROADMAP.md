@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.40.6c`
+`v1.40.6d`
 
 ## Current Product Flow
 
@@ -186,6 +186,20 @@ Completed:
 - Improved mobile readability.
 - Added institutional research presentation style.
 - Optimized content hierarchy.
+
+### v1.40.6d — Social Pack Layout Safety Fix
+
+Completed:
+
+- Fixed footer overlap.
+- Fixed oversized text.
+- Added fixed safe-area layout.
+- Added content compression rules.
+- Improved export readiness for FB / IG / LINE.
+
+Next:
+
+`v1.40.7 — Publish Center Foundation`
 
 ## Next Suggested Version
 

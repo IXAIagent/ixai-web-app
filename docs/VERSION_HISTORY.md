@@ -504,3 +504,31 @@ Out of Scope:
 - Auto publishing.
 - Portfolio Intelligence.
 - AI Alert Engine.
+
+## v1.40.6d — Social Pack Layout Safety Fix
+
+Why:
+
+- v1.40.6c improved direction but exported PNGs still had text overflow and footer overlap.
+- Social assets must be safe for direct FB / IG / LINE publishing.
+
+What Changed:
+
+- Added fixed header/main/footer safe areas.
+- Reduced oversized typography.
+- Added copy compression rules.
+- Simplified slide layouts.
+- Prevented footer, page number, and disclaimer overlap.
+
+Key Decisions:
+
+- Layout safety is more important than decorative design.
+- Social copy must be shorter than app/public brief content.
+- PNG export requires visual QA before use.
+
+Out of Scope:
+
+- Publish Center.
+- Auto publishing.
+- Portfolio Intelligence.
+- AI Alert Engine.

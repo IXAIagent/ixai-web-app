@@ -24,7 +24,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.40.6c`
+`v1.40.6d`
 
 Current Core Flow:
 
@@ -59,7 +59,7 @@ LINE Delivery Foundation now adds local/session-first delivery preferences, Acco
 
 Mobile Visual QA readiness now adds a lightweight 390px browser smoke check for public, account/pro gated, and admin surfaces. The QA script verifies route load, no obvious application/hydration error text, no horizontal overflow, and route-specific key UI text.
 
-Social Intelligence Engine foundation now turns reviewed Daily / Weekly Intelligence into manual FB / IG / LINE social content packs. The current implementation provides 9:16 story-style preview cards, caption drafts, 一玄 / IXAI visual framing, official logo usage, reusable brand tokens, client-side PNG export, and compliance footnotes for human-reviewed manual publishing only. v1.40.6c redesigns the pack layout toward institutional research and social-first readability instead of app-card or presentation-slide styling.
+Social Intelligence Engine foundation now turns reviewed Daily / Weekly Intelligence into manual FB / IG / LINE social content packs. The current implementation provides 9:16 story-style preview cards, caption drafts, 一玄 / IXAI visual framing, official logo usage, reusable brand tokens, client-side PNG export, and compliance footnotes for human-reviewed manual publishing only. v1.40.6c redesigned the pack layout toward institutional research and social-first readability. v1.40.6d adds Social Pack Layout Safety: a fixed header / main / footer safe-area structure, capped social typography ceilings, render-layer text compression helpers, and a simplified single-state risk panel so exported PNGs no longer suffer footer / disclaimer overlap, oversized headlines, or symbol-tag clipping.
 
 Current Highest Priorities:
 
@@ -95,6 +95,7 @@ Completed product capabilities include:
 - Social Pack PNG Export: Daily / Weekly Social Pack slides can be downloaded as 1080 × 1920 PNG assets.
 - Screenshot workflow is no longer required for Social Pack distribution assets.
 - Social Pack Layout Redesign: improved information hierarchy, institutional research style visual system, and social-first content presentation for Daily / Weekly Social Packs.
+- Social Pack Layout Safety: fixed header / main / footer safe-area layout, capped social typography ceilings, render-layer text compression helpers, simplified single-state risk panel, and footer/disclaimer overlap prevention for exported 1080×1920 PNGs.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.

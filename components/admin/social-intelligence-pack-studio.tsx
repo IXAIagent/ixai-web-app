@@ -31,7 +31,55 @@ const EXPORT_WIDTH = 1080;
 const EXPORT_HEIGHT = 1920;
 const DAILY_TECH_SYMBOLS = ["NVDA", "MSFT", "AMD", "AVGO", "PLTR"];
 const WEEKLY_TECH_SYMBOLS = ["AI Infra", "Semis", "Cloud", "Data Center", "Software"];
-const RISK_STAGES = ["Low", "Moderate", "Elevated", "High"];
+
+// v1.40.6d — Social pack export scaling reference.
+// Preview cards render at 280px wide with a fixed 9:16 aspect ratio
+// (~498px tall). html-to-image scales that DOM up to 1080 × 1920 for
+// PNG export, so the effective scaling factor is 1080 / 280 ≈ 3.857.
+// All typography caps below are picked so the export hits the ceilings
+// specified in PROJECT_RULES Social Pack Layout Safety:
+//   Cover H1 ≤ 72px export   → ≤ 18px preview
+//   Content H1 ≤ 64px export → ≤ 16px preview
+//   Body ≤ 34px export       → ≤ 8.8px preview
+//   Footer 22-26px export    → 6px preview
+//   Disclaimer 18-22px export → 5px preview
+const HEADER_HEIGHT_CLASS = "h-[9.375%]"; // 180 / 1920
+const FOOTER_HEIGHT_CLASS = "h-[13.542%]"; // 260 / 1920
+
+// Per-slide copy compression caps (CJK glyphs). Hard upper bounds —
+// the render layer truncates above them even if the data layer let
+// longer copy through. Small intentionally; social readers scan.
+const COPY_LIMITS = {
+  coverHeadline: 18,
+  insightLine: 24,
+  bodyBullet: 28,
+  newsTitle: 14,
+  newsSummary: 22,
+  viewMain: 20,
+  viewSupplement: 36,
+} as const;
+
+const RISK_REGIME_COPY: Record<
+  string,
+  { meaning: string; fcn: string }
+> = {
+  Low: {
+    meaning: "市場節奏穩定，留意過度集中或槓桿擴張。",
+    fcn: "FCN 評估以紀律與標的品質為主。",
+  },
+  Moderate: {
+    meaning: "波動分散，個別觀察主題集中度與催化。",
+    fcn: "FCN 結構需理解標的距離與 KO/KI。",
+  },
+  Elevated: {
+    meaning: "風險指標上升，配置偏向防禦與分散。",
+    fcn: "FCN 結構需理解 KO / KI / Worst Performer。",
+  },
+  High: {
+    meaning: "波動加大，先整理曝險再判讀機會。",
+    fcn: "FCN 結構在高波動下需更謹慎的標的審視。",
+  },
+};
 
 function packSourceLabel(pack: SocialIntelligencePack) {
   if (!pack.sourceBriefId) {
@@ -52,7 +100,10 @@ function downloadDataUrl(dataUrl: string, fileName: string) {
   link.click();
 }
 
-function compactSlideText(value: string, maxLength: number) {
+// v1.40.6d — Render-layer compression helper. Trims trailing
+// whitespace, collapses runs, and adds an ellipsis when the string
+// exceeds the cap. The function name mirrors the spec.
+function compactText(value: string, maxLength: number) {
   const normalized = value.replace(/\s+/g, " ").trim();
 
   if (normalized.length <= maxLength) {
@@ -62,10 +113,30 @@ function compactSlideText(value: string, maxLength: number) {
   return `${normalized.slice(0, maxLength - 1)}…`;
 }
 
+// v1.40.6d — Split a long Chinese line into shorter visual lines so
+// the cover headline and the I-Xuan view main quote do not break
+// awkwardly inside fixed-width safe areas.
+function splitIntoShortLines(value: string, maxCharsPerLine: number): string[] {
+  const normalized = value.replace(/\s+/g, " ").trim();
+
+  if (!normalized) {
+    return [];
+  }
+
+  const lines: string[] = [];
+
+  for (let i = 0; i < normalized.length; i += maxCharsPerLine) {
+    lines.push(normalized.slice(i, i + maxCharsPerLine));
+  }
+
+  return lines;
+}
+
+// Split a "headline｜detail" bullet payload into two compacted pieces.
 function splitBullet(value: string) {
   const parts = value.split("｜");
-  const heading = compactSlideText(parts[0] ?? value, 24);
-  const detail = compactSlideText(parts.slice(1).join("｜") || value, 42);
+  const heading = compactText(parts[0] ?? value, COPY_LIMITS.newsTitle);
+  const detail = compactText(parts.slice(1).join("｜") || value, COPY_LIMITS.newsSummary);
 
   return { detail, heading };
 }
@@ -98,20 +169,23 @@ function riskStageFor(kind: SocialPackKind) {
   return kind === "daily" ? "Elevated" : "Moderate";
 }
 
+// v1.40.6d — Header safe area. Compact logo + IXAI Intelligence /
+// date stack. Never grows beyond HEADER_HEIGHT_CLASS, so it cannot
+// push into the main content area.
 function SlideHeader({ index, pack }: { index: number; pack: SocialIntelligencePack }) {
   return (
-    <div className="relative z-10 flex items-start justify-between gap-4">
-      <div className="flex h-7 w-11 items-center justify-center">
+    <div className={`${HEADER_HEIGHT_CLASS} relative z-10 flex shrink-0 items-center justify-between gap-3 px-5 pt-4`}>
+      <div className="flex h-6 w-9 items-center justify-center">
         <IxaiLogo size="xs" />
       </div>
       <div className="min-w-0 text-right">
         <p
-          className="whitespace-nowrap font-mono text-[7px] uppercase leading-3 tracking-[0.1em]"
+          className="whitespace-nowrap font-mono text-[6px] uppercase leading-[1.05] tracking-[0.1em]"
           style={{ color: socialBrandTokens.gold }}
         >
           IXAI Intelligence
         </p>
-        <p className="mt-0.5 whitespace-nowrap font-mono text-[7px] uppercase leading-3 tracking-[0.07em] text-[rgba(244,240,230,0.5)]">
+        <p className="mt-0.5 whitespace-nowrap font-mono text-[6px] uppercase leading-[1.05] tracking-[0.07em] text-[rgba(244,240,230,0.5)]">
           {index === 0 ? (pack.kind === "daily" ? "Daily Intelligence" : "Weekly Intelligence") : pack.dateLabel}
         </p>
       </div>
@@ -119,222 +193,325 @@ function SlideHeader({ index, pack }: { index: number; pack: SocialIntelligenceP
   );
 }
 
+// v1.40.6d — Footer safe area. Three rows: brand line + page number,
+// then disclaimer underneath. Lives inside the flex column flow so it
+// cannot overlap the main content area regardless of body length.
 function SlideFooter({ index, pack }: { index: number; pack: SocialIntelligencePack }) {
   return (
-    <footer className="absolute bottom-5 left-5 right-5 z-10 border-t pt-3" style={{ borderColor: "rgba(185,154,99,0.34)" }}>
+    <footer
+      className={`${FOOTER_HEIGHT_CLASS} relative z-10 flex shrink-0 flex-col justify-end gap-1 border-t px-5 pb-5 pt-3`}
+      style={{ borderColor: "rgba(185,154,99,0.34)" }}
+    >
       <div className="flex items-end justify-between gap-3">
         <div>
-          <p className="whitespace-nowrap font-mono text-[6px] leading-3 tracking-normal" style={{ color: socialBrandTokens.gold }}>
+          <p
+            className="whitespace-nowrap font-mono text-[6px] leading-[1.2] tracking-normal"
+            style={{ color: socialBrandTokens.gold }}
+          >
             I-Xuan Investment Co., Ltd.
           </p>
-          <p className="mt-0.5 whitespace-nowrap font-mono text-[6px] leading-3 tracking-normal text-[rgba(244,240,230,0.5)]">
+          <p className="mt-0.5 whitespace-nowrap font-mono text-[6px] leading-[1.2] tracking-normal text-[rgba(244,240,230,0.5)]">
             app.ixuan.ai
           </p>
         </div>
-        <p className="whitespace-nowrap font-mono text-[6px] leading-3 tracking-normal text-[rgba(244,240,230,0.54)]">
+        <p className="whitespace-nowrap font-mono text-[6px] leading-[1.2] tracking-normal text-[rgba(244,240,230,0.54)]">
           {index + 1} of {pack.slides.length}
         </p>
       </div>
-      <p className="mt-2 text-[6px] leading-3 text-[rgba(244,240,230,0.46)]">
+      <p className="mt-1 text-[5px] leading-[1.3] text-[rgba(244,240,230,0.46)]">
         Market intelligence and education only. Not personalized investment advice.
       </p>
     </footer>
   );
 }
 
+// v1.40.6d — Slide 1 Cover. One short insight line, no long copy.
 function CoverSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
-  const lead = compactSlideText(slide.bullets[0] ?? "市場脈絡與風險環境已整理完成。", 22);
   const title = pack.kind === "daily" ? "今日市場最重要的事" : "本週市場焦點";
+  const leadRaw = compactText(slide.bullets[0] ?? "市場脈絡與風險環境已整理完成。", COPY_LIMITS.insightLine);
+  // v1.40.6d — Break the lead insight into ≤12-char visual lines so a
+  // long Chinese sentence never wraps mid-phrase against the fixed
+  // safe-area width.
+  const leadLines = splitIntoShortLines(leadRaw, 12);
 
   return (
-    <div className="relative z-10 mt-7">
-      <p className="font-mono text-[8px] uppercase tracking-[0.16em]" style={{ color: socialBrandTokens.gold }}>
-        {pack.kind === "daily" ? "Daily Intelligence" : "Weekly Intelligence"}
-      </p>
-      <h3 className="mt-3 max-w-[9ch] text-[1.18rem] font-semibold leading-[1.08] tracking-normal">
-        {title}
-      </h3>
-      <p className="mt-4 border-l pl-3 text-[9px] font-medium leading-4 text-[rgba(244,240,230,0.82)]" style={{ borderColor: socialBrandTokens.gold }}>
-        {lead}
-      </p>
+    <div className="flex h-full flex-col justify-between">
+      <div>
+        <p
+          className="font-mono text-[7px] uppercase tracking-[0.16em]"
+          style={{ color: socialBrandTokens.gold }}
+        >
+          {pack.kind === "daily" ? "Daily Intelligence" : "Weekly Intelligence"}
+        </p>
+        <h3 className="mt-2 text-[18px] font-semibold leading-[1.1] tracking-normal">
+          {title}
+        </h3>
+      </div>
+      <div
+        className="mt-3 border-l pl-3"
+        style={{ borderColor: socialBrandTokens.gold }}
+      >
+        {leadLines.map((line, lineIndex) => (
+          <p
+            className="text-[8.5px] font-medium leading-[1.45] text-[rgba(244,240,230,0.82)]"
+            key={`cover-lead-${lineIndex}`}
+          >
+            {line}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
 
+// v1.40.6d — Slide 2 Market Pulse. Exactly three news items in three
+// rows, each row capped at title 14 + summary 22 chars to guarantee
+// two lines max per item.
 function MarketPulseSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
   const Icon = slide.id === "market_review" ? Landmark : Globe2;
+  const items = slide.bullets.slice(0, 3);
 
   return (
-    <div className="relative z-10 mt-9">
-      <div className="flex items-center justify-between gap-3 border-b pb-3" style={{ borderColor: "rgba(185,154,99,0.36)" }}>
+    <div className="flex h-full flex-col">
+      <div
+        className="flex items-center justify-between gap-3 border-b pb-2"
+        style={{ borderColor: "rgba(185,154,99,0.36)" }}
+      >
         <div>
-          <p className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
+          <p
+            className="font-mono text-[7px] uppercase tracking-[0.18em]"
+            style={{ color: socialBrandTokens.gold }}
+          >
             {slide.eyebrow}
           </p>
-          <h3 className="mt-1 text-2xl font-semibold leading-tight">
+          <h3 className="mt-1 text-[16px] font-semibold leading-tight">
             {slide.id === "market_review" ? "Market Review" : "Market Pulse"}
           </h3>
         </div>
-        <Icon className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />
+        <Icon className="h-5 w-5 text-[var(--ixai-gold)]" strokeWidth={1.8} />
       </div>
-      <div className="mt-6 grid gap-5">
-        {slide.bullets.slice(0, 3).map((bullet, bulletIndex) => {
+      <div className="mt-3 flex flex-1 flex-col justify-between gap-2">
+        {items.map((bullet, bulletIndex) => {
           const item = splitBullet(bullet);
 
           return (
-            <div className="grid grid-cols-[2.25rem_1fr] gap-3" key={`${bullet}-${bulletIndex}`}>
-              <p className="font-mono text-lg leading-none" style={{ color: socialBrandTokens.gold }}>
+            <div className="grid grid-cols-[1.6rem_1fr] gap-2" key={`${bullet}-${bulletIndex}`}>
+              <p
+                className="font-mono text-[12px] leading-[1.05]"
+                style={{ color: socialBrandTokens.gold }}
+              >
                 {String(bulletIndex + 1).padStart(2, "0")}
               </p>
-              <div className="border-b border-white/10 pb-4">
-                <p className="text-lg font-semibold leading-6">{item.heading}</p>
-                <p className="mt-1 text-[13px] leading-5 text-[rgba(244,240,230,0.68)]">{item.detail}</p>
+              <div>
+                <p className="text-[9px] font-semibold leading-[1.35]">{item.heading}</p>
+                <p className="mt-0.5 text-[8px] leading-[1.4] text-[rgba(244,240,230,0.68)]">
+                  {item.detail}
+                </p>
               </div>
             </div>
           );
         })}
       </div>
-      <p className="mt-6 text-[11px] leading-5 text-[rgba(244,240,230,0.46)]">
-        Reviewed intelligence for manual social distribution.
-      </p>
     </div>
   );
 }
 
+// v1.40.6d — Slide 3 AI / Tech Watch. Symbol tags live in the main
+// safe area at the bottom of the body — they cannot creep toward the
+// footer because the footer is its own flex sibling.
 function AiTechSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+  const points = slide.bullets.slice(0, 3);
+
   return (
-    <div className="relative z-10 mt-9">
+    <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
+          <p
+            className="font-mono text-[7px] uppercase tracking-[0.18em]"
+            style={{ color: socialBrandTokens.gold }}
+          >
             {slide.eyebrow}
           </p>
-          <h3 className="mt-1 text-[1.65rem] font-semibold leading-tight">AI / Tech Watch</h3>
+          <h3 className="mt-1 text-[16px] font-semibold leading-tight">AI / Tech Watch</h3>
         </div>
-        <div className="flex gap-2">
-          <Cpu className="h-6 w-6 text-[var(--ixai-gold)]" strokeWidth={1.8} />
-          <Cloud className="h-6 w-6 text-[rgba(244,240,230,0.76)]" strokeWidth={1.8} />
+        <div className="flex gap-1.5">
+          <Cpu className="h-4 w-4 text-[var(--ixai-gold)]" strokeWidth={1.8} />
+          <Cloud className="h-4 w-4 text-[rgba(244,240,230,0.76)]" strokeWidth={1.8} />
         </div>
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">
-        {techSymbolsFor(pack.kind).map((symbol) => (
-          <span
-            className="border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.08em]"
-            key={symbol}
-            style={{ borderColor: "rgba(185,154,99,0.45)", color: socialBrandTokens.gold }}
-          >
-            {symbol}
-          </span>
-        ))}
-      </div>
-      <div className="mt-7 grid gap-4">
-        {slide.bullets.slice(0, 3).map((bullet, bulletIndex) => (
-          <div className="border-l pl-3" key={`${bullet}-${bulletIndex}`} style={{ borderColor: "rgba(185,154,99,0.52)" }}>
-            <p className="text-[17px] font-semibold leading-6">
-              {compactSlideText(splitBullet(bullet).heading, 20)}
-            </p>
-            <p className="mt-1 text-[13px] leading-5 text-[rgba(244,240,230,0.66)]">
-              {compactSlideText(splitBullet(bullet).detail, 44)}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
-  const activeStage = riskStageFor(pack.kind);
-  const fcnLine = compactSlideText(slide.bullets.find((bullet) => /FCN|KO|KI|Worst/i.test(bullet)) ?? slide.bullets[1] ?? "FCN 結構需理解 KO / KI / Worst Performer。", 54);
-
-  return (
-    <div className="relative z-10 mt-9">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
-            FCN / Risk Watch
-          </p>
-          <h3 className="mt-1 text-[1.65rem] font-semibold leading-tight">Risk Regime</h3>
-        </div>
-        <ShieldCheck className="h-7 w-7 text-[var(--ixai-gold)]" strokeWidth={1.8} />
-      </div>
-      <div className="mt-7 grid gap-2">
-        {RISK_STAGES.map((stage) => {
-          const isActive = stage === activeStage;
-
+      <div className="mt-4 flex flex-1 flex-col gap-2.5">
+        {points.map((bullet, bulletIndex) => {
+          const item = splitBullet(bullet);
           return (
             <div
-              className="grid grid-cols-[5.5rem_1fr] items-center gap-3 border-b py-2"
-              key={stage}
-              style={{ borderColor: "rgba(244,240,230,0.1)" }}
+              className="border-l pl-2"
+              key={`${bullet}-${bulletIndex}`}
+              style={{ borderColor: "rgba(185,154,99,0.52)" }}
             >
-              <p
-                className="font-mono text-[10px] uppercase tracking-[0.12em]"
-                style={{ color: isActive ? socialBrandTokens.gold : "rgba(244,240,230,0.42)" }}
-              >
-                {stage}
+              <p className="text-[9px] font-semibold leading-[1.35]">
+                {compactText(item.heading, COPY_LIMITS.newsTitle)}
               </p>
-              <div className="h-1.5 bg-white/10">
-                <div
-                  className="h-full"
-                  style={{
-                    backgroundColor: isActive ? socialBrandTokens.gold : "rgba(244,240,230,0.22)",
-                    width: isActive ? "100%" : "34%",
-                  }}
-                />
-              </div>
+              <p className="mt-0.5 text-[8px] leading-[1.4] text-[rgba(244,240,230,0.66)]">
+                {compactText(item.detail, COPY_LIMITS.bodyBullet)}
+              </p>
             </div>
           );
         })}
       </div>
-      <div className="mt-7 border-l pl-4" style={{ borderColor: socialBrandTokens.gold }}>
-        <p className="font-mono text-[9px] uppercase tracking-[0.16em]" style={{ color: socialBrandTokens.gold }}>
-          FCN Awareness
-        </p>
-        <p className="mt-2 text-lg font-semibold leading-6">{fcnLine}</p>
-        <p className="mt-2 text-[12px] leading-5 text-[rgba(244,240,230,0.58)]">
-          FCN structures should be understood with licensed professionals and official documents.
-        </p>
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {techSymbolsFor(pack.kind)
+          .slice(0, 5)
+          .map((symbol) => (
+            <span
+              className="border px-1.5 py-0.5 font-mono text-[6.5px] uppercase tracking-[0.08em]"
+              key={symbol}
+              style={{ borderColor: "rgba(185,154,99,0.45)", color: socialBrandTokens.gold }}
+            >
+              {symbol}
+            </span>
+          ))}
       </div>
     </div>
   );
 }
 
-function IxuanViewSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
-  const main = compactSlideText(slide.bullets[0] ?? "先整理風險，再判讀機會。", 28);
+// v1.40.6d — Slide 4 FCN / Risk Watch. No multi-row risk bar. Single
+// state + one-line meaning + one-line FCN awareness, exactly as the
+// v1.40.6d spec asks for.
+function RiskSlide({ pack, slide }: { pack: SocialIntelligencePack; slide: SocialIntelligencePack["slides"][number] }) {
+  const activeStage = riskStageFor(pack.kind);
+  const copy = RISK_REGIME_COPY[activeStage] ?? RISK_REGIME_COPY.Moderate;
+  const fcnAwareness = compactText(
+    slide.bullets.find((bullet) => /FCN|KO|KI|Worst/i.test(bullet)) ?? copy.fcn,
+    COPY_LIMITS.viewSupplement,
+  );
+  const meaning = compactText(copy.meaning, COPY_LIMITS.viewSupplement);
 
   return (
-    <div className="relative z-10 mt-12">
-      <Quote className="h-8 w-8 text-[var(--ixai-gold)]" strokeWidth={1.7} />
-      <p className="mt-5 font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
-        {slide.id === "weekly_view" ? "I-Xuan Weekly View" : "I-Xuan View"}
-      </p>
-      <h3 className="mt-4 max-w-[11ch] text-[2.15rem] font-semibold leading-[1.08]">
-        {main}
-      </h3>
-      <p className="mt-6 border-t pt-4 text-[14px] leading-6 text-[rgba(244,240,230,0.68)]" style={{ borderColor: "rgba(185,154,99,0.38)" }}>
-        完整內容請見 IXAI App。此內容為市場資訊與教育分享。
+    <div className="flex h-full flex-col">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p
+            className="font-mono text-[7px] uppercase tracking-[0.18em]"
+            style={{ color: socialBrandTokens.gold }}
+          >
+            FCN / Risk Watch
+          </p>
+          <h3 className="mt-1 text-[16px] font-semibold leading-tight">Risk Regime</h3>
+        </div>
+        <ShieldCheck className="h-5 w-5 text-[var(--ixai-gold)]" strokeWidth={1.8} />
+      </div>
+      <div className="mt-5 flex flex-1 flex-col justify-center gap-3">
+        <div
+          className="rounded-sm border px-3 py-2"
+          style={{
+            borderColor: socialBrandTokens.gold,
+            backgroundColor: "rgba(185,154,99,0.1)",
+          }}
+        >
+          <p
+            className="font-mono text-[6.5px] uppercase tracking-[0.16em]"
+            style={{ color: socialBrandTokens.gold }}
+          >
+            Current Risk State
+          </p>
+          <p
+            className="mt-1 font-mono text-[20px] font-semibold leading-[1.05]"
+            style={{ color: socialBrandTokens.gold }}
+          >
+            {activeStage}
+          </p>
+        </div>
+        <div>
+          <p
+            className="font-mono text-[6.5px] uppercase tracking-[0.16em]"
+            style={{ color: socialBrandTokens.gold }}
+          >
+            Risk Meaning
+          </p>
+          <p className="mt-1 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.82)]">
+            {meaning}
+          </p>
+        </div>
+        <div>
+          <p
+            className="font-mono text-[6.5px] uppercase tracking-[0.16em]"
+            style={{ color: socialBrandTokens.gold }}
+          >
+            FCN Awareness
+          </p>
+          <p className="mt-1 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.82)]">
+            {fcnAwareness}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// v1.40.6d — Slide 5 I-Xuan View. Main quote ≤ 20 chars, supplement
+// line ≤ 36 chars. Quote sits high, supplement sits low; both inside
+// the main safe area.
+function IxuanViewSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
+  const mainRaw = slide.bullets[0] ?? "先整理風險，再判讀機會。";
+  const main = compactText(mainRaw, COPY_LIMITS.viewMain);
+  const supplement = compactText(
+    slide.bullets[1] ?? "完整內容請見 IXAI App。此為市場資訊與教育分享。",
+    COPY_LIMITS.viewSupplement,
+  );
+
+  return (
+    <div className="flex h-full flex-col justify-between">
+      <div>
+        <Quote className="h-6 w-6 text-[var(--ixai-gold)]" strokeWidth={1.7} />
+        <p
+          className="mt-3 font-mono text-[7px] uppercase tracking-[0.18em]"
+          style={{ color: socialBrandTokens.gold }}
+        >
+          {slide.id === "weekly_view" ? "I-Xuan Weekly View" : "I-Xuan View"}
+        </p>
+        <h3 className="mt-2 text-[18px] font-semibold leading-[1.1]">
+          {main}
+        </h3>
+      </div>
+      <p
+        className="border-t pt-3 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.68)]"
+        style={{ borderColor: "rgba(185,154,99,0.38)" }}
+      >
+        {supplement}
       </p>
     </div>
   );
 }
 
+// v1.40.6d — Fallback layout for any slide id we don't have a custom
+// template for. Bullets capped to bodyBullet length.
 function StandardSlide({ slide }: { slide: SocialIntelligencePack["slides"][number] }) {
   return (
-    <div className="relative z-10 mt-9">
-      <div className="flex items-center justify-between gap-3 border-b pb-3" style={{ borderColor: "rgba(185,154,99,0.34)" }}>
+    <div className="flex h-full flex-col">
+      <div
+        className="flex items-center justify-between gap-3 border-b pb-2"
+        style={{ borderColor: "rgba(185,154,99,0.34)" }}
+      >
         <div>
-          <p className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: socialBrandTokens.gold }}>
+          <p
+            className="font-mono text-[7px] uppercase tracking-[0.18em]"
+            style={{ color: socialBrandTokens.gold }}
+          >
             {slide.eyebrow}
           </p>
-          <h3 className="mt-1 text-2xl font-semibold leading-tight">{slide.title}</h3>
+          <h3 className="mt-1 text-[16px] font-semibold leading-tight">{slide.title}</h3>
         </div>
         {renderSlideIcon(slide.id)}
       </div>
-      <div className="mt-6 grid gap-4">
+      <div className="mt-3 flex flex-1 flex-col gap-2">
         {slide.bullets.slice(0, 3).map((bullet) => (
-          <p className="border-l pl-3 text-[14px] leading-6 text-[rgba(244,240,230,0.74)]" key={bullet} style={{ borderColor: "rgba(185,154,99,0.5)" }}>
-            {compactSlideText(bullet, 52)}
+          <p
+            className="border-l pl-2 text-[8.5px] leading-[1.45] text-[rgba(244,240,230,0.74)]"
+            key={bullet}
+            style={{ borderColor: "rgba(185,154,99,0.5)" }}
+          >
+            {compactText(bullet, COPY_LIMITS.bodyBullet)}
           </p>
         ))}
       </div>
@@ -366,6 +543,10 @@ function SlideBody({ pack, slide }: { pack: SocialIntelligencePack; slide: Socia
   return <StandardSlide slide={slide} />;
 }
 
+// v1.40.6d — Slide preview wrapper. Replaces the previous
+// pb-24 + absolute footer pattern with three explicit safe-area
+// siblings: header / main / footer. Only the decorative gradient and
+// the soft border ring remain absolute; nothing content-bearing is.
 function SlidePreview({
   index,
   pack,
@@ -383,7 +564,7 @@ function SlidePreview({
 
   return (
     <article
-      className="relative flex w-full max-w-[280px] flex-col overflow-hidden border px-5 pb-24 pt-5 shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
+      className="relative flex w-full max-w-[280px] flex-col overflow-hidden border shadow-[0_24px_90px_rgba(0,0,0,0.28)]"
       data-social-slide={`${pack.kind}-${index + 1}`}
       ref={slideRef}
       style={{
@@ -394,17 +575,21 @@ function SlidePreview({
       }}
     >
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-36"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[20%]"
         style={{
           background: `linear-gradient(180deg, rgba(185,154,99,0.18), rgba(185,154,99,0))`,
         }}
       />
       <div
-        className="pointer-events-none absolute bottom-20 right-[-54px] h-44 w-44 rounded-full border"
+        aria-hidden="true"
+        className="pointer-events-none absolute right-[-54px] top-1/3 h-44 w-44 rounded-full border"
         style={{ borderColor: "rgba(185,154,99,0.12)" }}
       />
       <SlideHeader index={index} pack={pack} />
-      <SlideBody pack={pack} slide={slide} />
+      <main className="relative z-10 flex-1 overflow-hidden px-5 py-2">
+        <SlideBody pack={pack} slide={slide} />
+      </main>
       <SlideFooter index={index} pack={pack} />
     </article>
   );
