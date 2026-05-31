@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.42.4`
+`v1.43.0`
 
 Current Core Flow:
 
@@ -116,6 +116,8 @@ Market Memory Layer now adds a lightweight Daily Intelligence memory foundation.
 
 Social Media Optimization Layer now makes Social Packs platform-aware. Admin Social Pack Studio supports IG Feed / Carousel 4:5 export at 1080 × 1350 as the primary feed format while preserving Story / Reels 9:16 export at 1080 × 1920 for LINE / Story distribution. The same reviewed intelligence pack can now be previewed and exported for different social contexts without auto-publishing.
 
+Intelligence Source of Truth Architecture now makes Daily Intelligence Core the shared source for Public Daily Brief, Daily Social Pack, and Weekly Intelligence aggregation. Daily Core standardizes todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals. Social Pack is now an entry asset derived from Daily / Weekly Core instead of a parallel content generator, and Weekly Intelligence now aggregates recent Daily Core signals before human review.
+
 Current Highest Priorities:
 
 1. Publish Center Foundation.
@@ -161,6 +163,7 @@ Completed product capabilities include:
 - Social Pack intelligence upgrade: Daily Social Pack content now extracts insight and rewrites for social readability, avoiding template residue such as Short Insight / Observation labels, generic repeated filler, clipped English fragments, and non-compliant trading language.
 - Market Memory Layer: Daily Briefs now include What Changed Since Last Brief, continuity tags, and memory-aware I-Xuan View language based on recent editorial briefs.
 - Social Media Optimization Layer: Social Pack Studio now supports IG Feed / Carousel 4:5 and Story / Reels 9:16 export formats with platform-specific preview dimensions and copy density.
+- Intelligence Source of Truth Architecture: Daily Intelligence Core now connects Daily Brief, Daily Social Pack, Weekly Aggregation, and future Account / Pro Intelligence with one shared intelligence contract.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.

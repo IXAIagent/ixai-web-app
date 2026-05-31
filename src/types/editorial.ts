@@ -70,6 +70,27 @@ export type DailyTopStory = {
   watchpoint: string;
 };
 
+export type DailySocialHooks = {
+  primaryHook: string;
+  marketPulse: string[];
+  aiTechSignal: {
+    keySignal: string;
+    whyItMatters: string;
+    watchNext: string;
+  };
+  riskHook: string;
+  ixuanHook: string;
+};
+
+export type DailyWeeklySignals = {
+  primaryTheme: string;
+  repeatedThemes: string[];
+  risingThemes: string[];
+  fadingThemes: string[];
+  weeklyNarrative: string;
+  watchNext: string[];
+};
+
 export type DailyCoverageScore = {
   macro: number;
   aiTech: number;
@@ -126,6 +147,8 @@ export type DailyIntelligenceDraft = {
   riskRegimeReasoning?: DailyRiskRegimeReasoning;
   fcnAwareness?: DailyFcnAwareness;
   ixuanView?: string;
+  socialHooks?: DailySocialHooks;
+  weeklySignals?: DailyWeeklySignals;
   marketMemory?: import("@/src/lib/intelligence/memory/types").MarketMemorySnapshot;
   whatChangedSinceLastBrief?: string;
   continuityTags?: string[];
@@ -323,6 +346,25 @@ export type WeeklyIntelligenceSections = {
   generatorStats?: WeeklyGeneratorStats;
   // v1.32 — narrative intelligence bundle.
   narrative?: WeeklyNarrativeBundle;
+  // v1.43 — Daily Intelligence Core aggregation. Stored inside the
+  // sections jsonb object so Weekly can inherit the Daily source of truth
+  // without a Supabase schema migration.
+  dailyCoreAggregation?: WeeklyDailyCoreAggregation;
+};
+
+export type WeeklyDailyCoreAggregation = {
+  aggregationWindow: string;
+  limitedHistory: boolean;
+  recentSignals: string[];
+  repeatedThemes: string[];
+  risingThemes: string[];
+  fadingThemes: string[];
+  weeklyNarrative: string;
+  whatChanged: string;
+  ixuanViewSummary: string;
+  nextWeekWatchpoints: string[];
+  sourceBriefCount: number;
+  sourceBriefSlugs: string[];
 };
 
 export type WeeklyIntelligenceAiSuggestion = {

@@ -300,7 +300,7 @@ function CoverSlide({
   const isFeed = format === "ig_feed_4_5";
   const title = pack.kind === "daily"
     ? isFeed
-      ? "AI 行情還沒結束？今天市場透露 3 個訊號"
+      ? slide.title
       : "今日市場最重要的 5 件事"
     : isFeed
       ? "本週市場正在 pricing 什麼"
@@ -883,7 +883,7 @@ export function SocialIntelligencePackStudio({
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
             產生供 IG Feed / Carousel、FB / Threads 與 Story / LINE 手動發布的平台化圖文素材。每張卡片固定使用正式一玄
-            Logo、IXAI Intelligence header、統一 footer 與 disclaimer，不自動發文、不串接平台 API。
+            Logo、IXAI Intelligence header、統一 footer 與 disclaimer。Social Pack 從 Daily / Weekly Intelligence Core 派生，不自動發文、不串接平台 API。
           </p>
         </div>
         <div className="grid gap-2 sm:flex sm:flex-wrap xl:justify-end">
@@ -927,6 +927,12 @@ export function SocialIntelligencePackStudio({
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Source: <span className="text-[var(--ixai-cream)]">{packSourceLabel(activePack)}</span>
+        </p>
+        <p className="rounded-md border border-[rgba(176,141,87,0.22)] bg-[rgba(176,141,87,0.08)] px-3 py-2 text-[rgba(245,240,230,0.68)]">
+          Source of Truth:{" "}
+          <span className="text-[var(--ixai-cream)]">
+            {activeKind === "daily" ? "Daily Intelligence Core" : "Weekly Daily-Core Aggregation"}
+          </span>
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Footer: <span className="text-[var(--ixai-cream)]">I-Xuan Investment Co., Ltd. · app.ixuan.ai</span>

@@ -862,3 +862,39 @@ Out of Scope:
 - Auth, LINE Login, or LIFF changes.
 - Portfolio Intelligence.
 - Buy/sell recommendations or return promises.
+
+## v1.43.0 — Intelligence Source of Truth Architecture
+
+Why:
+
+- Daily Brief, Weekly Brief, and Social Pack had improved individually but still behaved like parallel content products.
+- Weekly Intelligence needed to inherit recent Daily market signals instead of generating a disconnected narrative.
+- Social Pack needed to function as the acquisition entry into Daily / Weekly Intelligence, not a separate image template.
+- Daily Briefs with overlapping themes needed difference-aware copy so consecutive days do not feel repetitive.
+
+What Changed:
+
+- Added Daily Intelligence Core as the common contract for Daily, Social, Weekly, and future Account / Pro reuse.
+- Standardized core fields for todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals.
+- Made Daily Social Pack derive Slide 1 hook, Market Pulse, AI / Tech Watch, FCN / Risk Watch, and I-Xuan View from Daily Core.
+- Made Weekly Intelligence aggregate recent Daily Core signals, continuity tags, whatChanged, and I-Xuan View before manual review.
+- Added admin copy showing that Social Pack is derived from Daily / Weekly Core and Weekly aggregates recent Daily Core.
+- Strengthened difference-aware Market Memory copy when themes overlap across days.
+
+Key Decisions:
+
+- Daily Intelligence Core is the source of truth.
+- Social Pack is an entry asset into Daily / Weekly Intelligence, not a standalone narrative engine.
+- Weekly Intelligence should be built from recent Daily Core first, with news intake and calendar data supporting the weekly view.
+- The architecture remains editorial-first and does not require a Supabase schema migration.
+
+Out of Scope:
+
+- Supabase schema changes.
+- Auth, LINE Login, or LIFF changes.
+- News provider pipeline changes.
+- New providers.
+- Auto publishing or platform APIs.
+- Portfolio Intelligence.
+- Pro subscription.
+- Buy/sell recommendations, target prices, return promises, or automated trading.

@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.42.4`
+`v1.43.0`
 
 ## Related Strategic Documents
 
@@ -312,20 +312,30 @@ Completed:
 - Added admin format selector and export dimension mapping.
 - Optimized Social Pack preview density so feed cards feel more platform-native and less like report slides.
 
+### v1.43.0 — Intelligence Source of Truth Architecture
+
+Completed:
+
+- Added Daily Intelligence Core as the shared source for Daily Brief, Daily Social Pack, Weekly Aggregation, and future Account / Pro Intelligence.
+- Standardized core fields: todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals.
+- Made Social Pack derive hooks, market pulse, AI / Tech signal, risk / FCN awareness, and I-Xuan View from Daily / Weekly Core.
+- Made Weekly Intelligence aggregate recent Daily Core signals, continuity tags, whatChanged copy, and I-Xuan View before manual review.
+- Added difference-aware continuity copy when Daily themes overlap across days.
+
 Next:
 
-`v1.42.5 — Publish Center Foundation`
+`v1.43.1 — Weekly Intelligence Reliability QA`
 
 ## Next Suggested Version
 
-`v1.42.5 — Publish Center Foundation`
+`v1.43.1 — Weekly Intelligence Reliability QA`
 
 Goal:
 
-- Turn reviewed Daily / Weekly / Social Pack output into an approval-ready Publish Center path.
-- Preserve human review before external delivery or publishing.
-- Keep public / account / future Pro delivery boundaries clear.
-- Do not add automated trading, paid entitlement, or unreviewed push automation.
+- Verify Weekly generation against Daily Core aggregation in local and production-like admin flows.
+- Confirm Weekly draft persistence behavior, Supabase error visibility, and editorial fallback boundaries.
+- Preserve the source-of-truth architecture before adding Publish Center workflow.
+- Do not add automated publishing, platform APIs, paid entitlement, or portfolio intelligence.
 
 ## Future Roadmap
 

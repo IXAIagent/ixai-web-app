@@ -18,6 +18,7 @@ import type {
   DailyTopStory,
 } from "@/src/types/editorial";
 import { log } from "@/src/lib/log";
+import { attachDailyIntelligenceCore } from "@/src/lib/intelligence/core";
 import { attachMarketMemoryToDailyIntelligence } from "@/src/lib/intelligence/memory";
 import { buildNarrativeBundle } from "@/src/lib/intelligence/narrative-engine";
 import type { NewsIntakeMode, NewsSourceStatus, NormalizedNewsItem } from "@/src/types/news";
@@ -777,7 +778,9 @@ export async function generateDailyIntelligenceDraftFromNews(
     });
   }
 
-  intelligence = attachMarketMemoryToDailyIntelligence(intelligence, options.previousBriefs);
+  intelligence = attachDailyIntelligenceCore(
+    attachMarketMemoryToDailyIntelligence(intelligence, options.previousBriefs),
+  );
 
   const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const now = nowIso();

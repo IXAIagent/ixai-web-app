@@ -1,4 +1,5 @@
 import { weeklyBriefs, type WeeklyBrief } from "@/content/weekly-briefs";
+import { getDraftsAsync } from "@/src/lib/editorial/repository";
 import { getSupabaseRestConfig } from "@/src/lib/supabase/server";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
 import {
@@ -19,7 +20,9 @@ import {
   buildNarrativeBundle,
   type NarrativeBundle,
 } from "@/src/lib/intelligence/narrative-engine";
+import { buildWeeklyAggregationFromDailyCores } from "@/src/lib/intelligence/core";
 import type {
+  WeeklyDailyCoreAggregation,
   WeeklyDraftGenerationSummary,
   WeeklyIntelligenceAiSuggestion,
   WeeklyIntelligenceDraft,
@@ -712,7 +715,18 @@ function buildIntelligenceSummary(
   past: WeeklyPastWeekHighlights,
   upcoming: UpcomingEvent[],
   intake: NewsIntakeResult,
+  dailyCoreAggregation?: WeeklyDailyCoreAggregation,
 ): WeeklyIntelligenceSections["intelligenceSummary"] {
+  if (dailyCoreAggregation?.sourceBriefSlugs.length) {
+    return {
+      pricing: `本週主線：${dailyCoreAggregation.weeklyNarrative}`,
+      riskTone:
+        dailyCoreAggregation.nextWeekWatchpoints[0] ??
+        "本週風險基調仍需觀察利率、美元、波動率與市場廣度是否同向。",
+      whatChanged: dailyCoreAggregation.whatChanged,
+    };
+  }
+
   const fedSignal = past.fedRatesMacro[0];
   const aiSignal = past.aiSemiconductors[0];
   const taiwanSignal = past.taiwanEquities[0];
@@ -802,6 +816,7 @@ function buildWeeklySections({
   sourcesUsed,
   categorization,
   narrative,
+  dailyCoreAggregation,
 }: {
   intake: NewsIntakeResult;
   past: WeeklyPastWeekHighlights;
@@ -812,9 +827,24 @@ function buildWeeklySections({
   sourcesUsed: WeeklySourceUsed[];
   categorization: CategorizationResult;
   narrative: NarrativeBundle;
+  dailyCoreAggregation?: WeeklyDailyCoreAggregation;
 }): WeeklyIntelligenceSections {
   const fedRatesPast = past.fedRatesMacro[0];
   const taiwanPast = past.taiwanEquities[0];
+  const dailyCoreHighlights = (dailyCoreAggregation?.recentSignals ?? [])
+    .slice(0, 4)
+    .map((signal, index) => ({
+      headline: signal,
+      ixaiView:
+        dailyCoreAggregation?.repeatedThemes[index]
+          ? `Daily Core 連續追蹤：${dailyCoreAggregation.repeatedThemes[index]}。`
+          : "Daily Core 訊號用於週報聚合，不是獨立重新生成的觀點。",
+      label: ["Daily Signal", "Continuity", "Theme Shift", "Risk Context"][index] ?? "Daily Core",
+      summary:
+        index === 0
+          ? dailyCoreAggregation?.whatChanged ?? signal
+          : dailyCoreAggregation?.nextWeekWatchpoints[index - 1] ?? signal,
+    }));
 
   const upcomingWeek: WeeklyUpcomingEvent[] = upcoming.map((event) => ({
     date: event.date,
@@ -826,7 +856,7 @@ function buildWeeklySections({
   }));
 
   return {
-    marketHighlights: legacyMarketHighlights(past),
+    marketHighlights: dailyCoreHighlights.length ? dailyCoreHighlights : legacyMarketHighlights(past),
     majorEvents: legacyMajorEvents(past, upcomingFedMacro, upcomingTaiwan),
     nextWeekFocus: legacyNextWeekFocus(upcoming),
     earningsFocus:
@@ -858,7 +888,7 @@ function buildWeeklySections({
           : "台積電與 AI server 相關供應鏈仍是台股風險偏好與外資配置的主要觀察窗口。",
     },
     fcnMarketObservation: buildFcnObservation(past),
-    intelligenceSummary: buildIntelligenceSummary(past, upcoming, intake),
+    intelligenceSummary: buildIntelligenceSummary(past, upcoming, intake, dailyCoreAggregation),
     pastWeekHighlights: past,
     upcomingWeek,
     sourcesUsed,
@@ -891,6 +921,7 @@ function buildWeeklySections({
       },
       importanceRanking: narrative.importanceRanking,
     },
+    dailyCoreAggregation,
   };
 }
 
@@ -929,10 +960,14 @@ function buildAiSuggestion(
 
   return {
     summarySuggestion: sections.intelligenceSummary.pricing,
-    keyThemes: sections.marketHighlights.map((item) => item.label),
+    keyThemes: sections.dailyCoreAggregation?.repeatedThemes.length
+      ? sections.dailyCoreAggregation.repeatedThemes
+      : sections.marketHighlights.map((item) => item.label),
     riskFocus,
-    nextWeekWatchlist: sections.nextWeekFocus,
-    intelligenceNarrative: sections.intelligenceSummary.whatChanged,
+    nextWeekWatchlist: sections.dailyCoreAggregation?.nextWeekWatchpoints.length
+      ? sections.dailyCoreAggregation.nextWeekWatchpoints
+      : sections.nextWeekFocus,
+    intelligenceNarrative: sections.dailyCoreAggregation?.weeklyNarrative ?? sections.intelligenceSummary.whatChanged,
     sourceMode: intake.mode,
     inputNewsCount: intake.itemCount,
     sourceLabels,
@@ -988,6 +1023,8 @@ export async function generateWeeklyIntelligenceDraft({
 } = {}) {
   const { weekStart, weekEnd } = getWeeklyGenerationRange();
   const intake = await getLatestNewsIntakeResult();
+  const recentDailyBriefs = await getDraftsAsync();
+  const dailyCoreAggregation = buildWeeklyAggregationFromDailyCores(recentDailyBriefs);
   const existingDraft = await findWeeklyDraftByRange(weekStart, weekEnd);
 
   if (existingDraft && !force) {
@@ -1049,6 +1086,7 @@ export async function generateWeeklyIntelligenceDraft({
     sourcesUsed,
     categorization,
     narrative,
+    dailyCoreAggregation,
   });
   const aiSuggestion = buildAiSuggestion(sections, intake, upcoming);
   const slug = force

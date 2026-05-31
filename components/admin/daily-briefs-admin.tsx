@@ -430,7 +430,7 @@ function WeeklyEditorPreview() {
               Weekly Workflow Console
             </p>
             <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-              News sources / market data / AI-assisted suggestion → Editorial review → Preview → Manual publish.
+              Weekly Intelligence aggregates recent Daily Intelligence Core. News intake still supports source coverage, but Weekly should inherit the Daily source-of-truth narrative before human review.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -596,6 +596,20 @@ function WeeklyEditorPreview() {
                   <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.72)]">
                     {selectedWeeklyDraft.sections.intelligenceSummary.pricing}
                   </p>
+                  {selectedWeeklyDraft.sections.dailyCoreAggregation ? (
+                    <div className="mt-2 space-y-1 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
+                      <p>
+                        Daily Core source: {selectedWeeklyDraft.sections.dailyCoreAggregation.sourceBriefCount} briefs ·{" "}
+                        {selectedWeeklyDraft.sections.dailyCoreAggregation.aggregationWindow} ·{" "}
+                        {selectedWeeklyDraft.sections.dailyCoreAggregation.sourceBriefSlugs.slice(0, 7).join(" / ") || "editorial-safe fallback"}.
+                      </p>
+                      {selectedWeeklyDraft.sections.dailyCoreAggregation.limitedHistory ? (
+                        <p className="text-amber-100/75">
+                          Based on limited Daily Intelligence history
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
 
                 {selectedWeeklyDraft.sections.generatorStats ? (
@@ -634,6 +648,37 @@ function WeeklyEditorPreview() {
                           {selectedWeeklyDraft.sections.generatorStats.sourcesUsedCount}
                         </span>
                       </p>
+                    </div>
+                  </div>
+                ) : null}
+
+                {selectedWeeklyDraft.sections.dailyCoreAggregation ? (
+                  <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                      Daily Intelligence Core Aggregation
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.66)]">
+                      {selectedWeeklyDraft.sections.dailyCoreAggregation.whatChanged}
+                    </p>
+                    <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.48)]">
+                      sourceBriefCount: {selectedWeeklyDraft.sections.dailyCoreAggregation.sourceBriefCount} · aggregationWindow:{" "}
+                      {selectedWeeklyDraft.sections.dailyCoreAggregation.aggregationWindow} · sourceBriefSlugs:{" "}
+                      {selectedWeeklyDraft.sections.dailyCoreAggregation.sourceBriefSlugs.join(" / ") || "editorial-safe fallback"}
+                    </p>
+                    {selectedWeeklyDraft.sections.dailyCoreAggregation.limitedHistory ? (
+                      <p className="mt-1 text-xs leading-5 text-amber-100/75">
+                        Based on limited Daily Intelligence history
+                      </p>
+                    ) : null}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {selectedWeeklyDraft.sections.dailyCoreAggregation.repeatedThemes.slice(0, 5).map((theme) => (
+                        <span
+                          className="rounded-full border border-[rgba(176,141,87,0.3)] bg-[rgba(176,141,87,0.08)] px-2.5 py-1 text-xs text-[var(--ixai-gold)]"
+                          key={theme}
+                        >
+                          {theme}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 ) : null}
@@ -885,8 +930,8 @@ export function DailyBriefsAdmin() {
                 Daily / Weekly Intelligence Workflow
               </h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-                新聞來源與市場資料先進入 AI-assisted suggestion，再由 Editorial Studio
-                審閱、預覽與發布。日報與週報分流，不做自動發布。
+                Daily Intelligence Core 是日報、Social Pack 與週報聚合的共同來源。新聞來源與市場資料先進入 Daily Core，再由 Editorial Studio
+                審閱、預覽與發布。週報聚合最近 Daily Core，不做自動發布。
               </p>
             </div>
             <div className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.045] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)] lg:min-w-[300px]">
@@ -947,7 +992,7 @@ export function DailyBriefsAdmin() {
                 Daily Workflow Console
               </p>
               <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-                Generate Daily Intelligence Draft → AI-assisted suggestion → Editorial review → Preview → Manual publish.
+                Generate Daily Intelligence Core → Public Daily Brief → Daily Social Pack → Weekly Aggregation → Manual publish.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">

@@ -339,6 +339,16 @@ Daily Intelligence Rules:
 - Editorial drafts that lack source coverage, content length, or insight depth should be visibly flagged before manual publish.
 - Provider Health, Coverage Score, Content Quality Score, raw provider errors, and source debug metadata are admin-only diagnostics and must not be exposed through public Daily Brief responses.
 
+Intelligence Source of Truth Rules:
+
+- Daily Intelligence Core is the shared source of truth for Public Daily Brief, Daily Social Pack, Weekly Aggregation, and future Account / Pro Intelligence.
+- Daily Intelligence Core should include todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals.
+- Social Packs must derive hooks, market pulse, AI / Tech signal, risk / FCN awareness, and I-Xuan View from Daily / Weekly Core. They must not invent a separate narrative disconnected from the reviewed brief.
+- Weekly Intelligence should aggregate recent Daily Intelligence Core signals, themes, whatChanged copy, continuity tags, and I-Xuan View before falling back to raw news intake.
+- If Daily themes overlap strongly across days, the copy should explain what changed, what extended, or what faded. Do not repeat generic statements such as "AI is important" or "rates are important" without a difference-aware angle.
+- Daily / Weekly / Social surfaces should reinforce the content funnel: Social Pack → Daily / Weekly Intelligence → Account → Future Pro Interest.
+- Source-of-truth architecture must not require Supabase schema changes unless explicitly approved.
+
 Intelligence Distribution Layer Rules:
 
 - Distribution preferences may organize frequency, categories, and channels for future intelligence delivery.

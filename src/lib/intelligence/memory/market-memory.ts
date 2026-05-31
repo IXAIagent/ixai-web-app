@@ -166,13 +166,18 @@ export function buildWhatChangedSinceLastBrief(snapshot: MarketMemorySnapshot) {
   const fading = snapshot.fadingThemes[0];
 
   if (snapshot.memoryDate) {
+    const overlap = snapshot.risingThemes[0]
+      ? `主題與前一份 Brief 高度重疊時，IXAI 不重複說明「AI 很重要、利率很重要」，而是追蹤今日變化：${snapshot.risingThemes[0]} 是否成為新的敘事延伸。`
+      : "主題與前一份 Brief 高度重疊時，IXAI 會追蹤市場敘事的延續、分化與優先順序，而不是重複同一句主線。";
+
     return [
       `相較前一份 Brief，市場主線仍圍繞 ${dominant}，但今日更需要觀察 ${rising} 是否接棒升溫。`,
       fading
         ? `${fading} 的訊號相對降溫，代表市場正在重新排序敘事優先順序。`
         : "這代表市場主線尚未反轉，而是從既有題材延伸到新的受惠層。",
+      overlap,
       "此段為公開市場敘事追蹤，不是個人化投資建議。",
-    ].join("");
+    ].join(" ");
   }
 
   return [
