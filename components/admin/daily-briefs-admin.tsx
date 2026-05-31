@@ -307,7 +307,9 @@ function WeeklyEditorPreview() {
       const draftCount = resolvedDrafts.filter((draft) => !draft.id.startsWith("static-")).length;
       const baseMessage =
         payload.summary?.status === "existing"
-          ? `Existing weekly draft loaded · ${payload.summary.itemCount} input items · ${payload.summary.sourceMode}`
+          ? payload.draft.status === "published" || payload.draft.status === "archived"
+            ? `Weekly range already ${payload.draft.status}. Current Supabase persistence allows one weekly row per week, so Generate cannot create a parallel draft without a schema/revision change.`
+            : `Existing weekly draft loaded · ${payload.summary.itemCount} input items · ${payload.summary.sourceMode}`
           : `Weekly draft generated · ${payload.summary?.itemCount ?? 0} input items · ${payload.summary?.sourceMode ?? "fallback"}`;
       setWeeklyMessage(
         `${baseMessage} · id ${draftIdPrefix} · status ${payload.draft.status} · drafts ${draftCount}`,

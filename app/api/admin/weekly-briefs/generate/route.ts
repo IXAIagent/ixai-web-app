@@ -27,6 +27,18 @@ export async function POST(request: NextRequest) {
   try {
     const { draft, intake, summary } = await generateWeeklyIntelligenceDraft({ force });
     const drafts = await listAdminWeeklyDraftsAsync();
+    console.info(
+      "[IXAI WEEKLY WORKFLOW]",
+      JSON.stringify({
+        draft_id: draft.id,
+        generation_completed: true,
+        generation_started: true,
+        list_count_after_save: drafts.length,
+        save_completed: summary.status === "generated",
+        weekly_slug: draft.slug,
+        weekly_status: draft.status,
+      }),
+    );
 
     return Response.json({
       draft,

@@ -68,6 +68,16 @@ function logWeeklyPersistence(message: string, error?: unknown) {
   }
 }
 
+function logWeeklyWorkflow(event: string, payload: Record<string, unknown>) {
+  console.info(
+    "[IXAI WEEKLY WORKFLOW]",
+    JSON.stringify({
+      event,
+      ...payload,
+    }),
+  );
+}
+
 // v1.30.3 — distinguish "Supabase env not configured" (allow fallback for
 // reads, surface clear error for writes) from "Supabase is configured but
 // the request failed" (writes MUST fail loudly, never silently fall back
@@ -981,16 +991,21 @@ async function findWeeklyDraftByRange(weekStart: string, weekEnd: string) {
   // Generate within a week would hit a unique_violation instead of
   // returning the existing draft).
   const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
-    `${WEEKLY_TABLE}?select=*&week_start=eq.${weekStart}&week_end=eq.${weekEnd}&limit=1`,
+    `${WEEKLY_TABLE}?select=*&week_start=eq.${weekStart}&week_end=eq.${weekEnd}&order=updated_at.desc`,
     {},
     true,
   );
 
-  if (records?.[0]) {
-    return toDraft(records[0]);
+  if (records?.length) {
+    const drafts = sortWeeklyDrafts(records.map(toDraft));
+    return drafts.find((draft) => draft.status === "draft" || draft.status === "review") ?? drafts[0];
   }
 
-  return serverWeeklyDrafts.find((draft) => draft.weekStart === weekStart && draft.weekEnd === weekEnd) ?? null;
+  const localDrafts = sortWeeklyDrafts(
+    serverWeeklyDrafts.filter((draft) => draft.weekStart === weekStart && draft.weekEnd === weekEnd),
+  );
+
+  return localDrafts.find((draft) => draft.status === "draft" || draft.status === "review") ?? localDrafts[0] ?? null;
 }
 
 function buildSummary({
@@ -1022,10 +1037,18 @@ export async function generateWeeklyIntelligenceDraft({
   force?: boolean;
 } = {}) {
   const { weekStart, weekEnd } = getWeeklyGenerationRange();
+  logWeeklyWorkflow("generation_started", {
+    force,
+    generation_started: true,
+    week_end: weekEnd,
+    week_start: weekStart,
+  });
   const intake = await getLatestNewsIntakeResult();
   const recentDailyBriefs = await getDraftsAsync();
   const dailyCoreAggregation = buildWeeklyAggregationFromDailyCores(recentDailyBriefs);
   const existingDraft = await findWeeklyDraftByRange(weekStart, weekEnd);
+  const canReuseExisting =
+    existingDraft?.status === "draft" || existingDraft?.status === "review";
 
   if (existingDraft && !force) {
     lastWeeklyGenerationSummary = buildSummary({
@@ -1033,6 +1056,15 @@ export async function generateWeeklyIntelligenceDraft({
       draft: existingDraft,
       intake,
       forced: false,
+    });
+    logWeeklyWorkflow("generation_completed", {
+      blocked_by_published_week_range: !canReuseExisting,
+      draft_id: existingDraft.id,
+      generation_completed: true,
+      reused_existing: true,
+      save_completed: false,
+      weekly_slug: existingDraft.slug,
+      weekly_status: existingDraft.status,
     });
 
     return { draft: existingDraft, intake, summary: lastWeeklyGenerationSummary };
@@ -1112,6 +1144,14 @@ export async function generateWeeklyIntelligenceDraft({
     updatedBy: "system",
   };
   const savedDraft = await saveWeeklyDraftAsync(draft);
+  logWeeklyWorkflow("save_completed", {
+    draft_id: savedDraft.id,
+    generation_completed: true,
+    generation_started: true,
+    save_completed: true,
+    weekly_slug: savedDraft.slug,
+    weekly_status: savedDraft.status,
+  });
 
   lastWeeklyGenerationSummary = buildSummary({
     status: "generated",
