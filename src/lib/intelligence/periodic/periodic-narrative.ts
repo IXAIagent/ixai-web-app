@@ -163,13 +163,17 @@ export function buildPeriodicIntelligenceNarrative(
     160,
   );
   const ixuanView = sentence(
-    insight.questionDriven?.ixuanView ||
-    insight.ixuanView ||
-    `${periodLabel}一玄觀點：市場不是缺少資訊，而是需要判斷哪一條敘事正在被重新定價。${primary} 若延續，下一步要看 ${whatToWatchNext[0] ?? "利率、AI 與風險偏好是否同向"}。`,
+    input.period === "weekly"
+      ? `${periodLabel}一玄觀點：本週判斷重點是 ${primary} 是否真的改變了週內資金排序，而不是把 Daily 訊號加總。下週要看 ${whatToWatchNext[0] ?? "財報、法說與總經資料是否支持本週主線"}。`
+      : insight.questionDriven?.ixuanView ||
+        insight.ixuanView ||
+        `${periodLabel}一玄觀點：市場不是缺少資訊，而是需要判斷哪一條敘事正在被重新定價。${primary} 若延續，下一步要看 ${whatToWatchNext[0] ?? "利率、AI 與風險偏好是否同向"}。`,
     `${periodLabel}一玄觀點聚焦市場正在 pricing 什麼，而不是追逐單一新聞。`,
     190,
   );
-  const socialHook = insight.questionDriven?.centralQuestion || insight.socialFunnel.hook;
+  const socialHook = input.period === "weekly"
+    ? `${periodLabel}${primary}改變了什麼？`
+    : insight.questionDriven?.centralQuestion || insight.socialFunnel.hook;
   const socialConflict = sentence(
     insight.questionDriven?.keyAnswer ||
     insight.socialFunnel.conflict ||

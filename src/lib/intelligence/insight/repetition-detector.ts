@@ -74,3 +74,23 @@ export function ensureDistinctNarratives(values: string[], fallbacks: string[]) 
 
   return output;
 }
+
+export function detectCrossPeriodSimilarity(
+  dailySlides: string[],
+  weeklySlides: string[],
+  threshold = 0.68,
+) {
+  const comparedIndexes = [0, 1, 4];
+  const matches = comparedIndexes
+    .map((index) => ({
+      dailySlide: index + 1,
+      similarity: similarity(dailySlides[index] ?? "", weeklySlides[index] ?? ""),
+      weeklySlide: index + 1,
+    }))
+    .filter((match) => match.similarity >= threshold);
+
+  return {
+    hasCrossPeriodOverlap: matches.length > 0,
+    matches,
+  };
+}

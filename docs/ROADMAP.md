@@ -406,11 +406,26 @@ Completed:
 
 Next:
 
-`v1.43.2 — Weekly Revision Migration Review / Rollout`
+`v1.50.1 — Daily / Weekly Social Pack Divergence Fix`
 
 ## Next Suggested Version
 
-`v1.43.2 — Weekly Revision Migration Review / Rollout`
+`v1.50.1 — Daily / Weekly Social Pack Divergence Fix`
+
+Goal:
+
+- Fix Daily / Weekly Social Pack narrative source separation.
+- Split Daily / Weekly narrative source priority at generator level.
+- Ensure Daily Social Pack and Weekly Social Pack no longer produce interchangeable cards.
+- Daily Social Pack should answer what happened today, today's biggest market question, and what to watch today.
+- Weekly Social Pack should answer what changed this week, what next-week catalysts matter, and whether the weekly thesis is extending, reversing, or rotating.
+- Weekly Social Pack should prioritize weekly major events, upcoming events, weekly periodic narrative, and weekly-only I-Xuan View before any generic shared insight fallback.
+- Add Social Pack Period Divergence QA so Daily Slide 1 / 2 / 3 / 4 / 5 and Weekly Slide 1 / 2 / 3 / 4 / 5 are manually compared after Social Pack, Daily engine, or Weekly engine changes.
+- Do not change auth, LINE, LIFF, billing, portfolio, trading, platform APIs, auto publishing, or Supabase migration execution.
+
+## Future Roadmap
+
+### v1.43.2 — Weekly Revision Migration Review / Rollout
 
 Goal:
 
@@ -418,8 +433,6 @@ Goal:
 - Verify that same-week canonical published weekly + revision draft can coexist.
 - Verify revision publish promotion, previous canonical archival, and canonical public reads.
 - Do not auto-overwrite published Weekly Intelligence or change public URL behavior without review.
-
-## Future Roadmap
 
 ### v1.40.7 — Publish Center Foundation
 

@@ -136,10 +136,10 @@ Social Intelligence Rewrite now moves Social Pack generation from Brief compress
 
 Current Highest Priorities:
 
-1. Weekly Revision Migration Review / Rollout.
-2. Publish Center Foundation.
-3. Monthly / Yearly Periodic Intelligence planning.
-4. Portfolio Intelligence.
+1. Daily / Weekly Social Pack Divergence Fix.
+2. Weekly Revision Migration Review / Rollout.
+3. Publish Center Foundation.
+4. Monthly / Yearly Periodic Intelligence planning.
 
 Growth Strategy:
 
@@ -303,6 +303,8 @@ Known areas that require care:
 - Daily Intelligence quality is now a retention bottleneck priority. Drafts should target 3-5 minute reading value, with provider health and coverage gaps visible to editors.
 - Daily Brief and Social Pack content must remain interpretation-first. Avoid reverting Daily output to raw news summary, generic filler, or template labels.
 - Social Pack I-Xuan View must remain complete Chinese commentary and should not display raw English headlines, clipped fragments, or duplicated placeholder copy.
+- Daily / Weekly Social Pack Divergence Bug: Daily and Weekly Social Packs may currently share too much of the same thesis, slide copy, evidence, and I-Xuan View, making them look like the same card set with different labels. This is a major product issue, not a copy polish issue. Daily Social Pack and Weekly Social Pack must be treated as different products: Daily answers what happened today, today's biggest market question, and what to watch today; Weekly answers what changed this week, what next-week catalysts matter, and whether the weekly thesis is extending, reversing, or rotating.
+- Daily / Weekly Social Pack Divergence is a P0 product bug until fixed in v1.50.1. The root cause is not UI or export layout; it is shared thesis / question-driven / social funnel leakage. Weekly has weekly news intake, categorization, and upcoming-event inputs, but final question / insight / social layers can still be overwritten by shared Daily-influenced thesis. v1.50.1 must fix period separation at generator and source-priority level.
 - Provider coverage is materially improved in v1.41.3, but Reuters, Bloomberg, Yahoo Finance, CNYES, 工商時報, 經濟日報, and MoneyDJ remain disabled until stable legal RSS/API access is verified.
 - Market Memory Layer is local / editorial-first and uses recent Daily Briefs as narrative context. It must not be represented as personal market memory, portfolio memory, or individualized investment advice.
 

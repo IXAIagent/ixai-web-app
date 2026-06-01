@@ -401,6 +401,28 @@ Social Intelligence Rewrite Rules:
 - Weekly Social Pack roles are Weekly question, What changed this week, The one thing that matters, Next week catalysts, and I-Xuan Weekly View.
 - Each slide should introduce new information and avoid duplicating the same thesis.
 - Cards should avoid both paragraph walls and one-line underfilled slides.
+- Daily Social Pack source priority must be: Daily current news / event signal, Daily question-driven insight, Daily Brief / Daily Core fields, then Daily-only fallback.
+- Weekly Social Pack source priority must be: Weekly major events, Weekly upcoming events / next-week catalysts, Weekly periodic narrative, Weekly-only I-Xuan View, then Weekly-only fallback.
+- Hard rule: Daily Social Pack and Weekly Social Pack are different products. Daily must answer what happened today, today's biggest market question, and what to watch today. Weekly must answer what changed this week, what next-week catalysts matter, and whether the weekly thesis is extending, reversing, or rotating.
+- Weekly Social Pack must not directly reuse Daily Social Pack generator output.
+- Weekly Social Pack must not use Daily Core as its primary narrative source; Daily Core may only provide optional continuity context.
+- Weekly Social Pack must not prioritize generic shared `questionDriven` output if that output was built from Daily continuity context rather than weekly events and upcoming catalysts.
+- Daily and Weekly Slide 1 questions must not be the same.
+- Daily and Weekly Slide 2 evidence must not be the same evidence set or play the same information role.
+- Daily and Weekly Slide 5 I-Xuan View must not be almost identical with only "today" / "this week" wording changed.
+- Daily and Weekly Social Packs must not share generic AI / rates / valuation fallback copy.
+- Do not use the same fallback copy to fill Daily and Weekly cards.
+- Do not merely relabel the same content as Daily or Weekly while ignoring period-specific narrative separation.
+
+Social Pack Period Divergence QA:
+
+- After any Social Pack, Daily engine, or Weekly engine change, manually compare Daily Social Pack against Weekly Social Pack.
+- Daily Slide 1 vs Weekly Slide 1: the market question must not be identical.
+- Daily Slide 2 vs Weekly Slide 2: the information role must not be identical.
+- Daily Slide 3 vs Weekly Slide 3: Daily should emphasize today's signal; Weekly should emphasize the weekly market thesis or week-level axis.
+- Daily Slide 4 vs Weekly Slide 4: Daily should emphasize today's watch next; Weekly should emphasize next-week catalysts.
+- Daily Slide 5 vs Weekly Slide 5: I-Xuan View must be period-specific and not only a "today" / "this week" word swap.
+- If the Daily and Weekly card sets look interchangeable, QA fails.
 
 ## I. Growth Rules
 

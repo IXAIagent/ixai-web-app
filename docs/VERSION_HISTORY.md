@@ -1146,3 +1146,39 @@ Key Decisions:
 Out of Scope:
 
 - Auth, LINE Login, LIFF, billing, provider infrastructure, Supabase schema, Weekly migration execution, platform APIs, auto publishing, portfolio workflows, trading logic, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.50.1 — Daily / Weekly Social Pack Divergence Fix (Pending)
+
+Why:
+
+- v1.49.0 rewrote Social Packs as slide-native social cards, but production review still found Daily Social Pack and Weekly Social Pack content can become too similar.
+- The failure mode is not merely wording polish. It means the period separation promised by v1.45.0 Periodic Intelligence Engine Correction and v1.49.0 Social Intelligence Rewrite is not fully enforced.
+- Audit found that `buildIXAIInsight`, `QuestionDrivenInsight`, `socialFunnel`, and Daily Core aggregation can still leak the same thesis into Weekly output.
+- Daily and Weekly cards must not look like the same social asset with different labels.
+
+Required Fix Direction:
+
+- Separate Daily and Weekly Social Pack narrative sources.
+- Split or strictly branch Daily / Weekly question-driven logic and source priority.
+- Remove Daily aggregation as a Weekly thesis source; Daily continuity may remain metadata only.
+- Reorder Weekly Social Pack priority toward weekly events, next-week catalysts, weekly periodic narrative, and weekly-only I-Xuan View.
+- Daily Social Pack must answer what happened today, today's biggest market question, and what to watch today.
+- Weekly Social Pack must answer what changed this week, what next-week catalysts matter, and whether the weekly thesis is extending, reversing, or rotating.
+- Prevent Weekly Social Pack from directly reusing Daily Social Pack generator output.
+- Prevent Weekly Social Pack from using Daily Core as its primary narrative source.
+- Prevent identical Daily / Weekly Slide 1 questions, Slide 2 evidence, and nearly identical Slide 5 I-Xuan View.
+- Prevent the same fallback copy from filling both Daily and Weekly cards.
+
+Required QA:
+
+- Run Social Pack Period Divergence QA after Social Pack, Daily engine, or Weekly engine changes.
+- Compare Daily Slide 1 against Weekly Slide 1; questions must not match.
+- Compare Daily Slide 2 against Weekly Slide 2; evidence and information role must differ.
+- Compare Daily Slide 3 against Weekly Slide 3; Daily should emphasize today's signal, Weekly should emphasize week-level thesis.
+- Compare Daily Slide 4 against Weekly Slide 4; Daily should emphasize today's watch next, Weekly should emphasize next-week catalysts.
+- Compare Daily Slide 5 against Weekly Slide 5; I-Xuan View must be period-specific, not a "today" / "this week" word swap.
+- If the two card sets look interchangeable, QA fails.
+
+Out of Scope:
+
+- Auth, LINE Login, LIFF, billing, portfolio workflows, trading logic, Supabase migration execution, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.

@@ -1324,13 +1324,6 @@ export async function generateWeeklyIntelligenceDraft({
     },
   });
   const periodicNarrative = buildPeriodicIntelligenceNarrative({
-    continuityContext: dailyCoreAggregation.sourceBriefCount
-      ? {
-          narrative: dailyCoreAggregation.weeklyNarrative,
-          tags: dailyCoreAggregation.repeatedThemes,
-          watchpoints: dailyCoreAggregation.nextWeekWatchpoints,
-        }
-      : undefined,
     newsItems: intake.items,
     period: "weekly",
     upcomingEvents: upcoming.map((event) => ({
@@ -1341,13 +1334,6 @@ export async function generateWeeklyIntelligenceDraft({
     })),
   });
   const insight = buildIXAIInsight({
-    continuityContext: dailyCoreAggregation.sourceBriefCount
-      ? {
-          narrative: dailyCoreAggregation.weeklyNarrative,
-          tags: dailyCoreAggregation.repeatedThemes,
-          watchpoints: dailyCoreAggregation.nextWeekWatchpoints,
-        }
-      : undefined,
     newsItems: intake.items,
     period: "weekly",
     upcomingEvents: upcoming.map((event) => ({

@@ -260,6 +260,24 @@ function signalLine(signal: IXAIMarketSignal | undefined, fallback: string) {
   return sentence(`${signal.signal}：${signal.implication}`, fallback, 110);
 }
 
+function shortEventTitle(event: IXAIKeyEvent | undefined, fallback: string) {
+  const title = event?.title?.replace(/^.*?[:：]\s*/, "").trim() || fallback;
+  const firstClause = title
+    .split(/(?<=[。！？!?；;])|，|,/)
+    .map((part) => part.trim())
+    .find(Boolean) ?? fallback;
+
+  return firstClause.length > 26 ? `${firstClause.slice(0, 25)}…` : firstClause;
+}
+
+type IXAIUpcomingEvent = NonNullable<IXAIInsightInput["upcomingEvents"]>[number];
+
+function upcomingTitle(upcoming?: IXAIUpcomingEvent) {
+  if (!upcoming) return undefined;
+  const title = upcoming.title.replace(/^.*?[:：]\s*/, "").trim();
+  return title.length > 26 ? `${title.slice(0, 25)}…` : title;
+}
+
 function buildQuestionDrivenInsight({
   input,
   keyEvents,
@@ -331,7 +349,9 @@ function buildQuestionDrivenInsight({
       ),
     };
     const weekly: QuestionDrivenInsight = {
-      centralQuestion: "AI 行情正在換手嗎？",
+      centralQuestion: upcoming
+        ? `${upcomingTitle(upcoming)}會驗證本週 AI 換手嗎？`
+        : `${shortEventTitle(aiEvent, "AI 與科技事件")}讓本週市場換手了嗎？`,
       counterEvidence: uniqueSentences(
         [
           "若下週通膨數據降溫且大型科技 guidance 維持上修，市場可能重新擴散。",
@@ -354,8 +374,12 @@ function buildQuestionDrivenInsight({
       ),
       evidenceDetails: evidenceItems.slice(0, 5),
       ixuanView:
-        "一玄週觀點：本週不是 AI 退潮，而是市場開始分辨 AI 故事和 AI 現金流。下一階段的關鍵，不是誰最會講 AI，而是誰能用財報、訂單與資本支出證明 AI 已經進入營運成果。",
-      keyAnswer: "還不能說結束，但資金正在從故事型 AI，轉向能交出財報、訂單與法說證據的 AI。",
+        upcoming
+          ? `一玄週觀點：本週重點不是把 Daily 訊號加總，而是看 ${shortEventTitle(aiEvent, "AI 主線")} 是否能被下週 ${upcomingTitle(upcoming)} 驗證。若財報、法說或總經資料沒有支持，市場會把 AI 題材和 AI 現金流分開定價。`
+          : `一玄週觀點：本週重點不是把 Daily 訊號加總，而是看 ${shortEventTitle(aiEvent, "AI 主線")} 是否真的改變了週內資金排序。若證據只停留在題材，市場會把 AI 故事和 AI 現金流分開定價。`,
+      keyAnswer: upcoming
+        ? `本週答案要等下週 ${upcomingTitle(upcoming)} 驗證；資金暫時不是離開 AI，而是在等財報、法說與總經資料確認誰能延續。`
+        : `本週還不能說 AI 退潮，但 ${shortEventTitle(aiEvent, "AI 相關事件")} 讓資金開始把題材熱度和營運證據分開定價。`,
       watchNext: uniqueSentences(
         [
           upcoming

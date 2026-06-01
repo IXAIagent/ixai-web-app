@@ -214,6 +214,21 @@ function evidenceLabel(category?: string, fallback = "Evidence") {
   return fallback;
 }
 
+function weeklyQuestionFromSource(source?: WeeklyIntelligenceDraft | null, fallback = "本週市場真正改變了什麼？") {
+  const majorEvent = source?.sections.majorEvents?.[0];
+  const upcoming = source?.sections.upcomingWeek?.[0];
+
+  if (majorEvent?.title) {
+    return `${readableSnippet(majorEvent.title, "本週核心事件", 22)}改變了什麼？`;
+  }
+
+  if (upcoming?.title) {
+    return `下週${readableSnippet(upcoming.title, "關鍵事件", 20)}會驗證什麼？`;
+  }
+
+  return fallback;
+}
+
 function firstItems<T>(items: T[] | undefined, count: number) {
   return Array.isArray(items) ? items.slice(0, count) : [];
 }
@@ -414,24 +429,22 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
   const questionDriven = insight?.questionDriven;
   const weeklyEvidence = questionDriven?.evidenceDetails ?? [];
   const weeklyView =
-    questionDriven?.ixuanView ??
-    insight?.ixuanView ??
     periodic?.ixuanView ??
     source?.sections.intelligenceSummary.pricing ??
     source?.aiSuggestion.intelligenceNarrative ??
-    "本週核心不在單一新聞，而是利率、AI 科技與風險偏好如何共同改變市場定價。";
+    "一玄週觀點：本週重點是辨認哪些事件真正改變了週內資金排序，以及下週哪些催化會驗證或推翻這條主線。";
   const weeklyTarget = source?.slug ? `/weekly-brief/${source.slug}` : "/weekly-brief";
   const weeklyHref = appHref(weeklyTarget);
-  const weeklyCta = insight?.socialFunnel.cta ?? periodic?.clearCTA ?? "想看本週證據、反證與下週觀察，請進 IXAI App 讀 Weekly Intelligence。";
+  const weeklyCta = periodic?.clearCTA ?? "想看本週轉折、三個事件與下週催化，請進 IXAI App 讀 Weekly Intelligence。";
   const weeklySignals = firstItems(
-    weeklyEvidence.length
-      ? weeklyEvidence.map((item) => evidenceSocialPoint(evidenceLabel(item.category, "Event"), item))
-      : source?.sections.majorEvents?.length
+    source?.sections.majorEvents?.length
       ? source.sections.majorEvents.map((event) => `${event.label}｜${event.title}：${event.whyItMatters}`)
+      : weeklyEvidence.length
+      ? weeklyEvidence.map((item) => evidenceSocialPoint(evidenceLabel(item.category, "Event"), item))
       : [
-          "Macro｜利率與美元仍牽動風險偏好。",
-          "AI / Tech｜AI 科技主線需要財報與資本支出驗證。",
-          "Risk｜Crypto 與高 beta 資產維持波動觀察。",
+          "本週事件｜週內主要事件尚待 editor 補充，先以公開新聞建立週報基準。",
+          "本週主線｜比較週初與週末，判斷資金是否從題材轉向證據。",
+          "本週風險｜下週資料與法說將驗證本週主線是否延續。",
         ],
     3,
   );
@@ -440,36 +453,36 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
     source?.sections.intelligenceSummary.riskTone ??
     "本週風險環境以波動、利率與美元節奏為核心。";
   const weeklyNextWeek = (
-    questionDriven?.watchNext.length
-      ? questionDriven.watchNext.slice(0, 3)
-      : source?.sections.upcomingWeek?.length
+    source?.sections.upcomingWeek?.length
       ? source.sections.upcomingWeek.slice(0, 3).map((event) => `${event.date}｜${event.title}：${event.whyItMatters}`)
-      : source?.sections.nextWeekFocus?.slice(0, 3) ?? []
+      : source?.sections.nextWeekFocus?.length
+      ? source.sections.nextWeekFocus.slice(0, 3)
+      : questionDriven?.watchNext.slice(0, 3) ?? []
   );
   const weeklyCatalysts = firstItems(
     weeklyNextWeek.length
       ? weeklyNextWeek
       : [
-          "利率資料｜觀察通膨與殖利率是否繼續壓縮估值容錯率。",
-          "科技財報｜觀察 cloud capex 與 AI 訂單能否支持現金流敘事。",
-          "台灣供應鏈｜觀察 AI server 與半導體訂單是否同步上修。",
+          "下週總經｜觀察通膨、殖利率與美元是否改變風險資產定價。",
+          "下週科技｜觀察法說與 guidance 是否支持本週 AI 主線。",
+          "下週台灣｜觀察 AI 供應鏈訂單與外資節奏是否延續。",
         ],
     3,
-  ).map((item, index) => (item.includes("｜") ? item : `Catalyst ${index + 1}｜${item}`));
-  const weeklyQuestion = questionDriven?.centralQuestion ?? insight?.socialFunnel.hook ?? periodic?.socialHook ?? "本週市場最大轉折是什麼？";
+  ).map((item) => (item.includes("｜") ? item : `下週觀察｜${item}`));
+  const weeklyQuestion = weeklyQuestionFromSource(source, periodic?.socialHook ?? "本週市場最大轉折是什麼？");
   const weeklyAnswer = readableSnippet(
-    questionDriven?.keyAnswer ?? insight?.socialFunnel.payoff ?? periodic?.mainNarrative,
-    "市場正在從題材熱度，轉向能否交出現金流證據。",
+    source?.sections.intelligenceSummary.whatChanged ?? periodic?.whatChanged ?? periodic?.mainNarrative,
+    "本週重點不是 Daily 訊號加總，而是週內事件如何改變下週驗證順序。",
     58,
   );
   const oneThing = readableSnippet(
-    questionDriven?.whatChangesMyMind[0] ?? questionDriven?.keyAnswer ?? periodic?.mainNarrative,
-    "真正重要的是企業 guidance、資本支出與訂單能否接上敘事。",
+    periodic?.mainNarrative ?? source?.sections.intelligenceSummary.pricing ?? weeklySignals[0],
+    "真正重要的是本週事件能否被下週資料、法說與資金流延續。",
     78,
   );
   const riskLine = readableSnippet(
-    questionDriven?.counterEvidence[0] ?? weeklyRisk,
-    "若利率、美元或財報 guidance 不配合，估值容錯率會下降。",
+    weeklyRisk ?? questionDriven?.counterEvidence[0],
+    "若下週資料與法說不配合，本週主線可能只是短線題材。",
     60,
   );
   const weeklySlideBullets = ensureDistinctNarratives(
