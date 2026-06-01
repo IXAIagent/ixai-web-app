@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.43.0`
+`v1.43.1`
 
 Current Core Flow:
 
@@ -118,12 +118,14 @@ Social Media Optimization Layer now makes Social Packs platform-aware. Admin Soc
 
 Intelligence Source of Truth Architecture now makes Daily Intelligence Core the shared source for Public Daily Brief, Daily Social Pack, and Weekly Intelligence aggregation. Daily Core standardizes todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals. Social Pack is now an entry asset derived from Daily / Weekly Core instead of a parallel content generator, and Weekly Intelligence now aggregates recent Daily Core signals before human review.
 
+Weekly Revision Workflow Phase 1 selects the Option B revision model for same-week Weekly Intelligence revisions. The project now contains a reviewed migration SQL plan and backward-compatible code support for revision_number, parent_weekly_id, is_canonical, superseded_at, superseded_by, and revision_note. Production migration is not applied automatically; until the migration is manually approved and executed, Weekly generation keeps the current locked behavior and clearly explains that revision workflow requires migration. Public Weekly routes remain canonical-only when the revision schema is available, and fall back to status=published reads before migration.
+
 Current Highest Priorities:
 
-1. Publish Center Foundation.
-2. Portfolio Intelligence.
-3. AI Alert Engine.
-4. Dynamic Intelligence Provider Integration.
+1. Weekly Revision Migration Review / Rollout.
+2. Publish Center Foundation.
+3. Portfolio Intelligence.
+4. AI Alert Engine.
 
 Growth Strategy:
 
@@ -264,6 +266,7 @@ Known areas that require care:
 - Daily Brief, Weekly Intelligence, and Share Intelligence are trust-building public surfaces. Do not put an auth wall in front of public article reading.
 - Public Intelligence modules are foundation-level and may still use static / editorial-safe data until provider integration is explicitly approved.
 - Public Intelligence Engine still relies on editorial/static-safe intelligence data; dynamic market intelligence provider integration remains future work.
+- Weekly Revision Workflow Phase 1 includes migration SQL and code support only. The Supabase migration must be manually reviewed, backed up, and explicitly approved before production execution.
 - Auth and identity architecture remains protected and should not be rewritten without explicit approval.
 - Watchlist Intelligence Lite remains local/session-first.
 - Durable watchlist persistence remains future work unless explicitly approved.

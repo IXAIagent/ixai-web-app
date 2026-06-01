@@ -898,3 +898,38 @@ Out of Scope:
 - Portfolio Intelligence.
 - Pro subscription.
 - Buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.43.1 — Weekly Revision Workflow Phase 1
+
+Why:
+
+- Weekly Production QA showed that the existing unique `(week_start, week_end)` constraint prevents a same-week revision draft when a canonical weekly is already published.
+- IXAI needs a safe editorial revision model that preserves public URL stability and does not overwrite published Weekly Intelligence.
+- The revision model requires database review before production migration, so Phase 1 establishes migration SQL and backward-compatible code support first.
+
+What Changed:
+
+- Added a reviewed Supabase migration SQL plan for Weekly revision columns.
+- Added backward-compatible Weekly repository / API support for revision_number, parent_weekly_id, is_canonical, superseded_at, superseded_by, and revision_note.
+- Added Generate Revision Draft behavior when the revision schema is available.
+- Added Publish Revision promotion behavior: previous canonical is archived/non-canonical and the new revision becomes canonical.
+- Updated Admin Weekly UI to show revision number, canonical status, parent weekly, superseded state, schema availability, and migration-required locked messaging.
+- Kept production safe when the migration has not been applied.
+
+Key Decisions:
+
+- Option B — Revision Columns / Constraint Change — is the selected architecture.
+- Production migration requires explicit manual approval, backup, and review.
+- Public Weekly reads must prefer canonical published rows when the revision schema is available.
+- Previous canonical Weekly rows are preserved for audit/history instead of being deleted or overwritten.
+- Before migration, Weekly generation keeps the locked behavior and explains that revision workflow requires migration.
+
+Out of Scope:
+
+- Applying the Supabase production migration.
+- Dropping production indexes directly.
+- Deleting or overwriting published Weekly Intelligence.
+- Changing public Weekly URL behavior.
+- Auth, LINE Login, LIFF, provider pipeline, Daily/Social source-of-truth changes.
+- Auto publishing or platform APIs.
+- Buy/sell recommendations, target prices, return promises, or automated trading.

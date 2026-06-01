@@ -5,6 +5,7 @@ import {
   generateWeeklyIntelligenceDraft,
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
+  isWeeklyRevisionSchemaAvailableAsync,
   listAdminWeeklyDraftsAsync,
 } from "@/src/lib/editorial/weekly";
 
@@ -27,6 +28,7 @@ export async function POST(request: NextRequest) {
   try {
     const { draft, intake, summary } = await generateWeeklyIntelligenceDraft({ force });
     const drafts = await listAdminWeeklyDraftsAsync();
+    const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
     console.info(
       "[IXAI WEEKLY WORKFLOW]",
       JSON.stringify({
@@ -37,6 +39,8 @@ export async function POST(request: NextRequest) {
         save_completed: summary.status === "generated",
         weekly_slug: draft.slug,
         weekly_status: draft.status,
+        revision_schema_available: revisionSchemaAvailable,
+        revision_number: draft.revisionNumber ?? 1,
       }),
     );
 
@@ -47,6 +51,7 @@ export async function POST(request: NextRequest) {
       summary,
       persistence: {
         readable: isWeeklyPersistenceReadable(),
+        revisionSchemaAvailable,
         writable: isWeeklyPersistenceWritable(),
       },
     });
@@ -65,6 +70,7 @@ export async function POST(request: NextRequest) {
               : "Weekly draft generation failed.",
         persistence: {
           readable: isWeeklyPersistenceReadable(),
+          revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
           writable: isWeeklyPersistenceWritable(),
         },
       },

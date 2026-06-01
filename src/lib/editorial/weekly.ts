@@ -40,6 +40,7 @@ const SUPABASE_TIMEOUT_MS = 6000;
 
 let serverWeeklyDrafts: WeeklyIntelligenceDraft[] = [];
 let lastWeeklyGenerationSummary: WeeklyDraftGenerationSummary | null = null;
+let weeklyRevisionSchemaAvailableCache: boolean | null = null;
 
 type WeeklyPersistenceRecord = {
   id: string;
@@ -60,6 +61,12 @@ type WeeklyPersistenceRecord = {
   compliance_note?: string | null;
   created_by?: string | null;
   updated_by?: string | null;
+  revision_number?: number | null;
+  parent_weekly_id?: string | null;
+  is_canonical?: boolean | null;
+  superseded_at?: string | null;
+  superseded_by?: string | null;
+  revision_note?: string | null;
 };
 
 function logWeeklyPersistence(message: string, error?: unknown) {
@@ -112,11 +119,20 @@ function toDraft(record: WeeklyPersistenceRecord): WeeklyIntelligenceDraft {
     complianceNote: record.compliance_note ?? undefined,
     createdBy: record.created_by ?? undefined,
     updatedBy: record.updated_by ?? undefined,
+    revisionNumber: record.revision_number ?? undefined,
+    parentWeeklyId: record.parent_weekly_id ?? undefined,
+    isCanonical: record.is_canonical ?? undefined,
+    supersededAt: record.superseded_at ?? undefined,
+    supersededBy: record.superseded_by ?? undefined,
+    revisionNote: record.revision_note ?? undefined,
   };
 }
 
-function toRecord(draft: WeeklyIntelligenceDraft): WeeklyPersistenceRecord {
-  return {
+function toRecord(
+  draft: WeeklyIntelligenceDraft,
+  options: { includeRevisionFields?: boolean } = {},
+): WeeklyPersistenceRecord {
+  const record: WeeklyPersistenceRecord = {
     id: draft.id,
     slug: draft.slug,
     title: draft.title,
@@ -136,6 +152,17 @@ function toRecord(draft: WeeklyIntelligenceDraft): WeeklyPersistenceRecord {
     created_by: draft.createdBy ?? "system",
     updated_by: draft.updatedBy ?? null,
   };
+
+  if (options.includeRevisionFields) {
+    record.revision_number = draft.revisionNumber ?? 1;
+    record.parent_weekly_id = draft.parentWeeklyId ?? null;
+    record.is_canonical = draft.isCanonical ?? false;
+    record.superseded_at = draft.supersededAt ?? null;
+    record.superseded_by = draft.supersededBy ?? null;
+    record.revision_note = draft.revisionNote ?? null;
+  }
+
+  return record;
 }
 
 // v1.30.3 — strict variant. Throws WeeklyPersistenceError("not_configured")
@@ -248,6 +275,35 @@ export function isWeeklyPersistenceWritable() {
   return Boolean(getSupabaseRestConfig({ write: true }));
 }
 
+export async function isWeeklyRevisionSchemaAvailableAsync({
+  refresh = false,
+}: {
+  refresh?: boolean;
+} = {}) {
+  if (!refresh && weeklyRevisionSchemaAvailableCache !== null) {
+    return weeklyRevisionSchemaAvailableCache;
+  }
+
+  try {
+    await supabaseFetch<Pick<WeeklyPersistenceRecord, "id" | "revision_number" | "is_canonical">[]>(
+      `${WEEKLY_TABLE}?select=id,revision_number,is_canonical,parent_weekly_id,superseded_at,superseded_by,revision_note&limit=1`,
+      {},
+      true,
+    );
+    weeklyRevisionSchemaAvailableCache = true;
+  } catch (error) {
+    weeklyRevisionSchemaAvailableCache = false;
+    if (
+      process.env.NODE_ENV !== "production" &&
+      !(error instanceof WeeklyPersistenceError && error.reason === "not_configured")
+    ) {
+      logWeeklyPersistence("Weekly revision schema is not available yet; using locked workflow fallback.", error);
+    }
+  }
+
+  return weeklyRevisionSchemaAvailableCache;
+}
+
 function sortWeeklyDrafts(drafts: WeeklyIntelligenceDraft[]) {
   return [...drafts].sort((a, b) => {
     const aTime = new Date(a.publishedAt ?? a.updatedAt ?? a.generatedAt ?? a.weekEnd).getTime();
@@ -309,6 +365,8 @@ function staticWeeklyToDraft(brief: WeeklyBrief): WeeklyIntelligenceDraft {
     complianceNote: "本週報為 IXAI editorial intelligence 內容，僅供市場資訊與風險觀察參考，不構成投資建議、買賣指令或報酬承諾。",
     createdBy: "static_editorial",
     updatedBy: "static_editorial",
+    revisionNumber: 1,
+    isCanonical: true,
   };
 }
 
@@ -363,6 +421,20 @@ export async function listWeeklyDraftsAsync() {
 }
 
 export async function listPublishedWeeklyDraftsAsync() {
+  const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
+
+  if (revisionSchemaAvailable) {
+    const canonicalRecords = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
+      `${WEEKLY_TABLE}?select=*&status=eq.published&is_canonical=eq.true&order=published_at.desc.nullslast`,
+      {},
+      false,
+    );
+
+    if (canonicalRecords?.length) {
+      return sortWeeklyDrafts(canonicalRecords.map(toDraft).filter((draft) => draft.status === "published"));
+    }
+  }
+
   const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&status=eq.published&order=published_at.desc.nullslast`,
     {},
@@ -397,6 +469,24 @@ export async function getLatestPublishedWeeklyDraftAsync() {
 
 export async function getPublishedWeeklyDraftBySlugAsync(slug: string) {
   const encodedSlug = encodeURIComponent(slug);
+  const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
+
+  if (revisionSchemaAvailable) {
+    const canonicalRecords = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
+      `${WEEKLY_TABLE}?select=*&slug=eq.${encodedSlug}&status=eq.published&is_canonical=eq.true&limit=1`,
+      {},
+      false,
+    );
+
+    if (canonicalRecords?.[0]) {
+      return toDraft(canonicalRecords[0]);
+    }
+
+    if (isWeeklyPersistenceReadable()) {
+      return null;
+    }
+  }
+
   const records = await supabaseFetchSafe<WeeklyPersistenceRecord[]>(
     `${WEEKLY_TABLE}?select=*&slug=eq.${encodedSlug}&status=eq.published&limit=1`,
     {},
@@ -460,7 +550,10 @@ export async function saveWeeklyDraftAsync(draft: WeeklyIntelligenceDraft) {
   //   2. Add ?on_conflict=slug so the upsert can MERGE on the slug unique
   //      constraint. Without it, PostgREST defaults to the PK and a repeat
   //      Generate (same slug, new uuid) would raise 409 unique_violation.
-  const record = toRecord(nextDraft);
+  const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
+  const record = toRecord(nextDraft, {
+    includeRevisionFields: revisionSchemaAvailable,
+  });
 
   try {
     const saved = await supabaseFetch<WeeklyPersistenceRecord[]>(
@@ -985,7 +1078,7 @@ function buildAiSuggestion(
   };
 }
 
-async function findWeeklyDraftByRange(weekStart: string, weekEnd: string) {
+async function listWeeklyDraftsByRangeAsync(weekStart: string, weekEnd: string) {
   // v1.30.6 — generation-time lookup. Uses service role so a pre-existing
   // draft for this week is correctly detected (otherwise the second
   // Generate within a week would hit a unique_violation instead of
@@ -997,15 +1090,33 @@ async function findWeeklyDraftByRange(weekStart: string, weekEnd: string) {
   );
 
   if (records?.length) {
-    const drafts = sortWeeklyDrafts(records.map(toDraft));
-    return drafts.find((draft) => draft.status === "draft" || draft.status === "review") ?? drafts[0];
+    return sortWeeklyDrafts(records.map(toDraft));
   }
 
-  const localDrafts = sortWeeklyDrafts(
+  return sortWeeklyDrafts(
     serverWeeklyDrafts.filter((draft) => draft.weekStart === weekStart && draft.weekEnd === weekEnd),
   );
+}
 
-  return localDrafts.find((draft) => draft.status === "draft" || draft.status === "review") ?? localDrafts[0] ?? null;
+function findCanonicalWeeklyDraft(
+  drafts: WeeklyIntelligenceDraft[],
+  revisionSchemaAvailable: boolean,
+) {
+  const publishedDrafts = drafts.filter((draft) => draft.status === "published");
+
+  if (revisionSchemaAvailable) {
+    return (
+      publishedDrafts.find((draft) => draft.isCanonical) ??
+      publishedDrafts[0] ??
+      null
+    );
+  }
+
+  return publishedDrafts[0] ?? null;
+}
+
+function getNextWeeklyRevisionNumber(drafts: WeeklyIntelligenceDraft[]) {
+  return Math.max(0, ...drafts.map((draft) => draft.revisionNumber ?? 1)) + 1;
 }
 
 function buildSummary({
@@ -1046,11 +1157,23 @@ export async function generateWeeklyIntelligenceDraft({
   const intake = await getLatestNewsIntakeResult();
   const recentDailyBriefs = await getDraftsAsync();
   const dailyCoreAggregation = buildWeeklyAggregationFromDailyCores(recentDailyBriefs);
-  const existingDraft = await findWeeklyDraftByRange(weekStart, weekEnd);
-  const canReuseExisting =
-    existingDraft?.status === "draft" || existingDraft?.status === "review";
+  const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
+  const weeklyRangeDrafts = await listWeeklyDraftsByRangeAsync(weekStart, weekEnd);
+  const editableDraft = weeklyRangeDrafts.find(
+    (draft) => draft.status === "draft" || draft.status === "review",
+  );
+  const canonicalPublished = findCanonicalWeeklyDraft(
+    weeklyRangeDrafts,
+    revisionSchemaAvailable,
+  );
+  const existingDraft = editableDraft ?? canonicalPublished ?? weeklyRangeDrafts[0] ?? null;
+  const canReuseExisting = Boolean(editableDraft);
 
-  if (existingDraft && !force) {
+  if (
+    existingDraft &&
+    ((!revisionSchemaAvailable && weeklyRangeDrafts.length > 0) ||
+      (editableDraft && !force))
+  ) {
     lastWeeklyGenerationSummary = buildSummary({
       status: "existing",
       draft: existingDraft,
@@ -1061,6 +1184,8 @@ export async function generateWeeklyIntelligenceDraft({
       blocked_by_published_week_range: !canReuseExisting,
       draft_id: existingDraft.id,
       generation_completed: true,
+      revision_requires_migration: Boolean(canonicalPublished && !revisionSchemaAvailable),
+      revision_schema_available: revisionSchemaAvailable,
       reused_existing: true,
       save_completed: false,
       weekly_slug: existingDraft.slug,
@@ -1121,9 +1246,18 @@ export async function generateWeeklyIntelligenceDraft({
     dailyCoreAggregation,
   });
   const aiSuggestion = buildAiSuggestion(sections, intake, upcoming);
-  const slug = force
-    ? `weekly-intelligence-${weekEnd}-${now.replace(/[:.]/g, "-")}`
-    : `weekly-intelligence-${weekEnd}`;
+  const revisionNumber =
+    canonicalPublished && revisionSchemaAvailable
+      ? getNextWeeklyRevisionNumber(weeklyRangeDrafts)
+      : weeklyRangeDrafts.length
+        ? getNextWeeklyRevisionNumber(weeklyRangeDrafts)
+        : 1;
+  const slug =
+    revisionSchemaAvailable && revisionNumber > 1
+      ? `weekly-intelligence-${weekEnd}-r${revisionNumber}`
+      : force
+        ? `weekly-intelligence-${weekEnd}-${now.replace(/[:.]/g, "-")}`
+        : `weekly-intelligence-${weekEnd}`;
   const draft: WeeklyIntelligenceDraft = {
     id: crypto.randomUUID(),
     slug,
@@ -1142,12 +1276,23 @@ export async function generateWeeklyIntelligenceDraft({
     complianceNote: "本週報由 IXAI 根據公開新聞標題、摘要與市場脈絡產生草稿，需經人工審閱。內容僅供市場資訊與風險觀察參考，不構成投資建議、買賣指令或報酬承諾。",
     createdBy: "system",
     updatedBy: "system",
+    revisionNumber,
+    parentWeeklyId:
+      canonicalPublished && revisionSchemaAvailable ? canonicalPublished.id : undefined,
+    isCanonical: false,
+    revisionNote:
+      canonicalPublished && revisionSchemaAvailable
+        ? "Generated revision from canonical weekly"
+        : undefined,
   };
   const savedDraft = await saveWeeklyDraftAsync(draft);
   logWeeklyWorkflow("save_completed", {
     draft_id: savedDraft.id,
     generation_completed: true,
     generation_started: true,
+    parent_weekly_id: savedDraft.parentWeeklyId ?? null,
+    revision_number: savedDraft.revisionNumber ?? 1,
+    revision_schema_available: revisionSchemaAvailable,
     save_completed: true,
     weekly_slug: savedDraft.slug,
     weekly_status: savedDraft.status,
@@ -1223,11 +1368,22 @@ export async function publishWeeklyDraftAsync(id: string) {
   }
 
   const now = new Date().toISOString();
+  const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
+  const weeklyRangeDrafts = revisionSchemaAvailable
+    ? await listWeeklyDraftsByRangeAsync(current.weekStart, current.weekEnd)
+    : [];
+  const previousCanonical = revisionSchemaAvailable
+    ? findCanonicalWeeklyDraft(
+        weeklyRangeDrafts.filter((draft) => draft.id !== current.id),
+        true,
+      )
+    : null;
   const next: WeeklyIntelligenceDraft = {
     ...current,
     status: "published",
     publishedAt: now,
     publishDate: current.publishDate ?? now,
+    isCanonical: revisionSchemaAvailable ? true : current.isCanonical,
     updatedAt: now,
     updatedBy: "editorial_studio",
   };
@@ -1235,6 +1391,23 @@ export async function publishWeeklyDraftAsync(id: string) {
   // v1.30.3 — surface persistence failures so the API can return non-OK
   // and the admin UI shows a real error instead of an optimistic success.
   try {
+    if (previousCanonical) {
+      // v1.43.1 Phase 1 — once the revision migration is applied, the
+      // previous canonical row is archived before the new revision becomes
+      // canonical. This keeps public weekly routes canonical-only under the
+      // existing RLS rule (status='published') while preserving the row for
+      // audit/history instead of deleting or mutating it as a draft.
+      await saveWeeklyDraftAsync({
+        ...previousCanonical,
+        status: "archived",
+        isCanonical: false,
+        supersededAt: now,
+        supersededBy: current.id,
+        updatedAt: now,
+        updatedBy: "editorial_studio",
+      });
+    }
+
     return {
       draft: await saveWeeklyDraftAsync(next),
       error: null,

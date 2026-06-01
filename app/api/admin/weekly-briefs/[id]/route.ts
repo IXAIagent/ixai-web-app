@@ -5,6 +5,7 @@ import {
   getWeeklyDraftByIdAsync,
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
+  isWeeklyRevisionSchemaAvailableAsync,
   listAdminWeeklyDraftsAsync,
   updateWeeklyDraftAsync,
 } from "@/src/lib/editorial/weekly";
@@ -35,7 +36,14 @@ export async function GET(request: NextRequest, context: WeeklyRouteContext) {
     return Response.json({ status: "not_found" }, { status: 404 });
   }
 
-  return Response.json({ draft });
+  return Response.json({
+    draft,
+    persistence: {
+      readable: isWeeklyPersistenceReadable(),
+      revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
+      writable: isWeeklyPersistenceWritable(),
+    },
+  });
 }
 
 export async function PATCH(request: NextRequest, context: WeeklyRouteContext) {
@@ -81,6 +89,7 @@ export async function PATCH(request: NextRequest, context: WeeklyRouteContext) {
               : "Supabase weekly update failed.",
         persistence: {
           readable: isWeeklyPersistenceReadable(),
+          revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
           writable: isWeeklyPersistenceWritable(),
         },
       },
@@ -97,6 +106,7 @@ export async function PATCH(request: NextRequest, context: WeeklyRouteContext) {
     drafts: await listAdminWeeklyDraftsAsync(),
     persistence: {
       readable: isWeeklyPersistenceReadable(),
+      revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
       writable: isWeeklyPersistenceWritable(),
     },
   });

@@ -3,6 +3,7 @@ import { isAdminRequestAuthorized } from "@/src/lib/admin/auth";
 import {
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
+  isWeeklyRevisionSchemaAvailableAsync,
   listAdminWeeklyDraftsAsync,
 } from "@/src/lib/editorial/weekly";
 
@@ -22,11 +23,13 @@ export async function GET(request: NextRequest) {
   // v1.30.5 — Editorial Studio only sees durable rows. Static fallback
   // weekly briefs cannot be edited via PATCH and would 404 if selected.
   const drafts = await listAdminWeeklyDraftsAsync();
+  const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
 
   return Response.json({
     drafts,
     persistence: {
       readable: isWeeklyPersistenceReadable(),
+      revisionSchemaAvailable,
       writable: isWeeklyPersistenceWritable(),
     },
     note: "Weekly drafts are generated for editorial review only. Publish remains manual.",

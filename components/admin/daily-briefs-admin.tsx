@@ -71,6 +71,7 @@ type GenerationMeta = {
 
 type PersistenceMeta = {
   readable: boolean;
+  revisionSchemaAvailable?: boolean;
   writable: boolean;
 };
 
@@ -185,6 +186,18 @@ function WeeklyEditorPreview() {
     !selectedIsStatic &&
     selectedWeeklyDraft?.status === "review" &&
     Boolean(selectedWeeklyDraft.summary && selectedWeeklyDraft.sections.marketHighlights.length);
+  const weeklyRevisionSchemaAvailable = Boolean(weeklyPersistence?.revisionSchemaAvailable);
+  const selectedWeeklyIsPublished =
+    selectedWeeklyDraft?.status === "published" || selectedWeeklyDraft?.status === "archived";
+  const selectedWeeklyLockedForRevision =
+    selectedWeeklyIsPublished && !weeklyRevisionSchemaAvailable;
+  const generateWeeklyLabel = isWeeklyGenerating
+    ? "Generating..."
+    : selectedWeeklyDraft?.status === "published" && weeklyRevisionSchemaAvailable
+      ? "Create Revision Draft"
+      : selectedWeeklyLockedForRevision
+        ? "Revision requires migration"
+        : "Generate Weekly Draft";
 
   const refreshWeeklyDrafts = useCallback((nextDrafts: WeeklyIntelligenceDraft[]) => {
     const durableDrafts = nextDrafts.filter((draft) => !draft.id.startsWith("static-"));
@@ -308,7 +321,9 @@ function WeeklyEditorPreview() {
       const baseMessage =
         payload.summary?.status === "existing"
           ? payload.draft.status === "published" || payload.draft.status === "archived"
-            ? `Weekly range already ${payload.draft.status}. Current Supabase persistence allows one weekly row per week, so Generate cannot create a parallel draft without a schema/revision change.`
+            ? payload.persistence?.revisionSchemaAvailable
+              ? `Weekly range already has a canonical ${payload.draft.status} row. Use Create Revision Draft after selecting the canonical weekly.`
+              : `Weekly range already ${payload.draft.status}. Revision workflow requires the reviewed Supabase migration before a parallel draft can be created.`
             : `Existing weekly draft loaded · ${payload.summary.itemCount} input items · ${payload.summary.sourceMode}`
           : `Weekly draft generated · ${payload.summary?.itemCount ?? 0} input items · ${payload.summary?.sourceMode ?? "fallback"}`;
       setWeeklyMessage(
@@ -442,7 +457,7 @@ function WeeklyEditorPreview() {
               onClick={handleGenerateWeeklyDraft}
               type="button"
             >
-              {isWeeklyGenerating ? "Generating..." : "Generate Weekly Draft"}
+              {generateWeeklyLabel}
             </button>
             <button
               className="rounded-lg border border-[rgba(176,141,87,0.38)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] disabled:opacity-45"
@@ -510,6 +525,10 @@ function WeeklyEditorPreview() {
             <span className="text-[var(--ixai-cream)]">
               {weeklyPersistence?.writable ? "durable Supabase" : "safe fallback / static published"}
             </span>{" "}
+            · Revision schema:{" "}
+            <span className={weeklyRevisionSchemaAvailable ? "text-emerald-100" : "text-amber-100"}>
+              {weeklyRevisionSchemaAvailable ? "available" : "migration required"}
+            </span>{" "}
             · Human Review Required · No Auto-publish
           </p>
         </div>
@@ -539,11 +558,16 @@ function WeeklyEditorPreview() {
                       {draft.title}
                     </h3>
                     <p className="mt-1 font-mono text-xs text-[rgba(245,240,230,0.38)]">
-                      {draft.weekStart} - {draft.weekEnd}
+                      {draft.weekStart} - {draft.weekEnd} · revision v{draft.revisionNumber ?? 1}
                     </p>
                     <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.42)]">
                       generated {formatDate(draft.generatedAt)} · updated {formatDate(draft.updatedAt)}
                       {draft.publishedAt ? ` · published ${formatDate(draft.publishedAt)}` : ""}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.42)]">
+                      {draft.isCanonical ? "canonical weekly" : "non-canonical / revision candidate"}
+                      {draft.parentWeeklyId ? ` · parent ${draft.parentWeeklyId.slice(0, 8)}` : ""}
+                      {draft.supersededAt ? ` · superseded ${formatDate(draft.supersededAt)}` : ""}
                     </p>
                   </div>
                   <WeeklyStatusBadge status={draft.status} />
@@ -587,6 +611,66 @@ function WeeklyEditorPreview() {
                   {!canPublishWeekly ? (
                     <p className="mt-2 text-xs leading-5 text-amber-100/80">
                       Publish disabled until this draft is marked as Review and contains title, summary, sections, and IXAI Intelligence Summary.
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                    Revision Workflow
+                  </p>
+                  <div className="mt-2 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.62)] sm:grid-cols-2">
+                    <p>
+                      Week range:{" "}
+                      <span className="font-mono text-[rgba(245,240,230,0.84)]">
+                        {selectedWeeklyDraft.weekStart} - {selectedWeeklyDraft.weekEnd}
+                      </span>
+                    </p>
+                    <p>
+                      Revision:{" "}
+                      <span className="font-mono text-[rgba(245,240,230,0.84)]">
+                        v{selectedWeeklyDraft.revisionNumber ?? 1}
+                      </span>
+                    </p>
+                    <p>
+                      Canonical:{" "}
+                      <span className={selectedWeeklyDraft.isCanonical ? "text-emerald-100" : "text-amber-100"}>
+                        {selectedWeeklyDraft.isCanonical ? "yes" : "no / pending"}
+                      </span>
+                    </p>
+                    <p>
+                      Parent weekly:{" "}
+                      <span className="font-mono text-[rgba(245,240,230,0.84)]">
+                        {selectedWeeklyDraft.parentWeeklyId?.slice(0, 8) ?? "none"}
+                      </span>
+                    </p>
+                    <p>
+                      Superseded:{" "}
+                      <span className="font-mono text-[rgba(245,240,230,0.84)]">
+                        {selectedWeeklyDraft.supersededAt
+                          ? `${formatDate(selectedWeeklyDraft.supersededAt)}${
+                              selectedWeeklyDraft.supersededBy
+                                ? ` by ${selectedWeeklyDraft.supersededBy.slice(0, 8)}`
+                                : ""
+                            }`
+                          : "none"}
+                      </span>
+                    </p>
+                    <p>
+                      Schema:{" "}
+                      <span className={weeklyRevisionSchemaAvailable ? "text-emerald-100" : "text-amber-100"}>
+                        {weeklyRevisionSchemaAvailable ? "revision-ready" : "migration required"}
+                      </span>
+                    </p>
+                  </div>
+                  {selectedWeeklyLockedForRevision ? (
+                    <p className="mt-3 text-xs leading-5 text-amber-100/80">
+                      This week already has a published Weekly Intelligence. Create revision workflow requires the reviewed Supabase migration before a parallel draft can be created.
+                    </p>
+                  ) : null}
+                  {selectedWeeklyDraft.revisionNote ? (
+                    <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.52)]">
+                      {selectedWeeklyDraft.revisionNote}
                     </p>
                   ) : null}
                 </div>

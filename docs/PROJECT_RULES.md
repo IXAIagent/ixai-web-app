@@ -349,6 +349,16 @@ Intelligence Source of Truth Rules:
 - Daily / Weekly / Social surfaces should reinforce the content funnel: Social Pack → Daily / Weekly Intelligence → Account → Future Pro Interest.
 - Source-of-truth architecture must not require Supabase schema changes unless explicitly approved.
 
+Weekly Revision Workflow Rules:
+
+- Weekly Intelligence may support revisions only through an explicit reviewed workflow; do not overwrite a published weekly row as an implicit draft.
+- A week may have multiple revisions only after the approved revision migration is applied.
+- Public Weekly routes must prefer the canonical published weekly row when the revision schema is available.
+- Only one canonical published weekly should exist per week_start / week_end range.
+- Previous canonical revisions should be preserved for audit/history and marked non-canonical or archived when a newer revision is published.
+- Production Supabase migration for weekly revisions requires backup, review, and explicit approval before execution.
+- Until the migration is applied, Weekly generation should keep the locked behavior and clearly explain that revision workflow requires migration.
+
 Intelligence Distribution Layer Rules:
 
 - Distribution preferences may organize frequency, categories, and channels for future intelligence delivery.

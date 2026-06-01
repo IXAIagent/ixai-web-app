@@ -398,6 +398,12 @@ export type WeeklyIntelligenceDraft = {
   complianceNote?: string;
   createdBy?: string;
   updatedBy?: string;
+  revisionNumber?: number;
+  parentWeeklyId?: string;
+  isCanonical?: boolean;
+  supersededAt?: string;
+  supersededBy?: string;
+  revisionNote?: string;
 };
 
 export type WeeklyDraftGenerationSummary = {

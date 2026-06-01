@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.43.0`
+`v1.43.1`
 
 ## Related Strategic Documents
 
@@ -322,20 +322,30 @@ Completed:
 - Made Weekly Intelligence aggregate recent Daily Core signals, continuity tags, whatChanged copy, and I-Xuan View before manual review.
 - Added difference-aware continuity copy when Daily themes overlap across days.
 
+### v1.43.1 — Weekly Revision Workflow Phase 1
+
+Completed:
+
+- Selected Option B: revision columns / constraint change as the Weekly revision model.
+- Added reviewed migration SQL plan for revision_number, parent_weekly_id, is_canonical, superseded_at, superseded_by, and revision_note.
+- Added backward-compatible repository / API / admin UI support that keeps production safe when revision columns do not exist yet.
+- Preserved current locked Weekly behavior until the migration is manually reviewed and applied.
+- Kept public Weekly reads canonical-only when the revision schema is available, with status=published fallback before migration.
+
 Next:
 
-`v1.43.1 — Weekly Intelligence Reliability QA`
+`v1.43.2 — Weekly Revision Migration Review / Rollout`
 
 ## Next Suggested Version
 
-`v1.43.1 — Weekly Intelligence Reliability QA`
+`v1.43.2 — Weekly Revision Migration Review / Rollout`
 
 Goal:
 
-- Verify Weekly generation against Daily Core aggregation in local and production-like admin flows.
-- Confirm Weekly draft persistence behavior, Supabase error visibility, and editorial fallback boundaries.
-- Preserve the source-of-truth architecture before adding Publish Center workflow.
-- Do not add automated publishing, platform APIs, paid entitlement, or portfolio intelligence.
+- Review and apply the Weekly revision migration only after backup and approval.
+- Verify that same-week canonical published weekly + revision draft can coexist.
+- Verify revision publish promotion, previous canonical archival, and canonical public reads.
+- Do not auto-overwrite published Weekly Intelligence or change public URL behavior without review.
 
 ## Future Roadmap
 

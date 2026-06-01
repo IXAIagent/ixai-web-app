@@ -3,6 +3,7 @@ import {
   generateWeeklyIntelligenceDraft,
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
+  isWeeklyRevisionSchemaAvailableAsync,
 } from "@/src/lib/editorial/weekly";
 import { getExpectedCronSecret, isSchedulerConfigured } from "@/src/lib/editorial/scheduler";
 
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
     sourceStatus: summary.sourceStatus,
     persistence: {
       readable: isWeeklyPersistenceReadable(),
+      revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
       writable: isWeeklyPersistenceWritable(),
     },
     note: "Weekly cron creates draft/review material only. It never publishes.",

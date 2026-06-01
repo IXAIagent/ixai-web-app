@@ -3,6 +3,7 @@ import { isAdminRequestAuthorized } from "@/src/lib/admin/auth";
 import {
   isWeeklyPersistenceReadable,
   isWeeklyPersistenceWritable,
+  isWeeklyRevisionSchemaAvailableAsync,
   listAdminWeeklyDraftsAsync,
   publishWeeklyDraftAsync,
 } from "@/src/lib/editorial/weekly";
@@ -53,6 +54,7 @@ export async function POST(request: NextRequest, context: WeeklyPublishRouteCont
         message,
         persistence: {
           readable: isWeeklyPersistenceReadable(),
+          revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
           writable: isWeeklyPersistenceWritable(),
         },
       },
@@ -74,6 +76,7 @@ export async function POST(request: NextRequest, context: WeeklyPublishRouteCont
           "Weekly publish did not return a published row. Supabase write may not have landed.",
         persistence: {
           readable: isWeeklyPersistenceReadable(),
+          revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
           writable: isWeeklyPersistenceWritable(),
         },
       },
@@ -86,6 +89,7 @@ export async function POST(request: NextRequest, context: WeeklyPublishRouteCont
     drafts: await listAdminWeeklyDraftsAsync(),
     persistence: {
       readable: isWeeklyPersistenceReadable(),
+      revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
       writable: isWeeklyPersistenceWritable(),
     },
     note: "Manual publish completed after editorial review.",
