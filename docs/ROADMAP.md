@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.44.0`
+`v1.45.0`
 
 ## Related Strategic Documents
 
@@ -341,6 +341,17 @@ Completed:
 - Aligned public Daily title / SEO title, Daily Core headline, and Social Slide 1 hook to the same market theme.
 - Preserved platform-aware IG Feed / Story export while making Social Packs a conversion entry into Daily / Weekly / Account / Future Pro.
 - Kept manual publishing, no platform APIs, and non-advisory compliance boundaries.
+
+### v1.45.0 — Periodic Intelligence Engine Correction
+
+Completed:
+
+- Re-centered source-of-truth architecture around News Source → IXAI Intelligence Engine → period output.
+- Added a Periodic Narrative Model for Daily / Weekly with Monthly / Yearly type-level reservation.
+- Corrected Weekly so weekly news intake, weekly categorization, upcoming-week calendar, and periodic narrative are the primary Weekly sources.
+- Kept Daily Core as optional Weekly continuity context only.
+- Reworked Weekly Social Pack as a Weekly conversion entry, not a Daily aggregation image.
+- Preserved manual publishing, no platform APIs, no Supabase migration, and non-advisory compliance boundaries.
 
 Next:
 

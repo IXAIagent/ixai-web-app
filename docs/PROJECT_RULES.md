@@ -339,15 +339,18 @@ Daily Intelligence Rules:
 - Editorial drafts that lack source coverage, content length, or insight depth should be visibly flagged before manual publish.
 - Provider Health, Coverage Score, Content Quality Score, raw provider errors, and source debug metadata are admin-only diagnostics and must not be exposed through public Daily Brief responses.
 
-Intelligence Source of Truth Rules:
+Periodic Intelligence Source Rules:
 
-- Daily Intelligence Core is the shared source of truth for Public Daily Brief, Daily Social Pack, Weekly Aggregation, and future Account / Pro Intelligence.
-- Daily Intelligence Core should include todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals.
-- Social Packs must derive hooks, market pulse, AI / Tech signal, risk / FCN awareness, and I-Xuan View from Daily / Weekly Core. They must not invent a separate narrative disconnected from the reviewed brief.
-- Weekly Intelligence should aggregate recent Daily Intelligence Core signals, themes, whatChanged copy, continuity tags, and I-Xuan View before falling back to raw news intake.
-- If Daily themes overlap strongly across days, the copy should explain what changed, what extended, or what faded. Do not repeat generic statements such as "AI is important" or "rates are important" without a difference-aware angle.
+- News Source is the source of truth. IXAI Intelligence Engine interprets news intake into period-specific outputs.
+- Daily, Weekly, Monthly, and Yearly are separate periodic intelligence products, not nested summaries of each other.
+- Daily Intelligence should use recent daily news intake and produce Daily Brief + Daily Social Pack.
+- Weekly Intelligence should use weekly news intake, weekly categorization, weekly events, next-week calendar, and periodic narrative model as its primary source.
+- Daily Intelligence Core may be used as optional continuity context for Weekly, but it must not be the primary Weekly source or override weekly news-source narrative.
+- Monthly / Yearly are reserved periods; type/model support may exist before full product implementation.
+- Social Packs must derive hooks, conflict, payoff, risk contrast, and CTA from the reviewed period narrative. They must not invent a separate narrative disconnected from the reviewed period brief.
+- If themes overlap across periods, the copy should explain what changed, what extended, or what faded. Do not repeat generic statements such as "AI is important" or "rates are important" without a difference-aware angle.
 - Daily / Weekly / Social surfaces should reinforce the content funnel: Social Pack → Daily / Weekly Intelligence → Account → Future Pro Interest.
-- Source-of-truth architecture must not require Supabase schema changes unless explicitly approved.
+- Periodic intelligence architecture must not require Supabase schema changes unless explicitly approved.
 
 Weekly Revision Workflow Rules:
 

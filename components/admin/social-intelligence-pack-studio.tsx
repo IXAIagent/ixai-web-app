@@ -301,9 +301,7 @@ function CoverSlide({
   const isFeed = format === "ig_feed_4_5";
   const title = pack.kind === "daily"
     ? slide.title
-    : isFeed
-      ? "本週市場正在 pricing 什麼"
-      : "本週市場焦點";
+    : slide.title || (isFeed ? "本週市場正在 pricing 什麼" : "本週市場焦點");
   const bulletLimit = pack.kind === "daily" ? 2 : isFeed ? 4 : 4;
   const bullets = slide.bullets
     .slice(0, bulletLimit)

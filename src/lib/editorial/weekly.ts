@@ -21,6 +21,10 @@ import {
   type NarrativeBundle,
 } from "@/src/lib/intelligence/narrative-engine";
 import { buildWeeklyAggregationFromDailyCores } from "@/src/lib/intelligence/core";
+import {
+  buildPeriodicIntelligenceNarrative,
+  type PeriodicIntelligenceNarrative,
+} from "@/src/lib/intelligence/periodic";
 import type {
   WeeklyDailyCoreAggregation,
   WeeklyDraftGenerationSummary,
@@ -818,18 +822,9 @@ function buildIntelligenceSummary(
   past: WeeklyPastWeekHighlights,
   upcoming: UpcomingEvent[],
   intake: NewsIntakeResult,
+  periodicNarrative: PeriodicIntelligenceNarrative,
   dailyCoreAggregation?: WeeklyDailyCoreAggregation,
 ): WeeklyIntelligenceSections["intelligenceSummary"] {
-  if (dailyCoreAggregation?.sourceBriefSlugs.length) {
-    return {
-      pricing: `本週主線：${dailyCoreAggregation.weeklyNarrative}`,
-      riskTone:
-        dailyCoreAggregation.nextWeekWatchpoints[0] ??
-        "本週風險基調仍需觀察利率、美元、波動率與市場廣度是否同向。",
-      whatChanged: dailyCoreAggregation.whatChanged,
-    };
-  }
-
   const fedSignal = past.fedRatesMacro[0];
   const aiSignal = past.aiSemiconductors[0];
   const taiwanSignal = past.taiwanEquities[0];
@@ -883,9 +878,12 @@ function buildIntelligenceSummary(
       : "市場敘事仍圍繞利率、AI capex 與台股供應鏈兌現能力；本週無單一事件改變整體 regime。";
 
   return {
-    pricing,
-    riskTone,
-    whatChanged,
+    pricing: periodicNarrative.mainNarrative || pricing,
+    riskTone: periodicNarrative.riskNarrative || riskTone,
+    whatChanged:
+      dailyCoreAggregation?.sourceBriefSlugs.length
+        ? `${periodicNarrative.whatChanged} Daily continuity context：${dailyCoreAggregation.repeatedThemes.slice(0, 3).join("、") || "limited history"}。`
+        : periodicNarrative.whatChanged || whatChanged,
   };
 }
 
@@ -920,6 +918,7 @@ function buildWeeklySections({
   categorization,
   narrative,
   dailyCoreAggregation,
+  periodicNarrative,
 }: {
   intake: NewsIntakeResult;
   past: WeeklyPastWeekHighlights;
@@ -931,24 +930,10 @@ function buildWeeklySections({
   categorization: CategorizationResult;
   narrative: NarrativeBundle;
   dailyCoreAggregation?: WeeklyDailyCoreAggregation;
+  periodicNarrative: PeriodicIntelligenceNarrative;
 }): WeeklyIntelligenceSections {
   const fedRatesPast = past.fedRatesMacro[0];
   const taiwanPast = past.taiwanEquities[0];
-  const dailyCoreHighlights = (dailyCoreAggregation?.recentSignals ?? [])
-    .slice(0, 4)
-    .map((signal, index) => ({
-      headline: signal,
-      ixaiView:
-        dailyCoreAggregation?.repeatedThemes[index]
-          ? `Daily Core 連續追蹤：${dailyCoreAggregation.repeatedThemes[index]}。`
-          : "Daily Core 訊號用於週報聚合，不是獨立重新生成的觀點。",
-      label: ["Daily Signal", "Continuity", "Theme Shift", "Risk Context"][index] ?? "Daily Core",
-      summary:
-        index === 0
-          ? dailyCoreAggregation?.whatChanged ?? signal
-          : dailyCoreAggregation?.nextWeekWatchpoints[index - 1] ?? signal,
-    }));
-
   const upcomingWeek: WeeklyUpcomingEvent[] = upcoming.map((event) => ({
     date: event.date,
     title: event.title,
@@ -959,7 +944,7 @@ function buildWeeklySections({
   }));
 
   return {
-    marketHighlights: dailyCoreHighlights.length ? dailyCoreHighlights : legacyMarketHighlights(past),
+    marketHighlights: legacyMarketHighlights(past),
     majorEvents: legacyMajorEvents(past, upcomingFedMacro, upcomingTaiwan),
     nextWeekFocus: legacyNextWeekFocus(upcoming),
     earningsFocus:
@@ -991,7 +976,7 @@ function buildWeeklySections({
           : "台積電與 AI server 相關供應鏈仍是台股風險偏好與外資配置的主要觀察窗口。",
     },
     fcnMarketObservation: buildFcnObservation(past),
-    intelligenceSummary: buildIntelligenceSummary(past, upcoming, intake, dailyCoreAggregation),
+    intelligenceSummary: buildIntelligenceSummary(past, upcoming, intake, periodicNarrative, dailyCoreAggregation),
     pastWeekHighlights: past,
     upcomingWeek,
     sourcesUsed,
@@ -1025,6 +1010,7 @@ function buildWeeklySections({
       importanceRanking: narrative.importanceRanking,
     },
     dailyCoreAggregation,
+    periodicNarrative,
   };
 }
 
@@ -1063,14 +1049,14 @@ function buildAiSuggestion(
 
   return {
     summarySuggestion: sections.intelligenceSummary.pricing,
-    keyThemes: sections.dailyCoreAggregation?.repeatedThemes.length
-      ? sections.dailyCoreAggregation.repeatedThemes
+    keyThemes: sections.periodicNarrative?.dominantThemes.length
+      ? sections.periodicNarrative.dominantThemes
       : sections.marketHighlights.map((item) => item.label),
     riskFocus,
-    nextWeekWatchlist: sections.dailyCoreAggregation?.nextWeekWatchpoints.length
-      ? sections.dailyCoreAggregation.nextWeekWatchpoints
+    nextWeekWatchlist: sections.periodicNarrative?.whatToWatchNext.length
+      ? sections.periodicNarrative.whatToWatchNext
       : sections.nextWeekFocus,
-    intelligenceNarrative: sections.dailyCoreAggregation?.weeklyNarrative ?? sections.intelligenceSummary.whatChanged,
+    intelligenceNarrative: sections.periodicNarrative?.mainNarrative ?? sections.intelligenceSummary.whatChanged,
     sourceMode: intake.mode,
     inputNewsCount: intake.itemCount,
     sourceLabels,
@@ -1232,6 +1218,23 @@ export async function generateWeeklyIntelligenceDraft({
       earnings: categorization.sections.earnings[0],
     },
   });
+  const periodicNarrative = buildPeriodicIntelligenceNarrative({
+    continuityContext: dailyCoreAggregation.sourceBriefCount
+      ? {
+          narrative: dailyCoreAggregation.weeklyNarrative,
+          tags: dailyCoreAggregation.repeatedThemes,
+          watchpoints: dailyCoreAggregation.nextWeekWatchpoints,
+        }
+      : undefined,
+    newsItems: intake.items,
+    period: "weekly",
+    upcomingEvents: upcoming.map((event) => ({
+      category: event.category,
+      date: event.date,
+      title: event.title,
+      whyItMatters: event.whyItMatters,
+    })),
+  });
 
   const sections = buildWeeklySections({
     intake,
@@ -1244,6 +1247,7 @@ export async function generateWeeklyIntelligenceDraft({
     categorization,
     narrative,
     dailyCoreAggregation,
+    periodicNarrative,
   });
   const aiSuggestion = buildAiSuggestion(sections, intake, upcoming);
   const revisionNumber =

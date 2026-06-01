@@ -364,6 +364,10 @@ export type WeeklyIntelligenceSections = {
   // sections jsonb object so Weekly can inherit the Daily source of truth
   // without a Supabase schema migration.
   dailyCoreAggregation?: WeeklyDailyCoreAggregation;
+  // v1.45 — Periodic Narrative Model. Stored inside sections jsonb so
+  // Daily / Weekly / future Monthly / Yearly can share one narrative
+  // contract without a Supabase migration.
+  periodicNarrative?: import("@/src/lib/intelligence/periodic/types").PeriodicIntelligenceNarrative;
 };
 
 export type WeeklyDailyCoreAggregation = {

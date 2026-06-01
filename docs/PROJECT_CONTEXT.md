@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.44.0`
+`v1.45.0`
 
 Current Core Flow:
 
@@ -116,18 +116,20 @@ Market Memory Layer now adds a lightweight Daily Intelligence memory foundation.
 
 Social Media Optimization Layer now makes Social Packs platform-aware. Admin Social Pack Studio supports IG Feed / Carousel 4:5 export at 1080 × 1350 as the primary feed format while preserving Story / Reels 9:16 export at 1080 × 1920 for LINE / Story distribution. The same reviewed intelligence pack can now be previewed and exported for different social contexts without auto-publishing.
 
-Intelligence Source of Truth Architecture now makes Daily Intelligence Core the shared source for Public Daily Brief, Daily Social Pack, and Weekly Intelligence aggregation. Daily Core standardizes todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals. Social Pack is now an entry asset derived from Daily / Weekly Core instead of a parallel content generator, and Weekly Intelligence now aggregates recent Daily Core signals before human review.
+Intelligence Source of Truth Architecture now makes Daily Intelligence Core the shared source for Public Daily Brief and Daily Social Pack. Daily Core standardizes todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals. Social Pack is now an entry asset derived from reviewed Daily / Weekly intelligence instead of a parallel content generator.
 
 Weekly Revision Workflow Phase 1 selects the Option B revision model for same-week Weekly Intelligence revisions. The project now contains a reviewed migration SQL plan and backward-compatible code support for revision_number, parent_weekly_id, is_canonical, superseded_at, superseded_by, and revision_note. Production migration is not applied automatically; until the migration is manually approved and executed, Weekly generation keeps the current locked behavior and clearly explains that revision workflow requires migration. Public Weekly routes remain canonical-only when the revision schema is available, and fall back to status=published reads before migration.
 
 Social Conversion Layer now treats Social Pack as the conversion entry point into Daily / Weekly Intelligence rather than a compressed brief. Daily Intelligence Core now carries headline, headlineHook, conversionHook, socialThesis, socialCuriosity, socialCTA, weeklyThesis, and contentFunnelTarget so the public Daily title, SEO title, Social Slide 1 hook, and Slide 5 CTA follow one content funnel. Daily Social Pack slides now map to stop-scroll hook, curiosity builder, signal explainer, risk contrast, and I-Xuan View + contextual CTA.
 
+Periodic Intelligence Engine Correction now re-centers the content architecture around news sources and the IXAI Intelligence Engine. Daily, Weekly, Monthly, and Yearly are separate period outputs. Daily uses recent daily news intake; Weekly uses weekly news intake, the weekly categorizer, upcoming-week calendar, and periodic narrative model as its primary source. Daily Core may provide optional continuity context, but Weekly is no longer primarily Daily aggregation. Daily and Weekly Social Packs are conversion entries for their respective period briefs, not compressed article images.
+
 Current Highest Priorities:
 
 1. Weekly Revision Migration Review / Rollout.
 2. Publish Center Foundation.
-3. Portfolio Intelligence.
-4. AI Alert Engine.
+3. Monthly / Yearly Periodic Intelligence planning.
+4. Portfolio Intelligence.
 
 Growth Strategy:
 
@@ -167,7 +169,7 @@ Completed product capabilities include:
 - Social Pack intelligence upgrade: Daily Social Pack content now extracts insight and rewrites for social readability, avoiding template residue such as Short Insight / Observation labels, generic repeated filler, clipped English fragments, and non-compliant trading language.
 - Market Memory Layer: Daily Briefs now include What Changed Since Last Brief, continuity tags, and memory-aware I-Xuan View language based on recent editorial briefs.
 - Social Media Optimization Layer: Social Pack Studio now supports IG Feed / Carousel 4:5 and Story / Reels 9:16 export formats with platform-specific preview dimensions and copy density.
-- Intelligence Source of Truth Architecture: Daily Intelligence Core now connects Daily Brief, Daily Social Pack, Weekly Aggregation, and future Account / Pro Intelligence with one shared intelligence contract.
+- Periodic Intelligence Engine Correction: News Source is the source of truth; IXAI Intelligence Engine produces Daily / Weekly / future Monthly / Yearly outputs; Social Packs are conversion entries for each period.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.

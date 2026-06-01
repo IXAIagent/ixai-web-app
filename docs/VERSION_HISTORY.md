@@ -965,3 +965,36 @@ Out of Scope:
 - Platform APIs, auto publishing, LINE broadcast, or marketing automation.
 - Portfolio Intelligence or Pro monetization.
 - Buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.45.0 — Periodic Intelligence Engine Correction
+
+Why:
+
+- The v1.43 source-of-truth model made Daily Core too central, causing Weekly Intelligence to behave like Daily aggregation.
+- Product direction required News Source → IXAI Intelligence Engine → Daily / Weekly / Monthly / Yearly as separate periodic outputs.
+- Social Packs needed to represent each period's brief as a conversion entry, not a compressed article image.
+
+What Changed:
+
+- Added a Periodic Narrative Model with whatHappened, whyItMatters, whatChanged, whatToWatchNext, mainNarrative, riskNarrative, I-Xuan View, socialHook, socialConflict, socialPayoff, and clearCTA.
+- Added Daily / Weekly implementation support with Monthly / Yearly reserved at the type/model layer.
+- Corrected Weekly generation so weekly news intake, categorization, upcoming-week events, and periodic narrative drive Weekly Brief content.
+- Kept Daily Core as optional continuity context only; it no longer overrides Weekly market highlights, Weekly intelligence summary, or Weekly Social Pack main narrative.
+- Reworked Weekly Social Pack into a Weekly conversion funnel: weekly turn, three signals, AI / Tech line, Macro / Risk / FCN watch, and I-Xuan Weekly View + CTA.
+- Preserved Daily Social Pack as a Daily conversion entry and removed recurring "previous brief" language from social copy.
+
+Key Decisions:
+
+- News Source is the source of truth; IXAI Intelligence Engine is the interpreter.
+- Daily / Weekly / Monthly / Yearly are separate periodic products.
+- Social Pack is a traffic entry for its period brief.
+- Weekly may reference Daily for continuity, but Weekly must remain weekly-news-source driven.
+
+Out of Scope:
+
+- Supabase migration execution.
+- Weekly revision schema rollout.
+- Auth, LINE Login, LIFF, or provider pipeline changes.
+- Platform APIs, auto publishing, LINE broadcast, or marketing automation.
+- Portfolio Intelligence or Pro monetization.
+- Buy/sell recommendations, target prices, return promises, or automated trading.
