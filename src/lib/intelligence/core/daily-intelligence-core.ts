@@ -146,8 +146,8 @@ function buildConversionHook(headline: string, topThreeThings: DailyIntelligence
 
   return clampSentence(
     firstWatchpoint
-      ? `${cleanTheme}的市場脈絡，值得點進完整 Daily Brief 看清楚`
-      : `${cleanTheme}不只是單一新聞，完整脈絡請看 Daily Brief`,
+      ? `${cleanTheme}的市場脈絡，需要回到 Daily Brief 看事件、訊號與下一步觀察`
+      : `${cleanTheme}不只是單一新聞，請回到 Daily Brief 看完整市場訊號`,
     "這不是單一新聞，而是今天市場主線的變化。",
     46,
   );
@@ -348,19 +348,25 @@ export function buildDailyIntelligenceCore(
   } = {},
 ): DailyIntelligenceCore {
   const topThreeThings = (intelligence.topThreeThings?.length ? intelligence.topThreeThings : FALLBACK_TOP_THREE).slice(0, 3);
+  const insight = intelligence.insight;
   const headline = clamp(
     options.headline ?? intelligence.headline ?? intelligence.todayHeadline,
     intelligence.todaySignal ?? "今日市場主線聚焦 AI、利率與風險偏好。",
     86,
   );
-  const todaySignal = clamp(intelligence.todaySignal ?? headline, "今日最重要的訊號是：AI、利率與風險偏好仍是市場主線。", 120);
-  const headlineHook = intelligence.headlineHook ?? buildHeadlineHook(headline, todaySignal);
+  const todaySignal = clamp(
+    insight?.marketSignals[0]?.signal ?? intelligence.todaySignal ?? headline,
+    "今日最重要的訊號是：AI、利率與風險偏好仍是市場主線。",
+    120,
+  );
+  const headlineHook = insight?.socialFunnel.hook ?? intelligence.headlineHook ?? buildHeadlineHook(headline, todaySignal);
   const hookTheme = stripDailyPrefix(headlineHook).replace(/[？?]$/, "").replace(/\s+的/g, "的");
   const marketInterpretation = clamp(intelligence.marketInterpretation ?? intelligence.marketRegimeNote, "今日市場解讀重點是 AI、利率與風險偏好的互動。", 220);
-  const conversionHook = intelligence.conversionHook ?? buildConversionHook(headline, topThreeThings);
+  const conversionHook = intelligence.conversionHook ?? insight?.socialFunnel.conflict ?? buildConversionHook(headline, topThreeThings);
   const socialThesis = clampSentence(
     dedupeAdjacentSentences(
       intelligence.socialThesis ??
+        insight?.whyItMatters ??
         (clean(headline) === clean(todaySignal) || todaySignal.includes(headline)
         ? marketInterpretation
         : `${headline} ${todaySignal}`),
@@ -369,7 +375,7 @@ export function buildDailyIntelligenceCore(
     116,
   );
   const socialCuriosity = clampSentence(
-    intelligence.socialCuriosity ?? `為什麼 ${hookTheme} 值得點進去看？關鍵在於 ${topThreeThings[0]?.whyItMatters ?? "市場正在 pricing 的主線與風險約束"}`,
+    intelligence.socialCuriosity ?? insight?.socialFunnel.conflict ?? `為什麼 ${hookTheme} 值得點進去看？關鍵在於 ${topThreeThings[0]?.whyItMatters ?? "市場正在 pricing 的主線與風險約束"}`,
     "為什麼這件事值得點進去看？關鍵在市場主線是否延續或轉向。",
     94,
   );
@@ -378,8 +384,8 @@ export function buildDailyIntelligenceCore(
     intelligence.contentFunnelTarget ??
     "/daily-brief";
   const socialCTA = clampSentence(
-    intelligence.socialCTA ?? `完整 Daily Brief：${hookTheme}的市場脈絡已整理在 IXAI App`,
-    "完整 Daily Brief 已整理在 IXAI App。",
+    intelligence.socialCTA ?? insight?.socialFunnel.cta ?? `想看 ${hookTheme} 背後的事件、訊號與下一步觀察，請進 IXAI App 讀 Daily Brief`,
+    "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief。",
     70,
   );
   const weeklyThesis = clampSentence(
@@ -394,7 +400,7 @@ export function buildDailyIntelligenceCore(
     headline,
     headlineHook,
     investorWatchpoints: (intelligence.investorWatchpoints?.length ? intelligence.investorWatchpoints : intelligence.whatToMonitor).slice(0, 6),
-    ixuanView: clamp(intelligence.ixuanView ?? intelligence.marketRegimeNote, "一玄觀點聚焦市場正在 pricing 什麼，而不是單一新聞。", 220),
+    ixuanView: clamp(insight?.ixuanView ?? intelligence.ixuanView ?? intelligence.marketRegimeNote, "一玄觀點聚焦市場正在 pricing 什麼，而不是單一新聞。", 220),
     marketInterpretation,
     socialCTA,
     socialCuriosity,
@@ -402,7 +408,7 @@ export function buildDailyIntelligenceCore(
     todaySignal,
     topThreeThings,
     weeklyThesis,
-    whatChanged: clamp(intelligence.whatChangedSinceLastBrief, "IXAI 正在建立 Daily Intelligence 的市場記憶層，追蹤主線延續、升溫與降溫。", 360),
+    whatChanged: clamp(insight?.whatChanged ?? intelligence.whatChangedSinceLastBrief, "IXAI 正在建立 Daily Intelligence 的市場記憶層，追蹤主線延續、升溫與降溫。", 360),
   };
   const socialHooks = buildSocialHooks(coreBase);
   const weeklySignals = buildWeeklySignals(coreBase);
@@ -513,7 +519,7 @@ export function buildWeeklyAggregationFromDailyCores(
   const limitedPrefix = limitedHistory ? "Based on limited Daily Intelligence history，" : "";
   const whatChanged = latest
     ? prior
-      ? `${limitedPrefix}相較最近 ${sourceBriefCount} 份 Daily Intelligence，本週主線仍以 ${primary} 為核心，但最新變化在於 ${latest.weeklySignals.risingThemes[0] ?? latest.continuityTags[1] ?? secondary} 是否接棒升溫。`
+      ? `${limitedPrefix}Daily continuity context 顯示，本週主線仍以 ${primary} 為核心，但最新變化在於 ${latest.weeklySignals.risingThemes[0] ?? latest.continuityTags[1] ?? secondary} 是否接棒升溫。`
       : `${limitedPrefix}本週 Weekly Intelligence 先以 ${primary}、${secondary} 與 ${resolvedRepeated[2] ?? "risk regime"} 建立聚合基準。`
     : "Based on limited Daily Intelligence history，本週 Daily Core 資料不足，使用 editorial-safe weekly fallback 建立市場敘事基準。";
 

@@ -19,6 +19,7 @@ import type {
 } from "@/src/types/editorial";
 import { log } from "@/src/lib/log";
 import { attachDailyIntelligenceCore } from "@/src/lib/intelligence/core";
+import { buildIXAIInsight } from "@/src/lib/intelligence/insight";
 import { attachMarketMemoryToDailyIntelligence } from "@/src/lib/intelligence/memory";
 import { buildNarrativeBundle } from "@/src/lib/intelligence/narrative-engine";
 import type { NewsIntakeMode, NewsSourceStatus, NormalizedNewsItem } from "@/src/types/news";
@@ -237,47 +238,6 @@ function buildTopThreeThings({
   return items;
 }
 
-function buildMarketInterpretation({
-  ai,
-  crypto,
-  macro,
-  rates,
-  risk,
-}: {
-  ai?: NormalizedNewsItem;
-  crypto?: NormalizedNewsItem;
-  macro?: NormalizedNewsItem;
-  rates?: NormalizedNewsItem;
-  risk?: NormalizedNewsItem;
-}) {
-  const hasAi = Boolean(ai);
-  const hasMacro = Boolean(rates ?? macro ?? risk);
-  const cryptoContext = crypto
-    ? "Crypto 則繼續扮演流動性與風險偏好的高 beta 溫度計。"
-    : "Crypto 今日若缺少明確催化，仍適合作為流動性與槓桿情緒的輔助觀察。";
-
-  if (hasAi && hasMacro) {
-    return [
-      "今日市場不是單純的新聞輪動，而是 AI 成長敘事與利率折現壓力的拉扯。",
-      "若 AI 需求從晶片擴散到雲端、資料庫與企業軟體，代表資本支出敘事仍有延伸；但只要長端利率維持高檔，估值容錯率就會下降。",
-      cryptoContext,
-    ].join(" ");
-  }
-
-  if (hasAi) {
-    return [
-      "今日市場解讀的核心是 AI 主線是否從少數大型科技股擴散到更廣的軟體、雲端與供應鏈。",
-      "若擴散成立，市場會把 AI 視為企業效率與資本支出的長週期題材；若擴散失敗，集中度風險會重新浮現。",
-    ].join(" ");
-  }
-
-  return [
-    "今日市場解讀的重點是風險資產是否有足夠理由擴散，而不是單看指數漲跌。",
-    "利率、美元、波動率與市場廣度需要一起觀察；若這些訊號不同步，短線風險偏好可能反覆。",
-    cryptoContext,
-  ].join(" ");
-}
-
 function buildInvestorWatchpoints({
   ai,
   crypto,
@@ -453,10 +413,35 @@ function attachDailyContentEngine(
   const coverageScore = buildCoverageScore(newsItems);
   const riskRegimeReasoning = buildRiskRegimeReasoning(newsItems, intelligence.marketRegime);
   const fcnAwareness = buildFcnAwareness(intelligence.generatedAt);
-  const todaySignal = buildTodaySignal({ ai, macro, rates, risk });
-  const topThreeThings = buildTopThreeThings({ macro, rates, taiwan });
-  const marketInterpretation = buildMarketInterpretation({ ai, crypto, macro, rates, risk });
-  const investorWatchpoints = buildInvestorWatchpoints({ ai, crypto, macro, rates, risk, taiwan });
+  const insight = buildIXAIInsight({
+    newsItems,
+    period: "daily",
+  });
+  const todaySignal = cleanIntelligenceSentence(
+    `${insight.keyEvents[0]?.title ?? buildTodaySignal({ ai, macro, rates, risk })} ${insight.marketSignals[0]?.signal ?? ""}`,
+    buildTodaySignal({ ai, macro, rates, risk }),
+    150,
+  );
+  const fallbackTopThree = buildTopThreeThings({ macro, rates, taiwan });
+  const topThreeThings = [
+    ...insight.keyEvents.slice(0, 3).map((event, index) => ({
+    headline: cleanIntelligenceSentence(event.title, fallbackTopThree[index]?.headline ?? "市場事件需要人工審閱。", 54),
+    whatHappened: cleanIntelligenceSentence(event.sourceContext, "公開來源捕捉到此市場事件。", 76),
+    whyItMatters: cleanIntelligenceSentence(event.whyItMatters, "此事件有助於判斷市場主線與風險偏好。", 96),
+    watchpoint: cleanIntelligenceSentence(
+      insight.marketSignals[index]?.implication ?? insight.whatToWatchNext,
+      "觀察此事件是否改變利率、AI、Crypto 或風險偏好。",
+      86,
+    ),
+  })),
+    ...fallbackTopThree,
+  ].slice(0, 3);
+  const marketInterpretation = [insight.narrativeTension, insight.whyItMatters, insight.whatChanged].join(" ");
+  const investorWatchpoints = [
+    insight.whatToWatchNext,
+    ...insight.marketSignals.map((signal) => `${signal.signal} ${signal.implication}`),
+    ...buildInvestorWatchpoints({ ai, crypto, macro, rates, risk, taiwan }),
+  ].slice(0, 6);
   const macroWatch = {
     headline: "Macro Watch",
     whatHappened: cleanIntelligenceSentence(rates?.summary ?? macro?.summary, "Fed、Treasury yield、美元與通膨資料仍是今日風險資產的定價核心。", 120),
@@ -486,7 +471,7 @@ function attachDailyContentEngine(
         ]
       : ["No major crypto catalyst today.", "仍需觀察 BTC / ETH、ETF flow、stablecoin liquidity 與高槓桿資金是否出現風險偏好轉折。"],
   };
-  const ixuanView = buildIxuanView({ ai, crypto, macro, rates, risk });
+  const ixuanView = insight.ixuanView || buildIxuanView({ ai, crypto, macro, rates, risk });
   const executiveSummary = buildExecutiveSummary({
     intelligence,
     marketInterpretation,
@@ -532,6 +517,7 @@ function attachDailyContentEngine(
     coverageScore,
     contentQuality,
     providerHealth: sourceHealthFromStatus(sourceStatus),
+    insight,
   };
 }
 

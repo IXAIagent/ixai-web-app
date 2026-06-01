@@ -3,6 +3,7 @@ import type {
   PeriodicIntelligenceNarrative,
   PeriodicIntelligencePeriod,
 } from "@/src/lib/intelligence/periodic/types";
+import { buildIXAIInsight } from "@/src/lib/intelligence/insight";
 import type { NormalizedNewsItem } from "@/src/types/news";
 
 const PERIOD_LABEL: Record<PeriodicIntelligencePeriod, string> = {
@@ -117,6 +118,7 @@ export function buildPeriodicIntelligenceNarrative(
   const secondary = dominantThemes[1] ?? "AI / tech earnings power";
   const upcoming = input.upcomingEvents?.[0];
   const diversity = categoryDiversity(items);
+  const insight = buildIXAIInsight(input);
 
   const whatHappened = sentence(
     [
@@ -161,27 +163,25 @@ export function buildPeriodicIntelligenceNarrative(
     160,
   );
   const ixuanView = sentence(
+    insight.ixuanView ||
     `${periodLabel}一玄觀點：市場不是缺少資訊，而是需要判斷哪一條敘事正在被重新定價。${primary} 若延續，下一步要看 ${whatToWatchNext[0] ?? "利率、AI 與風險偏好是否同向"}。`,
     `${periodLabel}一玄觀點聚焦市場正在 pricing 什麼，而不是追逐單一新聞。`,
     190,
   );
-  const socialHook = input.period === "weekly"
-    ? `${periodLabel}市場最大轉折是什麼？`
-    : `${periodLabel}市場最重要的訊號是什麼？`;
+  const socialHook = insight.socialFunnel.hook;
   const socialConflict = sentence(
+    insight.socialFunnel.conflict ||
     `${primary} 看似是主線，但 ${secondary} 與風險偏好正在拉扯市場方向。`,
     "主線存在，但風險約束也在升高。",
     86,
   );
   const socialPayoff = sentence(
+    insight.socialFunnel.payoff ||
     `${periodLabel}完整 Brief 會把新聞拆成主線、風險與下一步觀察，而不是只列 headline。`,
     `${periodLabel}完整 Brief 已整理市場主線與風險脈絡。`,
     78,
   );
-  const clearCTA =
-    input.period === "weekly"
-      ? "閱讀完整 Weekly Intelligence"
-      : "閱讀完整 Daily Brief";
+  const clearCTA = insight.socialFunnel.cta;
 
   return {
     clearCTA,

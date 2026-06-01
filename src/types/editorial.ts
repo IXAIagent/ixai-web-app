@@ -169,6 +169,7 @@ export type DailyIntelligenceDraft = {
   coverageScore?: DailyCoverageScore;
   contentQuality?: DailyContentQualityScore;
   providerHealth?: DailyProviderHealth[];
+  insight?: import("@/src/lib/intelligence/insight/types").IXAIInsightOutput;
   // v1.32 — narrative intelligence bundle (optional, jsonb-friendly).
   narrative?: WeeklyNarrativeBundle;
 };
@@ -368,6 +369,10 @@ export type WeeklyIntelligenceSections = {
   // Daily / Weekly / future Monthly / Yearly can share one narrative
   // contract without a Supabase migration.
   periodicNarrative?: import("@/src/lib/intelligence/periodic/types").PeriodicIntelligenceNarrative;
+  // v1.46 — IXAI Insight Engine output. Stored in sections jsonb so
+  // Weekly Brief and Weekly Social Pack share event / signal / tension /
+  // viewpoint logic without a Supabase migration.
+  insight?: import("@/src/lib/intelligence/insight/types").IXAIInsightOutput;
 };
 
 export type WeeklyDailyCoreAggregation = {

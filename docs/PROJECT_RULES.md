@@ -342,6 +342,9 @@ Daily Intelligence Rules:
 Periodic Intelligence Source Rules:
 
 - News Source is the source of truth. IXAI Intelligence Engine interprets news intake into period-specific outputs.
+- Periodic outputs must follow News Source → Event Extraction → Signal Extraction → Tension / Change Detection → Insight Generation → Brief → Social Pack.
+- Daily and Weekly briefs must include key events, market signals, narrative tension, what changed, why it matters, what to watch next, and I-Xuan View.
+- Social Packs must use the insight social funnel: hook, conflict, payoff, and contextual CTA.
 - Daily, Weekly, Monthly, and Yearly are separate periodic intelligence products, not nested summaries of each other.
 - Daily Intelligence should use recent daily news intake and produce Daily Brief + Daily Social Pack.
 - Weekly Intelligence should use weekly news intake, weekly categorization, weekly events, next-week calendar, and periodic narrative model as its primary source.

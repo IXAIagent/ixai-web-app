@@ -21,10 +21,12 @@ import {
   type NarrativeBundle,
 } from "@/src/lib/intelligence/narrative-engine";
 import { buildWeeklyAggregationFromDailyCores } from "@/src/lib/intelligence/core";
+import { buildIXAIInsight } from "@/src/lib/intelligence/insight";
 import {
   buildPeriodicIntelligenceNarrative,
   type PeriodicIntelligenceNarrative,
 } from "@/src/lib/intelligence/periodic";
+import type { IXAIInsightOutput } from "@/src/lib/intelligence/insight";
 import type {
   WeeklyDailyCoreAggregation,
   WeeklyDraftGenerationSummary,
@@ -823,7 +825,7 @@ function buildIntelligenceSummary(
   upcoming: UpcomingEvent[],
   intake: NewsIntakeResult,
   periodicNarrative: PeriodicIntelligenceNarrative,
-  dailyCoreAggregation?: WeeklyDailyCoreAggregation,
+  insight: IXAIInsightOutput,
 ): WeeklyIntelligenceSections["intelligenceSummary"] {
   const fedSignal = past.fedRatesMacro[0];
   const aiSignal = past.aiSemiconductors[0];
@@ -878,12 +880,10 @@ function buildIntelligenceSummary(
       : "市場敘事仍圍繞利率、AI capex 與台股供應鏈兌現能力；本週無單一事件改變整體 regime。";
 
   return {
-    pricing: periodicNarrative.mainNarrative || pricing,
-    riskTone: periodicNarrative.riskNarrative || riskTone,
+    pricing: insight.whyItMatters || periodicNarrative.mainNarrative || pricing,
+    riskTone: insight.narrativeTension || periodicNarrative.riskNarrative || riskTone,
     whatChanged:
-      dailyCoreAggregation?.sourceBriefSlugs.length
-        ? `${periodicNarrative.whatChanged} Daily continuity context：${dailyCoreAggregation.repeatedThemes.slice(0, 3).join("、") || "limited history"}。`
-        : periodicNarrative.whatChanged || whatChanged,
+      insight.whatChanged || periodicNarrative.whatChanged || whatChanged,
   };
 }
 
@@ -919,6 +919,7 @@ function buildWeeklySections({
   narrative,
   dailyCoreAggregation,
   periodicNarrative,
+  insight,
 }: {
   intake: NewsIntakeResult;
   past: WeeklyPastWeekHighlights;
@@ -931,6 +932,7 @@ function buildWeeklySections({
   narrative: NarrativeBundle;
   dailyCoreAggregation?: WeeklyDailyCoreAggregation;
   periodicNarrative: PeriodicIntelligenceNarrative;
+  insight: IXAIInsightOutput;
 }): WeeklyIntelligenceSections {
   const fedRatesPast = past.fedRatesMacro[0];
   const taiwanPast = past.taiwanEquities[0];
@@ -976,7 +978,7 @@ function buildWeeklySections({
           : "台積電與 AI server 相關供應鏈仍是台股風險偏好與外資配置的主要觀察窗口。",
     },
     fcnMarketObservation: buildFcnObservation(past),
-    intelligenceSummary: buildIntelligenceSummary(past, upcoming, intake, periodicNarrative, dailyCoreAggregation),
+    intelligenceSummary: buildIntelligenceSummary(past, upcoming, intake, periodicNarrative, insight),
     pastWeekHighlights: past,
     upcomingWeek,
     sourcesUsed,
@@ -1011,6 +1013,7 @@ function buildWeeklySections({
     },
     dailyCoreAggregation,
     periodicNarrative,
+    insight,
   };
 }
 
@@ -1049,14 +1052,18 @@ function buildAiSuggestion(
 
   return {
     summarySuggestion: sections.intelligenceSummary.pricing,
-    keyThemes: sections.periodicNarrative?.dominantThemes.length
+    keyThemes: sections.insight?.keyEvents.length
+      ? sections.insight.keyEvents.map((event) => event.category)
+      : sections.periodicNarrative?.dominantThemes.length
       ? sections.periodicNarrative.dominantThemes
       : sections.marketHighlights.map((item) => item.label),
     riskFocus,
-    nextWeekWatchlist: sections.periodicNarrative?.whatToWatchNext.length
+    nextWeekWatchlist: sections.insight
+      ? [sections.insight.whatToWatchNext, ...sections.insight.marketSignals.map((signal) => signal.implication)].slice(0, 5)
+      : sections.periodicNarrative?.whatToWatchNext.length
       ? sections.periodicNarrative.whatToWatchNext
       : sections.nextWeekFocus,
-    intelligenceNarrative: sections.periodicNarrative?.mainNarrative ?? sections.intelligenceSummary.whatChanged,
+    intelligenceNarrative: sections.insight?.ixuanView ?? sections.periodicNarrative?.mainNarrative ?? sections.intelligenceSummary.whatChanged,
     sourceMode: intake.mode,
     inputNewsCount: intake.itemCount,
     sourceLabels,
@@ -1235,6 +1242,23 @@ export async function generateWeeklyIntelligenceDraft({
       whyItMatters: event.whyItMatters,
     })),
   });
+  const insight = buildIXAIInsight({
+    continuityContext: dailyCoreAggregation.sourceBriefCount
+      ? {
+          narrative: dailyCoreAggregation.weeklyNarrative,
+          tags: dailyCoreAggregation.repeatedThemes,
+          watchpoints: dailyCoreAggregation.nextWeekWatchpoints,
+        }
+      : undefined,
+    newsItems: intake.items,
+    period: "weekly",
+    upcomingEvents: upcoming.map((event) => ({
+      category: event.category,
+      date: event.date,
+      title: event.title,
+      whyItMatters: event.whyItMatters,
+    })),
+  });
 
   const sections = buildWeeklySections({
     intake,
@@ -1248,6 +1272,7 @@ export async function generateWeeklyIntelligenceDraft({
     narrative,
     dailyCoreAggregation,
     periodicNarrative,
+    insight,
   });
   const aiSuggestion = buildAiSuggestion(sections, intake, upcoming);
   const revisionNumber =

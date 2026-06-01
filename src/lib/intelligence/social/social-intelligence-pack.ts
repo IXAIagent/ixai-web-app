@@ -125,11 +125,40 @@ function compactText(value?: string, fallback = "IXAI 已整理今日市場脈�
   return output ? (/[。！？.!?；;]$/.test(output) ? output : `${output}。`) : fallback;
 }
 
+function socialThemeLabel(value?: string) {
+  const normalized = normalizeSocialCopy(value, "AI / Tech｜財報與資本支出驗證");
+
+  if (/AI\s*\/\s*tech earnings power/i.test(normalized)) {
+    return "AI / Tech｜財報與資本支出驗證";
+  }
+
+  if (/rates\s*\/\s*macro pricing/i.test(normalized)) {
+    return "Macro｜利率與美元定價";
+  }
+
+  if (/Taiwan AI supply chain/i.test(normalized)) {
+    return "Taiwan｜AI 供應鏈外資與法說訊號";
+  }
+
+  if (/crypto liquidity/i.test(normalized)) {
+    return "Crypto｜流動性與風險偏好";
+  }
+
+  if (/risk regime/i.test(normalized)) {
+    return "Risk｜波動率與市場廣度";
+  }
+
+  return normalized;
+}
+
 function normalizeSocialCopy(value?: string, fallback = "IXAI 已整理今日市場脈絡與風險觀察。") {
   return (value ?? fallback)
     .replace(/\*\*/g, "")
     .replace(/…/g, "")
-    .replace(/相較前一份 Brief[，：:]?\s*/g, "市場記憶顯示：")
+    .replace(/相較前一份 Brief[，：:]?\s*/g, "")
+    .replace(/相較最近\s*\d+\s*份 Daily Intelligence[，：:]?\s*/g, "")
+    .replace(/點進 IXAI App 看完整 Daily Brief/g, "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief")
+    .replace(/完整內容請見 IXAI App/g, "想看完整市場訊號與下一步觀察，請進 IXAI App")
     .replace(/([，。！？；])\s*[，。]+/g, "$1")
     .replace(/([。！？；])，/g, "$1")
     .replace(/Short Insight|Observation\s*\d+/gi, "")
@@ -316,16 +345,6 @@ function dailyIxuanView(source?: DailyBriefDraft | null) {
   return "本輪 AI 行情已不只是晶片股行情，而是逐步擴散到雲端、資料庫與企業軟體。短期仍需留意利率與估值壓力，但只要企業 AI 資本支出沒有反轉，市場主線仍可能圍繞 AI 基礎設施與軟體效率展開。";
 }
 
-function dailyMemoryPoint(source?: DailyBriefDraft | null) {
-  const memory = source?.intelligence?.whatChangedSinceLastBrief?.replace(/^相較前一份 Brief[，：:]\s*/, "");
-
-  if (!memory) {
-    return "市場記憶：IXAI 正在持續追蹤 AI、利率與風險偏好是否延續或轉向。";
-  }
-
-  return `市場記憶：${readableSnippet(memory, "市場主線仍需觀察延續與轉向。", 70)}`;
-}
-
 function appHref(target?: string) {
   if (!target) {
     return "https://app.ixuan.ai/daily-brief";
@@ -341,12 +360,12 @@ function appHref(target?: string) {
 function buildDailyCaption() {
   return [
     "【一玄每日 AI 投資日報】",
-    "今日市場重點已整理完成：",
-    "・市場焦點新聞",
-    "・AI / 科技觀察",
-    "・FCN 與風險環境",
+    "今日重點不是新聞數量，而是事件背後的市場訊號：",
+    "・今天最大事件",
+    "・市場訊號與風險拉扯",
+    "・AI / Tech 與 FCN awareness",
     "・一玄觀點",
-    "完整日報請見 IXAI App：",
+    "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief：",
     APP_URL,
     DISCLAIMER,
   ].join("\n");
@@ -355,12 +374,12 @@ function buildDailyCaption() {
 function buildWeeklyCaption() {
   return [
     "【一玄每週 AI 投資週報】",
-    "本週市場重點整理：",
-    "・市場回顧",
-    "・AI / 科技趨勢",
-    "・FCN 與風險觀察",
-    "・一玄週觀點",
-    "完整週報請見 IXAI App：",
+    "本週重點不是單日新聞加總，而是市場敘事的轉折：",
+    "・本週最大市場轉折",
+    "・三個市場訊號",
+    "・AI / Tech 主線",
+    "・Risk / FCN awareness",
+    "想看完整市場訊號與下週觀察，請進 IXAI App 讀 Weekly Intelligence：",
     APP_URL,
     DISCLAIMER,
   ].join("\n");
@@ -370,21 +389,22 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   const dateLabel = formatDateLabel(source?.publishedAt ?? source?.updatedAt);
   const core = source ? getDailyIntelligenceCoreFromBrief(source) : null;
   const fallbackSummary = executiveSummaryBullets(source);
+  const insight = source?.intelligence?.insight;
   const stopScrollBullets = core
     ? [
-        readableSnippet(core.conversionHook, "這不是單一新聞，而是今天市場主線的變化。", 46),
-        "點進 IXAI App 看完整 Daily Brief。",
+        readableSnippet(insight?.socialFunnel.conflict ?? core.conversionHook, "這不是單一新聞，而是今天市場主線的變化。", 46),
+        readableSnippet(insight?.socialFunnel.payoff ?? core.socialCTA, "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief。", 54),
       ]
     : firstItems(fallbackSummary, 2);
   const curiosityBullets = core
     ? (() => {
         const curiosity = readableSnippet(
-          core.socialCuriosity,
+          insight?.socialFunnel.conflict ?? core.socialCuriosity,
           "為什麼這件事值得點進去看？關鍵在市場主線是否延續或轉向。",
           58,
         );
         const thesis = distinctSocialValue(
-          core.socialThesis,
+          insight?.whyItMatters ?? core.socialThesis,
           [curiosity],
           "完整 Daily Brief 會拆解新聞背後的市場定價與風險約束。",
           58,
@@ -419,21 +439,24 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
           `Watch Next｜${watchNext}`,
         ];
       })()
-    : dailyAiTechPoints(source);
+    : insight
+      ? [
+          `Key Signal｜${readableSnippet(insight.marketSignals[0]?.signal, "AI / Tech 訊號正在測試市場風險偏好。", 48)}`,
+          `Why It Matters｜${readableSnippet(insight.marketSignals[0]?.implication ?? insight.whyItMatters, "這會影響科技成長與高 beta 風險承受度。", 48)}`,
+          `Watch Next｜${readableSnippet(insight.whatToWatchNext, "觀察 AI、利率與風險偏好是否同向。", 48)}`,
+        ]
+      : dailyAiTechPoints(source);
   const riskPoints = core
     ? [
         `Risk State｜${source?.intelligence?.riskRegimeReasoning?.current ?? "Elevated"}`,
-        `Why It Matters｜${readableSnippet(core.socialHooks.riskHook, "觀察波動率、美元、利率與市場廣度是否同向。", 48)}`,
+        `Why It Matters｜${readableSnippet(insight?.narrativeTension ?? core.socialHooks.riskHook, "觀察波動率、美元、利率與市場廣度是否同向。", 48)}`,
         `FCN Awareness｜${source?.intelligence?.fcnAwareness?.topic ?? "KO / KI"}：${readableSnippet(source?.intelligence?.fcnAwareness?.explanation, "理解 KO / KI / Worst Performer 等結構概念。", 46)}`,
       ]
     : dailyRiskPoints(source);
-  const dailyInsight = readableSnippet(core?.socialHooks.ixuanHook ?? dailyIxuanView(source), "一玄觀點聚焦市場正在 pricing 什麼，而不是單一新聞。", 120);
-  const memoryPoint = core
-    ? `市場記憶：${readableSnippet(core.whatChanged, "市場主線仍需觀察延續與轉向。", 70)}`
-    : dailyMemoryPoint(source);
+  const dailyInsight = readableSnippet(insight?.ixuanView ?? core?.socialHooks.ixuanHook ?? dailyIxuanView(source), "一玄觀點聚焦市場正在 pricing 什麼，而不是單一新聞。", 120);
   const dailyTarget = core?.contentFunnelTarget ?? (source?.slug ? `/daily-brief/${source.slug}` : "/daily-brief");
-  const dailyCta = core?.socialCTA ?? "完整 Daily Brief 已整理在 IXAI App。";
-  const socialTitle = core?.headlineHook ?? source?.title ?? "今日市場最重要的事";
+  const dailyCta = insight?.socialFunnel.cta ?? core?.socialCTA ?? "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief。";
+  const socialTitle = insight?.socialFunnel.hook ?? core?.headlineHook ?? source?.title ?? "今日市場最重要的事";
 
   return {
     caption: buildDailyCaption(),
@@ -476,7 +499,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
         title: "Risk Regime",
       },
       {
-        bullets: [dailyInsight, dailyCta, memoryPoint],
+        bullets: [dailyInsight, dailyCta],
         eyebrow: "I-Xuan View",
         footer: `${dailyCta} · app.ixuan.ai`,
         id: "ixuan_view",
@@ -492,17 +515,21 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       ? `${formatDateLabel(source.weekStart)} - ${formatDateLabel(source.weekEnd)}`
       : formatDateLabel(source?.publishedAt ?? source?.updatedAt);
   const periodic = source?.sections.periodicNarrative;
+  const insight = source?.sections.insight;
   const weeklyView =
+    insight?.ixuanView ??
     periodic?.ixuanView ??
     source?.sections.intelligenceSummary.pricing ??
     source?.aiSuggestion.intelligenceNarrative ??
     "本週核心不在單一新聞，而是利率、AI 科技與風險偏好如何共同改變市場定價。";
   const weeklyTarget = source?.slug ? `/weekly-brief/${source.slug}` : "/weekly-brief";
   const weeklyHref = appHref(weeklyTarget);
-  const weeklyCta = periodic?.clearCTA ?? "閱讀完整 Weekly Intelligence";
+  const weeklyCta = insight?.socialFunnel.cta ?? periodic?.clearCTA ?? "想看完整市場訊號與下週觀察，請進 IXAI App 讀 Weekly Intelligence。";
   const weeklySignalLabels = ["Macro", "AI / Tech", "Risk"];
   const weeklySignals = (
-    periodic?.whatToWatchNext.length
+    insight?.marketSignals.length
+      ? insight.marketSignals.slice(0, 3).map((signal, index) => `${weeklySignalLabels[index] ?? "Signal"}｜${signal.signal} ${signal.implication}`)
+      : periodic?.whatToWatchNext.length
       ? periodic.whatToWatchNext.slice(0, 3)
       : [
           "Macro｜利率與美元仍牽動風險偏好。",
@@ -535,18 +562,18 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
     kind: "weekly",
     sourceBriefId: source?.id,
     subtitle: "Weekly Intelligence",
-    title: periodic?.socialHook ?? "本週市場最大轉折是什麼？",
+    title: insight?.socialFunnel.hook ?? periodic?.socialHook ?? "本週市場最大轉折是什麼？",
     slides: [
       {
         bullets: [
-          compactText(periodic?.socialConflict ?? source?.summary, "利率、AI 科技與風險偏好正在拉扯本週市場方向。", 58),
-          compactText(periodic?.socialPayoff, "點進 IXAI App 看完整 Weekly Intelligence。", 58),
+          compactText(insight?.socialFunnel.conflict ?? periodic?.socialConflict ?? source?.summary, "利率、AI 科技與風險偏好正在拉扯本週市場方向。", 58),
+          compactText(insight?.socialFunnel.payoff ?? periodic?.socialPayoff, "想看完整市場訊號與下週觀察，請進 IXAI App 讀 Weekly Intelligence。", 58),
         ],
         eyebrow: "Weekly Intelligence",
         footer: "Institutional Research · Weekly Intelligence",
         id: "cover",
         subtitle: "一玄資訊",
-        title: periodic?.socialHook ?? "本週市場最大轉折是什麼？",
+        title: insight?.socialFunnel.hook ?? periodic?.socialHook ?? "本週市場最大轉折是什麼？",
       },
       {
         bullets: weeklySignals,
@@ -556,8 +583,8 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       },
       {
         bullets: [
-          compactText(weeklyAiTheme, "AI infrastructure / semiconductors / cloud / data center / software", 48),
-          compactText(periodic?.whyItMatters ?? source?.sections.taiwanAi.summary, "觀察 AI supply chain 是否維持資金關注與產業敘事。", 62),
+          compactText(socialThemeLabel(weeklyAiTheme), "AI / Tech｜財報與資本支出驗證", 48),
+          compactText(insight?.whyItMatters ?? periodic?.whyItMatters ?? source?.sections.taiwanAi.summary, "觀察 AI supply chain 是否維持資金關注與產業敘事。", 62),
           "台股 AI 供應鏈為公開觀察主題，非個別標的建議。",
         ],
         eyebrow: "AI / Tech Weekly",
@@ -566,7 +593,7 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       },
       {
         bullets: [
-          compactText(weeklyRisk, "本週風險環境以波動、利率與美元節奏為核心。", 56),
+          compactText(insight?.narrativeTension ?? weeklyRisk, "本週風險環境以波動、利率與美元節奏為核心。", 56),
           compactText(source?.sections.fcnMarketObservation.sentiment, "FCN 觀察以波動率、AI basket 與 worst-of 概念為教育用途。", 64),
           "不提供個人 FCN 風險結論或產品推薦。",
         ],

@@ -447,7 +447,7 @@ function WeeklyEditorPreview() {
               Weekly Workflow Console
             </p>
             <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-              Weekly Intelligence aggregates recent Daily Intelligence Core. News intake still supports source coverage, but Weekly should inherit the Daily source-of-truth narrative before human review.
+              Weekly Intelligence uses weekly news intake, weekly themes, upcoming events, and IXAI Insight Engine output. Daily Core is continuity context only.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -685,7 +685,7 @@ function WeeklyEditorPreview() {
                   {selectedWeeklyDraft.sections.dailyCoreAggregation ? (
                     <div className="mt-2 space-y-1 text-xs leading-5 text-[rgba(245,240,230,0.5)]">
                       <p>
-                        Daily Core source: {selectedWeeklyDraft.sections.dailyCoreAggregation.sourceBriefCount} briefs ·{" "}
+                        Continuity context: {selectedWeeklyDraft.sections.dailyCoreAggregation.sourceBriefCount} Daily briefs ·{" "}
                         {selectedWeeklyDraft.sections.dailyCoreAggregation.aggregationWindow} ·{" "}
                         {selectedWeeklyDraft.sections.dailyCoreAggregation.sourceBriefSlugs.slice(0, 7).join(" / ") || "editorial-safe fallback"}.
                       </p>
@@ -741,7 +741,7 @@ function WeeklyEditorPreview() {
                 {selectedWeeklyDraft.sections.dailyCoreAggregation ? (
                   <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                      Daily Intelligence Core Aggregation
+                      Daily Continuity Context
                     </p>
                     <p className="mt-2 text-sm leading-7 text-[rgba(245,240,230,0.66)]">
                       {selectedWeeklyDraft.sections.dailyCoreAggregation.whatChanged}
@@ -1016,8 +1016,8 @@ export function DailyBriefsAdmin() {
                 Daily / Weekly Intelligence Workflow
               </h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-                Daily Intelligence Core 是日報、Social Pack 與週報聚合的共同來源。新聞來源與市場資料先進入 Daily Core，再由 Editorial Studio
-                審閱、預覽與發布。週報聚合最近 Daily Core，不做自動發布。
+                News Source 是情報來源，IXAI Insight Engine 先抽取事件、訊號、矛盾與觀點，再輸出 Daily / Weekly 與各自 Social Pack。
+                Daily Core 可提供 continuity context，但 Weekly 以週新聞來源、週主題與下週事件為主，不做自動發布。
               </p>
             </div>
             <div className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.045] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)] lg:min-w-[300px]">

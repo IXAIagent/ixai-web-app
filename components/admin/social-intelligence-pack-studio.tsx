@@ -305,7 +305,7 @@ function CoverSlide({
   const bulletLimit = pack.kind === "daily" ? 2 : isFeed ? 4 : 4;
   const bullets = slide.bullets
     .slice(0, bulletLimit)
-    .map((bullet) => fitReadableText(bullet, isFeed ? 30 : COPY_LIMITS.coverBullet, "市場脈絡與風險環境已整理完成。"));
+    .map((bullet) => fitReadableText(bullet, isFeed ? 30 : COPY_LIMITS.coverBullet, "事件背後的市場訊號正在轉向。"));
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -599,9 +599,9 @@ function IxuanViewSlide({
     .filter(Boolean)
     .join(" ");
   const supplement = fitReadableText(
-    supportingRaw || "完整內容請見 IXAI App。此為市場資訊與教育分享。",
+    supportingRaw || "想看完整市場訊號與下一步觀察，請進 IXAI App。",
     isFeed ? 72 : 64,
-    "完整內容請見 IXAI App。",
+    "想看完整市場訊號與下一步觀察，請進 IXAI App。",
   );
 
   return (
@@ -902,7 +902,7 @@ export function SocialIntelligencePackStudio({
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[rgba(245,240,230,0.62)]">
             產生供 IG Feed / Carousel、FB / Threads 與 Story / LINE 手動發布的平台化圖文素材。每張卡片固定使用正式一玄
-            Logo、IXAI Intelligence header、統一 footer 與 disclaimer。Social Pack 從 Daily / Weekly Intelligence Core 派生，不自動發文、不串接平台 API。
+            Logo、IXAI Intelligence header、統一 footer 與 disclaimer。Social Pack 從 IXAI Insight Engine 與已審閱 Brief 派生，不自動發文、不串接平台 API。
           </p>
         </div>
         <div className="grid gap-2 sm:flex sm:flex-wrap xl:justify-end">

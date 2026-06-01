@@ -171,7 +171,7 @@ export function buildWhatChangedSinceLastBrief(snapshot: MarketMemorySnapshot) {
       : "主題與前一份 Brief 高度重疊時，IXAI 會追蹤市場敘事的延續、分化與優先順序，而不是重複同一句主線。";
 
     return [
-      `相較前一份 Brief，市場主線仍圍繞 ${dominant}，但今日更需要觀察 ${rising} 是否接棒升溫。`,
+      `市場記憶顯示，市場主線仍圍繞 ${dominant}，但今日更需要觀察 ${rising} 是否接棒升溫。`,
       fading
         ? `${fading} 的訊號相對降溫，代表市場正在重新排序敘事優先順序。`
         : "這代表市場主線尚未反轉，而是從既有題材延伸到新的受惠層。",
@@ -203,7 +203,7 @@ export function attachMarketMemoryToDailyIntelligence(
   const whatChangedSinceLastBrief = buildWhatChangedSinceLastBrief(snapshot);
   const continuityTags = buildContinuityTags(snapshot);
   const memoryPrefix = snapshot.memoryDate
-    ? `相較前一份 Brief，今日市場主線並未完全反轉，而是呈現 ${continuityTags.slice(0, 2).join(" / ")} 的延續與重新排序。`
+    ? `市場記憶顯示，今日市場主線並未完全反轉，而是呈現 ${continuityTags.slice(0, 2).join(" / ")} 的延續與重新排序。`
     : `IXAI 正在建立第一層市場記憶，今日先以 ${continuityTags.slice(0, 2).join(" / ")} 作為後續追蹤基準。`;
   const baseIxuanView = cleanText(intelligence.ixuanView);
 

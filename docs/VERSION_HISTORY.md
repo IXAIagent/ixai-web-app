@@ -998,3 +998,36 @@ Out of Scope:
 - Platform APIs, auto publishing, LINE broadcast, or marketing automation.
 - Portfolio Intelligence or Pro monetization.
 - Buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.46.0 — IXAI Insight Engine Fix
+
+Why:
+
+- Daily Brief and Weekly Brief still behaved too much like news summaries even after periodic source correction.
+- Social Packs had platform-ready layout but needed stronger hooks, tension, payoff, and I-Xuan viewpoint.
+- IXAI needed a dedicated interpretation layer between news intake and brief / social outputs.
+
+What Changed:
+
+- Added `src/lib/intelligence/insight/` as the core Event Extraction → Signal Extraction → Tension / Change Detection → Insight Generation layer.
+- Added keyEvents, marketSignals, narrativeTension, whatChanged, whyItMatters, whatToWatchNext, I-Xuan View, and socialFunnel output.
+- Rewired Daily generation so Daily Brief fields come from insight output instead of category summary fallback.
+- Rewired Weekly generation so Weekly Brief fields use weekly news-source insight and upcoming events.
+- Rewired Daily / Weekly Social Packs to use hook, conflict, payoff, and contextual CTA from the insight social funnel.
+- Cleaned recurring generic phrases such as previous-brief wording and generic app CTA fallbacks from generated social surfaces.
+
+Key Decisions:
+
+- News Source remains the source of truth, but raw news must pass through an insight engine before becoming a brief or social asset.
+- Daily and Weekly are separate period outputs, but both use the same insight contract.
+- Social Packs are traffic entry points built from insight, not compressed brief screenshots.
+- Compliance boundaries remain unchanged: education, risk awareness, and market interpretation only.
+
+Out of Scope:
+
+- Supabase migration execution.
+- Weekly revision schema rollout.
+- Auth, LINE Login, LIFF, or provider pipeline changes.
+- Platform APIs, auto publishing, LINE broadcast, or marketing automation.
+- Portfolio Intelligence or Pro monetization.
+- Buy/sell recommendations, target prices, return promises, or automated trading.

@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.45.0`
+`v1.46.0`
 
 ## Related Strategic Documents
 
@@ -351,6 +351,17 @@ Completed:
 - Corrected Weekly so weekly news intake, weekly categorization, upcoming-week calendar, and periodic narrative are the primary Weekly sources.
 - Kept Daily Core as optional Weekly continuity context only.
 - Reworked Weekly Social Pack as a Weekly conversion entry, not a Daily aggregation image.
+- Preserved manual publishing, no platform APIs, no Supabase migration, and non-advisory compliance boundaries.
+
+### v1.46.0 — IXAI Insight Engine Fix
+
+Completed:
+
+- Added the core Insight Engine layer between news intake and Daily / Weekly outputs.
+- Added event extraction, signal extraction, narrative tension, change detection, I-Xuan View, and social funnel generation.
+- Rewired Daily generation to use insight output for the largest event, market signal, why it matters, next watchpoint, and I-Xuan View.
+- Rewired Weekly generation to use insight output from weekly news intake and upcoming events.
+- Rewired Daily / Weekly Social Packs to use hook, conflict, payoff, and contextual CTA instead of summary compression.
 - Preserved manual publishing, no platform APIs, no Supabase migration, and non-advisory compliance boundaries.
 
 Next:
