@@ -880,10 +880,10 @@ function buildIntelligenceSummary(
       : "市場敘事仍圍繞利率、AI capex 與台股供應鏈兌現能力；本週無單一事件改變整體 regime。";
 
   return {
-    pricing: insight.whyItMatters || periodicNarrative.mainNarrative || pricing,
-    riskTone: insight.narrativeTension || periodicNarrative.riskNarrative || riskTone,
+    pricing: insight.questionDriven?.keyAnswer || insight.whyItMatters || periodicNarrative.mainNarrative || pricing,
+    riskTone: insight.questionDriven?.counterEvidence[0] || insight.narrativeTension || periodicNarrative.riskNarrative || riskTone,
     whatChanged:
-      insight.whatChanged || periodicNarrative.whatChanged || whatChanged,
+      insight.questionDriven?.whatChangesMyMind[0] || insight.whatChanged || periodicNarrative.whatChanged || whatChanged,
   };
 }
 
@@ -1059,11 +1059,20 @@ function buildAiSuggestion(
       : sections.marketHighlights.map((item) => item.label),
     riskFocus,
     nextWeekWatchlist: sections.insight
-      ? [sections.insight.whatToWatchNext, ...sections.insight.marketSignals.map((signal) => signal.implication)].slice(0, 5)
+      ? [
+          ...(sections.insight.questionDriven?.watchNext ?? []),
+          ...(sections.insight.questionDriven?.whatChangesMyMind ?? []),
+          sections.insight.whatToWatchNext,
+          ...sections.insight.marketSignals.map((signal) => signal.implication),
+        ].slice(0, 5)
       : sections.periodicNarrative?.whatToWatchNext.length
       ? sections.periodicNarrative.whatToWatchNext
       : sections.nextWeekFocus,
-    intelligenceNarrative: sections.insight?.ixuanView ?? sections.periodicNarrative?.mainNarrative ?? sections.intelligenceSummary.whatChanged,
+    intelligenceNarrative:
+      sections.insight?.questionDriven?.ixuanView ??
+      sections.insight?.ixuanView ??
+      sections.periodicNarrative?.mainNarrative ??
+      sections.intelligenceSummary.whatChanged,
     sourceMode: intake.mode,
     inputNewsCount: intake.itemCount,
     sourceLabels,

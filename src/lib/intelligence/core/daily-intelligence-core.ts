@@ -34,8 +34,8 @@ const FALLBACK_TOP_THREE: DailyIntelligenceCore["topThreeThings"] = [
     watchpoint: "觀察美債殖利率、美元與 VIX 是否同步轉強。",
   },
   {
-    headline: "AI：資金仍圍繞 AI infrastructure",
-    whatHappened: "AI infrastructure、semiconductors、cloud 與 enterprise software 仍是資金觀察主軸。",
+    headline: "AI：資金開始篩選能證明收入的公司",
+    whatHappened: "半導體、雲端與企業軟體仍是 AI 資金觀察主軸，但市場正在要求更清楚的支出與收入證據。",
     whyItMatters: "AI 主線若擴散到軟體與雲端，市場敘事會從晶片延伸到企業效率。",
     watchpoint: "觀察大型科技、企業軟體、資料中心與半導體供應鏈是否同向。",
   },
@@ -167,7 +167,7 @@ function inferTagsFromBrief(brief: DailyBriefDraft) {
   const tags: string[] = [];
 
   if (/AI|semiconductor|chip|NVDA|NVIDIA|software|cloud|半導體|晶片|雲端|企業軟體|供應鏈/i.test(raw)) {
-    tags.push("AI infrastructure");
+    tags.push("AI earnings proof");
   }
   if (/rate|yield|Fed|Treasury|dollar|inflation|利率|殖利率|聯準會|美元|通膨/i.test(raw)) {
     tags.push("rates pressure");
@@ -182,7 +182,7 @@ function inferTagsFromBrief(brief: DailyBriefDraft) {
     tags.push("risk regime");
   }
 
-  return unique(tags.length ? tags : ["AI infrastructure", "rates pressure", "risk regime"]).slice(0, 5);
+  return unique(tags.length ? tags : ["AI earnings proof", "rates pressure", "risk regime"]).slice(0, 5);
 }
 
 function legacySectionTopStories(brief: DailyBriefDraft): DailyIntelligenceCore["topThreeThings"] {
@@ -278,7 +278,7 @@ function buildFallbackTags(intelligence: DailyIntelligenceDraft) {
     ...(intelligence.continuityTags ?? []),
     ...(intelligence.marketMemory?.dominantThemes ?? []),
     ...(intelligence.marketMemory?.risingThemes ?? []),
-    "AI infrastructure",
+    "AI earnings proof",
     "rates pressure",
     "risk regime",
   ])
@@ -321,14 +321,14 @@ function buildSocialHooks(core: Omit<DailyIntelligenceCore, "socialHooks" | "wee
 }
 
 function buildWeeklySignals(core: Omit<DailyIntelligenceCore, "socialHooks" | "weeklySignals">): DailyWeeklySignals {
-  const tags = core.continuityTags.length ? core.continuityTags : ["AI infrastructure", "rates pressure", "risk regime"];
+  const tags = core.continuityTags.length ? core.continuityTags : ["AI earnings proof", "rates pressure", "risk regime"];
   const risingThemes = core.whatChanged.includes("升溫")
     ? tags.slice(0, 2)
     : core.continuityTags.slice(1, 3);
 
   return {
     fadingThemes: core.whatChanged.includes("降溫") ? tags.slice(-1) : [],
-    primaryTheme: tags[0] ?? "AI infrastructure",
+    primaryTheme: tags[0] ?? "AI earnings proof",
     repeatedThemes: tags.slice(0, 4),
     risingThemes: unique(risingThemes).slice(0, 3),
     watchNext: core.investorWatchpoints.slice(0, 5),
@@ -512,9 +512,9 @@ export function buildWeeklyAggregationFromDailyCores(
   const sourceBriefCount = sourceBriefSlugs.length;
   const limitedHistory = sourceBriefCount < 7;
   const aggregationWindow = sevenDayWindow.length >= 5 ? "7d" : "limited-history";
-  const fallbackThemes = ["AI infrastructure", "rates pressure", "risk regime"];
+  const fallbackThemes = ["AI earnings proof", "rates pressure", "risk regime"];
   const resolvedRepeated = repeatedThemes.length ? repeatedThemes : fallbackThemes;
-  const primary = resolvedRepeated[0] ?? "AI infrastructure";
+  const primary = resolvedRepeated[0] ?? "AI earnings proof";
   const secondary = resolvedRepeated[1] ?? "rates pressure";
   const limitedPrefix = limitedHistory ? "Based on limited Daily Intelligence history，" : "";
   const whatChanged = latest

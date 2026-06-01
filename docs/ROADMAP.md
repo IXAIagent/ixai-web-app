@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.46.0`
+`v1.47.1`
 
 ## Related Strategic Documents
 
@@ -363,6 +363,26 @@ Completed:
 - Rewired Weekly generation to use insight output from weekly news intake and upcoming events.
 - Rewired Daily / Weekly Social Packs to use hook, conflict, payoff, and contextual CTA instead of summary compression.
 - Preserved manual publishing, no platform APIs, no Supabase migration, and non-advisory compliance boundaries.
+
+### v1.47.0 — Question Driven Intelligence Engine
+
+Completed:
+
+- Added QuestionDrivenInsight as the Daily / Weekly narrative spine.
+- Daily Intelligence now starts from the market's central question, then answers with key answer, evidence, counter-evidence, watch next, and I-Xuan View.
+- Weekly Intelligence now asks the week-level market question before interpreting evidence and next-week events.
+- Daily / Weekly Social Packs now use question-led funnel roles rather than repeating the same summary thesis across slides.
+- Preserved non-advisory, educational, risk-aware boundaries.
+
+### v1.47.1 — Evidence Quality Sprint
+
+Completed:
+
+- Added event/source/whyItMatters evidence details to the question-driven insight model.
+- Added evidence scoring for specificity, recency, relevance, named entities, and catalyst strength.
+- Added narrative repetition detection for social slide copy.
+- Rewrote Weekly Social Pack flow around What Changed This Week, The One Thing That Matters, Next Week catalysts, and I-Xuan Weekly View.
+- Preserved non-advisory, educational, risk-aware boundaries.
 
 Next:
 

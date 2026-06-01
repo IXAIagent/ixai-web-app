@@ -305,7 +305,7 @@ function CoverSlide({
   const bulletLimit = pack.kind === "daily" ? 2 : isFeed ? 4 : 4;
   const bullets = slide.bullets
     .slice(0, bulletLimit)
-    .map((bullet) => fitReadableText(bullet, isFeed ? 30 : COPY_LIMITS.coverBullet, "事件背後的市場訊號正在轉向。"));
+    .map((bullet) => fitReadableText(bullet, isFeed ? 30 : COPY_LIMITS.coverBullet, "資金開始要求更清楚的證據。"));
 
   return (
     <div className="flex h-full min-h-0 flex-col">

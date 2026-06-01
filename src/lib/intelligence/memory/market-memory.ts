@@ -7,7 +7,7 @@ type ThemeDefinition = {
 };
 
 const THEME_DEFINITIONS: ThemeDefinition[] = [
-  { tag: "AI infrastructure", keywords: ["ai infrastructure", "data center", "資料中心", "半導體", "semiconductor", "NVDA", "AVGO"] },
+  { tag: "AI earnings proof", keywords: ["ai infrastructure", "data center", "資料中心", "半導體", "semiconductor", "NVDA", "AVGO"] },
   { tag: "enterprise software", keywords: ["enterprise software", "software", "cloud", "雲端", "企業軟體", "資料庫", "PLTR", "MSFT"] },
   { tag: "rates pressure", keywords: ["rates", "treasury", "yield", "Fed", "利率", "殖利率", "美債", "美元"] },
   { tag: "Taiwan AI supply chain", keywords: ["taiwan", "台股", "台積電", "供應鏈", "AI supply chain"] },
@@ -17,9 +17,9 @@ const THEME_DEFINITIONS: ThemeDefinition[] = [
 ];
 
 const FALLBACK_SNAPSHOT: MarketMemorySnapshot = {
-  aiTechNarrative: "AI infrastructure 仍是公開市場情報的核心觀察主線。",
+  aiTechNarrative: "AI 資金開始從題材熱度轉向支出、收入與供應鏈證據。",
   cryptoNarrative: "Crypto liquidity 繼續作為風險偏好與槓桿情緒的輔助觀察。",
-  dominantThemes: ["AI infrastructure", "rates pressure", "risk regime"],
+  dominantThemes: ["AI earnings proof", "rates pressure", "risk regime"],
   fadingThemes: [],
   macroNarrative: "利率、美元與 Treasury yield 仍是風險資產估值容錯率的共同折現因子。",
   previousIxuanView: undefined,
@@ -161,7 +161,7 @@ export function buildMarketMemorySnapshot(
 }
 
 export function buildWhatChangedSinceLastBrief(snapshot: MarketMemorySnapshot) {
-  const dominant = snapshot.dominantThemes[0] ?? "AI infrastructure";
+  const dominant = snapshot.dominantThemes[0] ?? "AI earnings proof";
   const rising = snapshot.risingThemes[0] ?? "enterprise software";
   const fading = snapshot.fadingThemes[0];
 

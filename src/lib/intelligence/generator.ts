@@ -217,7 +217,7 @@ function buildTopThreeThings({
     },
     {
       headline: "AI：資金主線從晶片延伸到軟體與雲端",
-      whatHappened: "AI infrastructure、semiconductors、cloud 與 enterprise software 仍是資金關注核心。",
+      whatHappened: "半導體、雲端與企業軟體仍是 AI 資金觀察核心，但市場正在要求更清楚的獲利與支出證據。",
       whyItMatters: "AI 行情若從單一晶片股擴散到軟體與雲端，代表企業 AI 支出敘事仍有延伸空間。",
       watchpoint: "觀察大型科技、企業軟體、資料中心與半導體供應鏈是否同向。",
     },
@@ -254,7 +254,7 @@ function buildInvestorWatchpoints({
   taiwan?: NormalizedNewsItem;
 }) {
   const watchpoints = [
-    ai ? "AI demand：觀察 AI infrastructure、enterprise software 與 cloud spending 是否延續。" : "AI demand：確認 AI 主線是否仍有資金與基本面支撐。",
+    ai ? "AI proof：觀察企業軟體、雲端支出與半導體供應鏈是否同時驗證 AI 支出。" : "AI proof：確認 AI 主線是否仍有資金與基本面支撐。",
     rates || macro ? "Rates / Treasury yields：觀察長端利率是否限制科技股估值擴張。" : "Rates / Treasury yields：若利率回升，風險資產容錯率會下降。",
     "Enterprise software spending：確認 AI 需求是否從晶片擴散到企業軟體與資料庫。",
     crypto ? "Crypto liquidity：觀察 BTC / ETH、ETF flow 與 stablecoin liquidity 是否支持風險偏好。" : "Crypto liquidity：沒有重大催化時，仍作為風險偏好溫度計。",
@@ -417,8 +417,9 @@ function attachDailyContentEngine(
     newsItems,
     period: "daily",
   });
+  const questionDriven = insight.questionDriven;
   const todaySignal = cleanIntelligenceSentence(
-    `${insight.keyEvents[0]?.title ?? buildTodaySignal({ ai, macro, rates, risk })} ${insight.marketSignals[0]?.signal ?? ""}`,
+    `${questionDriven.centralQuestion} ${questionDriven.keyAnswer}`,
     buildTodaySignal({ ai, macro, rates, risk }),
     150,
   );
@@ -429,17 +430,21 @@ function attachDailyContentEngine(
     whatHappened: cleanIntelligenceSentence(event.sourceContext, "公開來源捕捉到此市場事件。", 76),
     whyItMatters: cleanIntelligenceSentence(event.whyItMatters, "此事件有助於判斷市場主線與風險偏好。", 96),
     watchpoint: cleanIntelligenceSentence(
-      insight.marketSignals[index]?.implication ?? insight.whatToWatchNext,
+      questionDriven.evidence[index] ?? insight.marketSignals[index]?.implication ?? insight.whatToWatchNext,
       "觀察此事件是否改變利率、AI、Crypto 或風險偏好。",
       86,
     ),
   })),
     ...fallbackTopThree,
   ].slice(0, 3);
-  const marketInterpretation = [insight.narrativeTension, insight.whyItMatters, insight.whatChanged].join(" ");
+  const marketInterpretation = [
+    `Key Answer：${questionDriven.keyAnswer}`,
+    `Counter Evidence：${questionDriven.counterEvidence[0] ?? insight.narrativeTension}`,
+    `What Changes My Mind：${questionDriven.whatChangesMyMind[0] ?? insight.whatChanged}`,
+  ].join(" ");
   const investorWatchpoints = [
-    insight.whatToWatchNext,
-    ...insight.marketSignals.map((signal) => `${signal.signal} ${signal.implication}`),
+    ...questionDriven.watchNext,
+    ...questionDriven.whatChangesMyMind,
     ...buildInvestorWatchpoints({ ai, crypto, macro, rates, risk, taiwan }),
   ].slice(0, 6);
   const macroWatch = {
@@ -455,7 +460,7 @@ function attachDailyContentEngine(
       return text.includes(symbol.toLowerCase()) || ["NVDA", "MSFT", "AMD", "AVGO", "PLTR"].includes(symbol);
     }).slice(0, 5),
     observations: [
-      "AI infrastructure、semiconductors、cloud 與 software 仍是資金關注主軸。",
+      "半導體、雲端與企業軟體仍是 AI 資金關注主軸。",
       "台灣 AI supply chain 需同步觀察美股科技股、外資流向與匯率壓力。",
       "AI / Tech 的重點不是單一 headline，而是資本支出、供應鏈能見度與估值容錯率是否同向。",
       "若領漲只集中在少數 megacap，市場廣度不足會放大回撤敏感度。",
@@ -786,9 +791,9 @@ export async function generateDailyIntelligenceDraftFromNews(
   const sections: DailyBriefDraft["sections"] = [
     {
       category: "today_signal",
-      headline: "今日一句話：今天市場最重要的訊號。",
+      headline: "Central Question：今天市場最重要的問題。",
       summary: intelligence.todaySignal ?? intelligence.todayHeadline,
-      ixaiView: "Daily Brief 先回答今天市場最重要的訊號，再進入新聞、風險與觀察點。",
+      ixaiView: "Daily Brief 先提出今天市場真正想解答的問題，再用證據、反證與下一步觀察回答它。",
     },
     {
       category: "top_three_things",
@@ -805,7 +810,7 @@ export async function generateDailyIntelligenceDraftFromNews(
     },
     {
       category: "market_interpretation",
-      headline: "Market Interpretation：把新聞轉成市場解讀。",
+      headline: "Key Answer / Counter Evidence：把新聞轉成市場解讀。",
       summary: intelligence.marketInterpretation ?? intelligence.marketRegimeNote,
       ixaiView: "Market Interpretation 聚焦市場正在 pricing 的主線、限制條件與風險脈絡。",
     },
@@ -851,7 +856,7 @@ export async function generateDailyIntelligenceDraftFromNews(
     },
     {
       category: "ai_tech_watch",
-      headline: "AI / Tech Watch：追蹤大型科技、半導體與 AI infrastructure。",
+      headline: "AI / Tech Watch：追蹤大型科技、半導體與 AI 支出證據。",
       summary: [
         `Symbols: ${intelligence.aiTechWatch?.symbols.join(", ")}`,
         ...(intelligence.aiTechWatch?.observations ?? []),
@@ -903,7 +908,7 @@ export async function generateDailyIntelligenceDraftFromNews(
     id: `generated-${slug}`,
     slug,
     status: "review",
-    title: intelligence.todayHeadline,
+    title: intelligence.insight?.questionDriven.centralQuestion ?? intelligence.todayHeadline,
     marketSummary: `${generatedMarketSummary} ${engineMarketSummary}`,
     editorialNote: intelligence.ixuanView ?? intelligence.marketRegimeNote,
     sections,

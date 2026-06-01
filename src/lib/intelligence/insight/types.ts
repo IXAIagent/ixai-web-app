@@ -23,6 +23,14 @@ export type IXAIMarketSignal = {
   implication: string;
 };
 
+export type IXAIEvidenceItem = {
+  event: string;
+  source: string;
+  whyItMatters: string;
+  category: IXAIInsightCategory;
+  score: number;
+};
+
 export type IXAISocialFunnel = {
   hook: string;
   conflict: string;
@@ -30,14 +38,35 @@ export type IXAISocialFunnel = {
   cta: string;
 };
 
+export type InsightNarrative = {
+  tension: string;
+  whyNow: string;
+  ixuanView: string;
+  watchNext: string;
+};
+
+export type QuestionDrivenInsight = {
+  centralQuestion: string;
+  keyAnswer: string;
+  evidence: string[];
+  evidenceDetails: IXAIEvidenceItem[];
+  counterEvidence: string[];
+  whatChangesMyMind: string[];
+  watchNext: string[];
+  ixuanView: string;
+};
+
 export type IXAIInsightOutput = {
   keyEvents: IXAIKeyEvent[];
   marketSignals: IXAIMarketSignal[];
   narrativeTension: string;
+  whyNow: string;
   whatChanged: string;
   whyItMatters: string;
   whatToWatchNext: string;
   ixuanView: string;
+  insightNarrative: InsightNarrative;
+  questionDriven: QuestionDrivenInsight;
   socialFunnel: IXAISocialFunnel;
 };
 

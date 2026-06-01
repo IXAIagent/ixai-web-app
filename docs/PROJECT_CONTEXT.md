@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.46.0`
+`v1.47.1`
 
 Current Core Flow:
 
@@ -126,6 +126,10 @@ Periodic Intelligence Engine Correction now re-centers the content architecture 
 
 IXAI Insight Engine Fix now adds the missing core interpretation layer between news intake and period outputs. Daily and Weekly generation now follow News Source → Event Extraction → Signal Extraction → Tension / Change Detection → Insight Generation → Brief → Social Pack. The engine produces keyEvents, marketSignals, narrativeTension, whatChanged, whyItMatters, whatToWatchNext, I-Xuan View, and socialFunnel fields so briefs and social assets carry actual market interpretation instead of summary fallback text.
 
+Question Driven Intelligence Engine now makes Daily and Weekly outputs start from the market question users actually have. Each intelligence output carries centralQuestion, keyAnswer, evidence, counterEvidence, whatChangesMyMind, watchNext, and I-Xuan View. Daily / Weekly Social Packs now follow a question-led funnel instead of repeating the same AI / rates thesis across slides.
+
+Evidence Quality Sprint now makes the evidence layer event-first instead of conclusion-first. Daily and Weekly question-driven outputs now carry scored evidence details with event, source, whyItMatters, category, and score. Weekly Social Pack is rewritten around What Changed This Week, The One Thing That Matters, Next Week catalysts, and I-Xuan Weekly View.
+
 Current Highest Priorities:
 
 1. Weekly Revision Migration Review / Rollout.
@@ -173,6 +177,8 @@ Completed product capabilities include:
 - Social Media Optimization Layer: Social Pack Studio now supports IG Feed / Carousel 4:5 and Story / Reels 9:16 export formats with platform-specific preview dimensions and copy density.
 - Periodic Intelligence Engine Correction: News Source is the source of truth; IXAI Intelligence Engine produces Daily / Weekly / future Monthly / Yearly outputs; Social Packs are conversion entries for each period.
 - IXAI Insight Engine: event extraction, signal extraction, narrative tension, what changed, what to watch next, I-Xuan View, and social funnel generation for Daily / Weekly outputs.
+- Question Driven Intelligence Engine: Daily / Weekly now begin with a central market question and answer it through evidence, counter-evidence, observable watchpoints, and I-Xuan View.
+- Evidence Quality Sprint: Daily / Weekly evidence now prioritizes specific events, named entities, sources, catalysts, and upcoming events before interpretation.
 - Share Intelligence foundation with static intelligence share routes for acquisition and continuity.
 - Welcome and onboarding foundation for investor profile, watchlist seed, intelligence preference, and LINE entry.
 - Intelligence delivery foundation for Morning Intelligence, delivery preferences, LINE readiness, and Public / Pro delivery tier separation.

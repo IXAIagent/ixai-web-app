@@ -1031,3 +1031,66 @@ Out of Scope:
 - Platform APIs, auto publishing, LINE broadcast, or marketing automation.
 - Portfolio Intelligence or Pro monetization.
 - Buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.47.0 — Question Driven Intelligence Engine
+
+Why:
+
+- v1.46.0 added the insight engine, but real outputs still repeated similar AI / rates / risk phrasing across Daily, Weekly, and Social Pack surfaces.
+- IXAI needed to answer the user's actual market question rather than simply improve summary structure.
+- Social Packs needed slide-level roles that do not repeat the same thesis.
+
+What Changed:
+
+- Added QuestionDrivenInsight with centralQuestion, keyAnswer, evidence, counterEvidence, whatChangesMyMind, watchNext, and I-Xuan View.
+- Rewired Daily generation so the public Daily title and today signal start from the central question and answer.
+- Rewired Weekly generation so weekly summary and next-week watchlist can use question-driven evidence and counter-evidence.
+- Rewired Daily / Weekly Social Packs into question-led funnels: question, answer, evidence, counter-evidence / risk, and I-Xuan View + contextual CTA.
+- Strengthened AI provider instructions around central question, key answer, evidence, counter-evidence, and observable watch next.
+
+Key Decisions:
+
+- Question-driven intelligence is now the narrative spine for Daily and Weekly outputs.
+- Tension is not enough; every output must answer a concrete market question.
+- Social Packs must avoid repeating the same idea across slides.
+- Compliance boundaries remain unchanged: public education, risk awareness, and market interpretation only.
+
+Out of Scope:
+
+- Supabase migration execution.
+- Weekly revision schema rollout.
+- Auth, LINE Login, LIFF, or provider pipeline changes.
+- Platform APIs, auto publishing, LINE broadcast, or marketing automation.
+- Portfolio Intelligence or Pro monetization.
+- Buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.47.1 — Evidence Quality Sprint
+
+Why:
+
+- v1.47.0 made Daily and Weekly question-led, but the evidence layer still contained too many conclusions rather than specific events.
+- Weekly still needed a stronger report structure: what changed this week, the one thing that matters, next week catalysts, and I-Xuan Weekly View.
+- Social Packs needed a stricter anti-repetition pass so each slide introduces new information.
+
+What Changed:
+
+- Added scored evidence details with event, source, whyItMatters, category, and score.
+- Added evidence scoring based on specificity, recency, relevance, named entities, and catalyst strength.
+- Added narrative repetition detection and distinct slide fallback support for social content.
+- Rewired Daily and Weekly question-driven evidence to prefer concrete events such as company adoption, crypto flows, CPI, MediaTek, and other catalysts.
+- Reworked Weekly Social Pack structure around What Changed This Week, The One Thing That Matters, Next Week, and I-Xuan Weekly View.
+
+Key Decisions:
+
+- Evidence must answer "what actually happened" before explaining what it means.
+- Generic macro or AI statements are not evidence unless attached to a concrete event, company, data point, or upcoming catalyst.
+- Weekly should read like a report, not seven Daily Briefs merged together.
+
+Out of Scope:
+
+- Supabase migration execution.
+- Weekly revision schema rollout.
+- Auth, LINE Login, LIFF, or provider pipeline changes.
+- Platform APIs, auto publishing, LINE broadcast, or marketing automation.
+- Portfolio Intelligence or Pro monetization.
+- Buy/sell recommendations, target prices, return promises, or automated trading.

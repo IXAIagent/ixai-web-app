@@ -105,23 +105,41 @@ function eventTitle(item: NormalizedNewsItem, category: IXAIInsightCategory) {
     return clampSentence(item.title, "公開市場事件需要人工審閱。", 72);
   }
 
+  const text = `${item.title} ${item.summary ?? ""}`;
+
+  if (/nvidia|meta|schlumberger|adopting ai|ai-driven enterprise/i.test(text)) {
+    return "大型企業 AI 採用進度成為本週檢查 AI 現金流的線索。";
+  }
+
+  if (/binance.*stocks|tokenized equities|stock and ETF trading/i.test(text)) {
+    return "Binance 推出美股與 ETF 交易，Crypto 與傳統資產邊界再靠近。";
+  }
+
+  if (/crypto ETP outflows|outflows|redemption streak|CoinShares/i.test(text)) {
+    return "Crypto ETP 連續流出，流動性風險沒有消失。";
+  }
+
+  if (/cpi|inflation|treasury|yield|fed|dollar/i.test(text)) {
+    return "利率、通膨與美元仍在檢查高估值資產的容錯率。";
+  }
+
   if (category === "macro") {
-    return "公開來源顯示利率、美元或總經訊號正在影響市場定價。";
+    return "利率、美元或總經訊號正在影響市場定價。";
   }
 
   if (category === "ai-tech") {
-    return "公開來源顯示 AI / Tech 主線仍在接受資金與基本面驗證。";
+    return "AI / Tech 主線仍在接受資金與基本面驗證。";
   }
 
   if (category === "taiwan") {
-    return "公開來源顯示台灣 AI 供應鏈仍是市場觀察焦點。";
+    return "台灣 AI 供應鏈仍是市場觀察焦點。";
   }
 
   if (category === "crypto") {
-    return "公開來源顯示 Crypto 流動性與監管主題仍在變動。";
+    return "Crypto 流動性與監管主題仍在變動。";
   }
 
-  return "公開來源顯示風險偏好與波動環境需要重新檢視。";
+  return "風險偏好與波動環境需要重新檢視。";
 }
 
 export function extractInsightEvents(newsItems: NormalizedNewsItem[]): IXAIKeyEvent[] {

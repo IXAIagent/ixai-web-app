@@ -1,5 +1,6 @@
 import type { DailyBriefDraft, WeeklyIntelligenceDraft } from "@/src/types/editorial";
 import { getDailyIntelligenceCoreFromBrief } from "@/src/lib/intelligence/core";
+import { ensureDistinctNarratives } from "@/src/lib/intelligence/insight/repetition-detector";
 
 export type SocialPackKind = "daily" | "weekly";
 export type SocialExportFormat = "ig_feed_4_5" | "story_9_16";
@@ -125,32 +126,6 @@ function compactText(value?: string, fallback = "IXAI 已整理今日市場脈�
   return output ? (/[。！？.!?；;]$/.test(output) ? output : `${output}。`) : fallback;
 }
 
-function socialThemeLabel(value?: string) {
-  const normalized = normalizeSocialCopy(value, "AI / Tech｜財報與資本支出驗證");
-
-  if (/AI\s*\/\s*tech earnings power/i.test(normalized)) {
-    return "AI / Tech｜財報與資本支出驗證";
-  }
-
-  if (/rates\s*\/\s*macro pricing/i.test(normalized)) {
-    return "Macro｜利率與美元定價";
-  }
-
-  if (/Taiwan AI supply chain/i.test(normalized)) {
-    return "Taiwan｜AI 供應鏈外資與法說訊號";
-  }
-
-  if (/crypto liquidity/i.test(normalized)) {
-    return "Crypto｜流動性與風險偏好";
-  }
-
-  if (/risk regime/i.test(normalized)) {
-    return "Risk｜波動率與市場廣度";
-  }
-
-  return normalized;
-}
-
 function normalizeSocialCopy(value?: string, fallback = "IXAI 已整理今日市場脈絡與風險觀察。") {
   return (value ?? fallback)
     .replace(/\*\*/g, "")
@@ -159,6 +134,13 @@ function normalizeSocialCopy(value?: string, fallback = "IXAI 已整理今日市
     .replace(/相較最近\s*\d+\s*份 Daily Intelligence[，：:]?\s*/g, "")
     .replace(/點進 IXAI App 看完整 Daily Brief/g, "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief")
     .replace(/完整內容請見 IXAI App/g, "想看完整市場訊號與下一步觀察，請進 IXAI App")
+    .replace(/市場訊號正在轉向/g, "市場正在重新篩選可被證明的主線")
+    .replace(/投資人持續觀察/g, "資金會檢查")
+    .replace(/風險偏好受到壓力/g, "風險資產的容錯率下降")
+    .replace(/值得關注|持續關注/g, "需要用可觀察資料驗證")
+    .replace(/市場情緒變化/g, "資金定價條件改變")
+    .replace(/事件背後的市場訊號/g, "市場正在要求的證據")
+    .replace(/AI\s*敘事仍有吸引力/g, "資金仍願意買 AI")
     .replace(/([，。！？；])\s*[，。]+/g, "$1")
     .replace(/([。！？；])，/g, "$1")
     .replace(/Short Insight|Observation\s*\d+/gi, "")
@@ -213,6 +195,23 @@ function readableSnippet(value?: string, fallback = "維持風險意識與情境
 
 function socialPoint(label: string, value?: string, fallback = "維持市場脈絡與風險觀察。", maxLength = 38) {
   return `${label}｜${readableSnippet(value, fallback, maxLength)}`;
+}
+
+function evidenceSocialPoint(label: string, evidence?: { event: string; source: string; whyItMatters: string }) {
+  if (!evidence) {
+    return `${label}｜等待 editor 補充具體事件與來源。`;
+  }
+
+  return `${label}｜${readableSnippet(evidence.event, "具體事件待 editor 審閱。", 54)} ${readableSnippet(evidence.whyItMatters, "此事件用來驗證市場主線。", 54)}`;
+}
+
+function evidenceLabel(category?: string, fallback = "Evidence") {
+  if (category === "macro") return "Macro";
+  if (category === "ai-tech") return "AI / Tech";
+  if (category === "taiwan") return "Taiwan";
+  if (category === "crypto") return "Crypto";
+  if (category === "risk") return "Risk";
+  return fallback;
 }
 
 function distinctSocialValue(
@@ -360,7 +359,7 @@ function appHref(target?: string) {
 function buildDailyCaption() {
   return [
     "【一玄每日 AI 投資日報】",
-    "今日重點不是新聞數量，而是事件背後的市場訊號：",
+    "今日重點不是新聞數量，而是市場正在要求什麼證據：",
     "・今天最大事件",
     "・市場訊號與風險拉扯",
     "・AI / Tech 與 FCN awareness",
@@ -390,23 +389,27 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   const core = source ? getDailyIntelligenceCoreFromBrief(source) : null;
   const fallbackSummary = executiveSummaryBullets(source);
   const insight = source?.intelligence?.insight;
+  const questionDriven = insight?.questionDriven;
+  const dailyEvidence = questionDriven?.evidenceDetails ?? [];
+  const dailyAiEvidence =
+    dailyEvidence.find((item) => item.category === "ai-tech" || item.category === "taiwan") ??
+    dailyEvidence[0];
   const stopScrollBullets = core
     ? [
-        readableSnippet(insight?.socialFunnel.conflict ?? core.conversionHook, "這不是單一新聞，而是今天市場主線的變化。", 46),
-        readableSnippet(insight?.socialFunnel.payoff ?? core.socialCTA, "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief。", 54),
+        readableSnippet("今天要問的不是 AI 熱不熱，而是誰能拿出現金流證據。", "今天要問的不是 AI 熱不熱，而是誰能拿出證據。", 50),
       ]
     : firstItems(fallbackSummary, 2);
   const curiosityBullets = core
     ? (() => {
         const curiosity = readableSnippet(
-          insight?.socialFunnel.conflict ?? core.socialCuriosity,
-          "為什麼這件事值得點進去看？關鍵在市場主線是否延續或轉向。",
+          questionDriven?.keyAnswer ?? insight?.socialFunnel.conflict ?? core.socialCuriosity,
+          "資金沒有離開主線，但正在篩選能交出證據的公司。",
           58,
         );
         const thesis = distinctSocialValue(
-          insight?.whyItMatters ?? core.socialThesis,
+          questionDriven?.keyAnswer ?? insight?.whyItMatters ?? core.socialThesis,
           [curiosity],
-          "完整 Daily Brief 會拆解新聞背後的市場定價與風險約束。",
+          "真正要看的不是題材熱度，而是證據是否擴散到財報、訂單與現金流。",
           58,
         );
 
@@ -416,18 +419,18 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   const aiTech = core
     ? (() => {
         const keySignal = readableSnippet(
-          core.socialHooks.aiTechSignal.keySignal,
-          "AI 需求可能從晶片擴散到雲端與企業軟體。",
+          dailyAiEvidence?.event ?? questionDriven?.evidence[0] ?? core.socialHooks.aiTechSignal.keySignal,
+          "AI 需求需要用財報、訂單與資本支出驗證。",
           48,
         );
         const whyItMatters = distinctSocialValue(
-          core.socialHooks.aiTechSignal.whyItMatters,
+          dailyAiEvidence?.whyItMatters ?? questionDriven?.evidence[1] ?? core.socialHooks.aiTechSignal.whyItMatters,
           [keySignal],
-          "若擴散成立，AI 會從個股行情轉為產業效率敘事。",
+          "如果證據擴散，AI 會從個股行情變成產業現金流問題。",
           48,
         );
         const watchNext = distinctSocialValue(
-          core.socialHooks.aiTechSignal.watchNext,
+          questionDriven?.watchNext[0] ?? core.socialHooks.aiTechSignal.watchNext,
           [keySignal, whyItMatters],
           "觀察雲端、企業軟體與半導體供應鏈是否同向。",
           48,
@@ -449,14 +452,30 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   const riskPoints = core
     ? [
         `Risk State｜${source?.intelligence?.riskRegimeReasoning?.current ?? "Elevated"}`,
-        `Why It Matters｜${readableSnippet(insight?.narrativeTension ?? core.socialHooks.riskHook, "觀察波動率、美元、利率與市場廣度是否同向。", 48)}`,
+        `Counter Evidence｜${readableSnippet(questionDriven?.counterEvidence[1] ?? insight?.narrativeTension ?? core.socialHooks.riskHook, "如果利率與美元同向走高，估值容錯率會下降。", 54)}`,
         `FCN Awareness｜${source?.intelligence?.fcnAwareness?.topic ?? "KO / KI"}：${readableSnippet(source?.intelligence?.fcnAwareness?.explanation, "理解 KO / KI / Worst Performer 等結構概念。", 46)}`,
       ]
     : dailyRiskPoints(source);
-  const dailyInsight = readableSnippet(insight?.ixuanView ?? core?.socialHooks.ixuanHook ?? dailyIxuanView(source), "一玄觀點聚焦市場正在 pricing 什麼，而不是單一新聞。", 120);
+  const dailyInsight = readableSnippet(questionDriven?.ixuanView ?? insight?.ixuanView ?? core?.socialHooks.ixuanHook ?? dailyIxuanView(source), "一玄觀點聚焦市場正在 pricing 什麼，而不是單一新聞。", 120);
   const dailyTarget = core?.contentFunnelTarget ?? (source?.slug ? `/daily-brief/${source.slug}` : "/daily-brief");
-  const dailyCta = insight?.socialFunnel.cta ?? core?.socialCTA ?? "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief。";
-  const socialTitle = insight?.socialFunnel.hook ?? core?.headlineHook ?? source?.title ?? "今日市場最重要的事";
+  const dailyCta = insight?.socialFunnel.cta ?? core?.socialCTA ?? "想看今天的證據、反證與下一步觀察，請進 IXAI App 讀 Daily Brief。";
+  const socialTitle = questionDriven?.centralQuestion ?? insight?.socialFunnel.hook ?? core?.headlineHook ?? source?.title ?? "今日市場最重要的事";
+  const dailySlideBullets = ensureDistinctNarratives(
+    [
+      stopScrollBullets[0] ?? "",
+      curiosityBullets[0] ?? "",
+      aiTech[0] ?? "",
+      riskPoints[1] ?? "",
+      dailyInsight,
+    ],
+    [
+      "今天要問的不是題材熱不熱，而是證據能不能延續。",
+      "短答案：資金開始挑選能交出結果的公司。",
+      "具體證據來自企業採用、資本支出與供應鏈事件。",
+      "風險在於利率與美元讓估值容錯率下降。",
+      "一玄觀點聚焦現金流證據，而不是 headline 熱度。",
+    ],
+  );
 
   return {
     caption: buildDailyCaption(),
@@ -472,7 +491,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
     title: socialTitle,
     slides: [
       {
-        bullets: stopScrollBullets,
+        bullets: [dailySlideBullets[0]],
         eyebrow: "Daily Intelligence",
         footer: "Social Pack → Daily Brief",
         id: "cover",
@@ -480,26 +499,26 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
         title: socialTitle,
       },
       {
-        bullets: curiosityBullets,
+        bullets: [dailySlideBullets[1], curiosityBullets[1]].filter(Boolean),
         eyebrow: "Why It Matters",
         footer: "人工審閱後供手動發布",
         id: "top_news",
         title: "為什麼值得點進去看",
       },
       {
-        bullets: aiTech,
+        bullets: [dailySlideBullets[2], ...aiTech.slice(1)],
         eyebrow: "IXAI Tech Intelligence",
         id: "ai_tech_watch",
         title: "AI / 科技觀察",
       },
       {
-        bullets: riskPoints,
+        bullets: [riskPoints[0], dailySlideBullets[3], riskPoints[2]].filter(Boolean),
         eyebrow: "FCN Awareness",
         id: "fcn_risk_watch",
         title: "Risk Regime",
       },
       {
-        bullets: [dailyInsight, dailyCta],
+        bullets: [dailySlideBullets[4], dailyCta],
         eyebrow: "I-Xuan View",
         footer: `${dailyCta} · app.ixuan.ai`,
         id: "ixuan_view",
@@ -516,7 +535,13 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       : formatDateLabel(source?.publishedAt ?? source?.updatedAt);
   const periodic = source?.sections.periodicNarrative;
   const insight = source?.sections.insight;
+  const questionDriven = insight?.questionDriven;
+  const weeklyEvidence = questionDriven?.evidenceDetails ?? [];
+  const weeklyAiEvidence = weeklyEvidence.find((item) => item.category === "ai-tech" || item.category === "taiwan");
+  const weeklyMacroEvidence = weeklyEvidence.find((item) => item.category === "macro");
+  const weeklyCryptoEvidence = weeklyEvidence.find((item) => item.category === "crypto");
   const weeklyView =
+    questionDriven?.ixuanView ??
     insight?.ixuanView ??
     periodic?.ixuanView ??
     source?.sections.intelligenceSummary.pricing ??
@@ -524,10 +549,17 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
     "本週核心不在單一新聞，而是利率、AI 科技與風險偏好如何共同改變市場定價。";
   const weeklyTarget = source?.slug ? `/weekly-brief/${source.slug}` : "/weekly-brief";
   const weeklyHref = appHref(weeklyTarget);
-  const weeklyCta = insight?.socialFunnel.cta ?? periodic?.clearCTA ?? "想看完整市場訊號與下週觀察，請進 IXAI App 讀 Weekly Intelligence。";
+  const weeklyCta = insight?.socialFunnel.cta ?? periodic?.clearCTA ?? "想看本週證據、反證與下週觀察，請進 IXAI App 讀 Weekly Intelligence。";
   const weeklySignalLabels = ["Macro", "AI / Tech", "Risk"];
   const weeklySignals = (
-    insight?.marketSignals.length
+    weeklyEvidence.length
+      ? [weeklyAiEvidence, weeklyMacroEvidence, weeklyCryptoEvidence]
+          .filter((item): item is NonNullable<typeof item> => Boolean(item))
+          .slice(0, 3)
+          .map((item, index) => evidenceSocialPoint(evidenceLabel(item.category, weeklySignalLabels[index]), item))
+      : questionDriven?.evidence.length
+      ? questionDriven.evidence.slice(0, 3).map((signal, index) => `${weeklySignalLabels[index] ?? "Evidence"}｜${signal}`)
+      : insight?.marketSignals.length
       ? insight.marketSignals.slice(0, 3).map((signal, index) => `${weeklySignalLabels[index] ?? "Signal"}｜${signal.signal} ${signal.implication}`)
       : periodic?.whatToWatchNext.length
       ? periodic.whatToWatchNext.slice(0, 3)
@@ -543,13 +575,29 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
 
     return `${weeklySignalLabels[index] ?? "Watch"}｜${signal}`;
   });
-  const weeklyAiTheme =
-    periodic?.dominantThemes.find((theme) => /ai|tech|software|semi|台灣|taiwan/i.test(theme)) ??
-    source?.sections.taiwanAi.headline;
   const weeklyRisk =
     periodic?.riskNarrative ??
     source?.sections.intelligenceSummary.riskTone ??
     "本週風險環境以波動、利率與美元節奏為核心。";
+  const weeklyNextWeek = questionDriven?.watchNext.length
+    ? questionDriven.watchNext.slice(0, 3)
+    : source?.sections.nextWeekFocus?.slice(0, 3) ?? [];
+  const weeklySlideBullets = ensureDistinctNarratives(
+    [
+      questionDriven?.counterEvidence[0] ?? "",
+      weeklySignals[0] ?? "",
+      questionDriven?.keyAnswer ?? "",
+      weeklyNextWeek[0] ?? "",
+      weeklyView,
+    ],
+    [
+      "本週真正問題是 AI 是否正在從故事換手到證據。",
+      "本週變化來自企業採用、資金流與下週事件。",
+      "單一主線：市場開始從 AI 故事轉向 AI 現金流。",
+      "下週觀察：法說、通膨與利率是否支持科技估值。",
+      "一玄週觀點：看誰能把 AI 變成財報，而不是誰最會講 AI。",
+    ],
+  );
 
   return {
     caption: buildWeeklyCaption(),
@@ -562,48 +610,48 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
     kind: "weekly",
     sourceBriefId: source?.id,
     subtitle: "Weekly Intelligence",
-    title: insight?.socialFunnel.hook ?? periodic?.socialHook ?? "本週市場最大轉折是什麼？",
+    title: questionDriven?.centralQuestion ?? insight?.socialFunnel.hook ?? periodic?.socialHook ?? "本週市場最大轉折是什麼？",
     slides: [
       {
         bullets: [
-          compactText(insight?.socialFunnel.conflict ?? periodic?.socialConflict ?? source?.summary, "利率、AI 科技與風險偏好正在拉扯本週市場方向。", 58),
-          compactText(insight?.socialFunnel.payoff ?? periodic?.socialPayoff, "想看完整市場訊號與下週觀察，請進 IXAI App 讀 Weekly Intelligence。", 58),
+          compactText(weeklySlideBullets[0], "本週真正問題是 AI 是否正在從故事換手到證據。", 58),
         ],
         eyebrow: "Weekly Intelligence",
         footer: "Institutional Research · Weekly Intelligence",
         id: "cover",
         subtitle: "一玄資訊",
-        title: insight?.socialFunnel.hook ?? periodic?.socialHook ?? "本週市場最大轉折是什麼？",
-      },
-      {
-        bullets: weeklySignals,
-        eyebrow: "Market Review",
-        id: "market_review",
-        title: "本週三個重點訊號",
+        title: questionDriven?.centralQuestion ?? insight?.socialFunnel.hook ?? periodic?.socialHook ?? "本週市場最大轉折是什麼？",
       },
       {
         bullets: [
-          compactText(socialThemeLabel(weeklyAiTheme), "AI / Tech｜財報與資本支出驗證", 48),
-          compactText(insight?.whyItMatters ?? periodic?.whyItMatters ?? source?.sections.taiwanAi.summary, "觀察 AI supply chain 是否維持資金關注與產業敘事。", 62),
-          "台股 AI 供應鏈為公開觀察主題，非個別標的建議。",
+          ...weeklySignals.slice(0, 3),
+        ],
+        eyebrow: "Market Review",
+        id: "market_review",
+        title: "What Changed This Week",
+      },
+      {
+        bullets: [
+          compactText(weeklySlideBullets[2], "市場開始從 AI 故事轉向 AI 現金流。", 72),
+          compactText(questionDriven?.whatChangesMyMind[0], "若企業 guidance 轉強，AI 主線才更有延續性。", 62),
         ],
         eyebrow: "AI / Tech Weekly",
         id: "ai_tech_watch",
-        title: "AI / 科技週觀察",
+        title: "The One Thing That Matters",
       },
       {
         bullets: [
-          compactText(insight?.narrativeTension ?? weeklyRisk, "本週風險環境以波動、利率與美元節奏為核心。", 56),
-          compactText(source?.sections.fcnMarketObservation.sentiment, "FCN 觀察以波動率、AI basket 與 worst-of 概念為教育用途。", 64),
+          ...weeklyNextWeek.slice(0, 2).map((item) => compactText(item, "下週觀察法說、通膨與利率訊號。", 64)),
+          compactText(questionDriven?.counterEvidence[1] ?? weeklyRisk, "如果利率或美元再上行，估值容錯率會下降。", 60),
           "不提供個人 FCN 風險結論或產品推薦。",
         ],
         eyebrow: "FCN / Risk Weekly",
         id: "fcn_risk_watch",
-        title: "Risk Regime",
+        title: "Next Week / Risk",
       },
       {
         bullets: [
-          compactText(weeklyView, "本週核心觀點：理解市場正在 pricing 什麼，比追逐單點新聞更重要。", 68),
+          compactText(weeklySlideBullets[4], "本週核心觀點：理解市場正在 pricing 什麼，比追逐單點新聞更重要。", 132),
           `${weeklyCta}：${weeklyTarget}`,
         ],
         eyebrow: "I-Xuan Weekly View",

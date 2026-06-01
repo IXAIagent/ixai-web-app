@@ -375,6 +375,15 @@ Intelligence Distribution Layer Rules:
 - Distribution analytics may record lightweight published / viewed operational events only. They must not include raw email, LINE user ID, watchlist symbols, portfolio holdings, auth tokens, or notification tokens.
 - Any future external delivery requires explicit opt-in persistence, delivery logs, pause/unsubscribe controls, human review, and compliance approval.
 
+Question Driven Intelligence Rules:
+
+- Daily and Weekly Intelligence should begin from a central market question, not a generic summary.
+- Every question-led output should include key answer, evidence, counter-evidence, watch next, and I-Xuan View.
+- Social Packs should assign different roles to each slide: question, answer, evidence, counter-evidence / risk, and I-Xuan View + CTA.
+- Do not repeat the same thesis across multiple slides.
+- Avoid generic analyst phrases such as 市場訊號正在轉向, 投資人持續觀察, 風險偏好受到壓力, 值得關注, 持續關注, 市場情緒變化, 事件背後的市場訊號, AI敘事仍有吸引力.
+- Question-driven outputs remain public education and market interpretation only; they must not become buy/sell recommendations, target prices, return promises, or automated trading instructions.
+
 ## I. Growth Rules
 
 Current stage:
