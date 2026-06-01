@@ -1,5 +1,5 @@
 import type { DailyBriefDraft, WeeklyIntelligenceDraft } from "@/src/types/editorial";
-import { buildDailyIntelligenceCore } from "@/src/lib/intelligence/core";
+import { getDailyIntelligenceCoreFromBrief } from "@/src/lib/intelligence/core";
 
 export type SocialPackKind = "daily" | "weekly";
 export type SocialExportFormat = "ig_feed_4_5" | "story_9_16";
@@ -185,20 +185,23 @@ function socialPoint(label: string, value?: string, fallback = "維持市場脈�
   return `${label}｜${readableSnippet(value, fallback, maxLength)}`;
 }
 
-function socialBullet(value: string, fallback: string, maxLength = 44) {
-  if (value.includes("…")) {
-    const [label] = value.split("｜");
-    return label && label !== value ? `${label}｜${fallback}` : fallback;
-  }
+function distinctSocialValue(
+  value: string | undefined,
+  previousValues: string[],
+  fallback: string,
+  maxLength = 48,
+) {
+  const candidate = readableSnippet(value, fallback, maxLength);
+  const normalizedCandidate = normalizeSocialCopy(candidate);
+  const candidateSentences = normalizedCandidate
+    .split(/[。！？!?；;]/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const hasRepeatedSentence =
+    candidateSentences.length > 1 && new Set(candidateSentences).size < candidateSentences.length;
+  const isDuplicate = previousValues.some((previous) => normalizeSocialCopy(previous) === normalizedCandidate);
 
-  const [label, ...rest] = value.split("｜");
-  const detail = rest.join("｜") || value;
-
-  if (!rest.length) {
-    return readableSnippet(value, fallback, maxLength);
-  }
-
-  return `${label}｜${readableSnippet(detail, fallback, maxLength)}`;
+  return isDuplicate || hasRepeatedSentence ? fallback : candidate;
 }
 
 function firstItems<T>(items: T[] | undefined, count: number) {
@@ -322,6 +325,18 @@ function dailyMemoryPoint(source?: DailyBriefDraft | null) {
   return `相較前一份 Brief：${readableSnippet(memory, "市場主線仍需觀察延續與轉向。", 70)}`;
 }
 
+function appHref(target?: string) {
+  if (!target) {
+    return "https://app.ixuan.ai/daily-brief";
+  }
+
+  if (/^https?:\/\//i.test(target)) {
+    return target;
+  }
+
+  return `https://app.ixuan.ai${target.startsWith("/") ? target : `/${target}`}`;
+}
+
 function buildDailyCaption() {
   return [
     "【一玄每日 AI 投資日報】",
@@ -352,30 +367,57 @@ function buildWeeklyCaption() {
 
 export function generateDailySocialPack(source?: DailyBriefDraft | null): SocialIntelligencePack {
   const dateLabel = formatDateLabel(source?.publishedAt ?? source?.updatedAt);
-  const core = source?.intelligence ? buildDailyIntelligenceCore(source.intelligence) : null;
-  const executiveSummary = core
-    ? firstItems([
-        core.socialHooks.primaryHook,
-        ...core.topThreeThings.map((item) => readableSnippet(item.watchpoint, item.headline, 38)),
-        ...core.investorWatchpoints.map((item) => readableSnippet(item, "維持市場脈絡與風險觀察。", 38)),
-      ], 5)
-    : executiveSummaryBullets(source);
-  const topNews = (core?.socialHooks.marketPulse ?? dailyMarketPulse(source)).map((item, index) =>
-    socialBullet(
-      item,
-      [
-        "美元與利率仍牽動風險偏好。",
-        "AI 資金主線仍需觀察擴散速度。",
-        "高估值環境下，波動率容易放大。",
-      ][index] ?? "維持市場脈絡與風險觀察。",
-    ),
-  );
-  const aiTech = core
+  const core = source ? getDailyIntelligenceCoreFromBrief(source) : null;
+  const fallbackSummary = executiveSummaryBullets(source);
+  const stopScrollBullets = core
     ? [
-        socialPoint("Key Signal", core.socialHooks.aiTechSignal.keySignal, "AI 需求可能從晶片擴散到雲端與企業軟體。", 48),
-        socialPoint("Why It Matters", core.socialHooks.aiTechSignal.whyItMatters, "若擴散成立，AI 會從個股行情轉為產業效率敘事。", 48),
-        socialPoint("Watch Next", core.socialHooks.aiTechSignal.watchNext, "觀察雲端、企業軟體與半導體供應鏈是否同向。", 48),
+        readableSnippet(core.conversionHook, "這不是單一新聞，而是今天市場主線的變化。", 46),
+        "點進 IXAI App 看完整 Daily Brief。",
       ]
+    : firstItems(fallbackSummary, 2);
+  const curiosityBullets = core
+    ? (() => {
+        const curiosity = readableSnippet(
+          core.socialCuriosity,
+          "為什麼這件事值得點進去看？關鍵在市場主線是否延續或轉向。",
+          58,
+        );
+        const thesis = distinctSocialValue(
+          core.socialThesis,
+          [curiosity],
+          "完整 Daily Brief 會拆解新聞背後的市場定價與風險約束。",
+          58,
+        );
+
+        return [curiosity, thesis];
+      })()
+    : firstItems(dailyMarketPulse(source), 2);
+  const aiTech = core
+    ? (() => {
+        const keySignal = readableSnippet(
+          core.socialHooks.aiTechSignal.keySignal,
+          "AI 需求可能從晶片擴散到雲端與企業軟體。",
+          48,
+        );
+        const whyItMatters = distinctSocialValue(
+          core.socialHooks.aiTechSignal.whyItMatters,
+          [keySignal],
+          "若擴散成立，AI 會從個股行情轉為產業效率敘事。",
+          48,
+        );
+        const watchNext = distinctSocialValue(
+          core.socialHooks.aiTechSignal.watchNext,
+          [keySignal, whyItMatters],
+          "觀察雲端、企業軟體與半導體供應鏈是否同向。",
+          48,
+        );
+
+        return [
+          `Key Signal｜${keySignal}`,
+          `Why It Matters｜${whyItMatters}`,
+          `Watch Next｜${watchNext}`,
+        ];
+      })()
     : dailyAiTechPoints(source);
   const riskPoints = core
     ? [
@@ -388,34 +430,37 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   const memoryPoint = core
     ? `相較前一份 Brief：${readableSnippet(core.whatChanged, "市場主線仍需觀察延續與轉向。", 70)}`
     : dailyMemoryPoint(source);
+  const dailyTarget = core?.contentFunnelTarget ?? (source?.slug ? `/daily-brief/${source.slug}` : "/daily-brief");
+  const dailyCta = core?.socialCTA ?? "完整 Daily Brief 已整理在 IXAI App。";
+  const socialTitle = core?.headlineHook ?? source?.title ?? "今日市場最重要的事";
 
   return {
     caption: buildDailyCaption(),
     cta: {
-      href: "https://app.ixuan.ai/daily-brief",
-      label: "完整日報請見 IXAI App",
+      href: appHref(dailyTarget),
+      label: "閱讀完整 Daily Brief",
     },
     dateLabel,
     disclaimer: DISCLAIMER,
     kind: "daily",
     sourceBriefId: source?.id,
     subtitle: "Daily Intelligence",
-    title: core?.socialHooks.primaryHook ?? "今日市場最重要的事",
+    title: socialTitle,
     slides: [
       {
-        bullets: executiveSummary,
+        bullets: stopScrollBullets,
         eyebrow: "Daily Intelligence",
-        footer: "Daily Intelligence · Market Interpretation · Risk Awareness",
+        footer: "Social Pack → Daily Brief",
         id: "cover",
         subtitle: "一玄資訊",
-        title: core?.socialHooks.primaryHook ?? "今日市場最重要的事",
+        title: socialTitle,
       },
       {
-        bullets: topNews,
-        eyebrow: "Market Pulse",
+        bullets: curiosityBullets,
+        eyebrow: "Why It Matters",
         footer: "人工審閱後供手動發布",
         id: "top_news",
-        title: "Market Pulse",
+        title: "為什麼值得點進去看",
       },
       {
         bullets: aiTech,
@@ -430,9 +475,9 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
         title: "Risk Regime",
       },
       {
-        bullets: [dailyInsight, memoryPoint, "完整內容請見 IXAI App。"],
+        bullets: [dailyInsight, memoryPoint, dailyCta],
         eyebrow: "I-Xuan View",
-        footer: "完整日報請見 IXAI App · app.ixuan.ai",
+        footer: `${dailyCta} · app.ixuan.ai`,
         id: "ixuan_view",
         title: "I-Xuan View / 一玄觀點",
       },

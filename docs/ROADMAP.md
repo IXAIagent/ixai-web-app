@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.43.1`
+`v1.44.0`
 
 ## Related Strategic Documents
 
@@ -331,6 +331,16 @@ Completed:
 - Added backward-compatible repository / API / admin UI support that keeps production safe when revision columns do not exist yet.
 - Preserved current locked Weekly behavior until the migration is manually reviewed and applied.
 - Kept public Weekly reads canonical-only when the revision schema is available, with status=published fallback before migration.
+
+### v1.44.0 — Social Conversion Layer
+
+Completed:
+
+- Added social conversion fields to Daily Intelligence Core: headline, headlineHook, conversionHook, socialThesis, socialCuriosity, socialCTA, weeklyThesis, and contentFunnelTarget.
+- Rewired Daily Social Pack into a funnel structure: Stop-scroll Hook, Curiosity Builder, Signal Explainer, Risk Contrast, and I-Xuan View + contextual CTA.
+- Aligned public Daily title / SEO title, Daily Core headline, and Social Slide 1 hook to the same market theme.
+- Preserved platform-aware IG Feed / Story export while making Social Packs a conversion entry into Daily / Weekly / Account / Future Pro.
+- Kept manual publishing, no platform APIs, and non-advisory compliance boundaries.
 
 Next:
 

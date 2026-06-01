@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.43.1`
+`v1.44.0`
 
 Current Core Flow:
 
@@ -119,6 +119,8 @@ Social Media Optimization Layer now makes Social Packs platform-aware. Admin Soc
 Intelligence Source of Truth Architecture now makes Daily Intelligence Core the shared source for Public Daily Brief, Daily Social Pack, and Weekly Intelligence aggregation. Daily Core standardizes todaySignal, topThreeThings, marketInterpretation, investorWatchpoints, whatChanged, continuityTags, I-Xuan View, socialHooks, and weeklySignals. Social Pack is now an entry asset derived from Daily / Weekly Core instead of a parallel content generator, and Weekly Intelligence now aggregates recent Daily Core signals before human review.
 
 Weekly Revision Workflow Phase 1 selects the Option B revision model for same-week Weekly Intelligence revisions. The project now contains a reviewed migration SQL plan and backward-compatible code support for revision_number, parent_weekly_id, is_canonical, superseded_at, superseded_by, and revision_note. Production migration is not applied automatically; until the migration is manually approved and executed, Weekly generation keeps the current locked behavior and clearly explains that revision workflow requires migration. Public Weekly routes remain canonical-only when the revision schema is available, and fall back to status=published reads before migration.
+
+Social Conversion Layer now treats Social Pack as the conversion entry point into Daily / Weekly Intelligence rather than a compressed brief. Daily Intelligence Core now carries headline, headlineHook, conversionHook, socialThesis, socialCuriosity, socialCTA, weeklyThesis, and contentFunnelTarget so the public Daily title, SEO title, Social Slide 1 hook, and Slide 5 CTA follow one content funnel. Daily Social Pack slides now map to stop-scroll hook, curiosity builder, signal explainer, risk contrast, and I-Xuan View + contextual CTA.
 
 Current Highest Priorities:
 

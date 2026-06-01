@@ -7,6 +7,14 @@ import type {
 } from "@/src/types/editorial";
 
 export type DailyIntelligenceCore = {
+  headline: string;
+  headlineHook: string;
+  conversionHook: string;
+  socialThesis: string;
+  socialCuriosity: string;
+  socialCTA: string;
+  weeklyThesis: string;
+  contentFunnelTarget: string;
   todaySignal: string;
   topThreeThings: NonNullable<DailyIntelligenceDraft["topThreeThings"]>;
   marketInterpretation: string;
@@ -47,6 +55,28 @@ function clean(value?: string) {
     .trim();
 }
 
+function dedupeAdjacentSentences(value?: string) {
+  const normalized = clean(value);
+
+  if (!normalized) {
+    return normalized;
+  }
+
+  const parts = normalized
+    .split(/(?<=[。！？!?；;])\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const output: string[] = [];
+
+  for (const part of parts) {
+    if (clean(output[output.length - 1]) !== clean(part)) {
+      output.push(part);
+    }
+  }
+
+  return output.join(" ");
+}
+
 function clamp(value: string | undefined, fallback: string, maxLength = 96) {
   const normalized = clean(value) || fallback;
 
@@ -69,6 +99,11 @@ function clamp(value: string | undefined, fallback: string, maxLength = 96) {
   return output || `${normalized.slice(0, maxLength - 1)}…`;
 }
 
+function clampSentence(value: string | undefined, fallback: string, maxLength = 96) {
+  const output = clamp(value, fallback, maxLength);
+  return /[。！？?]$/.test(output) ? output : `${output}。`;
+}
+
 function unique(items: string[]) {
   return Array.from(new Set(items.map((item) => clean(item)).filter(Boolean)));
 }
@@ -78,6 +113,44 @@ function normalizeTag(tag: string) {
     .replace(/^#/, "")
     .replace(/_/g, " ")
     .trim();
+}
+
+function stripDailyPrefix(value: string) {
+  return clean(value)
+    .replace(/^今日一句話[:：]\s*/i, "")
+    .replace(/^Daily Intelligence[:：]\s*/i, "")
+    .replace(/^今日市場最重要的訊號是[:：]\s*/i, "")
+    .trim();
+}
+
+function buildHeadlineHook(headline: string, todaySignal: string) {
+  const normalized = stripDailyPrefix(headline || todaySignal);
+  const firstClause = normalized
+    .split(/(?<=[。！？!?；;])|，|,/)
+    .map((part) => part.trim())
+    .find(Boolean);
+  const hookBase = firstClause || stripDailyPrefix(todaySignal);
+
+  if (hookBase.length <= 34) {
+    return /[？?]$/.test(hookBase) ? hookBase : `${hookBase}？`;
+  }
+
+  return `${hookBase.slice(0, 33)}？`;
+}
+
+function buildConversionHook(headline: string, topThreeThings: DailyIntelligenceCore["topThreeThings"]) {
+  const headlineTheme = stripDailyPrefix(buildHeadlineHook(headline, topThreeThings[0]?.headline ?? headline))
+    .replace(/[？?]$/, "");
+  const firstWatchpoint = topThreeThings[0]?.watchpoint;
+  const cleanTheme = headlineTheme.replace(/\s+的/g, "的");
+
+  return clampSentence(
+    firstWatchpoint
+      ? `${cleanTheme}的市場脈絡，值得點進完整 Daily Brief 看清楚`
+      : `${cleanTheme}不只是單一新聞，完整脈絡請看 Daily Brief`,
+    "這不是單一新聞，而是今天市場主線的變化。",
+    46,
+  );
 }
 
 function briefTime(brief: DailyBriefDraft) {
@@ -225,7 +298,13 @@ function buildSocialHooks(core: Omit<DailyIntelligenceCore, "socialHooks" | "wee
     thirdTop?.watchpoint;
 
   return {
+    contentFunnelTarget: core.contentFunnelTarget,
+    conversionHook: core.conversionHook,
+    headlineHook: core.headlineHook,
     primaryHook: clamp(core.todaySignal.replace(/^今日最重要的訊號是[:：]\s*/, ""), "今日市場主線聚焦 AI、利率與風險偏好。", 52),
+    socialCTA: core.socialCTA,
+    socialCuriosity: core.socialCuriosity,
+    socialThesis: core.socialThesis,
     marketPulse: [
       `Macro｜${clamp(firstTop?.watchpoint, "美元與利率仍牽動風險偏好。", 34)}`,
       `AI｜${clamp(aiWatchpoint, "資金從晶片延伸到企業軟體。", 34)}`,
@@ -254,22 +333,75 @@ function buildWeeklySignals(core: Omit<DailyIntelligenceCore, "socialHooks" | "w
     risingThemes: unique(risingThemes).slice(0, 3),
     watchNext: core.investorWatchpoints.slice(0, 5),
     weeklyNarrative: clamp(
-      `${core.todaySignal} ${core.whatChanged}`,
+      `${core.weeklyThesis} ${core.whatChanged}`,
       "本週市場主線需要觀察 AI、利率與風險偏好是否延續。",
       320,
     ),
   };
 }
 
-export function buildDailyIntelligenceCore(intelligence: DailyIntelligenceDraft): DailyIntelligenceCore {
+export function buildDailyIntelligenceCore(
+  intelligence: DailyIntelligenceDraft,
+  options: {
+    contentFunnelTarget?: string;
+    headline?: string;
+  } = {},
+): DailyIntelligenceCore {
   const topThreeThings = (intelligence.topThreeThings?.length ? intelligence.topThreeThings : FALLBACK_TOP_THREE).slice(0, 3);
+  const headline = clamp(
+    options.headline ?? intelligence.headline ?? intelligence.todayHeadline,
+    intelligence.todaySignal ?? "今日市場主線聚焦 AI、利率與風險偏好。",
+    86,
+  );
+  const todaySignal = clamp(intelligence.todaySignal ?? headline, "今日最重要的訊號是：AI、利率與風險偏好仍是市場主線。", 120);
+  const headlineHook = intelligence.headlineHook ?? buildHeadlineHook(headline, todaySignal);
+  const hookTheme = stripDailyPrefix(headlineHook).replace(/[？?]$/, "").replace(/\s+的/g, "的");
+  const marketInterpretation = clamp(intelligence.marketInterpretation ?? intelligence.marketRegimeNote, "今日市場解讀重點是 AI、利率與風險偏好的互動。", 220);
+  const conversionHook = intelligence.conversionHook ?? buildConversionHook(headline, topThreeThings);
+  const socialThesis = clampSentence(
+    dedupeAdjacentSentences(
+      intelligence.socialThesis ??
+        (clean(headline) === clean(todaySignal) || todaySignal.includes(headline)
+        ? marketInterpretation
+        : `${headline} ${todaySignal}`),
+    ),
+    "今日市場主線不是單一新聞，而是 AI、利率與風險偏好的重新定價。",
+    116,
+  );
+  const socialCuriosity = clampSentence(
+    intelligence.socialCuriosity ?? `為什麼 ${hookTheme} 值得點進去看？關鍵在於 ${topThreeThings[0]?.whyItMatters ?? "市場正在 pricing 的主線與風險約束"}`,
+    "為什麼這件事值得點進去看？關鍵在市場主線是否延續或轉向。",
+    94,
+  );
+  const contentFunnelTarget =
+    options.contentFunnelTarget ??
+    intelligence.contentFunnelTarget ??
+    "/daily-brief";
+  const socialCTA = clampSentence(
+    intelligence.socialCTA ?? `完整 Daily Brief：${hookTheme}的市場脈絡已整理在 IXAI App`,
+    "完整 Daily Brief 已整理在 IXAI App。",
+    70,
+  );
+  const weeklyThesis = clampSentence(
+    intelligence.weeklyThesis ?? `${headline} 是本週需要追蹤是否延續的 Daily Core 訊號`,
+    "本週需要追蹤 Daily Core 訊號是否延續、升溫或降溫。",
+    110,
+  );
   const coreBase = {
+    contentFunnelTarget,
     continuityTags: buildFallbackTags(intelligence),
+    conversionHook,
+    headline,
+    headlineHook,
     investorWatchpoints: (intelligence.investorWatchpoints?.length ? intelligence.investorWatchpoints : intelligence.whatToMonitor).slice(0, 6),
     ixuanView: clamp(intelligence.ixuanView ?? intelligence.marketRegimeNote, "一玄觀點聚焦市場正在 pricing 什麼，而不是單一新聞。", 220),
-    marketInterpretation: clamp(intelligence.marketInterpretation ?? intelligence.marketRegimeNote, "今日市場解讀重點是 AI、利率與風險偏好的互動。", 220),
-    todaySignal: clamp(intelligence.todaySignal ?? intelligence.todayHeadline, "今日最重要的訊號是：AI、利率與風險偏好仍是市場主線。", 120),
+    marketInterpretation,
+    socialCTA,
+    socialCuriosity,
+    socialThesis,
+    todaySignal,
     topThreeThings,
+    weeklyThesis,
     whatChanged: clamp(intelligence.whatChangedSinceLastBrief, "IXAI 正在建立 Daily Intelligence 的市場記憶層，追蹤主線延續、升溫與降溫。", 360),
   };
   const socialHooks = buildSocialHooks(coreBase);
@@ -282,17 +414,32 @@ export function buildDailyIntelligenceCore(intelligence: DailyIntelligenceDraft)
   };
 }
 
-export function attachDailyIntelligenceCore(intelligence: DailyIntelligenceDraft): DailyIntelligenceDraft {
-  const core = buildDailyIntelligenceCore(intelligence);
+export function attachDailyIntelligenceCore(
+  intelligence: DailyIntelligenceDraft,
+  options: {
+    contentFunnelTarget?: string;
+    headline?: string;
+  } = {},
+): DailyIntelligenceDraft {
+  const core = buildDailyIntelligenceCore(intelligence, options);
 
   return {
     ...intelligence,
+    contentFunnelTarget: core.contentFunnelTarget,
     continuityTags: core.continuityTags,
+    conversionHook: core.conversionHook,
+    headline: core.headline,
+    headlineHook: core.headlineHook,
     investorWatchpoints: core.investorWatchpoints,
     marketInterpretation: core.marketInterpretation,
+    socialCTA: core.socialCTA,
+    socialCuriosity: core.socialCuriosity,
     socialHooks: core.socialHooks,
+    socialThesis: core.socialThesis,
+    todayHeadline: core.headline,
     todaySignal: core.todaySignal,
     topThreeThings: core.topThreeThings,
+    weeklyThesis: core.weeklyThesis,
     weeklySignals: core.weeklySignals,
     whatChangedSinceLastBrief: core.whatChanged,
     ixuanView: core.ixuanView,
@@ -301,11 +448,17 @@ export function attachDailyIntelligenceCore(intelligence: DailyIntelligenceDraft
 
 export function getDailyIntelligenceCoreFromBrief(brief: DailyBriefDraft): DailyIntelligenceCore | null {
   if (brief.intelligence) {
-    return buildDailyIntelligenceCore(brief.intelligence);
+    return buildDailyIntelligenceCore(brief.intelligence, {
+      contentFunnelTarget: `/daily-brief/${brief.slug}`,
+      headline: brief.title,
+    });
   }
 
   if (brief.sections.length || brief.marketSummary || brief.editorialNote) {
-    return buildDailyIntelligenceCore(buildLegacyIntelligenceFromBrief(brief));
+    return buildDailyIntelligenceCore(buildLegacyIntelligenceFromBrief(brief), {
+      contentFunnelTarget: `/daily-brief/${brief.slug}`,
+      headline: brief.title,
+    });
   }
 
   return null;

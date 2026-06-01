@@ -245,6 +245,7 @@ function buildUserPrompt(newsItems: ReturnType<typeof sanitizeNewsItems>, contex
         whatToMonitor: ["string"],
       },
       rules: [
+        "Headline is the public Daily title and the source for social stop-scroll hook; keep it specific to the strongest daily theme.",
         "MarketSummary should start with today's most important market signal, then connect macro, AI/Tech, Crypto and risk regime.",
         "RiskFocus should explain the core risk awareness point, not a trading action.",
         "Keep each feed item summary to 1 concise sentence, but include why it matters and what to watch.",

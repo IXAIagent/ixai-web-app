@@ -933,3 +933,35 @@ Out of Scope:
 - Auth, LINE Login, LIFF, provider pipeline, Daily/Social source-of-truth changes.
 - Auto publishing or platform APIs.
 - Buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.44.0 — Social Conversion Layer
+
+Why:
+
+- Daily → Social Pack linkage existed, but Social Pack still behaved like a compressed Daily Brief.
+- Social images need to act as a conversion entry point: stop the user, create curiosity, then route into Daily / Weekly Intelligence and eventually Account / Future Pro.
+- Daily title and Social Slide 1 hook could drift because they came from different fields.
+
+What Changed:
+
+- Added social conversion fields to Daily Intelligence Core: headline, headlineHook, conversionHook, socialThesis, socialCuriosity, socialCTA, weeklyThesis, and contentFunnelTarget.
+- Made public Daily title / SEO title, Daily Core headline, and Social Slide 1 hook share the same market theme.
+- Rewired Daily Social Pack slides into funnel roles: Stop-scroll Hook, Curiosity Builder, Signal Explainer, Risk Contrast, and I-Xuan View + contextual CTA.
+- Made Slide 5 CTA contextual to the Daily headline / funnel target rather than a fixed generic line.
+- Preserved IG Feed 4:5 and Story 9:16 export behavior without adding auto-publishing.
+
+Key Decisions:
+
+- Social Pack is a conversion surface, not a standalone intelligence artifact.
+- Daily Intelligence Core remains the source of truth for social hooks and funnel targeting.
+- Social copy can be shorter and more curiosity-driven, but it must remain aligned with the Daily title and non-advisory.
+
+Out of Scope:
+
+- Weekly revision migration execution.
+- Supabase schema changes.
+- Auth, LINE Login, or LIFF changes.
+- News provider pipeline changes.
+- Platform APIs, auto publishing, LINE broadcast, or marketing automation.
+- Portfolio Intelligence or Pro monetization.
+- Buy/sell recommendations, target prices, return promises, or automated trading.

@@ -778,14 +778,17 @@ export async function generateDailyIntelligenceDraftFromNews(
     });
   }
 
-  intelligence = attachDailyIntelligenceCore(
-    attachMarketMemoryToDailyIntelligence(intelligence, options.previousBriefs),
-  );
-
   const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const now = nowIso();
   const baseSlug = `daily-intelligence-${now.slice(0, 10)}`;
   const slug = options.slugSuffix ? `${baseSlug}-${options.slugSuffix}` : baseSlug;
+  intelligence = attachDailyIntelligenceCore(
+    attachMarketMemoryToDailyIntelligence(intelligence, options.previousBriefs),
+    {
+      contentFunnelTarget: `/daily-brief/${slug}`,
+      headline: intelligence.todayHeadline,
+    },
+  );
   const engineMarketSummary = [
     intelligence.todaySignal,
     intelligence.marketInterpretation,

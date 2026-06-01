@@ -286,8 +286,9 @@ function SlideFooter({
   );
 }
 
-// v1.41.2 — Slide 1 Cover. Lead with the five-point executive
-// summary so the cover carries useful intelligence, not just a title.
+// v1.44.0 — Slide 1 Stop-scroll Hook. Daily cards lead with the
+// conversion hook from Daily Intelligence Core instead of compressing
+// the whole brief into bullets. Weekly cards keep the broader recap role.
 function CoverSlide({
   format,
   pack,
@@ -299,14 +300,13 @@ function CoverSlide({
 }) {
   const isFeed = format === "ig_feed_4_5";
   const title = pack.kind === "daily"
-    ? isFeed
-      ? slide.title
-      : "今日市場最重要的 5 件事"
+    ? slide.title
     : isFeed
       ? "本週市場正在 pricing 什麼"
       : "本週市場焦點";
+  const bulletLimit = pack.kind === "daily" ? 2 : isFeed ? 4 : 4;
   const bullets = slide.bullets
-    .slice(0, isFeed ? 4 : pack.kind === "daily" ? 5 : 4)
+    .slice(0, bulletLimit)
     .map((bullet) => fitReadableText(bullet, isFeed ? 30 : COPY_LIMITS.coverBullet, "市場脈絡與風險環境已整理完成。"));
 
   return (
@@ -344,9 +344,9 @@ function CoverSlide({
   );
 }
 
-// v1.40.6d — Slide 2 Market Pulse. Exactly three news items in three
-// rows, each row capped at title 14 + summary 22 chars to guarantee
-// two lines max per item.
+// v1.44.0 — Slide 2 Curiosity Builder / Weekly Market Pulse. Daily
+// packs use the social curiosity field to explain why the reader should
+// open the full brief; weekly packs retain the recap-style market pulse.
 function MarketPulseSlide({
   format,
   slide,
@@ -357,6 +357,8 @@ function MarketPulseSlide({
   const isFeed = format === "ig_feed_4_5";
   const Icon = slide.id === "market_review" ? Landmark : Globe2;
   const items = slide.bullets.slice(0, 3);
+  const displayTitle = slide.title || (slide.id === "market_review" ? "Market Review" : "Market Pulse");
+  const isCuriosityBuilder = slide.eyebrow === "Why It Matters";
 
   return (
     <div className="flex h-full flex-col">
@@ -372,13 +374,29 @@ function MarketPulseSlide({
             {slide.eyebrow}
           </p>
           <h3 className={`${isFeed ? "text-[18px]" : "text-[16px]"} mt-1 font-semibold leading-tight`}>
-            {slide.id === "market_review" ? "Market Review" : "Market Pulse"}
+            {displayTitle}
           </h3>
         </div>
         <Icon className="h-5 w-5 text-[var(--ixai-gold)]" strokeWidth={1.8} />
       </div>
       <div className={`${isFeed ? "mt-2.5 gap-1.5" : "mt-3 gap-2"} flex flex-1 flex-col justify-between`}>
         {items.map((bullet, bulletIndex) => {
+          if (isCuriosityBuilder) {
+            return (
+              <div className="grid grid-cols-[1.6rem_1fr] gap-2" key={`${bullet}-${bulletIndex}`}>
+                <p
+                  className="font-mono text-[12px] leading-[1.05]"
+                  style={{ color: socialBrandTokens.gold }}
+                >
+                  {String(bulletIndex + 1).padStart(2, "0")}
+                </p>
+                <p className={`${isFeed ? "text-[9.4px]" : "text-[8.8px]"} font-medium leading-[1.38] text-[rgba(244,240,230,0.76)]`}>
+                  {fitReadableText(bullet, isFeed ? 54 : COPY_LIMITS.bodyBullet, "完整 Daily Brief 會拆解市場定價與風險約束。")}
+                </p>
+              </div>
+            );
+          }
+
           const item = splitBullet(bullet);
 
           return (
@@ -579,9 +597,12 @@ function IxuanViewSlide({
   const isFeed = format === "ig_feed_4_5";
   const mainRaw = slide.bullets[0] ?? "先整理風險，再判讀機會。";
   const main = fitReadableText(mainRaw, isFeed ? 96 : COPY_LIMITS.viewMain, "今日重點不是追逐短線雜訊，而是先整理風險，再判讀哪些主題值得持續觀察。");
+  const supportingRaw = [slide.bullets[1], slide.bullets[2]]
+    .filter(Boolean)
+    .join(" ");
   const supplement = fitReadableText(
-    slide.bullets[1] ?? "完整內容請見 IXAI App。此為市場資訊與教育分享。",
-    isFeed ? 50 : COPY_LIMITS.viewSupplement,
+    supportingRaw || "完整內容請見 IXAI App。此為市場資訊與教育分享。",
+    isFeed ? 72 : 64,
     "完整內容請見 IXAI App。",
   );
 

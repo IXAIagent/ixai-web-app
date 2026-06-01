@@ -72,6 +72,11 @@ export type DailyTopStory = {
 
 export type DailySocialHooks = {
   primaryHook: string;
+  headlineHook?: string;
+  conversionHook?: string;
+  socialThesis?: string;
+  socialCuriosity?: string;
+  socialCTA?: string;
   marketPulse: string[];
   aiTechSignal: {
     keySignal: string;
@@ -80,6 +85,7 @@ export type DailySocialHooks = {
   };
   riskHook: string;
   ixuanHook: string;
+  contentFunnelTarget?: string;
 };
 
 export type DailyWeeklySignals = {
@@ -119,6 +125,14 @@ export type DailyProviderHealth = {
 
 export type DailyIntelligenceDraft = {
   todayHeadline: string;
+  headline?: string;
+  headlineHook?: string;
+  conversionHook?: string;
+  socialThesis?: string;
+  socialCuriosity?: string;
+  socialCTA?: string;
+  weeklyThesis?: string;
+  contentFunnelTarget?: string;
   riskFocus: DailyRiskFocus;
   feedItems: DailyIntelligenceFeedItem[];
   marketRegimeNote: string;

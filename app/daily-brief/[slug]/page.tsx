@@ -51,10 +51,13 @@ export async function generateMetadata({ params }: PageProps) {
   // v1.33 — derive a short market summary line for the title, build a
   // dynamic OG image off /api/og/daily, and emit article-typed metadata
   // with publishedTime so social platforms render the editorial card.
-  const shortSummary = (brief.marketSummary ?? "").replace(/\s+/g, " ").slice(0, 80);
+  const headline =
+    "intelligence" in brief && brief.intelligence?.headline
+      ? brief.intelligence.headline
+      : brief.title;
 
   return buildPublicMetadata({
-    title: `Daily Brief — ${shortSummary || brief.title} | IXAI`,
+    title: `Daily Brief — ${headline} | IXAI`,
     description: brief.marketSummary,
     keywords: [
       "Daily Brief",
