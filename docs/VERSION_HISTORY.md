@@ -1122,3 +1122,27 @@ Out of Scope:
 - Auth, LINE Login, LIFF, billing, provider pipeline, or FCN engine changes.
 - Platform APIs, auto publishing, LINE broadcast, or marketing automation.
 - Portfolio Intelligence, Pro monetization, trading recommendations, target prices, return promises, or automated trading.
+
+## v1.49.0 — Social Intelligence Rewrite
+
+Why:
+
+- v1.48.0 made Social Pack cards safe, but the copy could become underfilled because cards were still rendered from compressed brief text.
+- Social Pack should be a conversion entry point with intentional slide-native copy, not a clipped or compressed version of the Daily / Weekly Brief.
+
+What Changed:
+
+- Rewired Daily Social Pack generation into Hook, What the market is seeing, The real risk, What to watch next, and I-Xuan View.
+- Rewired Weekly Social Pack generation into Weekly question, What changed this week, The one thing that matters, Next week catalysts, and I-Xuan Weekly View.
+- Made slide 2 / slide 4 carry 2–3 social-native evidence or watch items instead of one-line compressed filler.
+- Kept v1.48.0 layout constraints and footer safety while improving card intentionality.
+
+Key Decisions:
+
+- Social cards should be generated as social cards from the beginning.
+- The brief remains the source material, but each slide has a conversion role and should introduce new information.
+- Manual publishing, compliance language, and non-advisory boundaries remain unchanged.
+
+Out of Scope:
+
+- Auth, LINE Login, LIFF, billing, provider infrastructure, Supabase schema, Weekly migration execution, platform APIs, auto publishing, portfolio workflows, trading logic, buy/sell recommendations, target prices, return promises, or automated trading.

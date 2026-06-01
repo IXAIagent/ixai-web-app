@@ -71,14 +71,14 @@ const feedLimits: Record<SocialPackSlide, SocialTextLimit> = {
   top_news: {
     titleMaxChars: 20,
     subtitleMaxChars: 32,
-    bodyMaxChars: 76,
+    bodyMaxChars: 108,
     bulletMaxChars: 38,
-    maxBullets: 2,
+    maxBullets: 3,
   },
   market_review: {
     titleMaxChars: 20,
     subtitleMaxChars: 32,
-    bodyMaxChars: 76,
+    bodyMaxChars: 108,
     bulletMaxChars: 38,
     maxBullets: 3,
   },

@@ -394,6 +394,14 @@ Weekly Persistence / Social Layout Rules:
 - Social Pack text must be compressed before rendering; slide 5 must never render full long-form I-Xuan View if it exceeds the safe card limit.
 - Footer, page number, URL, and disclaimer must remain visible and must not overlap body content.
 
+Social Intelligence Rewrite Rules:
+
+- Social Packs should be generated as slide-native conversion cards, not compressed brief pages.
+- Daily Social Pack roles are Hook, What the market is seeing, Real risk, Watch next, and I-Xuan View.
+- Weekly Social Pack roles are Weekly question, What changed this week, The one thing that matters, Next week catalysts, and I-Xuan Weekly View.
+- Each slide should introduce new information and avoid duplicating the same thesis.
+- Cards should avoid both paragraph walls and one-line underfilled slides.
+
 ## I. Growth Rules
 
 Current stage:

@@ -297,6 +297,11 @@ function CoverSlide({
         <h3 className={`${isFeed ? "mt-1.5 text-[20px]" : "mt-2 text-[18px]"} font-semibold leading-[1.08] tracking-normal`}>
           {title}
         </h3>
+        {slide.subtitle ? (
+          <p className={`${isFeed ? "mt-2 text-[9px]" : "mt-2.5 text-[8.8px]"} leading-[1.35] text-[rgba(244,240,230,0.68)]`}>
+            {fitReadableText(slide.subtitle, isFeed ? 42 : 54, "市場正在要求更清楚的證據。")}
+          </p>
+        ) : null}
       </div>
       <div
         className={`${isFeed ? "mt-2.5 gap-1.5 pl-3" : "mt-3 gap-1.5 pl-3"} grid min-h-0 flex-1 content-start border-l`}

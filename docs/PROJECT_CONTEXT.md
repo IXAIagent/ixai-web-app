@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.48.0`
+`v1.49.0`
 
 Current Core Flow:
 
@@ -131,6 +131,8 @@ Question Driven Intelligence Engine now makes Daily and Weekly outputs start fro
 Evidence Quality Sprint now makes the evidence layer event-first instead of conclusion-first. Daily and Weekly question-driven outputs now carry scored evidence details with event, source, whyItMatters, category, and score. Weekly Social Pack is rewritten around What Changed This Week, The One Thing That Matters, Next Week catalysts, and I-Xuan Weekly View.
 
 Weekly Persistence Fix + Social Pack Layout System now makes Weekly generation failures observable instead of generic. When the current week is blocked by an existing published Weekly row and the revision migration is not applied, the Admin UI surfaces the existing weekly id/slug, exact blocked reason, migration requirement, and next action. Social Pack rendering now uses format-specific layout rules, text compression, and separate 4:5 / 9:16 constraints so exported cards reserve footer safe area and avoid paragraph overflow.
+
+Social Intelligence Rewrite now moves Social Pack generation from Brief compression into slide-native social cards. Daily Social Pack is generated as Hook → What the market is seeing → Real risk → Watch next → I-Xuan View, while Weekly Social Pack is generated as Weekly question → What changed this week → The one thing that matters → Next week catalysts → I-Xuan Weekly View. Social assets remain manual publishing material and still route readers back into Daily / Weekly Intelligence.
 
 Current Highest Priorities:
 

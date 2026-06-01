@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.48.0`
+`v1.49.0`
 
 ## Related Strategic Documents
 
@@ -393,6 +393,16 @@ Completed:
 - Added format-specific Social Pack layout rules for IG Feed / Carousel 4:5 and Story / Reels 9:16.
 - Added social text compression constraints before rendering so cards avoid footer overlap, paragraph walls, repeated filler, and slide 5 text explosion.
 - Preserved manual publishing only; no platform API, auto-publish, auth, LINE, LIFF, provider pipeline, or Supabase migration execution changes.
+
+### v1.49.0 — Social Intelligence Rewrite
+
+Completed:
+
+- Rewrote Social Pack generation from Brief → compress → slide into slide-native social card generation.
+- Daily Social Pack now follows Hook, What the market is seeing, The real risk, What to watch next, and I-Xuan View.
+- Weekly Social Pack now follows Weekly question, What changed this week, The one thing that matters, Next week catalysts, and I-Xuan Weekly View.
+- Preserved format-specific 4:5 / 9:16 layout constraints from v1.48.0 while increasing intentional card content density.
+- Preserved manual publishing and non-advisory compliance boundaries.
 
 Next:
 
