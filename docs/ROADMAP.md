@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.47.1`
+`v1.48.0`
 
 ## Related Strategic Documents
 
@@ -383,6 +383,16 @@ Completed:
 - Added narrative repetition detection for social slide copy.
 - Rewrote Weekly Social Pack flow around What Changed This Week, The One Thing That Matters, Next Week catalysts, and I-Xuan Weekly View.
 - Preserved non-advisory, educational, risk-aware boundaries.
+
+### v1.48.0 — Weekly Persistence Fix + Social Pack Layout System
+
+Completed:
+
+- Added production-safe Weekly generation diagnostics for started/completed/save states, existing weekly row, revision schema availability, blocked reason, and next action.
+- Kept Weekly revision migration unapplied; same-week revision creation still requires explicit migration approval when the old unique week range constraint is active.
+- Added format-specific Social Pack layout rules for IG Feed / Carousel 4:5 and Story / Reels 9:16.
+- Added social text compression constraints before rendering so cards avoid footer overlap, paragraph walls, repeated filler, and slide 5 text explosion.
+- Preserved manual publishing only; no platform API, auto-publish, auth, LINE, LIFF, provider pipeline, or Supabase migration execution changes.
 
 Next:
 

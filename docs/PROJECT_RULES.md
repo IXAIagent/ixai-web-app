@@ -384,6 +384,16 @@ Question Driven Intelligence Rules:
 - Avoid generic analyst phrases such as 市場訊號正在轉向, 投資人持續觀察, 風險偏好受到壓力, 值得關注, 持續關注, 市場情緒變化, 事件背後的市場訊號, AI敘事仍有吸引力.
 - Question-driven outputs remain public education and market interpretation only; they must not become buy/sell recommendations, target prices, return promises, or automated trading instructions.
 
+Weekly Persistence / Social Layout Rules:
+
+- Weekly generation must never silently claim success when Supabase persistence fails or the same-week revision workflow is locked.
+- If the revision schema is unavailable and a published weekly already exists for the range, Admin must show the existing weekly id/slug, blocked reason, migration requirement, and next action.
+- Weekly revision migration SQL must remain manually reviewed and explicitly applied; application code must not auto-apply database migrations.
+- Social Packs must apply format-specific layout constraints before rendering.
+- IG Feed / Carousel 4:5 and Story / Reels 9:16 are separate output systems with separate text limits.
+- Social Pack text must be compressed before rendering; slide 5 must never render full long-form I-Xuan View if it exceeds the safe card limit.
+- Footer, page number, URL, and disclaimer must remain visible and must not overlap body content.
+
 ## I. Growth Rules
 
 Current stage:

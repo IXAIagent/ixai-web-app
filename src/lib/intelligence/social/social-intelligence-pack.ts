@@ -652,10 +652,10 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       {
         bullets: [
           compactText(weeklySlideBullets[4], "本週核心觀點：理解市場正在 pricing 什麼，比追逐單點新聞更重要。", 132),
-          `${weeklyCta}：${weeklyTarget}`,
+          weeklyCta,
         ],
         eyebrow: "I-Xuan Weekly View",
-        footer: `${weeklyCta} · app.ixuan.ai`,
+        footer: `${weeklyCta} · ${weeklyTarget} · app.ixuan.ai`,
         id: "weekly_view",
         title: "一玄週觀點",
       },

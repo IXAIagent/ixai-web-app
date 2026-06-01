@@ -15,8 +15,11 @@ import { IxaiLogo } from "@/components/brand/ixai-logo";
 import {
   generateDailySocialPack,
   generateWeeklySocialPack,
+  clampSocialLine,
+  compressSocialText,
   socialBrandTokens,
   socialExportFormats,
+  toSocialFormat,
   type SocialExportFormat,
   type SocialIntelligencePack,
   type SocialPackKind,
@@ -48,16 +51,16 @@ const FORMAT_LAYOUT: Record<
   }
 > = {
   ig_feed_4_5: {
-    bodyClass: "px-5 py-1.5",
-    footerPct: "10.5%",
-    headerPct: "8%",
+    bodyClass: "px-5 py-2",
+    footerPct: "13%",
+    headerPct: "9%",
     previewWidthClass: "w-[300px]",
     title: "IG Feed / Carousel",
   },
   story_9_16: {
-    bodyClass: "px-5 py-2",
-    footerPct: "12.5%",
-    headerPct: "8.854%",
+    bodyClass: "px-5 py-3",
+    footerPct: "13%",
+    headerPct: "9%",
     previewWidthClass: "w-[280px]",
     title: "Story / Reels",
   },
@@ -129,32 +132,7 @@ function normalizeDisplayText(value: string) {
 // clause instead of slicing text with an ellipsis, so exported social
 // cards never show clipped fragments such as "AI / Tech Wat...".
 function fitReadableText(value: string, maxLength: number, fallback: string) {
-  const normalized = normalizeDisplayText(value);
-
-  if (normalized.length <= maxLength) {
-    return normalized;
-  }
-
-  const clauses = normalized
-    .split(/(?<=[。！？.!?；;])|，|,/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-  let selected = "";
-
-  for (const clause of clauses) {
-    const separator = /[。！？.!?；;]$/.test(selected) ? "" : "，";
-    const next = selected ? `${selected}${separator}${clause}` : clause;
-    if (next.length > maxLength) {
-      break;
-    }
-    selected = next;
-  }
-
-  if (selected) {
-    return /[。！？.!?；;]$/.test(selected) ? selected : `${selected}。`;
-  }
-
-  return fallback;
+  return clampSocialLine(normalizeDisplayText(value), maxLength, fallback);
 }
 
 // Split a "headline｜detail" bullet payload into two compacted pieces.
@@ -594,14 +572,14 @@ function IxuanViewSlide({
 }) {
   const isFeed = format === "ig_feed_4_5";
   const mainRaw = slide.bullets[0] ?? "先整理風險，再判讀機會。";
-  const main = fitReadableText(mainRaw, isFeed ? 96 : COPY_LIMITS.viewMain, "今日重點不是追逐短線雜訊，而是先整理風險，再判讀哪些主題值得持續觀察。");
+  const main = fitReadableText(mainRaw, isFeed ? 80 : COPY_LIMITS.viewMain, "今日重點不是追逐短線雜訊，而是先整理風險，再判讀哪些主題值得持續觀察。");
   const supportingRaw = [slide.bullets[1], slide.bullets[2]]
     .filter(Boolean)
     .join(" ");
   const supplement = fitReadableText(
     supportingRaw || "想看完整市場訊號與下一步觀察，請進 IXAI App。",
-    isFeed ? 72 : 64,
-    "想看完整市場訊號與下一步觀察，請進 IXAI App。",
+    isFeed ? 36 : 64,
+    "進 IXAI 讀完整 Brief。",
   );
 
   return (
@@ -680,27 +658,40 @@ function SlideBody({
   pack: SocialIntelligencePack;
   slide: SocialIntelligencePack["slides"][number];
 }) {
-  if (slide.id === "cover") {
-    return <CoverSlide format={format} pack={pack} slide={slide} />;
+  const compressed = compressSocialText({
+    bullets: slide.bullets,
+    format: toSocialFormat(format),
+    kind: pack.kind,
+    slideId: slide.id,
+    subtitle: slide.subtitle,
+    title: slide.title,
+  });
+  const safeSlide = {
+    ...slide,
+    ...compressed,
+  };
+
+  if (safeSlide.id === "cover") {
+    return <CoverSlide format={format} pack={pack} slide={safeSlide} />;
   }
 
-  if (slide.id === "top_news" || slide.id === "market_review") {
-    return <MarketPulseSlide format={format} slide={slide} />;
+  if (safeSlide.id === "top_news" || safeSlide.id === "market_review") {
+    return <MarketPulseSlide format={format} slide={safeSlide} />;
   }
 
-  if (slide.id === "ai_tech_watch") {
-    return <AiTechSlide format={format} pack={pack} slide={slide} />;
+  if (safeSlide.id === "ai_tech_watch") {
+    return <AiTechSlide format={format} pack={pack} slide={safeSlide} />;
   }
 
-  if (slide.id === "fcn_risk_watch") {
-    return <RiskSlide format={format} pack={pack} slide={slide} />;
+  if (safeSlide.id === "fcn_risk_watch") {
+    return <RiskSlide format={format} pack={pack} slide={safeSlide} />;
   }
 
-  if (slide.id === "ixuan_view" || slide.id === "weekly_view") {
-    return <IxuanViewSlide format={format} slide={slide} />;
+  if (safeSlide.id === "ixuan_view" || safeSlide.id === "weekly_view") {
+    return <IxuanViewSlide format={format} slide={safeSlide} />;
   }
 
-  return <StandardSlide format={format} slide={slide} />;
+  return <StandardSlide format={format} slide={safeSlide} />;
 }
 
 // v1.40.6d — Slide preview wrapper. Replaces the previous
@@ -950,7 +941,7 @@ export function SocialIntelligencePackStudio({
         <p className="rounded-md border border-[rgba(176,141,87,0.22)] bg-[rgba(176,141,87,0.08)] px-3 py-2 text-[rgba(245,240,230,0.68)]">
           Source of Truth:{" "}
           <span className="text-[var(--ixai-cream)]">
-            {activeKind === "daily" ? "Daily Intelligence Core" : "Weekly Daily-Core Aggregation"}
+            {activeKind === "daily" ? "Daily Intelligence Core" : "Weekly Intelligence Core"}
           </span>
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">

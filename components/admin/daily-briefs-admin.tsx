@@ -15,6 +15,7 @@ import type {
   DailyIntelligenceProviderStatus,
   DailyProviderHealth,
   DailyDraftGenerationSummary,
+  WeeklyGenerationDebug,
   WeeklyIntelligenceDraft,
   WeeklyIntelligenceStatus,
 } from "@/src/types/editorial";
@@ -160,6 +161,7 @@ function WeeklyStatusBadge({ status }: { status: WeeklyIntelligenceStatus }) {
 function WeeklyEditorPreview() {
   const [weeklyDrafts, setWeeklyDrafts] = useState<WeeklyIntelligenceDraft[]>([]);
   const [selectedWeeklyId, setSelectedWeeklyId] = useState("");
+  const [weeklyDebug, setWeeklyDebug] = useState<WeeklyGenerationDebug | null>(null);
   const [weeklyPersistence, setWeeklyPersistence] = useState<PersistenceMeta | null>(null);
   const [weeklyMessage, setWeeklyMessage] = useState("Weekly workflow is connected. Generate creates draft only; publish remains manual.");
   const [isWeeklyGenerating, setIsWeeklyGenerating] = useState(false);
@@ -280,9 +282,11 @@ function WeeklyEditorPreview() {
       // reach the admin UI instead of being replaced with a generic line.
       if (!response.ok) {
         const errorPayload = (await response.json().catch(() => ({}))) as {
+          debug?: WeeklyGenerationDebug;
           message?: string;
           status?: string;
         };
+        setWeeklyDebug(errorPayload.debug ?? null);
         throw new Error(errorPayload.message ?? "Weekly generation failed.");
       }
 
@@ -290,7 +294,12 @@ function WeeklyEditorPreview() {
         draft: WeeklyIntelligenceDraft;
         drafts: WeeklyIntelligenceDraft[];
         persistence?: PersistenceMeta;
-        summary?: { status: "generated" | "existing"; itemCount: number; sourceMode: string };
+        summary?: {
+          status: "generated" | "existing" | "blocked";
+          itemCount: number;
+          sourceMode: string;
+          debug?: WeeklyGenerationDebug;
+        };
       };
 
       // v1.30.6 — defensive refresh path. If the inline drafts array is
@@ -312,6 +321,7 @@ function WeeklyEditorPreview() {
       }
 
       setWeeklyPersistence(payload.persistence ?? null);
+      setWeeklyDebug(payload.summary?.debug ?? null);
       setSelectedWeeklyId(payload.draft.id);
 
       // v1.30.6 — surface draft id prefix + status + drafts count so
@@ -319,7 +329,10 @@ function WeeklyEditorPreview() {
       const draftIdPrefix = payload.draft.id.slice(0, 8);
       const draftCount = resolvedDrafts.filter((draft) => !draft.id.startsWith("static-")).length;
       const baseMessage =
-        payload.summary?.status === "existing"
+        payload.summary?.status === "blocked"
+          ? payload.summary.debug?.blockedReason ??
+            "Cannot create same-week revision until Supabase migration is applied."
+          : payload.summary?.status === "existing"
           ? payload.draft.status === "published" || payload.draft.status === "archived"
             ? payload.persistence?.revisionSchemaAvailable
               ? `Weekly range already has a canonical ${payload.draft.status} row. Use Create Revision Draft after selecting the canonical weekly.`
@@ -327,9 +340,12 @@ function WeeklyEditorPreview() {
             : `Existing weekly draft loaded · ${payload.summary.itemCount} input items · ${payload.summary.sourceMode}`
           : `Weekly draft generated · ${payload.summary?.itemCount ?? 0} input items · ${payload.summary?.sourceMode ?? "fallback"}`;
       setWeeklyMessage(
-        `${baseMessage} · id ${draftIdPrefix} · status ${payload.draft.status} · drafts ${draftCount}`,
+        `${baseMessage} · id ${draftIdPrefix} · status ${payload.draft.status} · drafts ${draftCount}${
+          payload.summary?.debug?.nextAction ? ` · next: ${payload.summary.debug.nextAction}` : ""
+        }`,
       );
     } catch (error) {
+      setWeeklyDebug(null);
       setWeeklyMessage(
         error instanceof Error
           ? error.message
@@ -532,6 +548,32 @@ function WeeklyEditorPreview() {
             · Human Review Required · No Auto-publish
           </p>
         </div>
+        {weeklyDebug ? (
+          <div className="mt-3 rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-5 text-[rgba(245,240,230,0.64)]">
+            <p className="font-mono uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+              Weekly Persistence Debug
+            </p>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              <p>Generation: {weeklyDebug.generationStarted ? "started" : "not started"} / {weeklyDebug.generationCompleted ? "completed" : "not completed"}</p>
+              <p>Save: {weeklyDebug.saveAttempted ? "attempted" : "not attempted"} / {weeklyDebug.saveCompleted ? "completed" : "not completed"}</p>
+              <p>Week: {weeklyDebug.weekStart} - {weeklyDebug.weekEnd}</p>
+              <p>Existing: {weeklyDebug.existingWeeklySlug ?? "none"} {weeklyDebug.existingWeeklyStatus ? `(${weeklyDebug.existingWeeklyStatus})` : ""}</p>
+              <p>Revision schema: {weeklyDebug.revisionSchemaAvailable ? "available" : "migration required"}</p>
+              <p>Final: {weeklyDebug.finalStatus}</p>
+              {weeklyDebug.postgrestCode ? <p>PostgREST: {weeklyDebug.postgrestCode}</p> : null}
+              {weeklyDebug.listCountAfterSave !== undefined ? <p>List count after save: {weeklyDebug.listCountAfterSave}</p> : null}
+            </div>
+            {weeklyDebug.blockedReason ? (
+              <p className="mt-2 text-amber-100/85">{weeklyDebug.blockedReason}</p>
+            ) : null}
+            {weeklyDebug.saveFailedReason ? (
+              <p className="mt-2 text-rose-100/85">{weeklyDebug.saveFailedReason}</p>
+            ) : null}
+            {weeklyDebug.nextAction ? (
+              <p className="mt-2 text-[rgba(245,240,230,0.72)]">Next action: {weeklyDebug.nextAction}</p>
+            ) : null}
+          </div>
+        ) : null}
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">

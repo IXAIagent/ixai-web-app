@@ -430,7 +430,7 @@ export type WeeklyIntelligenceDraft = {
 };
 
 export type WeeklyDraftGenerationSummary = {
-  status: "generated" | "existing";
+  status: "generated" | "existing" | "blocked";
   draftSlug: string;
   generatedAt: string;
   sourceMode: "real" | "fallback";
@@ -438,4 +438,25 @@ export type WeeklyDraftGenerationSummary = {
   sourceStatus: DailyDraftGenerationSummary["sourceStatus"];
   schedulerConfigured: boolean;
   forced: boolean;
+  debug?: WeeklyGenerationDebug;
+};
+
+export type WeeklyGenerationDebug = {
+  generationStarted: boolean;
+  generationCompleted: boolean;
+  saveAttempted: boolean;
+  saveCompleted: boolean;
+  weekStart: string;
+  weekEnd: string;
+  existingWeeklyFound: boolean;
+  existingWeeklyId?: string;
+  existingWeeklySlug?: string;
+  existingWeeklyStatus?: WeeklyIntelligenceStatus;
+  revisionSchemaAvailable: boolean;
+  finalStatus: "generated" | "existing" | "blocked" | "failed";
+  blockedReason?: string;
+  nextAction?: string;
+  saveFailedReason?: string;
+  postgrestCode?: string;
+  listCountAfterSave?: number;
 };

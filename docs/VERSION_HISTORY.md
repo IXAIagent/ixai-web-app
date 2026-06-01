@@ -1094,3 +1094,31 @@ Out of Scope:
 - Platform APIs, auto publishing, LINE broadcast, or marketing automation.
 - Portfolio Intelligence or Pro monetization.
 - Buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.48.0 — Weekly Persistence Fix + Social Pack Layout System
+
+Why:
+
+- Production Weekly generation could appear to fail generically when the existing `(week_start, week_end)` uniqueness constraint blocked same-week revisions before the reviewed migration was applied.
+- Social Pack 4:5 cards still had format-specific layout risk: footer overlap, dense slide 3 content, and oversized I-Xuan View / CTA text on slide 5.
+
+What Changed:
+
+- Added structured Weekly generation diagnostics for generation start/completion, week range, existing row, revision schema availability, save attempts, blocked reason, PostgREST error code, list count after save, and final response.
+- Preserved the safe locked behavior when revision schema is unavailable and an existing published weekly blocks same-week draft creation.
+- Added centralized Social Pack layout rules for Feed 4:5 and Story 9:16.
+- Added social copy normalization, line clamping, and slide-specific compression before rendering cards.
+- Updated Admin UI to display Weekly persistence debug details and actionable migration-required messaging.
+
+Key Decisions:
+
+- Weekly revision migration remains a reviewed manual DB operation and is not applied by application code.
+- If the old unique week range constraint blocks revision creation, IXAI should expose the exact reason and next action rather than pretending a draft was saved.
+- Social layouts should reduce bullets and compress copy before shrinking typography or allowing footer collision.
+
+Out of Scope:
+
+- Supabase migration execution.
+- Auth, LINE Login, LIFF, billing, provider pipeline, or FCN engine changes.
+- Platform APIs, auto publishing, LINE broadcast, or marketing automation.
+- Portfolio Intelligence, Pro monetization, trading recommendations, target prices, return promises, or automated trading.

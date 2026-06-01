@@ -29,14 +29,23 @@ export async function POST(request: NextRequest) {
     const { draft, intake, summary } = await generateWeeklyIntelligenceDraft({ force });
     const drafts = await listAdminWeeklyDraftsAsync();
     const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
+    const debug = summary.debug
+      ? {
+          ...summary.debug,
+          listCountAfterSave: drafts.length,
+        }
+      : undefined;
     console.info(
       "[IXAI WEEKLY WORKFLOW]",
       JSON.stringify({
+        blocked_reason: debug?.blockedReason ?? null,
         draft_id: draft.id,
+        final_response_sent: true,
+        final_status: debug?.finalStatus ?? summary.status,
         generation_completed: true,
         generation_started: true,
         list_count_after_save: drafts.length,
-        save_completed: summary.status === "generated",
+        save_completed: debug?.saveCompleted ?? summary.status === "generated",
         weekly_slug: draft.slug,
         weekly_status: draft.status,
         revision_schema_available: revisionSchemaAvailable,
@@ -48,7 +57,7 @@ export async function POST(request: NextRequest) {
       draft,
       drafts,
       intake,
-      summary,
+      summary: debug ? { ...summary, debug } : summary,
       persistence: {
         readable: isWeeklyPersistenceReadable(),
         revisionSchemaAvailable,
@@ -56,6 +65,20 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
+    const revisionSchemaAvailable = await isWeeklyRevisionSchemaAvailableAsync();
+    console.info(
+      "[IXAI WEEKLY WORKFLOW]",
+      JSON.stringify({
+        final_response_sent: true,
+        final_status: "failed",
+        generation_completed: false,
+        generation_started: true,
+        postgrest_code:
+          error instanceof WeeklyPersistenceError ? error.postgrestCode ?? null : null,
+        save_failed_reason:
+          error instanceof Error ? error.message : "Weekly draft generation failed.",
+      }),
+    );
     // v1.30.3 — generate writes via saveWeeklyDraftAsync, which now throws
     // on durable persistence failure. Surface the error so the admin UI
     // does not show a phantom draft that never landed in Supabase.
@@ -68,9 +91,20 @@ export async function POST(request: NextRequest) {
             : error instanceof Error
               ? error.message
               : "Weekly draft generation failed.",
+        debug: {
+          generationStarted: true,
+          generationCompleted: false,
+          saveAttempted: true,
+          saveCompleted: false,
+          finalStatus: "failed",
+          postgrestCode:
+            error instanceof WeeklyPersistenceError ? error.postgrestCode : undefined,
+          saveFailedReason:
+            error instanceof Error ? error.message : "Weekly draft generation failed.",
+        },
         persistence: {
           readable: isWeeklyPersistenceReadable(),
-          revisionSchemaAvailable: await isWeeklyRevisionSchemaAvailableAsync(),
+          revisionSchemaAvailable,
           writable: isWeeklyPersistenceWritable(),
         },
       },

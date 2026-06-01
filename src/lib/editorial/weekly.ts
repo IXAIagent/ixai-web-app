@@ -30,6 +30,7 @@ import type { IXAIInsightOutput } from "@/src/lib/intelligence/insight";
 import type {
   WeeklyDailyCoreAggregation,
   WeeklyDraftGenerationSummary,
+  WeeklyGenerationDebug,
   WeeklyIntelligenceAiSuggestion,
   WeeklyIntelligenceDraft,
   WeeklyIntelligenceSections,
@@ -97,11 +98,28 @@ function logWeeklyWorkflow(event: string, payload: Record<string, unknown>) {
 // to in-memory drafts which previously masked publish bugs in production).
 export class WeeklyPersistenceError extends Error {
   reason: "not_configured" | "request_failed";
+  httpStatus?: number;
+  postgrestCode?: string;
 
-  constructor(message: string, reason: "not_configured" | "request_failed") {
+  constructor(
+    message: string,
+    reason: "not_configured" | "request_failed",
+    options: { httpStatus?: number; postgrestCode?: string } = {},
+  ) {
     super(message);
     this.name = "WeeklyPersistenceError";
     this.reason = reason;
+    this.httpStatus = options.httpStatus;
+    this.postgrestCode = options.postgrestCode;
+  }
+}
+
+function getPostgrestCode(body: string) {
+  try {
+    const parsed = JSON.parse(body) as { code?: string };
+    return parsed.code;
+  } catch {
+    return body.match(/"code"\s*:\s*"([^"]+)"/)?.[1];
   }
 }
 
@@ -220,6 +238,10 @@ async function supabaseFetch<T>(
       throw new WeeklyPersistenceError(
         `Supabase weekly request failed: ${response.status} ${body.slice(0, 220)}`,
         "request_failed",
+        {
+          httpStatus: response.status,
+          postgrestCode: getPostgrestCode(body),
+        },
       );
     }
 
@@ -1124,11 +1146,13 @@ function getNextWeeklyRevisionNumber(drafts: WeeklyIntelligenceDraft[]) {
 function buildSummary({
   status,
   draft,
+  debug,
   intake,
   forced,
 }: {
   status: WeeklyDraftGenerationSummary["status"];
   draft: WeeklyIntelligenceDraft;
+  debug?: WeeklyGenerationDebug;
   intake: NewsIntakeResult;
   forced: boolean;
 }): WeeklyDraftGenerationSummary {
@@ -1141,6 +1165,43 @@ function buildSummary({
     sourceStatus: intake.sourceStatus ?? intake.sources,
     schedulerConfigured: Boolean(process.env.IXAI_CRON_SECRET || process.env.CRON_SECRET),
     forced,
+    debug,
+  };
+}
+
+function createWeeklyGenerationDebug({
+  existingWeekly,
+  revisionSchemaAvailable,
+  weekEnd,
+  weekStart,
+}: {
+  existingWeekly?: WeeklyIntelligenceDraft | null;
+  revisionSchemaAvailable: boolean;
+  weekEnd: string;
+  weekStart: string;
+}): WeeklyGenerationDebug {
+  return {
+    generationStarted: true,
+    generationCompleted: false,
+    saveAttempted: false,
+    saveCompleted: false,
+    weekStart,
+    weekEnd,
+    existingWeeklyFound: Boolean(existingWeekly),
+    existingWeeklyId: existingWeekly?.id,
+    existingWeeklySlug: existingWeekly?.slug,
+    existingWeeklyStatus: existingWeekly?.status,
+    revisionSchemaAvailable,
+    finalStatus: "failed",
+  };
+}
+
+function describeWeeklyLock(canonicalPublished: WeeklyIntelligenceDraft) {
+  return {
+    blockedReason:
+      "Cannot create same-week revision until Supabase migration is applied. Existing published weekly blocks draft creation.",
+    nextAction:
+      `Review and apply the weekly revision workflow migration, then create a revision draft for ${canonicalPublished.slug}.`,
   };
 }
 
@@ -1169,32 +1230,60 @@ export async function generateWeeklyIntelligenceDraft({
     revisionSchemaAvailable,
   );
   const existingDraft = editableDraft ?? canonicalPublished ?? weeklyRangeDrafts[0] ?? null;
-  const canReuseExisting = Boolean(editableDraft);
+  const debug = createWeeklyGenerationDebug({
+    existingWeekly: existingDraft,
+    revisionSchemaAvailable,
+    weekEnd,
+    weekStart,
+  });
+  logWeeklyWorkflow("existing_weekly_checked", {
+    existing_weekly_found: debug.existingWeeklyFound,
+    existing_weekly_id: debug.existingWeeklyId ?? null,
+    existing_weekly_slug: debug.existingWeeklySlug ?? null,
+    existing_weekly_status: debug.existingWeeklyStatus ?? null,
+    revision_schema_available: revisionSchemaAvailable,
+    week_end: weekEnd,
+    week_start: weekStart,
+  });
 
   if (
-    existingDraft &&
-    ((!revisionSchemaAvailable && weeklyRangeDrafts.length > 0) ||
-      (editableDraft && !force))
+    canonicalPublished &&
+    !editableDraft &&
+    !revisionSchemaAvailable
   ) {
+    const lock = describeWeeklyLock(canonicalPublished);
+    const blockedDebug: WeeklyGenerationDebug = {
+      ...debug,
+      blockedReason: lock.blockedReason,
+      finalStatus: "blocked",
+      generationCompleted: true,
+      nextAction: lock.nextAction,
+    };
     lastWeeklyGenerationSummary = buildSummary({
-      status: "existing",
-      draft: existingDraft,
+      status: "blocked",
+      draft: canonicalPublished,
+      debug: blockedDebug,
       intake,
-      forced: false,
+      forced: force,
     });
     logWeeklyWorkflow("generation_completed", {
-      blocked_by_published_week_range: !canReuseExisting,
-      draft_id: existingDraft.id,
+      blocked_reason: blockedDebug.blockedReason,
+      draft_id: canonicalPublished.id,
       generation_completed: true,
       revision_requires_migration: Boolean(canonicalPublished && !revisionSchemaAvailable),
       revision_schema_available: revisionSchemaAvailable,
       reused_existing: true,
       save_completed: false,
-      weekly_slug: existingDraft.slug,
-      weekly_status: existingDraft.status,
+      weekly_slug: canonicalPublished.slug,
+      weekly_status: canonicalPublished.status,
+    });
+    logWeeklyWorkflow("final_response", {
+      final_status: blockedDebug.finalStatus,
+      next_action: blockedDebug.nextAction,
+      weekly_slug: canonicalPublished.slug,
     });
 
-    return { draft: existingDraft, intake, summary: lastWeeklyGenerationSummary };
+    return { draft: canonicalPublished, intake, summary: lastWeeklyGenerationSummary };
   }
 
   const now = new Date().toISOString();
@@ -1297,10 +1386,10 @@ export async function generateWeeklyIntelligenceDraft({
         ? `weekly-intelligence-${weekEnd}-${now.replace(/[:.]/g, "-")}`
         : `weekly-intelligence-${weekEnd}`;
   const draft: WeeklyIntelligenceDraft = {
-    id: crypto.randomUUID(),
-    slug,
+    id: editableDraft?.id ?? crypto.randomUUID(),
+    slug: editableDraft?.slug ?? slug,
     title: `IXAI Weekly Intelligence｜${weekStart} - ${weekEnd}`,
-    status: "draft",
+    status: editableDraft?.status ?? "draft",
     weekStart,
     weekEnd,
     publishDate: now,
@@ -1314,16 +1403,63 @@ export async function generateWeeklyIntelligenceDraft({
     complianceNote: "本週報由 IXAI 根據公開新聞標題、摘要與市場脈絡產生草稿，需經人工審閱。內容僅供市場資訊與風險觀察參考，不構成投資建議、買賣指令或報酬承諾。",
     createdBy: "system",
     updatedBy: "system",
-    revisionNumber,
+    revisionNumber: editableDraft?.revisionNumber ?? revisionNumber,
     parentWeeklyId:
-      canonicalPublished && revisionSchemaAvailable ? canonicalPublished.id : undefined,
+      editableDraft?.parentWeeklyId ??
+      (canonicalPublished && revisionSchemaAvailable ? canonicalPublished.id : undefined),
     isCanonical: false,
     revisionNote:
-      canonicalPublished && revisionSchemaAvailable
+      editableDraft?.revisionNote ??
+      (canonicalPublished && revisionSchemaAvailable
         ? "Generated revision from canonical weekly"
-        : undefined,
+        : undefined),
   };
-  const savedDraft = await saveWeeklyDraftAsync(draft);
+  debug.saveAttempted = true;
+  logWeeklyWorkflow("save_attempted", {
+    draft_id: draft.id,
+    revision_number: draft.revisionNumber ?? 1,
+    revision_schema_available: revisionSchemaAvailable,
+    save_attempted: true,
+    weekly_slug: draft.slug,
+    weekly_status: draft.status,
+  });
+
+  let savedDraft: WeeklyIntelligenceDraft;
+  try {
+    savedDraft = await saveWeeklyDraftAsync(draft);
+  } catch (error) {
+    const failedDebug: WeeklyGenerationDebug = {
+      ...debug,
+      finalStatus: "failed",
+      generationCompleted: true,
+      postgrestCode: error instanceof WeeklyPersistenceError ? error.postgrestCode : undefined,
+      saveAttempted: true,
+      saveCompleted: false,
+      saveFailedReason:
+        error instanceof Error ? error.message : "Unknown weekly persistence failure.",
+    };
+    logWeeklyWorkflow("save_failed", {
+      draft_id: draft.id,
+      postgrest_code: failedDebug.postgrestCode ?? null,
+      save_failed_reason: failedDebug.saveFailedReason,
+      weekly_slug: draft.slug,
+    });
+    lastWeeklyGenerationSummary = buildSummary({
+      status: "blocked",
+      draft,
+      debug: failedDebug,
+      intake,
+      forced: force,
+    });
+    throw error;
+  }
+  const completedDebug: WeeklyGenerationDebug = {
+    ...debug,
+    finalStatus: editableDraft ? "existing" : "generated",
+    generationCompleted: true,
+    saveAttempted: true,
+    saveCompleted: true,
+  };
   logWeeklyWorkflow("save_completed", {
     draft_id: savedDraft.id,
     generation_completed: true,
@@ -1337,8 +1473,9 @@ export async function generateWeeklyIntelligenceDraft({
   });
 
   lastWeeklyGenerationSummary = buildSummary({
-    status: "generated",
+    status: editableDraft ? "existing" : "generated",
     draft: savedDraft,
+    debug: completedDebug,
     intake,
     forced: force,
   });
