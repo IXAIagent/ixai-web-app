@@ -1751,3 +1751,31 @@ Out of Scope:
 - AI Copilot.
 - Broker integrations.
 - Real portfolio / FCN data.
+
+## v1.56.1 — Feature Gate UI
+
+Why:
+
+- v1.56.0 established the entitlement layer, but locked Pro capabilities still
+  needed clearer UI treatment in the Account workspace.
+- Users should see that Portfolio, FCN Monitoring, and Risk Engine are future
+  Pro-gated capabilities rather than missing or broken features.
+
+What Changed:
+
+- Added a small Account feature-gate card component.
+- Displayed Portfolio Intelligence, FCN Monitoring, and Risk Engine as gated
+  cards under the Membership / Entitlements area.
+- Reused `canAccessPortfolio()`, `canAccessFCN()`, and
+  `canAccessRiskEngine()` from the v1.56 feature-gate foundation.
+- Preserved the Free-plan expectation that these Pro capabilities remain
+  locked.
+
+Out of Scope:
+
+- Stripe.
+- Billing.
+- Payment UI.
+- Real Portfolio / FCN data.
+- Risk Engine workflow UI.
+- Legacy Pro frontend migration.

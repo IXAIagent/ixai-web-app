@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.56.0`
+`v1.56.1`
 
 ## Related Strategic Documents
 
@@ -703,6 +703,28 @@ Still not included:
 - Risk Engine UI.
 - AI Copilot.
 - Broker or real portfolio data.
+
+### v1.56.1 — Feature Gate UI
+
+Completed:
+
+- Added visible Account UI cards for Portfolio Intelligence, FCN Monitoring,
+  and Risk Engine feature gates.
+- Reused the v1.56 entitlement helpers:
+  `canAccessPortfolio()`, `canAccessFCN()`, and `canAccessRiskEngine()`.
+- Kept Free accounts in the expected locked state for Portfolio, FCN
+  Monitoring, and Risk Engine.
+- Added clear "Reserved for Pro" / "Upgrade path coming soon" messaging without
+  payment flow or Stripe integration.
+
+Still not included:
+
+- Stripe.
+- Billing or upgrade checkout.
+- Real Portfolio Center data.
+- Real FCN Monitoring data.
+- Risk Engine workflow UI.
+- Broker integrations.
 
 ### v1.51.x — Backend Integration Boundary Strategy
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Database, ShieldCheck } from "lucide-react";
+import { LockedFeatureCard } from "@/components/pro/locked-feature-card";
 import {
   canAccessFCN,
   canAccessPortfolio,
@@ -337,6 +338,23 @@ export function ProLabConnectionCard({
   const canOpenPro = proAccess?.canOpenPro === true;
   const showAccountLink = source === "account" && showProAccess;
   const activeEntitlements = entitlements ?? membership?.entitlements ?? null;
+  const gatedFeatures = [
+    {
+      description: "Portfolio-aware intelligence will unlock only when portfolio entitlement is enabled.",
+      enabled: canAccessPortfolio(activeEntitlements),
+      name: "Portfolio Intelligence",
+    },
+    {
+      description: "FCN monitoring remains closed until the account has FCN entitlement.",
+      enabled: canAccessFCN(activeEntitlements),
+      name: "FCN Monitoring",
+    },
+    {
+      description: "Risk Engine access is reserved for future Pro entitlement states.",
+      enabled: canAccessRiskEngine(activeEntitlements),
+      name: "Risk Engine",
+    },
+  ];
   const legacyLoginWarning =
     "IXAI Pro Lab is currently a separate preview environment. App account login is not yet shared with Pro Lab. Do not use your App password to log into Pro Lab unless you have a separate Pro Lab account.";
 
@@ -472,6 +490,16 @@ export function ProLabConnectionCard({
                       {enabled ? "Enabled" : "Locked"}
                     </span>
                   </span>
+                ))}
+              </div>
+              <div className="mt-3 grid gap-2">
+                {gatedFeatures.map((feature) => (
+                  <LockedFeatureCard
+                    description={feature.description}
+                    enabled={feature.enabled}
+                    key={feature.name}
+                    name={feature.name}
+                  />
                 ))}
               </div>
             </div>

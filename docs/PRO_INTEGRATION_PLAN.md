@@ -583,6 +583,44 @@ Still not included:
 - Risk Engine UI.
 - AI Copilot.
 
+## v1.56.1 Feature Gate UI
+
+Purpose:
+
+- Make the v1.56 entitlement layer visible inside the Account experience.
+- Show users which future Pro capabilities are currently locked without
+  implying paid access, broker connectivity, or real portfolio/FCN data.
+
+Account UI additions:
+
+- Portfolio Intelligence feature gate.
+- FCN Monitoring feature gate.
+- Risk Engine feature gate.
+
+Current Free plan behavior:
+
+- Daily Brief, Weekly Brief, and Watchlist remain enabled.
+- Portfolio Intelligence remains locked.
+- FCN Monitoring remains locked.
+- Risk Engine remains locked.
+
+Implementation:
+
+- Reuses `src/lib/pro/feature-gates.ts`.
+- Uses `canAccessPortfolio()`, `canAccessFCN()`, and
+  `canAccessRiskEngine()` as the UI source of truth.
+- Adds a small locked feature card with `Reserved for Pro` and
+  `Upgrade path coming soon` messaging.
+
+Out of scope:
+
+- Stripe.
+- Billing.
+- Payment UI.
+- Real Portfolio / FCN data.
+- Risk Engine workflow UI.
+- Legacy Pro frontend migration.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:
