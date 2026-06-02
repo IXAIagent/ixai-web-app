@@ -8,6 +8,7 @@ import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence
 import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
 import { ConnectLineCard } from "@/components/line/connect-line-card";
 import { ProAlertPreview } from "@/components/pro/pro-alert-preview";
+import { ProLabConnectionCard } from "@/components/pro/pro-lab-connection-card";
 import { ProPreviewCard } from "@/components/pro/pro-preview-card";
 import { ProRiskMap } from "@/components/pro/pro-risk-map";
 import { ProWaitlistCta } from "@/components/pro/pro-waitlist-cta";
@@ -116,6 +117,8 @@ export function ProPreviewDashboard() {
       </section>
 
       <ProAlertPreview />
+
+      <ProLabConnectionCard source="pro_preview" />
 
       <section className="grid gap-4 rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>

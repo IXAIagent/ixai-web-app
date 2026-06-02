@@ -1268,3 +1268,36 @@ Out of Scope:
 - Moving folders.
 - Deleting legacy projects.
 - Changing auth, LINE, LIFF, Supabase, backend, provider infrastructure, billing, portfolio logic, or production app code.
+
+## v1.51.0 — IXAI App ↔ IXAI Pro Integration Foundation
+
+Why:
+
+- IXAI now has a stable production app and a separate IXAI Pro Legacy Dashboard Prototype that already connects to the FastAPI backend.
+- The next engineering step is not to move the whole legacy dashboard, but to create a safe connection layer between app.ixuan.ai, IXAI Pro Lab, and `backend/ixai_agent`.
+- Users should understand that Public App, Account, Pro Preview, and Pro Lab are part of one future product path.
+
+What Changed:
+
+- Added `docs/PRO_INTEGRATION_PLAN.md`.
+- Updated project map and roadmap with the production app / Pro Lab / backend roles.
+- Added `/api/backend/health` as the first server-side backend health proxy.
+- Added IXAI Pro Lab external entry points to `/pro`, `/pro-preview`, and `/account`.
+- Added Account Pro integration status surface with Backend Connected / Not configured / Unavailable states.
+
+Key Decisions:
+
+- Keep `app/ixai-web-app` as the active production frontend.
+- Keep `frontend/ixai-website-clean` as IXAI Pro Legacy Dashboard Prototype and reusable reference.
+- Use Next API server-side proxy patterns for backend integration.
+- Avoid direct browser-to-FastAPI protected requests in the production app.
+- Future integration must define Supabase user → backend account mapping before loading portfolio / FCN data.
+
+Out of Scope:
+
+- Backend code changes.
+- Legacy frontend code changes.
+- Moving folders or deleting projects.
+- Migrating legacy JWT auth.
+- Loading real portfolio, FCN, broker, trading, or paid entitlement data.
+- Stripe, billing, auth, LINE, LIFF, Daily / Weekly generation, admin workflow, or provider infrastructure changes.

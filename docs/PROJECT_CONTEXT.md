@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.50.2`
+`v1.51.0`
 
 Current Core Flow:
 
@@ -138,6 +138,8 @@ Daily / Weekly Social Pack Divergence Fix now separates Daily and Weekly social 
 
 LINE OAuth Prefetch CORS Fix now prevents the LINE login entry from being prefetched as a Next.js RSC request. The LINE OAuth link uses normal document navigation to `/api/line/login`, so `/pro-preview` no longer triggers `access.line.me` CORS console errors during route load.
 
+IXAI App ↔ IXAI Pro Integration Foundation now creates the first formal connection between the production app and the backend / legacy Pro Lab world. The production app exposes `/api/backend/health` as a server-side backend health proxy, reads `IXAI_BACKEND_URL` with development-only localhost fallback, and surfaces IXAI Pro Lab entry points on `/account`, `/pro`, and `/pro-preview` without migrating legacy UI, legacy JWT auth, or direct browser-to-FastAPI protected requests.
+
 Latest engineering health check:
 
 - Engineering Health Score: 8.2/10.
@@ -177,6 +179,33 @@ High-value reusable modules and patterns include:
 - Asset allocation layout
 - Alert center taxonomy
 - Backend API client contract ideas
+
+## B2. IXAI Pro Integration Foundation
+
+The v1.51 integration direction connects the current production app, the legacy Pro dashboard prototype, and the FastAPI backend without merging them prematurely.
+
+Current roles:
+
+- `app/ixai-web-app`: Active Production App, public app mainline, Supabase / Next API based.
+- `frontend/ixai-website-clean`: IXAI Pro Legacy Dashboard Prototype, already connected to `backend/ixai_agent`.
+- `backend/ixai_agent`: Active Backend Mainline Candidate for portfolio, FCN, crypto, alerts, account, preferences, imports, and intelligence APIs.
+- `brand/ixuan-brand-site`: Brand / Social Kit side project.
+
+v1.51.0 adds:
+
+- `/api/backend/health`: first server-side IXAI App → Backend health proxy.
+- `/account`: Pro integration card with backend status.
+- `/pro`: IXAI Pro Lab external entry.
+- `/pro-preview`: IXAI Pro Lab external entry.
+- `docs/PRO_INTEGRATION_PLAN.md`: formal integration sequence.
+
+The integration plan remains intentionally narrow:
+
+- Do not migrate the legacy frontend wholesale.
+- Do not migrate legacy JWT login or `localStorage` token auth.
+- Do not let browser clients call protected FastAPI endpoints directly.
+- Do not load real portfolio / FCN data before Supabase user → backend account mapping is approved.
+- Do not connect Stripe, paid entitlement, broker integration, or trading workflows.
 
 Current Highest Priorities:
 

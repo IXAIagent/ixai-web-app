@@ -7,20 +7,20 @@ This document classifies the main IXAI project folders so future AI agents do no
 ```text
 /Users/itsunkuo/Desktop/IXAI_PROJECTS
 ├─ app/ixai-web-app
-│  └─ Active production frontend
+│  └─ Active Production App
 ├─ backend/ixai_agent
 │  └─ Active backend mainline candidate
 ├─ frontend/ixai-website-clean
-│  └─ Legacy Pro / Portfolio Dashboard prototype
+│  └─ IXAI Pro Legacy Dashboard Prototype
 └─ brand/ixuan-brand-site
-   └─ Brand / social kit side project
+   └─ Brand / Social Kit
 ```
 
 ## app/ixai-web-app
 
 Role:
 
-- Active production frontend.
+- Active Production App.
 - Current Vercel / public app mainline.
 - Owns the public IXAI experience: landing, onboarding, Daily Brief, Weekly Intelligence, Share Intelligence, Account, Pro Preview, Admin Editorial Studio, and Social Intelligence Pack Studio.
 
@@ -53,7 +53,7 @@ Future integration should happen through a clear boundary, likely a Next API pro
 
 Role:
 
-- Legacy Pro / Portfolio Dashboard prototype.
+- IXAI Pro Legacy Dashboard Prototype.
 - Not the production frontend.
 - Valuable as a reference for future Account / Pro / Portfolio Intelligence surfaces.
 
@@ -96,7 +96,7 @@ Migration strategy:
 
 Role:
 
-- Brand / social kit side project.
+- Brand / Social Kit side project.
 - Useful for brand reference, content direction, and future visual/social assets.
 - Not the production IXAI app mainline.
 

@@ -6,6 +6,7 @@ import { MorningIntelligencePreview } from "@/components/intelligence/morning-in
 import { PublicProDeliveryComparison } from "@/components/intelligence/public-pro-delivery-comparison";
 import { ProComparison } from "@/components/pro/pro-comparison";
 import { ProFeatureGrid } from "@/components/pro/pro-feature-grid";
+import { ProLabConnectionCard } from "@/components/pro/pro-lab-connection-card";
 import { ProWaitlistCta } from "@/components/pro/pro-waitlist-cta";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -84,6 +85,8 @@ export default function ProPage() {
       <MorningIntelligencePreview source="pro_page" tier="public" />
 
       <ProComparison />
+
+      <ProLabConnectionCard source="pro" />
 
       <IdentifySessionCard
         source="pro_page"

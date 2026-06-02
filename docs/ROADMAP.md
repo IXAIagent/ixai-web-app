@@ -4,13 +4,14 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.50.2`
+`v1.51.0`
 
 ## Related Strategic Documents
 
 - `docs/PRODUCT_ORIGIN.md`
 - `docs/IXAI_VISION.md`
 - `docs/PROJECT_MAP.md`
+- `docs/PRO_INTEGRATION_PLAN.md`
 
 ## Current Product Flow
 
@@ -453,7 +454,24 @@ Goal:
 
 ## Future Roadmap
 
-### v1.51 — Backend Integration Boundary Strategy
+### v1.51.0 — IXAI App ↔ IXAI Pro Integration Foundation
+
+Completed / in progress:
+
+- Project map finalized across production app, legacy Pro dashboard prototype, backend, and brand side project.
+- Added `docs/PRO_INTEGRATION_PLAN.md`.
+- Added backend health proxy foundation at `/api/backend/health`.
+- Added Pro external dashboard link to the production app flow.
+- Added Account Pro integration status surface with backend connection status.
+- Preserved Supabase auth, LINE, LIFF, backend code, legacy frontend code, Daily / Weekly generation, and admin workflows.
+
+Goal:
+
+- Make the production IXAI App aware of the IXAI Pro Lab and backend without migrating the legacy frontend.
+- Establish the first server-side backend connection from app.ixuan.ai.
+- Prepare future Supabase user → backend account bridge.
+
+### v1.51.x — Backend Integration Boundary Strategy
 
 Goal:
 
