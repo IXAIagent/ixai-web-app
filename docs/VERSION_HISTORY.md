@@ -1419,3 +1419,41 @@ Out of Scope:
 - Stripe, payment UI, subscription management, or pricing.
 - Portfolio / FCN real data.
 - Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.53.1 — Account Link End-to-End Verification
+
+Why:
+
+- v1.52 added the production-app account-link proxy and v1.53 added the backend account-link endpoint.
+- The next risk was whether frontend and backend could actually communicate without weakening auth or exposing protected backend APIs to the browser.
+
+What Was Verified:
+
+- Backend `/health` returned `ok`.
+- Backend `/readyz` returned database ready state.
+- Backend `POST /api/v1/integrations/supabase/account-link` returned `created: true` on first test payload.
+- Repeating the same payload returned `created: false`.
+- The backend created / found a backend `User`, `Account`, and owner `AccountMembership`.
+- `pro_access_status` stayed `connected`, not `active`.
+- Frontend `/api/backend/health` reached the local backend through development fallback.
+- Frontend production server smoke test with `IXAI_BACKEND_URL=http://localhost:8000` returned `backendUrlConfigured: true` and `ok: true`.
+- Frontend `/api/pro/account-link` returned `401 not_authenticated` without a Supabase Bearer token.
+
+Known Blocker:
+
+- Full `/account` Connect Pro Account E2E still requires a real Supabase authenticated browser session / access token.
+- The local frontend dev server already running on port 3001 did not include `IXAI_BACKEND_URL`, so a separate short-lived production server on port 3002 was used to verify configured backend health.
+
+Key Decisions:
+
+- Do not bypass Supabase auth for local E2E.
+- Do not apply auth hacks or direct browser-to-FastAPI calls.
+- Keep account linking separate from paid Pro entitlement.
+
+Out of Scope:
+
+- Legacy frontend changes.
+- Supabase schema changes.
+- Stripe, payment UI, subscription management, or pricing.
+- Portfolio / FCN real data.
+- Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.

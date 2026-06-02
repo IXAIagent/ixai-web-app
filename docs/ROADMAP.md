@@ -532,6 +532,30 @@ Constraints:
 - No Supabase schema changes.
 - No Stripe, billing UI, portfolio data, FCN data, direct browser-to-FastAPI protected calls, or Pro auto-entitlement.
 
+### v1.53.1 — Account Link End-to-End Verification
+
+Completed / in progress:
+
+- Verified backend health locally with the v1.53 account-link endpoint.
+- Verified direct backend account-link idempotency:
+  - first request creates backend account link
+  - repeated request returns existing link
+  - default `pro_access_status` remains `connected`
+- Verified frontend backend health proxy can reach local backend through development fallback.
+- Verified frontend production server smoke test can reach local backend with `IXAI_BACKEND_URL` configured.
+- Verified unauthenticated frontend `/api/pro/account-link` remains closed with `401 not_authenticated`.
+
+Known blocker:
+
+- Full authenticated App → Next API → Backend account-link verification requires a valid Supabase browser session / access token.
+- Do not weaken auth, add auth bypass, or expose backend protected routes directly to the browser.
+
+Next:
+
+- Test `/account` `Connect Pro Account` with a real Supabase session.
+- Configure `IXAI_BACKEND_URL` in the frontend runtime for non-fallback backend health.
+- After authenticated link passes, evaluate the first read-only Pro summary proxy.
+
 ### v1.51.x — Backend Integration Boundary Strategy
 
 Goal:

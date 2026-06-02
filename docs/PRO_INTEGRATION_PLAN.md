@@ -325,6 +325,30 @@ The backend boundary should not expose:
 - Full backend internal URLs.
 - Portfolio or FCN data before identity mapping is approved.
 
+## v1.53.1 Account Link End-to-End Verification
+
+Verification status:
+
+- Backend local health passed against a temporary E2E SQLite database.
+- Backend `POST /api/v1/integrations/supabase/account-link` passed direct local testing:
+  - first request returned `created: true`
+  - second identical request returned `created: false`
+  - `pro_access_status` remained `connected`
+  - backend `User`, `Account`, and owner `AccountMembership` were created
+- Frontend `/api/backend/health` reached the backend through the development fallback and returned `ok: true`.
+- Frontend production server smoke test with `IXAI_BACKEND_URL=http://localhost:8000` returned `backendUrlConfigured: true` and `ok: true`.
+- Frontend `/api/pro/account-link` correctly returned `401 not_authenticated` without a Supabase Bearer token.
+
+Known blocker:
+
+- Full App → Next API → Backend account-link verification still requires an authenticated Supabase browser session or valid Supabase access token.
+- No auth bypass or schema change should be added for this test.
+
+Local DB note:
+
+- The existing local `ixai.db` was not upgraded because its Alembic version marker is behind existing tables.
+- E2E backend verification used a temporary database at `/tmp/ixai_v1531_e2e.db`.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:
