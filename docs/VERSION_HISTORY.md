@@ -1641,3 +1641,37 @@ Out of Scope:
 - Legacy frontend changes.
 - Daily / Weekly / Admin workflow changes.
 - Buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.55.1 — Production Migration Finalize
+
+Why:
+
+- v1.55.0 added the membership foundation, but production PostgreSQL still
+  needed explicit verification that Alembic had moved from
+  `0009_supabase_account_link` to `0010_membership_foundation`.
+- `/account` membership UI depends on the backend `subscriptions` and
+  `entitlements` tables existing in production.
+
+What Changed:
+
+- Added a temporary read-only backend migration status endpoint:
+  `GET /admin/migration-status`.
+- The endpoint reports current revision, expected revision, Alembic heads, and
+  whether `users`, `accounts`, `account_memberships`, `subscriptions`, and
+  `entitlements` exist.
+- Documented the production verification sequence in backend deployment notes.
+
+Key Decisions:
+
+- The endpoint is debug-only and does not execute migrations.
+- The endpoint should be removed after production verification or replaced with
+  protected ops tooling.
+- Account link can initialize Free membership only after migration 0010 is live.
+
+Out of Scope:
+
+- Stripe.
+- Portfolio / FCN real data.
+- Payment UI.
+- LINE Login changes.
+- Trading advice, target prices, return promises, or automated trading.

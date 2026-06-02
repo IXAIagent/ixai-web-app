@@ -33,7 +33,7 @@ type BackendAccountLinkResult =
       state: ProAccountLinkState;
     };
 
-function getConfiguredBackendUrl() {
+export function getConfiguredBackendUrl() {
   return process.env.IXAI_BACKEND_URL?.trim().replace(/\/$/, "") || null;
 }
 
