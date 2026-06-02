@@ -84,3 +84,9 @@ export async function getSupabaseAccessToken() {
 
   return data.session.access_token;
 }
+
+export async function getSupabaseAuthorizationHeaders() {
+  const accessToken = await getSupabaseAccessToken();
+
+  return accessToken ? { authorization: `Bearer ${accessToken}` } : undefined;
+}

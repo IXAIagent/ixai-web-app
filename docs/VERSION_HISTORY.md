@@ -1564,3 +1564,43 @@ Out of Scope:
 - Backend changes.
 - Legacy frontend changes.
 - Stripe, payment UI, portfolio / FCN data, auto publishing, platform APIs, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.54.3 — Supabase Bearer Token Client Bridge
+
+Why:
+
+- v1.54.2 confirmed that Next API routes cannot read the Supabase browser session from `sessionStorage`.
+- The correct low-risk path is not an auth rewrite, but an explicit client bridge that sends the current Supabase access token as an `Authorization: Bearer` header to trusted Next API routes.
+
+What Changed:
+
+- Added `getSupabaseAuthorizationHeaders()` to centralize Supabase `access_token` → Bearer header creation.
+- Updated Pro Lab connection client calls so `/api/pro/access` and `/api/pro/account-link` both use the same Bearer bridge.
+- Kept `/api/pro/account-link` server-side validation unchanged: it still verifies Supabase user identity before calling backend account-link.
+
+Expected Flow:
+
+```text
+Browser Supabase Session
+→ access_token
+→ Authorization: Bearer
+→ /api/pro/account-link
+→ Backend Account Link
+→ accountLink.status = linked
+```
+
+Key Decisions:
+
+- Do not use lightweight `ixai_identity` to create backend account links.
+- Do not accept anonymous account-link requests.
+- Do not expose backend tokens, Supabase tokens, or backend protected endpoints directly to the browser.
+- Account linking remains separate from paid Pro access.
+
+Out of Scope:
+
+- Backend changes.
+- Legacy frontend changes.
+- Auth rewrite.
+- Supabase schema changes.
+- LINE Login / LIFF changes.
+- Stripe, payment UI, portfolio / FCN data, auto publishing, platform APIs, buy/sell recommendations, target prices, return promises, or automated trading.

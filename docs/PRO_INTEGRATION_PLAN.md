@@ -441,6 +441,38 @@ Verification notes:
 - With lightweight identity only, `/api/pro/access` can show manual `connected` status, but `/api/pro/account-link` correctly remains `401 not_authenticated`.
 - This confirms the required next test input is a real Supabase Bearer session, not a lightweight identity cookie.
 
+## v1.54.3 Supabase Bearer Token Client Bridge
+
+Purpose:
+
+- Make the App → Next API account-link bridge explicit and auditable.
+- Keep Supabase auth in the browser, but pass the current Supabase `access_token` to Next API routes as an `Authorization: Bearer` header when the user clicks account-link controls.
+
+Client bridge:
+
+```text
+Browser Supabase session
+→ supabase.auth.getSession()
+→ session.access_token
+→ Authorization: Bearer <access_token>
+→ /api/pro/account-link
+→ backend account-link
+```
+
+Implementation notes:
+
+- `getSupabaseAuthorizationHeaders()` centralizes token-to-Bearer header creation.
+- `/api/pro/access` and `/api/pro/account-link` use the same client-side Bearer bridge.
+- `/api/pro/account-link` continues to reject anonymous requests and lightweight `ixai_identity`-only requests.
+- No fake identity fallback, auth rewrite, Supabase schema change, backend change, Stripe, Portfolio, or FCN data access was added.
+
+Expected authenticated result:
+
+- `GET /api/auth/session-debug` with the Bearer header should report `source: bearer`, `hasSupabaseSession: true`, and `userIdPresent: true`.
+- `POST /api/pro/account-link` should return `ok: true`.
+- Account Link Status should become `Linked`.
+- Linked remains identity-only and does not activate paid Pro access.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

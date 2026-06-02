@@ -617,6 +617,31 @@ Next:
 - If a real logged-in session is available, retry `/account` `Connect Pro Account`.
 - If Bearer is missing despite authenticated UI, patch the client button/token retrieval path rather than weakening server auth.
 
+### v1.54.3 — Supabase Bearer Token Client Bridge
+
+Completed / in progress:
+
+- Made the browser Supabase session → Bearer header bridge explicit through `getSupabaseAuthorizationHeaders()`.
+- Reused the same Bearer bridge for `/api/pro/access` and `/api/pro/account-link`.
+- Kept `/api/pro/account-link` closed to anonymous and lightweight identity-only requests.
+
+Expected authenticated flow:
+
+```text
+Supabase browser session
+→ access_token
+→ Authorization: Bearer
+→ /api/pro/account-link
+→ backend account-link
+→ Account Link Status: Linked
+```
+
+Next:
+
+- Run the button test with a real logged-in Supabase App user.
+- Confirm `/api/auth/session-debug` reports `source: bearer`.
+- Confirm backend account link is created / found and paid Pro access remains entitlement-gated.
+
 ### v1.51.x — Backend Integration Boundary Strategy
 
 Goal:

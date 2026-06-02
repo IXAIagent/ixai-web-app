@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Database, ShieldCheck } from "lucide-react";
-import { getSupabaseAccessToken } from "@/src/lib/supabase/client";
+import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
 
 type BackendHealth = {
   ok: boolean;
@@ -216,10 +216,10 @@ export function ProLabConnectionCard({
     let mounted = true;
 
     async function loadAccess() {
-      const accessToken = await getSupabaseAccessToken();
+      const authHeaders = await getSupabaseAuthorizationHeaders();
       const response = await fetch("/api/pro/access", {
         cache: "no-store",
-        headers: accessToken ? { authorization: `Bearer ${accessToken}` } : undefined,
+        headers: authHeaders,
       });
       const payload = (await response.json()) as ProAccessResponse;
 
@@ -259,10 +259,10 @@ export function ProLabConnectionCard({
     setAccountLinkPending(true);
 
     try {
-      const accessToken = await getSupabaseAccessToken();
+      const authHeaders = await getSupabaseAuthorizationHeaders();
       const response = await fetch("/api/pro/account-link", {
         cache: "no-store",
-        headers: accessToken ? { authorization: `Bearer ${accessToken}` } : undefined,
+        headers: authHeaders,
         method: "POST",
       });
       const payload = (await response.json()) as AccountLinkResponse;
