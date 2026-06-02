@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.49.0`
+`v1.50.2`
 
 ## Related Strategic Documents
 
@@ -404,24 +404,51 @@ Completed:
 - Preserved format-specific 4:5 / 9:16 layout constraints from v1.48.0 while increasing intentional card content density.
 - Preserved manual publishing and non-advisory compliance boundaries.
 
-Next:
+### v1.50.1 — Daily / Weekly Social Pack Divergence Fix
 
-`v1.50.1 — Daily / Weekly Social Pack Divergence Fix`
+Completed:
+
+- Split Daily / Weekly narrative source priority at generator level.
+- Ensured Daily Social Pack and Weekly Social Pack are separate period products.
+- Daily Social Pack now answers what happened today, today's biggest market question, and what to watch today.
+- Weekly Social Pack now answers what changed this week, what next-week catalysts matter, and whether the weekly thesis is extending, reversing, or rotating.
+- Weekly Social Pack prioritizes weekly major events, upcoming events, weekly periodic narrative, and weekly-only I-Xuan View before any generic shared insight fallback.
+- Added Social Pack Period Divergence QA so Daily Slide 1 / 2 / 3 / 4 / 5 and Weekly Slide 1 / 2 / 3 / 4 / 5 are manually compared after Social Pack, Daily engine, or Weekly engine changes.
+- Preserved auth, LINE, LIFF, billing, portfolio, trading, platform APIs, auto publishing, and Supabase migration boundaries.
+
+### v1.50.2 — LINE OAuth Prefetch CORS Fix
+
+Completed:
+
+- Fixed `/pro-preview` LINE OAuth CORS console error caused by Next.js RSC/prefetch behavior on `/api/line/login`.
+- LINE OAuth entry now uses normal document navigation instead of client-side Link prefetch.
+- Preserved homepage, auth main flow, LINE Login API, LIFF, and protected routes.
+- Confirmed `npm run lint`, `npm run build`, mobile QA, and production route QA passed.
+- Confirmed no hydration errors and no LINE OAuth CORS errors in checked routes.
+- Confirmed `main` and `origin/main` synchronized at commit `385ff518f9ee57b58c1b4fbb1fc98473563201a7`.
+
+## Current Engineering Health
+
+- Engineering Health Score: 8.2/10.
+- `npm run lint`: passed.
+- `npm run build`: passed.
+- 390px mobile QA: passed.
+- Production route QA: passed.
+- Hydration errors: none found in checked routes.
+- LINE OAuth CORS: none found after v1.50.2.
+- Working tree: clean at audit time.
+- Git: `main` / `origin/main` synchronized.
 
 ## Next Suggested Version
 
-`v1.50.1 — Daily / Weekly Social Pack Divergence Fix`
+`v1.50.3 — Post-Stabilization Cleanup`
 
 Goal:
 
-- Fix Daily / Weekly Social Pack narrative source separation.
-- Split Daily / Weekly narrative source priority at generator level.
-- Ensure Daily Social Pack and Weekly Social Pack no longer produce interchangeable cards.
-- Daily Social Pack should answer what happened today, today's biggest market question, and what to watch today.
-- Weekly Social Pack should answer what changed this week, what next-week catalysts matter, and whether the weekly thesis is extending, reversing, or rotating.
-- Weekly Social Pack should prioritize weekly major events, upcoming events, weekly periodic narrative, and weekly-only I-Xuan View before any generic shared insight fallback.
-- Add Social Pack Period Divergence QA so Daily Slide 1 / 2 / 3 / 4 / 5 and Weekly Slide 1 / 2 / 3 / 4 / 5 are manually compared after Social Pack, Daily engine, or Weekly engine changes.
-- Do not change auth, LINE, LIFF, billing, portfolio, trading, platform APIs, auto publishing, or Supabase migration execution.
+- Align long-form docs with completed v1.50.x state after future changes.
+- Audit Next.js `_rsc` prefetch abort noise on `/fcn` and `/weekly-brief` without changing product flow.
+- Continue Social Pack Period Divergence QA after Daily / Weekly engine changes.
+- Keep changes small, verifiable, and non-architectural unless explicitly approved.
 
 ## Future Roadmap
 

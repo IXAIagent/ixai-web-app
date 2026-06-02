@@ -1147,7 +1147,7 @@ Out of Scope:
 
 - Auth, LINE Login, LIFF, billing, provider infrastructure, Supabase schema, Weekly migration execution, platform APIs, auto publishing, portfolio workflows, trading logic, buy/sell recommendations, target prices, return promises, or automated trading.
 
-## v1.50.1 — Daily / Weekly Social Pack Divergence Fix (Pending)
+## v1.50.1 — Daily / Weekly Social Pack Divergence Fix
 
 Why:
 
@@ -1156,7 +1156,7 @@ Why:
 - Audit found that `buildIXAIInsight`, `QuestionDrivenInsight`, `socialFunnel`, and Daily Core aggregation can still leak the same thesis into Weekly output.
 - Daily and Weekly cards must not look like the same social asset with different labels.
 
-Required Fix Direction:
+What Changed:
 
 - Separate Daily and Weekly Social Pack narrative sources.
 - Split or strictly branch Daily / Weekly question-driven logic and source priority.
@@ -1169,7 +1169,13 @@ Required Fix Direction:
 - Prevent identical Daily / Weekly Slide 1 questions, Slide 2 evidence, and nearly identical Slide 5 I-Xuan View.
 - Prevent the same fallback copy from filling both Daily and Weekly cards.
 
-Required QA:
+Key Decisions:
+
+- Daily Social Pack and Weekly Social Pack are separate period products, not one shared card set with different labels.
+- Weekly may use Daily context as secondary continuity metadata, but not as the primary social thesis source.
+- Social Pack Period Divergence QA is now a standing quality gate for future Daily / Weekly engine changes.
+
+QA:
 
 - Run Social Pack Period Divergence QA after Social Pack, Daily engine, or Weekly engine changes.
 - Compare Daily Slide 1 against Weekly Slide 1; questions must not match.
@@ -1182,3 +1188,36 @@ Required QA:
 Out of Scope:
 
 - Auth, LINE Login, LIFF, billing, portfolio workflows, trading logic, Supabase migration execution, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.50.2 — LINE OAuth Prefetch CORS Fix
+
+Why:
+
+- Production QA found `/pro-preview` could trigger LINE OAuth CORS console errors when the LINE login endpoint was handled as a Next.js client-side/RSC navigation.
+- `/api/line/login` redirects to LINE OAuth and should be reached through normal document navigation, not prefetch or RSC fetch.
+
+What Changed:
+
+- Changed the LINE login button navigation from Next.js `Link` to a normal anchor for `/api/line/login`.
+- Preserved click-through behavior to LINE Login while preventing App Router prefetch / RSC fetch from touching the OAuth redirect.
+- Kept the fix scoped to the LINE login entry and did not change the homepage, auth main flow, LINE Login API, LIFF, or protected routes.
+
+Validation:
+
+- Engineering Health Score: 8.2/10.
+- `npm run lint` passed.
+- `npm run build` passed.
+- 390px mobile QA passed.
+- Production route QA passed.
+- No hydration errors found in checked routes.
+- No LINE OAuth CORS errors found after the fix.
+- Working tree was clean at the project health audit.
+- `main` and `origin/main` synchronized at `385ff518f9ee57b58c1b4fbb1fc98473563201a7`.
+
+Out of Scope:
+
+- Auth architecture changes.
+- LINE Login API or LIFF changes.
+- Homepage changes.
+- Supabase schema changes.
+- Platform APIs, auto publishing, portfolio workflows, trading logic, buy/sell recommendations, target prices, return promises, or automated trading.

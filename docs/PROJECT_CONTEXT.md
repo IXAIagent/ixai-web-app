@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.49.0`
+`v1.50.2`
 
 Current Core Flow:
 
@@ -134,12 +134,29 @@ Weekly Persistence Fix + Social Pack Layout System now makes Weekly generation f
 
 Social Intelligence Rewrite now moves Social Pack generation from Brief compression into slide-native social cards. Daily Social Pack is generated as Hook → What the market is seeing → Real risk → Watch next → I-Xuan View, while Weekly Social Pack is generated as Weekly question → What changed this week → The one thing that matters → Next week catalysts → I-Xuan Weekly View. Social assets remain manual publishing material and still route readers back into Daily / Weekly Intelligence.
 
+Daily / Weekly Social Pack Divergence Fix now separates Daily and Weekly social narrative source priority. Daily Social Pack answers today's market question, today's signal, and today's watch-next items; Weekly Social Pack answers what changed this week, next-week catalysts, and period-specific I-Xuan Weekly View. Weekly social cards must not reuse Daily Core as their primary thesis source.
+
+LINE OAuth Prefetch CORS Fix now prevents the LINE login entry from being prefetched as a Next.js RSC request. The LINE OAuth link uses normal document navigation to `/api/line/login`, so `/pro-preview` no longer triggers `access.line.me` CORS console errors during route load.
+
+Latest engineering health check:
+
+- Engineering Health Score: 8.2/10.
+- Latest commit: `385ff518f9ee57b58c1b4fbb1fc98473563201a7`.
+- `main` and `origin/main` synchronized.
+- Working tree clean at audit time.
+- `npm run lint` passed.
+- `npm run build` passed.
+- 390px mobile QA passed.
+- Production route QA passed for `/`, `/daily-brief`, `/weekly-brief`, `/share`, `/pro`, `/pro-preview`, `/account`, and `/admin`.
+- No hydration errors found in checked routes.
+- No LINE OAuth CORS errors found after the v1.50.2 fix.
+
 Current Highest Priorities:
 
-1. Daily / Weekly Social Pack Divergence Fix.
-2. Weekly Revision Migration Review / Rollout.
-3. Publish Center Foundation.
-4. Monthly / Yearly Periodic Intelligence planning.
+1. Weekly Revision Migration Review / Rollout.
+2. Publish Center Foundation.
+3. Monthly / Yearly Periodic Intelligence planning.
+4. Continued Social Pack Period Divergence QA after future Daily / Weekly engine changes.
 
 Growth Strategy:
 
@@ -303,8 +320,8 @@ Known areas that require care:
 - Daily Intelligence quality is now a retention bottleneck priority. Drafts should target 3-5 minute reading value, with provider health and coverage gaps visible to editors.
 - Daily Brief and Social Pack content must remain interpretation-first. Avoid reverting Daily output to raw news summary, generic filler, or template labels.
 - Social Pack I-Xuan View must remain complete Chinese commentary and should not display raw English headlines, clipped fragments, or duplicated placeholder copy.
-- Daily / Weekly Social Pack Divergence Bug: Daily and Weekly Social Packs may currently share too much of the same thesis, slide copy, evidence, and I-Xuan View, making them look like the same card set with different labels. This is a major product issue, not a copy polish issue. Daily Social Pack and Weekly Social Pack must be treated as different products: Daily answers what happened today, today's biggest market question, and what to watch today; Weekly answers what changed this week, what next-week catalysts matter, and whether the weekly thesis is extending, reversing, or rotating.
-- Daily / Weekly Social Pack Divergence is a P0 product bug until fixed in v1.50.1. The root cause is not UI or export layout; it is shared thesis / question-driven / social funnel leakage. Weekly has weekly news intake, categorization, and upcoming-event inputs, but final question / insight / social layers can still be overwritten by shared Daily-influenced thesis. v1.50.1 must fix period separation at generator and source-priority level.
+- Daily / Weekly Social Pack period separation is fixed in v1.50.1, but must remain a permanent QA rule. Daily and Weekly Social Packs should fail QA if they can be swapped without obvious period mismatch, if Slide 1 asks the same question, if Slide 2 reuses the same evidence role, or if Slide 5 reuses the same I-Xuan View with only "today" / "this week" wording changed.
+- Production route QA after v1.50.2 found repeated Next.js `_rsc` prefetch abort noise for `/fcn` and `/weekly-brief`. This did not create console errors or route failures, but future navigation/prefetch policy changes should verify these routes.
 - Provider coverage is materially improved in v1.41.3, but Reuters, Bloomberg, Yahoo Finance, CNYES, 工商時報, 經濟日報, and MoneyDJ remain disabled until stable legal RSS/API access is verified.
 - Market Memory Layer is local / editorial-first and uses recent Daily Briefs as narrative context. It must not be represented as personal market memory, portfolio memory, or individualized investment advice.
 
