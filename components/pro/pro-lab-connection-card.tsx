@@ -355,8 +355,9 @@ export function ProLabConnectionCard({
       name: "Risk Engine",
     },
   ];
+  const betaOpenAccess = accountLinkStatus === "linked";
   const legacyLoginWarning =
-    "IXAI Pro Lab is currently a separate preview environment. App account login is not yet shared with Pro Lab. Do not use your App password to log into Pro Lab unless you have a separate Pro Lab account.";
+    "The new IXAI Pro workspace now lives inside app.ixuan.ai. Legacy Pro Lab is reference-only and remains a separate preview environment.";
 
   async function handleConnectProAccount() {
     setAccountLinkPending(true);
@@ -410,12 +411,12 @@ export function ProLabConnectionCard({
             IXAI Pro Lab · {sourceLabel}
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
-            IXAI App 正在建立 Pro identity bridge。
+            IXAI App 正在開放 Unified Pro Workspace beta。
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Portfolio, FCN, and risk intelligence are being integrated from IXAI Pro Lab.
-            目前 Pro Lab 是獨立 preview environment，App account login is not yet shared
-            with Pro Lab. Full account linking is coming in v1.51.2+.
+            Authenticated and account-linked users can enter Portfolio, FCN, and Risk
+            workspace skeletons during beta. This does not activate paid Pro,
+            broker access, real portfolio data, or investment advice.
           </p>
           <p className="mt-2 max-w-3xl rounded-lg border border-amber-700/20 bg-amber-50/80 px-3 py-2 text-xs leading-6 text-amber-950">
             {legacyLoginWarning}
@@ -552,18 +553,14 @@ export function ProLabConnectionCard({
           >
             Sign in to connect Pro
           </Link>
-        ) : canOpenPro || !showProAccess ? (
-          <a
-            aria-label="Open Pro Lab preview in a separate environment"
+        ) : betaOpenAccess || canOpenPro || showAccountLink ? (
+          <Link
             className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
-            href={IXAI_PRO_LAB_URL}
-            rel="noreferrer"
-            target="_blank"
-            title="Open Pro Lab preview in a separate environment"
+            href="/pro"
           >
-            <span>{canOpenPro ? "View Pro Lab Preview" : "Learn about Pro Integration"}</span>
+            <span>Open IXAI Pro Workspace</span>
             <ArrowUpRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          </a>
+          </Link>
         ) : (
           <div className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest-soft)]">
             Pro access is reserved for preview / paid users
@@ -576,6 +573,17 @@ export function ProLabConnectionCard({
           <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           Explore Pro
         </Link>
+        <a
+          aria-label="Open legacy Pro Lab reference in a separate environment"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/45 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest-soft)]"
+          href={IXAI_PRO_LAB_URL}
+          rel="noreferrer"
+          target="_blank"
+          title="Legacy lab reference only"
+        >
+          Legacy lab reference only
+          <ArrowUpRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+        </a>
       </div>
 
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">

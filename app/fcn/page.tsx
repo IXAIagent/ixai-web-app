@@ -14,6 +14,24 @@ export default function FCNPage() {
       description="FCN Monitoring will connect KI / KO, worst-of, schedule, and structured note risk context after Pro entitlement is enabled."
       feature="fcn_monitoring"
       moduleName="FCN Monitoring"
+      sections={[
+        {
+          copy: "Coming soon: structured note holdings workspace. No real FCN positions are imported in this beta.",
+          title: "FCN Holdings",
+        },
+        {
+          copy: "Coming soon: coupon and observation schedule view for linked FCN records.",
+          title: "Coupon Schedule",
+        },
+        {
+          copy: "Coming soon: KI / KO awareness view for education and monitoring, not personal product advice.",
+          title: "KI / KO Watch",
+        },
+        {
+          copy: "Coming soon: worst-of monitoring to understand which underlying drives structure risk.",
+          title: "Worst-of Monitor",
+        },
+      ]}
     />
   );
 }

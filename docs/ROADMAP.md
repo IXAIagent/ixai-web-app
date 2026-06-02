@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.57.0`
+`v1.58.0`
 
 ## Related Strategic Documents
 
@@ -750,6 +750,28 @@ Still not included:
 - Broker API.
 - Real Portfolio / FCN data.
 - Legacy Pro frontend migration.
+
+### v1.58.0 — Unified Pro Product Integration
+
+Completed:
+
+- Added Beta Open Access policy for authenticated and account-linked users.
+- Kept membership / entitlement architecture intact while adding a temporary
+  beta override for Portfolio, FCN Monitoring, and Risk Engine.
+- Replaced `/pro` marketing preview with an in-app Unified Pro Workspace hub.
+- Let `/portfolio`, `/fcn`, and `/risk` render beta workspace skeletons for
+  linked users.
+- Changed Account Pro CTA toward `/pro` instead of legacy Pro Lab login.
+- Downgraded Legacy Pro Lab to reference-only status.
+
+Important boundaries:
+
+- Beta Open Access is temporary testing access, not permanent free Pro.
+- No Stripe or billing.
+- No broker connection.
+- No real Portfolio / FCN data.
+- No trading execution.
+- No investment advice.
 
 ### v1.51.x — Backend Integration Boundary Strategy
 

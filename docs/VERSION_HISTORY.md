@@ -1811,3 +1811,33 @@ Out of Scope:
 - Broker API.
 - Real Portfolio / FCN data.
 - Legacy Pro frontend migration.
+
+## v1.58.0 — Unified Pro Product Integration
+
+Why:
+
+- Users could link an account and see feature gates, but the product still felt
+  like a locked preview rather than an actual Pro beta workspace.
+- IXAI Pro needed to live inside app.ixuan.ai instead of sending users toward
+  the legacy Pro Lab login.
+
+What Changed:
+
+- Added Beta Open Access for authenticated and account-linked users.
+- Added a beta override that opens Portfolio, FCN Monitoring, and Risk Engine
+  workspace skeletons without deleting the underlying entitlement model.
+- Replaced `/pro` with an in-app Unified Pro Workspace hub.
+- Updated `/portfolio`, `/fcn`, and `/risk` to show beta workspace sections
+  when the user is authenticated and linked.
+- Changed Account Pro CTA toward `/pro`.
+- Downgraded Legacy Pro Lab to secondary reference-only status.
+
+Out of Scope:
+
+- Stripe.
+- Billing.
+- Broker API.
+- Real Portfolio / FCN data.
+- Trading execution.
+- Personalized investment advice.
+- Legacy frontend migration.

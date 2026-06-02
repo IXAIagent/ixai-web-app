@@ -659,6 +659,47 @@ Still not included:
 - Payment UI.
 - Legacy Pro frontend migration.
 
+## v1.58.0 Unified Pro Product Integration
+
+Purpose:
+
+- Move IXAI Pro from "linked identity plus locked entrances" into an in-app
+  beta workspace.
+- Make app.ixuan.ai the primary Pro product surface.
+- Keep the legacy Pro Lab as reference-only, not the main login destination.
+
+Beta Open Access policy:
+
+```text
+if betaOpenAccess && authenticated && accountLink.status = linked:
+  portfolio = true
+  fcn_monitoring = true
+  risk_engine = true
+```
+
+Current beta behavior:
+
+- Authenticated and account-linked users can enter `/portfolio`, `/fcn`, and
+  `/risk` workspace skeletons.
+- Free membership may still display as `FREE / BETA TESTER`.
+- Portfolio / FCN / Risk workspaces show beta placeholders only.
+
+Not included:
+
+- Stripe.
+- Billing.
+- Broker API.
+- Real Portfolio data.
+- Real FCN data.
+- Trading execution.
+- Personalized investment advice.
+
+Legacy Pro Lab:
+
+- `frontend/ixai-website-clean` remains a legacy reference project.
+- It is no longer the primary Pro product entry.
+- New Pro workspace is inside `app.ixuan.ai`.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

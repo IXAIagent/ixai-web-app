@@ -22,6 +22,8 @@ export const FREE_ENTITLEMENTS: IXAIEntitlements = {
   weekly_brief: true,
 };
 
+export const BETA_OPEN_ACCESS_ENABLED = true;
+
 export function normalizeEntitlements(value: unknown): IXAIEntitlements {
   const source = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
 
@@ -31,6 +33,32 @@ export function normalizeEntitlements(value: unknown): IXAIEntitlements {
       typeof source[key] === "boolean" ? source[key] : fallback,
     ]),
   ) as IXAIEntitlements;
+}
+
+export function canUseBetaOpenAccess({
+  accountLinkStatus,
+  authenticated,
+}: {
+  accountLinkStatus?: string | null;
+  authenticated?: boolean;
+}) {
+  return BETA_OPEN_ACCESS_ENABLED && authenticated === true && accountLinkStatus === "linked";
+}
+
+export function applyBetaOpenAccess(
+  entitlements: IXAIEntitlements,
+  betaOpenAccess: boolean,
+): IXAIEntitlements {
+  if (!betaOpenAccess) {
+    return entitlements;
+  }
+
+  return {
+    ...entitlements,
+    fcn_monitoring: true,
+    portfolio: true,
+    risk_engine: true,
+  };
 }
 
 export function canAccessPortfolio(entitlements: IXAIEntitlements | null | undefined) {
