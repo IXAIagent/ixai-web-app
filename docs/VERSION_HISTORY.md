@@ -1715,3 +1715,39 @@ Out of Scope:
 - LINE Login changes.
 - Membership logic changes.
 - Trading advice, target prices, return promises, or automated trading.
+
+## v1.56.0 — Unified Identity Foundation
+
+Why:
+
+- v1.55 established membership, but IXAI still needed a clearer SaaS feature
+  gate boundary so the same App account can later evaluate Free / Personal /
+  Pro / Enterprise access.
+- Portfolio, FCN Monitoring, and Risk Engine must remain locked until explicit
+  entitlement unlocks them.
+
+What Changed:
+
+- Added backend `GET /api/v1/entitlements/me`.
+- Added frontend `GET /api/pro/entitlements` proxy.
+- Added `src/lib/pro/feature-gates.ts`.
+- Added `canAccessPortfolio()`, `canAccessFCN()`, and `canAccessRiskEngine()`.
+- Added a compact Membership badge in the Account Pro card.
+
+Key Decisions:
+
+- Membership is the identity / plan layer.
+- Entitlements are the permission / feature-access layer.
+- Free accounts keep Daily Brief, Weekly Brief, and Watchlist access.
+- Portfolio, FCN Monitoring, Risk Engine, and AI Copilot remain locked.
+
+Out of Scope:
+
+- Stripe.
+- Billing.
+- Portfolio Center.
+- FCN Center.
+- Risk Engine UI.
+- AI Copilot.
+- Broker integrations.
+- Real portfolio / FCN data.

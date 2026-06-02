@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.55.0`
+`v1.56.0`
 
 ## Related Strategic Documents
 
@@ -676,6 +676,33 @@ Next:
 - Apply backend membership migration through a protected migration workflow.
 - Verify `/api/pro/membership` against production backend after migration.
 - Prepare v1.56 read-only Portfolio Summary Preview only after membership state is stable.
+
+### v1.56.0 — Unified Identity Foundation
+
+Completed / in progress:
+
+- Added backend `GET /api/v1/entitlements/me`.
+- Added production-app `GET /api/pro/entitlements` as a sanitized Next API proxy.
+- Added feature gate helpers for Portfolio, FCN Monitoring, and Risk Engine.
+- Added a compact Membership badge on the Account Pro card.
+- Kept Free accounts enabled for Daily Brief, Weekly Brief, and Watchlist.
+- Kept Portfolio, FCN Monitoring, Risk Engine, and AI Copilot locked.
+
+Goal:
+
+- Establish the SaaS permission layer that lets one App identity carry future
+  Free / Personal / Pro / Enterprise access decisions.
+- Keep Membership as identity / plan state and Entitlements as feature access.
+
+Still not included:
+
+- Stripe.
+- Billing.
+- Portfolio Center.
+- FCN Center.
+- Risk Engine UI.
+- AI Copilot.
+- Broker or real portfolio data.
 
 ### v1.51.x — Backend Integration Boundary Strategy
 

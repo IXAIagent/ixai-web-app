@@ -531,6 +531,58 @@ Backend requirement:
 - Future migration execution should use protected CI/CD, paid Render Shell /
   Jobs, Railway one-off command, or a strongly authenticated internal mechanism.
 
+## v1.56.0 Unified Identity Foundation
+
+Purpose:
+
+- Establish the first true SaaS feature-gate foundation for IXAI App and IXAI Pro.
+- Treat Membership as the identity / plan layer.
+- Treat Entitlements as the permission / feature-access layer.
+
+Backend entitlement source:
+
+```text
+GET /api/v1/entitlements/me
+```
+
+Frontend proxy:
+
+```text
+GET /api/pro/entitlements
+```
+
+Current expected Free account state:
+
+```text
+plan = free
+daily_brief = true
+weekly_brief = true
+watchlist = true
+portfolio = false
+fcn_monitoring = false
+risk_engine = false
+ai_copilot = false
+```
+
+Feature gate foundation:
+
+- `canAccessPortfolio()`
+- `canAccessFCN()`
+- `canAccessRiskEngine()`
+
+The `/account` Pro card can now show a Membership badge such as `FREE`,
+`PERSONAL`, `PRO`, or `ENTERPRISE`, while keeping locked Pro capabilities
+visibly separate from enabled Free features.
+
+Still not included:
+
+- Stripe.
+- Billing.
+- Portfolio Center.
+- FCN Center.
+- Risk Engine UI.
+- AI Copilot.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Database, ShieldCheck } from "lucide-react";
+import {
+  canAccessFCN,
+  canAccessPortfolio,
+  canAccessRiskEngine,
+  type IXAIEntitlements,
+} from "@/src/lib/pro/feature-gates";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
 
 type BackendHealth = {
@@ -58,13 +64,21 @@ type ProMembership = {
   accountId: string | null;
   planCode: "free" | "personal" | "pro" | "enterprise" | string;
   status: string;
-  entitlements: Record<string, boolean>;
+  entitlements: IXAIEntitlements;
 };
 
 type ProMembershipResponse = {
   membership: ProMembership | null;
   message?: string;
   ok: boolean;
+  status: "ok" | "not_authenticated" | "not_linked" | "backend_not_configured" | "error";
+};
+
+type ProEntitlementsResponse = {
+  entitlements: IXAIEntitlements;
+  message?: string;
+  ok: boolean;
+  plan: string;
   status: "ok" | "not_authenticated" | "not_linked" | "backend_not_configured" | "error";
 };
 
@@ -192,6 +206,10 @@ function membershipLabel(membership: ProMembership | null) {
   return labels[membership.planCode] ?? membership.planCode;
 }
 
+function planBadgeLabel(planCode: string | null | undefined) {
+  return (planCode || "free").toUpperCase();
+}
+
 export function ProLabConnectionCard({
   source,
   showProAccess = false,
@@ -212,6 +230,21 @@ export function ProLabConnectionCard({
   const [accountLinkPending, setAccountLinkPending] = useState(false);
   const [membership, setMembership] = useState<ProMembership | null>(null);
   const [membershipMessage, setMembershipMessage] = useState("Membership not evaluated yet.");
+  const [entitlementPlan, setEntitlementPlan] = useState<string | null>(null);
+  const [entitlements, setEntitlements] = useState<IXAIEntitlements | null>(null);
+
+  async function loadEntitlements(authHeaders: HeadersInit) {
+    const response = await fetch("/api/pro/entitlements", {
+      cache: "no-store",
+      headers: authHeaders,
+    });
+    const payload = (await response.json()) as ProEntitlementsResponse;
+
+    setEntitlementPlan(payload.plan);
+    setEntitlements(payload.entitlements);
+
+    return payload;
+  }
 
   useEffect(() => {
     if (!showBackendStatus) {
@@ -267,13 +300,16 @@ export function ProLabConnectionCard({
           headers: authHeaders,
         });
         const membershipPayload = (await membershipResponse.json()) as ProMembershipResponse;
+        const entitlementPayload = await loadEntitlements(authHeaders);
 
         if (mounted) {
           setMembership(membershipPayload.membership);
           setMembershipMessage(
             membershipPayload.ok
               ? "Linked account membership is entitlement-gated."
-              : membershipPayload.message ?? "Membership lookup is pending account link.",
+              : membershipPayload.message ??
+                  entitlementPayload.message ??
+                  "Membership lookup is pending account link.",
           );
         }
       }
@@ -300,6 +336,7 @@ export function ProLabConnectionCard({
     : proAccess?.reason ?? "Checking Pro access identity bridge...";
   const canOpenPro = proAccess?.canOpenPro === true;
   const showAccountLink = source === "account" && showProAccess;
+  const activeEntitlements = entitlements ?? membership?.entitlements ?? null;
   const legacyLoginWarning =
     "IXAI Pro Lab is currently a separate preview environment. App account login is not yet shared with Pro Lab. Do not use your App password to log into Pro Lab unless you have a separate Pro Lab account.";
 
@@ -324,12 +361,15 @@ export function ProLabConnectionCard({
           headers: authHeaders,
         });
         const membershipPayload = (await membershipResponse.json()) as ProMembershipResponse;
+        const entitlementPayload = await loadEntitlements(authHeaders);
 
         setMembership(membershipPayload.membership);
         setMembershipMessage(
           membershipPayload.ok
             ? "Linked account membership is entitlement-gated."
-            : membershipPayload.message ?? "Membership lookup is pending account link.",
+            : membershipPayload.message ??
+                entitlementPayload.message ??
+                "Membership lookup is pending account link.",
         );
       }
     } catch {
@@ -408,18 +448,23 @@ export function ProLabConnectionCard({
               <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
                 Membership
               </p>
-              <p className="mt-1 text-sm font-semibold">{membershipLabel(membership)}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <p className="text-sm font-semibold">{membershipLabel(membership)}</p>
+                <span className="rounded border border-[rgba(176,141,87,0.34)] bg-[var(--ixai-paper)] px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+                  {planBadgeLabel(entitlementPlan ?? membership?.planCode)}
+                </span>
+              </div>
               <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
                 {membershipMessage}
               </p>
               <div className="mt-2 grid gap-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
                 {[
-                  ["Daily Brief", membership?.entitlements.daily_brief],
-                  ["Weekly Brief", membership?.entitlements.weekly_brief],
-                  ["Watchlist", membership?.entitlements.watchlist],
-                  ["Portfolio", membership?.entitlements.portfolio],
-                  ["FCN Monitoring", membership?.entitlements.fcn_monitoring],
-                  ["Risk Engine", membership?.entitlements.risk_engine],
+                  ["Daily Brief", activeEntitlements?.daily_brief],
+                  ["Weekly Brief", activeEntitlements?.weekly_brief],
+                  ["Watchlist", activeEntitlements?.watchlist],
+                  ["Portfolio", canAccessPortfolio(activeEntitlements)],
+                  ["FCN Monitoring", canAccessFCN(activeEntitlements)],
+                  ["Risk Engine", canAccessRiskEngine(activeEntitlements)],
                 ].map(([label, enabled]) => (
                   <span className="flex items-center justify-between gap-2" key={String(label)}>
                     <span>{label}</span>
