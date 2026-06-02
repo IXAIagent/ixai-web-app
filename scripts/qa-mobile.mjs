@@ -65,7 +65,7 @@ const routeSpecs = [
   {
     path: "/pro",
     kind: "protected",
-    visibleText: ["IXAI Pro", "加入 Pro 等候名單", "建立你的 IXAI intelligence workspace"],
+    visibleText: ["IXAI Pro Bridge", "Open IXAI Pro Lab", "In-App Beta Workspace"],
   },
   {
     path: "/pro-preview",

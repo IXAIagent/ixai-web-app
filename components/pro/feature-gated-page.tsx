@@ -170,15 +170,15 @@ export function FeatureGatedPage({
       <section className="grid gap-3 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-forest)]">
               Current Plan
             </p>
             <p className="mt-1 text-lg font-semibold text-[var(--ixai-forest)]">
-            {normalizedPlan}
-            {betaEnabled ? " / Beta Tester" : ""}
-          </p>
+              {normalizedPlan}
+              {betaEnabled ? " / Beta Tester" : ""}
+            </p>
           </div>
-          <span className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-white/60 px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ixai-forest)]">
+          <span className="rounded-lg border border-[rgba(9,41,31,0.24)] bg-[var(--ixai-forest)] px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ixai-cream)]">
             {stateLabel}
           </span>
         </div>
@@ -225,15 +225,15 @@ export function FeatureGatedPage({
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
           href="/account"
         >
-          <ArrowLeft className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          <ArrowLeft className="h-4 w-4 text-[var(--ixai-cream)]" aria-hidden="true" />
           Back to Account
         </Link>
         <Link
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
           href="/pro"
         >
-          <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          Explore Pro Preview
+          <ShieldCheck className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
+          Open Pro Workspace
         </Link>
       </div>
     </main>

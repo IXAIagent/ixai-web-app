@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.52.0`
+`v1.59.0`
 
 Current Core Flow:
 
@@ -145,6 +145,8 @@ App User → Pro Access Identity Bridge now lets the production app derive a Pro
 Supabase User → Backend Account Link design now clarifies that App users and legacy Pro Lab users are not the same identity yet. App users live in Supabase Auth; Pro Lab users currently live in the backend FastAPI JWT users table. `/account` Pro Lab links must present the external dashboard as a separate preview environment and must not imply that an App password can log into the legacy Pro Lab. The target bridge is Supabase user → Next API server-side verification → backend account link / lookup → backend account id and Pro access state.
 
 Supabase User → Backend Account Link foundation now adds the first production-app server-side account-link boundary. `/api/pro/account-link` verifies the Supabase App user through the App layer, builds the future backend create-or-find payload, and attempts the backend contract only from the Next API route. `/api/pro/access` now reports accountLink status separately from paid Pro entitlement. If `IXAI_BACKEND_URL` is not configured or the backend endpoint is not implemented, the app shows `backend_not_configured` / `backend_contract_missing` without exposing secrets, backend URLs, portfolio data, FCN data, or granting paid Pro access.
+
+Real Pro Bridge + Icon Cleanup clarifies the current relationship between the production App and the existing IXAI Pro Lab. `app.ixuan.ai` now presents the existing Pro Lab as a clear external preview environment, while the new in-app Pro workspace remains a secondary beta skeleton. There is no true shared-login SSO yet: App users should not assume their app.ixuan.ai password works in the legacy Pro Lab unless assigned separate Pro Lab credentials. Pro CTAs and icons must use readable contrast, visible labels, and normal external anchors for Pro Lab navigation.
 
 Unified Pro Product Integration now makes app.ixuan.ai the primary IXAI Pro beta surface. During Beta Open Access, authenticated and account-linked users can enter Portfolio Intelligence, FCN Monitoring, and Risk Engine workspace skeletons inside the production app. This is not permanent free Pro, Stripe billing, broker access, real Portfolio / FCN data, trading execution, or investment advice. The legacy Pro Lab remains a reference-only environment rather than the primary product entry.
 

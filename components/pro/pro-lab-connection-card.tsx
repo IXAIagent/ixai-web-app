@@ -83,7 +83,7 @@ type ProEntitlementsResponse = {
   status: "ok" | "not_authenticated" | "not_linked" | "backend_not_configured" | "error";
 };
 
-const IXAI_PRO_LAB_URL = "https://ixai-website-clean.vercel.app/";
+const IXAI_PRO_LAB_URL = "https://ixai-website-clean.vercel.app/login";
 
 function mapBackendState(health: BackendHealth | null, failed: boolean): BackendUiState {
   if (!health && !failed) {
@@ -357,7 +357,7 @@ export function ProLabConnectionCard({
   ];
   const betaOpenAccess = accountLinkStatus === "linked";
   const legacyLoginWarning =
-    "The new IXAI Pro workspace now lives inside app.ixuan.ai. Legacy Pro Lab is reference-only and remains a separate preview environment.";
+    "Legacy Pro Lab is currently a separate environment. App account shared login is being connected; use assigned Pro Lab credentials if available.";
 
   async function handleConnectProAccount() {
     setAccountLinkPending(true);
@@ -411,12 +411,13 @@ export function ProLabConnectionCard({
             IXAI Pro Lab · {sourceLabel}
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
-            IXAI App 正在開放 Unified Pro Workspace beta。
+            IXAI App 正在連接現有 Pro Lab 與新的 App 內 beta workspace。
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Authenticated and account-linked users can enter Portfolio, FCN, and Risk
-            workspace skeletons during beta. This does not activate paid Pro,
-            broker access, real portfolio data, or investment advice.
+            Your App account can link to the backend identity layer, but the legacy
+            Pro Lab still uses a separate preview login today. The App workspace beta
+            remains available for linked users without Stripe, broker access, real
+            portfolio data, or investment advice.
           </p>
           <p className="mt-2 max-w-3xl rounded-lg border border-amber-700/20 bg-amber-50/80 px-3 py-2 text-xs leading-6 text-amber-950">
             {legacyLoginWarning}
@@ -464,12 +465,12 @@ export function ProLabConnectionCard({
 
           {showAccountLink ? (
             <div className="rounded-lg border border-[var(--ixai-border)] bg-white/50 px-3 py-2 text-[var(--ixai-forest)]">
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-forest)]">
                 Membership
               </p>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <p className="text-sm font-semibold">{membershipLabel(membership)}</p>
-                <span className="rounded border border-[rgba(176,141,87,0.34)] bg-[var(--ixai-paper)] px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+                <span className="rounded border border-[rgba(9,41,31,0.24)] bg-[var(--ixai-forest)] px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ixai-cream)]">
                   {planBadgeLabel(entitlementPlan ?? membership?.planCode)}
                 </span>
               </div>
@@ -554,13 +555,17 @@ export function ProLabConnectionCard({
             Sign in to connect Pro
           </Link>
         ) : betaOpenAccess || canOpenPro || showAccountLink ? (
-          <Link
+          <a
+            aria-label="Open IXAI Pro Lab in a separate preview environment"
             className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
-            href="/pro"
+            href={IXAI_PRO_LAB_URL}
+            rel="noreferrer"
+            target="_blank"
+            title="Open IXAI Pro Lab in a separate preview environment"
           >
-            <span>Open IXAI Pro Workspace</span>
+            <span>Open IXAI Pro Lab</span>
             <ArrowUpRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          </Link>
+          </a>
         ) : (
           <div className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest-soft)]">
             Pro access is reserved for preview / paid users
@@ -570,26 +575,26 @@ export function ProLabConnectionCard({
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
           href="/pro"
         >
-          <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          Explore Pro
+          <ShieldCheck className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
+          Open Pro Workspace
         </Link>
         <a
-          aria-label="Open legacy Pro Lab reference in a separate environment"
+          aria-label="Learn why Pro Lab login is separate today"
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/45 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest-soft)]"
           href={IXAI_PRO_LAB_URL}
           rel="noreferrer"
           target="_blank"
-          title="Legacy lab reference only"
+          title="Open Pro Lab preview in a separate environment"
         >
-          Legacy lab reference only
-          <ArrowUpRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          Pro Lab preview login is separate
+          <ArrowUpRight className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
         </a>
       </div>
 
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">
         This connection layer does not load portfolio holdings, FCN positions, broker data,
         paid entitlement, or personalized recommendations. Connecting your account does not
-        activate paid Pro access.
+        activate paid Pro access. There is no true shared-login SSO with the legacy Pro Lab yet.
       </p>
     </section>
   );

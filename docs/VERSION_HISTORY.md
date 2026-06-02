@@ -1841,3 +1841,31 @@ Out of Scope:
 - Trading execution.
 - Personalized investment advice.
 - Legacy frontend migration.
+
+## v1.59.0 — Real Pro Bridge + Icon Cleanup
+
+Why:
+
+- v1.58 created an in-app Pro beta workspace, but users still need a clear path
+  to the existing IXAI Pro Lab.
+- The legacy Pro Lab remains a separate FastAPI JWT environment, so App account
+  shared login is not true SSO yet.
+- Pro icons and CTA states needed stronger contrast and visible labels.
+
+What Changed:
+
+- `/account` now uses `Open IXAI Pro Lab` as the clear external Pro Lab CTA.
+- `/pro` now separates the existing Pro Lab path from the in-app beta workspace
+  path.
+- Legacy Pro Lab `/login` now explains that App shared login is being connected
+  and beta testers should use assigned Pro Lab credentials if available.
+- Pro CTA buttons, icon containers, badges, and locked / beta states now use
+  more readable contrast.
+
+Out of Scope:
+
+- Stripe or billing.
+- Broker API or trading execution.
+- Real Portfolio / FCN data.
+- Investment advice, buy/sell signals, target prices, or return promises.
+- True SSO between App Supabase auth and legacy Pro JWT login.

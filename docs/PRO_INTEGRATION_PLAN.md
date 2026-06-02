@@ -700,6 +700,37 @@ Legacy Pro Lab:
 - It is no longer the primary Pro product entry.
 - New Pro workspace is inside `app.ixuan.ai`.
 
+## v1.59.0 Real Pro Bridge + Icon Cleanup
+
+Purpose:
+
+- Clarify the real bridge between `app.ixuan.ai` and the existing IXAI Pro Lab.
+- Keep the in-app Pro workspace available as a beta skeleton, but stop implying
+  it replaces the recognizable legacy Pro Lab for current beta testers.
+- Improve Pro icon / CTA contrast so users can clearly see available, beta, and
+  linked states.
+
+Current bridge behavior:
+
+- `Open IXAI Pro Lab` points to `https://ixai-website-clean.vercel.app/login`
+  with normal external navigation.
+- Legacy Pro Lab remains a separate preview environment.
+- Shared login is in progress, but there is no true SSO yet.
+- App users should not assume their App password works in legacy Pro Lab unless
+  they have assigned Pro Lab credentials.
+- The in-app `/pro`, `/portfolio`, `/fcn`, and `/risk` surfaces remain beta
+  skeletons controlled by App account link / membership state.
+
+Out of scope:
+
+- Stripe.
+- Billing.
+- Broker API.
+- Real Portfolio / FCN data.
+- Trading execution.
+- Investment advice.
+- Supabase-to-legacy-Pro true SSO.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

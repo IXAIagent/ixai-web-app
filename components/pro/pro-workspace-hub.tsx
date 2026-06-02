@@ -58,6 +58,8 @@ const modules = [
   },
 ] as const;
 
+const LEGACY_PRO_LAB_LOGIN_URL = "https://ixai-website-clean.vercel.app/login";
+
 export function ProWorkspaceHub() {
   const [accountLinkStatus, setAccountLinkStatus] = useState<string | null>(null);
   const [authenticated, setAuthenticated] = useState(false);
@@ -147,20 +149,60 @@ export function ProWorkspaceHub() {
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--ixai-gold)] sm:text-[11px]">
-          IXAI Pro Workspace
+          IXAI Pro Bridge
         </p>
         <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:text-5xl">
-          Unified Pro Workspace
+          IXAI Pro connects the existing Pro Lab and the new App workspace.
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/70 sm:text-base">
-          The new IXAI Pro workspace now lives inside app.ixuan.ai. During beta,
-          authenticated and account-linked users can enter Portfolio, FCN, and Risk
-          workspace skeletons without Stripe, broker access, or real investment data.
+          The existing IXAI Pro Lab remains available for invited beta testers. The
+          new in-app workspace stays as a beta area for Portfolio, FCN, and Risk
+          skeletons while shared-login bridge work continues.
         </p>
         <p className="mt-3 max-w-3xl rounded-lg border border-white/10 bg-white/[0.055] px-3 py-2 text-xs leading-6 text-white/60">
-          Beta Open Access is temporary testing access. It is not permanent free Pro,
-          paid entitlement, trading execution, or personalized investment advice.
+          Legacy Pro Lab is a separate environment today. App account shared login
+          is in progress; do not assume your app.ixuan.ai password works in the
+          legacy lab unless you have assigned Pro Lab credentials.
         </p>
+      </section>
+
+      <section className="grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
+        <article className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(255,250,240,0.9)] p-4 shadow-[0_18px_56px_rgba(9,41,31,0.08)] sm:p-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-forest)]">
+            A. Existing Pro Lab
+          </p>
+          <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
+            Open the existing IXAI Pro Lab
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            Use this path when you need the current legacy Pro dashboard. Shared
+            login is not true SSO yet, so beta testers should use assigned Pro Lab
+            credentials if available.
+          </p>
+          <a
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] sm:w-auto"
+            href={LEGACY_PRO_LAB_LOGIN_URL}
+            rel="noreferrer"
+            target="_blank"
+          >
+            Open IXAI Pro Lab
+            <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          </a>
+        </article>
+
+        <article className="rounded-lg border border-[var(--ixai-border)] bg-white/60 p-4 sm:p-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-forest)]">
+            B. In-App Beta Workspace
+          </p>
+          <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
+            Test the new App workspace
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            Authenticated and account-linked users can test skeleton workspaces
+            inside app.ixuan.ai. No Stripe, broker connection, real holdings, or
+            investment advice is enabled.
+          </p>
+        </article>
       </section>
 
       <section className="grid gap-3 md:grid-cols-3">
@@ -173,7 +215,7 @@ export function ProWorkspaceHub() {
             className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4"
             key={label}
           >
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-forest)]">
               {label}
             </p>
             <p className="mt-2 text-base font-semibold leading-6 text-[var(--ixai-forest)]">
@@ -199,7 +241,7 @@ export function ProWorkspaceHub() {
               key={module.key}
             >
               <div className="flex items-start justify-between gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.34)] bg-white/55 text-[var(--ixai-gold)]">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)]">
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </span>
                 <span className="rounded border border-emerald-700/20 bg-emerald-50/70 px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-950">
@@ -225,9 +267,10 @@ export function ProWorkspaceHub() {
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-white/50 p-4 text-xs leading-6 text-[var(--ixai-ink-muted)] sm:p-5">
-        Legacy Pro Lab is now reference-only for product history. The primary Pro
-        workspace is inside app.ixuan.ai. No Stripe, broker connection, real Portfolio /
-        FCN data, trading execution, or investment advice is enabled in this beta.
+        Existing IXAI Pro Lab remains a separate preview environment. The new in-app
+        workspace is available for beta testing only. There is no true SSO yet, no
+        Stripe, broker connection, real Portfolio / FCN data, trading execution, or
+        investment advice.
       </section>
     </div>
   );

@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.58.0`
+`v1.59.0`
 
 ## Related Strategic Documents
 
@@ -449,6 +449,33 @@ Goal:
 
 - Align long-form docs with completed v1.50.x state after future changes.
 - Audit Next.js `_rsc` prefetch abort noise on `/fcn` and `/weekly-brief` without changing product flow.
+
+## v1.59.0 — Real Pro Bridge + Icon Cleanup
+
+Why:
+
+- v1.58 opened in-app Pro workspace skeletons, but users still expect the
+  existing IXAI Pro Lab to be reachable as the recognizable Pro surface.
+- The App and legacy Pro Lab do not yet share login / SSO, so Pro CTAs must not
+  imply that App credentials work in the legacy lab.
+- Several Pro icons and CTA treatments were too low-contrast for the forest /
+  cream / gold design system.
+
+What Changed:
+
+- `/account` Pro CTA now clearly opens the existing IXAI Pro Lab as a separate
+  preview environment.
+- `/pro` is split into two explicit paths: existing IXAI Pro Lab and the new
+  in-app beta workspace.
+- Legacy Pro Lab login now explains that App shared login is still being
+  connected and beta testers should use assigned Pro Lab credentials.
+- Pro icons, badges, and CTA labels now use clearer contrast and visible text.
+
+Out of Scope:
+
+- True SSO between Supabase App auth and legacy Pro JWT auth.
+- Stripe, billing, broker API, real Portfolio / FCN data, trading execution, or
+  investment advice.
 - Continue Social Pack Period Divergence QA after Daily / Weekly engine changes.
 - Keep changes small, verifiable, and non-architectural unless explicitly approved.
 
