@@ -86,7 +86,17 @@ export default function ProPage() {
 
       <ProComparison />
 
-      <ProLabConnectionCard source="pro" />
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)] p-4 sm:p-5">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
+          Account-based Pro Access
+        </p>
+        <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          IXAI App account 可以連接 IXAI Pro 身份，但完整 Pro access 將由 preview、
+          manual approval 或 future paid subscription 控制。本階段不接 Stripe，也不代表自動開通付費權限。
+        </p>
+      </section>
+
+      <ProLabConnectionCard source="pro" showProAccess />
 
       <IdentifySessionCard
         source="pro_page"

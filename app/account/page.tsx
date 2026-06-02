@@ -92,7 +92,7 @@ export default function AccountPage() {
 
       <PwaInstallCard />
 
-      <ProLabConnectionCard source="account" showBackendStatus />
+      <ProLabConnectionCard source="account" showBackendStatus showProAccess />
 
       <section className="grid gap-4 md:grid-cols-3">
         {[

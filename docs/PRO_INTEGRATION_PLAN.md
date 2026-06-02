@@ -79,6 +79,163 @@ External Pro Lab links must use plain anchors:
 
 Do not use Next.js `Link` for external Pro Lab navigation.
 
+## v1.51.1 App User to Pro Access Identity Bridge
+
+v1.51.1 adds the first Pro access identity bridge inside the production app.
+
+Principles:
+
+- App registration / login can connect a user to Pro identity.
+- Pro identity connection does not automatically grant paid Pro access.
+- Full Pro rights remain controlled by entitlement, subscription, or manual approval.
+- Stripe is not connected in this phase.
+- Legacy Pro JWT login is not migrated.
+- Browser clients still do not call protected FastAPI endpoints directly.
+
+Pro access statuses:
+
+```text
+not_connected
+connected
+preview
+active
+expired
+revoked
+```
+
+Current rules:
+
+- Not signed in: `not_connected`.
+- Signed in with no Pro record: `connected`.
+- Free membership with Pro waitlist / candidate / manual preview metadata: `preview`.
+- Pro or Enterprise membership with active status and valid expiry: `active`.
+- Expired membership or expired timestamp: `expired`.
+- Cancelled membership: `revoked`.
+- Unknown lookup failure: safe fallback keeps paid capabilities closed.
+
+Current access matrix:
+
+| Status | Open Pro Lab | Portfolio | FCN | Billing required |
+| --- | --- | --- | --- | --- |
+| `not_connected` | No | No | No | No |
+| `connected` | No | No | No | Yes for full Pro |
+| `preview` | Yes | No | No | Yes for full Pro |
+| `active` | Yes | Yes | Yes | No |
+| `expired` | No | No | No | Yes |
+| `revoked` | No | No | No | Yes |
+
+## Future Billing / Entitlement Model
+
+The future model should remain explicit:
+
+- Free App Account: public intelligence, account memory, onboarding, and Pro interest.
+- Pro Preview: manual or preview access to Pro Lab / sample workflows.
+- Pro Active Subscription: paid or approved entitlement for portfolio / FCN / risk intelligence.
+- Pro Expired: previously active, now inactive until renewed.
+- Pro Revoked: access removed by cancellation, compliance, or manual admin decision.
+- Manual Access: staff-approved access for beta users, FCN clients, or controlled demos.
+- Future Stripe Subscription: Stripe webhook updates membership / entitlement state server-side.
+
+v1.51.1 does not collect payment. It only creates the entitlement-aware identity model.
+
+## Future Backend Account Mapping
+
+Before real portfolio / FCN data flows into the production app, the backend should support an explicit account bridge.
+
+Potential backend endpoints:
+
+```text
+POST /api/v1/integrations/supabase/account-link
+GET /api/v1/accounts/by-external-user/{provider}/{external_user_id}
+```
+
+Equivalent designs are acceptable if they preserve:
+
+- Supabase user id as external identity.
+- Backend account / portfolio ownership mapping.
+- Server-side token handling.
+- No browser-direct protected FastAPI calls.
+- No portfolio or FCN data until mapping is verified.
+
+## v1.51.2 Supabase User to Backend Account Link
+
+v1.51.2 clarifies the identity gap between the production app and the legacy Pro Lab.
+
+Current state:
+
+- App users live in Supabase Auth.
+- Pro Lab users live in the backend FastAPI JWT `users` table.
+- These are not the same identity yet.
+- App credentials cannot log into the legacy Pro Lab unless a separate Pro Lab account exists.
+- This is why an app.ixuan.ai user may fail to sign in at `ixai-website-clean.vercel.app/login`.
+
+UX rule:
+
+- `/account` must not imply that App credentials directly open the legacy Pro Lab.
+- External Pro Lab links are preview / explanation links only.
+- Button copy should prefer `View Pro Lab Preview` or `Learn about Pro Integration`, not `Open IXAI Pro`.
+- Pro Lab links must explain that the environment is separate and App login is not shared yet.
+
+Target state:
+
+- App remains the primary login surface.
+- Supabase user becomes the source identity.
+- A Next API route verifies the Supabase user server-side.
+- Backend receives a controlled server-side request to create or find a linked backend account.
+- Backend returns a backend account id, backend user id, and access state.
+- Browser never receives backend admin secrets, service tokens, or protected FastAPI credentials.
+- Legacy Pro Lab login should not remain the long-term entry point.
+
+Backend contract options to design before implementation:
+
+Option A, create-or-find:
+
+```text
+POST /api/v1/integrations/supabase/account-link
+```
+
+Request from Next server only:
+
+```json
+{
+  "provider": "supabase",
+  "external_user_id": "<supabase_user_id>",
+  "email": "<email>",
+  "name": "<optional display name>"
+}
+```
+
+Response:
+
+```json
+{
+  "backend_account_id": "...",
+  "backend_user_id": "...",
+  "pro_access_status": "connected|preview|active|expired|revoked",
+  "created": true
+}
+```
+
+Option B, lookup:
+
+```text
+GET /api/v1/accounts/by-external-user/{provider}/{external_user_id}
+```
+
+Recommendation:
+
+- Option A is better for create-or-find identity linking.
+- Option B is better for later read-only lookup.
+- Before either endpoint is implemented, backend must verify that the request came from the trusted Next server.
+
+Entitlement rule:
+
+- App signup creates identity only.
+- App signup does not grant paid Pro access.
+- Pro access requires entitlement state: `connected`, `preview`, `active`, `expired`, or `revoked`.
+- Future billing starts with manual approval, then Stripe later.
+- No automatic Pro access is granted just because a user signs up.
+
 ## Backend Boundary Rules
 
 Production frontend should eventually talk to backend through Next API routes:

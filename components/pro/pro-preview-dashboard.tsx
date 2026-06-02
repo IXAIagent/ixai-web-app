@@ -118,7 +118,17 @@ export function ProPreviewDashboard() {
 
       <ProAlertPreview />
 
-      <ProLabConnectionCard source="pro_preview" />
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.8)] p-4 sm:p-5">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
+          Account-based Pro Access
+        </p>
+        <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          App account 可以建立 Pro 身份連接；完整 Portfolio / FCN / risk intelligence
+          仍會由 preview access、manual approval 或 future paid subscription 控制。
+        </p>
+      </section>
+
+      <ProLabConnectionCard source="pro_preview" showProAccess />
 
       <section className="grid gap-4 rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>

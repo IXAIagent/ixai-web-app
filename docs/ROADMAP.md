@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.51.0`
+`v1.51.2`
 
 ## Related Strategic Documents
 
@@ -470,6 +470,39 @@ Goal:
 - Make the production IXAI App aware of the IXAI Pro Lab and backend without migrating the legacy frontend.
 - Establish the first server-side backend connection from app.ixuan.ai.
 - Prepare future Supabase user → backend account bridge.
+
+### v1.51.1 — App User → Pro Access Identity Bridge
+
+Completed / in progress:
+
+- Added Pro access decision layer for production App users.
+- Added `/api/pro/access`.
+- Defined Pro states: `not_connected`, `connected`, `preview`, `active`, `expired`, and `revoked`.
+- Account page now shows Pro access status without unlocking paid capabilities.
+- Pro / Pro Preview now explain that access is account-based but entitlement-controlled.
+- Future billing / entitlement model documented without Stripe integration.
+
+Goal:
+
+- Let App users connect a Pro identity without automatically granting paid Pro entitlement.
+- Preserve future Stripe / subscription / manual approval control.
+- Keep Portfolio / FCN / risk intelligence closed until active entitlement and backend account mapping are approved.
+
+### v1.51.2 — Supabase User → Backend Account Link
+
+Completed / in progress:
+
+- Clarified that App users live in Supabase while legacy Pro Lab users live in the FastAPI JWT backend user table.
+- Updated `/account` Pro Lab copy so users do not assume App credentials can log into the legacy Pro Lab.
+- Reframed Pro Lab as a separate preview environment, not the long-term primary Pro entry point.
+- Documented backend account-link contract options.
+
+Goal:
+
+- Make App the primary login surface.
+- Design the Supabase user → backend account bridge before real portfolio / FCN data is exposed.
+- Keep browser clients away from protected FastAPI endpoints.
+- Preserve entitlement control: signup creates identity, not paid Pro access.
 
 ### v1.51.x — Backend Integration Boundary Strategy
 

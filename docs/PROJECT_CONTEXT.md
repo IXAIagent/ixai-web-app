@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.51.0`
+`v1.51.2`
 
 Current Core Flow:
 
@@ -140,6 +140,10 @@ LINE OAuth Prefetch CORS Fix now prevents the LINE login entry from being prefet
 
 IXAI App ↔ IXAI Pro Integration Foundation now creates the first formal connection between the production app and the backend / legacy Pro Lab world. The production app exposes `/api/backend/health` as a server-side backend health proxy, reads `IXAI_BACKEND_URL` with development-only localhost fallback, and surfaces IXAI Pro Lab entry points on `/account`, `/pro`, and `/pro-preview` without migrating legacy UI, legacy JWT auth, or direct browser-to-FastAPI protected requests.
 
+App User → Pro Access Identity Bridge now lets the production app derive a Pro access state for the current App user without granting paid rights by default. The bridge resolves `not_connected`, `connected`, `preview`, `active`, `expired`, and `revoked` states from existing identity / membership data, exposes `/api/pro/access`, and keeps Portfolio / FCN capabilities closed unless an active Pro entitlement exists.
+
+Supabase User → Backend Account Link design now clarifies that App users and legacy Pro Lab users are not the same identity yet. App users live in Supabase Auth; Pro Lab users currently live in the backend FastAPI JWT users table. `/account` Pro Lab links must present the external dashboard as a separate preview environment and must not imply that an App password can log into the legacy Pro Lab. The target bridge is Supabase user → Next API server-side verification → backend account link / lookup → backend account id and Pro access state.
+
 Latest engineering health check:
 
 - Engineering Health Score: 8.2/10.
@@ -198,6 +202,22 @@ v1.51.0 adds:
 - `/pro`: IXAI Pro Lab external entry.
 - `/pro-preview`: IXAI Pro Lab external entry.
 - `docs/PRO_INTEGRATION_PLAN.md`: formal integration sequence.
+
+v1.51.1 adds:
+
+- `/api/pro/access`: server-side Pro access status API.
+- `src/lib/pro/access.ts`: Pro access decision helper using existing identity / membership data.
+- Account Pro status card showing `not_connected`, `connected`, `preview`, `active`, `expired`, or `revoked`.
+- Pro / Pro Preview messaging that Pro access is account-based but entitlement-controlled.
+- Future billing / entitlement model documentation.
+
+v1.51.2 adds:
+
+- `/account` Pro Lab UX clarification: Pro Lab is a separate preview environment.
+- Pro Lab external link copy changed away from `Open IXAI Pro`.
+- Explicit warning that App account login is not yet shared with the legacy Pro Lab.
+- Supabase User → Backend Account Link design documentation.
+- Backend contract options for create-or-find and lookup account mapping.
 
 The integration plan remains intentionally narrow:
 

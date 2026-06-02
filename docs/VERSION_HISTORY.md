@@ -1301,3 +1301,74 @@ Out of Scope:
 - Migrating legacy JWT auth.
 - Loading real portfolio, FCN, broker, trading, or paid entitlement data.
 - Stripe, billing, auth, LINE, LIFF, Daily / Weekly generation, admin workflow, or provider infrastructure changes.
+
+## v1.51.1 — App User → Pro Access Identity Bridge
+
+Why:
+
+- App users need a path to connect IXAI Pro identity without automatically receiving paid Pro rights.
+- IXAI Pro access must preserve preview, manual approval, paid subscription, expired, and revoked states before Stripe or backend portfolio integration is added.
+
+What Changed:
+
+- Added a server-side Pro access decision helper.
+- Added `/api/pro/access` for current-user Pro access state.
+- Added status model: `not_connected`, `connected`, `preview`, `active`, `expired`, and `revoked`.
+- Account Pro status now communicates whether the user can open Pro, whether billing is required, and whether Portfolio / FCN capabilities remain closed.
+- Pro and Pro Preview now state that Pro access is account-based but controlled by preview / paid subscription entitlement.
+- Documented future backend account mapping endpoints and future billing / entitlement model.
+
+Key Decisions:
+
+- App registration / login can establish Pro identity connection.
+- Pro identity connection is not the same as paid Pro entitlement.
+- Active Pro or Enterprise membership is required before Portfolio / FCN capabilities are treated as open.
+- Stripe remains future work and must update entitlement state through trusted server-side flows.
+
+Out of Scope:
+
+- Backend code changes.
+- Legacy frontend code changes.
+- Supabase schema changes.
+- Stripe, billing portal, subscription management, or checkout.
+- Real portfolio / FCN / broker data.
+- Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.51.2 — Supabase User → Backend Account Link
+
+Why:
+
+- App users authenticate through Supabase Auth, while the legacy Pro Lab still uses backend FastAPI JWT users.
+- A user who signs up on app.ixuan.ai cannot automatically log into the legacy Pro Lab with the same credentials.
+- `/account` needed clearer UX so users do not mistake the Pro Lab preview link for a shared-login Pro dashboard.
+
+What Changed:
+
+- Reframed `/account` Pro Lab entry as a preview / integration explanation surface.
+- Changed misleading `Open IXAI Pro` wording toward `View Pro Lab Preview` / `Learn about Pro Integration`.
+- Added explicit warning that App login is not yet shared with Pro Lab and users should not use their App password unless they have a separate Pro Lab account.
+- Updated `/api/pro/access` reasons so `connected`, `preview`, and `active` states do not imply direct legacy Pro login.
+- Documented Supabase User → Backend Account Link target architecture.
+
+Target Backend Contract:
+
+- `POST /api/v1/integrations/supabase/account-link` for server-side create-or-find.
+- `GET /api/v1/accounts/by-external-user/{provider}/{external_user_id}` for lookup.
+- Backend must verify trusted Next server requests before account linking.
+
+Key Decisions:
+
+- App remains the primary login surface.
+- Supabase user is the source identity.
+- Next API verifies the user server-side before calling backend.
+- Legacy Pro Lab login is not the long-term entry point.
+- App signup creates identity only; it does not grant paid Pro access.
+
+Out of Scope:
+
+- Backend code changes.
+- Legacy frontend code changes.
+- Supabase schema changes.
+- Stripe, payment UI, subscription management, or pricing.
+- Portfolio / FCN real data.
+- Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
