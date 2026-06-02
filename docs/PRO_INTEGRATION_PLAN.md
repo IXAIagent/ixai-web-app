@@ -400,6 +400,47 @@ Next step:
 - Sign in with a real Supabase App account and repeat the `/account` button test.
 - Expected success criteria remain: `POST /api/pro/account-link` returns `ok: true`, backend creates/finds the account link, and Account Link Status becomes `Linked`.
 
+## v1.54.2 Auth Session Recovery / Debug
+
+Purpose:
+
+- Diagnose why local / production `/account` could not reach an authenticated Supabase App state during v1.54.1.
+- Add a safe server-side session debug endpoint without exposing Supabase tokens, refresh tokens, cookie values, full email, or full user id.
+
+Root cause found:
+
+- IXAI App currently stores the Supabase browser session in client-side `sessionStorage`.
+- Next API routes cannot read that client storage directly.
+- `/api/pro/access` can use a Supabase Bearer token when the client provides one, and can otherwise fall back to the older lightweight `ixai_identity` server cookie.
+- `/api/pro/account-link` correctly requires a Supabase Bearer identity because backend account linking needs the Supabase user id.
+- The older lightweight identity cookie contains email / membership continuity only; it does not contain the Supabase user id and must not be used to create backend account links.
+
+Debug endpoint:
+
+```text
+GET /api/auth/session-debug
+```
+
+Returns only non-sensitive diagnostics:
+
+- whether a valid Supabase Bearer session was detected
+- whether a lightweight server cookie session was detected
+- whether a user id / email is present without returning the values
+- cookie count and masked cookie-name categories
+- source: `bearer`, `server-cookie`, or `none`
+
+Current blocker:
+
+- A real logged-in browser session or valid Supabase access token is still required to complete the `/account` `Connect Pro Account` button test.
+- Do not bypass Supabase auth, inject fake cookies, or use lightweight identity as a backend account-link identity.
+
+Verification notes:
+
+- Unauthenticated local request returned `source: none`, `hasSupabaseSession: false`, and `hasUser: false`.
+- Lightweight `ixai_identity` cookie request returned `source: server-cookie`, `hasUser: true`, and `userIdPresent: false`.
+- With lightweight identity only, `/api/pro/access` can show manual `connected` status, but `/api/pro/account-link` correctly remains `401 not_authenticated`.
+- This confirms the required next test input is a real Supabase Bearer session, not a lightweight identity cookie.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

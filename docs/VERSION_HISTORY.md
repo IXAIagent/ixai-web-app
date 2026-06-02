@@ -1527,3 +1527,40 @@ Out of Scope:
 - Stripe, payment UI, subscription management, or pricing.
 - Portfolio / FCN real data.
 - Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.54.2 — Auth Session Recovery / Debug
+
+Why:
+
+- v1.54.1 could not complete the real `/account` button test because local and production `/account` did not have an authenticated Supabase App session available.
+- The next step was to determine whether the issue was missing login state, server-cookie visibility, Bearer-token forwarding, or account-link response mapping.
+
+What Changed:
+
+- Added safe `GET /api/auth/session-debug`.
+- The endpoint reports only non-sensitive diagnostics:
+  - valid Supabase Bearer session present or absent
+  - lightweight server cookie present or absent
+  - masked cookie-name categories and cookie count
+  - user id / email presence as booleans only
+  - source as `bearer`, `server-cookie`, or `none`
+- Documented the identity boundary between Supabase browser session and lightweight `ixai_identity` cookie.
+
+Key Findings:
+
+- Supabase App auth currently persists in browser `sessionStorage`.
+- Next API routes cannot read client `sessionStorage`.
+- `/api/pro/account-link` correctly requires Supabase identity because backend account linking needs the Supabase user id.
+- The lightweight identity cookie does not contain Supabase user id and should not be used to create backend account links.
+- Local unauthenticated debug returned `source: none`, no user, and no Supabase session.
+- Local lightweight identity debug returned `source: server-cookie`, user presence, but no Supabase user id.
+- With lightweight identity only, `/api/pro/access` can return manual connected status, while `/api/pro/account-link` correctly remains `401 not_authenticated`.
+
+Out of Scope:
+
+- Auth rewrite.
+- Supabase schema changes.
+- LINE Login / LIFF changes.
+- Backend changes.
+- Legacy frontend changes.
+- Stripe, payment UI, portfolio / FCN data, auto publishing, platform APIs, buy/sell recommendations, target prices, return promises, or automated trading.

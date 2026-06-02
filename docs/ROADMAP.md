@@ -594,6 +594,29 @@ Next:
 - Obtain a real App user session and run the button-click test.
 - After `accountLink.status = linked` is verified, proceed toward v1.55 Account Portfolio Summary Preview.
 
+### v1.54.2 — Auth Session Recovery / Debug
+
+Completed / in progress:
+
+- Added safe `/api/auth/session-debug` diagnostics for Supabase Bearer, lightweight server cookie, and cookie-presence state.
+- Confirmed the production app has two identity layers:
+  - Supabase browser session in client storage for App login.
+  - Lightweight `ixai_identity` server cookie for legacy identity continuity.
+- Confirmed backend account linking must use Supabase identity because it needs the Supabase user id.
+- Verified unauthenticated local debug state reports `source: none`.
+- Verified lightweight identity cookie debug state reports `source: server-cookie` and no Supabase user id.
+
+Current blocker:
+
+- Next API routes cannot read Supabase `sessionStorage`; the client must provide a valid Bearer token for account linking unless a future server-cookie Supabase session strategy is adopted.
+- The lightweight identity cookie cannot safely create backend account links because it lacks Supabase user id.
+
+Next:
+
+- Use `/api/auth/session-debug` before and after login to confirm whether the browser has a valid Supabase Bearer token.
+- If a real logged-in session is available, retry `/account` `Connect Pro Account`.
+- If Bearer is missing despite authenticated UI, patch the client button/token retrieval path rather than weakening server auth.
+
 ### v1.51.x — Backend Integration Boundary Strategy
 
 Goal:
