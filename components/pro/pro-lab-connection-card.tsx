@@ -30,9 +30,28 @@ type ProAccess = {
 };
 
 type ProAccessResponse = {
+  accountLink: ProAccountLink;
   ok: boolean;
   authenticated: boolean;
   proAccess: ProAccess;
+};
+
+type ProAccountLink = {
+  status:
+    | "not_started"
+    | "linked"
+    | "backend_not_configured"
+    | "backend_contract_missing"
+    | "error";
+  backendAccountId: string | null;
+  requiresAction: boolean;
+};
+
+type AccountLinkResponse = {
+  accountLink: ProAccountLink;
+  message: string;
+  ok: boolean;
+  status: ProAccountLink["status"] | "not_authenticated";
 };
 
 const IXAI_PRO_LAB_URL = "https://ixai-website-clean.vercel.app/";
@@ -115,6 +134,35 @@ function proAccessLabel(status: ProAccess["status"] | "checking") {
   return labels[status];
 }
 
+function accountLinkTone(status: ProAccountLink["status"] | "checking") {
+  if (status === "linked") {
+    return "border-emerald-700/20 bg-emerald-50/70 text-emerald-950";
+  }
+
+  if (status === "backend_contract_missing" || status === "backend_not_configured") {
+    return "border-amber-700/22 bg-amber-50/80 text-amber-950";
+  }
+
+  if (status === "error") {
+    return "border-rose-700/20 bg-rose-50/75 text-rose-950";
+  }
+
+  return "border-[var(--ixai-border)] bg-white/50 text-[var(--ixai-forest)]";
+}
+
+function accountLinkLabel(status: ProAccountLink["status"] | "checking") {
+  const labels = {
+    backend_contract_missing: "Backend contract pending",
+    backend_not_configured: "Backend not configured",
+    checking: "Checking",
+    error: "Link unavailable",
+    linked: "Linked",
+    not_started: "Not started",
+  };
+
+  return labels[status];
+}
+
 export function ProLabConnectionCard({
   source,
   showProAccess = false,
@@ -128,6 +176,11 @@ export function ProLabConnectionCard({
   const [failed, setFailed] = useState(false);
   const [proAccess, setProAccess] = useState<ProAccess | null>(null);
   const [proAccessFailed, setProAccessFailed] = useState(false);
+  const [accountLink, setAccountLink] = useState<ProAccountLink | null>(null);
+  const [accountLinkMessage, setAccountLinkMessage] = useState(
+    "Checking backend account link status...",
+  );
+  const [accountLinkPending, setAccountLinkPending] = useState(false);
 
   useEffect(() => {
     if (!showBackendStatus) {
@@ -171,6 +224,8 @@ export function ProLabConnectionCard({
       const payload = (await response.json()) as ProAccessResponse;
 
       if (mounted) {
+        setAccountLink(payload.accountLink);
+        setAccountLinkMessage(accountLinkMessageFromState(payload.accountLink));
         setProAccess(payload.proAccess);
         setProAccessFailed(false);
       }
@@ -189,14 +244,42 @@ export function ProLabConnectionCard({
 
   const backend = mapBackendState(health, failed);
   const proStatus = proAccess?.status ?? "checking";
+  const accountLinkStatus = accountLink?.status ?? "checking";
   const sourceLabel =
     source === "account" ? "Account" : source === "pro" ? "Pro" : "Pro Preview";
   const accessReason = proAccessFailed
     ? "Unable to verify Pro access. Safe fallback keeps paid features closed."
     : proAccess?.reason ?? "Checking Pro access identity bridge...";
   const canOpenPro = proAccess?.canOpenPro === true;
+  const showAccountLink = source === "account" && showProAccess;
   const legacyLoginWarning =
     "IXAI Pro Lab is currently a separate preview environment. App account login is not yet shared with Pro Lab. Do not use your App password to log into Pro Lab unless you have a separate Pro Lab account.";
+
+  async function handleConnectProAccount() {
+    setAccountLinkPending(true);
+
+    try {
+      const accessToken = await getSupabaseAccessToken();
+      const response = await fetch("/api/pro/account-link", {
+        cache: "no-store",
+        headers: accessToken ? { authorization: `Bearer ${accessToken}` } : undefined,
+        method: "POST",
+      });
+      const payload = (await response.json()) as AccountLinkResponse;
+
+      setAccountLink(payload.accountLink);
+      setAccountLinkMessage(payload.message || accountLinkMessageFromState(payload.accountLink));
+    } catch {
+      setAccountLink({
+        backendAccountId: null,
+        requiresAction: true,
+        status: "error",
+      });
+      setAccountLinkMessage("Account link request could not be completed.");
+    } finally {
+      setAccountLinkPending(false);
+    }
+  }
 
   return (
     <section className="rounded-lg border border-[rgba(176,141,87,0.3)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
@@ -237,18 +320,45 @@ export function ProLabConnectionCard({
 
           {showBackendStatus ? (
             <div className={`rounded-lg border px-3 py-2 ${toneClass(backend.tone)}`}>
-            <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]">
-              <Database className="h-3.5 w-3.5" aria-hidden="true" />
-              Backend
-            </p>
-            <p className="mt-1 text-sm font-semibold">{backend.label}</p>
-            <p className="mt-1 text-xs leading-5 opacity-80">{backend.detail}</p>
+              <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]">
+                <Database className="h-3.5 w-3.5" aria-hidden="true" />
+                Backend
+              </p>
+              <p className="mt-1 text-sm font-semibold">{backend.label}</p>
+              <p className="mt-1 text-xs leading-5 opacity-80">{backend.detail}</p>
+            </div>
+          ) : null}
+
+          {showAccountLink ? (
+            <div className={`rounded-lg border px-3 py-2 ${accountLinkTone(accountLinkStatus)}`}>
+              <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]">
+                <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                Account Link
+              </p>
+              <p className="mt-1 text-sm font-semibold">{accountLinkLabel(accountLinkStatus)}</p>
+              <p className="mt-1 text-xs leading-5 opacity-80">{accountLinkMessage}</p>
             </div>
           ) : null}
         </div>
       </div>
 
       <div className="mt-5 grid gap-2 sm:flex sm:flex-wrap">
+        {showAccountLink ? (
+          <button
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)] disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={
+              accountLinkPending ||
+              proStatus === "checking" ||
+              proAccess?.status === "not_connected" ||
+              accountLink?.status === "linked"
+            }
+            onClick={handleConnectProAccount}
+            type="button"
+          >
+            <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+            {accountLinkPending ? "Connecting..." : "Connect Pro Account"}
+          </button>
+        ) : null}
         {showProAccess && proAccess?.status === "not_connected" ? (
           <Link
             className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
@@ -284,8 +394,29 @@ export function ProLabConnectionCard({
 
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">
         This connection layer does not load portfolio holdings, FCN positions, broker data,
-        paid entitlement, or personalized recommendations.
+        paid entitlement, or personalized recommendations. Connecting your account does not
+        activate paid Pro access.
       </p>
     </section>
   );
+}
+
+function accountLinkMessageFromState(accountLink: ProAccountLink) {
+  if (accountLink.status === "linked") {
+    return "Your App identity has a backend account link. Paid Pro access remains entitlement-gated.";
+  }
+
+  if (accountLink.status === "backend_not_configured") {
+    return "Backend not configured. Account linking cannot start in this environment.";
+  }
+
+  if (accountLink.status === "backend_contract_missing") {
+    return "Backend contract pending. The account-link endpoint is not available yet.";
+  }
+
+  if (accountLink.status === "error") {
+    return "Backend account link check returned an error.";
+  }
+
+  return "Connect your App identity before backend Pro access can be evaluated.";
 }

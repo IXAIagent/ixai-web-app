@@ -28,11 +28,14 @@ export type ProAccessState = {
 export type ProAccessIdentity = {
   authenticated: boolean;
   email?: string | null;
+  externalUserId?: string | null;
+  name?: string | null;
   source: ProAccessSource;
   proCandidate?: boolean;
 };
 
 type SupabaseUserResponse = {
+  id?: string | null;
   email?: string | null;
   user_metadata?: Record<string, unknown> | null;
 };
@@ -215,6 +218,13 @@ export async function resolveSupabaseIdentityFromBearer(
     return {
       authenticated: true,
       email,
+      externalUserId: typeof user.id === "string" ? user.id : null,
+      name:
+        typeof user.user_metadata?.full_name === "string"
+          ? user.user_metadata.full_name
+          : typeof user.user_metadata?.name === "string"
+            ? user.user_metadata.name
+            : null,
       proCandidate: user.user_metadata?.pro_candidate === true,
       source: "supabase",
     };
@@ -237,6 +247,8 @@ export function identityFromLightweightSession(
   return {
     authenticated: true,
     email: session.normalized_email,
+    externalUserId: null,
+    name: null,
     proCandidate: session.pro_candidate,
     source: "manual",
   };

@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.51.2`
+`v1.52.0`
 
 ## Related Strategic Documents
 
@@ -504,6 +504,34 @@ Goal:
 - Keep browser clients away from protected FastAPI endpoints.
 - Preserve entitlement control: signup creates identity, not paid Pro access.
 
+### v1.52.0 — Supabase User → Backend Account Link Foundation
+
+Completed / in progress:
+
+- Audited `backend/ixai_agent` and confirmed it does not yet expose Supabase external-user account-link fields or endpoints.
+- Added production-app `POST /api/pro/account-link` as a server-side-only create-or-find contract boundary.
+- Extended `/api/pro/access` with accountLink status:
+  - `not_started`
+  - `linked`
+  - `backend_not_configured`
+  - `backend_contract_missing`
+  - `error`
+- Added `/account` Account Link Status and `Connect Pro Account` action.
+- Kept Portfolio / FCN disabled until backend entitlement and account mapping are complete.
+
+Goal:
+
+- Establish the first minimal App user → backend account-link flow without changing backend code.
+- Keep account linking separate from paid Pro entitlement.
+- Prepare backend implementation for `POST /api/v1/integrations/supabase/account-link`.
+
+Constraints:
+
+- No backend code changes.
+- No legacy frontend changes.
+- No Supabase schema changes.
+- No Stripe, billing UI, portfolio data, FCN data, direct browser-to-FastAPI protected calls, or Pro auto-entitlement.
+
 ### v1.51.x — Backend Integration Boundary Strategy
 
 Goal:
@@ -519,7 +547,8 @@ Recommended sequence:
 ```text
 Document legacy frontend role
 → Backend health proxy
-→ Supabase user to backend account mapping
+→ Supabase user to backend account-link route
+→ Backend implements trusted account-link contract
 → Account / Pro backend data boundary
 → Small reusable widget migration
 ```

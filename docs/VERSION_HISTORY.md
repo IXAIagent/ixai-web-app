@@ -1372,3 +1372,50 @@ Out of Scope:
 - Stripe, payment UI, subscription management, or pricing.
 - Portfolio / FCN real data.
 - Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.52.0 — Supabase User → Backend Account Link Foundation
+
+Why:
+
+- IXAI App users live in Supabase Auth, while backend / legacy Pro users currently live in FastAPI JWT tables.
+- The production app needed the first safe server-side account-link boundary without moving legacy auth or exposing backend protected endpoints to the browser.
+- `/account` needed to distinguish identity linking from paid Pro entitlement.
+
+Backend Audit:
+
+- `backend/ixai_agent` currently exposes FastAPI JWT auth, user, account, portfolio, FCN, crypto, alert, and intelligence surfaces.
+- It does not yet expose `external_user_id`, `provider`, `integrations`, `account-link`, or by-external-user lookup support.
+- Existing account APIs require backend JWT identity and cannot directly link Supabase users yet.
+
+What Changed:
+
+- Added `POST /api/pro/account-link`.
+- The route verifies the Supabase App user server-side, builds the future backend account-link payload, and calls `POST /api/v1/integrations/supabase/account-link` only from the Next API layer.
+- Added safe responses for `backend_not_configured`, `backend_contract_missing`, and backend errors.
+- Extended `/api/pro/access` with accountLink status.
+- Added `/account` Account Link Status and `Connect Pro Account`.
+- Kept Portfolio / FCN capabilities closed unless paid Pro entitlement and backend mapping are both available in future versions.
+
+Key Decisions:
+
+- Supabase remains the App source identity.
+- Backend account linking is server-side only.
+- Browser never receives backend admin secrets, service tokens, Supabase access tokens, or backend protected credentials.
+- Account linking does not activate paid Pro access.
+- Portfolio / FCN data remains disabled until backend entitlement and account mapping are complete.
+
+Future Backend Contract:
+
+```text
+POST /api/v1/integrations/supabase/account-link
+GET /api/v1/accounts/by-external-user/{provider}/{external_user_id}
+```
+
+Out of Scope:
+
+- Backend code changes.
+- Legacy frontend code changes.
+- Supabase schema changes.
+- Stripe, payment UI, subscription management, or pricing.
+- Portfolio / FCN real data.
+- Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.

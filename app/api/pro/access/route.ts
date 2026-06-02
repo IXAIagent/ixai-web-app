@@ -4,6 +4,7 @@ import {
   resolveProAccess,
   resolveSupabaseIdentityFromBearer,
 } from "@/src/lib/pro/access";
+import { getDefaultAccountLinkState } from "@/src/lib/pro/account-link";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -15,8 +16,14 @@ export async function GET(request: Request) {
   const identity =
     supabaseIdentity ?? identityFromLightweightSession(await readIdentitySession());
   const proAccess = await resolveProAccess(identity);
+  const accountLink = getDefaultAccountLinkState(identity);
 
   return Response.json({
+    accountLink: {
+      backendAccountId: accountLink.backendAccountId,
+      requiresAction: accountLink.requiresAction,
+      status: accountLink.status,
+    },
     authenticated: identity.authenticated,
     ok: true,
     proAccess: {

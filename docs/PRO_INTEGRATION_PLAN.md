@@ -236,6 +236,70 @@ Entitlement rule:
 - Future billing starts with manual approval, then Stripe later.
 - No automatic Pro access is granted just because a user signs up.
 
+## v1.52.0 Supabase User to Backend Account Link Foundation
+
+v1.52.0 implements the first production-app account-link boundary without changing backend code.
+
+Backend audit result:
+
+- `backend/ixai_agent` has FastAPI JWT auth and protected account APIs.
+- It has `User`, `Account`, `AccountMembership`, portfolio, FCN, crypto, alert, and intelligence models.
+- It does not currently have `external_user_id`, `provider`, `integrations`, `account-link`, or by-external-user lookup support.
+- Existing account APIs cannot directly support Supabase user linking without a backend contract.
+
+Production app additions:
+
+- `POST /api/pro/account-link`
+- `/api/pro/access` accountLink status
+- `/account` Account Link Status
+- `/account` `Connect Pro Account` action
+
+Account-link request payload prepared by the Next server:
+
+```json
+{
+  "provider": "supabase",
+  "external_user_id": "<supabase_user_id>",
+  "email": "<email>",
+  "name": "<optional display name>"
+}
+```
+
+Safe states:
+
+```text
+not_started
+linked
+backend_not_configured
+backend_contract_missing
+error
+```
+
+If the backend endpoint is not available yet, the production app returns:
+
+```json
+{
+  "ok": false,
+  "status": "backend_contract_missing",
+  "message": "Backend account-link endpoint is not available yet."
+}
+```
+
+Security boundaries:
+
+- The browser calls only the Next API route.
+- The browser does not call protected FastAPI endpoints directly.
+- Supabase tokens are used only to verify App identity inside the Next route.
+- Backend secrets, service tokens, and full backend URLs are not returned to the client.
+- User email is not logged by the account-link route.
+
+Entitlement boundary:
+
+- Account link is identity infrastructure only.
+- Account link does not activate paid Pro access.
+- Portfolio / FCN data remains disabled until backend mapping and entitlement are complete.
+- Stripe remains future work.
+
 ## Backend Boundary Rules
 
 Production frontend should eventually talk to backend through Next API routes:

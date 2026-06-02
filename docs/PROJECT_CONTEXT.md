@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.51.2`
+`v1.52.0`
 
 Current Core Flow:
 
@@ -144,6 +144,8 @@ App User → Pro Access Identity Bridge now lets the production app derive a Pro
 
 Supabase User → Backend Account Link design now clarifies that App users and legacy Pro Lab users are not the same identity yet. App users live in Supabase Auth; Pro Lab users currently live in the backend FastAPI JWT users table. `/account` Pro Lab links must present the external dashboard as a separate preview environment and must not imply that an App password can log into the legacy Pro Lab. The target bridge is Supabase user → Next API server-side verification → backend account link / lookup → backend account id and Pro access state.
 
+Supabase User → Backend Account Link foundation now adds the first production-app server-side account-link boundary. `/api/pro/account-link` verifies the Supabase App user through the App layer, builds the future backend create-or-find payload, and attempts the backend contract only from the Next API route. `/api/pro/access` now reports accountLink status separately from paid Pro entitlement. If `IXAI_BACKEND_URL` is not configured or the backend endpoint is not implemented, the app shows `backend_not_configured` / `backend_contract_missing` without exposing secrets, backend URLs, portfolio data, FCN data, or granting paid Pro access.
+
 Latest engineering health check:
 
 - Engineering Health Score: 8.2/10.
@@ -218,6 +220,14 @@ v1.51.2 adds:
 - Explicit warning that App account login is not yet shared with the legacy Pro Lab.
 - Supabase User → Backend Account Link design documentation.
 - Backend contract options for create-or-find and lookup account mapping.
+
+v1.52.0 adds:
+
+- `POST /api/pro/account-link`: first server-side App → Backend account link contract boundary.
+- `/api/pro/access` accountLink status alongside entitlement status.
+- `/account` Account Link Status and `Connect Pro Account` action.
+- Backend contract audit confirmation that `backend/ixai_agent` does not yet expose Supabase external-user linking fields or endpoints.
+- Clear separation between identity linking and paid Pro entitlement.
 
 The integration plan remains intentionally narrow:
 
