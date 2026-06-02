@@ -1675,3 +1675,43 @@ Out of Scope:
 - Payment UI.
 - LINE Login changes.
 - Trading advice, target prices, return promises, or automated trading.
+
+## v1.55.2 — Production Migration Execution
+
+Why:
+
+- Production migration status confirmed the backend was still at
+  `0009_supabase_account_link`; follow-up verification also observed
+  `0008_fcn_coupon_sched`, which is the direct parent of `0009`.
+- The v1.55 membership tables were missing in production:
+  `subscriptions = false`, `entitlements = false`.
+- Membership lookup and account-link could not complete reliably until
+  production PostgreSQL reached `0010_membership_foundation`.
+
+What Changed:
+
+- Added a temporary, token-protected backend migration executor:
+  `POST /admin/run-membership-migration`.
+- The executor requires `MIGRATION_BOOTSTRAP_TOKEN` and the matching
+  `X-IXAI-MIGRATION-TOKEN` request header.
+- The executor refuses unsupported source revisions and is intended only for
+  the linear `0008_fcn_coupon_sched` / `0009_supabase_account_link` →
+  `0010_membership_foundation` transition.
+- Documented the exact Render execution sequence, verification checks, and
+  cleanup requirement.
+
+Key Decisions:
+
+- This is not a product feature.
+- The endpoint must be removed after migration verification.
+- No membership rules, Stripe, Portfolio, FCN, or Pro entitlement logic changed.
+- A linked account remains Free by default after migration.
+
+Out of Scope:
+
+- Stripe.
+- Portfolio / FCN real data.
+- Payment UI.
+- LINE Login changes.
+- Membership logic changes.
+- Trading advice, target prices, return promises, or automated trading.
