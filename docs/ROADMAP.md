@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.52.0`
+`v1.55.0`
 
 ## Related Strategic Documents
 
@@ -641,6 +641,41 @@ Next:
 - Run the button test with a real logged-in Supabase App user.
 - Confirm `/api/auth/session-debug` reports `source: bearer`.
 - Confirm backend account link is created / found and paid Pro access remains entitlement-gated.
+
+### v1.55.0 — Membership Foundation
+
+Completed / in progress:
+
+- Added the backend membership / entitlement foundation for linked IXAI App accounts.
+- Added `subscriptions` and `entitlements` as the minimal backend model for
+  future Free / Personal / Pro / Enterprise access.
+- Linked backend accounts default to Free membership.
+- Free entitlements enable Daily Brief, Weekly Brief, and Watchlist only.
+- Portfolio, FCN Monitoring, Risk Engine, AI Copilot, and Pro Preview remain locked by default.
+- Added production-app `/api/pro/membership` as a sanitized Next API proxy.
+- Added `/account` membership and entitlement display without enabling paid Pro features.
+
+Goal:
+
+- Make the same App identity capable of carrying future Pro membership state.
+- Keep account linking separate from paid entitlement.
+- Prepare for future manual approval, Stripe, and Pro subscription logic without
+  adding payment UI in this version.
+
+Out of scope:
+
+- Stripe.
+- Payment UI.
+- Portfolio / FCN real data.
+- LINE Login changes.
+- Daily / Weekly / Admin workflow changes.
+- Legacy frontend changes.
+
+Next:
+
+- Apply backend membership migration through a protected migration workflow.
+- Verify `/api/pro/membership` against production backend after migration.
+- Prepare v1.56 read-only Portfolio Summary Preview only after membership state is stable.
 
 ### v1.51.x — Backend Integration Boundary Strategy
 

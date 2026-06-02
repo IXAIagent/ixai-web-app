@@ -473,6 +473,64 @@ Expected authenticated result:
 - Account Link Status should become `Linked`.
 - Linked remains identity-only and does not activate paid Pro access.
 
+## v1.55.0 Membership Foundation
+
+Purpose:
+
+- Add the first shared membership / entitlement foundation between the IXAI App
+  and IXAI Pro backend.
+- Keep App account linking separate from paid Pro activation.
+- Preserve Portfolio / FCN / Risk Engine as locked capabilities until future
+  entitlement and product releases explicitly open them.
+
+Membership source:
+
+```text
+Supabase App user
+→ Next API Bearer verification
+→ backend account link
+→ backend membership / entitlements
+→ sanitized /api/pro/membership response
+→ /account Pro card
+```
+
+Default linked account state:
+
+```text
+plan_code = free
+status = active
+provider = manual
+```
+
+Default Free entitlements:
+
+| Entitlement | Enabled |
+| --- | --- |
+| `daily_brief` | Yes |
+| `weekly_brief` | Yes |
+| `watchlist` | Yes |
+| `pro_preview` | No |
+| `portfolio` | No |
+| `fcn_monitoring` | No |
+| `risk_engine` | No |
+| `ai_copilot` | No |
+
+Production app behavior:
+
+- `/api/pro/membership` verifies the Supabase Bearer token before calling the backend.
+- The browser still does not call protected FastAPI endpoints directly.
+- `/account` can display Membership as Free / Personal / Pro / Enterprise and
+  show entitlement locks.
+- Linked account does not equal paid Pro.
+- Billing will come later; no Stripe or payment UI exists in v1.55.0.
+
+Backend requirement:
+
+- Production backend must run the v1.55 membership migration before
+  `/api/pro/membership` can return backend membership state.
+- Future migration execution should use protected CI/CD, paid Render Shell /
+  Jobs, Railway one-off command, or a strongly authenticated internal mechanism.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

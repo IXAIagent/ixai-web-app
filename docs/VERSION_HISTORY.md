@@ -1604,3 +1604,40 @@ Out of Scope:
 - Supabase schema changes.
 - LINE Login / LIFF changes.
 - Stripe, payment UI, portfolio / FCN data, auto publishing, platform APIs, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.55.0 — Membership Foundation
+
+Why:
+
+- v1.54.x completed the App → Backend account-link path, but linked identity
+  still needed a shared membership and entitlement boundary.
+- IXAI needs the same App account to carry future Free / Personal / Pro /
+  Enterprise access state without granting paid Pro automatically.
+
+What Changed:
+
+- Added backend `subscriptions` and `entitlements` foundation.
+- Linked backend accounts default to Free membership.
+- Default Free entitlements enable Daily Brief, Weekly Brief, and Watchlist.
+- Portfolio, FCN Monitoring, Risk Engine, AI Copilot, and Pro Preview remain locked by default.
+- Added backend membership service and `GET /api/v1/membership/me`.
+- Added production-app `GET /api/pro/membership` as a sanitized Next API proxy.
+- Added `/account` membership / entitlement display in the Pro card.
+
+Key Decisions:
+
+- Account linking does not equal paid Pro access.
+- Paid Pro remains entitlement-gated.
+- Stripe is future work.
+- Portfolio and FCN data remain disabled until future versions.
+- Browser clients still do not call protected backend endpoints directly.
+
+Out of Scope:
+
+- Stripe.
+- Payment UI.
+- Portfolio / FCN real data.
+- LINE Login changes.
+- Legacy frontend changes.
+- Daily / Weekly / Admin workflow changes.
+- Buy/sell recommendations, target prices, return promises, or automated trading.

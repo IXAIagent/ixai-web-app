@@ -54,6 +54,20 @@ type AccountLinkResponse = {
   status: ProAccountLink["status"] | "not_authenticated";
 };
 
+type ProMembership = {
+  accountId: string | null;
+  planCode: "free" | "personal" | "pro" | "enterprise" | string;
+  status: string;
+  entitlements: Record<string, boolean>;
+};
+
+type ProMembershipResponse = {
+  membership: ProMembership | null;
+  message?: string;
+  ok: boolean;
+  status: "ok" | "not_authenticated" | "not_linked" | "backend_not_configured" | "error";
+};
+
 const IXAI_PRO_LAB_URL = "https://ixai-website-clean.vercel.app/";
 
 function mapBackendState(health: BackendHealth | null, failed: boolean): BackendUiState {
@@ -163,6 +177,21 @@ function accountLinkLabel(status: ProAccountLink["status"] | "checking") {
   return labels[status];
 }
 
+function membershipLabel(membership: ProMembership | null) {
+  if (!membership) {
+    return "Not linked";
+  }
+
+  const labels: Record<string, string> = {
+    enterprise: "Enterprise",
+    free: "Free",
+    personal: "Personal",
+    pro: "Pro",
+  };
+
+  return labels[membership.planCode] ?? membership.planCode;
+}
+
 export function ProLabConnectionCard({
   source,
   showProAccess = false,
@@ -181,6 +210,8 @@ export function ProLabConnectionCard({
     "Checking backend account link status...",
   );
   const [accountLinkPending, setAccountLinkPending] = useState(false);
+  const [membership, setMembership] = useState<ProMembership | null>(null);
+  const [membershipMessage, setMembershipMessage] = useState("Membership not evaluated yet.");
 
   useEffect(() => {
     if (!showBackendStatus) {
@@ -229,6 +260,23 @@ export function ProLabConnectionCard({
         setProAccess(payload.proAccess);
         setProAccessFailed(false);
       }
+
+      if (authHeaders && mounted) {
+        const membershipResponse = await fetch("/api/pro/membership", {
+          cache: "no-store",
+          headers: authHeaders,
+        });
+        const membershipPayload = (await membershipResponse.json()) as ProMembershipResponse;
+
+        if (mounted) {
+          setMembership(membershipPayload.membership);
+          setMembershipMessage(
+            membershipPayload.ok
+              ? "Linked account membership is entitlement-gated."
+              : membershipPayload.message ?? "Membership lookup is pending account link.",
+          );
+        }
+      }
     }
 
     void loadAccess().catch(() => {
@@ -269,6 +317,21 @@ export function ProLabConnectionCard({
 
       setAccountLink(payload.accountLink);
       setAccountLinkMessage(payload.message || accountLinkMessageFromState(payload.accountLink));
+
+      if (payload.accountLink.status === "linked" && authHeaders) {
+        const membershipResponse = await fetch("/api/pro/membership", {
+          cache: "no-store",
+          headers: authHeaders,
+        });
+        const membershipPayload = (await membershipResponse.json()) as ProMembershipResponse;
+
+        setMembership(membershipPayload.membership);
+        setMembershipMessage(
+          membershipPayload.ok
+            ? "Linked account membership is entitlement-gated."
+            : membershipPayload.message ?? "Membership lookup is pending account link.",
+        );
+      }
     } catch {
       setAccountLink({
         backendAccountId: null,
@@ -337,6 +400,35 @@ export function ProLabConnectionCard({
               </p>
               <p className="mt-1 text-sm font-semibold">{accountLinkLabel(accountLinkStatus)}</p>
               <p className="mt-1 text-xs leading-5 opacity-80">{accountLinkMessage}</p>
+            </div>
+          ) : null}
+
+          {showAccountLink ? (
+            <div className="rounded-lg border border-[var(--ixai-border)] bg-white/50 px-3 py-2 text-[var(--ixai-forest)]">
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+                Membership
+              </p>
+              <p className="mt-1 text-sm font-semibold">{membershipLabel(membership)}</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
+                {membershipMessage}
+              </p>
+              <div className="mt-2 grid gap-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                {[
+                  ["Daily Brief", membership?.entitlements.daily_brief],
+                  ["Weekly Brief", membership?.entitlements.weekly_brief],
+                  ["Watchlist", membership?.entitlements.watchlist],
+                  ["Portfolio", membership?.entitlements.portfolio],
+                  ["FCN Monitoring", membership?.entitlements.fcn_monitoring],
+                  ["Risk Engine", membership?.entitlements.risk_engine],
+                ].map(([label, enabled]) => (
+                  <span className="flex items-center justify-between gap-2" key={String(label)}>
+                    <span>{label}</span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.1em]">
+                      {enabled ? "Enabled" : "Locked"}
+                    </span>
+                  </span>
+                ))}
+              </div>
             </div>
           ) : null}
         </div>
