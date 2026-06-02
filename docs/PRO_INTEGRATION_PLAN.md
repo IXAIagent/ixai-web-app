@@ -373,6 +373,33 @@ Next verification step:
 - Log in with a real Supabase App account, then click `/account` `Connect Pro Account`.
 - Expected result: Next API returns linked state, backend creates/finds account link, and Account Link Status becomes `Linked`.
 
+## v1.54.1 Real Supabase Session Button Test
+
+Verification status:
+
+- Backend temporary E2E database `/tmp/ixai_v1541_e2e.db` upgraded cleanly to `0009_supabase_account_link`.
+- Backend health and readiness passed on `localhost:8000`.
+- Frontend local server was started with `IXAI_BACKEND_URL=http://localhost:8000`.
+- Frontend `/api/backend/health` returned `backendUrlConfigured: true` and `ok: true`.
+- Frontend unauthenticated `POST /api/pro/account-link` correctly returned `401 not_authenticated`.
+
+Blocked:
+
+- Local `/account` and production `/account` both showed the unauthenticated Account entry shell.
+- No valid Supabase browser session or access token was available for the button-click test.
+- The `Connect Pro Account` click cannot be verified without a real logged-in App user session.
+
+Decision:
+
+- Do not bypass Supabase auth.
+- Do not inject fake cookies or create a parallel login path.
+- Do not weaken the App → Next API → Backend boundary.
+
+Next step:
+
+- Sign in with a real Supabase App account and repeat the `/account` button test.
+- Expected success criteria remain: `POST /api/pro/account-link` returns `ok: true`, backend creates/finds the account link, and Account Link Status becomes `Linked`.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

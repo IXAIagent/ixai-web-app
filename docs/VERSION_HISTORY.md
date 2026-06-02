@@ -1493,3 +1493,37 @@ Out of Scope:
 - Stripe, payment UI, subscription management, or pricing.
 - Portfolio / FCN real data.
 - Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.54.1 — Real Supabase Session Button Test
+
+Why:
+
+- v1.54 verified backend and frontend readiness, but did not complete a real logged-in `/account` button click.
+- The remaining requirement was to confirm that an authenticated Supabase App user can click `Connect Pro Account` and receive `accountLink.status = linked`.
+
+What Was Verified:
+
+- Backend temporary DB `/tmp/ixai_v1541_e2e.db` upgraded to `0009_supabase_account_link`.
+- Backend `/health` and `/readyz` passed.
+- Frontend local server with `IXAI_BACKEND_URL=http://localhost:8000` returned `backendUrlConfigured: true` and `ok: true`.
+- Frontend unauthenticated `POST /api/pro/account-link` returned `401 not_authenticated`.
+- Local and production `/account` both showed unauthenticated App entry shell.
+
+Blocked:
+
+- No valid Supabase authenticated browser session was available.
+- The `Connect Pro Account` button was not reachable because Account workspace was not authenticated.
+
+Key Decisions:
+
+- Do not bypass Supabase auth.
+- Do not inject fake cookies or fake Supabase tokens.
+- Do not modify legacy Pro login, LINE Login, Stripe, Portfolio / FCN, or admin flows.
+
+Out of Scope:
+
+- Legacy frontend changes.
+- Supabase schema changes.
+- Stripe, payment UI, subscription management, or pricing.
+- Portfolio / FCN real data.
+- Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.

@@ -575,6 +575,25 @@ Next:
 - Perform authenticated `/account` Connect Pro Account test with a real App user.
 - If successful, update Account Link Status to `Linked` and then consider v1.55 Account Portfolio Summary Preview.
 
+### v1.54.1 — Real Supabase Session Button Test
+
+Completed / in progress:
+
+- Rebuilt a clean backend E2E database at `/tmp/ixai_v1541_e2e.db`.
+- Verified backend health / readiness.
+- Verified frontend health proxy with `IXAI_BACKEND_URL` configured.
+- Verified unauthenticated `/api/pro/account-link` remains closed with `401 not_authenticated`.
+
+Blocked:
+
+- No authenticated Supabase browser session was available locally or in production.
+- `/account` showed the App entry shell, so the `Connect Pro Account` button was not reachable.
+
+Next:
+
+- Obtain a real App user session and run the button-click test.
+- After `accountLink.status = linked` is verified, proceed toward v1.55 Account Portfolio Summary Preview.
+
 ### v1.51.x — Backend Integration Boundary Strategy
 
 Goal:
