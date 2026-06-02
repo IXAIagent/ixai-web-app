@@ -1779,3 +1779,35 @@ Out of Scope:
 - Real Portfolio / FCN data.
 - Risk Engine workflow UI.
 - Legacy Pro frontend migration.
+
+## v1.57.0 — Pro Connection Completion
+
+Why:
+
+- v1.56 added membership / entitlement state, but remaining Pro product entries
+  still needed to be controlled by the same feature-gate foundation.
+- IXAI needed a small bridge from "identity is linked" to "product entrances
+  respect the linked account's entitlement state."
+
+What Changed:
+
+- Added `/portfolio` as a Portfolio Intelligence feature-gated route.
+- Changed `/fcn` into an FCN Monitoring feature-gated route.
+- Added `/risk` as a Risk Engine feature-gated route.
+- Updated Pro entry surfaces to show Pro module availability from the same
+  membership / entitlement state used in Account.
+- Added mobile QA coverage for `/portfolio`, `/fcn`, and `/risk`.
+
+Backend Counterpart:
+
+- Backend v1.57 adds a protected manual entitlement test endpoint for internal
+  QA before Stripe.
+
+Out of Scope:
+
+- Stripe.
+- Billing.
+- Payment UI.
+- Broker API.
+- Real Portfolio / FCN data.
+- Legacy Pro frontend migration.

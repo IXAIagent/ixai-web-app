@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.56.1`
+`v1.57.0`
 
 ## Related Strategic Documents
 
@@ -725,6 +725,31 @@ Still not included:
 - Real FCN Monitoring data.
 - Risk Engine workflow UI.
 - Broker integrations.
+
+### v1.57.0 — Pro Connection Completion
+
+Completed:
+
+- Added feature-gated route skeletons for `/portfolio`, `/fcn`, and `/risk`.
+- Connected those route entrances to the same App membership / entitlement
+  state used by `/account`.
+- Kept Free accounts in a `Reserved for Pro` state for Portfolio Intelligence,
+  FCN Monitoring, and Risk Engine.
+- Updated Pro entry surfaces so Pro modules reflect the same entitlement
+  decision rather than a separate Pro Lab-only state.
+
+Backend counterpart:
+
+- Added an internal manual entitlement test mechanism in the backend so IXAI can
+  verify Pro unlock behavior before Stripe.
+
+Still not included:
+
+- Stripe.
+- Billing or payment UI.
+- Broker API.
+- Real Portfolio / FCN data.
+- Legacy Pro frontend migration.
 
 ### v1.51.x — Backend Integration Boundary Strategy
 

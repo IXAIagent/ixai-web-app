@@ -504,6 +504,27 @@ export function ProLabConnectionCard({
               </div>
             </div>
           ) : null}
+
+          {!showAccountLink && showProAccess ? (
+            <div className="rounded-lg border border-[var(--ixai-border)] bg-white/50 px-3 py-2 text-[var(--ixai-forest)]">
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+                Pro Modules
+              </p>
+              <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
+                Pro entry reads the same App membership / entitlement state.
+              </p>
+              <div className="mt-3 grid gap-2">
+                {gatedFeatures.map((feature) => (
+                  <LockedFeatureCard
+                    description={feature.description}
+                    enabled={feature.enabled}
+                    key={feature.name}
+                    name={feature.name}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
 

@@ -621,6 +621,44 @@ Out of scope:
 - Risk Engine workflow UI.
 - Legacy Pro frontend migration.
 
+## v1.57.0 Pro Connection Completion
+
+Purpose:
+
+- Complete the first product-entry connection between IXAI App and IXAI Pro.
+- Ensure identity, membership, entitlements, Account UI, and Pro module
+  entrances all read the same feature-gate state.
+
+Frontend changes:
+
+- `/portfolio` now renders a Portfolio Intelligence feature-gated entrance.
+- `/fcn` now renders an FCN Monitoring feature-gated entrance.
+- `/risk` now renders a Risk Engine feature-gated entrance.
+- `/pro` and `/pro-preview` can show Pro module availability from the same
+  membership / entitlement state used by `/account`.
+
+Free plan behavior:
+
+- Portfolio Intelligence: `Reserved for Pro`.
+- FCN Monitoring: `Reserved for Pro`.
+- Risk Engine: `Reserved for Pro`.
+
+Backend counterpart:
+
+- Backend adds an internal-only manual entitlement test endpoint protected by
+  `IXAI_ADMIN_INTERNAL_TOKEN`.
+- Manual entitlement is for internal QA before Stripe and must not be treated as
+  public billing or payment functionality.
+
+Still not included:
+
+- Stripe.
+- Billing.
+- Broker API.
+- Real Portfolio / FCN data.
+- Payment UI.
+- Legacy Pro frontend migration.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

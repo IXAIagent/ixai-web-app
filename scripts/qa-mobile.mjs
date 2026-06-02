@@ -48,6 +48,21 @@ const routeSpecs = [
     ],
   },
   {
+    path: "/portfolio",
+    kind: "protected",
+    visibleText: ["Portfolio Intelligence", "Reserved for Pro"],
+  },
+  {
+    path: "/fcn",
+    kind: "protected",
+    visibleText: ["FCN Monitoring", "Reserved for Pro"],
+  },
+  {
+    path: "/risk",
+    kind: "protected",
+    visibleText: ["Risk Engine", "Reserved for Pro"],
+  },
+  {
     path: "/pro",
     kind: "protected",
     visibleText: ["IXAI Pro", "加入 Pro 等候名單", "建立你的 IXAI intelligence workspace"],
