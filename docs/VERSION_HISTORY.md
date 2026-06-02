@@ -1221,3 +1221,50 @@ Out of Scope:
 - Homepage changes.
 - Supabase schema changes.
 - Platform APIs, auto publishing, portfolio workflows, trading logic, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## Planned Note — Legacy Pro Dashboard Audit
+
+Why:
+
+- IXAI now has multiple project folders under `/Users/itsunkuo/Desktop/IXAI_PROJECTS`.
+- Future agents need a clear distinction between the active production frontend, backend mainline candidate, legacy Pro / Portfolio Dashboard prototype, and brand side project.
+- The legacy frontend contains useful Pro / Portfolio UI and backend contract ideas, but it should not be confused with the production app.
+
+What Was Classified:
+
+- `app/ixai-web-app`: active production frontend.
+- `backend/ixai_agent`: active backend mainline candidate.
+- `frontend/ixai-website-clean`: legacy Pro / Portfolio Dashboard prototype.
+- `brand/ixuan-brand-site`: brand / social kit side project.
+
+Reusable Legacy Assets:
+
+- `RiskPill`
+- `StatusBadge`
+- `SummaryCard`
+- `PortfolioEnginePanel`
+- `MarketEnginePanel`
+- `ScenarioSensitivityPanel`
+- `DashboardTodayFocus`
+- FCN position / schedule display pattern.
+- Asset allocation layout.
+- Alert center taxonomy.
+- Backend API client contract ideas.
+
+Not Recommended For Direct Migration:
+
+- Legacy JWT login.
+- `localStorage` token auth.
+- Direct browser-to-FastAPI protected requests.
+- Whole legacy `AppShell` navigation.
+- Terminal-heavy visual style.
+
+Key Decision:
+
+- Future Pro Dashboard work should use a hybrid strategy: keep `app/ixai-web-app` as the mainline, build a backend integration boundary first, and then migrate selected reusable widgets or information architecture patterns.
+
+Out of Scope:
+
+- Moving folders.
+- Deleting legacy projects.
+- Changing auth, LINE, LIFF, Supabase, backend, provider infrastructure, billing, portfolio logic, or production app code.

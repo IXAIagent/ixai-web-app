@@ -10,6 +10,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 - `docs/PRODUCT_ORIGIN.md`
 - `docs/IXAI_VISION.md`
+- `docs/PROJECT_MAP.md`
 
 ## Current Product Flow
 
@@ -451,6 +452,48 @@ Goal:
 - Keep changes small, verifiable, and non-architectural unless explicitly approved.
 
 ## Future Roadmap
+
+### v1.51 — Backend Integration Boundary Strategy
+
+Goal:
+
+- Do not migrate the legacy `frontend/ixai-website-clean` project wholesale.
+- Build a backend integration boundary in the active production frontend first.
+- Add a backend health proxy / readiness check before exposing portfolio workflows in production UI.
+- Define Supabase user → backend account mapping before moving protected portfolio or FCN data into `/account` or future Pro surfaces.
+- Migrate reusable Pro dashboard widgets only after the identity and backend boundary are clear.
+
+Recommended sequence:
+
+```text
+Document legacy frontend role
+→ Backend health proxy
+→ Supabase user to backend account mapping
+→ Account / Pro backend data boundary
+→ Small reusable widget migration
+```
+
+High-value reusable assets from `frontend/ixai-website-clean`:
+
+- `RiskPill`
+- `StatusBadge`
+- `SummaryCard`
+- `PortfolioEnginePanel`
+- `MarketEnginePanel`
+- `ScenarioSensitivityPanel`
+- `DashboardTodayFocus`
+- FCN position / schedule display pattern
+- Asset allocation layout
+- Alert center taxonomy
+- Backend API client contract ideas
+
+Do not directly migrate:
+
+- Legacy JWT login.
+- `localStorage` token auth.
+- Direct browser-to-FastAPI protected requests.
+- Whole legacy `AppShell` navigation.
+- Terminal-heavy visual style.
 
 ### v1.43.2 — Weekly Revision Migration Review / Rollout
 

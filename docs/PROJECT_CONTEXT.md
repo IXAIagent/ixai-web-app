@@ -151,6 +151,33 @@ Latest engineering health check:
 - No hydration errors found in checked routes.
 - No LINE OAuth CORS errors found after the v1.50.2 fix.
 
+## B1. Legacy Frontend Classification
+
+`/Users/itsunkuo/Desktop/IXAI_PROJECTS/frontend/ixai-website-clean` is not the production frontend. It is a legacy Pro / Portfolio Dashboard prototype that already connects to `/Users/itsunkuo/Desktop/IXAI_PROJECTS/backend/ixai_agent`.
+
+The legacy frontend uses FastAPI JWT auth, `localStorage` token storage, and direct browser-to-FastAPI protected requests through `NEXT_PUBLIC_API_BASE_URL`. The current production mainline, `/Users/itsunkuo/Desktop/IXAI_PROJECTS/app/ixai-web-app`, uses Supabase identity, Next API routes, public intelligence surfaces, editorial workflows, and the current IXAI design / conversion architecture.
+
+Future development should not migrate the legacy frontend wholesale. The recommended strategy is hybrid reuse:
+
+- Keep `app/ixai-web-app` as the active production frontend.
+- Treat `frontend/ixai-website-clean` as a reusable legacy Pro / Portfolio Dashboard reference.
+- Reuse UI patterns, portfolio widgets, FCN risk information architecture, asset-allocation layout ideas, alert taxonomy, and backend API contract ideas.
+- Avoid directly migrating legacy JWT login, `localStorage` token auth, direct browser-to-FastAPI protected requests, the whole legacy `AppShell` navigation, or the terminal-heavy visual style.
+
+High-value reusable modules and patterns include:
+
+- `RiskPill`
+- `StatusBadge`
+- `SummaryCard`
+- `PortfolioEnginePanel`
+- `MarketEnginePanel`
+- `ScenarioSensitivityPanel`
+- `DashboardTodayFocus`
+- FCN position / schedule display pattern
+- Asset allocation layout
+- Alert center taxonomy
+- Backend API client contract ideas
+
 Current Highest Priorities:
 
 1. Weekly Revision Migration Review / Rollout.
