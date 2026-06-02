@@ -1869,3 +1869,80 @@ Out of Scope:
 - Real Portfolio / FCN data.
 - Investment advice, buy/sell signals, target prices, or return promises.
 - True SSO between App Supabase auth and legacy Pro JWT login.
+
+## v1.60.0 — Unified Login Foundation
+
+Why:
+
+- v1.59 clarified the real Pro bridge, but App and Legacy Pro still do not
+  share a login session.
+- IXAI needs an explicit SSO architecture before changing production auth,
+  removing legacy login, or exposing real Pro data through shared identity.
+
+What Changed:
+
+- Added `docs/SSO_FOUNDATION_PLAN.md`.
+- Audited authentication across:
+  - Production App: Supabase Auth, sessionStorage, Bearer token bridge, Next API
+    verification, account-link / membership / entitlement proxy.
+  - Legacy Pro: FastAPI JWT login, `localStorage` `ixai_token`, direct
+    browser-to-FastAPI protected API calls.
+  - Backend: email/password users, custom HS256 JWT, Supabase external account
+    link, subscriptions, and entitlements.
+- Compared three SSO directions:
+  - Unified Supabase Auth.
+  - Transitional JWT Exchange Bridge.
+  - Custom SSO server.
+- Recommended Supabase Auth as the single identity source whenever practical,
+  with backend accounts as product ownership and entitlements as authorization.
+- Documented security requirements for JWT validation, token exchange, replay
+  prevention, logout behavior, and account-link failure modes.
+- Added phased migration plan from audit through beta SSO and legacy login
+  retirement.
+
+Out of Scope:
+
+- Enabling SSO in production.
+- Modifying App login, Legacy Pro login, or backend JWT behavior.
+- Removing existing Legacy Pro login.
+- Stripe, broker integration, portfolio engines, trading, or investment advice.
+
+## v1.61.0 — SSO Prototype & Implementation Readiness
+
+Why:
+
+- IXAI needs an implementation-ready SSO prototype plan before changing App,
+  Legacy Pro, or backend login behavior.
+- The target product outcome is login once in the App, click Open IXAI Pro, and
+  enter Pro without a second login.
+
+What Changed:
+
+- Added `docs/SSO_IMPLEMENTATION_PLAN.md`.
+- Expanded the auth architecture audit with:
+  - App Supabase auth flow, session lifecycle, JWT usage, refresh behavior, and
+    route-gate behavior.
+  - Backend account-link, membership lookup, entitlement lookup, and current
+    backend JWT validation.
+  - Legacy Pro login, backend JWT creation, `localStorage ixai_token`, dashboard
+    access flow, and protected route behavior.
+- Added sequence diagrams for current App identity, current Legacy Pro login,
+  target unified login, Option A Unified Supabase Auth, and Option B JWT
+  Exchange Bridge.
+- Recommended Unified Supabase Auth as the target SSO architecture, with JWT
+  Exchange Bridge as a transitional fallback only if direct migration is too
+  disruptive.
+- Defined prototype requirements for login, logout, expiration, session refresh,
+  failure recovery, CSRF, XSS, JWT replay, token leakage, and session fixation.
+- Added v1.62–v1.66 migration roadmap with scope, risk, rollback, and success
+  criteria.
+
+Out of Scope:
+
+- Enabling SSO in production.
+- Changing production App / Legacy Pro / backend auth flows.
+- Issuing new JWTs.
+- Supabase configuration changes.
+- Deployment.
+- UI redesign.
+- Stripe, broker integration, portfolio engines, or trading features.

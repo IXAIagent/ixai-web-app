@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.59.0`
+`v1.61.0`
 
 ## Related Strategic Documents
 
@@ -12,6 +12,8 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/IXAI_VISION.md`
 - `docs/PROJECT_MAP.md`
 - `docs/PRO_INTEGRATION_PLAN.md`
+- `docs/SSO_FOUNDATION_PLAN.md`
+- `docs/SSO_IMPLEMENTATION_PLAN.md`
 
 ## Current Product Flow
 
@@ -443,12 +445,16 @@ Completed:
 
 ## Next Suggested Version
 
-`v1.50.3 — Post-Stabilization Cleanup`
+`v1.62.0 — SSO Bridge Prototype`
 
 Goal:
 
-- Align long-form docs with completed v1.50.x state after future changes.
-- Audit Next.js `_rsc` prefetch abort noise on `/fcn` and `/weekly-brief` without changing product flow.
+- Select Option A Unified Supabase Auth validation or Option B transitional JWT
+  Exchange Bridge.
+- Prototype true App → Pro shared login for beta users only, preferably with
+  Unified Supabase Auth first.
+- Keep legacy Pro login available as rollback.
+- Do not change production authentication flows without explicit approval.
 
 ## v1.59.0 — Real Pro Bridge + Icon Cleanup
 
@@ -478,6 +484,68 @@ Out of Scope:
   investment advice.
 - Continue Social Pack Period Divergence QA after Daily / Weekly engine changes.
 - Keep changes small, verifiable, and non-architectural unless explicitly approved.
+
+## v1.60.0 — Unified Login Foundation
+
+Why:
+
+- v1.59 clarified that the existing IXAI Pro Lab is still a separate preview
+  environment, but true App → Pro shared login is not implemented.
+- IXAI needs a documented identity architecture before any SSO prototype changes
+  production auth surfaces.
+
+What Changed:
+
+- Added `docs/SSO_FOUNDATION_PLAN.md`.
+- Audited the Production App, Legacy Pro, and Backend identity models.
+- Documented current Supabase App auth, legacy FastAPI JWT auth, backend
+  account-link, membership, and entitlement trust boundaries.
+- Compared Unified Supabase Auth, JWT Exchange Bridge, and custom SSO server
+  options.
+- Recommended Supabase Auth as the single identity source whenever practical.
+- Added phased SSO migration plan: audit, prototype, beta users, production
+  rollout, legacy login retirement.
+
+Out of Scope:
+
+- Enabling SSO in production.
+- Changing App login, Legacy Pro login, or backend auth behavior.
+- Stripe, billing, broker integration, portfolio engines, trading features, or
+  investment advice.
+
+## v1.61.0 — SSO Prototype & Implementation Readiness
+
+Why:
+
+- v1.60 defined the identity foundation, but the team still needed exact
+  prototype flows, rollback paths, security requirements, and phase estimates
+  before changing login behavior.
+
+What Changed:
+
+- Added `docs/SSO_IMPLEMENTATION_PLAN.md`.
+- Documented deep auth audit details for App, Legacy Pro, and Backend:
+  session lifecycle, JWT usage, refresh behavior, account-link, membership,
+  entitlement, and protected-route behavior.
+- Produced current and target identity sequence diagrams.
+- Compared Unified Supabase Auth, JWT Exchange Bridge, and custom SSO server
+  with security, complexity, migration, rollback, and maintenance tradeoffs.
+- Recommended Option A Unified Supabase Auth as the target, with Option B JWT
+  Exchange Bridge only as a transitional fallback.
+- Defined technical prototype specs for login, logout, expiration, refresh,
+  failure recovery, CSRF, XSS, replay, token leakage, and session fixation.
+- Mapped v1.62–v1.66 rollout: SSO bridge prototype, silent login, Pro dashboard
+  auto-auth, duplicate login removal, and full unified identity.
+
+Out of Scope:
+
+- Production SSO.
+- Production login behavior changes.
+- JWT issuance changes.
+- Supabase config changes.
+- Deployment.
+- UI redesign.
+- Stripe, broker integration, portfolio engines, or trading features.
 
 ## Future Roadmap
 

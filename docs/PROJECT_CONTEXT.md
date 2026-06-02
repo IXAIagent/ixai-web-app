@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.59.0`
+`v1.61.0`
 
 Current Core Flow:
 
@@ -147,6 +147,10 @@ Supabase User → Backend Account Link design now clarifies that App users and l
 Supabase User → Backend Account Link foundation now adds the first production-app server-side account-link boundary. `/api/pro/account-link` verifies the Supabase App user through the App layer, builds the future backend create-or-find payload, and attempts the backend contract only from the Next API route. `/api/pro/access` now reports accountLink status separately from paid Pro entitlement. If `IXAI_BACKEND_URL` is not configured or the backend endpoint is not implemented, the app shows `backend_not_configured` / `backend_contract_missing` without exposing secrets, backend URLs, portfolio data, FCN data, or granting paid Pro access.
 
 Real Pro Bridge + Icon Cleanup clarifies the current relationship between the production App and the existing IXAI Pro Lab. `app.ixuan.ai` now presents the existing Pro Lab as a clear external preview environment, while the new in-app Pro workspace remains a secondary beta skeleton. There is no true shared-login SSO yet: App users should not assume their app.ixuan.ai password works in the legacy Pro Lab unless assigned separate Pro Lab credentials. Pro CTAs and icons must use readable contrast, visible labels, and normal external anchors for Pro Lab navigation.
+
+Unified Login Foundation documents the target identity architecture for true App → Pro shared login. The recommended target is Supabase Auth as the single identity source, backend accounts as the product ownership layer, and backend subscriptions / entitlements as the authorization layer. Legacy Pro still uses FastAPI JWT + `localStorage` today, so v1.60.0 does not change production login behavior. See `docs/SSO_FOUNDATION_PLAN.md` before implementing any SSO prototype, token exchange, or legacy login retirement.
+
+SSO Prototype & Implementation Readiness turns the v1.60 identity foundation into a concrete implementation specification. `docs/SSO_IMPLEMENTATION_PLAN.md` defines the target "login once in App, enter Pro without second login" flow, compares Unified Supabase Auth against a transitional JWT Exchange Bridge, and recommends prototyping Unified Supabase Auth first while keeping JWT Exchange as fallback. v1.61.0 is still docs / architecture only; it does not enable production SSO, change App login, change Legacy Pro login, issue new JWTs, or modify Supabase configuration.
 
 Unified Pro Product Integration now makes app.ixuan.ai the primary IXAI Pro beta surface. During Beta Open Access, authenticated and account-linked users can enter Portfolio Intelligence, FCN Monitoring, and Risk Engine workspace skeletons inside the production app. This is not permanent free Pro, Stripe billing, broker access, real Portfolio / FCN data, trading execution, or investment advice. The legacy Pro Lab remains a reference-only environment rather than the primary product entry.
 
