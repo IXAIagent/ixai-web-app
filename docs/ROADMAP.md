@@ -556,6 +556,25 @@ Next:
 - Configure `IXAI_BACKEND_URL` in the frontend runtime for non-fallback backend health.
 - After authenticated link passes, evaluate the first read-only Pro summary proxy.
 
+### v1.54 — Real Account Linking Verification
+
+Completed / in progress:
+
+- Verified backend account-link endpoint against a clean temporary E2E database.
+- Verified backend idempotency and default `connected` Pro access state.
+- Verified frontend backend health with `IXAI_BACKEND_URL` configured.
+- Verified unauthenticated frontend account-link remains closed with `401 not_authenticated`.
+
+Blocked:
+
+- Full `/account` button-click E2E requires a valid Supabase authenticated browser session.
+- Local and production account checks did not have an authenticated session available.
+
+Next:
+
+- Perform authenticated `/account` Connect Pro Account test with a real App user.
+- If successful, update Account Link Status to `Linked` and then consider v1.55 Account Portfolio Summary Preview.
+
 ### v1.51.x — Backend Integration Boundary Strategy
 
 Goal:

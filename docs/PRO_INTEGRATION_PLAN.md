@@ -349,6 +349,30 @@ Local DB note:
 - The existing local `ixai.db` was not upgraded because its Alembic version marker is behind existing tables.
 - E2E backend verification used a temporary database at `/tmp/ixai_v1531_e2e.db`.
 
+## v1.54 Real Account Linking Verification
+
+Verification status:
+
+- Backend temporary E2E database `/tmp/ixai_v154_e2e.db` upgraded cleanly to `0009_supabase_account_link`.
+- Backend health and readiness passed on `localhost:8000`.
+- Backend direct account-link test passed:
+  - first request returned `created: true`
+  - repeated request returned `created: false`
+  - `pro_access_status` remained `connected`
+- Frontend production server smoke test with `IXAI_BACKEND_URL=http://localhost:8000` returned `backendUrlConfigured: true` and `ok: true`.
+- Frontend unauthenticated `POST /api/pro/account-link` correctly returned `401 not_authenticated`.
+
+Current blocker:
+
+- Real browser-click E2E from `/account` requires an authenticated Supabase App session.
+- Local and production browser checks both reached the account entry shell, not an authenticated Account workspace.
+- No auth bypass, Supabase schema change, or legacy Pro login migration should be added just to force this verification.
+
+Next verification step:
+
+- Log in with a real Supabase App account, then click `/account` `Connect Pro Account`.
+- Expected result: Next API returns linked state, backend creates/finds account link, and Account Link Status becomes `Linked`.
+
 ## Reusable Legacy Assets
 
 High-value legacy assets to consider later:

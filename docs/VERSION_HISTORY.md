@@ -1457,3 +1457,39 @@ Out of Scope:
 - Stripe, payment UI, subscription management, or pricing.
 - Portfolio / FCN real data.
 - Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
+
+## v1.54 — Real Account Linking Verification
+
+Why:
+
+- v1.52 and v1.53 established the frontend and backend account-link endpoints.
+- The remaining question was whether a configured frontend runtime could reach the backend and whether `/account` could complete real linking for a Supabase-authenticated user.
+
+What Was Verified:
+
+- Temporary E2E database `/tmp/ixai_v154_e2e.db` upgraded to `0009_supabase_account_link`.
+- Backend `/health` and `/readyz` passed.
+- Backend direct `POST /api/v1/integrations/supabase/account-link` returned `created: true` first and `created: false` on repeat.
+- Backend created / found a backend `User`, `Account`, and owner `AccountMembership`.
+- `pro_access_status` stayed `connected`, not `active`.
+- Frontend `/api/backend/health` returned `backendUrlConfigured: true` and `ok: true` when started with `IXAI_BACKEND_URL=http://localhost:8000`.
+- Frontend unauthenticated `POST /api/pro/account-link` returned `401 not_authenticated`.
+
+Blocked:
+
+- Full `/account` Connect Pro Account browser E2E requires a valid Supabase App session.
+- Local and production browser checks both displayed the account entry shell rather than an authenticated Account workspace.
+
+Key Decisions:
+
+- Do not bypass Supabase auth for local verification.
+- Do not weaken auth, migrate legacy Pro login, or expose backend protected endpoints directly.
+- Account linking remains separate from paid Pro access.
+
+Out of Scope:
+
+- Legacy frontend changes.
+- Supabase schema changes.
+- Stripe, payment UI, subscription management, or pricing.
+- Portfolio / FCN real data.
+- Auth, LINE Login, LIFF, Daily / Weekly generation, admin workflow, provider infrastructure, platform APIs, auto publishing, buy/sell recommendations, target prices, return promises, or automated trading.
