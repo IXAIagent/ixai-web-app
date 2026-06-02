@@ -1946,3 +1946,36 @@ Out of Scope:
 - Deployment.
 - UI redesign.
 - Stripe, broker integration, portfolio engines, or trading features.
+
+## v1.61.1 — SSO Design Review
+
+Why:
+
+- v1.60 and v1.61 recommended Unified Supabase Auth, but IXAI needed a
+  feasibility review before editing authentication code.
+- Legacy Pro still uses FastAPI JWT + `localStorage ixai_token`, while the App
+  uses Supabase Auth and the backend now owns account-link / membership /
+  entitlement decisions.
+
+What Changed:
+
+- Added `docs/SSO_FILE_CHANGESET.md` with expected App, Backend, and Legacy Pro
+  file-level changes for v1.62+.
+- Added `docs/SSO_PROTOTYPE_BLUEPRINT.md` with v1.62-v1.66 rollout phases,
+  rollback paths, and success criteria.
+- Added `docs/SSO_SECURITY_REVIEW.md` with critical / high / medium SSO risks
+  and mitigations.
+- Confirmed GO with constraints: Legacy Pro can migrate toward Supabase Auth,
+  but session source, protected route gate, API Authorization header, and
+  backend JWT validation must be changed together.
+- Confirmed v1.62 is the first expected version to write SSO prototype code.
+
+Out of Scope:
+
+- Production auth changes.
+- Supabase configuration changes.
+- JWT issuance changes.
+- Deployment.
+- UI redesign.
+- Legacy login retirement.
+- Stripe, broker integration, portfolio engines, trading, or investment advice.

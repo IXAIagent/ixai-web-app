@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.61.0`
+`v1.61.1`
 
 ## Related Strategic Documents
 
@@ -14,6 +14,9 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/PRO_INTEGRATION_PLAN.md`
 - `docs/SSO_FOUNDATION_PLAN.md`
 - `docs/SSO_IMPLEMENTATION_PLAN.md`
+- `docs/SSO_FILE_CHANGESET.md`
+- `docs/SSO_PROTOTYPE_BLUEPRINT.md`
+- `docs/SSO_SECURITY_REVIEW.md`
 
 ## Current Product Flow
 
@@ -544,6 +547,40 @@ Out of Scope:
 - JWT issuance changes.
 - Supabase config changes.
 - Deployment.
+- UI redesign.
+- Stripe, broker integration, portfolio engines, or trading features.
+
+## v1.61.1 — SSO Design Review
+
+Why:
+
+- v1.60 and v1.61 recommended Unified Supabase Auth, but IXAI needed to verify
+  whether Legacy Pro can realistically adopt that architecture before any auth
+  code is changed.
+
+Completed:
+
+- Reviewed App, Legacy Pro, and Backend auth implementation boundaries.
+- Confirmed GO with constraints for Unified Supabase Auth as the target
+  architecture.
+- Confirmed Legacy Pro can migrate toward Supabase Auth, but only by changing
+  session source, protected route behavior, API Authorization headers, and
+  backend token validation together.
+- Added exact expected file changes in `docs/SSO_FILE_CHANGESET.md`.
+- Added v1.62-v1.66 implementation blueprint in
+  `docs/SSO_PROTOTYPE_BLUEPRINT.md`.
+- Added SSO risk and mitigation review in `docs/SSO_SECURITY_REVIEW.md`.
+
+Next code version:
+
+- `v1.62.0 — SSO Launch Endpoint Prototype`
+
+Still not included:
+
+- Production SSO.
+- Supabase configuration changes.
+- JWT issuance changes.
+- Legacy login removal.
 - UI redesign.
 - Stripe, broker integration, portfolio engines, or trading features.
 

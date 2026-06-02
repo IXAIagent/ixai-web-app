@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.61.0`
+`v1.61.1`
 
 Current Core Flow:
 
@@ -151,6 +151,8 @@ Real Pro Bridge + Icon Cleanup clarifies the current relationship between the pr
 Unified Login Foundation documents the target identity architecture for true App → Pro shared login. The recommended target is Supabase Auth as the single identity source, backend accounts as the product ownership layer, and backend subscriptions / entitlements as the authorization layer. Legacy Pro still uses FastAPI JWT + `localStorage` today, so v1.60.0 does not change production login behavior. See `docs/SSO_FOUNDATION_PLAN.md` before implementing any SSO prototype, token exchange, or legacy login retirement.
 
 SSO Prototype & Implementation Readiness turns the v1.60 identity foundation into a concrete implementation specification. `docs/SSO_IMPLEMENTATION_PLAN.md` defines the target "login once in App, enter Pro without second login" flow, compares Unified Supabase Auth against a transitional JWT Exchange Bridge, and recommends prototyping Unified Supabase Auth first while keeping JWT Exchange as fallback. v1.61.0 is still docs / architecture only; it does not enable production SSO, change App login, change Legacy Pro login, issue new JWTs, or modify Supabase configuration.
+
+SSO Design Review validates that the v1.60 / v1.61 architecture is implementable before writing authentication code. The review concludes GO with constraints: Legacy Pro can migrate toward Supabase Auth, but only if its session source, protected route gate, API Authorization header, and backend JWT validation model are changed together. `docs/SSO_FILE_CHANGESET.md`, `docs/SSO_PROTOTYPE_BLUEPRINT.md`, and `docs/SSO_SECURITY_REVIEW.md` define the expected file impact, v1.62-v1.66 rollout, rollback path, and security controls. v1.61.1 remains documentation-only and does not change production authentication.
 
 Unified Pro Product Integration now makes app.ixuan.ai the primary IXAI Pro beta surface. During Beta Open Access, authenticated and account-linked users can enter Portfolio Intelligence, FCN Monitoring, and Risk Engine workspace skeletons inside the production app. This is not permanent free Pro, Stripe billing, broker access, real Portfolio / FCN data, trading execution, or investment advice. The legacy Pro Lab remains a reference-only environment rather than the primary product entry.
 
@@ -438,3 +440,8 @@ Before major work, AI agents should read `PROJECT_CONTEXT.md`, `PROJECT_RULES.md
 - `docs/PRODUCT_ORIGIN.md`: origin layer for why IXAI exists and how 一玄 advisory, monitoring, Morning Brief, Public Intelligence, Account Intelligence, and Future Pro Intelligence connect.
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: historical record of the pre-app AI Morning Brief, FCN monitoring, Crypto Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 - `docs/IXAI_VISION.md`: long-term vision layer for IXAI as an AI-native Wealth Intelligence Operating System.
+- `docs/SSO_FOUNDATION_PLAN.md`: unified login foundation and current App / Legacy Pro / Backend identity model.
+- `docs/SSO_IMPLEMENTATION_PLAN.md`: SSO prototype implementation readiness plan.
+- `docs/SSO_FILE_CHANGESET.md`: expected file-level impact before v1.62+ SSO code changes.
+- `docs/SSO_PROTOTYPE_BLUEPRINT.md`: v1.62-v1.66 SSO rollout plan.
+- `docs/SSO_SECURITY_REVIEW.md`: SSO token, trust-boundary, replay, logout, and entitlement security review.
