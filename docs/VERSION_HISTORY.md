@@ -6,6 +6,37 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.67.0 — App ↔ Pro SSO Launch Prototype
+
+Why:
+
+- The App and legacy IXAI Pro Lab need a real identity handoff before true shared login can replace the legacy Pro login.
+- Previous versions clarified product copy and SSO architecture, but users still landed on a separate Pro login surface.
+
+What Changed:
+
+- Added the v1.67 SSO launch prototype plan.
+- App prepares a short-lived one-time launch code for `開啟 IXAI Pro`.
+- Legacy Pro can receive and validate the launch code on a dedicated receive route.
+- The prototype validates App identity without putting Supabase tokens in query strings.
+
+Key Decisions:
+
+- Keep legacy Pro login as fallback.
+- Do not issue production Pro JWTs in this version.
+- Do not store App tokens in Legacy Pro localStorage.
+- Treat in-memory launch-code storage as prototype-only.
+
+Out of Scope:
+
+- Stripe.
+- Broker integration.
+- Portfolio engine.
+- FCN calculation engine.
+- Trading.
+- Full auth replacement.
+- Legacy Pro login removal.
+
 ## Pre-App Origin / AI Morning Brief Era
 
 Why:

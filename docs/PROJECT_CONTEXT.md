@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.66.0`
+`v1.67.0`
 
 Current Core Flow:
 
@@ -77,6 +77,12 @@ Product Layers:
 - Account Intelligence: identity continuity, Watchlist Intelligence Lite, preference memory, LINE readiness.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, FCN risk workflow.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
+
+## v1.67.0 — App ↔ Pro SSO Launch Prototype
+
+v1.67.0 starts the first safe App to Pro identity handoff. The production App remains the Supabase Auth surface and the legacy IXAI Pro Lab remains a separate FastAPI JWT environment, but the App can now prepare a short-lived one-time launch code for `開啟 IXAI Pro`.
+
+The prototype proves that Legacy Pro can receive App identity without exposing Supabase refresh tokens, service role keys, or long-lived credentials in a URL. It does not remove the legacy Pro login, does not issue a production Pro session, and does not change membership, entitlement, Stripe, portfolio, FCN, or trading behavior.
 
 Current surface relationship:
 

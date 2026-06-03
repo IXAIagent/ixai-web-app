@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.66.0`
+`v1.67.0`
 
 ## Related Strategic Documents
 
@@ -25,6 +25,27 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`
 - `docs/PRO_MODULE_PAGES_REDESIGN_V165.md`
 - `docs/HOMEPAGE_CONVERSION_REDESIGN_V166.md`
+- `docs/SSO_LAUNCH_PROTOTYPE_V167.md`
+
+## v1.67.0 — App ↔ Pro SSO Launch Prototype
+
+Goal:
+
+- Prove the first low-risk App to Pro launch handoff.
+- Keep App login as Supabase Auth.
+- Keep Legacy Pro login intact as fallback.
+- Use a short-lived one-time launch code instead of sending Supabase tokens to Legacy Pro.
+- Let Legacy Pro receive and validate App identity on `/sso/receive`.
+
+Out of scope:
+
+- No full SSO rollout.
+- No legacy login removal.
+- No Stripe, broker, portfolio engine, FCN calculation, payment, trading, or Daily / Weekly engine changes.
+
+Next:
+
+- v1.68 should decide between a protected JWT exchange bridge and a direct Legacy Pro Supabase migration path after reviewing the v1.67 prototype.
 
 ## Current Product Flow
 
