@@ -28,7 +28,7 @@ function keywords(value: string) {
     .slice(0, 16);
 }
 
-function similarity(a: string, b: string) {
+export function narrativeSimilarity(a: string, b: string) {
   const aSet = new Set(keywords(a));
   const bSet = new Set(keywords(b));
 
@@ -47,7 +47,7 @@ export function detectRepeatedNarrative(values: string[], threshold = 0.72) {
 
   for (let i = 0; i < values.length; i += 1) {
     for (let j = i + 1; j < values.length; j += 1) {
-      const score = similarity(values[i] ?? "", values[j] ?? "");
+      const score = narrativeSimilarity(values[i] ?? "", values[j] ?? "");
       if (score >= threshold) {
         repeatedPairs.push({ first: i, second: j, similarity: score });
       }
@@ -84,7 +84,7 @@ export function detectCrossPeriodSimilarity(
   const matches = comparedIndexes
     .map((index) => ({
       dailySlide: index + 1,
-      similarity: similarity(dailySlides[index] ?? "", weeklySlides[index] ?? ""),
+      similarity: narrativeSimilarity(dailySlides[index] ?? "", weeklySlides[index] ?? ""),
       weeklySlide: index + 1,
     }))
     .filter((match) => match.similarity >= threshold);

@@ -278,6 +278,100 @@ function upcomingTitle(upcoming?: IXAIUpcomingEvent) {
   return title.length > 26 ? `${title.slice(0, 25)}…` : title;
 }
 
+function hashText(value: string) {
+  let hash = 0;
+
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+
+  return hash;
+}
+
+function conciseSubject(value?: string, fallback = "AI 事件") {
+  const normalized = sentence(value ?? "", fallback, 80)
+    .replace(/Why It Matters[:：].*$/i, "")
+    .replace(/^[A-Za-z /]+｜/, "")
+    .trim();
+
+  if (/MediaTek|聯發科|2454/i.test(normalized)) return "聯發科法說窗口";
+  if (/TSMC|台積|矽光子/i.test(normalized)) return "台積電矽光子量產";
+  if (/NVIDIA|Nvidia|Meta|Schlumberger/i.test(normalized)) return "NVIDIA / Meta AI 採用";
+  if (/Oracle|ORCL/i.test(normalized)) return "Oracle 財報與雲端支出";
+  if (/Binance/i.test(normalized)) return "Binance 美股代幣化";
+  if (/CoinShares|ETP|ETF/i.test(normalized)) return "Crypto ETP 資金流";
+  if (/CPI|通膨/i.test(normalized)) return "CPI 通膨數據";
+  if (/Treasury|yield|殖利率|美債/i.test(normalized)) return "美債殖利率";
+
+  const firstClause = normalized
+    .split(/(?<=[。！？!?；;])|，|,|：|:/)
+    .map((part) => part.trim())
+    .find(Boolean) ?? fallback;
+
+  return firstClause.length > 18 ? `${firstClause.slice(0, 17)}…` : firstClause;
+}
+
+function buildDailyAiMacroQuestion({
+  aiEvent,
+  aiEvidence,
+  macroEvidence,
+  primarySignal,
+  riskEvent,
+}: {
+  aiEvent?: IXAIKeyEvent;
+  aiEvidence?: ReturnType<typeof buildEvidenceItems>[number];
+  macroEvidence?: ReturnType<typeof buildEvidenceItems>[number];
+  primarySignal?: IXAIMarketSignal;
+  riskEvent?: IXAIKeyEvent;
+}) {
+  const subject = conciseSubject(aiEvidence?.event ?? aiEvent?.title, "AI 主線");
+  const macroSubject = conciseSubject(macroEvidence?.event ?? primarySignal?.signal, "利率與美元");
+  const riskSubject = conciseSubject(riskEvent?.title, "風險容錯率");
+  const choices = [
+    `${subject}之後，市場下一步要驗證什麼？`,
+    `${subject}會讓資金重新挑選 AI 贏家嗎？`,
+    `${subject}把市場焦點推向現金流了嗎？`,
+    `${subject}遇上${macroSubject}，AI 交易會怎麼變？`,
+    `${subject}讓${riskSubject}變成今天關鍵嗎？`,
+  ];
+  const seed = `${subject}|${macroSubject}|${riskSubject}|${aiEvidence?.source ?? ""}`;
+
+  return choices[hashText(seed) % choices.length];
+}
+
+function buildDailyAiMacroAnswer({
+  aiEvidence,
+  macroEvidence,
+}: {
+  aiEvidence?: ReturnType<typeof buildEvidenceItems>[number];
+  macroEvidence?: ReturnType<typeof buildEvidenceItems>[number];
+}) {
+  const subject = conciseSubject(aiEvidence?.event, "AI 事件");
+  const macroSubject = conciseSubject(macroEvidence?.event, "利率與美元");
+
+  return `今天答案不在 AI 是否退潮，而是 ${subject} 能否交出可驗證的訂單、支出或現金流，同時承受 ${macroSubject} 對估值容錯率的檢查。`;
+}
+
+function buildDailyAiMacroIxuanView({
+  aiEvidence,
+  macroEvidence,
+  riskEvidence,
+}: {
+  aiEvidence?: ReturnType<typeof buildEvidenceItems>[number];
+  macroEvidence?: ReturnType<typeof buildEvidenceItems>[number];
+  riskEvidence?: ReturnType<typeof buildEvidenceItems>[number];
+}) {
+  const subject = conciseSubject(aiEvidence?.event, "今天的 AI 事件");
+  const macroSubject = conciseSubject(macroEvidence?.event, "利率與美元");
+  const riskSubject = conciseSubject(riskEvidence?.event, "市場廣度與波動率");
+
+  return sentence(
+    `一玄觀點：今天不該只問 AI 還熱不熱，而要看 ${subject} 是否能把題材變成營收、訂單或資本支出證據。${macroSubject} 會限制市場願意給的估值容錯率，${riskSubject} 則決定資金會不會只集中在少數最強公司。`,
+    "一玄觀點：今天重點是把 AI 題材放回證據檢查，而不是追逐重複的 AI 故事。",
+    240,
+  );
+}
+
 function buildQuestionDrivenInsight({
   input,
   keyEvents,
@@ -309,8 +403,17 @@ function buildQuestionDrivenInsight({
     const macroEvidence = evidenceItems.find((item) => item.category === "macro");
     const cryptoEvidence = evidenceItems.find((item) => item.category === "crypto");
     const riskEvidence = evidenceItems.find((item) => item.category === "risk");
+    const dailyCentralQuestion = buildDailyAiMacroQuestion({
+      aiEvent,
+      aiEvidence,
+      macroEvidence,
+      primarySignal,
+      riskEvent,
+    });
+    const dailyKeyAnswer = buildDailyAiMacroAnswer({ aiEvidence, macroEvidence });
+    const dailyIxuanView = buildDailyAiMacroIxuanView({ aiEvidence, macroEvidence, riskEvidence });
     const daily: QuestionDrivenInsight = {
-      centralQuestion: "AI 股還在漲，為什麼市場反而更挑剔？",
+      centralQuestion: dailyCentralQuestion,
       counterEvidence: uniqueSentences(
         [
           "如果 AI 軟體、雲端與半導體沒有一起上修，這可能只是少數大型股行情。",
@@ -328,14 +431,19 @@ function buildQuestionDrivenInsight({
         3,
       ),
       evidenceDetails: evidenceItems.slice(0, 5),
-      ixuanView:
-        "一玄觀點：下一階段不是買 AI 故事，而是看誰能把 AI 變成現金流。資金沒有離開 AI，但它會更挑剔：有訂單、有毛利、有現金流證據的公司，才有機會繼續取得溢價。",
-      keyAnswer: "資金沒有離開 AI，但開始只買能證明獲利、訂單與資本支出的 AI。",
+      ixuanView: dailyIxuanView,
+      keyAnswer: dailyKeyAnswer,
       watchNext: uniqueSentences(
         [
-          "觀察 AI 軟體、雲端資本支出與半導體供應鏈是否同時上修。",
-          "觀察十年債殖利率與美元是否同向走高。",
-          "觀察科技股上漲廣度是否擴大，而不是只靠少數大型股撐住。",
+          aiEvidence
+            ? `觀察 ${conciseSubject(aiEvidence.event)} 是否帶出後續訂單、營收或資本支出證據。`
+            : "觀察 AI 軟體、雲端資本支出與半導體供應鏈是否同時上修。",
+          macroEvidence
+            ? `觀察 ${conciseSubject(macroEvidence.event)} 是否繼續壓縮科技估值容錯率。`
+            : "觀察十年債殖利率與美元是否同向走高。",
+          riskEvidence
+            ? `觀察 ${conciseSubject(riskEvidence.event)} 是否讓資金集中在少數權值股。`
+            : "觀察科技股上漲廣度是否擴大，而不是只靠少數大型股撐住。",
         ],
         3,
       ),

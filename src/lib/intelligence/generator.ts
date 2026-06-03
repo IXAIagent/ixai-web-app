@@ -4,6 +4,7 @@ import {
   getOpenAIProviderConfig,
   type AIDailyIntelligenceResult,
 } from "@/src/lib/intelligence/ai-provider";
+import { buildDailyIntelligenceSlug } from "@/src/lib/editorial/product-date";
 import type {
   DailyBriefDraft,
   DailyContentQualityScore,
@@ -129,6 +130,89 @@ function cleanIntelligenceSentence(value: string | undefined, fallback: string, 
   return compactText(normalized, fallback, maxLength);
 }
 
+function normalizeTitleForSimilarity(value: string) {
+  return value
+    .replace(/[，。！？、：:；;,.!?()\[\]【】]/g, " ")
+    .replace(/AI|IXAI|市場|今天|本週|資金|觀察|是否|為什麼|什麼|下一步/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function titleSimilarity(a: string, b: string) {
+  const aTokens = new Set(normalizeTitleForSimilarity(a).split(/\s+/).filter((token) => token.length >= 2));
+  const bTokens = new Set(normalizeTitleForSimilarity(b).split(/\s+/).filter((token) => token.length >= 2));
+
+  if (!aTokens.size || !bTokens.size) {
+    return a === b ? 1 : 0;
+  }
+
+  let overlap = 0;
+  for (const token of aTokens) {
+    if (bTokens.has(token)) overlap += 1;
+  }
+
+  return overlap / Math.min(aTokens.size, bTokens.size);
+}
+
+function isNearDuplicateTitle(title: string, recentTitles: string[], threshold = 0.72) {
+  return recentTitles.some((recent) => titleSimilarity(title, recent) >= threshold);
+}
+
+function titleSubjectFromStory(story?: DailyTopStory) {
+  if (!story) return undefined;
+  const candidate = story.headline
+    .replace(/^.*?[：:]\s*/, "")
+    .split(/，|。|：|:/)
+    .map((part) => part.trim())
+    .find(Boolean);
+
+  if (!candidate) return undefined;
+  return candidate.length > 16 ? `${candidate.slice(0, 15)}…` : candidate;
+}
+
+export function selectUniqueDailyTitle(
+  intelligence: DailyIntelligenceDraft,
+  previousBriefs: DailyBriefDraft[] = [],
+) {
+  const recentTitles = previousBriefs
+    .filter((brief) => brief.status === "published" || brief.status === "review" || brief.status === "draft")
+    .sort((a, b) => new Date(b.publishedAt ?? b.updatedAt).getTime() - new Date(a.publishedAt ?? a.updatedAt).getTime())
+    .slice(0, 7)
+    .map((brief) => brief.title)
+    .filter(Boolean);
+  const question = intelligence.insight?.questionDriven.centralQuestion;
+  const topStorySubject = titleSubjectFromStory(intelligence.topThreeThings?.[0]);
+  const secondStorySubject = titleSubjectFromStory(intelligence.topThreeThings?.[1]);
+  const headlineSubject = cleanIntelligenceSentence(
+    intelligence.todayHeadline,
+    topStorySubject ?? "今日市場訊號",
+    34,
+  ).replace(/[。！？!?]$/g, "");
+  const alternatives = [
+    question,
+    topStorySubject ? `${topStorySubject}之後，今天市場要驗證什麼？` : undefined,
+    secondStorySubject ? `${secondStorySubject}會改變今天的風險排序嗎？` : undefined,
+    headlineSubject ? `${headlineSubject}，市場真正要看哪個證據？` : undefined,
+    intelligence.headlineHook,
+    intelligence.socialHooks?.primaryHook,
+    intelligence.todayHeadline,
+  ]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => cleanIntelligenceSentence(value, intelligence.todayHeadline, 56).replace(/[。]$/g, "？"));
+
+  for (const candidate of alternatives) {
+    if (!isNearDuplicateTitle(candidate, recentTitles)) {
+      return candidate;
+    }
+  }
+
+  const fallbackSubject = topStorySubject ?? headlineSubject;
+  return fallbackSubject
+    ? `${fallbackSubject}這次和前幾天有何不同？`
+    : cleanIntelligenceSentence(intelligence.todayHeadline, "今天市場真正要驗證什麼？", 56).replace(/[。]$/g, "？");
+}
+
 function getItemsByCategory(items: NormalizedNewsItem[], categories: NormalizedNewsItem["category"][]) {
   return items.filter((item) => categories.includes(item.category));
 }
@@ -140,6 +224,7 @@ function sourceHealthFromStatus(sourceStatus: NewsSourceStatus[] = []): DailyPro
     status: source.status,
     lastSuccess: source.lastSuccessAt,
     errorReason: source.errorReason ?? source.reason,
+    reasonCode: source.reasonCode,
   }));
 }
 
@@ -771,8 +856,7 @@ export async function generateDailyIntelligenceDraftFromNews(
 
   const taiwan = firstByCategories(newsItems, ["taiwan", "semiconductors"]);
   const now = nowIso();
-  const baseSlug = `daily-intelligence-${now.slice(0, 10)}`;
-  const slug = options.slugSuffix ? `${baseSlug}-${options.slugSuffix}` : baseSlug;
+  const slug = buildDailyIntelligenceSlug(new Date(now), options.slugSuffix);
   intelligence = attachDailyIntelligenceCore(
     attachMarketMemoryToDailyIntelligence(intelligence, options.previousBriefs),
     {
@@ -780,6 +864,29 @@ export async function generateDailyIntelligenceDraftFromNews(
       headline: intelligence.todayHeadline,
     },
   );
+  const uniqueTitle = selectUniqueDailyTitle(intelligence, options.previousBriefs);
+  if (intelligence.insight?.questionDriven) {
+    intelligence = {
+      ...intelligence,
+      headline: uniqueTitle,
+      headlineHook: uniqueTitle,
+      todayHeadline: intelligence.todayHeadline,
+      insight: {
+        ...intelligence.insight,
+        questionDriven: {
+          ...intelligence.insight.questionDriven,
+          centralQuestion: uniqueTitle,
+        },
+      },
+      socialHooks: intelligence.socialHooks
+        ? {
+            ...intelligence.socialHooks,
+            headlineHook: uniqueTitle,
+            primaryHook: uniqueTitle,
+          }
+        : intelligence.socialHooks,
+    };
+  }
   const engineMarketSummary = [
     intelligence.todaySignal,
     intelligence.marketInterpretation,
@@ -908,7 +1015,7 @@ export async function generateDailyIntelligenceDraftFromNews(
     id: `generated-${slug}`,
     slug,
     status: "review",
-    title: intelligence.insight?.questionDriven.centralQuestion ?? intelligence.todayHeadline,
+    title: uniqueTitle,
     marketSummary: `${generatedMarketSummary} ${engineMarketSummary}`,
     editorialNote: intelligence.ixuanView ?? intelligence.marketRegimeNote,
     sections,

@@ -1,6 +1,6 @@
 import type { DailyBriefDraft, WeeklyIntelligenceDraft } from "@/src/types/editorial";
 import { getDailyIntelligenceCoreFromBrief } from "@/src/lib/intelligence/core";
-import { ensureDistinctNarratives } from "@/src/lib/intelligence/insight/repetition-detector";
+import { ensureDistinctNarratives, narrativeSimilarity } from "@/src/lib/intelligence/insight/repetition-detector";
 
 export type SocialPackKind = "daily" | "weekly";
 export type SocialExportFormat = "ig_feed_4_5" | "story_9_16";
@@ -214,6 +214,60 @@ function evidenceLabel(category?: string, fallback = "Evidence") {
   return fallback;
 }
 
+function socialSubjectFromEvidence(evidence?: { event: string; source: string; whyItMatters: string }) {
+  const value = evidence?.event ?? "";
+
+  if (/MediaTek|聯發科|2454/i.test(value)) return "聯發科法說";
+  if (/TSMC|台積|矽光子/i.test(value)) return "台積電矽光子";
+  if (/NVIDIA|Nvidia|Meta|Schlumberger/i.test(value)) return "企業 AI 採用";
+  if (/Oracle|ORCL/i.test(value)) return "雲端財報";
+  if (/Binance/i.test(value)) return "美股代幣化";
+  if (/CoinShares|ETP|ETF/i.test(value)) return "Crypto 資金流";
+  if (/CPI|通膨/i.test(value)) return "通膨數據";
+  if (/Treasury|yield|殖利率|美債/i.test(value)) return "美債殖利率";
+
+  return readableSnippet(value, "今日關鍵事件", 16).replace(/[。！？!?]$/g, "");
+}
+
+function buildDailySocialTitle(
+  source: DailyBriefDraft | null | undefined,
+  question: string | undefined,
+  evidence: { event: string; source: string; whyItMatters: string }[],
+) {
+  const subject = socialSubjectFromEvidence(evidence[0]);
+  const candidates = [
+    `${subject}，今天市場要看哪個證據？`,
+    `${subject}背後，風險正在往哪裡移？`,
+    `${subject}會讓資金重新挑選主線嗎？`,
+    source?.intelligence?.headlineHook,
+    source?.intelligence?.socialHooks?.primaryHook,
+  ].filter((item): item is string => Boolean(item));
+
+  return candidates.find((candidate) => !question || narrativeSimilarity(candidate, question) < 0.72)
+    ?? candidates[0]
+    ?? "今天市場要看哪個證據？";
+}
+
+function buildDailySocialView(
+  questionView: string | undefined,
+  evidence: { event: string; source: string; whyItMatters: string }[],
+  fallback: string,
+) {
+  const subject = socialSubjectFromEvidence(evidence[0]);
+  const second = socialSubjectFromEvidence(evidence[1]);
+  const socialView = `一玄觀點：今天先看 ${subject} 是否能帶出可驗證的收入、訂單或資金流，再看 ${second} 是否限制風險資產的容錯率。`;
+
+  if (!questionView || narrativeSimilarity(socialView, questionView) < 0.68) {
+    return readableSnippet(socialView, fallback, 110);
+  }
+
+  return readableSnippet(
+    `一玄觀點：今天的社群重點不是重複日報結論，而是提醒讀者從 ${subject} 回到證據、風險與下一步觀察。`,
+    fallback,
+    110,
+  );
+}
+
 function weeklyQuestionFromSource(source?: WeeklyIntelligenceDraft | null, fallback = "本週市場真正改變了什麼？") {
   const majorEvent = source?.sections.majorEvents?.[0];
   const upcoming = source?.sections.upcomingWeek?.[0];
@@ -298,7 +352,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   const insight = source?.intelligence?.insight;
   const questionDriven = insight?.questionDriven;
   const dailyEvidence = questionDriven?.evidenceDetails ?? [];
-  const socialTitle = questionDriven?.centralQuestion ?? insight?.socialFunnel.hook ?? core?.headlineHook ?? source?.title ?? "今天市場真正要問什麼？";
+  const socialTitle = buildDailySocialTitle(source, questionDriven?.centralQuestion, dailyEvidence);
   const rawShortAnswer = readableSnippet(
     questionDriven?.keyAnswer ?? insight?.socialFunnel.payoff ?? core?.conversionHook,
     "資金沒有離開主線，但開始要求更清楚的獲利證據。",
@@ -344,7 +398,11 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   )
     .filter((item): item is string => Boolean(item))
     .map((item, index) => `Watch ${index + 1}｜${readableSnippet(item, "觀察證據是否同步上修。", 36)}`);
-  const dailyInsight = readableSnippet(questionDriven?.ixuanView ?? insight?.ixuanView ?? core?.socialHooks.ixuanHook ?? dailyIxuanView(source), "下一階段贏家不是最會講故事，而是最能把需求變成現金流的公司。", 110);
+  const dailyInsight = buildDailySocialView(
+    questionDriven?.ixuanView,
+    dailyEvidence,
+    core?.socialHooks.ixuanHook ?? dailyIxuanView(source),
+  );
   const dailyTarget = core?.contentFunnelTarget ?? (source?.slug ? `/daily-brief/${source.slug}` : "/daily-brief");
   const dailyCta = insight?.socialFunnel.cta ?? core?.socialCTA ?? "想看今天的證據、反證與下一步觀察，請進 IXAI App 讀 Daily Brief。";
   const dailySlideBullets = ensureDistinctNarratives(

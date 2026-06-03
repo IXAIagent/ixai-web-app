@@ -121,6 +121,7 @@ export type DailyProviderHealth = {
   status: "success" | "failed" | "disabled" | "fallback" | "empty";
   lastSuccess?: string;
   errorReason?: string;
+  reasonCode?: import("@/src/types/news").NewsSourceStatus["reasonCode"];
 };
 
 export type DailyIntelligenceDraft = {

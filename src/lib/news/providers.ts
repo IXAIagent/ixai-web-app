@@ -27,6 +27,7 @@ type RssSourceConfig = {
   notes: string;
   classification: NewsProviderClassification;
   disabledReason?: string;
+  disabledReasonCode?: NewsSourceStatus["reasonCode"];
   includeKeywords?: string[];
 };
 
@@ -143,7 +144,9 @@ const rssSources: RssSourceConfig[] = [
     tags: ["markets", "equities"],
     notes: "Provider slot retained for future Yahoo-style market feed integration.",
     classification: "recoverable",
-    disabledReason: "Disabled after repeated 429/rate-limit responses during intake checks.",
+    disabledReason:
+      "RSS path disabled after repeated 429/rate-limit responses during intake checks. App quote Yahoo chart API and backend / Pro yfinance paths are separate provider paths.",
+    disabledReasonCode: "rate_limited",
   },
   {
     id: "cnbc",
@@ -238,7 +241,9 @@ const rssSources: RssSourceConfig[] = [
     tags: ["macro", "institutional"],
     notes: "Source seed only. Enable only after confirming stable public RSS terms and access.",
     classification: "recoverable",
-    disabledReason: "Provider seed retained; not enabled to avoid relying on unverified RSS access.",
+    disabledReason:
+      "Provider seed retained; not enabled because stable public RSS access and usage terms are unverified.",
+    disabledReasonCode: "disabled_by_policy",
   },
   {
     id: "reuters",
@@ -252,6 +257,7 @@ const rssSources: RssSourceConfig[] = [
     notes: "Source seed only. IXAI should use legal RSS/API access without copying full articles.",
     classification: "recoverable",
     disabledReason: "Endpoint currently returns 404 in verification; keep disabled until Reuters provides stable legal RSS/API access.",
+    disabledReasonCode: "unsupported_source",
   },
   {
     id: "seeking-alpha",
@@ -302,6 +308,7 @@ const rssSources: RssSourceConfig[] = [
     notes: "Taiwan market provider slot for a future legal and stable RSS/API source.",
     classification: "recoverable",
     disabledReason: "Endpoint is reachable but returned an empty RSS channel during local verification.",
+    disabledReasonCode: "empty_feed",
   },
   {
     id: "commercial-times",
@@ -315,6 +322,7 @@ const rssSources: RssSourceConfig[] = [
     notes: "Taiwan business news source seed. Do not fetch full article text.",
     classification: "recoverable",
     disabledReason: "Endpoint currently returns 403 in verification; keep disabled until stable public RSS access is confirmed.",
+    disabledReasonCode: "forbidden",
   },
   {
     id: "economic-daily",
@@ -328,6 +336,7 @@ const rssSources: RssSourceConfig[] = [
     notes: "Taiwan market source seed. Enable only after endpoint verification.",
     classification: "recoverable",
     disabledReason: "Endpoint is reachable but returned an empty RSS channel during local verification.",
+    disabledReasonCode: "empty_feed",
   },
   {
     id: "moneydj",
@@ -341,6 +350,7 @@ const rssSources: RssSourceConfig[] = [
     notes: "Taiwan market source seed. Enable only after endpoint verification.",
     classification: "experimental",
     disabledReason: "Verification returned HTML with zero RSS items; keep disabled until a stable RSS/API endpoint is confirmed.",
+    disabledReasonCode: "empty_feed",
   },
   {
     id: "nasdaq",
@@ -779,6 +789,7 @@ function asSourceStatus(
     status,
     itemCount,
     reason,
+    reasonCode: status === "disabled" ? source.disabledReasonCode : undefined,
     errorReason: status === "failed" || status === "disabled" ? reason : undefined,
     lastCheckedAt: checkedAt,
     lastSuccessAt: status === "success" ? checkedAt : undefined,

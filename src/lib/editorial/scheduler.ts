@@ -4,6 +4,7 @@ import {
   saveDraftAsync,
 } from "@/src/lib/editorial/repository";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
+import { getProductDateKey } from "@/src/lib/editorial/product-date";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
 import type { DailyDraftGenerationSummary } from "@/src/types/editorial";
 import type { NewsIntakeResult } from "@/src/types/news";
@@ -11,7 +12,7 @@ import type { NewsIntakeResult } from "@/src/types/news";
 let lastGenerationSummary: DailyDraftGenerationSummary | null = null;
 
 function todayKey() {
-  return new Date().toISOString().slice(0, 10);
+  return getProductDateKey();
 }
 
 function forceSuffix() {

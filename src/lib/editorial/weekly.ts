@@ -902,10 +902,10 @@ function buildIntelligenceSummary(
       : "市場敘事仍圍繞利率、AI capex 與台股供應鏈兌現能力；本週無單一事件改變整體 regime。";
 
   return {
-    pricing: insight.questionDriven?.keyAnswer || insight.whyItMatters || periodicNarrative.mainNarrative || pricing,
-    riskTone: insight.questionDriven?.counterEvidence[0] || insight.narrativeTension || periodicNarrative.riskNarrative || riskTone,
+    pricing: periodicNarrative.mainNarrative || insight.whyItMatters || pricing,
+    riskTone: periodicNarrative.riskNarrative || insight.narrativeTension || riskTone,
     whatChanged:
-      insight.questionDriven?.whatChangesMyMind[0] || insight.whatChanged || periodicNarrative.whatChanged || whatChanged,
+      periodicNarrative.whatChanged || insight.whatChanged || whatChanged,
   };
 }
 
@@ -1091,9 +1091,9 @@ function buildAiSuggestion(
       ? sections.periodicNarrative.whatToWatchNext
       : sections.nextWeekFocus,
     intelligenceNarrative:
-      sections.insight?.questionDriven?.ixuanView ??
-      sections.insight?.ixuanView ??
       sections.periodicNarrative?.mainNarrative ??
+      sections.insight?.ixuanView ??
+      sections.insight?.questionDriven?.ixuanView ??
       sections.intelligenceSummary.whatChanged,
     sourceMode: intake.mode,
     inputNewsCount: intake.itemCount,

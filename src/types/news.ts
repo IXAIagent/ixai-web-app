@@ -46,6 +46,13 @@ export type NewsSourceStatus = {
   status: "success" | "failed" | "disabled" | "fallback" | "empty";
   itemCount: number;
   reason?: string;
+  reasonCode?:
+    | "rate_limited"
+    | "empty_feed"
+    | "forbidden"
+    | "unsupported_source"
+    | "disabled_by_policy"
+    | "active_in_pro_via_different_path";
   lastSuccessAt?: string;
   lastCheckedAt?: string;
   errorReason?: string;

@@ -2036,3 +2036,55 @@ Out of Scope:
 - Weekly revision migration.
 - Publish workflow changes.
 - Stripe, broker integration, portfolio engines, trading, or investment advice.
+
+## v1.62.1 — Content Engine Rewrite Implementation
+
+Why:
+
+- v1.62.0 confirmed the Daily / Social / Weekly repetition issue was a content
+  engine problem, not a UI issue.
+- Same-theme Daily news could still produce the same AI + Macro question,
+  answer, and I-Xuan View.
+- Social Packs could still look like Daily narrative reuse because Slide 1 and
+  Slide 5 consumed Daily `questionDriven` too directly.
+- Weekly summary layers still allowed shared question-driven thesis to compete
+  with weekly periodic narrative.
+- UTC date keys could create Asia/Taipei product-date drift around boundary
+  hours.
+- Disabled provider health needed structured reason visibility.
+
+What Changed:
+
+- Replaced the fixed AI + Macro Daily narrative branch with event-sensitive
+  question, answer, and I-Xuan View construction.
+- Added 7-day Daily title uniqueness guard across draft / review / published
+  Daily titles.
+- Added social-native Daily Social title and I-Xuan helpers so Social Pack uses
+  the same market events without directly copying Daily wording.
+- Reprioritized Weekly summary / suggestion fields toward weekly periodic
+  narrative before shared question-driven fallback.
+- Added Asia/Taipei product-date helpers for scheduler date key and generated
+  Daily slugs.
+- Added provider health `reasonCode` support for disabled sources.
+- Added regression checks in `scripts/test-content-engine-v162.mjs`.
+- Added `docs/CONTENT_ENGINE_REWRITE_V162.md`.
+
+Provider Decisions:
+
+- Yahoo Finance App Daily RSS remains disabled with `rate_limited` because the
+  RSS path repeatedly hit 429 responses.
+- Yahoo App quote chart API and backend / Pro yfinance paths are separate
+  provider paths and are not disabled by the Daily RSS decision.
+- Bloomberg App Daily RSS remains disabled with `disabled_by_policy` until
+  stable public RSS access and usage terms are verified.
+- No scraping, unofficial feeds, or workaround sources were added.
+
+Out of Scope:
+
+- SSO / Auth.
+- LINE / LIFF.
+- Membership / Pro integration.
+- Provider activation.
+- Publish workflow changes.
+- Supabase schema changes.
+- Stripe, broker integration, portfolio engines, trading, or investment advice.

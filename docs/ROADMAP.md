@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.62.0`
+`v1.62.1`
 
 ## Related Strategic Documents
 
@@ -452,24 +452,19 @@ Completed:
 
 ## Next Suggested Version
 
-`v1.62.1 — Content Engine Implementation`
+`v1.62.2 — Content Engine Output QA`
 
 Goal:
 
-- Remove deterministic Daily narrative repetition from the AI + macro branch.
-- Rebalance Daily title / question source priority so event-specific headlines
-  and evidence can drive adjacent Daily briefs.
-- Keep Daily Social Pack derived from Daily source material, but make Slide 1
-  and Slide 5 date/event-specific instead of repeated shared thesis copy.
-- Preserve Weekly source priority around weekly events, upcoming catalysts,
-  weekly periodic narrative, and weekly-only I-Xuan View.
-- Add Asia/Taipei product-date key design for Daily draft lookup / slug /
-  publish diagnostics.
-- Add regression tests for consecutive Daily divergence, Daily Social
-  divergence, Weekly / Daily separation, provider disabled reasons, and
-  product-date behavior.
-- Do not change auth, SSO, LINE, publish flow, provider activation, or
-  Supabase schema.
+- Generate real Daily Briefs across adjacent dates and compare titles,
+  `questionDriven`, I-Xuan View, and Social Packs.
+- Generate Weekly Intelligence from weekly news intake and verify it does not
+  collapse back into Daily wording.
+- Verify Admin Provider Health displays structured disabled-provider reasons.
+- Verify Asia/Taipei date keys around UTC boundary hours in scheduler and
+  generated slugs.
+- Keep SSO, auth, provider activation, publish flow, and Supabase schema out of
+  scope unless a separate approval is given.
 
 ## v1.62.0 — Content Intelligence Foundation
 
@@ -507,6 +502,34 @@ Provider decisions:
 - App market quote Yahoo chart API and backend / legacy yfinance paths are
   separate from App Daily news intake and must not be treated as the same
   provider pipeline.
+
+## v1.62.1 — Content Engine Rewrite Implementation
+
+Completed:
+
+- Removed the fixed AI + Macro Daily question / answer / I-Xuan View branch.
+- Added event-sensitive Daily AI + Macro question, answer, and I-Xuan View
+  construction using dominant event, secondary macro/risk context, and source
+  evidence.
+- Added 7-day Daily title uniqueness guard for draft/review/published Daily
+  titles.
+- Decoupled Daily Social Pack Slide 1 and Slide 5 from direct Daily
+  `questionDriven` reuse by introducing social-native title and I-Xuan helpers.
+- Strengthened Weekly summary / suggestion priority around weekly periodic
+  narrative instead of shared question-driven thesis.
+- Added Asia/Taipei product-date helpers for Daily scheduler date key and
+  generated Daily slug.
+- Added provider disabled `reasonCode` visibility for Yahoo Finance,
+  Bloomberg, and other disabled provider slots.
+- Added `scripts/test-content-engine-v162.mjs` regression checks.
+- Added `docs/CONTENT_ENGINE_REWRITE_V162.md`.
+
+Still required:
+
+- Real output QA for adjacent Daily Briefs, Daily Social Packs, Weekly
+  Intelligence, and Weekly Social Packs.
+- Production Admin Provider Health visual verification.
+- No provider activation until source stability / policy review is complete.
 
 Out of Scope:
 
