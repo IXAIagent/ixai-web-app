@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "qa:mobile": "node scripts/qa-mobile.mjs"
+    "qa:mobile": "node scripts/qa-mobile.mjs",
+    "qa:visual": "node scripts/qa-visual.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",

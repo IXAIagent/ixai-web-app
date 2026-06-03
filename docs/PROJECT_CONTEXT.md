@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.64.1`
+`v1.64.2`
 
 Current Core Flow:
 

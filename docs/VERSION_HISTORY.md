@@ -2305,3 +2305,56 @@ Out of Scope:
 - Account / homepage rebalance (still deferred to v1.65).
 - Pale-icon containers on `/about`, `/feedback`, and home component
   children (deferred to a future design-system pass).
+
+## v1.64.2 — Shared Icon System + Visual Screenshot QA
+
+Why:
+
+- v1.64.1 codified the Icon Contrast Rule in PROJECT_RULES but each
+  consumer still inline-styled its own 36×36 forest container. Small
+  drift had already started — `h-9 w-9` vs `h-10 w-10`, border
+  opacities 0.24 / 0.28 / 0.32 / 0.34, inconsistent shadow specs.
+- Future contributors could slip a pale-gold-on-cream pattern back in.
+  The rule needs a code-enforced primitive, not just a doc.
+- The icon-contrast complaint also asked for visual screenshot QA on
+  /pro, /account, /portfolio, /risk; no script existed.
+
+What Changed:
+
+- New shared primitive `components/ui/feature-icon.tsx`. Sizes md
+  (36×36) and sm (32×32); tones gold (accent) and cream (success).
+  Forest container + visible border + optional shadow. Cannot be
+  mis-sized below the Icon Contrast Rule floor.
+- Migrated 5 consumers off inline `<span>` markup to `<FeatureIcon>`:
+  - `components/pro/locked-feature-card.tsx` (used by /portfolio, /risk)
+  - `components/pro/feature-gated-page.tsx` (used by /portfolio, /risk)
+  - `components/account/watchlist-intelligence-lite.tsx` (used by /account)
+  - `components/pro/pro-workspace-hub.tsx` (used by /pro)
+  - `app/pro/page.tsx` (pain-point cards + App-vs-Pro AlarmClock)
+- New screenshot QA: `scripts/qa-visual.mjs` + `npm run qa:visual`.
+  Playwright launches a 390×844 mobile viewport, navigates each of
+  /pro /account /portfolio /risk, saves a full-page PNG to
+  `tmp/visual-qa/<route>-<timestamp>.png`. `/tmp` is gitignored.
+- Added `docs/SHARED_ICON_SYSTEM_V1642.md` (rule + rollback plan).
+
+Key Decisions:
+
+- One primitive, not per-page CSS. The rule must be self-enforcing in
+  code, not just in markdown.
+- No `lg` size — `<FeatureIcon>` floors at 32×32 / 36×36 by design.
+- Visual QA is a script, not a manual checklist. Screenshots are local
+  artefacts (gitignored); the script is committed.
+- `/fcn` not migrated this turn — its icons are already in forest-bg
+  shape from v1.64.0 and `/fcn` is not in the v1.64.2 brief scope.
+- `<PublicIntelligenceEngine>`, FCN education content, Pro copy,
+  Account layout untouched.
+
+Out of Scope:
+
+- SSO. Auth. Supabase. JWT. Backend. Providers.
+- Daily / Weekly content. Generation engine.
+- FCN education page redesign.
+- /pro copywriting changes. /account layout rebalance.
+- Pale icons in `/about`, `/feedback`, and home component children
+  (deferred to a future design-system pass).
+- Stripe, paywall, broker integration, real portfolio data.

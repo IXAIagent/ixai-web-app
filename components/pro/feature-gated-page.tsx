@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { FeatureIcon } from "@/components/ui/feature-icon";
 import { LockedFeatureCard } from "@/components/pro/locked-feature-card";
 import {
   applyBetaOpenAccess,
@@ -207,9 +208,7 @@ export function FeatureGatedPage({
           // instruction matches the IXAI palette and stays high-contrast on
           // cream surfaces.
           <div className="flex items-start gap-3 rounded-lg border border-[color-mix(in_srgb,var(--ixai-risk-watch)_36%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_10%,white)] p-4 text-sm leading-7 text-[var(--ixai-forest)]">
-            <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.34)] bg-[var(--ixai-forest)]">
-              <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-            </span>
+            <FeatureIcon className="mt-0.5" icon={ShieldCheck} size="md" tone="gold" shadow={false} />
             <p>{gateInstruction}</p>
           </div>
         )}

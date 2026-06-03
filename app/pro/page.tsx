@@ -9,6 +9,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { ProWorkspaceHub } from "@/components/pro/pro-workspace-hub";
+import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 // v1.64.0 — /pro is the conversion surface. The marketing prelude
@@ -97,9 +98,8 @@ export default function ProPage() {
                 className="flex h-full flex-col rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4"
                 key={point.title}
               >
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.28)] bg-[var(--ixai-forest)]">
-                  <Icon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-                </span>
+                {/* v1.64.2 — migrated to shared <FeatureIcon> */}
+                <FeatureIcon icon={Icon} size="md" tone="gold" />
                 <h3 className="mt-3 text-base font-semibold leading-6 text-[var(--ixai-forest)]">
                   {point.title}
                 </h3>
@@ -120,9 +120,8 @@ export default function ProPage() {
       {/* 4. App-vs-Pro reaffirmation */}
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:p-5">
         <div className="flex items-start gap-3">
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.24)] bg-[var(--ixai-forest)]">
-            <AlarmClock className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          </span>
+          {/* v1.64.2 — migrated to shared <FeatureIcon> */}
+          <FeatureIcon icon={AlarmClock} size="md" tone="gold" shadow={false} />
           <p>
             <span className="font-semibold text-[var(--ixai-forest)]">App 提供市場教育與公開情報，Pro 提供進階監控與工作區。</span>
             完成綁定帳號後，已開放測試資格的使用者可進入 Pro 測試模組；本階段不含付款、券商串接、真實部位資料或投資建議。

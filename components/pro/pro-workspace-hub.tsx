@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, BriefcaseBusiness, RadioTower, ShieldCheck } from "lucide-react";
+import { FeatureIcon } from "@/components/ui/feature-icon";
 import {
   applyBetaOpenAccess,
   canAccessFCN,
@@ -228,9 +229,8 @@ export function ProWorkspaceHub() {
           return (
             <article className={cardClass} key={module.key}>
               <div className="flex items-start justify-between gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.34)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_8px_18px_rgba(9,41,31,0.12)]">
-                  <Icon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-                </span>
+                {/* v1.64.2 — migrated to shared <FeatureIcon> */}
+                <FeatureIcon icon={Icon} size="md" tone="gold" />
                 <span
                   className={`rounded border px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] ${
                     available

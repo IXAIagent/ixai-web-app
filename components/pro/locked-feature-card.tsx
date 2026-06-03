@@ -1,13 +1,10 @@
 import { CheckCircle2, LockKeyhole } from "lucide-react";
+import { FeatureIcon } from "@/components/ui/feature-icon";
 
-// v1.64.1 — Reusable card replacing the pre-v1.64.0 pale-gold-icon-on-cream
-// pattern with the IXAI icon-contrast rule:
-//   - dark forest icon container (≥ 36×36)
-//   - gold or cream symbol depending on state
-//   - visible border on the container
-// Enabled state uses --ixai-risk-clear tokens via color-mix() instead of the
-// off-brand emerald-* utility classes. Disabled state uses gold-tinted ixai
-// tokens so it remains legible on cream surfaces.
+// v1.64.2 — Migrated to the shared <FeatureIcon> primitive so the
+// dark-forest container + gold/cream glyph contract lives in exactly
+// one place. Enabled state uses --ixai-risk-clear via color-mix();
+// disabled state uses the gold-tinted ixai border / bg.
 
 export function LockedFeatureCard({
   description,
@@ -25,13 +22,12 @@ export function LockedFeatureCard({
   return (
     <article className={cardClass}>
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.34)] bg-[var(--ixai-forest)] shadow-[0_6px_14px_rgba(9,41,31,0.12)]">
-          {enabled ? (
-            <CheckCircle2 className="h-4 w-4 text-[var(--ixai-cream)]" aria-hidden="true" />
-          ) : (
-            <LockKeyhole className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          )}
-        </span>
+        <FeatureIcon
+          className="mt-0.5"
+          icon={enabled ? CheckCircle2 : LockKeyhole}
+          size="md"
+          tone={enabled ? "cream" : "gold"}
+        />
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-semibold leading-5">{name}</h3>

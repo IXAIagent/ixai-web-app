@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.64.1`
+`v1.64.2`
 
 ## Related Strategic Documents
 
@@ -463,6 +463,30 @@ Goal:
   production review.
 - Continue to keep SSO, auth, backend, Supabase, and content engine work
   separate.
+
+## v1.64.2 — Shared Icon System + Visual Screenshot QA
+
+Completed:
+
+- Added `components/ui/feature-icon.tsx` — single shared primitive for
+  any feature/card/badge icon on light surfaces. Codifies the Icon
+  Contrast Rule in code: forest container, gold/cream glyph, visible
+  border, minimum 36×36 (or 32×32 for sm size).
+- Migrated /portfolio, /risk, /account, /pro consumers off
+  inline-styled `<span>` icon containers onto `<FeatureIcon>`.
+- Added `scripts/qa-visual.mjs` + `npm run qa:visual` — Playwright-
+  driven screenshot QA for /pro /account /portfolio /risk at 390×844.
+- Gitignored `/tmp` so visual QA artefacts stay local.
+
+Out of Scope (unchanged):
+
+- Daily / Weekly content surfaces.
+- Public Intelligence Engine consumers.
+- FCN education page.
+- Pro copy, Account layout.
+- SSO, auth, Supabase, backend, content engine, providers.
+- Pale-icon containers in home component children and on /about,
+  /feedback (deferred to a future design-system pass).
 
 ## v1.64.1 — Visual QA Fix
 

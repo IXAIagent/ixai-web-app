@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# v1.64.2 — visual QA screenshots are local-only artefacts
+/tmp
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
