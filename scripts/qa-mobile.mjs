@@ -11,7 +11,7 @@ const routeSpecs = [
   {
     path: "/",
     kind: "public",
-    visibleText: ["讓 AI 開始理解你的投資世界", "Market Pulse"],
+    visibleText: ["一玄 AI 投資助理", "閱讀每日晨報", "FCN 監控"],
   },
   {
     path: "/daily-brief",

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// v1.64.2 — Screenshot QA. Boots a dev server (or uses QA_BASE_URL),
-// opens the four icon-contrast surfaces listed in v1.64.2, and saves a
+// Screenshot QA. Boots a dev server (or uses QA_BASE_URL),
+// opens the core conversion / Pro module surfaces, and saves a
 // full-page PNG per route. Mobile viewport (390×844) matches qa-mobile.
 //
 // Usage:
@@ -20,7 +20,7 @@ const port = Number(process.env.QA_PORT ?? 3000);
 const baseUrl = process.env.QA_BASE_URL ?? `http://localhost:${port}`;
 const viewport = { width: 390, height: 844 };
 
-const ROUTES = ["/pro", "/account", "/portfolio", "/risk"];
+const ROUTES = ["/", "/pro", "/account", "/portfolio", "/risk"];
 
 const OUTPUT_DIR = path.resolve(process.cwd(), "tmp", "visual-qa");
 
@@ -103,7 +103,7 @@ async function main() {
     browser = await chromium.launch();
     const stamp = new Date().toISOString().replace(/[:.]/g, "-");
 
-    console.log("IXAI visual QA — v1.64.2 shared icon contrast");
+    console.log("IXAI visual QA — conversion and Pro module pages");
     console.log(`Viewport: ${viewport.width}x${viewport.height}`);
     console.log(`Base URL: ${baseUrl}`);
     console.log("");

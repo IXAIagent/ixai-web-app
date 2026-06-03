@@ -2359,6 +2359,47 @@ Out of Scope:
   (deferred to a future design-system pass).
 - Stripe, paywall, broker integration, real portfolio data.
 
+## v1.66.0 — Homepage Conversion Redesign
+
+Why:
+
+- The homepage still felt like a technical product-system page after the
+  Pro module pages were fixed.
+- Taiwan visitors need to understand in the first 10 seconds what IXAI is,
+  why I-Xuan is credible, why FCN is a core moat, and what action to take.
+- The homepage needed to connect 一玄投資顧問能力 with IXAI's AI investment
+  intelligence system instead of over-explaining internal architecture.
+
+What Changed:
+
+- Added `docs/HOMEPAGE_CONVERSION_REDESIGN_V166.md`.
+- Rebuilt `/` around a clear conversion flow: hero, trust / origin, pain
+  points, what IXAI provides, FCN moat, App / Pro / Consulting split,
+  compact Daily / Weekly entry, and final CTA.
+- Replaced English-heavy and technical homepage modules with Chinese-first
+  product communication.
+- Made FCN monitoring the homepage's primary Pro differentiation message.
+- Added `/` to visual screenshot QA coverage.
+
+Key Decisions:
+
+- App = public intelligence, education, and account activation.
+- IXAI Pro = advanced monitoring workspace for FCN, portfolio, and risk.
+- Consulting = high-touch FCN checkup, portfolio diagnosis, and advisory
+  service.
+- Public homepage must not read like a system architecture page.
+
+Out of Scope:
+
+- SSO, Auth, Supabase, JWT.
+- Backend / legacy Pro.
+- Daily / Weekly generation.
+- Provider ingestion.
+- Stripe / payment.
+- Broker integration.
+- Real portfolio / FCN data.
+- Trading features or investment advice.
+
 ## v1.65.0 — Pro Module Product Pages Redesign
 
 Why:

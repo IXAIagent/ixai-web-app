@@ -2,17 +2,18 @@ import { IntelligenceLanding } from "@/components/home/intelligence-landing";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
-  title: "IXAI — AI Investment Intelligence Layer",
+  title: "IXAI — 一玄 AI 投資助理",
   description:
-    "讓 AI 開始理解你的投資世界。IXAI 整合市場情報、Watchlist memory、FCN 風險意識與 LINE intelligence delivery。",
+    "一玄 AI 投資助理協助台灣投資人閱讀市場情報、理解 FCN 風險，並銜接 IXAI Pro 投資組合與風險監控工作區。",
   keywords: [
     "IXAI",
-    "AI Investment Intelligence",
-    "Investment Intelligence",
-    "Watchlist Memory",
-    "FCN Risk Awareness",
-    "LINE Intelligence",
-    "AI Wealth OS",
+    "一玄",
+    "AI 投資助理",
+    "每日晨報",
+    "FCN 監控",
+    "投資組合分析",
+    "風險中心",
+    "投資顧問",
   ],
   canonical: "/",
 });

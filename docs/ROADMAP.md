@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.65.0`
+`v1.66.0`
 
 ## Related Strategic Documents
 
@@ -24,6 +24,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/TAIWAN_USER_UX_CLEANUP_V163.md`
 - `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`
 - `docs/PRO_MODULE_PAGES_REDESIGN_V165.md`
+- `docs/HOMEPAGE_CONVERSION_REDESIGN_V166.md`
 
 ## Current Product Flow
 
@@ -455,18 +456,40 @@ Completed:
 
 ## Next Suggested Version
 
-`v1.65.0 — Pro Module Product Pages Redesign`
+`v1.66.0 — Homepage Conversion Redesign`
 
 Goal:
 
-- Redesign `/pro`, `/portfolio`, and `/risk` as product-value pages instead
-  of skeleton permission pages.
-- Make FCN Monitoring the primary IXAI Pro module while keeping `/fcn` as
-  public education.
-- Explain Portfolio Analysis and Risk Center with Taiwan-investor scenarios.
+- Redesign `/` as a clear Taiwan-investor conversion page.
+- Explain IXAI as 一玄 AI 投資助理 within the first screen.
+- Make FCN monitoring the core Pro moat.
 - Preserve App / Pro / Consulting role separation.
 - Keep SSO, auth, backend, Supabase, Stripe, broker integration, and content
   engine work separate.
+
+## v1.66.0 — Homepage Conversion Redesign
+
+Completed:
+
+- Added `docs/HOMEPAGE_CONVERSION_REDESIGN_V166.md`.
+- Reworked `/` from a technical system explanation into a conversion page
+  for Taiwan investors.
+- Updated the hero around 一玄 AI 投資助理, market intelligence, FCN risk,
+  portfolio context, and consulting service.
+- Added trust / origin, real pain points, three-layer IXAI offer, FCN moat,
+  App / Pro / Consulting split, compact latest intelligence, and final CTA
+  sections.
+- Kept homepage language Chinese-first and reduced public-facing "engine"
+  / system wording.
+
+Out of scope:
+
+- SSO / auth / Supabase / JWT.
+- Backend / legacy Pro.
+- Daily / Weekly generation.
+- Provider ingestion.
+- Stripe, payment, broker integration, real portfolio / FCN data, trading,
+  or investment advice.
 
 ## v1.65.0 — Pro Module Product Pages Redesign
 

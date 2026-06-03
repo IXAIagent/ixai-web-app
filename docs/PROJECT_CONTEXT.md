@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.65.0`
+`v1.66.0`
 
 Current Core Flow:
 
@@ -165,6 +165,8 @@ UX Product Role Correction v1.63.1 restores the App / Pro product boundary after
 Unified Pro Product Integration now makes app.ixuan.ai the primary IXAI Pro beta surface. During Beta Open Access, authenticated and account-linked users can enter Portfolio Intelligence, FCN Monitoring, and Risk Engine workspace skeletons inside the production app. This is not permanent free Pro, Stripe billing, broker access, real Portfolio / FCN data, trading execution, or investment advice. The legacy Pro Lab remains a reference-only environment rather than the primary product entry.
 
 Pro Module Product Pages Redesign v1.65.0 turns `/pro`, `/portfolio`, and `/risk` from skeleton / permission pages into product-value pages for Taiwan users. `/pro` explains IXAI Pro as the advanced monitoring workspace with FCN first, Portfolio second, and Risk Center third. `/portfolio` explains asset allocation, concentration, theme exposure, FCN overlap, and market-risk linkage without loading real holdings. `/risk` explains market regime, scenarios, FCN risk, concentration, and AI risk summaries without becoming a trading or advice surface. App remains education / public intelligence / lead capture; Pro remains the paid or invited professional monitoring workspace; consulting remains the high-touch advisory service. See `docs/PRO_MODULE_PAGES_REDESIGN_V165.md`.
+
+Homepage Conversion Redesign v1.66.0 turns `/` from an internal product-system explanation into a Taiwan investor conversion page. The homepage now explains IXAI as 一玄 AI 投資助理, frames I-Xuan's credibility through FCN advisory and market monitoring origins, makes FCN monitoring the Pro moat, separates App / Pro / Consulting roles, and gives visitors clear next steps: read Daily Brief, learn FCN, apply for Pro testing, or book advisory consultation. See `docs/HOMEPAGE_CONVERSION_REDESIGN_V166.md`.
 
 Latest engineering health check:
 
