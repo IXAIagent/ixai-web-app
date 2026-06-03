@@ -20,7 +20,17 @@ const port = Number(process.env.QA_PORT ?? 3000);
 const baseUrl = process.env.QA_BASE_URL ?? `http://localhost:${port}`;
 const viewport = { width: 390, height: 844 };
 
-const ROUTES = ["/", "/pro", "/account", "/portfolio", "/risk"];
+const ROUTES = [
+  { path: "/", visibleText: ["一玄 AI 投資助理"] },
+  { path: "/pro", visibleText: ["開啟 IXAI Pro", "了解 FCN 監控", "預約顧問諮詢"] },
+  {
+    authGatedOk: true,
+    path: "/account",
+    visibleText: ["開啟 IXAI Pro", "Pro 串接"],
+  },
+  { path: "/portfolio", visibleText: ["投資組合分析"] },
+  { path: "/risk", visibleText: ["風險中心"] },
+];
 
 const OUTPUT_DIR = path.resolve(process.cwd(), "tmp", "visual-qa");
 
@@ -70,7 +80,25 @@ function startDevServer() {
   return child;
 }
 
-async function shoot(browser, route, stamp) {
+async function getVisibleTextMatches(page, candidates) {
+  const matches = [];
+
+  for (const text of candidates) {
+    const locator = page.getByText(text, { exact: false }).first();
+    try {
+      if ((await locator.count()) > 0 && (await locator.isVisible({ timeout: 750 }))) {
+        matches.push(text);
+      }
+    } catch {
+      // Missing text is reported by the caller.
+    }
+  }
+
+  return matches;
+}
+
+async function shoot(browser, routeSpec, stamp) {
+  const route = routeSpec.path;
   const page = await browser.newPage({ isMobile: true, viewport });
   const url = `${baseUrl}${route}`;
   const safeName = route.replace(/^\//, "").replace(/\//g, "_") || "root";
@@ -80,8 +108,30 @@ async function shoot(browser, route, stamp) {
     await page.goto(url, { waitUntil: "networkidle", timeout: 20000 });
     // Allow client-side hydration of FeatureIcon and Pro entitlement fetches.
     await sleep(1500);
+    const visibleMatches = await getVisibleTextMatches(page, routeSpec.visibleText);
+    if (visibleMatches.length < routeSpec.visibleText.length) {
+      const bodyText = await page.evaluate(() => document.body.innerText);
+      const authGated =
+        routeSpec.authGatedOk &&
+        (bodyText.includes("建立 IXAI Account") || bodyText.includes("登入"));
+
+      if (authGated) {
+        await page.screenshot({ path: outputPath, fullPage: true });
+        console.log(
+          `AUTH-GATED ${route.padEnd(16)} missing=${routeSpec.visibleText
+            .filter((text) => !visibleMatches.includes(text))
+            .join(", ")} → ${outputPath}`,
+        );
+        return { authGated: true, route, ok: true, outputPath };
+      }
+
+      const missing = routeSpec.visibleText.filter((text) => !visibleMatches.includes(text));
+      throw new Error(`Missing visible text: ${missing.join(", ")}`);
+    }
     await page.screenshot({ path: outputPath, fullPage: true });
-    console.log(`SHOT  ${route.padEnd(20)} → ${outputPath}`);
+    console.log(
+      `SHOT  ${route.padEnd(20)} matched=${visibleMatches.join(", ")} → ${outputPath}`,
+    );
     return { route, ok: true, outputPath };
   } catch (error) {
     console.error(`FAIL  ${route} :: ${error?.message ?? error}`);
@@ -109,8 +159,8 @@ async function main() {
     console.log("");
 
     const results = [];
-    for (const route of ROUTES) {
-      results.push(await shoot(browser, route, stamp));
+    for (const routeSpec of ROUTES) {
+      results.push(await shoot(browser, routeSpec, stamp));
     }
 
     const failed = results.filter((r) => !r.ok);

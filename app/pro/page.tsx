@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   AlertTriangle,
-  ArrowRight,
   BriefcaseBusiness,
   CalendarCheck,
   Layers3,
@@ -10,6 +9,7 @@ import {
   Radar,
   ShieldCheck,
 } from "lucide-react";
+import { ProSsoLaunchButton } from "@/components/pro/pro-sso-launch-button";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -73,25 +73,19 @@ export default function ProPage() {
           把 FCN、投資組合與市場風險集中到一個進階工作區，協助你更早看見風險變化。
         </p>
         <div className="mt-5 grid gap-2 sm:flex sm:flex-wrap">
-          <Link
-            className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold"
-            href="/account"
-          >
-            申請 Pro 測試
-            <ArrowRight className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
-          </Link>
+          <ProSsoLaunchButton className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)] disabled:cursor-wait disabled:opacity-75" />
           <Link
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] transition hover:bg-white/[0.12]"
-            href="/feedback?intent=fcn_consultation"
+            href="/fcn"
           >
-            預約 FCN 健檢
+            了解 FCN 監控
             <CalendarCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.55)] bg-[rgba(176,141,87,0.18)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[rgba(176,141,87,0.28)]"
             href="/feedback?intent=consulting"
           >
-            了解顧問服務
+            預約顧問諮詢
             <MessageSquare className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
@@ -151,7 +145,6 @@ export default function ProPage() {
               href={module.href}
             >
               了解 {module.title}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </article>
         ))}

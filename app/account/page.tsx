@@ -5,6 +5,7 @@ import { AccountPanel } from "@/components/auth/account-panel";
 import { LineDeliveryFoundationCard } from "@/components/intelligence/line-delivery-foundation-card";
 import { ConnectLineCard } from "@/components/line/connect-line-card";
 import { ProLabConnectionCard } from "@/components/pro/pro-lab-connection-card";
+import { ProSsoLaunchButton } from "@/components/pro/pro-sso-launch-button";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ixaiIdentity } from "@/src/lib/ixai/identity";
 
@@ -29,6 +30,9 @@ export default function AccountPage() {
         <p className="mt-3 max-w-3xl text-xs leading-6 text-white/56">
           {ixaiIdentity.sharedAccountMessage}
         </p>
+        <div className="mt-5 max-w-xs">
+          <ProSsoLaunchButton className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)] disabled:cursor-wait disabled:opacity-75" />
+        </div>
       </section>
 
       <section className="grid gap-3">

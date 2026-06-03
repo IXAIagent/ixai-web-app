@@ -42,6 +42,7 @@ const routeSpecs = [
     path: "/account",
     kind: "protected",
     visibleText: [
+      "開啟 IXAI Pro",
       "LINE 情報接收偏好",
       "我的 IXAI",
       "關注清單情報",
@@ -66,7 +67,12 @@ const routeSpecs = [
   {
     path: "/pro",
     kind: "protected",
-    visibleText: ["IXAI Pro：為需要持續監控風險的投資人打造", "申請 Pro 測試", "預約 FCN 健檢"],
+    visibleText: [
+      "IXAI Pro：為需要持續監控風險的投資人打造",
+      "開啟 IXAI Pro",
+      "了解 FCN 監控",
+      "預約顧問諮詢",
+    ],
   },
   {
     path: "/pro-preview",

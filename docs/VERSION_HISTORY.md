@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.67.1 — Promote Pro SSO CTA
+
+Why:
+
+- v1.67.0 created the SSO launch endpoint and button, but the `/pro` hero still led with education / consulting CTAs.
+- Users needed an obvious first-screen `開啟 IXAI Pro` action to test the App to Pro handoff.
+
+What Changed:
+
+- Promoted `ProSsoLaunchButton` into the `/pro` hero as the primary CTA.
+- Moved the `/account` Pro launch action near the top of the Pro card.
+- Added visual QA text checks for `/pro` and `/account`.
+
+Out of Scope:
+
+- SSO backend logic.
+- `/api/pro/launch` token behavior.
+- Legacy Pro receive route.
+- Auth.
+- Backend.
+- Daily / Weekly generation.
+- Provider ingestion.
+- FCN education content.
+
 ## v1.67.0 — App ↔ Pro SSO Launch Prototype
 
 Why:

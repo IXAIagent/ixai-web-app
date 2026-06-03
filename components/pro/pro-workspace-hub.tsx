@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, BriefcaseBusiness, RadioTower, ShieldCheck } from "lucide-react";
+import { ProSsoLaunchButton } from "@/components/pro/pro-sso-launch-button";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import {
   applyBetaOpenAccess,
@@ -169,14 +170,19 @@ export function ProWorkspaceHub() {
           <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
             如需使用目前的 Pro 測試版，請從這裡進入。App 共用登入仍在串接中。
           </p>
+          <div className="mt-4">
+            <ProSsoLaunchButton
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] disabled:cursor-wait disabled:opacity-75 sm:w-auto"
+              fallbackHref={LEGACY_PRO_LAB_LOGIN_URL}
+            />
+          </div>
           <a
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] sm:w-auto"
+            className="mt-3 inline-flex text-xs font-semibold text-[var(--ixai-forest-soft)] underline underline-offset-4"
             href={LEGACY_PRO_LAB_LOGIN_URL}
             rel="noreferrer"
             target="_blank"
           >
-            開啟 IXAI Pro
-            <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+            無法自動連接時，使用 Pro 登入頁
           </a>
         </article>
 

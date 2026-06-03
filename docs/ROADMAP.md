@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.67.0`
+`v1.67.1`
 
 ## Related Strategic Documents
 
@@ -26,6 +26,21 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/PRO_MODULE_PAGES_REDESIGN_V165.md`
 - `docs/HOMEPAGE_CONVERSION_REDESIGN_V166.md`
 - `docs/SSO_LAUNCH_PROTOTYPE_V167.md`
+- `docs/SSO_CTA_PROMOTION_V1671.md`
+
+## v1.67.1 — Promote Pro SSO CTA
+
+Goal:
+
+- Make the App to Pro SSO launch visible and testable from `/pro` and `/account`.
+- Put `開啟 IXAI Pro` first in the `/pro` hero CTA order.
+- Surface the same SSO launch action near the top of the `/account` Pro card.
+
+Out of scope:
+
+- No launch-token behavior changes.
+- No Legacy Pro receive route changes.
+- No auth, backend, Daily / Weekly, provider, or FCN education changes.
 
 ## v1.67.0 — App ↔ Pro SSO Launch Prototype
 

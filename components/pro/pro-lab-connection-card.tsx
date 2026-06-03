@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Database, ShieldCheck } from "lucide-react";
 import { LockedFeatureCard } from "@/components/pro/locked-feature-card";
+import { ProSsoLaunchButton } from "@/components/pro/pro-sso-launch-button";
 import {
   canAccessFCN,
   canAccessPortfolio,
@@ -429,6 +430,14 @@ export function ProLabConnectionCard({
           <p className="mt-2 max-w-3xl rounded-lg border border-amber-700/20 bg-amber-50/80 px-3 py-2 text-xs leading-6 text-amber-950">
             {legacyLoginWarning}
           </p>
+          {showProAccess ? (
+            <div className="mt-4 max-w-xs">
+              <ProSsoLaunchButton fallbackHref={IXAI_PRO_LAB_URL} />
+              <p className="mt-2 text-xs leading-5 text-[var(--ixai-ink-muted)]">
+                這會透過 App 帳號建立短效連線；若失敗，仍可使用 Pro 登入頁。
+              </p>
+            </div>
+          ) : null}
         </div>
 
         <div className="grid min-w-[210px] gap-2">
@@ -561,19 +570,7 @@ export function ProLabConnectionCard({
           >
             登入後綁定 Pro
           </Link>
-        ) : betaOpenAccess || canOpenPro || showAccountLink ? (
-          <a
-            aria-label="在獨立測試環境開啟 IXAI Pro"
-            className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
-            href={IXAI_PRO_LAB_URL}
-            rel="noreferrer"
-            target="_blank"
-            title="在獨立測試環境開啟 IXAI Pro"
-          >
-            <span>開啟 IXAI Pro</span>
-            <ArrowUpRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          </a>
-        ) : (
+        ) : betaOpenAccess || canOpenPro || showAccountLink ? null : (
           <div className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest-soft)]">
             Pro 使用權保留給受邀測試或付費使用者
           </div>

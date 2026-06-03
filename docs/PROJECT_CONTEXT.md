@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.67.0`
+`v1.67.1`
 
 Current Core Flow:
 
@@ -83,6 +83,10 @@ Product Layers:
 v1.67.0 starts the first safe App to Pro identity handoff. The production App remains the Supabase Auth surface and the legacy IXAI Pro Lab remains a separate FastAPI JWT environment, but the App can now prepare a short-lived one-time launch code for `開啟 IXAI Pro`.
 
 The prototype proves that Legacy Pro can receive App identity without exposing Supabase refresh tokens, service role keys, or long-lived credentials in a URL. It does not remove the legacy Pro login, does not issue a production Pro session, and does not change membership, entitlement, Stripe, portfolio, FCN, or trading behavior.
+
+## v1.67.1 — Promote Pro SSO CTA
+
+v1.67.1 makes the App to Pro launch prototype visible in the primary user flow. `/pro` now leads with `開啟 IXAI Pro` as the first hero CTA, while `/account` surfaces the same launch action near the top of the Pro card. This version only promotes the SSO launch entry point; it does not change launch-token behavior, Legacy Pro receive behavior, auth, backend, Daily / Weekly generation, provider ingestion, or FCN education content.
 
 Current surface relationship:
 
