@@ -1,5 +1,14 @@
 import { CheckCircle2, LockKeyhole } from "lucide-react";
 
+// v1.64.1 — Reusable card replacing the pre-v1.64.0 pale-gold-icon-on-cream
+// pattern with the IXAI icon-contrast rule:
+//   - dark forest icon container (≥ 36×36)
+//   - gold or cream symbol depending on state
+//   - visible border on the container
+// Enabled state uses --ixai-risk-clear tokens via color-mix() instead of the
+// off-brand emerald-* utility classes. Disabled state uses gold-tinted ixai
+// tokens so it remains legible on cream surfaces.
+
 export function LockedFeatureCard({
   description,
   enabled,
@@ -9,26 +18,18 @@ export function LockedFeatureCard({
   enabled: boolean;
   name: string;
 }) {
+  const cardClass = enabled
+    ? "min-w-0 rounded-lg border px-3 py-3 border-[color-mix(in_srgb,var(--ixai-risk-clear)_38%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-clear)_10%,white)] text-[color-mix(in_srgb,var(--ixai-risk-clear)_60%,var(--ixai-forest))]"
+    : "min-w-0 rounded-lg border px-3 py-3 border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.72)] text-[var(--ixai-forest)]";
+
   return (
-    <article
-      className={`min-w-0 rounded-lg border px-3 py-3 ${
-        enabled
-          ? "border-emerald-700/20 bg-emerald-50/70 text-emerald-950"
-          : "border-[rgba(176,141,87,0.3)] bg-[rgba(255,250,240,0.72)] text-[var(--ixai-forest)]"
-      }`}
-    >
-      <div className="flex items-start gap-2">
-        <span
-          className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border ${
-            enabled
-              ? "border-emerald-700/20 bg-white/60 text-emerald-800"
-              : "border-[rgba(176,141,87,0.34)] bg-white/55 text-[var(--ixai-gold)]"
-          }`}
-        >
+    <article className={cardClass}>
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.34)] bg-[var(--ixai-forest)] shadow-[0_6px_14px_rgba(9,41,31,0.12)]">
           {enabled ? (
-            <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+            <CheckCircle2 className="h-4 w-4 text-[var(--ixai-cream)]" aria-hidden="true" />
           ) : (
-            <LockKeyhole className="h-3.5 w-3.5" aria-hidden="true" />
+            <LockKeyhole className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           )}
         </span>
         <div className="min-w-0">

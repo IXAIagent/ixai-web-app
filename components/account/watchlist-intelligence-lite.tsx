@@ -41,8 +41,11 @@ export function WatchlistIntelligenceLite() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
-              <Brain className="h-4 w-4 stroke-current" aria-hidden="true" />
+            {/* v1.64.1 — Card icon now follows the IXAI icon-contrast rule:
+                dark forest container + gold glyph + visible border. The
+                previous gold-tint container on cream read as faint. */}
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.34)] bg-[var(--ixai-forest)] shadow-[0_6px_14px_rgba(9,41,31,0.12)]">
+              <Brain className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             </span>
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
@@ -172,8 +175,10 @@ export function WatchlistIntelligenceLite() {
 
       <aside className="mt-4 rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(255,250,240,0.72)] p-3">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.1)] text-[var(--ixai-gold)]">
-            <ShieldCheck className="h-4 w-4 stroke-current" aria-hidden="true" />
+          {/* v1.64.1 — Disclaimer icon now follows the IXAI icon-contrast rule:
+              dark forest container + gold glyph instead of faint gold-on-cream. */}
+          <span className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.32)] bg-[var(--ixai-forest)] shadow-[0_4px_10px_rgba(9,41,31,0.10)]">
+            <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </span>
           <p className="text-xs leading-6 text-[var(--ixai-forest-soft)]">
             關注清單情報只整理你在意的市場主題，不是個人化投資建議、投資組合分析、交易指令或 FCN 風險結論。

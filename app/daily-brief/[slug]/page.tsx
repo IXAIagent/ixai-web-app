@@ -3,7 +3,6 @@ import { AlertTriangle, ArrowLeft, ArrowUpRight, Eye } from "lucide-react";
 import { DailyBriefLocalDetail } from "@/components/daily-brief/daily-brief-local-detail";
 import { IntelligenceCta } from "@/components/distribution/intelligence-cta";
 import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
-import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
 import {
   BreadcrumbStructuredData,
@@ -282,7 +281,8 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
 
       <ProUpgradeCard feature="premium_daily" surface="daily_slug_bottom" />
 
-      <PublicIntelligenceEngine density="compact" surface="daily_slug" />
+      {/* v1.64.1 — Public Intelligence Engine block removed from Daily detail
+          per the placement rule: homepage only. */}
 
       <PublicIntelligenceCta surface="daily_slug_bottom" />
 

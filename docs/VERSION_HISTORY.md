@@ -2232,3 +2232,76 @@ Out of Scope:
 - Real FCN holdings, real portfolio data, real risk monitoring.
 - Account page rebalance (deferred to v1.65).
 - Full homepage rewrite (deferred to v1.65+).
+
+## v1.64.1 — Visual QA Fix
+
+Why:
+
+- After v1.64.0 shipped, live visual QA found two regressions that the
+  v1.64.0 audit had missed.
+- The Public Intelligence Engine block was still being rendered on
+  `/daily-brief` (via `DailyBriefUnifiedArchive`), on the Daily slug
+  page, and on the Weekly slug page. The v1.64.0 audit had assumed
+  Daily / Weekly were already in v1.63.1 reading-first shape; the
+  audit was wrong.
+- The shared `LockedFeatureCard` component used by `/portfolio` and
+  `/risk` rendered a pale gold icon on a cream container — exactly the
+  "pale gold outline on beige card" pattern the icon-contrast rule
+  forbids. Off-token emerald / amber utility classes also lived in the
+  same component.
+- `/account` carried the same pale-gold-on-cream pattern in
+  WatchlistIntelligenceLite and on its feedback buttons.
+
+What Changed:
+
+- Removed `<PublicIntelligenceEngine>` from 4 Daily / Weekly surfaces:
+  `components/daily-brief/daily-brief-unified-archive.tsx`,
+  `components/daily-brief/daily-brief-local-detail.tsx`,
+  `app/daily-brief/[slug]/page.tsx`,
+  `app/weekly-brief/[slug]/page.tsx`. Block remains on the homepage and
+  on `/share` + `/share/intelligence/[slug]`.
+- Rewrote `components/pro/locked-feature-card.tsx`: 36×36 forest icon
+  container; gold glyph for locked state, cream glyph for enabled
+  state; visible 0.34-opacity border; soft shadow. Enabled card body
+  switched from `border-emerald-700/20 bg-emerald-50/70 text-emerald-950`
+  to `color-mix(in srgb, var(--ixai-risk-clear), ...)` triplet.
+- Updated `components/pro/feature-gated-page.tsx` locked-state
+  instruction box: replaced `border-amber-700/20 bg-amber-50/80 text-amber-950`
+  with `color-mix(in srgb, var(--ixai-risk-watch), ...)` triplet and
+  added a forest-iconed ShieldCheck container for the instruction.
+- Updated `components/account/watchlist-intelligence-lite.tsx`: Brain
+  card icon and ShieldCheck disclaimer aside icon switched to the
+  forest+gold pattern.
+- Updated `app/account/page.tsx` feedback buttons: leading glyphs
+  (MessageSquare, Bug) now use `text-[var(--ixai-forest)]` so they
+  match the button's forest text color instead of fading on cream;
+  trailing ArrowUpRight glyphs keep gold as the forward-action accent.
+- Added `docs/VISUAL_QA_FIX_V1641.md` with the codified rules.
+- Added Icon Contrast Rule and Public Intelligence Engine Placement
+  Rule to `docs/PROJECT_RULES.md`.
+
+Key Decisions:
+
+- `<PublicIntelligenceEngine>` belongs on homepage and acquisition
+  surfaces only. Daily / Weekly / Pro / Account surfaces must not
+  render it.
+- Card icons on cream surfaces must use the dark-forest container +
+  gold (or cream) glyph + visible border pattern, at minimum 32×32
+  (prefer 36×36).
+- Inline button glyphs may match the button text color and skip the
+  container; trailing forward-action glyphs may keep gold accent.
+- Off-token Tailwind colors (`emerald-*`, `amber-*`, `red-*`) are
+  forbidden on Pro surfaces — must use IXAI risk tokens via
+  `color-mix()`.
+
+Out of Scope:
+
+- SSO. Backend. Supabase. Auth. JWT. Membership entitlements logic.
+- Daily / Weekly content generation engine.
+- Provider ingestion / news pipeline.
+- Trading features, broker integration, Stripe, paywall.
+- Real FCN holdings, real portfolio data, real risk monitoring.
+- FCN education content (unchanged).
+- Account / homepage rebalance (still deferred to v1.65).
+- Pale-icon containers on `/about`, `/feedback`, and home component
+  children (deferred to a future design-system pass).

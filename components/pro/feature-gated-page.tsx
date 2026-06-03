@@ -202,8 +202,15 @@ export function FeatureGatedPage({
             ))}
           </div>
         ) : (
-          <div className="rounded-lg border border-amber-700/20 bg-amber-50/80 p-4 text-sm leading-7 text-amber-950">
-            {gateInstruction}
+          // v1.64.1 — Replace off-token amber utility classes with the
+          // --ixai-risk-watch gold tone via color-mix() so the locked-state
+          // instruction matches the IXAI palette and stays high-contrast on
+          // cream surfaces.
+          <div className="flex items-start gap-3 rounded-lg border border-[color-mix(in_srgb,var(--ixai-risk-watch)_36%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_10%,white)] p-4 text-sm leading-7 text-[var(--ixai-forest)]">
+            <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.34)] bg-[var(--ixai-forest)]">
+              <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+            </span>
+            <p>{gateInstruction}</p>
           </div>
         )}
 

@@ -70,7 +70,10 @@ export default function AccountPage() {
             href="/feedback"
           >
             <span className="inline-flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+              {/* v1.64.1 — Leading glyph follows button text color (forest) for
+                  readable contrast on cream; trailing arrow keeps gold as the
+                  forward-action accent. */}
+              <MessageSquare className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
               提供意見
             </span>
             <ArrowUpRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
@@ -80,7 +83,7 @@ export default function AccountPage() {
             href="/feedback"
           >
             <span className="inline-flex items-center gap-2">
-              <Bug className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+              <Bug className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
               回報問題
             </span>
             <ArrowUpRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />

@@ -114,6 +114,20 @@ Social Pack Layout Safety Rules:
 - Risk Watch slide may show one regime state, 2-3 short reasons, and one readable FCN Awareness line. It must not collide with the footer.
 - I-Xuan View should be a complete concise branded viewpoint, not a clipped headline fragment.
 
+Icon Contrast Rule (v1.64.1):
+
+- Card icons and badge icons on light (cream / white) surfaces must use a dark forest icon container (`bg-[var(--ixai-forest)]`), with a gold (`text-[var(--ixai-gold)]`) or cream (`text-[var(--ixai-cream)]`) symbol, a visible border (at least `border-[rgba(9,41,31,0.32)]`), and a minimum 32×32 (`h-8 w-8`) size — prefer 36×36 (`h-9 w-9`) for primary cards.
+- Inline button glyphs (16×16 alongside button text) may skip the container, but must match the button's text color. Trailing forward-action glyphs (ArrowRight, ArrowUpRight) may keep `text-[var(--ixai-gold)]` as a forward-cue accent.
+- Forbidden: `bg-[rgba(176,141,87,0.10)]` / `bg-[rgba(176,141,87,0.13)]` icon containers on cream surfaces; pale gold icons on `bg-white/55` without a container.
+- Forbidden: off-token Tailwind utility colors for state pills on Pro / Account / Portfolio / Risk surfaces — `border-emerald-*`, `bg-emerald-*`, `text-emerald-*`, `border-amber-*`, `bg-amber-*`, `text-amber-*`, `border-red-*`, `bg-red-*`, `text-red-*`. Use `color-mix(in srgb, var(--ixai-risk-*), ...)` over `--ixai-risk-clear` / `--ixai-risk-watch` / `--ixai-risk-elevated` / `--ixai-risk-critical` instead.
+
+Public Intelligence Engine Placement Rule (v1.64.1):
+
+- `<PublicIntelligenceEngine>` may only render on the homepage and on acquisition / share surfaces (`/`, `/share`, `/share/intelligence/[slug]`).
+- Daily / Weekly archive and detail pages must remain reading-first and must not render `<PublicIntelligenceEngine>`. This applies to `/daily-brief`, `/daily-brief/[slug]`, `/weekly-brief`, `/weekly-brief/[slug]`, the `DailyBriefUnifiedArchive` component, and the `DailyBriefLocalDetail` component.
+- Pro surfaces (`/pro`, `/pro-preview`, `/pro-intelligence`) and `/account` must not render `<PublicIntelligenceEngine>` — Pro is the conversion surface, Account is the workspace, neither is the architecture explainer.
+- Code review should fail any diff that re-introduces the `PublicIntelligenceEngine` import on a Daily / Weekly / Pro / Account surface without an explicit product decision.
+
 ## D. Commit Rules
 
 Use small commits.

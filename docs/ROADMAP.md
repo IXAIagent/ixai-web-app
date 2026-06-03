@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.64.0`
+`v1.64.1`
 
 ## Related Strategic Documents
 
@@ -463,6 +463,32 @@ Goal:
   production review.
 - Continue to keep SSO, auth, backend, Supabase, and content engine work
   separate.
+
+## v1.64.1 — Visual QA Fix
+
+Completed:
+
+- Removed `<PublicIntelligenceEngine>` block from `/daily-brief`,
+  `/daily-brief/[slug]`, `/weekly-brief/[slug]`, and the local detail
+  component. Block remains on the homepage and `/share` surfaces.
+- Fixed low-contrast icons on `/portfolio` and `/risk` via the shared
+  `LockedFeatureCard` and `FeatureGatedPage` components — replaced
+  pale-gold-on-cream containers with the forest+gold pattern, and
+  swapped off-token emerald / amber utility classes for
+  `color-mix(in srgb, var(--ixai-risk-*), ...)` IXAI tokens.
+- Fixed low-contrast icons on `/account` (WatchlistIntelligenceLite
+  card icon + disclaimer aside icon + feedback button leading glyphs).
+- Verified `/pro` CTA text visibility: already token-driven (cream-
+  on-forest and forest-on-cream), no change needed.
+- Codified the Icon Contrast Rule and the Public Intelligence Engine
+  Placement Rule in `docs/PROJECT_RULES.md`.
+
+Out of Scope (unchanged):
+
+- SSO, auth, Supabase, backend, content engine, providers, payment.
+- Account / homepage rebalance (still deferred to v1.65).
+- Full design-system pale-icon pass across `/`, `/about`, `/feedback`,
+  and home component children (deferred to v1.65+).
 
 ## v1.64.0 — App UX / FCN Education / Pro Conversion Redesign
 

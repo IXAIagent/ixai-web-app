@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight, CalendarDays, ShieldCheck } from "lucide-react";
 import { NarrativeIntelligence } from "@/components/intelligence/narrative-intelligence";
 import { PublicIntelligenceCta } from "@/components/intelligence/public-intelligence-cta";
-import { PublicIntelligenceEngine } from "@/components/intelligence/public-intelligence-engine";
 import {
   BreadcrumbStructuredData,
   NewsArticleStructuredData,
@@ -474,7 +473,8 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
 
       <ProUpgradeCard feature="premium_weekly" surface="weekly_slug_bottom" />
 
-      <PublicIntelligenceEngine density="compact" surface="weekly_slug" />
+      {/* v1.64.1 — Public Intelligence Engine block removed from Weekly detail
+          per the placement rule: homepage only. */}
 
       <PublicIntelligenceCta surface="weekly_slug_bottom" />
 
