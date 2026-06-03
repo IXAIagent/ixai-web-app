@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.63.1`
+`v1.64.0`
 
 ## Related Strategic Documents
 
@@ -454,22 +454,35 @@ Completed:
 
 ## Next Suggested Version
 
-`v1.63.1 — UX Product Role Correction`
+`v1.65 — Account & Homepage Rebalance`
 
 Goal:
 
-- Correct App / Pro product role confusion introduced during v1.63.0
-  localization.
-- Restore `/fcn` as FCN education and introduction, not a free App FCN
-  monitoring workspace.
-- Keep personal FCN monitoring, KI / KO watch, worst-of monitoring, coupon
-  calendar, portfolio analysis, and risk-engine workflows in IXAI Pro.
-- Simplify `/daily-brief` and `/weekly-brief` so reading remains the primary
-  action and Public Intelligence Engine architecture is not foregrounded.
-- Clarify `/account` information architecture around account status, Pro
-  connection, membership plan, and feature access.
-- Keep SSO, auth, provider activation, publish flow, backend, and Supabase
-  schema out of scope unless separately approved.
+- Take the residual v1.64.0 items (account information-architecture pass and
+  homepage full rewrite) and ship them once the v1.64 cut has settled in
+  production review.
+- Continue to keep SSO, auth, backend, Supabase, and content engine work
+  separate.
+
+## v1.64.0 — App UX / FCN Education / Pro Conversion Redesign
+
+Completed:
+
+- Added `docs/APP_UX_REDESIGN_V164.md` planning document.
+- Rebuilt `/fcn` as education + conversion (added high-net-worth pillar,
+  worked example, manual-pain block, expanded Pro FCN moat list, consulting
+  CTA, compliance footer).
+- Rebuilt `/pro` with a marketing prelude (hero, pain points, FCN-primary
+  module hierarchy, consulting CTA) wrapping the existing workspace hub.
+- FCN module gets primary / wider visual treatment inside the workspace hub.
+- Added App / Pro / 顧問服務 tri-fold line to the homepage hero.
+- Daily / Weekly / Account already in v1.63.1 shape; no changes in this cut.
+
+Out of Scope (deferred):
+
+- Account information-architecture rebalance.
+- Full homepage rewrite.
+- SSO, auth, backend, Supabase, content engine, providers, payment.
 
 ## v1.62.0 — Content Intelligence Foundation
 

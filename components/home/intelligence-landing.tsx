@@ -113,6 +113,12 @@ export function IntelligenceLanding() {
               IXAI 將市場情報、Watchlist、FCN 風險與 LINE intelligence delivery
               整合成一個 AI-native investment intelligence layer。
             </p>
+            {/* v1.64.0 — App / Pro / 顧問服務 tri-fold so first-time visitors immediately see the role split. */}
+            <p className="mt-3 max-w-2xl rounded-md border border-white/12 bg-white/[0.045] px-3 py-2 text-xs leading-6 text-white/72">
+              <span className="font-semibold text-[var(--ixai-cream)]">App</span> 公開市場情報與教育 ·
+              <span className="ml-1 font-semibold text-[var(--ixai-cream)]">Pro</span> 投資組合與 FCN 監控 ·
+              <span className="ml-1 font-semibold text-[var(--ixai-cream)]">顧問服務</span> FCN 健檢與一對一諮詢
+            </p>
             <div className="mt-6 grid gap-2 sm:flex sm:flex-wrap">
               <Link
                 className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold"

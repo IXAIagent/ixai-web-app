@@ -34,7 +34,19 @@ type BackendHealth = {
   ok: boolean;
 };
 
+// v1.64.0 — FCN moved to first slot and marked `featured` so the module grid
+// renders it wider with a primary visual treatment. Portfolio and Risk follow
+// as secondary cards. Module entitlement logic is unchanged.
 const modules = [
+  {
+    copy: "整理 FCN 持倉、配息與觀察日、KI / KO 距離、Worst-of 變化、標的集中度與 AI 風險提醒的測試版入口。",
+    href: "/fcn",
+    icon: ShieldCheck,
+    key: "fcn",
+    label: "FCN 監控",
+    cta: "了解 FCN 監控",
+    featured: true,
+  },
   {
     copy: "查看投資組合總覽、資產配置、部位整理與 AI 投資筆記的測試版入口。",
     href: "/portfolio",
@@ -42,14 +54,7 @@ const modules = [
     key: "portfolio",
     label: "投資組合分析",
     cta: "開啟投資組合",
-  },
-  {
-    copy: "查看 FCN 持倉、配息時程、KI / KO 觀察與 Worst-of 監控的測試版入口。",
-    href: "/fcn",
-    icon: ShieldCheck,
-    key: "fcn",
-    label: "FCN 監控",
-    cta: "開啟 FCN",
+    featured: false,
   },
   {
     copy: "查看投資組合風險、集中度、情境監控與 AI 風險提醒的測試版入口。",
@@ -58,6 +63,7 @@ const modules = [
     key: "risk",
     label: "風險中心",
     cta: "開啟風險中心",
+    featured: false,
   },
 ] as const;
 
@@ -147,22 +153,10 @@ export function ProWorkspaceHub() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--ixai-gold)] sm:text-[11px]">
-          IXAI Pro 入口
-        </p>
-        <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:text-5xl">
-          IXAI Pro 正在與 App 帳號整合中。
-        </h1>
-        <p className="mt-4 max-w-3xl text-sm leading-7 text-white/70 sm:text-base">
-          IXAI Pro 是進階投資情報工作區。完成共用登入後，使用者將可用同一組帳號進入 Pro。
-        </p>
-        <p className="mt-3 max-w-3xl rounded-lg border border-white/10 bg-white/[0.055] px-3 py-2 text-xs leading-6 text-white/60">
-          目前舊版 Pro 測試區仍是獨立環境；若你有受邀測試帳號，請使用指定的 Pro 帳密。
-        </p>
-      </section>
-
+    // v1.64.0 — Hub no longer renders a top hero. The /pro page wraps the hub
+    // with a page-level marketing prelude. The hub keeps integration-status
+    // messaging inline with the Pro Lab + App-internal cards below.
+    <div className="flex w-full flex-col gap-4 sm:gap-6">
       <section className="grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
         <article className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(255,250,240,0.9)] p-4 shadow-[0_18px_56px_rgba(9,41,31,0.08)] sm:p-5">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-forest)]">
@@ -205,10 +199,10 @@ export function ProWorkspaceHub() {
           ["系統連線", backendStatus],
         ].map(([label, value]) => (
           <article
-            className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4"
+            className="rounded-lg border border-[rgba(9,41,31,0.18)] bg-[rgba(255,250,240,0.9)] p-4"
             key={label}
           >
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-forest)]">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-forest)]">
               {label}
             </p>
             <p className="mt-2 text-base font-semibold leading-6 text-[var(--ixai-forest)]">
@@ -218,7 +212,7 @@ export function ProWorkspaceHub() {
         ))}
       </section>
 
-      <section className="grid gap-3 lg:grid-cols-3">
+      <section className="grid gap-3 lg:grid-cols-[1.6fr_1fr_1fr]">
         {modules.map((module) => {
           const Icon = module.icon;
           const available =
@@ -227,21 +221,32 @@ export function ProWorkspaceHub() {
               : module.key === "fcn"
                 ? moduleAvailability.fcn
                 : moduleAvailability.risk;
+          const cardClass = module.featured
+            ? "flex h-full flex-col rounded-lg border border-[rgba(176,141,87,0.55)] bg-[rgba(176,141,87,0.13)] p-5 shadow-[0_18px_56px_rgba(9,41,31,0.10)] sm:p-6"
+            : "flex h-full flex-col rounded-lg border border-[rgba(176,141,87,0.3)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5";
 
           return (
-            <article
-              className="rounded-lg border border-[rgba(176,141,87,0.3)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-5"
-              key={module.key}
-            >
+            <article className={cardClass} key={module.key}>
               <div className="flex items-start justify-between gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.28)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)]">
-                  <Icon className="h-4 w-4" aria-hidden="true" />
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[rgba(9,41,31,0.34)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)] shadow-[0_8px_18px_rgba(9,41,31,0.12)]">
+                  <Icon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
                 </span>
-                <span className="rounded border border-emerald-700/20 bg-emerald-50/70 px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-950">
+                <span
+                  className={`rounded border px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] ${
+                    available
+                      ? "border-[color-mix(in_srgb,var(--ixai-risk-clear)_38%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-clear)_14%,white)] text-[color-mix(in_srgb,var(--ixai-risk-clear)_68%,var(--ixai-forest))]"
+                      : "border-[var(--ixai-border)] bg-white/55 text-[var(--ixai-forest-soft)]"
+                  }`}
+                >
                   {available ? "測試可用" : "請先綁定"}
                 </span>
               </div>
-              <h2 className="mt-4 text-lg font-semibold leading-7 text-[var(--ixai-forest)]">
+              {module.featured ? (
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                  Pro 主打模組
+                </p>
+              ) : null}
+              <h2 className={`text-lg font-semibold leading-7 text-[var(--ixai-forest)] ${module.featured ? "mt-1 sm:text-xl" : "mt-4"}`}>
                 {module.label}
               </h2>
               <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">

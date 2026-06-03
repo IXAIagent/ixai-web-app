@@ -2175,3 +2175,60 @@ Out of Scope:
 - Backend or legacy Pro changes.
 - Stripe, broker integration, real portfolio / FCN data, trading, or
   investment advice.
+
+## v1.64.0 — App UX / FCN Education / Pro Conversion Redesign
+
+Why:
+
+- v1.63.1 corrected the product role split (App = public education + lead
+  capture; Pro = monitoring + workspace) but stopped at structural correction.
+- After v1.63.1 the `/fcn` page was education-only and did not convert.
+- After v1.63.1 the `/pro` page was a stub wrapping the workspace hub without
+  any marketing prelude, so first-time visitors read the page as a status
+  notice instead of a value proposition.
+- The user is head of 一玄投資 and provides FCN 健檢, portfolio diagnosis,
+  and high-net-worth consulting. None of those services had a CTA on the
+  public app — the funnel terminated at "申請 Pro 測試".
+- The App / Pro / 顧問服務 tri-fold needed to be explicit in user-facing copy.
+
+What Changed:
+
+- Added `docs/APP_UX_REDESIGN_V164.md` — planning document for the cut.
+- Rebuilt `/fcn` as education + conversion. Added: "為什麼高資產投資人會用
+  FCN" pillar block; "實境舉例" non-advisory worked example; "為什麼今日很
+  難做到" manual-pain block; expanded Pro FCN moat list (KI/KO/Worst-of/
+  observation calendar/risk tier/concentration/AI alerts) clearly labeled
+  as Pro-only; consulting CTA (預約 FCN 健檢); compliance footer.
+- Rebuilt `/pro` page wrapper. Added a marketing prelude before the existing
+  workspace hub: hero with App-vs-Pro line, three pain-point cards, FCN-
+  primary module hierarchy override, consulting CTA. The workspace hub
+  itself was left functionally intact.
+- Updated `components/pro/pro-workspace-hub.tsx` to render the FCN module
+  with a wider span / primary visual treatment in the module grid. Portfolio
+  and Risk remain as secondary cards. All entitlement, backend health, and
+  account-link logic preserved unchanged.
+- Updated `components/home/intelligence-landing.tsx` with a one-line App /
+  Pro / 顧問服務 tri-fold under the hero copy block. No structural rebuild.
+
+Key Decisions:
+
+- App stays education + lead capture. FCN Monitoring stays a Pro moat.
+- Consulting CTAs route to the existing `/feedback?intent=...` lead-capture
+  vector; no new analytics events, no new API surface.
+- `/daily-brief`, `/weekly-brief`, `/account` are already in v1.63.1 shape;
+  no changes in this cut.
+- Homepage gets a copy nudge only — full landing rewrite deferred to v1.65+.
+- All v1.62.1 content engine guarantees (title diversification, period
+  separation, Asia/Taipei dates) preserved.
+- All v1.63 Taiwan UX cleanup guarantees (Traditional Chinese, no
+  engineering jargon in public pages) preserved and extended.
+
+Out of Scope:
+
+- SSO. Backend. Supabase. Auth. JWT. Membership entitlements logic.
+- Daily / Weekly content generation engine.
+- Provider ingestion / news pipeline.
+- Trading features, broker integration, Stripe, paywall.
+- Real FCN holdings, real portfolio data, real risk monitoring.
+- Account page rebalance (deferred to v1.65).
+- Full homepage rewrite (deferred to v1.65+).
