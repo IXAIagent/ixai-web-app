@@ -2132,3 +2132,46 @@ Out of Scope:
 - Provider logic.
 - Backend or legacy Pro changes.
 - Stripe, broker integration, real portfolio / FCN data, trading, or investment advice.
+
+## v1.63.1 — UX Product Role Correction
+
+Why:
+
+- v1.63.0 improved localization, but it also made `/fcn` look like an App-side
+  FCN Monitoring entry.
+- That blurred the product boundary: the App is public market intelligence,
+  education, account, and membership entry; Pro is the advanced investment
+  workspace.
+- FCN Monitoring can imply personal structured-product risk conclusions, so it
+  must remain a Pro / paid / beta capability rather than a free public App page.
+
+What Changed:
+
+- Added `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`.
+- Changed `/fcn` back into FCN education and introduction.
+- Removed the App-local FCN Monitoring skeleton from `/fcn`.
+- Simplified `/daily-brief` and `/weekly-brief` reading pages by removing
+  non-essential architecture cards from the primary archive view.
+- Improved `/pro` icon and CTA contrast guidance / implementation.
+- Reorganized `/account` around account status, Pro connection, membership
+  plan, and feature access while avoiding raw backend / entitlement /
+  feature-gate language.
+
+Key Decisions:
+
+- App may explain FCN concepts, KI / KO, worst-of, and coupon calendar at an
+  educational level.
+- Personal FCN monitoring, KI / KO watch, worst-of monitoring, coupon
+  calendars, portfolio analysis, and risk-engine workflows belong in IXAI Pro.
+- Daily / Weekly archive pages should prioritize reading over product
+  architecture explanation.
+
+Out of Scope:
+
+- SSO.
+- Auth / Supabase / JWT changes.
+- Daily / Weekly content generation engine.
+- Provider logic.
+- Backend or legacy Pro changes.
+- Stripe, broker integration, real portfolio / FCN data, trading, or
+  investment advice.

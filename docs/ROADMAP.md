@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.63.0`
+`v1.63.1`
 
 ## Related Strategic Documents
 
@@ -22,6 +22,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/CONTENT_ENGINE_ARCHITECTURE.md`
 - `docs/PROVIDER_HEALTH_REVIEW.md`
 - `docs/TAIWAN_USER_UX_CLEANUP_V163.md`
+- `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`
 
 ## Current Product Flow
 
@@ -453,17 +454,20 @@ Completed:
 
 ## Next Suggested Version
 
-`v1.63.1 — Taiwan UX Visual QA Follow-up`
+`v1.63.1 — UX Product Role Correction`
 
 Goal:
 
-- Manually inspect `/account`, `/pro`, `/pro-preview`, `/portfolio`, `/fcn`,
-  `/risk`, `/daily-brief`, and `/weekly-brief` in desktop and 390px mobile.
-- Verify normal users no longer see raw backend / entitlement / feature-gate /
-  skeleton language in primary content.
-- Verify admin surfaces still preserve technical diagnostics where appropriate.
-- Continue Content Engine output QA separately before changing Daily / Weekly
-  generation again.
+- Correct App / Pro product role confusion introduced during v1.63.0
+  localization.
+- Restore `/fcn` as FCN education and introduction, not a free App FCN
+  monitoring workspace.
+- Keep personal FCN monitoring, KI / KO watch, worst-of monitoring, coupon
+  calendar, portfolio analysis, and risk-engine workflows in IXAI Pro.
+- Simplify `/daily-brief` and `/weekly-brief` so reading remains the primary
+  action and Public Intelligence Engine architecture is not foregrounded.
+- Clarify `/account` information architecture around account status, Pro
+  connection, membership plan, and feature access.
 - Keep SSO, auth, provider activation, publish flow, backend, and Supabase
   schema out of scope unless separately approved.
 
@@ -558,6 +562,29 @@ Out of scope:
 - Provider logic.
 - Backend / legacy Pro changes.
 - Stripe, portfolio data, FCN data, or investment advice.
+
+## v1.63.1 — UX Product Role Correction
+
+Completed:
+
+- Added `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`.
+- Repositioned `/fcn` as an FCN education and introduction page.
+- Clarified that FCN Monitoring belongs to IXAI Pro because it can imply
+  personal structured-product risk conclusions.
+- Simplified Daily / Weekly archive pages so users see reading entry points
+  instead of product architecture cards.
+- Strengthened `/pro` icon / CTA contrast rules.
+- Simplified `/account` around account status, Pro connection, membership plan,
+  and feature access.
+
+Out of scope:
+
+- SSO / auth changes.
+- Daily / Weekly content generation engine.
+- Provider logic.
+- Backend / legacy Pro changes.
+- Stripe, broker integration, real portfolio / FCN data, trading, or
+  investment advice.
 
 Out of Scope:
 

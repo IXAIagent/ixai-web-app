@@ -2,15 +2,9 @@ import Link from "next/link";
 import { ArrowUpRight, Bug, MessageSquare } from "lucide-react";
 import { WatchlistIntelligenceLite } from "@/components/account/watchlist-intelligence-lite";
 import { AccountPanel } from "@/components/auth/account-panel";
-import { DeliveryPreferenceCard } from "@/components/intelligence/delivery-preference-card";
-import { IntelligenceDeliveryCard } from "@/components/intelligence/intelligence-delivery-card";
 import { LineDeliveryFoundationCard } from "@/components/intelligence/line-delivery-foundation-card";
-import { MorningIntelligencePreview } from "@/components/intelligence/morning-intelligence-preview";
 import { ConnectLineCard } from "@/components/line/connect-line-card";
 import { ProLabConnectionCard } from "@/components/pro/pro-lab-connection-card";
-import { ProUpgradeCard } from "@/components/pro/pro-upgrade-card";
-import { PwaInstallCard } from "@/components/pwa/install-card";
-import { WatchlistAccountStatus } from "@/components/watchlist/watchlist-account-status";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { ixaiIdentity } from "@/src/lib/ixai/identity";
 
@@ -37,23 +31,28 @@ export default function AccountPage() {
         </p>
       </section>
 
-      <AccountPanel />
+      <section className="grid gap-3">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          帳號狀態
+        </p>
+        <AccountPanel />
+      </section>
 
-      <WatchlistIntelligenceLite />
+      <section className="grid gap-3">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          Pro 串接 · 會員方案 · 功能權限
+        </p>
+        <ProLabConnectionCard source="account" showBackendStatus showProAccess />
+      </section>
 
-      <ConnectLineCard source="account" />
-
-      <LineDeliveryFoundationCard source="account" />
-
-      <DeliveryPreferenceCard source="account" />
-
-      <IntelligenceDeliveryCard source="account" tier="preview" />
-
-      <MorningIntelligencePreview source="account" tier="public" />
-
-      <ProUpgradeCard feature="portfolio_intelligence" surface="account" />
-
-      <WatchlistAccountStatus />
+      <section className="grid gap-3">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          關注清單與接收偏好
+        </p>
+        <WatchlistIntelligenceLite />
+        <ConnectLineCard source="account" />
+        <LineDeliveryFoundationCard source="account" />
+      </section>
 
       <section className="rounded-2xl border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
@@ -87,30 +86,6 @@ export default function AccountPage() {
             <ArrowUpRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
-      </section>
-
-      <PwaInstallCard />
-
-      <ProLabConnectionCard source="account" showBackendStatus showProAccess />
-
-      <section className="grid gap-4 md:grid-cols-3">
-        {[
-          ["FREE", "每日晨報、每週情報、市場總覽與基礎關注清單。"],
-          ["PERSONAL", "保存關注清單、主題偏好與閱讀記憶，調整個人情報優先順序。"],
-          ["PRO", "FCN 監控、投資組合分析、AI 風險提醒、Crypto 監控與個人晨報。"],
-        ].map(([label, copy]) => (
-          <article
-            className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-4"
-            key={label}
-          >
-            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-              {label}
-            </p>
-            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              {copy}
-            </p>
-          </article>
-        ))}
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
