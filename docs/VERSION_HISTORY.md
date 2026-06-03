@@ -1979,3 +1979,60 @@ Out of Scope:
 - UI redesign.
 - Legacy login retirement.
 - Stripe, broker integration, portfolio engines, trading, or investment advice.
+
+## v1.62.0 — Content Intelligence Foundation
+
+Why:
+
+- v1.62 SSO work was paused to investigate a more urgent content-quality root
+  cause.
+- Production review found the 2026-06-02 and expected 2026-06-03 Daily Brief /
+  Social Pack narratives could appear nearly identical.
+- `docs/DAILY_BRIEF_ROOT_CAUSE_ANALYSIS.md` found that production did not expose
+  a public `daily-intelligence-2026-06-03` brief through the checked API.
+- The same audit found that the 2026-06-02 public title came from
+  `intelligence.insight.questionDriven.centralQuestion`, not the provider
+  `todayHeadline`.
+- The primary repeated-title cause is deterministic AI + macro question-driven
+  logic in the content engine.
+
+What Changed:
+
+- Added `docs/CONTENT_ENGINE_V162_PLAN.md`.
+- Added `docs/CONTENT_ENGINE_ARCHITECTURE.md`.
+- Added `docs/PROVIDER_HEALTH_REVIEW.md`.
+- Documented the existing Daily Brief generation flow.
+- Documented the existing Social Pack generation flow.
+- Documented the existing Weekly Intelligence / aggregation flow.
+- Documented Provider Health flow and disabled-provider reasons.
+- Added a root-cause matrix for Daily title repetition, Social Pack repetition,
+  Weekly similarity risk, UTC date-key risk, and provider-health ambiguity.
+- Defined Narrative Diversification, Daily / Social separation, Weekly / Daily
+  separation, Asia/Taipei product-date key design, regression test plan,
+  v1.62.1 implementation scope, and rollback plan.
+
+Key Decisions:
+
+- v1.62.0 is documentation / architecture only.
+- Do not patch `build-insight.ts`, Social Pack generator, Weekly generator,
+  scheduler, or publish flow until v1.62.1 implementation is approved.
+- Daily and Weekly content quality fixes must be regression-tested before
+  another production content-engine change.
+- `Yahoo Finance` Daily RSS remains disabled because of repeated 429 /
+  rate-limit responses.
+- `Bloomberg` Daily RSS remains disabled because stable public RSS access and
+  legal / terms suitability have not been verified.
+- App quote Yahoo chart API and backend / legacy yfinance providers are
+  separate provider paths and should not be confused with App Daily news intake.
+
+Out of Scope:
+
+- Production generation code changes.
+- Auth / SSO work.
+- LINE / LIFF.
+- Supabase schema changes.
+- Provider activation.
+- Bloomberg / Yahoo scraping.
+- Weekly revision migration.
+- Publish workflow changes.
+- Stripe, broker integration, portfolio engines, trading, or investment advice.

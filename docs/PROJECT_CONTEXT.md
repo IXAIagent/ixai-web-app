@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.61.1`
+`v1.62.0`
 
 Current Core Flow:
 
@@ -154,6 +154,8 @@ SSO Prototype & Implementation Readiness turns the v1.60 identity foundation int
 
 SSO Design Review validates that the v1.60 / v1.61 architecture is implementable before writing authentication code. The review concludes GO with constraints: Legacy Pro can migrate toward Supabase Auth, but only if its session source, protected route gate, API Authorization header, and backend JWT validation model are changed together. `docs/SSO_FILE_CHANGESET.md`, `docs/SSO_PROTOTYPE_BLUEPRINT.md`, and `docs/SSO_SECURITY_REVIEW.md` define the expected file impact, v1.62-v1.66 rollout, rollback path, and security controls. v1.61.1 remains documentation-only and does not change production authentication.
 
+Content Intelligence Foundation pauses v1.62 SSO implementation work to document the Daily / Weekly / Social Pack content-engine failure mode first. `docs/DAILY_BRIEF_ROOT_CAUSE_ANALYSIS.md` confirms that production does not expose a published `daily-intelligence-2026-06-03` brief and that repeated Daily titles / Social Packs are primarily caused by deterministic AI + macro question-driven narrative logic in the content engine. `docs/CONTENT_ENGINE_V162_PLAN.md`, `docs/CONTENT_ENGINE_ARCHITECTURE.md`, and `docs/PROVIDER_HEALTH_REVIEW.md` define the v1.62.1 implementation scope, provider health boundaries, Asia/Taipei product-date design, regression tests, and rollback plan. v1.62.0 remains documentation-only and does not modify generation code.
+
 Unified Pro Product Integration now makes app.ixuan.ai the primary IXAI Pro beta surface. During Beta Open Access, authenticated and account-linked users can enter Portfolio Intelligence, FCN Monitoring, and Risk Engine workspace skeletons inside the production app. This is not permanent free Pro, Stripe billing, broker access, real Portfolio / FCN data, trading execution, or investment advice. The legacy Pro Lab remains a reference-only environment rather than the primary product entry.
 
 Latest engineering health check:
@@ -249,10 +251,11 @@ The integration plan remains intentionally narrow:
 
 Current Highest Priorities:
 
-1. Weekly Revision Migration Review / Rollout.
-2. Publish Center Foundation.
-3. Monthly / Yearly Periodic Intelligence planning.
-4. Continued Social Pack Period Divergence QA after future Daily / Weekly engine changes.
+1. v1.62.1 Content Engine implementation: remove deterministic Daily narrative repetition, add Asia/Taipei product-date key, and add Daily / Social / Weekly regression tests.
+2. Weekly Revision Migration Review / Rollout.
+3. Publish Center Foundation.
+4. Monthly / Yearly Periodic Intelligence planning.
+5. Continued Social Pack Period Divergence QA after future Daily / Weekly engine changes.
 
 Growth Strategy:
 
@@ -417,6 +420,9 @@ Known areas that require care:
 - Daily Brief and Social Pack content must remain interpretation-first. Avoid reverting Daily output to raw news summary, generic filler, or template labels.
 - Social Pack I-Xuan View must remain complete Chinese commentary and should not display raw English headlines, clipped fragments, or duplicated placeholder copy.
 - Daily / Weekly Social Pack period separation is fixed in v1.50.1, but must remain a permanent QA rule. Daily and Weekly Social Packs should fail QA if they can be swapped without obvious period mismatch, if Slide 1 asks the same question, if Slide 2 reuses the same evidence role, or if Slide 5 reuses the same I-Xuan View with only "today" / "this week" wording changed.
+- Daily Brief consecutive-date repetition is a current Content Engine risk. `docs/DAILY_BRIEF_ROOT_CAUSE_ANALYSIS.md` found that the public 2026-06-02 title came from `questionDriven.centralQuestion`, while `daily-intelligence-2026-06-03` was not publicly published through the checked API. Future Daily engine changes must not let a broad AI + macro branch produce the same title, key answer, I-Xuan View, and Social Pack slides across adjacent dates.
+- Daily title, Social Pack Slide 1, and Social Pack Slide 5 must be date/event-specific. If two adjacent Daily Briefs with different source events produce the same central question or same I-Xuan View, QA should fail.
+- Daily product date / slug generation currently has UTC-date risk. Future work should explicitly design an Asia/Taipei product-date key before changing scheduler or publish behavior.
 - Production route QA after v1.50.2 found repeated Next.js `_rsc` prefetch abort noise for `/fcn` and `/weekly-brief`. This did not create console errors or route failures, but future navigation/prefetch policy changes should verify these routes.
 - Provider coverage is materially improved in v1.41.3, but Reuters, Bloomberg, Yahoo Finance, CNYES, 工商時報, 經濟日報, and MoneyDJ remain disabled until stable legal RSS/API access is verified.
 - Market Memory Layer is local / editorial-first and uses recent Daily Briefs as narrative context. It must not be represented as personal market memory, portfolio memory, or individualized investment advice.
@@ -445,3 +451,7 @@ Before major work, AI agents should read `PROJECT_CONTEXT.md`, `PROJECT_RULES.md
 - `docs/SSO_FILE_CHANGESET.md`: expected file-level impact before v1.62+ SSO code changes.
 - `docs/SSO_PROTOTYPE_BLUEPRINT.md`: v1.62-v1.66 SSO rollout plan.
 - `docs/SSO_SECURITY_REVIEW.md`: SSO token, trust-boundary, replay, logout, and entitlement security review.
+- `docs/DAILY_BRIEF_ROOT_CAUSE_ANALYSIS.md`: root-cause audit for repeated 2026-06-02 / expected 2026-06-03 Daily Brief and Social Pack narratives.
+- `docs/CONTENT_ENGINE_V162_PLAN.md`: v1.62 Content Intelligence Foundation plan and v1.62.1 implementation scope.
+- `docs/CONTENT_ENGINE_ARCHITECTURE.md`: Daily / Weekly / Social Pack content-engine architecture baseline.
+- `docs/PROVIDER_HEALTH_REVIEW.md`: provider health review for App Daily news, App quotes, backend / legacy providers, Yahoo Finance, and Bloomberg.

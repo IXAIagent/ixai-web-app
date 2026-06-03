@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.61.1`
+`v1.62.0`
 
 ## Related Strategic Documents
 
@@ -17,6 +17,10 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/SSO_FILE_CHANGESET.md`
 - `docs/SSO_PROTOTYPE_BLUEPRINT.md`
 - `docs/SSO_SECURITY_REVIEW.md`
+- `docs/DAILY_BRIEF_ROOT_CAUSE_ANALYSIS.md`
+- `docs/CONTENT_ENGINE_V162_PLAN.md`
+- `docs/CONTENT_ENGINE_ARCHITECTURE.md`
+- `docs/PROVIDER_HEALTH_REVIEW.md`
 
 ## Current Product Flow
 
@@ -448,16 +452,73 @@ Completed:
 
 ## Next Suggested Version
 
-`v1.62.0 — SSO Bridge Prototype`
+`v1.62.1 — Content Engine Implementation`
 
 Goal:
 
-- Select Option A Unified Supabase Auth validation or Option B transitional JWT
-  Exchange Bridge.
-- Prototype true App → Pro shared login for beta users only, preferably with
-  Unified Supabase Auth first.
-- Keep legacy Pro login available as rollback.
-- Do not change production authentication flows without explicit approval.
+- Remove deterministic Daily narrative repetition from the AI + macro branch.
+- Rebalance Daily title / question source priority so event-specific headlines
+  and evidence can drive adjacent Daily briefs.
+- Keep Daily Social Pack derived from Daily source material, but make Slide 1
+  and Slide 5 date/event-specific instead of repeated shared thesis copy.
+- Preserve Weekly source priority around weekly events, upcoming catalysts,
+  weekly periodic narrative, and weekly-only I-Xuan View.
+- Add Asia/Taipei product-date key design for Daily draft lookup / slug /
+  publish diagnostics.
+- Add regression tests for consecutive Daily divergence, Daily Social
+  divergence, Weekly / Daily separation, provider disabled reasons, and
+  product-date behavior.
+- Do not change auth, SSO, LINE, publish flow, provider activation, or
+  Supabase schema.
+
+## v1.62.0 — Content Intelligence Foundation
+
+Why:
+
+- v1.62 SSO implementation was paused because Daily / Weekly / Social Pack
+  quality had a more immediate root-cause issue.
+- Production review found 2026-06-02 and expected 2026-06-03 Daily Brief /
+  Social Pack narratives could appear nearly identical.
+- The root-cause audit found that production did not expose a public
+  `daily-intelligence-2026-06-03` brief and that the 2026-06-02 public title
+  was driven by `questionDriven.centralQuestion`, not the generated provider
+  headline.
+- The content engine still has deterministic AI + macro narrative rules that
+  can repeat the same title, key answer, and I-Xuan View across adjacent dates.
+
+Completed:
+
+- Added `docs/DAILY_BRIEF_ROOT_CAUSE_ANALYSIS.md`.
+- Added `docs/CONTENT_ENGINE_V162_PLAN.md`.
+- Added `docs/CONTENT_ENGINE_ARCHITECTURE.md`.
+- Added `docs/PROVIDER_HEALTH_REVIEW.md`.
+- Documented current Daily Brief, Daily Social Pack, Weekly Intelligence,
+  Weekly Social Pack, and Provider Health flows.
+- Documented root-cause matrix, Narrative Diversification design, Daily /
+  Social separation, Weekly / Daily separation, Asia/Taipei product-date key
+  design, regression test plan, v1.62.1 implementation scope, and rollback plan.
+
+Provider decisions:
+
+- App Daily `Yahoo Finance` RSS remains disabled because repeated intake checks
+  hit 429 / rate-limit responses.
+- App Daily `Bloomberg` remains disabled because stable public RSS access and
+  terms are not verified.
+- App market quote Yahoo chart API and backend / legacy yfinance paths are
+  separate from App Daily news intake and must not be treated as the same
+  provider pipeline.
+
+Out of Scope:
+
+- Code changes.
+- `build-insight.ts` changes.
+- Social Pack generator changes.
+- Weekly generator changes.
+- Scheduler changes.
+- Publish flow changes.
+- Auth / SSO changes.
+- Provider activation.
+- Supabase schema changes.
 
 ## v1.59.0 — Real Pro Bridge + Icon Cleanup
 
@@ -571,9 +632,11 @@ Completed:
   `docs/SSO_PROTOTYPE_BLUEPRINT.md`.
 - Added SSO risk and mitigation review in `docs/SSO_SECURITY_REVIEW.md`.
 
-Next code version:
+Deferred SSO code version:
 
-- `v1.62.0 — SSO Launch Endpoint Prototype`
+- `SSO Launch Endpoint Prototype` is deferred until after the v1.62 Content
+  Engine root-cause work. The next implementation version is now
+  `v1.62.1 — Content Engine Implementation`.
 
 Still not included:
 
