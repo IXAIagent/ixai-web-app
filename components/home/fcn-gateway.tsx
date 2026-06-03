@@ -3,7 +3,7 @@ import { ArrowRight, BookOpen, ShieldCheck, Sparkles } from "lucide-react";
 
 // v1.32.2 — FCN education gateway, intelligence-styled. Pure education
 // surface; no individualized FCN risk monitoring (that remains a Pro
-// feature). Two CTAs: Learn FCN (/fcn) and IXAI Pro Preview (/pro).
+// feature). Two CTAs: learn FCN (/fcn) and IXAI Pro (/pro).
 
 export function FcnGateway() {
   return (
@@ -13,14 +13,14 @@ export function FcnGateway() {
           <ShieldCheck className="h-4 w-4" aria-hidden="true" />
         </span>
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          FCN Education Hub
+          FCN 教育中心
         </p>
       </div>
       <h2 className="mt-3 font-serif text-xl font-semibold leading-8 sm:text-2xl">
-        FCN 不只是 coupon — worst-of / KI / volatility 才是真正風險核心。
+        FCN 不只是 coupon — worst-of / KI / 波動率才是真正風險核心。
       </h2>
       <p className="mt-3 max-w-3xl text-sm leading-7 text-white/72 sm:text-base sm:leading-8">
-        IXAI Public 只做教育型 FCN intelligence；個人化 FCN risk monitoring 與 basket 風控保留在未來 IXAI Pro。
+        IXAI 只做教育型 FCN 情報；個人化 FCN 風險監控與 basket 風控保留在未來 IXAI Pro。
       </p>
 
       <div className="mt-5 grid gap-3 sm:gap-4 md:grid-cols-3">
@@ -45,7 +45,7 @@ export function FcnGateway() {
         <article className="flex h-full flex-col rounded-xl border border-white/12 bg-white/[0.045] p-3.5 text-sm leading-7 text-[rgba(245,240,230,0.72)] sm:p-4">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-            Volatility
+            波動率
           </div>
           <p className="mt-2">
             高 coupon 是高波動的對價；理解波動率定價，才能看清 FCN 的真正風險樣貌。
@@ -59,14 +59,14 @@ export function FcnGateway() {
           href="/fcn"
         >
           <BookOpen className="h-4 w-4" aria-hidden="true" />
-          Learn FCN
+          認識 FCN
         </Link>
         <Link
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] transition hover:bg-white/[0.06]"
           href="/pro"
         >
           <Sparkles className="h-4 w-4" aria-hidden="true" />
-          IXAI Pro Preview
+          IXAI Pro
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>

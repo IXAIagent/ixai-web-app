@@ -7,10 +7,10 @@ export function Hero() {
             IXAI
           </p>
           <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-normal sm:text-4xl">
-            AI Wealth Intelligence Platform
+            AI 財富情報平台
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-8 text-[rgba(245,240,230,0.72)]">
-            一套每天打開的 AI wealth intelligence platform，將市場情報、風險脈絡與資產觀察整理成可持續使用的金融決策節奏。
+            一套每天打開的 AI 財富情報平台，將市場情報、風險脈絡與資產觀察整理成可持續使用的金融決策節奏。
           </p>
         </div>
 
@@ -19,7 +19,7 @@ export function Hero() {
             <p className="text-xs uppercase tracking-[0.2em] text-[rgba(245,240,230,0.42)]">
               今日閱讀框架
             </p>
-            <p className="mt-2 text-lg font-medium">Daily Brief + Intelligence OS</p>
+            <p className="mt-2 text-lg font-medium">每日晨報 + 市場情報</p>
           </div>
           <div className="grid grid-cols-3 gap-2">
             {["閱讀", "判斷", "監控"].map((item) => (

@@ -9,23 +9,23 @@ import { getUpgradeReason } from "@/src/lib/membership/entitlements";
 const featureCopy: Record<ProFeature, { title: string; copy: string }> = {
   ai_alerts: {
     title: "將市場情報轉化為 AI 風險警示。",
-    copy: "IXAI Pro 將把你的 Watchlist 與 market memory 連接到個人風險通知。",
+    copy: "IXAI Pro 將把你的關注清單與市場記憶連接到個人風險提醒。",
   },
   fcn_risk_intelligence: {
     title: "把 FCN 監控帶入個人風險工作區。",
-    copy: "從 FCN 教育延伸到 Worst-of、KI 距離與 coupon schedule 監控。",
+    copy: "從 FCN 教育延伸到 Worst-of、KI 距離與配息時程監控。",
   },
   portfolio_intelligence: {
     title: "讓 IXAI 成為你的個人情報系統。",
-    copy: "Portfolio Intelligence 將連接市場結構、集中度與 Watchlist 行為。",
+    copy: "投資組合分析將連接市場結構、集中度與關注清單行為。",
   },
   premium_daily: {
-    title: "把 Daily Brief 延伸為個人晨間簡報。",
-    copy: "IXAI Pro 會把 public intelligence 轉化為貼近個人資產的工作流。",
+    title: "把每日晨報延伸為個人晨間簡報。",
+    copy: "IXAI Pro 會把公開市場情報轉化為貼近個人資產的工作流。",
   },
   premium_weekly: {
-    title: "將 Weekly Intelligence 連接到你的風險地圖。",
-    copy: "IXAI Pro 會把每週市場敘事延伸為 portfolio 與 FCN 監控。",
+    title: "將每週情報連接到你的風險地圖。",
+    copy: "IXAI Pro 會把每週市場敘事延伸為投資組合與 FCN 監控。",
   },
 };
 

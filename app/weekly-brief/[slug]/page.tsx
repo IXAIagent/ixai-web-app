@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: PageProps) {
 
   if (!brief) {
     return {
-      title: "Weekly Brief Not Found | IXAI",
+      title: "找不到每週情報 | IXAI",
     };
   }
 
@@ -56,10 +56,10 @@ export async function generateMetadata({ params }: PageProps) {
     : brief.executiveSummary;
 
   return buildPublicMetadata({
-    title: `Weekly Intelligence — ${brief.coveragePeriod} | IXAI`,
+    title: `每週情報 — ${brief.coveragePeriod} | IXAI`,
     description,
     keywords: [
-      "Weekly Intelligence",
+      "每週情報",
       "IXAI",
       "Market Regime",
       "AI",
@@ -72,13 +72,13 @@ export async function generateMetadata({ params }: PageProps) {
     canonical: `/weekly-brief/${slug}`,
     ogImage: {
       url: `/api/og/weekly?slug=${encodeURIComponent(slug)}`,
-      alt: `IXAI Weekly Intelligence — ${brief.coveragePeriod}`,
+      alt: `IXAI 每週情報 — ${brief.coveragePeriod}`,
     },
     ogType: "article",
     articleMeta: {
       publishedTime: brief.publishedAt,
       modifiedTime: brief.publishedAt,
-      section: "Weekly Intelligence",
+      section: "每週情報",
       tags: ["AI", "Fed", "Taiwan", "Crypto", "Volatility", "FCN"],
     },
   });
@@ -101,27 +101,27 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         imageUrl={`/api/og/weekly?slug=${encodeURIComponent(slug)}`}
         publishedAt={brief.publishedAt}
         modifiedAt={brief.publishedAt}
-        section="Weekly Intelligence"
+        section="每週情報"
         keywords={["AI", "Fed", "Taiwan", "Crypto", "Volatility", "FCN"]}
       />
       <BreadcrumbStructuredData
         items={[
           { name: "IXAI", url: "/" },
-          { name: "Weekly Intelligence", url: "/weekly-brief" },
+          { name: "每週情報", url: "/weekly-brief" },
           { name: brief.title, url: `/weekly-brief/${slug}` },
         ]}
       />
 
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          Weekly Intelligence
+          每週情報
         </p>
         <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70">
           <span className="rounded-lg border border-white/12 px-2.5 py-1">
-            Public Intelligence
+            公開市場情報
           </span>
           <span className="rounded-lg border border-white/12 px-2.5 py-1">
-            General Market Awareness
+            一般市場觀察
           </span>
         </div>
         <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
@@ -144,15 +144,15 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* v1.33 — Share This Weekly Intelligence */}
+      {/* v1.33 — weekly intelligence sharing. */}
       <section className="rounded-2xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Share This Weekly Intelligence
+              分享這份每週情報
             </p>
             <p className="mt-1.5 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-              把本週 IXAI 市場 strategist note 分享給你的網絡。
+              把本週 IXAI 市場觀點分享給你的網絡。
             </p>
           </div>
           <ShareActions
@@ -170,8 +170,8 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         <>
           <IntelligenceQuoteCard
             narrative={brief.narrative}
-            eyebrow="IXAI Weekly Intelligence"
-            contextLine={`Coverage · ${brief.coveragePeriod}`}
+            eyebrow="IXAI 每週情報"
+            contextLine={`回顧期間 · ${brief.coveragePeriod}`}
             events={brief.upcomingFocus.map((focus) => ({
               date: focus.date,
               title: focus.event,
@@ -183,7 +183,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
           />
           <NarrativeIntelligence
             narrative={brief.narrative}
-            eyebrow="Weekly Narrative Intelligence"
+            eyebrow="每週市場敘事"
           />
         </>
       ) : null}
@@ -200,7 +200,7 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
       <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)]">
         <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5 sm:py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            IXAI Intelligence Summary
+            IXAI 情報摘要
           </p>
           <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
             市場目前正在 pricing 什麼
@@ -208,9 +208,9 @@ export default async function WeeklyBriefDetailPage({ params }: PageProps) {
         </div>
         <div className="grid gap-3 p-4 sm:p-5 lg:grid-cols-3">
           {[
-            ["Pricing", brief.intelligenceSummary.pricing],
-            ["Risk Tone", brief.intelligenceSummary.riskTone],
-            ["What Changed", brief.intelligenceSummary.whatChanged],
+            ["市場定價", brief.intelligenceSummary.pricing],
+            ["風險基調", brief.intelligenceSummary.riskTone],
+            ["本週變化", brief.intelligenceSummary.whatChanged],
           ].map(([label, text]) => (
             <article className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4" key={label}>
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">

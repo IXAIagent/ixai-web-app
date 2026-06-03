@@ -19,13 +19,11 @@ export function PublicIntelligenceDisclaimer({
         </span>
         <div className="min-w-0">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-            Public Intelligence Notice
+            公開市場情報提醒
           </p>
           <p className="mt-1 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-            IXAI provides market intelligence, educational content, and risk-awareness context.
-            Public Intelligence is not personalized investment advice, portfolio analysis,
-            trading instruction, or a recommendation to buy or sell any security or financial
-            product.
+            IXAI 提供市場情報、教育內容與風險意識脈絡；公開市場情報不是個人化投資建議、
+            投資組合分析、交易指令，也不是任何證券或金融商品的買賣建議。
           </p>
         </div>
       </div>

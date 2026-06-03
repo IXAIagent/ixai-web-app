@@ -5,19 +5,19 @@ import { ArrowUpRight, ShieldCheck, Sparkles } from "lucide-react";
 // the public/pro split without hard-selling. No performance claims.
 
 const PUBLIC_ITEMS = [
-  "Market regime narrative（每日 / 每週）",
-  "Cross-market intelligence flow",
+  "市場狀態敘事（每日 / 每週）",
+  "跨市場情報流",
   "FCN 教育型市場觀察",
-  "Daily Brief / Weekly Intelligence 閱讀",
-  "Watchlist 與基礎個人化偏好",
+  "每日晨報 / 每週情報閱讀",
+  "關注清單與基礎個人化偏好",
 ];
 
 const PRO_ITEMS = [
-  "Personalized portfolio intelligence",
-  "FCN basket risk monitoring",
+  "個人化投資組合分析",
+  "FCN basket 風險監控",
   "Worst-of / KI distance 個人化追蹤",
-  "Personalized weekly intelligence",
-  "AI risk alerts 與 cross-asset 監控",
+  "個人化每週情報",
+  "AI 風險提醒與跨資產監控",
 ];
 
 export function ProGuardrail() {
@@ -28,21 +28,21 @@ export function ProGuardrail() {
           <Sparkles className="h-4 w-4" aria-hidden="true" />
         </span>
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Public Intelligence × IXAI Pro
+          公開市場情報 × IXAI Pro
         </p>
       </div>
       <h2 className="mt-3 text-lg font-semibold leading-7 text-[var(--ixai-forest)] sm:text-xl">
-        高層 intelligence 公開閱讀；個人化保留在 IXAI Pro。
+        高層市場情報公開閱讀；個人化保留在 IXAI Pro。
       </h2>
       <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-        IXAI Public App 用來建立每日市場閱讀習慣；當需要把市場 narrative 對齊個人持倉與 FCN 風控時，未來可進入 IXAI Pro。
+        IXAI App 用來建立每日市場閱讀習慣；當需要把市場敘事對齊個人持倉與 FCN 風控時，未來可進入 IXAI Pro。
       </p>
 
       <div className="mt-5 grid gap-3 sm:gap-4 md:grid-cols-2">
         <article className="rounded-xl border border-[var(--ixai-border)] bg-white/55 p-4">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-            Public Intelligence 提供
+            公開市場情報提供
           </div>
           <ul className="mt-3 grid gap-1.5 text-sm leading-7 text-[var(--ixai-forest-soft)]">
             {PUBLIC_ITEMS.map((item) => (
@@ -82,12 +82,12 @@ export function ProGuardrail() {
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest)]"
           href="/account"
         >
-          建立 IXAI Account
+          建立 IXAI 帳號
           <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">
-        IXAI Public Intelligence 不提供個別投資建議、買賣指令或績效保證；個人化分析保留至付費 Pro 開放。
+        IXAI 公開市場情報不提供個別投資建議、買賣指令或績效保證；個人化分析保留至付費 Pro 開放。
       </p>
     </section>
   );

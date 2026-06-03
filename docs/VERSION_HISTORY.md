@@ -2088,3 +2088,47 @@ Out of Scope:
 - Publish workflow changes.
 - Supabase schema changes.
 - Stripe, broker integration, portfolio engines, trading, or investment advice.
+
+## v1.63.0 — Taiwan User UX Cleanup
+
+Why:
+
+- Taiwan users were seeing too many mixed English product terms and engineering
+  labels in normal user-facing pages.
+- `/account` and Pro surfaces exposed backend / account-link / entitlement /
+  feature-gate concepts that should be internal or simplified.
+- `/portfolio`, `/fcn`, and `/risk` still read like beta skeletons instead of
+  clear Pro module entrances.
+- Daily / Weekly public pages still used English labels such as Daily Brief and
+  Weekly Intelligence in visible UI.
+
+What Changed:
+
+- Added `docs/TAIWAN_USER_UX_CLEANUP_V163.md` as the Taiwan UX source-of-truth.
+- Localized normal user-facing labels toward Traditional Chinese.
+- Updated `/account` hero and Pro connection card copy.
+- Updated `/pro` into a clearer Chinese IXAI Pro entrance with Pro Lab and
+  App-side Pro module language.
+- Updated `/portfolio`, `/fcn`, and `/risk` module copy to 投資組合分析, FCN 監控,
+  and 風險中心.
+- Updated `/daily-brief` and `/weekly-brief` archive labels to 每日晨報 and 每週情報.
+- Updated `/pro-preview` sample copy and preview badge language.
+- Updated 390px mobile QA route expectations for localized copy.
+
+Key Decisions:
+
+- Normal users should see user-facing status language such as 系統連線, 帳號綁定,
+  會員方案, 功能權限, 測試可用, and Pro 保留功能.
+- Engineering diagnostics such as provider health, scheduler status, raw
+  backend state, and provider metadata should remain in admin/internal surfaces.
+- `/daily` and `/weekly` are not active App Router routes; the active public
+  routes are `/daily-brief` and `/weekly-brief`.
+
+Out of Scope:
+
+- SSO.
+- Auth / Supabase / JWT changes.
+- Daily / Weekly content generation engine.
+- Provider logic.
+- Backend or legacy Pro changes.
+- Stripe, broker integration, real portfolio / FCN data, trading, or investment advice.

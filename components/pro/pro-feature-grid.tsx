@@ -3,18 +3,18 @@ import { BellRing, Brain, ShieldCheck } from "lucide-react";
 const FEATURES = [
   {
     icon: Brain,
-    title: "Personal Portfolio Intelligence",
-    copy: "把持倉、集中度與市場 regime 轉成個人化風險脈絡，而不是只看價格清單。",
+    title: "個人投資組合分析",
+    copy: "把持倉、集中度與市場狀態轉成個人化風險脈絡，而不是只看價格清單。",
   },
   {
     icon: ShieldCheck,
-    title: "FCN Risk Intelligence",
-    copy: "追蹤 worst-of、KI / KO distance、coupon schedule 與波動率壓力。",
+    title: "FCN 風險情報",
+    copy: "追蹤 Worst-of、KI / KO 距離、配息時程與波動率壓力。",
   },
   {
     icon: BellRing,
-    title: "AI Market Memory & Alerts",
-    copy: "讓 IXAI 記住你的 watchlist 與關注主題，未來建立風險提醒工作流。",
+    title: "AI 市場記憶與提醒",
+    copy: "讓 IXAI 記住你的關注清單與主題，未來建立風險提醒工作流。",
   },
 ];
 

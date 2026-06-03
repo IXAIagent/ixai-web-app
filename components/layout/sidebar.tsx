@@ -14,35 +14,35 @@ const navGroups: Array<{
   items: Array<{ external?: boolean; label: string; href: string; primary?: boolean }>;
 }> = [
   {
-    heading: "Daily",
+    heading: "每日",
     items: [
       { label: "市場首頁", href: "/", primary: true },
-      { label: "每日簡報", href: "/daily-brief" },
+      { label: "每日晨報", href: "/daily-brief" },
     ],
   },
   {
-    heading: "Market",
+    heading: "市場",
     items: [
       { label: "市場總覽", href: "/market" },
-      { label: "週報", href: "/weekly-brief" },
+      { label: "每週情報", href: "/weekly-brief" },
     ],
   },
   {
-    heading: "Personal",
+    heading: "個人",
     items: [
       { label: "自選觀察", href: "/watchlist" },
       { label: "我的 IXAI", href: "/account" },
     ],
   },
   {
-    heading: "Membership",
+    heading: "會員",
     items: [
       { label: "FCN", href: "/fcn" },
       { label: "IXAI Pro", href: "/pro" },
     ],
   },
   {
-    heading: "Brand",
+    heading: "品牌",
     items: [
       { label: "About 一玄", href: "/about" },
     ],
@@ -62,12 +62,12 @@ export function Sidebar() {
               IXAI
             </Eyebrow>
             <h1 className="mt-1 text-sm font-semibold tracking-normal">
-              Intelligence OS
+              市場情報
             </h1>
           </div>
         </div>
         <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.50)]">
-          Daily market command layer.
+          每日市場情報入口。
         </p>
       </div>
 
@@ -91,7 +91,7 @@ export function Sidebar() {
         <AccountStatus />
         <div className="rounded-lg border border-white/10 bg-white/[0.045] p-3">
           <Eyebrow mono className="text-[10px]">
-            Risk State
+            風險狀態
           </Eyebrow>
           <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.62)]">
             Risk-on 偏正向，但利率仍是估值壓力源。

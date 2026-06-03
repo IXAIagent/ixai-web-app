@@ -13,7 +13,7 @@ import {
 
 // v1.32.1 — Mobile Intelligence Navigation.
 //
-// Brief / Market / IXAI (center, floating) / FCN / Me. The center IXAI
+// Morning brief / market / IXAI (center, floating) / FCN / account. The center IXAI
 // button is intentionally larger with a subtle gold ring + soft glow so
 // it reads as the primary surface, not a flashy CTA.
 //
@@ -38,14 +38,14 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   {
     key: "brief",
-    label: "Brief",
+    label: "晨報",
     href: "/daily-brief",
     icon: FileText,
     matchPrefixes: ["/daily-brief", "/weekly-brief"],
   },
   {
     key: "market",
-    label: "Market",
+    label: "市場",
     href: "/market",
     icon: BarChart3,
   },
@@ -65,7 +65,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     key: "me",
-    label: "Me",
+    label: "我的",
     href: "/account",
     icon: UserCircle,
     matchPrefixes: ["/account", "/login", "/register"],

@@ -98,7 +98,7 @@ export function DailyBriefUnifiedArchive({
     return (
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5">
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-          Daily Brief
+          每日晨報
         </p>
         <p className="mt-2 text-sm leading-7 text-[var(--ixai-ink-muted)]">
           正在讀取最新每日簡報。
@@ -111,7 +111,7 @@ export function DailyBriefUnifiedArchive({
     return (
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5">
         <p className="text-sm leading-7 text-[var(--ixai-ink-muted)]">
-          目前尚無已發布 Daily Brief。
+          目前尚無已發布每日晨報。
         </p>
       </section>
     );

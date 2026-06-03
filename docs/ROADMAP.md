@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.62.1`
+`v1.63.0`
 
 ## Related Strategic Documents
 
@@ -21,6 +21,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/CONTENT_ENGINE_V162_PLAN.md`
 - `docs/CONTENT_ENGINE_ARCHITECTURE.md`
 - `docs/PROVIDER_HEALTH_REVIEW.md`
+- `docs/TAIWAN_USER_UX_CLEANUP_V163.md`
 
 ## Current Product Flow
 
@@ -452,19 +453,19 @@ Completed:
 
 ## Next Suggested Version
 
-`v1.62.2 — Content Engine Output QA`
+`v1.63.1 — Taiwan UX Visual QA Follow-up`
 
 Goal:
 
-- Generate real Daily Briefs across adjacent dates and compare titles,
-  `questionDriven`, I-Xuan View, and Social Packs.
-- Generate Weekly Intelligence from weekly news intake and verify it does not
-  collapse back into Daily wording.
-- Verify Admin Provider Health displays structured disabled-provider reasons.
-- Verify Asia/Taipei date keys around UTC boundary hours in scheduler and
-  generated slugs.
-- Keep SSO, auth, provider activation, publish flow, and Supabase schema out of
-  scope unless a separate approval is given.
+- Manually inspect `/account`, `/pro`, `/pro-preview`, `/portfolio`, `/fcn`,
+  `/risk`, `/daily-brief`, and `/weekly-brief` in desktop and 390px mobile.
+- Verify normal users no longer see raw backend / entitlement / feature-gate /
+  skeleton language in primary content.
+- Verify admin surfaces still preserve technical diagnostics where appropriate.
+- Continue Content Engine output QA separately before changing Daily / Weekly
+  generation again.
+- Keep SSO, auth, provider activation, publish flow, backend, and Supabase
+  schema out of scope unless separately approved.
 
 ## v1.62.0 — Content Intelligence Foundation
 
@@ -530,6 +531,33 @@ Still required:
   Intelligence, and Weekly Social Packs.
 - Production Admin Provider Health visual verification.
 - No provider activation until source stability / policy review is complete.
+
+## v1.63.0 — Taiwan User UX Cleanup
+
+Completed:
+
+- Localized normal user-facing routes toward Traditional Chinese copy.
+- Simplified `/account` hero and Pro entry language.
+- Replaced engineering labels such as Backend, Account Link, Membership,
+  Entitlement, Feature Gate, Beta Enabled, and Reserved for Pro with
+  user-facing labels such as 系統連線, 帳號綁定, 會員方案, 功能權限, 測試可用, and
+  Pro 保留功能.
+- Updated `/pro` to explain IXAI Pro in short Chinese copy while preserving the
+  existing Pro Lab bridge.
+- Updated `/portfolio`, `/fcn`, and `/risk` to present 投資組合分析, FCN 監控,
+  and 風險中心 as clear Pro modules rather than engineering skeletons.
+- Updated `/daily-brief` and `/weekly-brief` public labels to 每日晨報 and
+  每週情報.
+- Added `docs/TAIWAN_USER_UX_CLEANUP_V163.md`.
+- Updated mobile QA route expectations for the localized copy.
+
+Out of scope:
+
+- SSO / auth changes.
+- Daily / Weekly generation engine.
+- Provider logic.
+- Backend / legacy Pro changes.
+- Stripe, portfolio data, FCN data, or investment advice.
 
 Out of Scope:
 

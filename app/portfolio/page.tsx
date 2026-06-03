@@ -2,34 +2,34 @@ import { FeatureGatedPage } from "@/components/pro/feature-gated-page";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
-  title: "Portfolio Intelligence | IXAI Pro",
+  title: "投資組合分析 | IXAI Pro",
   description:
-    "Portfolio Intelligence is a future IXAI Pro module controlled by membership entitlements.",
+    "IXAI Pro 投資組合分析測試入口，未來將連接資產配置、部位整理與 AI 投資筆記。",
   canonical: "/portfolio",
 });
 
 export default function PortfolioPage() {
   return (
     <FeatureGatedPage
-      description="Portfolio Intelligence will connect account-linked portfolio context to market intelligence after Pro entitlement is enabled."
+      description="投資組合分析會在 Pro 權限開放後，將帳號中的投資組合脈絡連接到市場情報。"
       feature="portfolio"
-      moduleName="Portfolio Intelligence"
+      moduleName="投資組合分析"
       sections={[
         {
-          copy: "Coming soon: a linked account overview that can later summarize total exposure without connecting brokers in this beta.",
-          title: "Portfolio Overview",
+          copy: "測試版會先整理帳號層級總覽；目前不串接券商，也不讀取真實部位。",
+          title: "投資組合總覽",
         },
         {
-          copy: "Coming soon: allocation cards for asset class, currency, and thematic exposure once real portfolio data is connected.",
-          title: "Asset Allocation",
+          copy: "未來可依資產類別、幣別與主題曝險整理配置；目前僅顯示測試版結構。",
+          title: "資產配置",
         },
         {
-          copy: "Coming soon: position-level workspace. No holdings, broker data, or trade execution are loaded in v1.58.",
-          title: "Positions",
+          copy: "未來會建立部位層級工作區；目前不載入持股、券商資料或交易功能。",
+          title: "部位整理",
         },
         {
-          copy: "Coming soon: AI notes that connect market intelligence to portfolio context without giving buy/sell instructions.",
-          title: "AI Portfolio Notes",
+          copy: "未來會把市場情報連到投資組合脈絡，但不提供買賣指令。",
+          title: "AI 投資筆記",
         },
       ]}
     />

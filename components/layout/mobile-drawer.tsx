@@ -47,25 +47,25 @@ type DrawerSection = {
 
 const DRAWER_SECTIONS: DrawerSection[] = [
   {
-    title: "Intelligence",
+    title: "市場情報",
     entries: [
-      { label: "Daily Brief", href: "/daily-brief", icon: FileText },
-      { label: "Weekly Intelligence", href: "/weekly-brief", icon: Newspaper },
+      { label: "每日晨報", href: "/daily-brief", icon: FileText },
+      { label: "每週情報", href: "/weekly-brief", icon: Newspaper },
     ],
   },
   {
-    title: "Markets",
+    title: "市場",
     entries: [
-      { label: "Market Overview", href: "/market", icon: BarChart3 },
-      { label: "Watchlist", href: "/watchlist", icon: Eye },
+      { label: "市場總覽", href: "/market", icon: BarChart3 },
+      { label: "關注清單", href: "/watchlist", icon: Eye },
     ],
   },
   {
-    title: "FCN Intelligence",
+    title: "FCN",
     entries: [
-      { label: "Learn FCN", href: "/fcn", icon: ShieldCheck },
+      { label: "認識 FCN", href: "/fcn", icon: ShieldCheck },
       {
-        label: "FCN Philosophy",
+        label: "FCN 觀念",
         href: "/fcn#learn-fcn",
         icon: BookOpen,
         matchPrefix: "/fcn",
@@ -77,15 +77,15 @@ const DRAWER_SECTIONS: DrawerSection[] = [
     entries: [
       { label: "我的 IXAI", href: "/account", icon: UserCircle },
       { label: "IXAI Pro", href: "/pro", icon: Sparkles },
-      { label: "About 一玄", href: "/about", icon: Info },
+      { label: "關於一玄", href: "/about", icon: Info },
     ],
   },
   {
-    title: "Settings",
+    title: "設定與回饋",
     entries: [
-      { label: "Feedback", href: "/feedback", icon: MessageSquare },
-      { label: "Notification Settings", href: "/settings/notifications", icon: Settings },
-      { label: "Report a Bug", href: "/feedback", icon: Bug, matchPrefix: "/feedback" },
+      { label: "提供意見", href: "/feedback", icon: MessageSquare },
+      { label: "通知設定", href: "/settings/notifications", icon: Settings },
+      { label: "回報問題", href: "/feedback", icon: Bug, matchPrefix: "/feedback" },
     ],
   },
 ];
@@ -152,7 +152,7 @@ export function MobileDrawer({
         type="button"
       />
       <aside
-        aria-label="IXAI Intelligence OS navigation drawer"
+        aria-label="IXAI 主要導覽選單"
         className={`absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col border-r border-[rgba(176,141,87,0.30)] bg-[#071f17] text-[var(--ixai-cream)] shadow-[24px_0_64px_rgba(9,41,31,0.34)] transition-transform duration-220 ease-out ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
@@ -161,10 +161,10 @@ export function MobileDrawer({
         <header className="flex items-start justify-between gap-3 border-b border-white/10 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+0.8rem)]">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-              IXAI Intelligence OS
+              IXAI 市場情報
             </p>
             <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-              IXAI 一玄 · AI Wealth Intelligence
+              IXAI 一玄 · AI 財富情報
             </p>
           </div>
           <button

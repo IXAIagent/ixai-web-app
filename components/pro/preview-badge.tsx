@@ -7,7 +7,7 @@ import type { IntelligenceSurface } from "@/src/lib/intelligence/access";
 
 export function PreviewBadge({
   surface = "pro_preview",
-  label = "Preview · Sample-only",
+  label = "預覽 · 示意資料",
 }: {
   surface?: IntelligenceSurface;
   label?: string;

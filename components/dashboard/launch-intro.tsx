@@ -14,11 +14,11 @@ export function LaunchIntro() {
             IXAI 市場情報入口
           </p>
           <h2 className="mt-1.5 text-lg font-semibold leading-6 text-[var(--ixai-forest)] sm:text-xl sm:leading-8">
-            免費市場 intelligence 與 AI 風險觀察平台。
+            免費市場情報與 AI 風險觀察平台。
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--ixai-ink-muted)] sm:leading-7">
-            每天閱讀 Daily Brief、追蹤市場脈搏與 FCN 風險觀察；需要個人化監控時，
-            可延伸到 IXAI Pro 的 AI Wealth Operating System。
+            每天閱讀每日晨報、追蹤市場脈搏與 FCN 風險觀察；需要個人化監控時，
+            可延伸到 IXAI Pro 的 AI 財富工作區。
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
@@ -26,7 +26,7 @@ export function LaunchIntro() {
             className="ixai-cta-forest inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-sm font-medium sm:px-4"
             href={ixaiEcosystem.dailyBriefUrl}
           >
-            查看 Daily Brief
+            查看每日晨報
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] px-3 py-2 text-sm font-medium text-[var(--ixai-forest)] sm:px-4"

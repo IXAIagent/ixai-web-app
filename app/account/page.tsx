@@ -16,7 +16,7 @@ import { ixaiIdentity } from "@/src/lib/ixai/identity";
 
 export const metadata = buildPublicMetadata({
   title: "我的 IXAI",
-  description: "我的 IXAI 是偏好設定、watchlist 同步與未來個人化 AI 風險監控的入口。",
+  description: "我的 IXAI 是偏好設定、關注清單同步與未來個人化 AI 風險提醒的入口。",
 });
 
 export default function AccountPage() {
@@ -24,14 +24,13 @@ export default function AccountPage() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          AI Intelligence Workspace
+          我的 IXAI
         </p>
         <h1 className="mt-2 max-w-3xl font-serif text-2xl font-semibold leading-8 sm:mt-3 sm:text-5xl sm:leading-snug">
-          你的 AI intelligence layer 從這裡開始。
+          你的市場情報工作區從這裡開始。
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:leading-7">
-          這裡整理你的身份狀態、Watchlist memory、LINE intelligence readiness 與未來 IXAI Pro
-          personal intelligence 的入口。
+          這裡整理你的帳號狀態、關注清單、LINE 接收設定與 IXAI Pro 入口。
         </p>
         <p className="mt-3 max-w-3xl text-xs leading-6 text-white/56">
           {ixaiIdentity.sharedAccountMessage}
@@ -57,8 +56,8 @@ export default function AccountPage() {
       <WatchlistAccountStatus />
 
       <section className="rounded-2xl border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Public Beta · Feedback
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+          公開測試 · 回饋
         </p>
         <h2 className="mt-2 text-lg font-semibold leading-7 text-[var(--ixai-forest)] sm:text-xl">
           IXAI Public Beta 持續優化中，歡迎提供回饋。
@@ -96,9 +95,9 @@ export default function AccountPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         {[
-          ["FREE", "Daily Brief、Weekly Brief、市場總覽與基礎自選觀察。"],
-          ["PERSONAL", "保存自選觀察、關注主題與閱讀記憶，調整個人情報優先順序。"],
-          ["PRO", "FCN 監控、投資組合 intelligence、AI 風險提醒、Crypto 監控與個人晨報。"],
+          ["FREE", "每日晨報、每週情報、市場總覽與基礎關注清單。"],
+          ["PERSONAL", "保存關注清單、主題偏好與閱讀記憶，調整個人情報優先順序。"],
+          ["PRO", "FCN 監控、投資組合分析、AI 風險提醒、Crypto 監控與個人晨報。"],
         ].map(([label, copy]) => (
           <article
             className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-4"
@@ -116,17 +115,17 @@ export default function AccountPage() {
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.78)] p-5 sm:p-6">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Why account?
+          為什麼需要帳號？
         </p>
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-          IXAI Account 是建立市場記憶與未來 Pro intelligence continuity 的起點。
+          IXAI 帳號是建立市場記憶與未來 Pro 情報連續性的起點。
         </h2>
         <div className="mt-5 grid gap-3 text-sm leading-7 text-[var(--ixai-forest-soft)] md:grid-cols-2">
           {[
-            "未來支援跨裝置同步 watchlist，不只存在單一瀏覽器。",
-            "保存 interests，讓情報排序逐步貼近你的市場關注。",
-            "累積 reading memory，讓 IXAI 更懂你的每日使用脈絡。",
-            "為未來 IXAI Pro 的 FCN、portfolio、AI risk alerts 與 personal morning brief 做準備。",
+            "未來支援跨裝置同步關注清單，不只存在單一瀏覽器。",
+            "保存關注主題，讓情報排序逐步貼近你的市場關注。",
+            "累積閱讀記憶，讓 IXAI 更懂你的每日使用脈絡。",
+            "為未來 IXAI Pro 的 FCN、投資組合分析、AI 風險提醒與個人晨報做準備。",
             ixaiIdentity.accountContinuityCopy,
           ].map((item) => (
             <p

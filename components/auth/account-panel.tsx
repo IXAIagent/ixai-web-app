@@ -123,13 +123,13 @@ export function AccountPanel() {
   return (
     <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_16px_44px_rgba(9,41,31,0.05)] sm:p-6">
       <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-        My IXAI
+        我的 IXAI
       </p>
       <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-        {isAuthenticated ? "你的 IXAI 身份已建立" : "建立帳號後進入 IXAI intelligence workspace"}
+        {isAuthenticated ? "你的 IXAI 身份已建立" : "建立帳號後進入 IXAI 情報工作區"}
       </h2>
       <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-        IXAI Public App 現在以帳號作為進入點。登入後可以進入每日市場 intelligence、
+        IXAI App 現在以帳號作為進入點。登入後可以閱讀每日市場情報、
         建立個人自選觀察，並為未來 IXAI Pro 個人化 AI 風險監控建立基礎。
         Pro 連接與跨裝置同步會分階段開放。
       </p>

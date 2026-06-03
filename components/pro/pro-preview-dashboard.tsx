@@ -32,23 +32,22 @@ export function ProPreviewDashboard() {
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)] sm:text-[11px] sm:tracking-[0.28em]">
-          Intelligence Preview · Sample-only
+          情報預覽 · 示意資料
         </p>
         <div className="mt-3">
           <PreviewBadge />
         </div>
         <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:text-5xl">
-          IXAI Intelligence Preview
+          IXAI 情報預覽
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
-          這裡展示 Public intelligence 如何逐步延伸為 future personalized intelligence：
-          portfolio awareness、FCN risk awareness、watchlist memory 與 AI alert workflow。本頁僅使用示意資料。
+          這裡展示公開市場情報如何逐步延伸為個人化情報：投資組合觀察、FCN 風險意識、關注清單記憶與 AI 風險提醒。本頁僅使用示意資料。
         </p>
       </section>
 
       <IdentifySessionCard
         source="pro_preview"
-        title="保留你的 Intelligence Preview context"
+        title="保留你的情報預覽脈絡"
       />
 
       <ConnectLineCard source="pro_preview" />
@@ -123,8 +122,7 @@ export function ProPreviewDashboard() {
           Account-based Pro Access
         </p>
         <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          App account 可以建立 Pro 身份連接；完整 Portfolio / FCN / risk intelligence
-          仍會由 preview access、manual approval 或 future paid subscription 控制。
+          App 帳號可以建立 Pro 身份連接；完整投資組合、FCN 與風險情報仍會由測試資格、人工核准或未來付費方案控制。
         </p>
       </section>
 
@@ -136,17 +134,16 @@ export function ProPreviewDashboard() {
             升級路徑
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
-            從 Preview 進入未來 Pro Intelligence。
+            從預覽進入未來 IXAI Pro。
           </h2>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            此頁是示意預覽。未來 Pro access 將需要 membership entitlement
-            與清楚的風險控管；此階段尚未進行任何收費。
+            此頁是示意預覽。未來 Pro 使用權將依會員方案與功能權限開放；此階段尚未進行任何收費。
           </p>
           <Link
               className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest)] sm:w-auto"
             href="/account"
           >
-            回到 AI Intelligence Workspace
+            回到我的 IXAI
             <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
           <UpgradeIntelligenceCta

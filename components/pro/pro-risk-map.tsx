@@ -11,7 +11,7 @@ export function ProRiskMap() {
       <div className="border-b border-[var(--ixai-border)] px-4 py-3.5 sm:px-5">
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Portfolio Intelligence 預覽
+            投資組合分析預覽
           </p>
           <PreviewBadge />
         </div>

@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.62.1`
+`v1.63.0`
 
 Current Core Flow:
 
@@ -157,6 +157,8 @@ SSO Design Review validates that the v1.60 / v1.61 architecture is implementable
 Content Intelligence Foundation pauses v1.62 SSO implementation work to document the Daily / Weekly / Social Pack content-engine failure mode first. `docs/DAILY_BRIEF_ROOT_CAUSE_ANALYSIS.md` confirms that production does not expose a published `daily-intelligence-2026-06-03` brief and that repeated Daily titles / Social Packs are primarily caused by deterministic AI + macro question-driven narrative logic in the content engine. `docs/CONTENT_ENGINE_V162_PLAN.md`, `docs/CONTENT_ENGINE_ARCHITECTURE.md`, and `docs/PROVIDER_HEALTH_REVIEW.md` define the v1.62.1 implementation scope, provider health boundaries, Asia/Taipei product-date design, regression tests, and rollback plan. v1.62.0 remains documentation-only and does not modify generation code.
 
 Content Engine Rewrite v1.62.1 implements the approved content-engine safety patch. Daily AI + Macro narrative no longer returns fixed question-driven copy, Daily title selection now checks recent 7 Daily titles before publishing near-duplicates, Daily Social Pack builds social-native card copy instead of directly reusing Daily `questionDriven`, Weekly summary layers prioritize weekly periodic narrative, Daily draft / slug generation uses Asia/Taipei product date, and provider health now exposes structured disabled reason codes for sources such as Yahoo Finance and Bloomberg. See `docs/CONTENT_ENGINE_REWRITE_V162.md`.
+
+Taiwan User UX Cleanup v1.63.0 localizes normal user-facing pages for Taiwan users, simplifies mixed English / engineering copy, and separates user information from internal system diagnostics. `/account`, `/pro`, `/pro-preview`, `/portfolio`, `/fcn`, `/risk`, `/daily-brief`, and `/weekly-brief` now favor Traditional Chinese labels such as 每日晨報, 每週情報, 關注清單, 投資組合分析, FCN 監控, 風險中心, 會員方案, 帳號綁定, and 系統連線. Admin and technical surfaces may retain diagnostics, but normal users should not see raw backend / entitlement / feature-gate language. See `docs/TAIWAN_USER_UX_CLEANUP_V163.md`.
 
 Unified Pro Product Integration now makes app.ixuan.ai the primary IXAI Pro beta surface. During Beta Open Access, authenticated and account-linked users can enter Portfolio Intelligence, FCN Monitoring, and Risk Engine workspace skeletons inside the production app. This is not permanent free Pro, Stripe billing, broker access, real Portfolio / FCN data, trading execution, or investment advice. The legacy Pro Lab remains a reference-only environment rather than the primary product entry.
 
@@ -458,3 +460,4 @@ Before major work, AI agents should read `PROJECT_CONTEXT.md`, `PROJECT_RULES.md
 - `docs/CONTENT_ENGINE_ARCHITECTURE.md`: Daily / Weekly / Social Pack content-engine architecture baseline.
 - `docs/PROVIDER_HEALTH_REVIEW.md`: provider health review for App Daily news, App quotes, backend / legacy providers, Yahoo Finance, and Bloomberg.
 - `docs/CONTENT_ENGINE_REWRITE_V162.md`: v1.62.1 content-engine rewrite implementation record, including Daily title diversification, Social Pack separation, Weekly separation, Asia/Taipei date fix, provider health reason codes, tests, and rollback plan.
+- `docs/TAIWAN_USER_UX_CLEANUP_V163.md`: v1.63.0 Traditional Chinese UX cleanup source-of-truth for normal user pages, engineering-info separation, wording table, pages changed, and rollback plan.

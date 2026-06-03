@@ -21,10 +21,10 @@ type BackendHealth = {
 };
 
 type BackendUiState =
-  | { label: "Checking"; tone: "pending"; detail: "Checking backend connection..." }
-  | { label: "Connected"; tone: "ok"; detail: string }
-  | { label: "Not configured"; tone: "muted"; detail: string }
-  | { label: "Unavailable"; tone: "warning"; detail: string };
+  | { label: "檢查中"; tone: "pending"; detail: "正在確認系統連線。" }
+  | { label: "已連線"; tone: "ok"; detail: string }
+  | { label: "尚未設定"; tone: "muted"; detail: string }
+  | { label: "暫時無法連線"; tone: "warning"; detail: string };
 
 type ProAccess = {
   status: "not_connected" | "connected" | "preview" | "active" | "expired" | "revoked";
@@ -88,40 +88,40 @@ const IXAI_PRO_LAB_URL = "https://ixai-website-clean.vercel.app/login";
 function mapBackendState(health: BackendHealth | null, failed: boolean): BackendUiState {
   if (!health && !failed) {
     return {
-      label: "Checking",
+      label: "檢查中",
       tone: "pending",
-      detail: "Checking backend connection...",
+      detail: "正在確認系統連線。",
     };
   }
 
   if (!health || failed) {
     return {
-      label: "Unavailable",
+      label: "暫時無法連線",
       tone: "warning",
-      detail: "Backend health proxy could not reach IXAI backend.",
+      detail: "IXAI Pro 連線暫時無法確認。",
     };
   }
 
   if (health.ok) {
     return {
-      label: "Connected",
+      label: "已連線",
       tone: "ok",
-      detail: `IXAI backend responded: ${health.backendStatus}.`,
+      detail: "IXAI Pro 系統可用。",
     };
   }
 
   if (!health.backendUrlConfigured) {
     return {
-      label: "Not configured",
+      label: "尚未設定",
       tone: "muted",
-      detail: "IXAI_BACKEND_URL is not configured for this environment.",
+      detail: "此環境尚未設定 Pro 系統連線。",
     };
   }
 
   return {
-    label: "Unavailable",
+    label: "暫時無法連線",
     tone: "warning",
-    detail: `IXAI backend status: ${health.backendStatus}.`,
+    detail: "IXAI Pro 系統暫時無法使用。",
   };
 }
 
@@ -151,13 +151,27 @@ function proAccessTone(status: ProAccess["status"] | "checking") {
 
 function proAccessLabel(status: ProAccess["status"] | "checking") {
   const labels = {
-    active: "Active",
-    checking: "Checking",
-    connected: "Connected",
-    expired: "Expired",
-    not_connected: "Not connected",
-    preview: "Preview",
-    revoked: "Revoked",
+    active: "已啟用",
+    checking: "檢查中",
+    connected: "已連接",
+    expired: "已到期",
+    not_connected: "未連接",
+    preview: "測試資格",
+    revoked: "已停用",
+  };
+
+  return labels[status];
+}
+
+function proAccessReasonLabel(status: ProAccess["status"] | "checking") {
+  const labels = {
+    active: "你的 Pro 使用資格已啟用。",
+    checking: "正在確認 Pro 使用資格。",
+    connected: "你的 App 帳號已連接，完整 Pro 使用權仍需測試資格或付費權限。",
+    expired: "你的 Pro 使用資格已到期。",
+    not_connected: "請先登入並綁定 Pro 帳號。",
+    preview: "你目前可使用 Pro 測試資格。",
+    revoked: "你的 Pro 使用資格已停用。",
   };
 
   return labels[status];
@@ -181,12 +195,12 @@ function accountLinkTone(status: ProAccountLink["status"] | "checking") {
 
 function accountLinkLabel(status: ProAccountLink["status"] | "checking") {
   const labels = {
-    backend_contract_missing: "Backend contract pending",
-    backend_not_configured: "Backend not configured",
-    checking: "Checking",
-    error: "Link unavailable",
-    linked: "Linked",
-    not_started: "Not started",
+    backend_contract_missing: "系統串接準備中",
+    backend_not_configured: "系統尚未設定",
+    checking: "檢查中",
+    error: "暫時無法綁定",
+    linked: "已綁定",
+    not_started: "尚未綁定",
   };
 
   return labels[status];
@@ -194,7 +208,7 @@ function accountLinkLabel(status: ProAccountLink["status"] | "checking") {
 
 function membershipLabel(membership: ProMembership | null) {
   if (!membership) {
-    return "Not linked";
+    return "尚未綁定";
   }
 
   const labels: Record<string, string> = {
@@ -226,11 +240,11 @@ export function ProLabConnectionCard({
   const [proAccessFailed, setProAccessFailed] = useState(false);
   const [accountLink, setAccountLink] = useState<ProAccountLink | null>(null);
   const [accountLinkMessage, setAccountLinkMessage] = useState(
-    "Checking backend account link status...",
+    "正在確認 Pro 帳號綁定狀態。",
   );
   const [accountLinkPending, setAccountLinkPending] = useState(false);
   const [membership, setMembership] = useState<ProMembership | null>(null);
-  const [membershipMessage, setMembershipMessage] = useState("Membership not evaluated yet.");
+  const [membershipMessage, setMembershipMessage] = useState("會員方案尚未確認。");
   const [entitlementPlan, setEntitlementPlan] = useState<string | null>(null);
   const [entitlements, setEntitlements] = useState<IXAIEntitlements | null>(null);
 
@@ -301,16 +315,14 @@ export function ProLabConnectionCard({
           headers: authHeaders,
         });
         const membershipPayload = (await membershipResponse.json()) as ProMembershipResponse;
-        const entitlementPayload = await loadEntitlements(authHeaders);
+        await loadEntitlements(authHeaders);
 
         if (mounted) {
           setMembership(membershipPayload.membership);
           setMembershipMessage(
             membershipPayload.ok
-              ? "Linked account membership is entitlement-gated."
-              : membershipPayload.message ??
-                  entitlementPayload.message ??
-                  "Membership lookup is pending account link.",
+              ? "已讀取你的會員方案與功能權限。"
+              : "完成帳號綁定後即可確認會員方案。",
           );
         }
       }
@@ -331,33 +343,33 @@ export function ProLabConnectionCard({
   const proStatus = proAccess?.status ?? "checking";
   const accountLinkStatus = accountLink?.status ?? "checking";
   const sourceLabel =
-    source === "account" ? "Account" : source === "pro" ? "Pro" : "Pro Preview";
+    source === "account" ? "帳號頁" : source === "pro" ? "Pro 頁" : "Pro 預覽";
   const accessReason = proAccessFailed
-    ? "Unable to verify Pro access. Safe fallback keeps paid features closed."
-    : proAccess?.reason ?? "Checking Pro access identity bridge...";
+    ? "暫時無法確認 Pro 使用資格，付費功能維持關閉。"
+    : proAccessReasonLabel(proStatus);
   const canOpenPro = proAccess?.canOpenPro === true;
   const showAccountLink = source === "account" && showProAccess;
   const activeEntitlements = entitlements ?? membership?.entitlements ?? null;
   const gatedFeatures = [
     {
-      description: "Portfolio-aware intelligence will unlock only when portfolio entitlement is enabled.",
+      description: "完成 Pro 權限後，會開放投資組合相關分析。",
       enabled: canAccessPortfolio(activeEntitlements),
-      name: "Portfolio Intelligence",
+      name: "投資組合分析",
     },
     {
-      description: "FCN monitoring remains closed until the account has FCN entitlement.",
+      description: "完成 Pro 權限後，會開放 FCN 監控與觀察日提醒。",
       enabled: canAccessFCN(activeEntitlements),
-      name: "FCN Monitoring",
+      name: "FCN 監控",
     },
     {
-      description: "Risk Engine access is reserved for future Pro entitlement states.",
+      description: "完成 Pro 權限後，會開放風險中心與情境提醒。",
       enabled: canAccessRiskEngine(activeEntitlements),
-      name: "Risk Engine",
+      name: "風險中心",
     },
   ];
   const betaOpenAccess = accountLinkStatus === "linked";
   const legacyLoginWarning =
-    "Legacy Pro Lab is currently a separate environment. App account shared login is being connected; use assigned Pro Lab credentials if available.";
+    "IXAI Pro 目前仍是獨立測試環境。App 共用登入正在串接中；若你有受邀測試帳號，請使用指定的 Pro 帳密。";
 
   async function handleConnectProAccount() {
     setAccountLinkPending(true);
@@ -372,7 +384,7 @@ export function ProLabConnectionCard({
       const payload = (await response.json()) as AccountLinkResponse;
 
       setAccountLink(payload.accountLink);
-      setAccountLinkMessage(payload.message || accountLinkMessageFromState(payload.accountLink));
+      setAccountLinkMessage(accountLinkMessageFromState(payload.accountLink));
 
       if (payload.accountLink.status === "linked" && authHeaders) {
         const membershipResponse = await fetch("/api/pro/membership", {
@@ -380,15 +392,13 @@ export function ProLabConnectionCard({
           headers: authHeaders,
         });
         const membershipPayload = (await membershipResponse.json()) as ProMembershipResponse;
-        const entitlementPayload = await loadEntitlements(authHeaders);
+        await loadEntitlements(authHeaders);
 
         setMembership(membershipPayload.membership);
         setMembershipMessage(
           membershipPayload.ok
-            ? "Linked account membership is entitlement-gated."
-            : membershipPayload.message ??
-                entitlementPayload.message ??
-                "Membership lookup is pending account link.",
+            ? "已讀取你的會員方案與功能權限。"
+            : "完成帳號綁定後即可確認會員方案。",
         );
       }
     } catch {
@@ -397,7 +407,7 @@ export function ProLabConnectionCard({
         requiresAction: true,
         status: "error",
       });
-      setAccountLinkMessage("Account link request could not be completed.");
+      setAccountLinkMessage("Pro 帳號綁定暫時無法完成。");
     } finally {
       setAccountLinkPending(false);
     }
@@ -408,16 +418,13 @@ export function ProLabConnectionCard({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            IXAI Pro Lab · {sourceLabel}
+            IXAI Pro · {sourceLabel}
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
-            IXAI App 正在連接現有 Pro Lab 與新的 App 內 beta workspace。
+            IXAI Pro 正在與 App 帳號整合中。
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Your App account can link to the backend identity layer, but the legacy
-            Pro Lab still uses a separate preview login today. The App workspace beta
-            remains available for linked users without Stripe, broker access, real
-            portfolio data, or investment advice.
+            完成後，使用者將可用同一組帳號進入 Pro。測試期間，已登入並完成綁定的使用者可試用 Pro 模組；目前不含付款、券商串接、真實部位資料或投資建議。
           </p>
           <p className="mt-2 max-w-3xl rounded-lg border border-amber-700/20 bg-amber-50/80 px-3 py-2 text-xs leading-6 text-amber-950">
             {legacyLoginWarning}
@@ -429,13 +436,13 @@ export function ProLabConnectionCard({
             <div className={`rounded-lg border px-3 py-2 ${proAccessTone(proStatus)}`}>
               <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-                Pro Access
+                Pro 使用資格
               </p>
               <p className="mt-1 text-sm font-semibold">{proAccessLabel(proStatus)}</p>
               <p className="mt-1 text-xs leading-5 opacity-80">{accessReason}</p>
               {proAccess?.billingRequired ? (
                 <p className="mt-2 text-xs leading-5 opacity-80">
-                  Billing will be required for full Pro access.
+                  完整 Pro 使用權未來會需要付費或人工核准。
                 </p>
               ) : null}
             </div>
@@ -445,7 +452,7 @@ export function ProLabConnectionCard({
             <div className={`rounded-lg border px-3 py-2 ${toneClass(backend.tone)}`}>
               <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]">
                 <Database className="h-3.5 w-3.5" aria-hidden="true" />
-                Backend
+                系統連線
               </p>
               <p className="mt-1 text-sm font-semibold">{backend.label}</p>
               <p className="mt-1 text-xs leading-5 opacity-80">{backend.detail}</p>
@@ -456,7 +463,7 @@ export function ProLabConnectionCard({
             <div className={`rounded-lg border px-3 py-2 ${accountLinkTone(accountLinkStatus)}`}>
               <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-                Account Link
+                帳號綁定
               </p>
               <p className="mt-1 text-sm font-semibold">{accountLinkLabel(accountLinkStatus)}</p>
               <p className="mt-1 text-xs leading-5 opacity-80">{accountLinkMessage}</p>
@@ -466,7 +473,7 @@ export function ProLabConnectionCard({
           {showAccountLink ? (
             <div className="rounded-lg border border-[var(--ixai-border)] bg-white/50 px-3 py-2 text-[var(--ixai-forest)]">
               <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-forest)]">
-                Membership
+                會員方案
               </p>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <p className="text-sm font-semibold">{membershipLabel(membership)}</p>
@@ -479,17 +486,17 @@ export function ProLabConnectionCard({
               </p>
               <div className="mt-2 grid gap-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
                 {[
-                  ["Daily Brief", activeEntitlements?.daily_brief],
-                  ["Weekly Brief", activeEntitlements?.weekly_brief],
-                  ["Watchlist", activeEntitlements?.watchlist],
-                  ["Portfolio", canAccessPortfolio(activeEntitlements)],
-                  ["FCN Monitoring", canAccessFCN(activeEntitlements)],
-                  ["Risk Engine", canAccessRiskEngine(activeEntitlements)],
+                  ["每日晨報", activeEntitlements?.daily_brief],
+                  ["每週情報", activeEntitlements?.weekly_brief],
+                  ["關注清單", activeEntitlements?.watchlist],
+                  ["投資組合", canAccessPortfolio(activeEntitlements)],
+                  ["FCN 監控", canAccessFCN(activeEntitlements)],
+                  ["風險中心", canAccessRiskEngine(activeEntitlements)],
                 ].map(([label, enabled]) => (
                   <span className="flex items-center justify-between gap-2" key={String(label)}>
                     <span>{label}</span>
                     <span className="font-mono text-[10px] uppercase tracking-[0.1em]">
-                      {enabled ? "Enabled" : "Locked"}
+                      {enabled ? "可使用" : "未開放"}
                     </span>
                   </span>
                 ))}
@@ -510,10 +517,10 @@ export function ProLabConnectionCard({
           {!showAccountLink && showProAccess ? (
             <div className="rounded-lg border border-[var(--ixai-border)] bg-white/50 px-3 py-2 text-[var(--ixai-forest)]">
               <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
-                Pro Modules
+                Pro 模組
               </p>
               <p className="mt-1 text-xs leading-5 text-[var(--ixai-ink-muted)]">
-                Pro entry reads the same App membership / entitlement state.
+                Pro 入口會依照同一份 App 會員方案與權限顯示。
               </p>
               <div className="mt-3 grid gap-2">
                 {gatedFeatures.map((feature) => (
@@ -544,7 +551,7 @@ export function ProLabConnectionCard({
             type="button"
           >
             <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-            {accountLinkPending ? "Connecting..." : "Connect Pro Account"}
+            {accountLinkPending ? "連線中..." : "綁定 Pro 帳號"}
           </button>
         ) : null}
         {showProAccess && proAccess?.status === "not_connected" ? (
@@ -552,23 +559,23 @@ export function ProLabConnectionCard({
             className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
             href="/login"
           >
-            Sign in to connect Pro
+            登入後綁定 Pro
           </Link>
         ) : betaOpenAccess || canOpenPro || showAccountLink ? (
           <a
-            aria-label="Open IXAI Pro Lab in a separate preview environment"
+            aria-label="在獨立測試環境開啟 IXAI Pro"
             className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
             href={IXAI_PRO_LAB_URL}
             rel="noreferrer"
             target="_blank"
-            title="Open IXAI Pro Lab in a separate preview environment"
+            title="在獨立測試環境開啟 IXAI Pro"
           >
-            <span>Open IXAI Pro Lab</span>
+            <span>開啟 IXAI Pro</span>
             <ArrowUpRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </a>
         ) : (
           <div className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-center text-sm font-medium text-[var(--ixai-forest-soft)]">
-            Pro access is reserved for preview / paid users
+            Pro 使用權保留給受邀測試或付費使用者
           </div>
         )}
         <Link
@@ -576,25 +583,24 @@ export function ProLabConnectionCard({
           href="/pro"
         >
           <ShieldCheck className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
-          Open Pro Workspace
+          查看 Pro 測試區
         </Link>
         <a
-          aria-label="Learn why Pro Lab login is separate today"
+          aria-label="了解為什麼 Pro 測試區目前是獨立登入"
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/45 px-4 py-2.5 text-sm font-medium text-[var(--ixai-forest-soft)]"
           href={IXAI_PRO_LAB_URL}
           rel="noreferrer"
           target="_blank"
-          title="Open Pro Lab preview in a separate environment"
+          title="開啟獨立 Pro 測試區"
         >
-          Pro Lab preview login is separate
+          Pro 測試區目前是獨立登入
           <ArrowUpRight className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
         </a>
       </div>
 
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-ink-muted)]">
-        This connection layer does not load portfolio holdings, FCN positions, broker data,
-        paid entitlement, or personalized recommendations. Connecting your account does not
-        activate paid Pro access. There is no true shared-login SSO with the legacy Pro Lab yet.
+        這個區塊只確認帳號與 Pro 入口狀態，不載入投資部位、FCN 部位、券商資料或個人化建議。
+        綁定帳號不代表已開通付費 Pro；舊版 Pro 測試區尚未完成共用登入。
       </p>
     </section>
   );
@@ -602,20 +608,20 @@ export function ProLabConnectionCard({
 
 function accountLinkMessageFromState(accountLink: ProAccountLink) {
   if (accountLink.status === "linked") {
-    return "Your App identity has a backend account link. Paid Pro access remains entitlement-gated.";
+    return "你的 App 帳號已完成 Pro 身份綁定；完整 Pro 使用權仍需測試資格或付費權限。";
   }
 
   if (accountLink.status === "backend_not_configured") {
-    return "Backend not configured. Account linking cannot start in this environment.";
+    return "此環境尚未設定 Pro 系統連線，暫時無法開始綁定。";
   }
 
   if (accountLink.status === "backend_contract_missing") {
-    return "Backend contract pending. The account-link endpoint is not available yet.";
+    return "Pro 帳號串接仍在準備中。";
   }
 
   if (accountLink.status === "error") {
-    return "Backend account link check returned an error.";
+    return "Pro 帳號綁定檢查暫時失敗。";
   }
 
-  return "Connect your App identity before backend Pro access can be evaluated.";
+  return "請先綁定 App 帳號，再確認 Pro 使用資格。";
 }

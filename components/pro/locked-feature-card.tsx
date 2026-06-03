@@ -35,15 +35,15 @@ export function LockedFeatureCard({
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-semibold leading-5">{name}</h3>
             <span className="rounded border border-current/20 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] opacity-80">
-              {enabled ? "Available" : "Locked"}
+              {enabled ? "可使用" : "尚未開放"}
             </span>
           </div>
           <p className="mt-1 text-xs leading-5 opacity-80">{description}</p>
           <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.12em] opacity-70">
-            {enabled ? "Entitlement enabled" : "Reserved for Pro"}
+            {enabled ? "功能已開放" : "Pro 保留功能"}
           </p>
           {!enabled ? (
-            <p className="mt-1 text-xs leading-5 opacity-70">Upgrade path coming soon.</p>
+            <p className="mt-1 text-xs leading-5 opacity-70">升級路徑規劃中。</p>
           ) : null}
         </div>
       </div>

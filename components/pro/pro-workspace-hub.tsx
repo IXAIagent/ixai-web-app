@@ -36,25 +36,28 @@ type BackendHealth = {
 
 const modules = [
   {
-    copy: "Portfolio overview, allocation, positions, and AI portfolio notes in beta skeleton form.",
+    copy: "查看投資組合總覽、資產配置、部位整理與 AI 投資筆記的測試版入口。",
     href: "/portfolio",
     icon: BriefcaseBusiness,
     key: "portfolio",
-    label: "Portfolio Intelligence",
+    label: "投資組合分析",
+    cta: "開啟投資組合",
   },
   {
-    copy: "FCN holdings, coupon schedule, KI / KO watch, and worst-of monitor placeholders.",
+    copy: "查看 FCN 持倉、配息時程、KI / KO 觀察與 Worst-of 監控的測試版入口。",
     href: "/fcn",
     icon: ShieldCheck,
     key: "fcn",
-    label: "FCN Monitoring",
+    label: "FCN 監控",
+    cta: "開啟 FCN",
   },
   {
-    copy: "Portfolio risk, concentration risk, scenario monitor, and AI alert placeholders.",
+    copy: "查看投資組合風險、集中度、情境監控與 AI 風險提醒的測試版入口。",
     href: "/risk",
     icon: RadioTower,
     key: "risk",
-    label: "Risk Engine",
+    label: "風險中心",
+    cta: "開啟風險中心",
   },
 ] as const;
 
@@ -63,7 +66,7 @@ const LEGACY_PRO_LAB_LOGIN_URL = "https://ixai-website-clean.vercel.app/login";
 export function ProWorkspaceHub() {
   const [accountLinkStatus, setAccountLinkStatus] = useState<string | null>(null);
   const [authenticated, setAuthenticated] = useState(false);
-  const [backendStatus, setBackendStatus] = useState("Checking");
+  const [backendStatus, setBackendStatus] = useState("檢查中");
   const [entitlements, setEntitlements] = useState<IXAIEntitlements>(() =>
     normalizeEntitlements(null),
   );
@@ -93,9 +96,7 @@ export function ProWorkspaceHub() {
         : null;
 
       if (mounted) {
-        setBackendStatus(
-          healthPayload?.ok ? `Connected (${healthPayload.backendStatus ?? "ok"})` : "Unavailable",
-        );
+          setBackendStatus(healthPayload?.ok ? "已連線" : "暫時無法連線");
       }
 
       const accessResponse = await fetch("/api/pro/access", {
@@ -128,7 +129,7 @@ export function ProWorkspaceHub() {
 
     void loadWorkspaceState().catch(() => {
       if (mounted) {
-        setBackendStatus("Unavailable");
+        setBackendStatus("暫時無法連線");
       }
     });
 
@@ -138,7 +139,7 @@ export function ProWorkspaceHub() {
   }, []);
 
   const betaEnabled = canUseBetaOpenAccess({ accountLinkStatus, authenticated });
-  const planLabel = `${plan.toUpperCase()}${betaEnabled ? " / BETA TESTER" : ""}`;
+  const planLabel = `${plan.toUpperCase()}${betaEnabled ? " / 測試資格" : ""}`;
   const moduleAvailability = {
     fcn: canAccessFCN(entitlements),
     portfolio: canAccessPortfolio(entitlements),
@@ -149,35 +150,29 @@ export function ProWorkspaceHub() {
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--ixai-gold)] sm:text-[11px]">
-          IXAI Pro Bridge
+          IXAI Pro 入口
         </p>
         <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight sm:text-5xl">
-          IXAI Pro connects the existing Pro Lab and the new App workspace.
+          IXAI Pro 正在與 App 帳號整合中。
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/70 sm:text-base">
-          The existing IXAI Pro Lab remains available for invited beta testers. The
-          new in-app workspace stays as a beta area for Portfolio, FCN, and Risk
-          skeletons while shared-login bridge work continues.
+          IXAI Pro 是進階投資情報工作區。完成共用登入後，使用者將可用同一組帳號進入 Pro。
         </p>
         <p className="mt-3 max-w-3xl rounded-lg border border-white/10 bg-white/[0.055] px-3 py-2 text-xs leading-6 text-white/60">
-          Legacy Pro Lab is a separate environment today. App account shared login
-          is in progress; do not assume your app.ixuan.ai password works in the
-          legacy lab unless you have assigned Pro Lab credentials.
+          目前舊版 Pro 測試區仍是獨立環境；若你有受邀測試帳號，請使用指定的 Pro 帳密。
         </p>
       </section>
 
       <section className="grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
         <article className="rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(255,250,240,0.9)] p-4 shadow-[0_18px_56px_rgba(9,41,31,0.08)] sm:p-5">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-forest)]">
-            A. Existing Pro Lab
+            現有 Pro 測試區
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
-            Open the existing IXAI Pro Lab
+            開啟 IXAI Pro
           </h2>
           <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Use this path when you need the current legacy Pro dashboard. Shared
-            login is not true SSO yet, so beta testers should use assigned Pro Lab
-            credentials if available.
+            如需使用目前的 Pro 測試版，請從這裡進入。App 共用登入仍在串接中。
           </p>
           <a
             className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] sm:w-auto"
@@ -185,31 +180,29 @@ export function ProWorkspaceHub() {
             rel="noreferrer"
             target="_blank"
           >
-            Open IXAI Pro Lab
+            開啟 IXAI Pro
             <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </a>
         </article>
 
         <article className="rounded-lg border border-[var(--ixai-border)] bg-white/60 p-4 sm:p-5">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-forest)]">
-            B. In-App Beta Workspace
+            App 內 Pro 測試區
           </p>
           <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)]">
-            Test the new App workspace
+            查看 Pro 測試模組
           </h2>
           <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Authenticated and account-linked users can test skeleton workspaces
-            inside app.ixuan.ai. No Stripe, broker connection, real holdings, or
-            investment advice is enabled.
+            測試期間，已登入並完成綁定的使用者可試用 Pro 模組。目前不含付款、券商串接、真實部位資料或投資建議。
           </p>
         </article>
       </section>
 
       <section className="grid gap-3 md:grid-cols-3">
         {[
-          ["Beta Access", betaEnabled ? "Enabled" : authenticated ? "Connect account" : "Sign in"],
-          ["Membership", planLabel],
-          ["Backend", backendStatus],
+          ["測試資格", betaEnabled ? "已開放" : authenticated ? "請先綁定帳號" : "請先登入"],
+          ["會員方案", planLabel],
+          ["系統連線", backendStatus],
         ].map(([label, value]) => (
           <article
             className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4"
@@ -245,7 +238,7 @@ export function ProWorkspaceHub() {
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </span>
                 <span className="rounded border border-emerald-700/20 bg-emerald-50/70 px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-950">
-                  {available ? "Beta Enabled" : "Connect Account"}
+                  {available ? "測試可用" : "請先綁定"}
                 </span>
               </div>
               <h2 className="mt-4 text-lg font-semibold leading-7 text-[var(--ixai-forest)]">
@@ -258,7 +251,7 @@ export function ProWorkspaceHub() {
                 className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
                 href={module.href}
               >
-                Open {module.label.replace(" Intelligence", "").replace(" Monitoring", "")}
+                {module.cta}
                 <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               </Link>
             </article>
@@ -267,10 +260,7 @@ export function ProWorkspaceHub() {
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-white/50 p-4 text-xs leading-6 text-[var(--ixai-ink-muted)] sm:p-5">
-        Existing IXAI Pro Lab remains a separate preview environment. The new in-app
-        workspace is available for beta testing only. There is no true SSO yet, no
-        Stripe, broker connection, real Portfolio / FCN data, trading execution, or
-        investment advice.
+        舊版 Pro 測試區目前仍是獨立環境。App 內 Pro 模組僅供測試，不含付款、券商串接、真實投資組合 / FCN 資料、交易執行或投資建議。
       </section>
     </div>
   );

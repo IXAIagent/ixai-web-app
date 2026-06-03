@@ -5,9 +5,9 @@ import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getAllWeeklyBriefsAsync, getLatestWeeklyBriefAsync } from "@/src/lib/weeklyBriefs";
 
 export const metadata = buildPublicMetadata({
-  title: "Weekly Intelligence — Market Strategist Note | IXAI",
+  title: "每週情報 — 市場策略筆記 | IXAI",
   description:
-    "IXAI Weekly Intelligence — past-week market recap, next-week calendar, and what the market is pricing across AI, Fed, Taiwan semiconductors and crypto.",
+    "IXAI 每週情報整理本週市場變化、下週事件與 AI、利率、台股半導體、Crypto 的市場定價脈絡。",
   keywords: [
     "Weekly Intelligence",
     "IXAI",
@@ -32,10 +32,10 @@ export default async function WeeklyBriefArchivePage() {
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
         <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7">
           <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-            Weekly Intelligence
+            每週情報
           </p>
           <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
-            Weekly Intelligence 尚未發布。
+            每週情報尚未發布。
           </h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:text-base sm:leading-8">
             IXAI Editorial Studio 會先產生週報草稿，再由人工審閱後發布。發布後會顯示於此頁。
@@ -49,10 +49,10 @@ export default async function WeeklyBriefArchivePage() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          Weekly Intelligence
+          每週情報
         </p>
         <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">
-          每週市場 Intelligence，整理一週市場正在 pricing 什麼。
+          每週市場情報，整理一週市場正在反映什麼。
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:text-base sm:leading-8">
           以更低頻、結構化的方式回顧美股、台股、AI 科技、利率、Crypto 與下週重大事件，
@@ -66,7 +66,7 @@ export default async function WeeklyBriefArchivePage() {
         <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[1fr_16rem] lg:p-6">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-              最新 Weekly Intelligence / {latestBrief.publishedAt}
+              最新每週情報 / {latestBrief.publishedAt}
             </p>
             <h2 className="mt-2 max-w-3xl text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:mt-3 sm:text-2xl sm:leading-8">
               {latestBrief.title}
@@ -96,7 +96,7 @@ export default async function WeeklyBriefArchivePage() {
               className="ixai-cta-forest inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-medium sm:w-fit"
               href={`/weekly-brief/${latestBrief.slug}`}
             >
-              閱讀 Weekly Intelligence
+              閱讀每週情報
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
@@ -106,10 +106,10 @@ export default async function WeeklyBriefArchivePage() {
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.74)]">
         <div className="border-b border-[var(--ixai-border)] px-5 py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Weekly Archive
+            每週情報紀錄
           </p>
           <h2 className="mt-1 text-base font-semibold text-[var(--ixai-forest)]">
-            歷史 Weekly Intelligence
+            歷史每週情報
           </h2>
         </div>
         <div className="divide-y divide-[var(--ixai-border)]">
@@ -137,7 +137,7 @@ export default async function WeeklyBriefArchivePage() {
                   </ul>
                 </div>
                 <span className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--ixai-ink-muted)]">
-                  Weekly Brief
+                  每週情報
                   <ArrowRight className="mt-2 h-4 w-4 lg:ml-auto" aria-hidden="true" />
                 </span>
               </div>

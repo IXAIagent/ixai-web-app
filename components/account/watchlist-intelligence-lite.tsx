@@ -46,17 +46,15 @@ export function WatchlistIntelligenceLite() {
             </span>
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                Watchlist Intelligence Lite
+                關注清單情報
               </p>
               <h2 className="mt-1 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
-                Account Intelligence Workspace 正在整理你的市場記憶。
+                IXAI 正在整理你的市場記憶。
               </h2>
             </div>
           </div>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            IXAI is starting to remember what you care about. This workspace currently uses your
-            onboarding preferences to organize public intelligence into a lightweight market memory
-            layer.
+            IXAI 會先使用你的 onboarding 偏好與關注清單，整理成輕量市場記憶。
           </p>
         </div>
 
@@ -66,13 +64,13 @@ export function WatchlistIntelligenceLite() {
             href="/onboarding"
           >
             <RefreshCw className="h-4 w-4 stroke-current" aria-hidden="true" />
-            調整 Onboarding
+            調整偏好
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.34)] bg-white/60 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
             href="/daily-brief"
           >
-            View Daily Intelligence
+            查看每日晨報
             <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
@@ -80,7 +78,7 @@ export function WatchlistIntelligenceLite() {
 
       {summary === null ? (
         <div className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/50 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          正在讀取此裝置的 onboarding memory...
+          正在讀取此裝置的偏好記憶...
         </div>
       ) : hasMemory ? (
         <div className="mt-5 grid gap-3 lg:grid-cols-[0.95fr_1.35fr]">
@@ -89,7 +87,7 @@ export function WatchlistIntelligenceLite() {
               <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
                 <ListChecks className="h-4 w-4 stroke-current" aria-hidden="true" />
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
-                  Your Watchlist Memory
+                  你的關注清單記憶
                 </p>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -104,7 +102,7 @@ export function WatchlistIntelligenceLite() {
                   ))
                 ) : (
                   <span className="text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                    你尚未輸入 watchlist symbol，IXAI 會先使用 markets 與 interests 建立記憶。
+                    你尚未輸入關注標的，IXAI 會先使用市場與主題偏好建立記憶。
                   </span>
                 )}
               </div>
@@ -112,7 +110,7 @@ export function WatchlistIntelligenceLite() {
 
             <article className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4">
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-                Markets & Themes
+                市場與主題
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {[...summary.markets, ...summary.interests].map((item) => (
@@ -131,7 +129,7 @@ export function WatchlistIntelligenceLite() {
             <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
               <LineChart className="h-4 w-4 stroke-current" aria-hidden="true" />
               <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
-                Suggested Public Intelligence Paths
+                建議閱讀路徑
               </p>
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -157,16 +155,16 @@ export function WatchlistIntelligenceLite() {
       ) : (
         <div className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4">
           <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
-            Start onboarding to create your first Intelligence Layer.
+            開始設定偏好，建立你的第一層市場記憶。
           </h3>
           <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            完成 markets、interests 與 watchlist seed 後，Account 會顯示你的輕量市場記憶。
+            完成市場、主題與關注清單後，這裡會顯示你的輕量市場記憶。
           </p>
           <Link
             className="ixai-cta-forest mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold"
             href="/onboarding"
           >
-            建立 Intelligence Layer
+            建立市場記憶
             <ArrowRight className="h-4 w-4 stroke-current" aria-hidden="true" />
           </Link>
         </div>
@@ -178,9 +176,7 @@ export function WatchlistIntelligenceLite() {
             <ShieldCheck className="h-4 w-4 stroke-current" aria-hidden="true" />
           </span>
           <p className="text-xs leading-6 text-[var(--ixai-forest-soft)]">
-            Watchlist Intelligence Lite organizes market topics you care about. It is not
-            personalized investment advice, portfolio analysis, trading instruction, or an FCN risk
-            conclusion.
+            關注清單情報只整理你在意的市場主題，不是個人化投資建議、投資組合分析、交易指令或 FCN 風險結論。
           </p>
         </div>
       </aside>

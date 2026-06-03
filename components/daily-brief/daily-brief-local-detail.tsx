@@ -83,7 +83,7 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-10 sm:px-6 lg:px-8">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Daily Brief
+          每日晨報
         </p>
         <h1 className="text-2xl font-semibold text-[var(--ixai-forest)]">
           正在讀取每日簡報。
@@ -96,7 +96,7 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-10 sm:px-6 lg:px-8">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Daily Brief
+          每日晨報
         </p>
         <h1 className="text-2xl font-semibold text-[var(--ixai-forest)]">
           找不到這份每日簡報。
@@ -115,14 +115,14 @@ export function DailyBriefLocalDetail({ slug }: { slug: string }) {
     <article className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
-          Daily Brief / {brief.publishedAt}
+          每日晨報 / {brief.publishedAt}
         </p>
         <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70">
           <span className="rounded-lg border border-white/12 px-2.5 py-1">
-            Public Intelligence
+            公開市場情報
           </span>
           <span className="rounded-lg border border-white/12 px-2.5 py-1">
-            General Market Awareness
+            一般市場觀察
           </span>
         </div>
         <h1 className="mt-3 max-w-3xl text-2xl font-semibold leading-snug sm:text-4xl">

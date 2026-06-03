@@ -26,49 +26,49 @@ const preferenceOptions: Array<{
   label: string;
 }> = [
   {
-    copy: "Public morning market context. Readiness only; no automated send yet.",
+    copy: "每日市場重點偏好；目前尚未自動推送。",
     key: "dailyMorningBrief",
-    label: "Daily morning brief",
+    label: "每日晨報",
   },
   {
-    copy: "Weekly Intelligence digest for public market awareness.",
+    copy: "每週市場整理與下週觀察。",
     key: "weeklyIntelligence",
-    label: "Weekly intelligence digest",
+    label: "每週情報",
   },
   {
-    copy: "Market Pulse, Macro Watch, and general risk context.",
+    copy: "市場脈動、總經觀察與一般風險脈絡。",
     key: "marketPulse",
-    label: "Market Pulse",
+    label: "市場脈動",
   },
   {
-    copy: "Uses Watchlist Intelligence Lite topics without portfolio assumptions.",
+    copy: "依關注清單主題整理，不推論個人持倉。",
     key: "watchlistLite",
-    label: "Watchlist Intelligence Lite",
+    label: "關注清單情報",
   },
   {
-    copy: "Educational FCN structure updates and concept refreshers.",
+    copy: "FCN 結構教育與概念提醒。",
     key: "fcnAwareness",
-    label: "FCN Awareness",
+    label: "FCN 教育",
   },
   {
-    copy: "Public Risk Regime language for Calm / Neutral / Elevated / Stress.",
+    copy: "整理公開市場風險狀態，不做個人化判斷。",
     key: "riskRegime",
-    label: "Risk Regime",
+    label: "風險狀態",
   },
 ];
 
 const layerCards = [
   {
-    label: "Public Delivery",
-    copy: "General Daily / Weekly / Market Intelligence. Educational and non-personalized.",
+    label: "公開情報",
+    copy: "每日晨報、每週情報與市場觀察，皆為教育型與非個人化內容。",
   },
   {
-    label: "Account Delivery",
-    copy: "Preference memory, watchlist-lite relevance, identity continuity, and LINE readiness.",
+    label: "帳號偏好",
+    copy: "保存閱讀偏好、關注主題與 LINE 接收準備狀態。",
   },
   {
-    label: "Future Pro Delivery",
-    copy: "Portfolio Intelligence, AI Alerts, FCN workflow, and risk intelligence after explicit activation.",
+    label: "未來 Pro",
+    copy: "明確啟用後，才會進一步支援投資組合、AI 提醒與 FCN 工作流。",
   },
 ];
 
@@ -78,14 +78,14 @@ function statusCopy(preferences: LineDeliveryPreferenceState, lineConnected: boo
   }
 
   if (preferences.deliveryStatus === "paused") {
-    return "Delivery readiness 已暫停";
+    return "LINE 接收準備已暫停";
   }
 
   if (preferences.deliveryStatus === "ready") {
-    return "LINE readiness preference 已保存";
+    return "LINE 接收偏好已保存";
   }
 
-  return "可設定 LINE delivery preference";
+  return "可設定 LINE 接收偏好";
 }
 
 export function LineDeliveryFoundationCard({
@@ -144,16 +144,15 @@ export function LineDeliveryFoundationCard({
             </span>
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                LINE Delivery Foundation
+                LINE 情報接收偏好
               </p>
               <h2 className="mt-1 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
-                設定未來透過 LINE 接收 IXAI Intelligence 的偏好。
+                設定未來透過 LINE 接收 IXAI 情報的偏好。
               </h2>
             </div>
           </div>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            LINE Delivery is currently in readiness mode. Your preferences help IXAI prepare the
-            intelligence you want to receive, but automated push delivery is not active yet.
+            目前僅先保存接收偏好，協助 IXAI 準備你想收到的情報類型；自動推送尚未啟用。
           </p>
         </div>
 
@@ -169,7 +168,7 @@ export function LineDeliveryFoundationCard({
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.34)] bg-white/60 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
             href="/weekly-brief"
           >
-            View Weekly Intelligence
+            查看每週情報
             <ArrowRight className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
@@ -182,7 +181,7 @@ export function LineDeliveryFoundationCard({
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-                    Opt-in readiness
+                    接收狀態
                   </p>
                   <h3 className="mt-2 text-lg font-semibold leading-7 text-[var(--ixai-forest)]">
                     {statusCopy(preferences, lineConnected)}
@@ -200,7 +199,7 @@ export function LineDeliveryFoundationCard({
                   type="button"
                 >
                   <BellRing className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
-                  Set delivery preferences
+                  保存接收偏好
                 </button>
                 <button
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
@@ -208,7 +207,7 @@ export function LineDeliveryFoundationCard({
                   type="button"
                 >
                   <CirclePause className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
-                  Pause readiness
+                  暫停接收準備
                 </button>
                 <button
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
@@ -216,12 +215,11 @@ export function LineDeliveryFoundationCard({
                   type="button"
                 >
                   <CircleSlash className="h-4 w-4 stroke-current text-[var(--ixai-gold)]" aria-hidden="true" />
-                  Remove LINE delivery preference
+                  移除 LINE 接收偏好
                 </button>
               </div>
               <p className="mt-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-                Pause / unsubscribe concepts are modeled here before production delivery exists.
-                Real push requires durable opt-in, logs, and approval.
+                正式推送前仍需完整同意紀錄、發送紀錄與人工審核流程。
               </p>
             </article>
 
@@ -229,7 +227,7 @@ export function LineDeliveryFoundationCard({
               <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
                 <Clock8 className="h-4 w-4 stroke-current" aria-hidden="true" />
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
-                  Delivery preference structure
+                  偏好類型
                 </p>
               </div>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -287,16 +285,14 @@ export function LineDeliveryFoundationCard({
                 <ShieldCheck className="h-4 w-4 stroke-current" aria-hidden="true" />
               </span>
               <p className="text-xs leading-6 text-[var(--ixai-forest-soft)]">
-                Delivery preferences organize the types of market intelligence you want IXAI to
-                prepare. They are not trading instructions or personalized investment
-                recommendations.
+                接收偏好只用來整理你希望 IXAI 準備的市場情報類型；不構成交易指令或個人化投資建議。
               </p>
             </div>
           </aside>
         </>
       ) : (
         <div className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/50 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          正在讀取此裝置的 LINE delivery preference...
+          正在讀取此裝置的 LINE 接收偏好...
         </div>
       )}
     </section>

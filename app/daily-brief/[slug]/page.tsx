@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: PageProps) {
 
   if (!brief) {
     return {
-      title: "Daily Brief Not Found | IXAI",
+      title: "找不到每日晨報 | IXAI",
     };
   }
 
@@ -57,10 +57,10 @@ export async function generateMetadata({ params }: PageProps) {
       : brief.title;
 
   return buildPublicMetadata({
-    title: `Daily Brief — ${headline} | IXAI`,
+    title: `每日晨報 — ${headline} | IXAI`,
     description: brief.marketSummary,
     keywords: [
-      "Daily Brief",
+      "每日晨報",
       "IXAI",
       "AI",
       "Fed",
@@ -73,13 +73,13 @@ export async function generateMetadata({ params }: PageProps) {
     canonical: `/daily-brief/${slug}`,
     ogImage: {
       url: `/api/og/daily?slug=${encodeURIComponent(slug)}`,
-      alt: `IXAI Daily Brief — ${brief.title}`,
+      alt: `IXAI 每日晨報 — ${brief.title}`,
     },
     ogType: "article",
     articleMeta: {
       publishedTime: "publishedAt" in brief && brief.publishedAt ? brief.publishedAt : undefined,
       modifiedTime: "publishedAt" in brief && brief.publishedAt ? brief.publishedAt : undefined,
-      section: "Daily Brief",
+      section: "每日晨報",
       tags: ["AI", "Fed", "Taiwan", "Crypto", "Volatility"],
     },
   });
@@ -108,13 +108,13 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
         imageUrl={`/api/og/daily?slug=${encodeURIComponent(slug)}`}
         publishedAt={brief.publishedAt}
         modifiedAt={brief.publishedAt}
-        section="Daily Brief"
+        section="每日晨報"
         keywords={["AI", "Fed", "Taiwan", "Crypto", "Volatility"]}
       />
       <BreadcrumbStructuredData
         items={[
           { name: "IXAI", url: "/" },
-          { name: "Daily Brief", url: "/daily-brief" },
+          { name: "每日晨報", url: "/daily-brief" },
           { name: brief.title, url: `/daily-brief/${slug}` },
         ]}
       />
@@ -123,14 +123,14 @@ export default async function DailyBriefDetailPage({ params }: PageProps) {
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
-              Daily Brief / {brief.publishedAt}
+              每日晨報 / {brief.publishedAt}
             </p>
             <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-white/70">
               <span className="rounded-lg border border-white/12 px-2.5 py-1">
-                Public Intelligence
+                公開市場情報
               </span>
               <span className="rounded-lg border border-white/12 px-2.5 py-1">
-                General Market Awareness
+                一般市場觀察
               </span>
             </div>
             <h1 className="mt-2 max-w-3xl text-xl font-semibold leading-7 sm:mt-3 sm:text-4xl sm:leading-snug">

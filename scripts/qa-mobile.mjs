@@ -16,12 +16,12 @@ const routeSpecs = [
   {
     path: "/daily-brief",
     kind: "public",
-    visibleText: ["Daily", "Public Intelligence"],
+    visibleText: ["每日晨報", "今日市場觀察"],
   },
   {
     path: "/weekly-brief",
     kind: "public",
-    visibleText: ["Weekly", "Public Intelligence"],
+    visibleText: ["每週情報", "每週市場情報"],
   },
   {
     path: "/share",
@@ -42,35 +42,36 @@ const routeSpecs = [
     path: "/account",
     kind: "protected",
     visibleText: [
-      "LINE Delivery Foundation",
-      "Watchlist Intelligence Lite",
-      "建立你的 IXAI intelligence workspace",
+      "LINE 情報接收偏好",
+      "我的 IXAI",
+      "關注清單情報",
+      "IXAI Pro",
     ],
   },
   {
     path: "/portfolio",
     kind: "protected",
-    visibleText: ["Portfolio Intelligence", "Reserved for Pro"],
+    visibleText: ["投資組合分析", "Pro 保留功能"],
   },
   {
     path: "/fcn",
     kind: "protected",
-    visibleText: ["FCN Monitoring", "Reserved for Pro"],
+    visibleText: ["FCN 監控", "Pro 保留功能"],
   },
   {
     path: "/risk",
     kind: "protected",
-    visibleText: ["Risk Engine", "Reserved for Pro"],
+    visibleText: ["風險中心", "Pro 保留功能"],
   },
   {
     path: "/pro",
     kind: "protected",
-    visibleText: ["IXAI Pro Bridge", "Open IXAI Pro Lab", "In-App Beta Workspace"],
+    visibleText: ["IXAI Pro 入口", "開啟 IXAI Pro", "App 內 Pro 測試區"],
   },
   {
     path: "/pro-preview",
     kind: "public",
-    visibleText: ["IXAI Intelligence Preview", "Intelligence Preview"],
+    visibleText: ["IXAI 情報預覽", "情報預覽"],
   },
   {
     path: "/pro-intelligence",
