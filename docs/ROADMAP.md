@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.64.2`
+`v1.65.0`
 
 ## Related Strategic Documents
 
@@ -23,6 +23,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/PROVIDER_HEALTH_REVIEW.md`
 - `docs/TAIWAN_USER_UX_CLEANUP_V163.md`
 - `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`
+- `docs/PRO_MODULE_PAGES_REDESIGN_V165.md`
 
 ## Current Product Flow
 
@@ -454,15 +455,43 @@ Completed:
 
 ## Next Suggested Version
 
-`v1.65 — Account & Homepage Rebalance`
+`v1.65.0 — Pro Module Product Pages Redesign`
 
 Goal:
 
-- Take the residual v1.64.0 items (account information-architecture pass and
-  homepage full rewrite) and ship them once the v1.64 cut has settled in
-  production review.
-- Continue to keep SSO, auth, backend, Supabase, and content engine work
-  separate.
+- Redesign `/pro`, `/portfolio`, and `/risk` as product-value pages instead
+  of skeleton permission pages.
+- Make FCN Monitoring the primary IXAI Pro module while keeping `/fcn` as
+  public education.
+- Explain Portfolio Analysis and Risk Center with Taiwan-investor scenarios.
+- Preserve App / Pro / Consulting role separation.
+- Keep SSO, auth, backend, Supabase, Stripe, broker integration, and content
+  engine work separate.
+
+## v1.65.0 — Pro Module Product Pages Redesign
+
+Completed:
+
+- Added `docs/PRO_MODULE_PAGES_REDESIGN_V165.md`.
+- Reworked `/pro` as a conversion page for IXAI Pro with hero, pain points,
+  FCN-first Pro modules, App-vs-Pro explanation, and Pro / consulting CTAs.
+- Reworked `/portfolio` as a Portfolio Analysis value page explaining asset
+  allocation, concentration, theme exposure, FCN overlap, and market-risk
+  linkage.
+- Reworked `/risk` as a Risk Center value page explaining market regime,
+  major events, concentration, FCN risk, scenarios, and AI risk summaries.
+- Kept `/fcn` as an education and conversion page; FCN Monitoring remains
+  a Pro capability.
+- Continued using `components/ui/feature-icon.tsx` for card icons.
+
+Out of scope:
+
+- SSO / auth / Supabase / JWT.
+- Backend / legacy Pro.
+- Daily / Weekly generation.
+- Provider ingestion.
+- Stripe, payment, broker integration, real portfolio / FCN data, trading,
+  or investment advice.
 
 ## v1.64.2 — Shared Icon System + Visual Screenshot QA
 

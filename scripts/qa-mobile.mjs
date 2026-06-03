@@ -51,7 +51,7 @@ const routeSpecs = [
   {
     path: "/portfolio",
     kind: "protected",
-    visibleText: ["投資組合分析", "Pro 保留功能"],
+    visibleText: ["投資組合分析", "集中風險", "預約投資組合診斷"],
   },
   {
     path: "/fcn",
@@ -61,12 +61,12 @@ const routeSpecs = [
   {
     path: "/risk",
     kind: "protected",
-    visibleText: ["風險中心", "Pro 保留功能"],
+    visibleText: ["風險中心", "不要等市場大跌", "預約風險健檢"],
   },
   {
     path: "/pro",
     kind: "protected",
-    visibleText: ["IXAI Pro 入口", "開啟 IXAI Pro", "App 內 Pro 測試區"],
+    visibleText: ["IXAI Pro：為需要持續監控風險的投資人打造", "申請 Pro 測試", "預約 FCN 健檢"],
   },
   {
     path: "/pro-preview",

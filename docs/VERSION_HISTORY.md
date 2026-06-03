@@ -2358,3 +2358,46 @@ Out of Scope:
 - Pale icons in `/about`, `/feedback`, and home component children
   (deferred to a future design-system pass).
 - Stripe, paywall, broker integration, real portfolio data.
+
+## v1.65.0 — Pro Module Product Pages Redesign
+
+Why:
+
+- v1.64.2 made icons readable, but `/pro`, `/portfolio`, and `/risk` still
+  felt like permission or skeleton pages rather than product-value pages.
+- Taiwan users need to understand what IXAI Pro is, why Portfolio / FCN /
+  Risk matter, and why Pro testing or consulting is relevant before they see
+  access states.
+- Icon fixes alone cannot explain product value.
+
+What Changed:
+
+- Added `docs/PRO_MODULE_PAGES_REDESIGN_V165.md`.
+- Rebuilt `/pro` as a conversion page: hero, pain points, FCN-first module
+  positioning, App vs Pro explanation, and CTAs for Pro testing, FCN health
+  check, and consulting.
+- Rebuilt `/portfolio` as a product-value page explaining asset allocation,
+  concentration risk, theme exposure, FCN overlap, and market-risk linkage.
+- Rebuilt `/risk` as a product-value page explaining market regime, major
+  events, concentration, FCN risk, scenarios, and AI risk summaries.
+- Used the existing shared `FeatureIcon` primitive for the redesigned cards.
+
+Key Decisions:
+
+- App = education / public intelligence / lead capture.
+- Pro = paid or invited professional monitoring workspace.
+- Consulting = personalized high-touch advisory service.
+- FCN Monitoring remains the primary Pro wedge, but `/fcn` remains a public
+  education page.
+
+Out of Scope:
+
+- SSO.
+- Auth / Supabase / JWT.
+- Backend / legacy Pro.
+- Daily / Weekly generation.
+- Provider ingestion.
+- Stripe / payment.
+- Broker integration.
+- Real portfolio / FCN data.
+- Trading features or investment advice.

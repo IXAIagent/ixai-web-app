@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.64.2`
+`v1.65.0`
 
 Current Core Flow:
 
@@ -163,6 +163,8 @@ Taiwan User UX Cleanup v1.63.0 localizes normal user-facing pages for Taiwan use
 UX Product Role Correction v1.63.1 restores the App / Pro product boundary after the v1.63 localization pass. The App is the public market intelligence, education, account, and membership entry surface. IXAI Pro is the advanced investment workspace. `/fcn` must be an FCN education and introduction page, not a free App FCN monitoring skeleton. Personal FCN monitoring, KI / KO watch, worst-of monitoring, coupon calendars, portfolio analysis, and risk-engine workflows belong to Pro / paid / beta surfaces only. Daily and Weekly archive pages should prioritize reading and avoid foregrounding Public Intelligence Engine architecture cards. See `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`.
 
 Unified Pro Product Integration now makes app.ixuan.ai the primary IXAI Pro beta surface. During Beta Open Access, authenticated and account-linked users can enter Portfolio Intelligence, FCN Monitoring, and Risk Engine workspace skeletons inside the production app. This is not permanent free Pro, Stripe billing, broker access, real Portfolio / FCN data, trading execution, or investment advice. The legacy Pro Lab remains a reference-only environment rather than the primary product entry.
+
+Pro Module Product Pages Redesign v1.65.0 turns `/pro`, `/portfolio`, and `/risk` from skeleton / permission pages into product-value pages for Taiwan users. `/pro` explains IXAI Pro as the advanced monitoring workspace with FCN first, Portfolio second, and Risk Center third. `/portfolio` explains asset allocation, concentration, theme exposure, FCN overlap, and market-risk linkage without loading real holdings. `/risk` explains market regime, scenarios, FCN risk, concentration, and AI risk summaries without becoming a trading or advice surface. App remains education / public intelligence / lead capture; Pro remains the paid or invited professional monitoring workspace; consulting remains the high-touch advisory service. See `docs/PRO_MODULE_PAGES_REDESIGN_V165.md`.
 
 Latest engineering health check:
 
