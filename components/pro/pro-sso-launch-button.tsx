@@ -59,7 +59,7 @@ export function ProSsoLaunchButton({
       <button
         className={
           className ||
-          "ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] disabled:cursor-wait disabled:opacity-75"
+          "ixai-cta-forest inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] disabled:cursor-wait disabled:opacity-75"
         }
         disabled={status === "connecting"}
         onClick={handleLaunch}
@@ -68,7 +68,7 @@ export function ProSsoLaunchButton({
         {status === "connecting" ? (
           <Loader2 className="h-4 w-4 animate-spin text-[var(--ixai-gold)]" aria-hidden="true" />
         ) : null}
-        <span>{status === "connecting" ? "正在連接 IXAI Pro" : "開啟 IXAI Pro"}</span>
+        <span className="text-current">{status === "connecting" ? "正在連接 IXAI Pro" : "開啟 IXAI Pro"}</span>
         {status === "connecting" ? null : (
           <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
         )}
