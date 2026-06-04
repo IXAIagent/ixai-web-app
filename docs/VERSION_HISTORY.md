@@ -6,6 +6,43 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.69.0 — Pro Session Hardening
+
+Why:
+
+- v1.68 let App users enter Legacy Pro without seeing `/login`, but the MVP localStorage marker was still too thin for refresh, protected routes, logout, and API failure behavior.
+
+What Changed:
+
+- Documented v1.69 Pro Session Hardening.
+- Upgraded Legacy Pro SSO marker to structured `ixai_sso_v2`.
+- Centralized session helpers: `getProSession`, `setProSsoSession`, `clearProSession`, `isSsoSession`, `isLegacyJwtSession`, and `isSessionExpired`.
+- Kept legacy FastAPI JWT login working.
+- Prevented `ixai_sso_v2` from being sent to FastAPI as a backend JWT.
+- Preserved SSO session on backend API 401 so pages can show degraded states instead of forcing `/login`.
+- Logout now clears legacy JWT and SSO session state predictably.
+
+Key Decisions:
+
+- Keep App `/api/pro/launch` unchanged.
+- Keep localStorage only as MVP infrastructure.
+- Treat the SSO marker as UI identity bridge only, not paid Pro authorization.
+- Defer true Supabase session / backend JWT validation for protected Pro APIs to v1.70+.
+
+Out of Scope:
+
+- Stripe / billing.
+- Broker integration.
+- Trading.
+- Portfolio engine.
+- FCN calculation engine.
+- Daily / Weekly generation.
+- Provider ingestion.
+- Backend production membership logic.
+- Supabase schema changes.
+- App login UX changes.
+- Legacy Pro login fallback removal.
+
 ## v1.68.0 — App ↔ Pro Unified Identity MVP
 
 Why:

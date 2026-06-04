@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.68.0`
+`v1.69.0`
 
 ## Related Strategic Documents
 
@@ -29,6 +29,27 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/SSO_CTA_PROMOTION_V1671.md`
 - `docs/ACCOUNT_ICON_CLEANUP_V1672.md`
 - `docs/UNIFIED_IDENTITY_MVP_V168.md`
+- `docs/PRO_SESSION_HARDENING_V169.md`
+
+## v1.69.0 — Pro Session Hardening
+
+Goal:
+
+- Upgrade the Legacy Pro MVP SSO marker from `ixai_sso_v1` to structured `ixai_sso_v2`.
+- Centralize session helpers for legacy JWT and App SSO sessions.
+- Keep refresh behavior stable on `/dashboard`.
+- Let protected Pro routes accept SSO UI sessions without treating them as backend JWTs.
+- Ensure logout clears both legacy JWT and SSO session state predictably.
+
+Out of scope:
+
+- No Supabase migration.
+- No backend production membership logic changes.
+- No Stripe, billing, broker, trading, Portfolio engine, FCN calculation engine, provider ingestion, or Daily / Weekly generation changes.
+
+Next:
+
+- v1.70 should move from localStorage MVP session markers toward a safer shared Supabase or backend-validated session model for protected Pro APIs.
 
 ## v1.68.0 — App ↔ Pro Unified Identity MVP
 

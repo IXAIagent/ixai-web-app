@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.68.0`
+`v1.69.0`
 
 Current Core Flow:
 
@@ -97,6 +97,12 @@ v1.67.2 cleans the remaining off-style account icons in the `關注清單與接�
 v1.68.0 turns the v1.67 App to Pro handoff into the first usable identity bridge. App `/api/pro/launch` remains stable: it validates the Supabase user, issues a short-lived one-time launch code, and never exposes Supabase access or refresh tokens in the URL. Legacy Pro now validates the launch code, creates a clearly marked short-lived `ixai_sso_v1` MVP session, and redirects the user into `/dashboard` instead of leaving them on the Pro login path.
 
 This is not a full Supabase migration and not paid Pro authorization. The MVP session is a local UI bridge for Legacy Pro only; it does not grant backend Portfolio / FCN / Risk data access, does not replace FastAPI JWT login, and does not change membership or entitlement rules. Future v1.69+ work should replace the localStorage MVP marker with a safer shared Supabase / backend-validated session model.
+
+## v1.69.0 — Pro Session Hardening
+
+v1.69.0 stabilizes the v1.68 local App-to-Pro session bridge. Legacy Pro now uses a structured `ixai_sso_v2` session object with provider, App user id tail, masked email, issuedAt, expiresAt, and source fields. Session helpers are centralized around `getProSession`, `setProSsoSession`, `clearProSession`, `isSsoSession`, `isLegacyJwtSession`, and `isSessionExpired`.
+
+The hardening goal is practical stability: refresh should keep a valid SSO user in `/dashboard`, protected Legacy Pro routes should accept either a legacy FastAPI JWT or the App SSO marker, and backend API 401 responses under SSO should produce degraded UI states rather than immediately destroying the SSO session. The marker remains localStorage MVP infrastructure and does not authorize paid Pro, portfolio, FCN, risk, trading, or broker functionality.
 
 Current surface relationship:
 
