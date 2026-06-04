@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.69.0`
+`v1.70.2`
 
 ## Related Strategic Documents
 
@@ -30,6 +30,42 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/ACCOUNT_ICON_CLEANUP_V1672.md`
 - `docs/UNIFIED_IDENTITY_MVP_V168.md`
 - `docs/PRO_SESSION_HARDENING_V169.md`
+- `docs/SSO_STABILITY_VALIDATION_V170.md`
+- `docs/APP_LOGIN_ENTRY_FIX_V1702.md`
+
+## v1.70.2 — App Login Entry Fix
+
+Goal:
+
+- Make `/login` clearly support existing-user login after Pro logout QA.
+- Keep `/register` as the account creation surface.
+- Preserve Supabase auth logic and SSO launch behavior unchanged.
+
+Out of scope:
+
+- No SSO logic changes.
+- No Pro session changes.
+- No Legacy Pro, backend, Daily / Weekly, FCN, provider, Stripe, trading, or portfolio engine changes.
+
+## v1.70.0 — SSO Stability Validation
+
+Goal:
+
+- Validate the App to Pro SSO path after v1.69.1 without adding features.
+- Confirm a logged-in App user can launch Legacy Pro, land on `/dashboard`, refresh, switch routes, re-enter from App `/account`, and logout predictably.
+- Confirm invalid / replayed codes show the safe fallback page and do not clear an already valid SSO session.
+- Record known limitations of the localStorage MVP SSO bridge before production release QA.
+
+Out of scope:
+
+- No UI changes.
+- No App `/api/pro/launch` behavior changes.
+- No backend, Supabase schema, auth provider, Daily / Weekly, FCN content, provider, Stripe, broker, trading, or portfolio engine changes.
+
+Next:
+
+- v1.70.1 should run credential-dependent production release QA after the v1.69.1 Legacy Pro persistence fix is deployed.
+- v1.71 should decide whether to move the Pro bridge toward Supabase session reuse or backend-validated bridge tokens for protected Pro APIs.
 
 ## v1.69.0 — Pro Session Hardening
 

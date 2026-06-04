@@ -6,6 +6,70 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.70.2 — App Login Entry Fix
+
+Why:
+
+- After Legacy Pro logout QA, users may return to the App and need to sign in again.
+- `/login` technically rendered login mode, but the page hierarchy and surrounding copy still felt too close to account creation.
+
+What Changed:
+
+- Added `docs/APP_LOGIN_ENTRY_FIX_V1702.md`.
+- Updated `/login` copy so the page title is `進入 IXAI`.
+- Added a simple `登入 / 建立帳號` switch in the shared password auth form.
+- Kept `/register` as the account creation route.
+
+Key Decisions:
+
+- Keep email / password auth behavior unchanged.
+- Keep Supabase auth helpers unchanged.
+- Do not change SSO or Legacy Pro behavior.
+
+Out of Scope:
+
+- SSO launch code.
+- Pro session logic.
+- Legacy Pro.
+- Backend.
+- Daily / Weekly generation.
+- FCN content.
+- Provider ingestion.
+- Stripe / trading.
+
+## v1.70.0 — SSO Stability Validation
+
+Why:
+
+- v1.69.1 fixed the Legacy Pro persistence regression where a replayed launch code could clear an already valid App SSO session.
+- Before more SSO work, IXAI needs a documented stability checkpoint for dashboard refresh, route switching, re-entry, invalid code fallback, and logout behavior.
+
+What Changed:
+
+- Added `docs/SSO_STABILITY_VALIDATION_V170.md`.
+- Updated project context and roadmap to mark v1.70.0 as validation-only.
+- Documented the manual QA checklist for App login → `開啟 IXAI Pro` → Legacy Pro `/dashboard` → refresh / route switch / logout stability.
+
+Key Decisions:
+
+- Do not change App `/api/pro/launch` in v1.70.0.
+- Do not add credential-dependent automation for SSO.
+- Treat the localStorage SSO bridge as MVP infrastructure pending a future Supabase session or backend-validated bridge-token design.
+
+Out of Scope:
+
+- UI changes.
+- SSO launch-code behavior changes.
+- Backend changes.
+- Auth provider or Supabase schema changes.
+- Daily / Weekly generation.
+- FCN content.
+- Provider ingestion.
+- Stripe / billing.
+- Broker integration.
+- Trading.
+- Portfolio engine.
+
 ## v1.69.0 — Pro Session Hardening
 
 Why:

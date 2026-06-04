@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.69.0`
+`v1.70.2`
 
 Current Core Flow:
 
@@ -103,6 +103,16 @@ This is not a full Supabase migration and not paid Pro authorization. The MVP se
 v1.69.0 stabilizes the v1.68 local App-to-Pro session bridge. Legacy Pro now uses a structured `ixai_sso_v2` session object with provider, App user id tail, masked email, issuedAt, expiresAt, and source fields. Session helpers are centralized around `getProSession`, `setProSsoSession`, `clearProSession`, `isSsoSession`, `isLegacyJwtSession`, and `isSessionExpired`.
 
 The hardening goal is practical stability: refresh should keep a valid SSO user in `/dashboard`, protected Legacy Pro routes should accept either a legacy FastAPI JWT or the App SSO marker, and backend API 401 responses under SSO should produce degraded UI states rather than immediately destroying the SSO session. The marker remains localStorage MVP infrastructure and does not authorize paid Pro, portfolio, FCN, risk, trading, or broker functionality.
+
+## v1.70.0 — SSO Stability Validation
+
+v1.70.0 is a validation-only checkpoint after the v1.69.1 Legacy Pro persistence fix. It documents the required App to Pro SSO stability checklist: launch from the App, land in Legacy Pro `/dashboard`, refresh without falling back to `/login`, switch Pro routes without destroying the SSO session, handle invalid / replayed codes safely, and keep Legacy Pro logout separate from the App Supabase session.
+
+No product behavior changes are introduced in the App for v1.70.0. App `/api/pro/launch`, SSO launch-code behavior, backend membership / entitlement logic, Daily / Weekly generation, provider ingestion, FCN content, Stripe, broker, trading, and portfolio engines remain out of scope. See `docs/SSO_STABILITY_VALIDATION_V170.md` before running production SSO release QA.
+
+## v1.70.2 — App Login Entry Fix
+
+v1.70.2 clarifies the App login entry after Pro logout QA. `/login` is now visibly an existing-user login surface with the title `進入 IXAI`, a primary `登入` action, and a secondary `建立 IXAI Account` path. `/register` remains the account creation page. This is a UX copy / hierarchy fix only; it does not change Supabase auth logic, SSO launch behavior, Legacy Pro session behavior, backend, Daily / Weekly generation, FCN content, providers, Stripe, trading, or portfolio engines.
 
 Current surface relationship:
 
