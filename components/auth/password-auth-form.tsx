@@ -44,6 +44,14 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
       ? "登入後即可回到 Account、Daily Brief、Watchlist 與 IXAI Pro 入口。"
       : "建立帳號後即可在此裝置保存 IXAI session；跨裝置同步與 Pro handoff 將分階段開放。"
     : "IXAI Account production auth 尚未設定。";
+  const activeTabStyle = {
+    backgroundColor: "var(--ixai-forest)",
+    color: "var(--ixai-cream)",
+  };
+  const inactiveTabStyle = {
+    backgroundColor: "rgba(255, 250, 240, 0.72)",
+    color: "var(--ixai-forest)",
+  };
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -90,27 +98,36 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
         className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.9)] p-5 shadow-[0_16px_44px_rgba(9,41,31,0.05)] sm:p-7"
         onSubmit={handleSubmit}
       >
-        <div className="mb-5 grid grid-cols-2 gap-2 rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] p-1 text-sm font-semibold">
+        <div className="mb-5 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.68)] p-1">
+          <p className="px-2 pb-1.5 pt-1 text-[11px] font-medium text-[var(--ixai-ink-muted)]">
+            {isLogin ? "目前：登入" : "目前：建立帳號"}
+          </p>
+          <div className="grid grid-cols-2 gap-2 text-sm font-semibold">
           <Link
-            className={`rounded-md px-3 py-2 text-center transition ${
+            aria-current={isLogin ? "page" : undefined}
+            className={`rounded-md border px-3 py-2 text-center transition ${
               isLogin
-                ? "bg-[var(--ixai-forest)] text-[var(--ixai-cream)]"
-                : "text-[var(--ixai-ink-muted)] hover:text-[var(--ixai-forest)]"
+                ? "border-[var(--ixai-forest)] shadow-sm"
+                : "border-[rgba(9,41,31,0.14)] hover:border-[var(--ixai-gold)]"
             }`}
             href="/login"
+            style={isLogin ? activeTabStyle : inactiveTabStyle}
           >
             登入
           </Link>
           <Link
-            className={`rounded-md px-3 py-2 text-center transition ${
+            aria-current={!isLogin ? "page" : undefined}
+            className={`rounded-md border px-3 py-2 text-center transition ${
               !isLogin
-                ? "bg-[var(--ixai-forest)] text-[var(--ixai-cream)]"
-                : "text-[var(--ixai-ink-muted)] hover:text-[var(--ixai-forest)]"
+                ? "border-[var(--ixai-forest)] shadow-sm"
+                : "border-[rgba(9,41,31,0.14)] hover:border-[var(--ixai-gold)]"
             }`}
             href="/register"
+            style={!isLogin ? activeTabStyle : inactiveTabStyle}
           >
             建立帳號
           </Link>
+          </div>
         </div>
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           {isLogin ? "IXAI Login" : "IXAI Register"}
