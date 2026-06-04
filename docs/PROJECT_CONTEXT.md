@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.67.2`
+`v1.68.0`
 
 Current Core Flow:
 
@@ -91,6 +91,12 @@ v1.67.1 makes the App to Pro launch prototype visible in the primary user flow. 
 ## v1.67.2 — Account Icon Cleanup
 
 v1.67.2 cleans the remaining off-style account icons in the `關注清單與接收偏好` area. Account lower-section card markers now follow the shared `FeatureIcon` rule from v1.64.2: forest container, gold/cream glyph, visible border, and minimum 32px. This is visual-only and does not touch SSO logic, `/api/pro/launch`, Legacy Pro receive, backend, auth, Daily / Weekly, providers, FCN content, or page layout.
+
+## v1.68.0 — App ↔ Pro Unified Identity MVP
+
+v1.68.0 turns the v1.67 App to Pro handoff into the first usable identity bridge. App `/api/pro/launch` remains stable: it validates the Supabase user, issues a short-lived one-time launch code, and never exposes Supabase access or refresh tokens in the URL. Legacy Pro now validates the launch code, creates a clearly marked short-lived `ixai_sso_v1` MVP session, and redirects the user into `/dashboard` instead of leaving them on the Pro login path.
+
+This is not a full Supabase migration and not paid Pro authorization. The MVP session is a local UI bridge for Legacy Pro only; it does not grant backend Portfolio / FCN / Risk data access, does not replace FastAPI JWT login, and does not change membership or entitlement rules. Future v1.69+ work should replace the localStorage MVP marker with a safer shared Supabase / backend-validated session model.
 
 Current surface relationship:
 

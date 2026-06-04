@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.67.2`
+`v1.68.0`
 
 ## Related Strategic Documents
 
@@ -28,6 +28,26 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/SSO_LAUNCH_PROTOTYPE_V167.md`
 - `docs/SSO_CTA_PROMOTION_V1671.md`
 - `docs/ACCOUNT_ICON_CLEANUP_V1672.md`
+- `docs/UNIFIED_IDENTITY_MVP_V168.md`
+
+## v1.68.0 — App ↔ Pro Unified Identity MVP
+
+Goal:
+
+- Complete the first usable App to Pro login experience.
+- Keep App login as Supabase Auth.
+- Keep App `/api/pro/launch` as a short-lived one-time-code boundary.
+- Let Legacy Pro validate the launch code, create a short-lived `ixai_sso_v1` MVP session, and redirect users directly to `/dashboard`.
+- Preserve legacy Pro `/login` as fallback.
+
+Out of scope:
+
+- No Stripe, billing, broker integration, trading, portfolio engine, FCN calculation engine, Daily / Weekly generation, provider ingestion, Supabase schema change, or legacy login removal.
+- The MVP session does not grant paid Pro access and does not authorize backend Portfolio / FCN / Risk data.
+
+Next:
+
+- v1.69 should replace the MVP localStorage bridge with a safer session model: direct Supabase session in Legacy Pro or backend-validated bridge tokens for protected Pro APIs.
 
 ## v1.67.2 — Account Icon Cleanup
 

@@ -6,6 +6,42 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.68.0 — App ↔ Pro Unified Identity MVP
+
+Why:
+
+- v1.67 proved that Legacy Pro could receive and validate an App launch code, but users still had to continue through the legacy Pro login path.
+- The next product requirement is a real App to Pro entry where a logged-in App user lands directly inside the Pro dashboard.
+
+What Changed:
+
+- Documented the v1.68 Unified Identity MVP.
+- Legacy Pro validates the App one-time launch code and creates a short-lived `ixai_sso_v1` MVP session.
+- Legacy Pro redirects valid SSO users to `/dashboard`.
+- API 401 responses under the MVP SSO marker no longer force an immediate logout redirect back to `/login`; Pro can show degraded dashboard states while the true backend auth model remains unchanged.
+
+Key Decisions:
+
+- Keep App `/api/pro/launch` stable.
+- Keep launch codes short-lived and one-time use.
+- Do not expose Supabase access tokens, refresh tokens, service role keys, or backend secrets to Legacy Pro.
+- Keep legacy FastAPI JWT login as fallback.
+- Treat the localStorage MVP marker as temporary; it does not grant paid Pro access or protected backend data access.
+
+Out of Scope:
+
+- Stripe / billing.
+- Broker integration.
+- Trading.
+- Portfolio engine.
+- FCN calculation engine.
+- Daily / Weekly generation.
+- Provider ingestion.
+- Backend production membership logic.
+- Supabase schema changes.
+- Existing App login changes.
+- Legacy Pro login removal.
+
 ## v1.67.2 — Account Icon Cleanup
 
 Why:
