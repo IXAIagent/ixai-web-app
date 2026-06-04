@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useIdentitySession } from "@/components/auth/identity-provider";
+import { FeatureIcon } from "@/components/ui/feature-icon";
 import {
   readLineDeliveryPreferences,
   setLineDeliveryStatus,
@@ -139,9 +140,7 @@ export function LineDeliveryFoundationCard({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.13)] text-[var(--ixai-gold)]">
-              <MessageCircle className="h-4 w-4 stroke-current" aria-hidden="true" />
-            </span>
+            <FeatureIcon icon={MessageCircle} size="md" tone="gold" />
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
                 LINE 情報接收偏好
@@ -225,7 +224,7 @@ export function LineDeliveryFoundationCard({
 
             <article className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4">
               <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
-                <Clock8 className="h-4 w-4 stroke-current" aria-hidden="true" />
+                <FeatureIcon icon={Clock8} size="sm" tone="gold" shadow={false} />
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
                   偏好類型
                 </p>
@@ -281,9 +280,7 @@ export function LineDeliveryFoundationCard({
 
           <aside className="mt-4 rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(255,250,240,0.72)] p-3">
             <div className="flex items-start gap-3">
-              <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.1)] text-[var(--ixai-gold)]">
-                <ShieldCheck className="h-4 w-4 stroke-current" aria-hidden="true" />
-              </span>
+              <FeatureIcon className="mt-0.5" icon={ShieldCheck} size="sm" tone="gold" />
               <p className="text-xs leading-6 text-[var(--ixai-forest-soft)]">
                 接收偏好只用來整理你希望 IXAI 準備的市場情報類型；不構成交易指令或個人化投資建議。
               </p>

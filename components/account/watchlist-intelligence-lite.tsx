@@ -85,7 +85,7 @@ export function WatchlistIntelligenceLite() {
           <div className="space-y-3">
             <article className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4">
               <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
-                <ListChecks className="h-4 w-4 stroke-current" aria-hidden="true" />
+                <FeatureIcon icon={ListChecks} size="sm" tone="gold" shadow={false} />
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
                   你的關注清單記憶
                 </p>
@@ -127,7 +127,7 @@ export function WatchlistIntelligenceLite() {
 
           <article className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4">
             <div className="flex items-center gap-2 text-[var(--ixai-gold)]">
-              <LineChart className="h-4 w-4 stroke-current" aria-hidden="true" />
+              <FeatureIcon icon={LineChart} size="sm" tone="gold" shadow={false} />
               <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
                 建議閱讀路徑
               </p>

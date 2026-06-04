@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.67.1`
+`v1.67.2`
 
 ## Related Strategic Documents
 
@@ -27,6 +27,20 @@ This document is the high-level product continuity layer for IXAI. It should hel
 - `docs/HOMEPAGE_CONVERSION_REDESIGN_V166.md`
 - `docs/SSO_LAUNCH_PROTOTYPE_V167.md`
 - `docs/SSO_CTA_PROMOTION_V1671.md`
+- `docs/ACCOUNT_ICON_CLEANUP_V1672.md`
+
+## v1.67.2 — Account Icon Cleanup
+
+Goal:
+
+- Remove remaining off-style icon treatments from `/account` lower user sections.
+- Keep card / section icons aligned with the v1.64.2 shared `FeatureIcon` system.
+- Preserve SSO CTA placement and launch behavior unchanged.
+
+Out of scope:
+
+- No SSO logic changes.
+- No backend, auth, content engine, provider, FCN content, or layout changes.
 
 ## v1.67.1 — Promote Pro SSO CTA
 

@@ -50,7 +50,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 Current Version:
 
-`v1.67.1`
+`v1.67.2`
 
 Current Core Flow:
 
@@ -87,6 +87,10 @@ The prototype proves that Legacy Pro can receive App identity without exposing S
 ## v1.67.1 — Promote Pro SSO CTA
 
 v1.67.1 makes the App to Pro launch prototype visible in the primary user flow. `/pro` now leads with `開啟 IXAI Pro` as the first hero CTA, while `/account` surfaces the same launch action near the top of the Pro card. This version only promotes the SSO launch entry point; it does not change launch-token behavior, Legacy Pro receive behavior, auth, backend, Daily / Weekly generation, provider ingestion, or FCN education content.
+
+## v1.67.2 — Account Icon Cleanup
+
+v1.67.2 cleans the remaining off-style account icons in the `關注清單與接收偏好` area. Account lower-section card markers now follow the shared `FeatureIcon` rule from v1.64.2: forest container, gold/cream glyph, visible border, and minimum 32px. This is visual-only and does not touch SSO logic, `/api/pro/launch`, Legacy Pro receive, backend, auth, Daily / Weekly, providers, FCN content, or page layout.
 
 Current surface relationship:
 

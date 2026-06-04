@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.67.2 — Account Icon Cleanup
+
+Why:
+
+- After v1.67.1, `/account` still had lower-section icon treatments that could look off-style compared with the shared v1.64.2 icon system.
+
+What Changed:
+
+- Migrated remaining account lower-section card markers to `FeatureIcon`.
+- Focused on `IXAI 正在整理你的市場記憶` and `LINE 情報接收偏好` child surfaces.
+- Kept inline button glyphs unchanged where they follow button text rules.
+
+Out of Scope:
+
+- SSO logic.
+- `/api/pro/launch`.
+- Legacy Pro receive route.
+- Pro CTA placement.
+- Backend.
+- Auth.
+- Daily / Weekly generation.
+- Provider logic.
+- FCN education content.
+
 ## v1.67.1 — Promote Pro SSO CTA
 
 Why:
