@@ -72,7 +72,7 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
 
   return (
     <section className="mx-auto grid w-full max-w-5xl gap-5 px-3 py-4 sm:px-6 sm:py-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-8 lg:py-12">
-      <div className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_20px_70px_rgba(9,41,31,0.16)] sm:p-7">
+      <div className="order-2 rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_20px_70px_rgba(9,41,31,0.16)] sm:p-7 lg:order-1">
         <IxaiLogoFrame className="h-14 w-24" logoSize="md" tone="dark" />
         <p className="mt-6 text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
           IXAI Account
@@ -91,26 +91,9 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
       </div>
 
       <form
-        className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.9)] p-5 shadow-[0_16px_44px_rgba(9,41,31,0.05)] sm:p-7"
+        className="order-1 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.9)] p-5 shadow-[0_16px_44px_rgba(9,41,31,0.05)] sm:p-7 lg:order-2"
         onSubmit={handleSubmit}
       >
-        <div className="mb-5 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.68)] px-3 py-2.5 text-sm leading-6 text-[var(--ixai-forest)]">
-          {isLogin ? (
-            <p>
-              還沒有 IXAI Account？{" "}
-              <Link className="font-semibold underline-offset-4 hover:underline" href="/register">
-                建立 IXAI Account
-              </Link>
-            </p>
-          ) : (
-            <p>
-              已經有 IXAI Account？{" "}
-              <Link className="font-semibold underline-offset-4 hover:underline" href="/login">
-                前往登入
-              </Link>
-            </p>
-          )}
-        </div>
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           {isLogin ? "IXAI Login" : "IXAI Register"}
         </p>

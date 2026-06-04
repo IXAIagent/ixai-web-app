@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { useIdentity } from "@/components/auth/auth-provider";
 
@@ -61,6 +62,12 @@ function isPublicRoute(pathname: string | null | undefined) {
   );
 }
 
+function isAccountRoute(pathname: string | null | undefined) {
+  const normalizedPathname = normalizePathname(pathname);
+
+  return normalizedPathname === "/account";
+}
+
 function AuthEntryShell({
   children,
 }: Readonly<{
@@ -79,6 +86,14 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
   const pathname = usePathname();
   const { mounted, session } = useIdentity();
   const currentPathname = getHydrationSafePathname(pathname);
+  const shouldRedirectAccountToLogin =
+    mounted && session.mode !== "authenticated" && isAccountRoute(currentPathname);
+
+  useEffect(() => {
+    if (shouldRedirectAccountToLogin && typeof window !== "undefined") {
+      window.location.replace("/login");
+    }
+  }, [shouldRedirectAccountToLogin]);
 
   if (isPublicRoute(currentPathname)) {
     return <>{children}</>;
@@ -99,6 +114,19 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
 
   if (session.mode === "authenticated") {
     return <>{children}</>;
+  }
+
+  if (shouldRedirectAccountToLogin) {
+    return (
+      <AuthEntryShell>
+        <section className="w-full rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_20px_70px_rgba(9,41,31,0.08)] sm:p-7">
+          <IxaiLogoFrame className="h-14 w-24" logoSize="md" priority />
+          <p className="mt-5 text-sm leading-7 text-[var(--ixai-ink-muted)]">
+            正在前往登入...
+          </p>
+        </section>
+      </AuthEntryShell>
+    );
   }
 
   return (
