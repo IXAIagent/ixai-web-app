@@ -24,6 +24,10 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isLogin = mode === "login";
+  const emailInputId = isLogin ? "ixai-login-email" : "ixai-register-email";
+  const passwordInputId = isLogin
+    ? "ixai-login-password"
+    : "ixai-register-password";
   const routeMessage =
     searchParams.get("verified") === "1"
       ? "Email 已驗證，請重新登入 IXAI。"
@@ -121,23 +125,33 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
         </p>
 
         <div className="mt-5 grid gap-4">
-          <label className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]">
+          <label
+            className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]"
+            htmlFor={emailInputId}
+          >
             Email
             <input
               autoComplete="email"
               className="min-h-11 rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--ixai-gold)]"
+              id={emailInputId}
+              name="email"
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
               type="email"
               value={email}
             />
           </label>
-          <label className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]">
+          <label
+            className="grid gap-2 text-sm font-medium text-[var(--ixai-forest)]"
+            htmlFor={passwordInputId}
+          >
             密碼
             <input
               autoComplete={isLogin ? "current-password" : "new-password"}
               className="min-h-11 rounded-lg border border-[var(--ixai-border)] bg-[var(--ixai-paper)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--ixai-gold)]"
+              id={passwordInputId}
               minLength={6}
+              name="password"
               onChange={(event) => setPassword(event.target.value)}
               placeholder="至少 6 個字元"
               type="password"
