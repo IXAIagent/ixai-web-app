@@ -256,6 +256,7 @@ async function main() {
     exportCurrentPackEnabled: await page.getByRole("button", { name: /Export Current Pack/i }).first().isEnabled().catch(() => false),
     copyCaptionEnabled: await page.getByRole("button", { name: /Copy caption/i }).first().isEnabled().catch(() => false),
     downloadPngEnabled: await page.getByRole("button", { name: /Download PNG/i }).first().isEnabled().catch(() => false),
+    duplicateSentenceIssues: (studioText.match(/duplicate_sentence/g) ?? []).length,
     duplicateNarrativeIssues: qualityIssues === "0" ? [] : repeatedNarrativeLines(studioText),
     marketPulseOccurrences: (studioText.match(/Market Pulse/g) ?? []).length,
   };
@@ -291,6 +292,10 @@ async function main() {
 
   if (actual.duplicateNarrativeIssues.length > 0) {
     failures.push(`Narrative duplicates found: ${actual.duplicateNarrativeIssues.join(" | ")}`);
+  }
+
+  if (actual.duplicateSentenceIssues > 0) {
+    failures.push(`duplicate_sentence diagnostics should be 0, got ${actual.duplicateSentenceIssues}`);
   }
 
   if (actual.marketPulseOccurrences > 0) {

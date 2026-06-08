@@ -205,6 +205,47 @@ function chooseNarrativeByPattern(items: string[], pattern: RegExp, fallback: st
   );
 }
 
+function markNarrativeUsed(used: string[], ...values: Array<string | undefined | null>) {
+  for (const value of values) {
+    const normalized = compactNarrative(value ?? undefined);
+    if (normalized.length < 10) continue;
+    if (used.some((existing) => isNearDuplicateNarrative(existing, normalized))) continue;
+    used.push(normalized);
+  }
+}
+
+function allocateNarrativeByPattern(
+  items: string[],
+  pattern: RegExp,
+  fallback: string,
+  used: string[],
+) {
+  const selected = chooseNarrativeByPattern(items, pattern, fallback, used);
+  markNarrativeUsed(used, selected);
+  return selected;
+}
+
+function allocateNarrativeBodies(
+  items: Array<string | undefined | null>,
+  fallbacks: string[],
+  count: number,
+  used: string[],
+) {
+  const output: string[] = [];
+
+  for (const item of [...items, ...fallbacks]) {
+    const normalized = compactNarrative(item ?? undefined);
+    if (normalized.length < 10) continue;
+    if (used.some((existing) => isNearDuplicateNarrative(existing, normalized))) continue;
+    if (output.some((existing) => isNearDuplicateNarrative(existing, normalized))) continue;
+    output.push(normalized);
+    markNarrativeUsed(used, normalized);
+    if (output.length >= count) break;
+  }
+
+  return output;
+}
+
 export function generateDailySocialPack(source?: DailyBriefDraft | null): SocialIntelligencePack {
   const dateLabel = formatDateLabel(source?.publishedAt ?? source?.updatedAt);
   const extraction = extractDailySocialIntelligence(source);
@@ -308,7 +349,8 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
   const weeklySignals = extraction.evidenceItems
     .map((item) => labeledNarrative(item.label, item.whatHappened))
     .slice(0, 3);
-  const weeklyChainBodies = uniqueNarrativeBodies(
+  const usedNarrativeTexts: string[] = [];
+  const weeklyChainBodies = allocateNarrativeBodies(
     [
       `${extraction.crossMarketChain[0]?.narrative ?? ""} ${extraction.crossMarketChain[1]?.narrative ?? ""}`,
       `${extraction.crossMarketChain[2]?.narrative ?? ""} ${extraction.crossMarketChain[3]?.narrative ?? ""}`,
@@ -320,13 +362,51 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       "BTC / ETH 波動會把風險傳導到 FCN worst-of basket、KO / KI 與籃子集中度。",
     ],
     3,
+    usedNarrativeTexts,
   );
   const weeklyChain = [
     labeledNarrative("Fed / Rates → USD", weeklyChainBodies[0]),
     labeledNarrative("AI Beta → Taiwan Semis", weeklyChainBodies[1]),
     labeledNarrative("Crypto → FCN Volatility", weeklyChainBodies[2]),
   ];
-  const catalystBodies = uniqueNarrativeBodies(
+  const aiTechCandidates = [
+    extraction.aiEarningsPowerSignal,
+    ...extraction.evidenceItems.map((item) => `${item.whatHappened} ${item.whyItMatters}`),
+    "AI guidance / earnings｜觀察 AI guidance、earnings、capex 與台積電 / 2330 供應鏈是否支撐 AI beta。",
+  ];
+  const aiWhatHappened = allocateNarrativeByPattern(
+    aiTechCandidates,
+    /AI|semiconductor|半導體|NVDA|NVIDIA|TSMC|台積|2330|guidance|指引|capex|cloud|data center|財報|AI server/i,
+    "AI earnings、guidance、capex 與台積電 / 2330 供應鏈是本週檢驗 AI beta 的主要證據。",
+    usedNarrativeTexts,
+  );
+  const aiWhyItMatters = allocateNarrativeByPattern(
+    [
+      "如果 guidance 與 capex 不能支撐估值，高 beta 科技股會重新檢驗獲利容錯率。",
+      extraction.crossMarketChain[2]?.narrative,
+      extraction.crossMarketChain[3]?.narrative,
+      "AI beta 若不能被 earnings、guidance 與台積電 / 2330 供應鏈驗證，資金會更挑剔估值與獲利證據。",
+    ],
+    /valuation|估值|earnings|獲利|AI beta|guidance|capex|台積|2330|semiconductor|半導體/i,
+    "如果 guidance 與 capex 不能支撐估值，高 beta 科技股會重新檢驗獲利容錯率。",
+    usedNarrativeTexts,
+  );
+  const aiWatchNext = allocateNarrativeByPattern(
+    [
+      ...extraction.nextWeekCatalysts,
+      "AI guidance / earnings｜觀察 AI guidance、earnings、capex 與台積電 / 2330 供應鏈是否支撐 AI beta。",
+      "NVDA / TSMC / 2330｜觀察 AI server、cloud capex 與 data center 訂單是否同步驗證。",
+    ],
+    /AI|NVDA|台積|2330|TSMC|guidance|指引|capex|cloud|data center|財報|半導體/i,
+    "下週觀察 AI guidance、台積電 / 2330 與半導體供應鏈是否同步上修。",
+    usedNarrativeTexts,
+  );
+  const weeklyStrategist = [
+    labeledNarrative("What Happened", aiWhatHappened),
+    labeledNarrative("Why It Matters", aiWhyItMatters),
+    labeledNarrative("Watch Next", aiWatchNext),
+  ];
+  const catalystBodies = allocateNarrativeBodies(
     extraction.nextWeekCatalysts,
     [
       "FOMC / Powell｜觀察利率路徑是否改變美元、SPY / QQQ、BTC 與台股半導體風險定價。",
@@ -334,45 +414,15 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       "FCN volatility｜觀察 worst-of basket pressure、KO / KI 距離與籃子集中敏感度。",
     ],
     3,
+    usedNarrativeTexts,
   );
   const weeklyCatalysts = [
-    labeledNarrative("FOMC / Powell", chooseNarrativeByPattern(catalystBodies, /FOMC|Powell|Fed|利率|美元|CPI|PCE/i, "觀察 FOMC / Powell 是否改變美元、SPY / QQQ、BTC 與台股半導體風險定價。")),
-    labeledNarrative("AI guidance / earnings", chooseNarrativeByPattern(catalystBodies, /AI|NVDA|台積|2330|TSMC|guidance|指引|capex|cloud|data center|財報|半導體/i, "觀察 AI guidance、earnings、capex 與台積電 / 2330 供應鏈是否支撐 AI beta。")),
-    labeledNarrative("FCN volatility", chooseNarrativeByPattern(catalystBodies, /FCN|KO|KI|worst|volatility|波動|籃子|BTC|ETH/i, "觀察 BTC / ETH、QQQ 與 FCN worst-of basket pressure、KO / KI 距離是否惡化。")),
-  ];
-  const aiTechCandidates = [
-    extraction.aiEarningsPowerSignal,
-    ...extraction.evidenceItems.map((item) => `${item.whatHappened} ${item.whyItMatters}`),
-    weeklyCatalysts[1],
-  ];
-  const aiWhatHappened = chooseNarrativeByPattern(
-    aiTechCandidates,
-    /AI|semiconductor|半導體|NVDA|NVIDIA|TSMC|台積|2330|guidance|指引|capex|cloud|data center|財報|AI server/i,
-    "AI earnings、guidance、capex 與台積電 / 2330 供應鏈是本週檢驗 AI beta 的主要證據。",
-  );
-  const aiWhyItMatters = chooseNarrativeByPattern(
-    [
-      "如果 guidance 與 capex 不能支撐估值，高 beta 科技股會重新檢驗獲利容錯率。",
-      extraction.crossMarketChain[2]?.narrative,
-      extraction.crossMarketChain[3]?.narrative,
-    ],
-    /valuation|估值|earnings|獲利|AI beta|guidance|capex|台積|2330|semiconductor|半導體/i,
-    "如果 guidance 與 capex 不能支撐估值，高 beta 科技股會重新檢驗獲利容錯率。",
-    [aiWhatHappened],
-  );
-  const aiWatchNext = chooseNarrativeByPattern(
-    weeklyCatalysts,
-    /AI|NVDA|台積|2330|TSMC|guidance|指引|capex|cloud|data center|財報|半導體/i,
-    "下週觀察 AI guidance、台積電 / 2330 與半導體供應鏈是否同步上修。",
-    [aiWhatHappened, aiWhyItMatters],
-  );
-  const weeklyStrategist = [
-    labeledNarrative("What Happened", aiWhatHappened),
-    labeledNarrative("Why It Matters", aiWhyItMatters),
-    labeledNarrative("Watch Next", aiWatchNext),
+    labeledNarrative("FOMC / Powell", allocateNarrativeByPattern(catalystBodies, /FOMC|Powell|Fed|利率|美元|CPI|PCE/i, "觀察 FOMC / Powell 是否改變美元、SPY / QQQ、BTC 與台股半導體風險定價。", usedNarrativeTexts)),
+    labeledNarrative("AI guidance / earnings", allocateNarrativeByPattern(catalystBodies, /AI|NVDA|台積|2330|TSMC|guidance|指引|capex|cloud|data center|財報|半導體/i, "觀察 AI guidance、earnings、capex 與台積電 / 2330 供應鏈是否支撐 AI beta。", usedNarrativeTexts)),
+    labeledNarrative("FCN volatility", allocateNarrativeByPattern(catalystBodies, /FCN|KO|KI|worst|volatility|波動|籃子|BTC|ETH/i, "觀察 BTC / ETH、QQQ 與 FCN worst-of basket pressure、KO / KI 距離是否惡化。", usedNarrativeTexts)),
   ];
   const weeklyQuestion = extraction.centralQuestion;
-  const weeklyViewBodies = uniqueNarrativeBodies(
+  const weeklyViewBodies = allocateNarrativeBodies(
     [
       extraction.iXuanWeeklyViewAngle,
       extraction.weeklyChange,
@@ -385,6 +435,7 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       "下週觀察：FOMC / Powell、AI guidance / capex、台積電 / 2330 與 FCN volatility 是否同向驗證。",
     ],
     3,
+    usedNarrativeTexts,
   );
   const weeklyViewBullets = [
     labeledNarrative("市場觀點", weeklyViewBodies[0]),
