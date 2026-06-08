@@ -4,13 +4,23 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.70.2`
+`v1.83.8d / Project Stabilization`
+
+## Current Priority
+
+Current priority is Project Stabilization / Documentation Governance.
+
+- Do not enter v1.90 or a new feature mainline until Social Pack regression governance is complete.
+- Social Pack / Weekly Export must pass the regression gate defined in `docs/PROJECT_RULES.md`.
+- Return to App / Pro integration only after Social Pack production behavior is confirmed by user-facing production evidence, not only fixture, build, lint, or mobile smoke checks.
+- Treat v1.82-v1.83.8d as a process-correction incident, not a clean success sequence.
 
 ## Related Strategic Documents
 
 - `docs/PRODUCT_ORIGIN.md`
 - `docs/IXAI_VISION.md`
 - `docs/PROJECT_MAP.md`
+- `docs/SOCIAL_PACK_INCIDENT_REVIEW_20260609.md`
 - `docs/PRO_INTEGRATION_PLAN.md`
 - `docs/SSO_FOUNDATION_PLAN.md`
 - `docs/SSO_IMPLEMENTATION_PLAN.md`

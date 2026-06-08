@@ -42,6 +42,8 @@ The Workflow Layer turns reading, onboarding, account memory, social distributio
 
 The Risk Layer keeps FCN, crypto, portfolio, macro, and market-regime content framed as awareness and monitoring rather than trading instruction.
 
+Social distribution is part of the Workflow Layer, but it is not the core judgment engine. Social Pack assets should help reviewed intelligence travel to LINE / FB / IG audiences without weakening the underlying intelligence workflow, risk discipline, or user trust.
+
 ## Membership Layer
 
 Future IXAI Pro is the Membership Layer.

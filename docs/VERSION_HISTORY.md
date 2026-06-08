@@ -6,6 +6,45 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.83.x Social Pack Stabilization Incident
+
+Why:
+
+- v1.82-v1.83.8d produced a sequence of Social Pack / Weekly Export hotfixes, but production repeatedly remained blocked after fixture, build, lint, or mobile smoke checks passed.
+- User-provided production screenshots showed disabled export controls, failed content quality, source/canonical mismatches, `Market Pulse` fallback residue, and repeated Weekly narrative sentences after earlier fixes were declared complete.
+- The real failure was not only code quality. It was a verification and governance failure.
+
+What Changed:
+
+- v1.82.4 added Social Pack quality guard rules.
+- v1.82.5 and v1.82.7 rewrote narrative expectations and strategist-style depth.
+- v1.83.0 introduced an Intelligence Extraction Layer.
+- v1.83.2 patched extraction and quality-guard false positives.
+- v1.83.3 unblocked Daily export by narrowing quality scan scope.
+- v1.83.4-v1.83.4c addressed Weekly canonical export source selection, fixture validation, and selected/export metadata separation.
+- v1.83.5-v1.83.8d focused on Weekly narrative dedupe, renderer fallback, diagnostics, sentence allocation, and market-review sentence-level dedupe.
+- `docs/SOCIAL_PACK_INCIDENT_REVIEW_20260609.md` was added as the incident review and prevention document.
+
+Key Learning:
+
+- Weekly Social Pack is a high-risk workflow because selected review source, same-week canonical published source, generator output, rendered slide text, caption text, quality guard, and export controls must all agree.
+- Fixture pass does not equal production truth.
+- Build/lint/mobile smoke does not prove Social Pack export readiness.
+- Root-cause claims must remain tentative until production diagnostics and actual issue text are verified.
+
+Governance Change:
+
+- `docs/PROJECT_RULES.md` now requires production-like Social Pack regression before completion can be claimed.
+- Weekly Social Pack fixes must verify selected review plus same-week canonical published cases, rendered slide text, caption text, quality issues, source eligibility, export eligibility, Download PNG, and Copy caption.
+- Social Pack hotfixes must update the incident log or governance docs.
+- The project should not return to App / Pro mainline while Social Pack export remains blocked.
+
+Out of Scope:
+
+- This incident record does not authorize new narrative engine work.
+- This does not change auth, SSO, backend, Portfolio / FCN / Stock / Crypto, or Pro integration priorities.
+- Social Pack remains a distribution asset, not IXAI's core judgment engine.
+
 ## v1.70.2 — App Login Entry Fix
 
 Why:

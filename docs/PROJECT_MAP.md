@@ -32,6 +32,12 @@ Current architecture:
 
 This is the future product mainline.
 
+Social Pack Note:
+
+- Social Pack is a distribution asset for reviewed intelligence. It is not the core judgment engine.
+- Do not let Social Pack hotfixes or export tooling destabilize Daily / Weekly intelligence, account memory, Portfolio Intelligence, or Pro workflow development.
+- Future Social Pack work must follow `docs/SOCIAL_PACK_INCIDENT_REVIEW_20260609.md`.
+
 ## backend/ixai_agent
 
 Role:

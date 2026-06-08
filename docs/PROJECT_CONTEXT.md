@@ -472,6 +472,9 @@ Known areas that require care:
 - Production route QA after v1.50.2 found repeated Next.js `_rsc` prefetch abort noise for `/fcn` and `/weekly-brief`. This did not create console errors or route failures, but future navigation/prefetch policy changes should verify these routes.
 - Provider coverage is materially improved in v1.41.3, but Reuters, Bloomberg, Yahoo Finance, CNYES, 工商時報, 經濟日報, and MoneyDJ remain disabled until stable legal RSS/API access is verified.
 - Market Memory Layer is local / editorial-first and uses recent Daily Briefs as narrative context. It must not be represented as personal market memory, portfolio memory, or individualized investment advice.
+- Weekly Social Pack is now a high-risk area. v1.82-v1.83.8d included repeated Social Pack / Weekly Export hotfixes where fixture, build, or mobile smoke checks passed while production still failed.
+- Future Social Pack work must first read `docs/SOCIAL_PACK_INCIDENT_REVIEW_20260609.md`.
+- Major Social Pack fixes must not rely only on fixture/build/lint proof. They require production-like regression across selected review source, same-week canonical published source, rendered slide text, caption text, quality diagnostics, export eligibility, Download PNG, and Copy caption.
 
 ## G. AI Collaboration Workflow
 
@@ -486,6 +489,8 @@ IXAI uses a multi-agent collaboration model:
 - `docs/VERSION_HISTORY.md`: concise implementation history for handoff.
 
 Before major work, AI agents should read `PROJECT_CONTEXT.md`, `PROJECT_RULES.md`, `ROADMAP.md`, and `VERSION_HISTORY.md`, audit the relevant files, and only then patch. The goal is to prevent context loss, version drift, accidental architecture rewrites, and product misalignment.
+
+For Social Pack / Weekly Export work, the agent must also read `docs/SOCIAL_PACK_INCIDENT_REVIEW_20260609.md` and must not claim completion until the production-like regression gate in `docs/PROJECT_RULES.md` is satisfied.
 
 ## H. See Also
 
@@ -502,5 +507,6 @@ Before major work, AI agents should read `PROJECT_CONTEXT.md`, `PROJECT_RULES.md
 - `docs/CONTENT_ENGINE_ARCHITECTURE.md`: Daily / Weekly / Social Pack content-engine architecture baseline.
 - `docs/PROVIDER_HEALTH_REVIEW.md`: provider health review for App Daily news, App quotes, backend / legacy providers, Yahoo Finance, and Bloomberg.
 - `docs/CONTENT_ENGINE_REWRITE_V162.md`: v1.62.1 content-engine rewrite implementation record, including Daily title diversification, Social Pack separation, Weekly separation, Asia/Taipei date fix, provider health reason codes, tests, and rollback plan.
+- `docs/SOCIAL_PACK_INCIDENT_REVIEW_20260609.md`: v1.82-v1.83.8d Social Pack / Weekly Export incident review and prevention rules.
 - `docs/TAIWAN_USER_UX_CLEANUP_V163.md`: v1.63.0 Traditional Chinese UX cleanup source-of-truth for normal user pages, engineering-info separation, wording table, pages changed, and rollback plan.
 - `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`: v1.63.1 App / Pro role correction source-of-truth, FCN education-page positioning, Daily / Weekly reading-page cleanup, Pro icon/CTA rules, and account information architecture.

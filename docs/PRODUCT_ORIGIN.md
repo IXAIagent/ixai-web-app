@@ -109,3 +109,5 @@ The current public app is a productized layer on top of this origin:
 - Admin / Editorial Studio preserves human review before publication.
 
 Future work should not lose the origin. IXAI exists because market intelligence only becomes valuable when it is organized around risk, memory, workflow, and trust.
+
+Social Pack assets are distribution surfaces for this intelligence workflow. They should not become a separate unstable product center or consume project focus at the expense of Daily / Weekly intelligence, Portfolio / FCN monitoring, or trust-preserving Pro workflows.

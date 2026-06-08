@@ -438,6 +438,26 @@ Social Pack Period Divergence QA:
 - Daily Slide 5 vs Weekly Slide 5: I-Xuan View must be period-specific and not only a "today" / "this week" word swap.
 - If the Daily and Weekly card sets look interchangeable, QA fails.
 
+Social Pack Incident Prevention Rules:
+
+- Before changing Social Pack generation, rendering, quality guard, source selection, or export eligibility, read `docs/SOCIAL_PACK_INCIDENT_REVIEW_20260609.md`.
+- Social Pack must not be declared complete from build, lint, or mobile smoke alone.
+- Weekly Social Pack requires production-like regression because it depends on selected review source, same-week canonical published source, generated text, rendered slide text, caption text, quality guard, and export controls.
+- Weekly regression must include the case where the selected weekly draft is review / non-canonical while a same-week published canonical weekly exists.
+- Weekly regression must confirm canonical export source selection.
+- Weekly regression must confirm selected metadata and export source metadata are separated.
+- Weekly regression must inspect rendered slide text, not only generator output.
+- Weekly regression must inspect caption text separately from slide text.
+- Weekly regression must confirm `Quality issues = 0`.
+- Weekly regression must confirm `Source eligible = true`.
+- Weekly regression must confirm `Export eligible = true`.
+- Weekly regression must confirm Export Current Pack is enabled.
+- Weekly regression must confirm Download PNG is enabled and the downloaded PNG is visually checked.
+- Weekly regression must confirm Copy caption is enabled and the copied caption is checked.
+- If production screenshots show failure, do not attribute it to cache unless production HEAD SHA, route, rendered diagnostics, and actual issue text have been verified.
+- Every Social Pack hotfix must update the incident log or governance docs, not only isolated version files.
+- Do not switch back to App / Pro mainline while Social Pack export remains blocked.
+
 ## I. Growth Rules
 
 Current stage:
@@ -496,5 +516,22 @@ For any functional or UI change:
 - No console errors for the changed flow.
 - External links use safe `target` / `rel` where applicable.
 - Public UI does not expose internal debugging labels unless it is an intentional admin surface.
+
+For Social Pack / Weekly Export changes:
+
+- Production HEAD SHA is confirmed.
+- Production Admin UI confirms `Content quality: passed`.
+- `Quality issues = 0`.
+- `Source eligible = true`.
+- `Export eligible = true`.
+- Export Current Pack is enabled.
+- Download PNG is enabled.
+- Copy caption is enabled.
+- Actual downloaded PNG is visually checked.
+- Same-week review/canonical case is checked.
+- Docs are updated.
+- User confirms the production result.
+
+Fixture pass, build pass, lint pass, and mobile smoke pass are supporting checks only. They do not satisfy Social Pack Definition of Done.
 
 For documentation-only changes, lint/build should still be run when requested by the task.
