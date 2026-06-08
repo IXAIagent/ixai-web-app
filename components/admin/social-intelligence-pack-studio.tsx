@@ -201,8 +201,27 @@ function sourceAlignmentFor({
 
 type SocialPackQualityIssue = {
   detail: string;
+  issueType:
+    | "consecutive_generic_slides"
+    | "daily_cover_view_mismatch"
+    | "daily_ixuan_repeated_phrase"
+    | "daily_watch_next_incomplete"
+    | "duplicate_sentence"
+    | "placeholder_pattern"
+    | "weekly_ai_tech_missing"
+    | "weekly_ai_tech_mismatch"
+    | "weekly_catalyst_missing"
+    | "weekly_fcn_missing"
+    | "weak_bullet";
+  matchedRule: string;
   severity: "blocker" | "warning";
   slideId?: string;
+  slideTitle?: string;
+  source: "caption" | "generated slide" | "metadata" | "rendered slide";
+  textA?: string;
+  textB?: string;
+  similarity?: number;
+  repetitionCount?: number;
 };
 
 type SocialPackQualityResult = {
@@ -258,8 +277,22 @@ function slideNarrativeText(slide: SocialIntelligencePack["slides"][number]) {
     .join(" ");
 }
 
-function slideBodyTexts(slide: SocialIntelligencePack["slides"][number]) {
-  return [slide.subtitle, ...slide.bullets].filter((value): value is string => Boolean(value?.trim()));
+type QualityTextItem = {
+  slideId: string;
+  slideTitle: string;
+  source: SocialPackQualityIssue["source"];
+  text: string;
+};
+
+function slideBodyTextItems(slide: SocialIntelligencePack["slides"][number]) {
+  return [slide.subtitle, ...slide.bullets]
+    .filter((value): value is string => Boolean(value?.trim()))
+    .map((text) => ({
+      slideId: slide.id,
+      slideTitle: slide.title,
+      source: "generated slide" as const,
+      text,
+    }));
 }
 
 function sentenceParts(value: string) {
@@ -281,19 +314,26 @@ function isQualityDuplicateIgnored(value: string) {
   );
 }
 
-function repeatedSentences(texts: string[]) {
-  const counts = new Map<string, number>();
+function repeatedSentences(items: QualityTextItem[]) {
+  const occurrences = new Map<string, QualityTextItem[]>();
 
-  for (const text of texts) {
-    for (const sentence of sentenceParts(text)) {
+  for (const item of items) {
+    for (const sentence of sentenceParts(item.text)) {
       const normalized = sentence.replace(/\s+/g, " ").trim();
       if (normalized.length < 8) continue;
       if (isQualityDuplicateIgnored(normalized)) continue;
-      counts.set(normalized, (counts.get(normalized) ?? 0) + 1);
+      occurrences.set(normalized, [...(occurrences.get(normalized) ?? []), item]);
     }
   }
 
-  return [...counts.entries()].filter(([, count]) => count > 1).map(([sentence]) => sentence);
+  return [...occurrences.entries()]
+    .filter(([, matches]) => matches.length > 1)
+    .map(([sentence, matches]) => ({
+      count: matches.length,
+      matches,
+      sentence,
+      similarity: 1,
+    }));
 }
 
 function repeatedPhraseIssue(value: string) {
@@ -340,22 +380,36 @@ function isGenericSlide(slide: SocialIntelligencePack["slides"][number]) {
 function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPackQualityResult {
   const issues: SocialPackQualityIssue[] = [];
   const narrativeTexts = pack.slides.map(slideNarrativeText);
-  const duplicateTexts = pack.slides.flatMap(slideBodyTexts);
+  const duplicateTexts = pack.slides.flatMap(slideBodyTextItems);
   const allText = narrativeTexts.join(" ");
 
   for (const pattern of PLACEHOLDER_PATTERNS) {
     if (pattern.test(allText)) {
       issues.push({
         detail: `含待審閱或 placeholder 文字：${pattern.source}`,
+        issueType: "placeholder_pattern",
+        matchedRule: pattern.source,
         severity: "blocker",
+        source: "generated slide",
+        textA: allText.match(pattern)?.[0] ?? pattern.source,
       });
     }
   }
 
-  for (const sentence of repeatedSentences(duplicateTexts)) {
+  for (const duplicate of repeatedSentences(duplicateTexts)) {
+    const [firstMatch, secondMatch] = duplicate.matches;
     issues.push({
-      detail: `出現重複句：${sentence}`,
+      detail: `出現重複句：${duplicate.sentence}`,
+      issueType: "duplicate_sentence",
+      matchedRule: "exact sentence repetition in slide body/subtitle",
+      repetitionCount: duplicate.count,
       severity: "blocker",
+      similarity: duplicate.similarity,
+      slideId: firstMatch?.slideId,
+      slideTitle: firstMatch?.slideTitle,
+      source: firstMatch?.source ?? "generated slide",
+      textA: firstMatch?.text ?? duplicate.sentence,
+      textB: secondMatch?.text ?? duplicate.sentence,
     });
   }
 
@@ -364,8 +418,13 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
     if (weakBullets.length > 0) {
       issues.push({
         detail: `${slide.title} 有空白或過短 bullet。`,
+        issueType: "weak_bullet",
+        matchedRule: "bullet length < 8",
         severity: "blocker",
         slideId: slide.id,
+        slideTitle: slide.title,
+        source: "generated slide",
+        textA: weakBullets.join(" | "),
       });
     }
   });
@@ -374,7 +433,14 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
     if (isGenericSlide(pack.slides[index]) && isGenericSlide(pack.slides[index + 1])) {
       issues.push({
         detail: `連續兩張卡過於 generic：${pack.slides[index].title} / ${pack.slides[index + 1].title}`,
+        issueType: "consecutive_generic_slides",
+        matchedRule: "adjacent slides match generic pattern and lack concrete market anchor",
         severity: "blocker",
+        slideId: pack.slides[index].id,
+        slideTitle: pack.slides[index].title,
+        source: "generated slide",
+        textA: slideNarrativeText(pack.slides[index]),
+        textB: slideNarrativeText(pack.slides[index + 1]),
       });
       break;
     }
@@ -384,7 +450,11 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
     if (!WEEKLY_CATALYST_PATTERN.test(allText)) {
       issues.push({
         detail: "Weekly pack 缺少 next-week catalyst 關鍵字（FOMC / Powell / 利率 / CPI / PCE / 財報 / guidance / 台積電 / 2330 / QQQ / SPY / BTC）。",
+        issueType: "weekly_catalyst_missing",
+        matchedRule: WEEKLY_CATALYST_PATTERN.source,
         severity: "blocker",
+        source: "generated slide",
+        textA: allText,
       });
     }
 
@@ -394,25 +464,41 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
       if (!TECH_CONTENT_PATTERN.test(contentText)) {
         issues.push({
           detail: "Weekly AI / Tech Watch 卡未包含 AI / semiconductor / guidance / capex / cloud / data center 等科技內容。",
+          issueType: "weekly_ai_tech_missing",
+          matchedRule: TECH_CONTENT_PATTERN.source,
           severity: "blocker",
           slideId: aiTechSlide.id,
+          slideTitle: aiTechSlide.title,
+          source: "generated slide",
+          textA: contentText,
         });
       }
       if (CRYPTO_MACRO_ONLY_PATTERN.test(contentText) && !TECH_CONTENT_PATTERN.test(contentText)) {
         issues.push({
           detail: "Weekly AI / Tech Watch 卡內容偏 BTC / ETH 或純 macro，與標題錯位。",
+          issueType: "weekly_ai_tech_mismatch",
+          matchedRule: `${CRYPTO_MACRO_ONLY_PATTERN.source} without ${TECH_CONTENT_PATTERN.source}`,
           severity: "blocker",
           slideId: aiTechSlide.id,
+          slideTitle: aiTechSlide.title,
+          source: "generated slide",
+          textA: contentText,
         });
       }
     }
 
     const fcnRiskSlide = pack.slides.find((slide) => slide.id === "fcn_risk_watch");
     if (fcnRiskSlide && !FCN_CONTENT_PATTERN.test(slideNarrativeText(fcnRiskSlide))) {
+      const fcnText = slideNarrativeText(fcnRiskSlide);
       issues.push({
         detail: "Weekly FCN / Risk Watch 卡缺少 KO / KI / worst-of / volatility / 波動 / 籃子等 FCN 風險元素。",
+        issueType: "weekly_fcn_missing",
+        matchedRule: FCN_CONTENT_PATTERN.source,
         severity: "blocker",
         slideId: fcnRiskSlide.id,
+        slideTitle: fcnRiskSlide.title,
+        source: "generated slide",
+        textA: fcnText,
       });
     }
   }
@@ -430,7 +516,12 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
       if (!sharedMeaningfulCue) {
         issues.push({
           detail: "Daily cover title 與 I-Xuan View 主軸可能脫節。",
+          issueType: "daily_cover_view_mismatch",
+          matchedRule: "cover and I-Xuan View must share at least one meaningful market cue",
           severity: "blocker",
+          source: "generated slide",
+          textA: coverText,
+          textB: ixuanViewText,
         });
       }
     }
@@ -440,8 +531,14 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
       if (repeatedPhrase) {
         issues.push({
           detail: `Daily I-Xuan View 出現明顯重複片語：「${repeatedPhrase}」。`,
+          issueType: "daily_ixuan_repeated_phrase",
+          matchedRule: "same phrase appears twice within one I-Xuan View sentence",
           severity: "blocker",
           slideId: ixuanView?.id,
+          slideTitle: ixuanView?.title,
+          source: "generated slide",
+          textA: ixuanViewText,
+          textB: repeatedPhrase,
         });
       }
     }
@@ -453,8 +550,13 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
       if (hasBareWatchLabels || !hasSpecificContent) {
         issues.push({
           detail: "Daily Watch Next 卡只有 Watch 1 / Watch 2 / Watch 3 或缺少具體觀察內容。",
+          issueType: "daily_watch_next_incomplete",
+          matchedRule: "bare Watch 1/2/3 labels or no bullet with length >= 12",
           severity: "blocker",
           slideId: watchNext.id,
+          slideTitle: watchNext.title,
+          source: "generated slide",
+          textA: watchNext.bullets.join(" | "),
         });
       }
     }
@@ -1472,9 +1574,60 @@ export function SocialIntelligencePackStudio({
           <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.62)]">
             目前 Social Pack 含待審閱文字或 placeholder。可以預覽，但不可正式匯出。
           </p>
-          <ul className="mt-2 grid gap-1 text-xs leading-5 text-[rgba(245,240,230,0.72)]">
-            {quality.topIssues.map((issue) => (
-              <li key={issue}>• {issue}</li>
+          <ul className="mt-3 grid gap-3 text-xs leading-5 text-[rgba(245,240,230,0.72)]">
+            {quality.issues.map((issue, issueIndex) => (
+              <li
+                className="rounded-md border border-white/10 bg-black/10 p-3"
+                key={`${issue.issueType}-${issue.slideId ?? "pack"}-${issueIndex}`}
+              >
+                <p className="font-semibold text-[var(--ixai-cream)]">
+                  {issueIndex + 1}. {issue.detail}
+                </p>
+                <dl className="mt-2 grid gap-1 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-[rgba(245,240,230,0.46)]">Issue type</dt>
+                    <dd className="break-words text-[var(--ixai-cream)]">{issue.issueType}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[rgba(245,240,230,0.46)]">Source</dt>
+                    <dd className="break-words text-[var(--ixai-cream)]">{issue.source}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[rgba(245,240,230,0.46)]">Slide id</dt>
+                    <dd className="break-words text-[var(--ixai-cream)]">{issue.slideId ?? "pack-level"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[rgba(245,240,230,0.46)]">Slide title</dt>
+                    <dd className="break-words text-[var(--ixai-cream)]">{issue.slideTitle ?? "pack-level"}</dd>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <dt className="text-[rgba(245,240,230,0.46)]">Matched rule</dt>
+                    <dd className="break-words text-[var(--ixai-cream)]">{issue.matchedRule}</dd>
+                  </div>
+                  {typeof issue.repetitionCount === "number" || typeof issue.similarity === "number" ? (
+                    <div className="sm:col-span-2">
+                      <dt className="text-[rgba(245,240,230,0.46)]">Similarity / repetition count</dt>
+                      <dd className="break-words text-[var(--ixai-cream)]">
+                        {typeof issue.similarity === "number" ? `similarity ${issue.similarity.toFixed(2)}` : "similarity n/a"}
+                        {" · "}
+                        {typeof issue.repetitionCount === "number" ? `count ${issue.repetitionCount}` : "count n/a"}
+                      </dd>
+                    </div>
+                  ) : null}
+                  {issue.textA ? (
+                    <div className="sm:col-span-2">
+                      <dt className="text-[rgba(245,240,230,0.46)]">Offending text A</dt>
+                      <dd className="break-words text-[var(--ixai-cream)]">{issue.textA}</dd>
+                    </div>
+                  ) : null}
+                  {issue.textB ? (
+                    <div className="sm:col-span-2">
+                      <dt className="text-[rgba(245,240,230,0.46)]">Offending text B</dt>
+                      <dd className="break-words text-[var(--ixai-cream)]">{issue.textB}</dd>
+                    </div>
+                  ) : null}
+                </dl>
+              </li>
             ))}
           </ul>
         </div>
