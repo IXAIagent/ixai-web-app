@@ -39,6 +39,15 @@ export type SocialIntelligencePack = {
     label: string;
     href: string;
   };
+  debug?: {
+    marketReviewAllocationAudit?: Array<{
+      bucket: string;
+      sourceId?: string;
+      sourceSlug?: string;
+      sourceHash: string;
+      sourceText: string;
+    }>;
+  };
 };
 
 const DISCLAIMER =
@@ -190,6 +199,27 @@ function labeledNarrative(label: string, body?: string) {
   return `${label}｜${compactNarrative(body)}`;
 }
 
+function sentenceParts(value: string) {
+  return compactNarrative(value)
+    .split(/[。！？!?；;\n]+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function sourceHash(value: string) {
+  let hash = 0;
+
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+
+  return hash.toString(16).padStart(8, "0");
+}
+
+function sentenceKey(value: string) {
+  return comparableNarrative(value);
+}
+
 function chooseNarrativeByPattern(items: string[], pattern: RegExp, fallback: string, used: string[] = []) {
   const candidates = [
     ...items.filter((item) => pattern.test(item)),
@@ -246,26 +276,66 @@ function allocateNarrativeBodies(
   return output;
 }
 
-function ensureDistinctMarketReviewBodies(items: string[]) {
-  const fallbacks = [
-    "FOMC / Powell 與美元變化會影響科技股折現率。",
-    "觀察 AI guidance / capex 是否支撐台股半導體估值。",
-    "BTC / ETH 與 worst-of 籃子波動是 FCN 風險溫度計。",
-  ];
-  const output: string[] = [];
+function hasUsedSentence(value: string, usedSentenceKeys: Set<string>) {
+  return sentenceParts(value).some((sentence) => {
+    const key = sentenceKey(sentence);
+    return key.length >= 8 && usedSentenceKeys.has(key);
+  });
+}
 
-  items.slice(0, 3).forEach((item, index) => {
-    const normalized = compactNarrative(item);
-    const fallback = fallbacks[index];
-    const body =
-      normalized.length >= 10 && !output.some((existing) => isNearDuplicateNarrative(existing, normalized))
-        ? normalized
-        : fallback;
-    const uniqueBody = output.some((existing) => isNearDuplicateNarrative(existing, body)) ? fallback : body;
-    output.push(uniqueBody);
+function markSentencesUsed(value: string, usedSentenceKeys: Set<string>) {
+  for (const sentence of sentenceParts(value)) {
+    const key = sentenceKey(sentence);
+    if (key.length >= 8) {
+      usedSentenceKeys.add(key);
+    }
+  }
+}
+
+function removeUsedSentences(value: string, usedSentenceKeys: Set<string>) {
+  const uniqueSentences = sentenceParts(value).filter((sentence) => {
+    const key = sentenceKey(sentence);
+    return key.length < 8 || !usedSentenceKeys.has(key);
   });
 
-  return output;
+  return uniqueSentences.join("。");
+}
+
+function allocateMarketReviewBodies({
+  buckets,
+  sourceId,
+  sourceSlug,
+}: {
+  buckets: Array<{
+    bucket: string;
+    candidates: Array<string | undefined | null>;
+    fallback: string;
+  }>;
+  sourceId?: string;
+  sourceSlug?: string;
+}) {
+  const usedSentenceKeys = new Set<string>();
+  const audit: NonNullable<SocialIntelligencePack["debug"]>["marketReviewAllocationAudit"] = [];
+  const bodies = buckets.map(({ bucket, candidates, fallback }) => {
+    const selected =
+      [...candidates, fallback]
+        .map((candidate) => compactNarrative(candidate ?? undefined))
+        .map((candidate) => removeUsedSentences(candidate, usedSentenceKeys))
+        .find((candidate) => candidate.length >= 10) ??
+      fallback;
+    const safeSelected = selected.length >= 10 && !hasUsedSentence(selected, usedSentenceKeys) ? selected : fallback;
+    markSentencesUsed(safeSelected, usedSentenceKeys);
+    audit.push({
+      bucket,
+      sourceHash: sourceHash(safeSelected),
+      sourceId,
+      sourceSlug,
+      sourceText: safeSelected,
+    });
+    return safeSelected;
+  });
+
+  return { audit, bodies };
 }
 
 export function generateDailySocialPack(source?: DailyBriefDraft | null): SocialIntelligencePack {
@@ -372,21 +442,36 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
     .map((item) => labeledNarrative(item.label, item.whatHappened))
     .slice(0, 3);
   const usedNarrativeTexts: string[] = [];
-  const weeklyChainBodies = allocateNarrativeBodies(
-    [
-      `${extraction.crossMarketChain[0]?.narrative ?? ""} ${extraction.crossMarketChain[1]?.narrative ?? ""}`,
-      `${extraction.crossMarketChain[2]?.narrative ?? ""} ${extraction.crossMarketChain[3]?.narrative ?? ""}`,
-      `${extraction.crossMarketChain[4]?.narrative ?? ""} ${extraction.crossMarketChain[5]?.narrative ?? ""}`,
+  const marketReviewAllocation = allocateMarketReviewBodies({
+    buckets: [
+      {
+        bucket: "Fed / Rates → USD",
+        candidates: [
+          `${extraction.crossMarketChain[0]?.narrative ?? ""} ${extraction.crossMarketChain[1]?.narrative ?? ""}`,
+        ],
+        fallback: "FOMC / Powell 與美元變化會影響科技股折現率。",
+      },
+      {
+        bucket: "AI Beta → Taiwan Semis",
+        candidates: [
+          `${extraction.crossMarketChain[2]?.narrative ?? ""} ${extraction.crossMarketChain[3]?.narrative ?? ""}`,
+        ],
+        fallback: "觀察 AI guidance / capex 是否支撐台股半導體估值。",
+      },
+      {
+        bucket: "Crypto → FCN Volatility",
+        candidates: [
+          `${extraction.crossMarketChain[4]?.narrative ?? ""} ${extraction.crossMarketChain[5]?.narrative ?? ""}`,
+          extraction.fcnTranslation,
+        ],
+        fallback: "BTC / ETH 與 worst-of 籃子波動是 FCN 風險溫度計。",
+      },
     ],
-    [
-      "FOMC / Powell 與利率預期會先改變美元、SPY / QQQ、BTC 與台股半導體的資金成本。",
-      "AI guidance、earnings、capex 與台積電 / 2330 供應鏈決定 AI beta 能否擴散。",
-      "BTC / ETH 波動會把風險傳導到 FCN worst-of basket、KO / KI 與籃子集中度。",
-    ],
-    3,
-    usedNarrativeTexts,
-  );
-  const marketReviewBodies = ensureDistinctMarketReviewBodies(weeklyChainBodies);
+    sourceId: source?.id,
+    sourceSlug: source?.slug,
+  });
+  const marketReviewBodies = marketReviewAllocation.bodies;
+  markNarrativeUsed(usedNarrativeTexts, ...marketReviewBodies);
   const weeklyChain = [
     labeledNarrative("Fed / Rates → USD", marketReviewBodies[0]),
     labeledNarrative("AI Beta → Taiwan Semis", marketReviewBodies[1]),
@@ -494,6 +579,9 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
     sourceBriefId: source?.id,
     subtitle: "Weekly Intelligence",
     title: weeklyQuestion,
+    debug: {
+      marketReviewAllocationAudit: marketReviewAllocation.audit,
+    },
     slides: [
       {
         bullets: [

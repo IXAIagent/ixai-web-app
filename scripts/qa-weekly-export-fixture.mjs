@@ -197,6 +197,13 @@ function repeatedNarrativeLines(text) {
     .map(([sentence]) => sentence);
 }
 
+function sentenceKey(value) {
+  return value
+    .toLowerCase()
+    .replace(/[｜:：，。！？!?\s/·、；;（）()]/g, "")
+    .trim();
+}
+
 function textBetween(text, startMarker, endMarker) {
   const start = text.indexOf(startMarker);
   if (start < 0) return "";
@@ -207,6 +214,23 @@ function textBetween(text, startMarker, endMarker) {
 
 function repeatedMarketReviewLines(text) {
   return repeatedNarrativeLines(textBetween(text, "What Changed This Week", "The One Thing That Matters"));
+}
+
+function sharedMarketReviewSentenceKeys(text) {
+  const section = textBetween(text, "What Changed This Week", "The One Thing That Matters");
+  const counts = new Map();
+
+  for (const sentence of sentenceParts(section)) {
+    const normalized = sentence.replace(/\s+/g, " ").trim();
+    if (shouldIgnoreNarrativeLine(normalized)) continue;
+    const key = sentenceKey(normalized);
+    if (key.length < 8) continue;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([key]) => key);
 }
 
 async function main() {
@@ -271,6 +295,7 @@ async function main() {
     duplicateSentenceIssues: (studioText.match(/duplicate_sentence/g) ?? []).length,
     duplicateNarrativeIssues: qualityIssues === "0" ? [] : repeatedNarrativeLines(studioText),
     marketReviewInternalDuplicates: repeatedMarketReviewLines(studioText),
+    marketReviewSharedSentenceKeys: sharedMarketReviewSentenceKeys(studioText),
     marketPulseOccurrences: (studioText.match(/Market Pulse/g) ?? []).length,
   };
 
@@ -313,6 +338,10 @@ async function main() {
 
   if (actual.marketReviewInternalDuplicates.length > 0) {
     failures.push(`Market Review internal duplicates found: ${actual.marketReviewInternalDuplicates.join(" | ")}`);
+  }
+
+  if (actual.marketReviewSharedSentenceKeys.length > 0) {
+    failures.push(`Market Review shared sentence keys found: ${actual.marketReviewSharedSentenceKeys.join(" | ")}`);
   }
 
   if (actual.marketPulseOccurrences > 0) {
