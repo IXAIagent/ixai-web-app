@@ -234,10 +234,14 @@ const TECH_CONTENT_PATTERN = /AI|semiconductor|半導體|NVDA|Nvidia|台積電|T
 const CRYPTO_MACRO_ONLY_PATTERN = /BTC|ETH|Crypto|加密|rates|macro|利率|總經|美元/i;
 const FCN_CONTENT_PATTERN = /KO|KI|worst[- ]?of|Worst|volatility|波動|籃子/i;
 
-function slideText(slide: SocialIntelligencePack["slides"][number]) {
-  return [slide.eyebrow, slide.title, slide.subtitle, ...slide.bullets, slide.footer]
+function slideNarrativeText(slide: SocialIntelligencePack["slides"][number]) {
+  return [slide.title, slide.subtitle, ...slide.bullets]
     .filter(Boolean)
     .join(" ");
+}
+
+function slideBodyTexts(slide: SocialIntelligencePack["slides"][number]) {
+  return [slide.subtitle, ...slide.bullets].filter((value): value is string => Boolean(value?.trim()));
 }
 
 function sentenceParts(value: string) {
@@ -251,6 +255,14 @@ function hasConcreteMarketElement(value: string) {
   return CONCRETE_MARKET_PATTERNS.some((pattern) => pattern.test(value));
 }
 
+function isQualityDuplicateIgnored(value: string) {
+  return (
+    /^https?:\/\//i.test(value) ||
+    /app\.ixuan\.ai/i.test(value) ||
+    /^(IXAI Intelligence|I-Xuan View|I-Xuan Weekly View|一玄觀點|Daily Brief|Weekly Intelligence|Market Intelligence)$/i.test(value)
+  );
+}
+
 function repeatedSentences(texts: string[]) {
   const counts = new Map<string, number>();
 
@@ -258,6 +270,7 @@ function repeatedSentences(texts: string[]) {
     for (const sentence of sentenceParts(text)) {
       const normalized = sentence.replace(/\s+/g, " ").trim();
       if (normalized.length < 8) continue;
+      if (isQualityDuplicateIgnored(normalized)) continue;
       counts.set(normalized, (counts.get(normalized) ?? 0) + 1);
     }
   }
@@ -301,22 +314,16 @@ function repeatedPhraseIssue(value: string) {
 }
 
 function isGenericSlide(slide: SocialIntelligencePack["slides"][number]) {
-  const text = slideText(slide);
+  const text = slideNarrativeText(slide);
   const genericHits = GENERIC_PATTERNS.filter((pattern) => pattern.test(text)).length;
   return genericHits > 0 && !hasConcreteMarketElement(text);
 }
 
 function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPackQualityResult {
   const issues: SocialPackQualityIssue[] = [];
-  const packTexts = [
-    pack.title,
-    pack.subtitle,
-    pack.dateLabel,
-    pack.caption,
-    pack.cta.label,
-    ...pack.slides.map(slideText),
-  ];
-  const allText = packTexts.join(" ");
+  const narrativeTexts = pack.slides.map(slideNarrativeText);
+  const duplicateTexts = pack.slides.flatMap(slideBodyTexts);
+  const allText = narrativeTexts.join(" ");
 
   for (const pattern of PLACEHOLDER_PATTERNS) {
     if (pattern.test(allText)) {
@@ -327,7 +334,7 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
     }
   }
 
-  for (const sentence of repeatedSentences(packTexts)) {
+  for (const sentence of repeatedSentences(duplicateTexts)) {
     issues.push({
       detail: `出現重複句：${sentence}`,
       severity: "blocker",
@@ -383,7 +390,7 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
     }
 
     const fcnRiskSlide = pack.slides.find((slide) => slide.id === "fcn_risk_watch");
-    if (fcnRiskSlide && !FCN_CONTENT_PATTERN.test(slideText(fcnRiskSlide))) {
+    if (fcnRiskSlide && !FCN_CONTENT_PATTERN.test(slideNarrativeText(fcnRiskSlide))) {
       issues.push({
         detail: "Weekly FCN / Risk Watch 卡缺少 KO / KI / worst-of / volatility / 波動 / 籃子等 FCN 風險元素。",
         severity: "blocker",
@@ -395,7 +402,7 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
   if (pack.kind === "daily") {
     const cover = pack.slides.find((slide) => slide.id === "cover");
     const ixuanView = pack.slides.find((slide) => slide.id === "ixuan_view");
-    const coverText = cover ? slideText(cover) : "";
+    const coverText = cover ? slideNarrativeText(cover) : "";
     const ixuanViewText = ixuanView ? ixuanView.bullets.join(" ") : "";
 
     if (coverText && ixuanViewText) {
