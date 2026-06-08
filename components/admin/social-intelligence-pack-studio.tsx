@@ -181,6 +181,262 @@ function sourceAlignmentFor({
   };
 }
 
+type SocialPackQualityIssue = {
+  detail: string;
+  severity: "blocker" | "warning";
+  slideId?: string;
+};
+
+type SocialPackQualityResult = {
+  canExport: boolean;
+  issues: SocialPackQualityIssue[];
+  statusLabel: "passed" | "failed";
+  topIssues: string[];
+};
+
+const PLACEHOLDER_PATTERNS = [
+  /具體事件待\s*editor\s*審閱/i,
+  /待\s*editor/i,
+  /editor\s*審閱/i,
+  /\bTBD\b/i,
+  /\bTODO\b/i,
+  /placeholder/i,
+  /fallback/i,
+  /Watch\s*1/i,
+  /Watch\s*2/i,
+  /Watch\s*3/i,
+  /具體事件待/i,
+  /請先審閱/i,
+  /等待\s*editor/i,
+];
+
+const GENERIC_PATTERNS = [
+  /這不是新聞數量，而是市場定價正在改變/,
+  /市場定價正在改變/,
+  /市場正在要求更清楚的證據/,
+  /本週市場最大轉折是什麼/,
+  /本週不是新聞加總/,
+  /理解市場正在 pricing 什麼/,
+  /觀察證據是否同步上修/,
+  /維持情境觀察與風險意識/,
+];
+
+const CONCRETE_MARKET_PATTERNS = [
+  /FOMC|Powell|CPI|PCE|Fed|利率|殖利率|美元|USD/i,
+  /NVDA|Nvidia|AVGO|TSMC|台積電|2330|半導體|AI|capex|guidance|指引|cloud|data center/i,
+  /QQQ|SPY|BTC|ETH|Crypto|加密/i,
+  /FCN|KI|KO|worst[- ]?of|Worst|波動|volatility|籃子/i,
+  /鴻海|台股|融資|財報|法說|ETF/i,
+];
+
+const WEEKLY_CATALYST_PATTERN = /FOMC|Powell|利率|CPI|PCE|財報|guidance|指引|台積電|2330|QQQ|SPY|BTC/i;
+const TECH_CONTENT_PATTERN = /AI|semiconductor|半導體|NVDA|Nvidia|台積電|TSMC|guidance|指引|capex|cloud|data center|雲端|資料中心|鴻海|AI server/i;
+const CRYPTO_MACRO_ONLY_PATTERN = /BTC|ETH|Crypto|加密|rates|macro|利率|總經|美元/i;
+const FCN_CONTENT_PATTERN = /KO|KI|worst[- ]?of|Worst|volatility|波動|籃子/i;
+
+function slideText(slide: SocialIntelligencePack["slides"][number]) {
+  return [slide.eyebrow, slide.title, slide.subtitle, ...slide.bullets, slide.footer]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function sentenceParts(value: string) {
+  return value
+    .split(/[。！？!?；;\n]+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function hasConcreteMarketElement(value: string) {
+  return CONCRETE_MARKET_PATTERNS.some((pattern) => pattern.test(value));
+}
+
+function repeatedSentences(texts: string[]) {
+  const counts = new Map<string, number>();
+
+  for (const text of texts) {
+    for (const sentence of sentenceParts(text)) {
+      const normalized = sentence.replace(/\s+/g, " ").trim();
+      if (normalized.length < 8) continue;
+      counts.set(normalized, (counts.get(normalized) ?? 0) + 1);
+    }
+  }
+
+  return [...counts.entries()].filter(([, count]) => count > 1).map(([sentence]) => sentence);
+}
+
+function repeatedPhraseIssue(value: string) {
+  const sentences = sentenceParts(value);
+  const ignore = ["IXAI", "app.ixuan.ai", "Daily Brief", "Weekly Intelligence", "Market Intelligence"];
+
+  for (const sentence of sentences) {
+    const normalized = sentence.replace(/\s+/g, " ").trim();
+    if (normalized.length < 14) continue;
+
+    for (let length = 4; length <= 12; length += 1) {
+      for (let start = 0; start <= normalized.length - length; start += 1) {
+        const phrase = normalized.slice(start, start + length).trim();
+        if (phrase.length < 4 || ignore.some((item) => phrase.includes(item))) continue;
+        if (!/[\u4e00-\u9fffA-Za-z]/.test(phrase)) continue;
+
+        const first = normalized.indexOf(phrase);
+        const second = normalized.indexOf(phrase, first + phrase.length);
+        if (second > -1) {
+          return phrase;
+        }
+      }
+    }
+  }
+
+  return "";
+}
+
+function isGenericSlide(slide: SocialIntelligencePack["slides"][number]) {
+  const text = slideText(slide);
+  const genericHits = GENERIC_PATTERNS.filter((pattern) => pattern.test(text)).length;
+  return genericHits > 0 && !hasConcreteMarketElement(text);
+}
+
+function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPackQualityResult {
+  const issues: SocialPackQualityIssue[] = [];
+  const packTexts = [
+    pack.title,
+    pack.subtitle,
+    pack.dateLabel,
+    pack.caption,
+    pack.cta.label,
+    pack.cta.href,
+    ...pack.slides.map(slideText),
+  ];
+  const allText = packTexts.join(" ");
+
+  for (const pattern of PLACEHOLDER_PATTERNS) {
+    if (pattern.test(allText)) {
+      issues.push({
+        detail: `含待審閱或 placeholder 文字：${pattern.source}`,
+        severity: "blocker",
+      });
+    }
+  }
+
+  for (const sentence of repeatedSentences(packTexts)) {
+    issues.push({
+      detail: `出現重複句：${sentence}`,
+      severity: "blocker",
+    });
+  }
+
+  pack.slides.forEach((slide) => {
+    const weakBullets = slide.bullets.filter((bullet) => bullet.trim().length < 8);
+    if (weakBullets.length > 0) {
+      issues.push({
+        detail: `${slide.title} 有空白或過短 bullet。`,
+        severity: "blocker",
+        slideId: slide.id,
+      });
+    }
+  });
+
+  for (let index = 0; index < pack.slides.length - 1; index += 1) {
+    if (isGenericSlide(pack.slides[index]) && isGenericSlide(pack.slides[index + 1])) {
+      issues.push({
+        detail: `連續兩張卡過於 generic：${pack.slides[index].title} / ${pack.slides[index + 1].title}`,
+        severity: "blocker",
+      });
+      break;
+    }
+  }
+
+  if (pack.kind === "weekly") {
+    if (!WEEKLY_CATALYST_PATTERN.test(allText)) {
+      issues.push({
+        detail: "Weekly pack 缺少 next-week catalyst 關鍵字（FOMC / Powell / 利率 / CPI / PCE / 財報 / guidance / 台積電 / 2330 / QQQ / SPY / BTC）。",
+        severity: "blocker",
+      });
+    }
+
+    const aiTechSlide = pack.slides.find((slide) => slide.id === "ai_tech_watch");
+    if (aiTechSlide) {
+      const contentText = [aiTechSlide.title, aiTechSlide.subtitle, ...aiTechSlide.bullets].filter(Boolean).join(" ");
+      if (!TECH_CONTENT_PATTERN.test(contentText)) {
+        issues.push({
+          detail: "Weekly AI / Tech Watch 卡未包含 AI / semiconductor / guidance / capex / cloud / data center 等科技內容。",
+          severity: "blocker",
+          slideId: aiTechSlide.id,
+        });
+      }
+      if (CRYPTO_MACRO_ONLY_PATTERN.test(contentText) && !TECH_CONTENT_PATTERN.test(contentText)) {
+        issues.push({
+          detail: "Weekly AI / Tech Watch 卡內容偏 BTC / ETH 或純 macro，與標題錯位。",
+          severity: "blocker",
+          slideId: aiTechSlide.id,
+        });
+      }
+    }
+
+    const fcnRiskSlide = pack.slides.find((slide) => slide.id === "fcn_risk_watch");
+    if (fcnRiskSlide && !FCN_CONTENT_PATTERN.test(slideText(fcnRiskSlide))) {
+      issues.push({
+        detail: "Weekly FCN / Risk Watch 卡缺少 KO / KI / worst-of / volatility / 波動 / 籃子等 FCN 風險元素。",
+        severity: "blocker",
+        slideId: fcnRiskSlide.id,
+      });
+    }
+  }
+
+  if (pack.kind === "daily") {
+    const cover = pack.slides.find((slide) => slide.id === "cover");
+    const ixuanView = pack.slides.find((slide) => slide.id === "ixuan_view");
+    const coverText = cover ? slideText(cover) : "";
+    const ixuanViewText = ixuanView ? slideText(ixuanView) : "";
+
+    if (coverText && ixuanViewText) {
+      const sharedMeaningfulCue =
+        /AI|利率|台股|FCN|風險|企業|證據|資金|科技|半導體/i.test(coverText) &&
+        /AI|利率|台股|FCN|風險|企業|證據|資金|科技|半導體/i.test(ixuanViewText);
+      if (!sharedMeaningfulCue) {
+        issues.push({
+          detail: "Daily cover title 與 I-Xuan View 主軸可能脫節。",
+          severity: "blocker",
+        });
+      }
+    }
+
+    if (ixuanViewText) {
+      const repeatedPhrase = repeatedPhraseIssue(ixuanViewText);
+      if (repeatedPhrase) {
+        issues.push({
+          detail: `Daily I-Xuan View 出現明顯重複片語：「${repeatedPhrase}」。`,
+          severity: "blocker",
+          slideId: ixuanView?.id,
+        });
+      }
+    }
+
+    const watchNext = pack.slides.find((slide) => /Watch Next/i.test(slide.eyebrow));
+    if (watchNext) {
+      const hasBareWatchLabels = watchNext.bullets.some((bullet) => /^Watch\s*[123]\s*$/i.test(bullet.trim()));
+      const hasSpecificContent = watchNext.bullets.some((bullet) => bullet.trim().length >= 12);
+      if (hasBareWatchLabels || !hasSpecificContent) {
+        issues.push({
+          detail: "Daily Watch Next 卡只有 Watch 1 / Watch 2 / Watch 3 或缺少具體觀察內容。",
+          severity: "blocker",
+          slideId: watchNext.id,
+        });
+      }
+    }
+  }
+
+  const blockers = issues.filter((issue) => issue.severity === "blocker");
+
+  return {
+    canExport: blockers.length === 0,
+    issues,
+    statusLabel: blockers.length === 0 ? "passed" : "failed",
+    topIssues: issues.slice(0, 4).map((issue) => issue.detail),
+  };
+}
+
 function createFileName(kind: SocialPackKind, index: number, format: SocialExportFormat) {
   const prefix = format === "ig_feed_4_5" ? "ig-feed" : "story";
   return `${kind}-${prefix}-social-pack-${String(index + 1).padStart(2, "0")}.png`;
@@ -890,14 +1146,21 @@ export function SocialIntelligencePackStudio({
     pack: activePack,
     weeklyDraft,
   });
+  const quality = useMemo(() => detectSocialPackQualityIssues(activePack), [activePack]);
+  const canExportPack = sourceAlignment.canExport && quality.canExport;
+  const exportBlockedMessage =
+    sourceAlignment.warning ||
+    (!quality.canExport
+      ? "目前 Social Pack 含待審閱文字或 placeholder。可以預覽，但不可正式匯出。"
+      : "No matching source is available for this period.");
 
   function registerSlide(index: number, node: HTMLElement | null) {
     slideRefs.current[index] = node;
   }
 
   async function copyCaption() {
-    if (!sourceAlignment.canExport) {
-      setCopyState(sourceAlignment.warning || "No matching source is available for this period.");
+    if (!canExportPack) {
+      setCopyState(exportBlockedMessage);
       return;
     }
 
@@ -910,8 +1173,8 @@ export function SocialIntelligencePackStudio({
   }
 
   async function exportSlide(index: number) {
-    if (!sourceAlignment.canExport) {
-      setExportState(sourceAlignment.warning || "No matching source is available for this period.");
+    if (!canExportPack) {
+      setExportState(exportBlockedMessage);
       return;
     }
 
@@ -944,8 +1207,8 @@ export function SocialIntelligencePackStudio({
   }
 
   async function exportCurrentPack() {
-    if (!sourceAlignment.canExport) {
-      setExportState(sourceAlignment.warning || "No matching source is available for this period.");
+    if (!canExportPack) {
+      setExportState(exportBlockedMessage);
       return;
     }
 
@@ -1094,10 +1357,19 @@ export function SocialIntelligencePackStudio({
           Canonical: <span className="text-[var(--ixai-cream)]">{sourceAlignment.canonicalLabel}</span>
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
-          Export eligible: <span className="text-[var(--ixai-cream)]">{sourceAlignment.exportEligibleLabel}</span>
+          Source eligible: <span className="text-[var(--ixai-cream)]">{sourceAlignment.exportEligibleLabel}</span>
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Fallback: <span className="text-[var(--ixai-cream)]">{sourceAlignment.fallbackLabel}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Content quality: <span className="text-[var(--ixai-cream)]">{quality.statusLabel}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Quality issues: <span className="text-[var(--ixai-cream)]">{quality.issues.length}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Export eligible: <span className="text-[var(--ixai-cream)]">{canExportPack ? "true" : "false"}</span>
         </p>
       </div>
 
@@ -1109,6 +1381,22 @@ export function SocialIntelligencePackStudio({
           <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.58)]">
             Daily Social Pack must be generated from the current Daily Brief source. Weekly Social Pack must be generated from the current Weekly Brief source.
           </p>
+        </div>
+      ) : null}
+
+      {!quality.canExport ? (
+        <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(176,141,87,0.1)] p-3 text-sm leading-6 text-[var(--ixai-cream)]">
+          <p className="font-semibold">
+            Content quality: failed
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.62)]">
+            目前 Social Pack 含待審閱文字或 placeholder。可以預覽，但不可正式匯出。
+          </p>
+          <ul className="mt-2 grid gap-1 text-xs leading-5 text-[rgba(245,240,230,0.72)]">
+            {quality.topIssues.map((issue) => (
+              <li key={issue}>• {issue}</li>
+            ))}
+          </ul>
         </div>
       ) : null}
 
@@ -1159,16 +1447,16 @@ export function SocialIntelligencePackStudio({
           </div>
           <button
             className="rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[var(--ixai-forest)] disabled:cursor-wait disabled:opacity-60"
-            disabled={isExporting || !sourceAlignment.canExport}
+            disabled={isExporting || !canExportPack}
             onClick={exportCurrentPack}
             type="button"
           >
-            {isExporting ? "Exporting..." : sourceAlignment.canExport ? "Export Current Pack" : "Export disabled"}
+            {isExporting ? "Exporting..." : canExportPack ? "Export Current Pack" : "Export disabled"}
           </button>
         </div>
         <div className="mt-5 overflow-x-hidden">
           <SocialPackPreview
-            disabled={!sourceAlignment.canExport}
+            disabled={!canExportPack}
             format={activeFormat}
             onDownload={exportSlide}
             pack={activePack}
@@ -1186,7 +1474,7 @@ export function SocialIntelligencePackStudio({
             </p>
             <button
               className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[var(--ixai-forest)] disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={!sourceAlignment.canExport}
+              disabled={!canExportPack}
               onClick={copyCaption}
               type="button"
             >
