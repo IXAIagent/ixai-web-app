@@ -156,6 +156,47 @@ function extractValue(text, label) {
   return text.match(pattern)?.[1]?.trim() ?? "";
 }
 
+function narrativeSegment(text) {
+  const start = text.indexOf("PREVIEW SOCIAL PACK");
+  return start >= 0 ? text.slice(start) : text;
+}
+
+function sentenceParts(value) {
+  return value
+    .split(/[。！？!?；;\n]+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function shouldIgnoreNarrativeLine(value) {
+  return (
+    value.length < 10 ||
+    /^https?:\/\//i.test(value) ||
+    /app\.ixuan\.ai/i.test(value) ||
+    /IXAI INTELLIGENCE/i.test(value) ||
+    /I-Xuan Investment Co\., Ltd\./i.test(value) ||
+    /Market intelligence and education only/i.test(value) ||
+    /市場資訊與教育分享/i.test(value) ||
+    /^\d{4}\/\d{2}\/\d{2}/.test(value) ||
+    /^(Download PNG|Copy caption|Export Current Pack|Content quality|Quality issues|Export eligible|Source eligible|Selected slug|Source slug|Selected status|Source status|Selected canonical|Canonical)$/i.test(value) ||
+    /^(Weekly Intelligence|Daily Brief|I-Xuan Weekly View|I-Xuan View|一玄週觀點|Market Review|Next Week Catalysts|AI \/ Tech Weekly)$/i.test(value)
+  );
+}
+
+function repeatedNarrativeLines(text) {
+  const counts = new Map();
+
+  for (const sentence of sentenceParts(narrativeSegment(text))) {
+    const normalized = sentence.replace(/\s+/g, " ").trim();
+    if (shouldIgnoreNarrativeLine(normalized)) continue;
+    counts.set(normalized, (counts.get(normalized) ?? 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([sentence]) => sentence);
+}
+
 async function main() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1280, height: 1600 } });
@@ -197,6 +238,7 @@ async function main() {
 
   const text = await page.locator("body").innerText();
   const studioText = text.split("SOCIAL INTELLIGENCE ENGINE").at(-1) ?? text;
+  const qualityIssues = extractValue(studioText, "Quality issues");
   const actual = {
     selectedSlug: extractValue(studioText, "Selected slug"),
     sourceSlug: extractValue(studioText, "Source slug"),
@@ -207,10 +249,14 @@ async function main() {
     sourceEligible: extractValue(studioText, "Source eligible"),
     exportEligible: extractValue(studioText, "Export eligible"),
     contentQuality: extractValue(studioText, "Content quality"),
-    qualityIssues: extractValue(studioText, "Quality issues"),
+    qualityIssues,
     exportCurrentPackVisible: /Export Current Pack/.test(studioText),
     copyCaptionVisible: /Copy caption/.test(studioText),
     downloadPngVisible: /Download PNG/.test(studioText),
+    exportCurrentPackEnabled: await page.getByRole("button", { name: /Export Current Pack/i }).first().isEnabled().catch(() => false),
+    copyCaptionEnabled: await page.getByRole("button", { name: /Copy caption/i }).first().isEnabled().catch(() => false),
+    downloadPngEnabled: await page.getByRole("button", { name: /Download PNG/i }).first().isEnabled().catch(() => false),
+    duplicateNarrativeIssues: qualityIssues === "0" ? [] : repeatedNarrativeLines(studioText),
   };
 
   const expected = {
@@ -222,11 +268,29 @@ async function main() {
     sourceCanonical: "true",
     sourceEligible: "true",
     exportEligible: "true",
+    contentQuality: "passed",
+    qualityIssues: "0",
   };
 
   const failures = Object.entries(expected)
     .filter(([key, value]) => actual[key] !== value)
     .map(([key, value]) => `${key}: expected ${value}, got ${actual[key] || "(empty)"}`);
+
+  if (!actual.exportCurrentPackVisible || !actual.exportCurrentPackEnabled) {
+    failures.push("Export Current Pack must be visible and enabled");
+  }
+
+  if (!actual.copyCaptionVisible || !actual.copyCaptionEnabled) {
+    failures.push("Copy caption must be visible and enabled");
+  }
+
+  if (!actual.downloadPngVisible || !actual.downloadPngEnabled) {
+    failures.push("Download PNG must be visible and enabled");
+  }
+
+  if (actual.duplicateNarrativeIssues.length > 0) {
+    failures.push(`Narrative duplicates found: ${actual.duplicateNarrativeIssues.join(" | ")}`);
+  }
 
   const result = {
     ok: failures.length === 0,

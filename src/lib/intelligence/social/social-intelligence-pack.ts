@@ -145,6 +145,66 @@ function appHref(target?: string) {
   return `https://app.ixuan.ai${target.startsWith("/") ? target : `/${target}`}`;
 }
 
+function compactNarrative(value?: string) {
+  return (value ?? "")
+    .replace(/\s+/g, " ")
+    .replace(/^[^｜]{1,36}｜/, "")
+    .trim();
+}
+
+function comparableNarrative(value?: string) {
+  return compactNarrative(value)
+    .toLowerCase()
+    .replace(/[｜:：，。！？!?\s/·、；;（）()]/g, "")
+    .trim();
+}
+
+function isNearDuplicateNarrative(a?: string, b?: string) {
+  const left = comparableNarrative(a);
+  const right = comparableNarrative(b);
+
+  if (!left || !right) return false;
+  if (left === right) return true;
+
+  const shorter = left.length < right.length ? left : right;
+  const longer = left.length < right.length ? right : left;
+
+  return shorter.length >= 18 && longer.includes(shorter);
+}
+
+function uniqueNarrativeBodies(items: Array<string | undefined | null>, fallbacks: string[], count: number) {
+  const output: string[] = [];
+
+  for (const item of [...items, ...fallbacks]) {
+    const normalized = compactNarrative(item ?? undefined);
+    if (normalized.length < 10) continue;
+    if (output.some((existing) => isNearDuplicateNarrative(existing, normalized))) continue;
+    output.push(normalized);
+    if (output.length >= count) break;
+  }
+
+  return output;
+}
+
+function labeledNarrative(label: string, body?: string) {
+  return `${label}｜${compactNarrative(body)}`;
+}
+
+function chooseNarrativeByPattern(items: string[], pattern: RegExp, fallback: string, used: string[] = []) {
+  const candidates = [
+    ...items.filter((item) => pattern.test(item)),
+    fallback,
+  ];
+
+  return (
+    uniqueNarrativeBodies(
+      candidates.filter((item) => !used.some((existing) => isNearDuplicateNarrative(existing, item))),
+      [fallback],
+      1,
+    )[0] ?? fallback
+  );
+}
+
 export function generateDailySocialPack(source?: DailyBriefDraft | null): SocialIntelligencePack {
   const dateLabel = formatDateLabel(source?.publishedAt ?? source?.updatedAt);
   const extraction = extractDailySocialIntelligence(source);
@@ -245,19 +305,91 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
   const weeklyTarget = source?.slug ? `/weekly-brief/${source.slug}` : "/weekly-brief";
   const weeklyHref = appHref(weeklyTarget);
   const weeklyCta = periodic?.clearCTA ?? "想看本週轉折、三個事件與下週催化，請進 IXAI App 讀 Weekly Intelligence。";
-  const weeklySignals = extraction.evidenceItems.map((item) => `${item.label}｜${item.whatHappened}`).slice(0, 3);
-  const weeklyCatalysts = extraction.nextWeekCatalysts;
+  const weeklySignals = extraction.evidenceItems
+    .map((item) => labeledNarrative(item.label, item.whatHappened))
+    .slice(0, 3);
+  const weeklyChainBodies = uniqueNarrativeBodies(
+    [
+      `${extraction.crossMarketChain[0]?.narrative ?? ""} ${extraction.crossMarketChain[1]?.narrative ?? ""}`,
+      `${extraction.crossMarketChain[2]?.narrative ?? ""} ${extraction.crossMarketChain[3]?.narrative ?? ""}`,
+      `${extraction.crossMarketChain[4]?.narrative ?? ""} ${extraction.crossMarketChain[5]?.narrative ?? ""}`,
+    ],
+    [
+      "FOMC / Powell 與利率預期會先改變美元、SPY / QQQ、BTC 與台股半導體的資金成本。",
+      "AI guidance、earnings、capex 與台積電 / 2330 供應鏈決定 AI beta 能否擴散。",
+      "BTC / ETH 波動會把風險傳導到 FCN worst-of basket、KO / KI 與籃子集中度。",
+    ],
+    3,
+  );
   const weeklyChain = [
-    `Fed / Rates → USD｜${extraction.crossMarketChain[0]?.narrative ?? ""} ${extraction.crossMarketChain[1]?.narrative ?? ""}`,
-    `AI Beta → Taiwan Semis｜${extraction.crossMarketChain[2]?.narrative ?? ""} ${extraction.crossMarketChain[3]?.narrative ?? ""}`,
-    `Crypto → FCN Volatility｜${extraction.crossMarketChain[4]?.narrative ?? ""} ${extraction.crossMarketChain[5]?.narrative ?? ""}`,
-  ].map((item) => item.replace(/\s+/g, " ").trim());
-  const weeklyStrategist = extraction.evidenceItems.map((item) => `${item.label}｜${item.whatHappened} ${item.whyItMatters}`).slice(0, 3);
+    labeledNarrative("Fed / Rates → USD", weeklyChainBodies[0]),
+    labeledNarrative("AI Beta → Taiwan Semis", weeklyChainBodies[1]),
+    labeledNarrative("Crypto → FCN Volatility", weeklyChainBodies[2]),
+  ];
+  const catalystBodies = uniqueNarrativeBodies(
+    extraction.nextWeekCatalysts,
+    [
+      "FOMC / Powell｜觀察利率路徑是否改變美元、SPY / QQQ、BTC 與台股半導體風險定價。",
+      "AI guidance / earnings｜觀察 NVDA、台積電 / 2330、cloud capex 是否支撐 AI beta。",
+      "FCN volatility｜觀察 worst-of basket pressure、KO / KI 距離與籃子集中敏感度。",
+    ],
+    3,
+  );
+  const weeklyCatalysts = [
+    labeledNarrative("FOMC / Powell", chooseNarrativeByPattern(catalystBodies, /FOMC|Powell|Fed|利率|美元|CPI|PCE/i, "觀察 FOMC / Powell 是否改變美元、SPY / QQQ、BTC 與台股半導體風險定價。")),
+    labeledNarrative("AI guidance / earnings", chooseNarrativeByPattern(catalystBodies, /AI|NVDA|台積|2330|TSMC|guidance|指引|capex|cloud|data center|財報|半導體/i, "觀察 AI guidance、earnings、capex 與台積電 / 2330 供應鏈是否支撐 AI beta。")),
+    labeledNarrative("FCN volatility", chooseNarrativeByPattern(catalystBodies, /FCN|KO|KI|worst|volatility|波動|籃子|BTC|ETH/i, "觀察 BTC / ETH、QQQ 與 FCN worst-of basket pressure、KO / KI 距離是否惡化。")),
+  ];
+  const aiTechCandidates = [
+    extraction.aiEarningsPowerSignal,
+    ...extraction.evidenceItems.map((item) => `${item.whatHappened} ${item.whyItMatters}`),
+    weeklyCatalysts[1],
+  ];
+  const aiWhatHappened = chooseNarrativeByPattern(
+    aiTechCandidates,
+    /AI|semiconductor|半導體|NVDA|NVIDIA|TSMC|台積|2330|guidance|指引|capex|cloud|data center|財報|AI server/i,
+    "AI earnings、guidance、capex 與台積電 / 2330 供應鏈是本週檢驗 AI beta 的主要證據。",
+  );
+  const aiWhyItMatters = chooseNarrativeByPattern(
+    [
+      "如果 guidance 與 capex 不能支撐估值，高 beta 科技股會重新檢驗獲利容錯率。",
+      extraction.crossMarketChain[2]?.narrative,
+      extraction.crossMarketChain[3]?.narrative,
+    ],
+    /valuation|估值|earnings|獲利|AI beta|guidance|capex|台積|2330|semiconductor|半導體/i,
+    "如果 guidance 與 capex 不能支撐估值，高 beta 科技股會重新檢驗獲利容錯率。",
+    [aiWhatHappened],
+  );
+  const aiWatchNext = chooseNarrativeByPattern(
+    weeklyCatalysts,
+    /AI|NVDA|台積|2330|TSMC|guidance|指引|capex|cloud|data center|財報|半導體/i,
+    "下週觀察 AI guidance、台積電 / 2330 與半導體供應鏈是否同步上修。",
+    [aiWhatHappened, aiWhyItMatters],
+  );
+  const weeklyStrategist = [
+    labeledNarrative("What Happened", aiWhatHappened),
+    labeledNarrative("Why It Matters", aiWhyItMatters),
+    labeledNarrative("Watch Next", aiWatchNext),
+  ];
   const weeklyQuestion = extraction.centralQuestion;
+  const weeklyViewBodies = uniqueNarrativeBodies(
+    [
+      extraction.iXuanWeeklyViewAngle,
+      extraction.weeklyChange,
+      extraction.fcnTranslation,
+      weeklyCatalysts.join(" "),
+    ],
+    [
+      "市場觀點：本週先看 Fed / USD 是否限制 AI beta，並用台積電 / 2330 與 QQQ 驗證資金承接。",
+      "風險觀點：若 BTC / ETH 與高 beta 科技股波動同步升高，FCN worst-of basket 與 KO / KI 距離要提高警覺。",
+      "下週觀察：FOMC / Powell、AI guidance / capex、台積電 / 2330 與 FCN volatility 是否同向驗證。",
+    ],
+    3,
+  );
   const weeklyViewBullets = [
-    `市場觀點｜${extraction.iXuanWeeklyViewAngle}`,
-    `風險觀點｜${extraction.weeklyChange}`,
-    `FCN Translation｜${extraction.fcnTranslation}`,
+    labeledNarrative("市場觀點", weeklyViewBodies[0]),
+    labeledNarrative("風險觀點", weeklyViewBodies[1]),
+    labeledNarrative("下週觀察", weeklyViewBodies[2]),
   ];
   const weeklySlideBullets = ensureDistinctNarratives(
     [
