@@ -38,7 +38,6 @@ export type SocialIntelligencePack = {
   };
 };
 
-const APP_URL = "app.ixuan.ai";
 const DISCLAIMER =
   "市場資訊與教育分享，非個人化投資建議。Market intelligence and education only. Not personalized investment advice.";
 export const socialBrandTokens = {
@@ -97,33 +96,6 @@ function formatDateLabel(value?: string) {
     month: "2-digit",
     year: "numeric",
   });
-}
-
-function compactText(value?: string, fallback = "IXAI 已整理今日市場脈絡與風險觀察。", maxLength = 74) {
-  const normalized = normalizeSocialCopy(value, fallback)
-    .replace(/([，。！？；])\s*[，。]+/g, "$1")
-    .replace(/([。！？；])，/g, "$1");
-
-  if (normalized.length <= maxLength) {
-    return normalized;
-  }
-
-  const clauses = normalized
-    .split(/(?<=[。！？.!?；;])|\s[|]\s|，|,/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-  let output = "";
-
-  for (const clause of clauses) {
-    const separator = /[。！？.!?；;]$/.test(output) ? "" : "，";
-    const next = output ? `${output}${separator}${clause}` : clause;
-    if (next.length > maxLength) {
-      break;
-    }
-    output = next;
-  }
-
-  return output ? (/[。！？.!?；;]$/.test(output) ? output : `${output}。`) : fallback;
 }
 
 function normalizeSocialCopy(value?: string, fallback = "IXAI 已整理今日市場脈絡與風險觀察。") {
@@ -193,27 +165,6 @@ function readableSnippet(value?: string, fallback = "維持風險意識與情境
   return fallback;
 }
 
-function socialPoint(label: string, value?: string, fallback = "維持市場脈絡與風險觀察。", maxLength = 38) {
-  return `${label}｜${readableSnippet(value, fallback, maxLength)}`;
-}
-
-function evidenceSocialPoint(label: string, evidence?: { event: string; source: string; whyItMatters: string }) {
-  if (!evidence) {
-    return `${label}｜等待 editor 補充具體事件與來源。`;
-  }
-
-  return `${label}｜${readableSnippet(evidence.event, "具體事件待 editor 審閱。", 54)} ${readableSnippet(evidence.whyItMatters, "此事件用來驗證市場主線。", 54)}`;
-}
-
-function evidenceLabel(category?: string, fallback = "Evidence") {
-  if (category === "macro") return "Macro";
-  if (category === "ai-tech") return "AI / Tech";
-  if (category === "taiwan") return "Taiwan";
-  if (category === "crypto") return "Crypto";
-  if (category === "risk") return "Risk";
-  return fallback;
-}
-
 function socialSubjectFromEvidence(evidence?: { event: string; source: string; whyItMatters: string }) {
   const value = evidence?.event ?? "";
 
@@ -248,26 +199,6 @@ function buildDailySocialTitle(
     ?? "今天市場要看哪個證據？";
 }
 
-function buildDailySocialView(
-  questionView: string | undefined,
-  evidence: { event: string; source: string; whyItMatters: string }[],
-  fallback: string,
-) {
-  const subject = socialSubjectFromEvidence(evidence[0]);
-  const second = socialSubjectFromEvidence(evidence[1]);
-  const socialView = `一玄觀點：今天先看 ${subject} 是否能帶出可驗證的收入、訂單或資金流，再看 ${second} 是否限制風險資產的容錯率。`;
-
-  if (!questionView || narrativeSimilarity(socialView, questionView) < 0.68) {
-    return readableSnippet(socialView, fallback, 110);
-  }
-
-  return readableSnippet(
-    `一玄觀點：今天的社群重點不是重複日報結論，而是提醒讀者從 ${subject} 回到證據、風險與下一步觀察。`,
-    fallback,
-    110,
-  );
-}
-
 function weeklyQuestionFromSource(source?: WeeklyIntelligenceDraft | null, fallback = "本週市場真正改變了什麼？") {
   const majorEvent = source?.sections.majorEvents?.[0];
   const upcoming = source?.sections.upcomingWeek?.[0];
@@ -281,10 +212,6 @@ function weeklyQuestionFromSource(source?: WeeklyIntelligenceDraft | null, fallb
   }
 
   return fallback;
-}
-
-function firstItems<T>(items: T[] | undefined, count: number) {
-  return Array.isArray(items) ? items.slice(0, count) : [];
 }
 
 function dailyIxuanView(source?: DailyBriefDraft | null) {
@@ -306,6 +233,266 @@ function dailyIxuanView(source?: DailyBriefDraft | null) {
   return "本輪 AI 行情已不只是晶片股行情，而是逐步擴散到雲端、資料庫與企業軟體。短期仍需留意利率與估值壓力，但只要企業 AI 資本支出沒有反轉，市場主線仍可能圍繞 AI 基礎設施與軟體效率展開。";
 }
 
+function sourceTextFromDailySection(source: DailyBriefDraft | null | undefined, pattern: RegExp) {
+  const section = source?.sections.find((item) => pattern.test(`${item.category} ${item.headline} ${item.summary} ${item.ixaiView ?? ""}`));
+
+  if (!section) {
+    return undefined;
+  }
+
+  return `${section.headline}：${section.summary}`;
+}
+
+function evidenceByCategory(
+  evidence: { category?: string; event: string; source: string; whyItMatters: string }[],
+  pattern: RegExp,
+) {
+  return evidence.find((item) => pattern.test(`${item.category ?? ""} ${item.event} ${item.whyItMatters} ${item.source}`));
+}
+
+function socialAxisLine(label: string, value: string | undefined, fallback: string, maxLength = 52) {
+  return `${label}｜${readableSnippet(value, fallback, maxLength)}`;
+}
+
+function buildDailyMarketAxes(
+  source: DailyBriefDraft | null | undefined,
+  evidence: { category?: string; event: string; source: string; whyItMatters: string }[],
+) {
+  const macroEvidence = evidenceByCategory(evidence, /macro|rates|fed|yield|利率|美元|通膨|殖利率/i);
+  const aiEvidence = evidenceByCategory(evidence, /ai|tech|semiconductor|chip|NVDA|NVIDIA|TSMC|台積|半導體|雲端|AI/i);
+  const taiwanCryptoEvidence = evidenceByCategory(evidence, /taiwan|crypto|BTC|ETH|台股|台灣|加密/i);
+  const macroSource =
+    macroEvidence
+      ? `${macroEvidence.event}：${macroEvidence.whyItMatters}`
+      : source?.intelligence?.macroWatch
+      ? `${source.intelligence.macroWatch.whatHappened} ${source.intelligence.macroWatch.marketMeaning}`
+      : sourceTextFromDailySection(source, /rates|macro|us_market|利率|美元|美股|總經/i);
+  const aiSource =
+    aiEvidence
+      ? `${aiEvidence.event}：${aiEvidence.whyItMatters}`
+      : source?.intelligence?.aiTechWatch?.observations?.[0] ??
+        source?.intelligence?.aiTechObservation ??
+        sourceTextFromDailySection(source, /ai|tech|ai_market|半導體|科技|台積|雲端/i);
+  const taiwanCryptoSource =
+    taiwanCryptoEvidence
+      ? `${taiwanCryptoEvidence.event}：${taiwanCryptoEvidence.whyItMatters}`
+      : sourceTextFromDailySection(source, /taiwan|crypto|taiwan_market|台股|台灣|加密|BTC|ETH/i) ??
+        source?.intelligence?.cryptoWatch?.observations?.[0] ??
+        source?.intelligence?.cryptoObservation;
+
+  return [
+    socialAxisLine("Macro", macroSource, "利率、美元與通膨仍是今日風險資產的定價錨點。"),
+    socialAxisLine("AI-Tech", aiSource, "AI 主線要從題材回到訂單、資本支出與現金流證據。"),
+    socialAxisLine("Taiwan-Crypto", taiwanCryptoSource, "台股供應鏈與 BTC / ETH 共同反映風險偏好的承接力。"),
+  ];
+}
+
+function uniqueConcreteItems(items: Array<string | undefined | null>, fallbackItems: string[], count = 3) {
+  const normalized = items
+    .map((item) => normalizeSocialCopy(item ?? "", ""))
+    .filter((item) => item.length >= 8 && !isMostlyEnglish(item));
+  const output: string[] = [];
+
+  for (const item of [...normalized, ...fallbackItems]) {
+    const snippet = readableSnippet(item, "", 62);
+    if (!snippet) continue;
+    if (output.some((existing) => narrativeSimilarity(existing, snippet) >= 0.78)) continue;
+    output.push(snippet);
+    if (output.length >= count) break;
+  }
+
+  return output;
+}
+
+function buildDailyWatchItems(source: DailyBriefDraft | null | undefined, watchNext: string[] | undefined) {
+  return uniqueConcreteItems(
+    [
+      ...(watchNext ?? []),
+      ...(source?.intelligence?.investorWatchpoints ?? []),
+      source?.intelligence?.macroWatch?.marketMeaning,
+      source?.intelligence?.aiTechWatch?.observations?.[0],
+      source?.intelligence?.cryptoWatch?.observations?.[0],
+    ],
+    [
+      "24 小時內觀察利率與美元是否同步壓抑科技股估值。",
+      "48 小時內觀察 AI 軟體、雲端與半導體是否同步上修。",
+      "72 小時內觀察台股 AI 供應鏈與 BTC / ETH 是否承接風險偏好。",
+    ],
+  ).map((item, index) => {
+    const labels = ["證據同步", "利率與美元", "科技廣度"];
+    return `${labels[index] ?? "下步觀察"}｜${item}`;
+  });
+}
+
+function buildDailyRiskBullets(source: DailyBriefDraft | null | undefined, riskCopy: string) {
+  const riskState = source?.intelligence?.riskRegimeReasoning?.current ?? "Elevated";
+  const riskReason =
+    source?.intelligence?.riskRegimeReasoning?.reasons?.[0] ??
+    riskCopy ??
+    "利率與估值壓力會降低風險資產容錯率。";
+  const fcn = source?.intelligence?.fcnAwareness;
+  const fcnCopy = fcn
+    ? `${fcn.topic}｜${readableSnippet(`${fcn.explanation} ${fcn.reminder}`, "KO / KI / Worst-of 與波動會影響 FCN 風險觀察。", 70)}`
+    : "FCN Awareness｜同步觀察 KO / KI / Worst-of、波動與籃子標的集中度。";
+
+  return [
+    `Risk State｜${riskState}`,
+    `Why It Matters｜${readableSnippet(riskReason, "風險資產容錯率正在被利率與估值重新檢查。", 70)}`,
+    fcnCopy,
+  ];
+}
+
+function buildDailyContractView(
+  source: DailyBriefDraft | null | undefined,
+  questionView: string | undefined,
+  evidence: { event: string; source: string; whyItMatters: string }[],
+  fallback: string,
+) {
+  const subjects = [socialSubjectFromEvidence(evidence[0]), socialSubjectFromEvidence(evidence[1])]
+    .filter((item) => item && item !== "今日關鍵事件");
+  const uniqueSubjects = Array.from(new Set(subjects));
+  const primary = uniqueSubjects[0] ?? "今日主線";
+  const secondary = uniqueSubjects[1] ?? "利率、美元與風險資產容錯率";
+  const sourceView = normalizeSocialCopy(questionView ?? source?.intelligence?.ixuanView ?? fallback, "");
+
+  if (sourceView.length >= 80 && sourceView.length <= 180 && narrativeSimilarity(sourceView, primary) < 0.28) {
+    return readableSnippet(sourceView, fallback, 150);
+  }
+
+  return readableSnippet(
+    `一玄觀點：今天不是判斷題材退潮，而是看 ${primary} 能否拿出收入、訂單或資金流證據；同時檢查 ${secondary} 是否正在降低風險資產容錯率。證據若同步，主線才有延續力。`,
+    fallback,
+    150,
+  );
+}
+
+function buildDailyCaptionFromSource(marketAxes: string[], riskBullets: string[], target: string) {
+  const axisLabels = marketAxes.map((axis) => axis.split("｜")[0]).join(" / ");
+  const riskLabel = riskBullets[0]?.replace("Risk State｜", "") ?? "Elevated";
+
+  return [
+    "【一玄每日 AI 投資日報】",
+    `今日三軸：${axisLabels}`,
+    `風險狀態：${riskLabel}，請同步看 FCN KO / KI / Worst-of awareness。`,
+    "想看今天的證據、反證與下一步觀察，請進 IXAI App 讀 Daily Brief：",
+    appHref(target),
+    DISCLAIMER,
+  ].join("\n");
+}
+
+function eventText(event: { label?: string; title?: string; whyItMatters?: string }) {
+  return `${event.label ?? "Event"}｜${event.title ?? ""}：${event.whyItMatters ?? ""}`;
+}
+
+function findWeeklyMajorEvent(
+  source: WeeklyIntelligenceDraft | null | undefined,
+  pattern: RegExp,
+) {
+  return source?.sections.majorEvents?.find((event) => pattern.test(`${event.label} ${event.title} ${event.whyItMatters}`));
+}
+
+function buildWeeklyChangedBullets(source: WeeklyIntelligenceDraft | null | undefined) {
+  const narrative = source?.sections.narrative;
+  const macroEvent = findWeeklyMajorEvent(source, /fed|rate|rates|macro|FOMC|Powell|利率|美元|殖利率|總經/i);
+  const aiEvent = findWeeklyMajorEvent(source, /AI|tech|semiconductor|NVDA|NVIDIA|TSMC|台積|半導體|cloud|capex|guidance|財報|指引/i);
+  const marketEvent = findWeeklyMajorEvent(source, /market|taiwan|crypto|BTC|ETH|SPY|QQQ|台股|資金|風險|波動/i);
+  const macroSource =
+    macroEvent ? eventText(macroEvent) : source?.sections.fedRates
+      ? `${source.sections.fedRates.headline}：${source.sections.fedRates.summary}`
+      : narrative?.pricingWhat?.find((item) => /rates|macro|利率|美元|FOMC|Powell/i.test(item));
+  const aiSource =
+    aiEvent ? eventText(aiEvent) : source?.sections.taiwanAi
+      ? `${source.sections.taiwanAi.headline}：${source.sections.taiwanAi.summary}`
+      : narrative?.aiNarrative;
+  const firstHighlight = source?.sections.marketHighlights?.[0];
+  const marketSource =
+    marketEvent
+      ? eventText(marketEvent)
+      : narrative?.crossMarketNarrative ??
+        source?.sections.intelligenceSummary.whatChanged ??
+        (firstHighlight ? `${firstHighlight.headline}：${firstHighlight.summary}` : undefined);
+
+  return [
+    socialAxisLine("Macro", macroSource, "FOMC、Powell、利率與美元仍是下週風險資產的共同定價錨。", 62),
+    socialAxisLine("AI", aiSource, "AI 主線要接受 earnings、guidance、capex 與雲端需求驗證。", 62),
+    socialAxisLine("Market", marketSource, "資金會檢查美股 AI beta、台股供應鏈、BTC 與 FCN 波動是否同向。", 62),
+  ];
+}
+
+function buildWeeklyCatalystBullets(source: WeeklyIntelligenceDraft | null | undefined, watchNext: string[] | undefined) {
+  const upcoming = source?.sections.upcomingWeek?.map((event) => `${event.date}｜${event.title}：${event.whyItMatters}`);
+
+  return uniqueConcreteItems(
+    [
+      ...(upcoming ?? []),
+      ...(source?.sections.nextWeekFocus ?? []),
+      ...(watchNext ?? []),
+      source?.sections.fedRates?.summary,
+      source?.sections.taiwanAi?.summary,
+    ],
+    [
+      "FOMC / Powell｜觀察利率路徑是否改變 SPY、QQQ 與 BTC 的風險定價。",
+      "AI earnings / guidance｜觀察台積電、NVDA 與雲端 capex 是否支持 AI 估值。",
+      "FCN volatility｜觀察 KO / KI、worst-of 與籃子波動是否因科技股震盪惡化。",
+    ],
+  );
+}
+
+function buildWeeklyOneThing(source: WeeklyIntelligenceDraft | null | undefined) {
+  const narrative = source?.sections.narrative;
+  const candidate =
+    narrative?.aiNarrative ??
+    source?.sections.periodicNarrative?.mainNarrative ??
+    source?.sections.intelligenceSummary.pricing ??
+    source?.sections.taiwanAi?.summary;
+
+  return readableSnippet(
+    candidate,
+    "本週唯一最重要的主軸，是 AI earnings、guidance 與 capex 能否把題材變成可驗證的財報證據。",
+    92,
+  );
+}
+
+function buildWeeklyRiskView(source: WeeklyIntelligenceDraft | null | undefined, catalysts: string[]) {
+  const narrative = source?.sections.narrative;
+  const marketView =
+    source?.sections.periodicNarrative?.ixuanView ??
+    narrative?.intelligenceTakeaway ??
+    source?.sections.intelligenceSummary.pricing;
+  const riskView =
+    narrative?.riskFocus ??
+    source?.sections.periodicNarrative?.riskNarrative ??
+    source?.sections.intelligenceSummary.riskTone;
+  const fcn = source?.sections.fcnMarketObservation;
+  const fcnView = fcn
+    ? `FCN 風險要看 ${fcn.worstOf} ${fcn.volatility}`
+    : "FCN 風險要同步看 KO / KI、worst-of、波動與籃子標的集中度。";
+
+  return [
+    `市場觀點｜${readableSnippet(marketView, "市場正在把 AI 故事重新交給財報、利率與資金流驗證。", 70)}`,
+    `風險觀點｜${readableSnippet(riskView, "若利率與美元壓力升高，科技估值與高 beta 資產容錯率會下降。", 70)}`,
+    `下週觀察｜${readableSnippet(`${catalysts[0] ?? "FOMC / Powell"}；${fcnView}`, "下週觀察 FOMC / Powell、AI guidance 與 FCN worst-of 波動。", 90)}`,
+  ];
+}
+
+function buildWeeklyCaptionFromSource(changedBullets: string[], catalysts: string[], target: string) {
+  const changedLabels = changedBullets.map((item) => item.split("｜")[0]).join(" / ");
+  const catalystLabels = catalysts
+    .map((item) => item.split("｜")[0])
+    .slice(0, 3)
+    .join(" / ");
+
+  return [
+    "【一玄每週 AI 投資週報】",
+    `本週變化：${changedLabels}`,
+    `下週催化：${catalystLabels}`,
+    "本週重點是把 rates、AI guidance、台股供應鏈、BTC 與 FCN risk 放進同一條市場鏈條。",
+    "想看完整市場鏈條、風險觀點與下週觀察，請進 IXAI App 讀 Weekly Intelligence：",
+    appHref(target),
+    DISCLAIMER,
+  ].join("\n");
+}
+
 function appHref(target?: string) {
   if (!target) {
     return "https://app.ixuan.ai/daily-brief";
@@ -316,34 +503,6 @@ function appHref(target?: string) {
   }
 
   return `https://app.ixuan.ai${target.startsWith("/") ? target : `/${target}`}`;
-}
-
-function buildDailyCaption() {
-  return [
-    "【一玄每日 AI 投資日報】",
-    "今日重點不是新聞數量，而是市場正在要求什麼證據：",
-    "・今天最大事件",
-    "・市場訊號與風險拉扯",
-    "・AI / Tech 與 FCN awareness",
-    "・一玄觀點",
-    "想看完整市場訊號與下一步觀察，請進 IXAI App 讀 Daily Brief：",
-    APP_URL,
-    DISCLAIMER,
-  ].join("\n");
-}
-
-function buildWeeklyCaption() {
-  return [
-    "【一玄每週 AI 投資週報】",
-    "本週重點不是單日新聞加總，而是市場敘事的轉折：",
-    "・本週最大市場轉折",
-    "・三個市場訊號",
-    "・AI / Tech 主線",
-    "・Risk / FCN awareness",
-    "想看完整市場訊號與下週觀察，請進 IXAI App 讀 Weekly Intelligence：",
-    APP_URL,
-    DISCLAIMER,
-  ].join("\n");
 }
 
 export function generateDailySocialPack(source?: DailyBriefDraft | null): SocialIntelligencePack {
@@ -361,44 +520,16 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   const shortAnswer = /市場脈絡|值得點進去看|整理/.test(rawShortAnswer)
     ? "市場焦點正從價格，轉向利率、AI 與風險承擔。"
     : rawShortAnswer;
-  const marketSeeing = firstItems(
-    dailyEvidence.length
-      ? dailyEvidence.map((item) =>
-          `${evidenceLabel(item.category, "Event")}｜${readableSnippet(item.event, "具體事件待 editor 審閱。", 32)}：${readableSnippet(item.whyItMatters, "這是市場驗證主線的證據。", 42)}`,
-        )
-      : [
-          socialPoint("Macro", source?.intelligence?.macroWatch?.whatHappened, "利率與美元仍是估值錨點。", 34),
-          socialPoint("AI", source?.intelligence?.aiTechWatch?.observations?.[0], "AI 需求需要訂單與現金流驗證。", 34),
-          socialPoint("Taiwan", source?.sections[0]?.headline, "台灣供應鏈仍是 AI trade 映射。", 34),
-        ],
-    3,
-  );
+  const marketSeeing = buildDailyMarketAxes(source, dailyEvidence);
   const riskCopy = readableSnippet(
     questionDriven?.counterEvidence[0] ?? insight?.narrativeTension ?? core?.socialHooks.riskHook,
     "真正風險不是主線消失，而是利率讓估值容錯率下降。",
     70,
   );
-  const riskSupport = source?.intelligence?.fcnAwareness
-    ? `FCN｜${source.intelligence.fcnAwareness.topic}：${readableSnippet(source.intelligence.fcnAwareness.explanation, "理解 KO / KI / Worst Performer。", 44)}`
-    : "FCN｜理解 KO / KI / Worst Performer，不做個人化判斷。";
-  const watchItems = firstItems(
-    [
-      ...(questionDriven?.watchNext?.length
-        ? questionDriven.watchNext
-        : [
-            core?.socialHooks.aiTechSignal.watchNext,
-            ...(source?.intelligence?.investorWatchpoints ?? []),
-            source?.intelligence?.cryptoWatch?.observations?.[0],
-          ]),
-      "AI 軟體需求能否接棒半導體。",
-      "雲端資本支出是否同步上修。",
-      "半導體訂單能否延續強度。",
-    ].filter((item): item is string => Boolean(item)),
-    3,
-  )
-    .filter((item): item is string => Boolean(item))
-    .map((item, index) => `Watch ${index + 1}｜${readableSnippet(item, "觀察證據是否同步上修。", 36)}`);
-  const dailyInsight = buildDailySocialView(
+  const riskBullets = buildDailyRiskBullets(source, riskCopy);
+  const watchItems = buildDailyWatchItems(source, questionDriven?.watchNext);
+  const dailyInsight = buildDailyContractView(
+    source,
     questionDriven?.ixuanView,
     dailyEvidence,
     core?.socialHooks.ixuanHook ?? dailyIxuanView(source),
@@ -423,7 +554,7 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
   );
 
   return {
-    caption: buildDailyCaption(),
+    caption: buildDailyCaptionFromSource(marketSeeing, riskBullets, dailyTarget),
     cta: {
       href: appHref(dailyTarget),
       label: "閱讀完整 Daily Brief",
@@ -452,19 +583,17 @@ export function generateDailySocialPack(source?: DailyBriefDraft | null): Social
       },
       {
         bullets: [
-          `Risk State｜${source?.intelligence?.riskRegimeReasoning?.current ?? "Elevated"}`,
-          `Reason 1｜${dailySlideBullets[2]}`,
-          riskSupport,
+          ...riskBullets,
         ],
         eyebrow: "Risk Contrast",
         id: "fcn_risk_watch",
-        title: "真正的風險",
+        title: "Risk Regime",
       },
       {
-        bullets: watchItems.length ? watchItems : ["AI software 是否接棒。", "Cloud spending 是否上修。", "Semiconductor orders 是否延續。"],
+        bullets: watchItems,
         eyebrow: "Watch Next",
         id: "market_review",
-        title: "接下來看什麼？",
+        title: "24–72 小時觀察",
       },
       {
         bullets: [dailySlideBullets[4], dailyCta],
@@ -485,83 +614,38 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
   const periodic = source?.sections.periodicNarrative;
   const insight = source?.sections.insight;
   const questionDriven = insight?.questionDriven;
-  const weeklyEvidence = questionDriven?.evidenceDetails ?? [];
-  const weeklyView =
-    periodic?.ixuanView ??
-    source?.sections.intelligenceSummary.pricing ??
-    source?.aiSuggestion.intelligenceNarrative ??
-    "一玄週觀點：本週重點是辨認哪些事件真正改變了週內資金排序，以及下週哪些催化會驗證或推翻這條主線。";
   const weeklyTarget = source?.slug ? `/weekly-brief/${source.slug}` : "/weekly-brief";
   const weeklyHref = appHref(weeklyTarget);
   const weeklyCta = periodic?.clearCTA ?? "想看本週轉折、三個事件與下週催化，請進 IXAI App 讀 Weekly Intelligence。";
-  const weeklySignals = firstItems(
-    source?.sections.majorEvents?.length
-      ? source.sections.majorEvents.map((event) => `${event.label}｜${event.title}：${event.whyItMatters}`)
-      : weeklyEvidence.length
-      ? weeklyEvidence.map((item) => evidenceSocialPoint(evidenceLabel(item.category, "Event"), item))
-      : [
-          "本週事件｜週內主要事件尚待 editor 補充，先以公開新聞建立週報基準。",
-          "本週主線｜比較週初與週末，判斷資金是否從題材轉向證據。",
-          "本週風險｜下週資料與法說將驗證本週主線是否延續。",
-        ],
-    3,
-  );
-  const weeklyRisk =
-    periodic?.riskNarrative ??
-    source?.sections.intelligenceSummary.riskTone ??
-    "本週風險環境以波動、利率與美元節奏為核心。";
-  const weeklyNextWeek = (
-    source?.sections.upcomingWeek?.length
-      ? source.sections.upcomingWeek.slice(0, 3).map((event) => `${event.date}｜${event.title}：${event.whyItMatters}`)
-      : source?.sections.nextWeekFocus?.length
-      ? source.sections.nextWeekFocus.slice(0, 3)
-      : questionDriven?.watchNext.slice(0, 3) ?? []
-  );
-  const weeklyCatalysts = firstItems(
-    weeklyNextWeek.length
-      ? weeklyNextWeek
-      : [
-          "下週總經｜觀察通膨、殖利率與美元是否改變風險資產定價。",
-          "下週科技｜觀察法說與 guidance 是否支持本週 AI 主線。",
-          "下週台灣｜觀察 AI 供應鏈訂單與外資節奏是否延續。",
-        ],
-    3,
-  ).map((item) => (item.includes("｜") ? item : `下週觀察｜${item}`));
+  const weeklySignals = buildWeeklyChangedBullets(source);
+  const weeklyCatalysts = buildWeeklyCatalystBullets(source, questionDriven?.watchNext);
   const weeklyQuestion = weeklyQuestionFromSource(source, periodic?.socialHook ?? "本週市場最大轉折是什麼？");
   const weeklyAnswer = readableSnippet(
     source?.sections.intelligenceSummary.whatChanged ?? periodic?.whatChanged ?? periodic?.mainNarrative,
     "本週重點不是 Daily 訊號加總，而是週內事件如何改變下週驗證順序。",
     58,
   );
-  const oneThing = readableSnippet(
-    periodic?.mainNarrative ?? source?.sections.intelligenceSummary.pricing ?? weeklySignals[0],
-    "真正重要的是本週事件能否被下週資料、法說與資金流延續。",
-    78,
-  );
-  const riskLine = readableSnippet(
-    weeklyRisk ?? questionDriven?.counterEvidence[0],
-    "若下週資料與法說不配合，本週主線可能只是短線題材。",
-    60,
-  );
+  const oneThing = buildWeeklyOneThing(source);
+  const weeklyViewBullets = buildWeeklyRiskView(source, weeklyCatalysts);
   const weeklySlideBullets = ensureDistinctNarratives(
     [
       weeklyAnswer,
       weeklySignals.join(" "),
       oneThing,
-      weeklyNextWeek[0] ?? "",
-      weeklyView,
+      weeklyCatalysts.join(" "),
+      weeklyViewBullets.join(" "),
     ],
     [
-      "本週市場真正的變化，是資金開始把故事和證據分開定價。",
-      "本週三個訊號分別來自總經、AI 科技與高 beta 風險資產。",
-      "一件最重要的事：AI 故事要接受現金流與 guidance 驗證。",
-      "下週觀察法說、通膨與利率是否支持科技估值。",
-      "一玄週觀點：看誰能把 AI 變成財報，而不是誰最會講 AI。",
+      "本週市場真正的變化，是資金開始要求 AI、利率與風險資產同時提出證據。",
+      "本週三個訊號來自 Macro、AI earnings 與跨市場資金排序。",
+      "本週唯一最重要的事，是 AI guidance 與 capex 能否支撐科技估值。",
+      "下週觀察 FOMC / Powell、AI guidance 與 FCN worst-of 波動。",
+      "一玄週觀點：用利率、AI 財報與 FCN 風險鏈條驗證下週資金方向。",
     ],
   );
 
   return {
-    caption: buildWeeklyCaption(),
+    caption: buildWeeklyCaptionFromSource(weeklySignals, weeklyCatalysts, weeklyTarget),
     cta: {
       href: weeklyHref,
       label: weeklyCta,
@@ -587,16 +671,16 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
         bullets: weeklySignals,
         eyebrow: "Market Review",
         id: "market_review",
-        title: "本週改變了什麼？",
+        title: "What Changed This Week",
       },
       {
         bullets: [
           weeklySlideBullets[2],
-          riskLine,
+          "AI 驗證｜觀察 earnings、guidance、capex、cloud 與 data center 需求是否同步支持估值。",
         ],
         eyebrow: "AI / Tech Weekly",
         id: "ai_tech_watch",
-        title: "最重要的一件事",
+        title: "The One Thing That Matters",
       },
       {
         bullets: weeklyCatalysts,
@@ -606,8 +690,7 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
       },
       {
         bullets: [
-          compactText(weeklySlideBullets[4], "本週核心觀點：理解市場正在 pricing 什麼，比追逐單點新聞更重要。", 132),
-          weeklyCta,
+          ...weeklyViewBullets,
         ],
         eyebrow: "I-Xuan Weekly View",
         footer: `${weeklyCta} · ${weeklyTarget} · app.ixuan.ai`,
