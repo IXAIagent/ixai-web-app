@@ -497,13 +497,24 @@ function fitReadableText(value: string, maxLength: number, fallback: string) {
   return clampSocialLine(normalizeDisplayText(value), maxLength, fallback);
 }
 
-// Split a "headline｜detail" bullet payload into two compacted pieces.
-function splitBullet(value: string) {
+// Split a compact "headline｜detail" bullet payload into two readable pieces.
+// v1.83.6 — Support common editorial separators and avoid "Market Pulse"
+// as the render fallback for Weekly market review cards.
+function splitBullet(value: string, fallbackHeading = "Market Pulse") {
   const normalized = normalizeDisplayText(value);
-  const parts = normalized.split("｜");
-  const heading = fitReadableText(parts[0] ?? normalized, COPY_LIMITS.newsTitle, "Market Pulse");
+  const separatorMatch = ["｜", "|", "：", ":", "→"]
+    .map((separator) => {
+      const index = normalized.indexOf(separator);
+      return index >= 0 ? { index, separator } : null;
+    })
+    .find((item): item is { index: number; separator: string } => Boolean(item));
+  const separatorIndex = separatorMatch?.index ?? -1;
+  const separatorLength = separatorMatch?.separator.length ?? 0;
+  const rawHeading = separatorIndex >= 0 ? normalized.slice(0, separatorIndex) : normalized;
+  const rawDetail = separatorIndex >= 0 ? normalized.slice(separatorIndex + separatorLength) : "";
+  const heading = fitReadableText(rawHeading || fallbackHeading, COPY_LIMITS.newsTitle, fallbackHeading);
   const detail = fitReadableText(
-    parts.slice(1).join("｜") || normalized,
+    rawDetail || normalized,
     COPY_LIMITS.newsSummary,
     "維持情境觀察與風險意識。",
   );
@@ -692,9 +703,11 @@ function CoverSlide({
 // open the full brief; weekly packs retain the recap-style market pulse.
 function MarketPulseSlide({
   format,
+  pack,
   slide,
 }: {
   format: SocialExportFormat;
+  pack: SocialIntelligencePack;
   slide: SocialIntelligencePack["slides"][number];
 }) {
   const isFeed = format === "ig_feed_4_5";
@@ -702,6 +715,10 @@ function MarketPulseSlide({
   const items = slide.bullets.slice(0, 3);
   const displayTitle = slide.title || (slide.id === "market_review" ? "Market Review" : "Market Pulse");
   const isCuriosityBuilder = slide.eyebrow === "Why It Matters";
+  const marketReviewFallbacks =
+    pack.kind === "weekly"
+      ? ["Fed / Rates → USD", "AI Beta → Taiwan Semis", "Crypto → FCN Volatility"]
+      : ["Macro", "AI-Tech", "Taiwan-Crypto"];
 
   return (
     <div className="flex h-full flex-col">
@@ -740,7 +757,12 @@ function MarketPulseSlide({
             );
           }
 
-          const item = splitBullet(bullet);
+          const item = splitBullet(
+            bullet,
+            slide.id === "market_review"
+              ? marketReviewFallbacks[bulletIndex] ?? "Market Review"
+              : "Market Signal",
+          );
 
           return (
             <div className="grid grid-cols-[1.6rem_1fr] gap-2" key={`${bullet}-${bulletIndex}`}>
@@ -1043,7 +1065,7 @@ function SlideBody({
   }
 
   if (safeSlide.id === "top_news" || safeSlide.id === "market_review") {
-    return <MarketPulseSlide format={format} slide={safeSlide} />;
+    return <MarketPulseSlide format={format} pack={pack} slide={safeSlide} />;
   }
 
   if (safeSlide.id === "ai_tech_watch") {

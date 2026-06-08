@@ -257,6 +257,7 @@ async function main() {
     copyCaptionEnabled: await page.getByRole("button", { name: /Copy caption/i }).first().isEnabled().catch(() => false),
     downloadPngEnabled: await page.getByRole("button", { name: /Download PNG/i }).first().isEnabled().catch(() => false),
     duplicateNarrativeIssues: qualityIssues === "0" ? [] : repeatedNarrativeLines(studioText),
+    marketPulseOccurrences: (studioText.match(/Market Pulse/g) ?? []).length,
   };
 
   const expected = {
@@ -290,6 +291,10 @@ async function main() {
 
   if (actual.duplicateNarrativeIssues.length > 0) {
     failures.push(`Narrative duplicates found: ${actual.duplicateNarrativeIssues.join(" | ")}`);
+  }
+
+  if (actual.marketPulseOccurrences > 0) {
+    failures.push(`Market Pulse render fallback still visible (${actual.marketPulseOccurrences} occurrence(s))`);
   }
 
   const result = {
