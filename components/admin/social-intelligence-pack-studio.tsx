@@ -267,7 +267,16 @@ function repeatedSentences(texts: string[]) {
 
 function repeatedPhraseIssue(value: string) {
   const sentences = sentenceParts(value);
-  const ignore = ["IXAI", "app.ixuan.ai", "Daily Brief", "Weekly Intelligence", "Market Intelligence"];
+  const ignore = [
+    "IXAI",
+    "app.ixuan.ai",
+    "Daily Brief",
+    "Weekly Intelligence",
+    "Market Intelligence",
+    "I-Xuan View",
+    "I-Xuan Weekly View",
+    "一玄觀點",
+  ];
 
   for (const sentence of sentences) {
     const normalized = sentence.replace(/\s+/g, " ").trim();
@@ -305,7 +314,6 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
     pack.dateLabel,
     pack.caption,
     pack.cta.label,
-    pack.cta.href,
     ...pack.slides.map(slideText),
   ];
   const allText = packTexts.join(" ");
@@ -388,7 +396,7 @@ function detectSocialPackQualityIssues(pack: SocialIntelligencePack): SocialPack
     const cover = pack.slides.find((slide) => slide.id === "cover");
     const ixuanView = pack.slides.find((slide) => slide.id === "ixuan_view");
     const coverText = cover ? slideText(cover) : "";
-    const ixuanViewText = ixuanView ? slideText(ixuanView) : "";
+    const ixuanViewText = ixuanView ? ixuanView.bullets.join(" ") : "";
 
     if (coverText && ixuanViewText) {
       const sharedMeaningfulCue =
