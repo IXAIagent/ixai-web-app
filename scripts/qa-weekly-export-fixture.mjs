@@ -197,6 +197,18 @@ function repeatedNarrativeLines(text) {
     .map(([sentence]) => sentence);
 }
 
+function textBetween(text, startMarker, endMarker) {
+  const start = text.indexOf(startMarker);
+  if (start < 0) return "";
+  const afterStart = text.slice(start + startMarker.length);
+  const end = afterStart.indexOf(endMarker);
+  return end >= 0 ? afterStart.slice(0, end) : afterStart;
+}
+
+function repeatedMarketReviewLines(text) {
+  return repeatedNarrativeLines(textBetween(text, "What Changed This Week", "The One Thing That Matters"));
+}
+
 async function main() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1280, height: 1600 } });
@@ -258,6 +270,7 @@ async function main() {
     downloadPngEnabled: await page.getByRole("button", { name: /Download PNG/i }).first().isEnabled().catch(() => false),
     duplicateSentenceIssues: (studioText.match(/duplicate_sentence/g) ?? []).length,
     duplicateNarrativeIssues: qualityIssues === "0" ? [] : repeatedNarrativeLines(studioText),
+    marketReviewInternalDuplicates: repeatedMarketReviewLines(studioText),
     marketPulseOccurrences: (studioText.match(/Market Pulse/g) ?? []).length,
   };
 
@@ -296,6 +309,10 @@ async function main() {
 
   if (actual.duplicateSentenceIssues > 0) {
     failures.push(`duplicate_sentence diagnostics should be 0, got ${actual.duplicateSentenceIssues}`);
+  }
+
+  if (actual.marketReviewInternalDuplicates.length > 0) {
+    failures.push(`Market Review internal duplicates found: ${actual.marketReviewInternalDuplicates.join(" | ")}`);
   }
 
   if (actual.marketPulseOccurrences > 0) {

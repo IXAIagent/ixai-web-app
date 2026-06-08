@@ -246,6 +246,28 @@ function allocateNarrativeBodies(
   return output;
 }
 
+function ensureDistinctMarketReviewBodies(items: string[]) {
+  const fallbacks = [
+    "FOMC / Powell 與美元變化會影響科技股折現率。",
+    "觀察 AI guidance / capex 是否支撐台股半導體估值。",
+    "BTC / ETH 與 worst-of 籃子波動是 FCN 風險溫度計。",
+  ];
+  const output: string[] = [];
+
+  items.slice(0, 3).forEach((item, index) => {
+    const normalized = compactNarrative(item);
+    const fallback = fallbacks[index];
+    const body =
+      normalized.length >= 10 && !output.some((existing) => isNearDuplicateNarrative(existing, normalized))
+        ? normalized
+        : fallback;
+    const uniqueBody = output.some((existing) => isNearDuplicateNarrative(existing, body)) ? fallback : body;
+    output.push(uniqueBody);
+  });
+
+  return output;
+}
+
 export function generateDailySocialPack(source?: DailyBriefDraft | null): SocialIntelligencePack {
   const dateLabel = formatDateLabel(source?.publishedAt ?? source?.updatedAt);
   const extraction = extractDailySocialIntelligence(source);
@@ -364,10 +386,11 @@ export function generateWeeklySocialPack(source?: WeeklyIntelligenceDraft | null
     3,
     usedNarrativeTexts,
   );
+  const marketReviewBodies = ensureDistinctMarketReviewBodies(weeklyChainBodies);
   const weeklyChain = [
-    labeledNarrative("Fed / Rates → USD", weeklyChainBodies[0]),
-    labeledNarrative("AI Beta → Taiwan Semis", weeklyChainBodies[1]),
-    labeledNarrative("Crypto → FCN Volatility", weeklyChainBodies[2]),
+    labeledNarrative("Fed / Rates → USD", marketReviewBodies[0]),
+    labeledNarrative("AI Beta → Taiwan Semis", marketReviewBodies[1]),
+    labeledNarrative("Crypto → FCN Volatility", marketReviewBodies[2]),
   ];
   const aiTechCandidates = [
     extraction.aiEarningsPowerSignal,
