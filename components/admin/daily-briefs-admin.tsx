@@ -170,6 +170,26 @@ function WeeklyEditorPreview() {
 
   const selectedWeeklyDraft =
     weeklyDrafts.find((draft) => draft.id === selectedWeeklyId) ?? weeklyDrafts[0] ?? null;
+  const weeklyCanonicalExportDraft = useMemo(() => {
+    if (!selectedWeeklyDraft) {
+      return null;
+    }
+
+    if (selectedWeeklyDraft.status === "published" && selectedWeeklyDraft.isCanonical === true) {
+      return selectedWeeklyDraft;
+    }
+
+    return (
+      weeklyDrafts.find(
+        (draft) =>
+          draft.weekStart === selectedWeeklyDraft.weekStart &&
+          draft.weekEnd === selectedWeeklyDraft.weekEnd &&
+          draft.status === "published" &&
+          draft.isCanonical === true,
+      ) ?? null
+    );
+  }, [selectedWeeklyDraft, weeklyDrafts]);
+  const weeklySocialPackSource = weeklyCanonicalExportDraft ?? selectedWeeklyDraft;
   const weeklyCounts = useMemo(
     () => ({
       draft: weeklyDrafts.filter((draft) => draft.status === "draft").length,
@@ -872,7 +892,11 @@ function WeeklyEditorPreview() {
         </section>
       </div>
 
-      <SocialIntelligencePackStudio defaultKind="weekly" weeklyDraft={selectedWeeklyDraft} />
+      <SocialIntelligencePackStudio
+        defaultKind="weekly"
+        selectedWeeklyDraft={selectedWeeklyDraft}
+        weeklyDraft={weeklySocialPackSource}
+      />
     </div>
   );
 }

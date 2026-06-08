@@ -28,8 +28,9 @@ import type { DailyBriefDraft, WeeklyIntelligenceDraft } from "@/src/types/edito
 
 type SocialIntelligencePackStudioProps = {
   dailyDraft?: DailyBriefDraft | null;
-  weeklyDraft?: WeeklyIntelligenceDraft | null;
   defaultKind?: SocialPackKind;
+  selectedWeeklyDraft?: WeeklyIntelligenceDraft | null;
+  weeklyDraft?: WeeklyIntelligenceDraft | null;
 };
 
 const DAILY_TECH_SYMBOLS = ["NVDA", "MSFT", "AMD", "AVGO", "PLTR"];
@@ -124,14 +125,17 @@ function sourceAlignmentFor({
   dailyDraft,
   kind,
   pack,
+  selectedWeeklyDraft,
   weeklyDraft,
 }: {
   dailyDraft?: DailyBriefDraft | null;
   kind: SocialPackKind;
   pack: SocialIntelligencePack;
+  selectedWeeklyDraft?: WeeklyIntelligenceDraft | null;
   weeklyDraft?: WeeklyIntelligenceDraft | null;
 }) {
   const source = kind === "daily" ? dailyDraft : weeklyDraft;
+  const selectedSource = kind === "weekly" ? selectedWeeklyDraft ?? weeklyDraft : source;
   const hasMatchingSource = Boolean(source?.id);
   const hasSlug = Boolean(source?.slug);
   const isFallback = !hasMatchingSource || !pack.sourceBriefId;
@@ -153,8 +157,14 @@ function sourceAlignmentFor({
     : isFallback
     ? "此為 fallback preview，不可匯出為正式社群包。"
     : !weeklyPublishedCanonical
-    ? "目前選取的是 Weekly review / non-canonical 版本。可以預覽，但不可下載 PNG 或複製正式 caption。請先發布成 canonical weekly，再產出正式 Social Pack。"
+    ? "目前沒有可用的 published canonical Weekly export source。可以預覽，但不可下載 PNG 或複製正式 caption。請先發布成 canonical weekly，再產出正式 Social Pack。"
     : "";
+  const selectedCanonicalLabel =
+    kind === "weekly" && selectedSource && "isCanonical" in selectedSource
+      ? selectedSource.isCanonical
+        ? "true"
+        : "false"
+      : "not applicable";
 
   return {
     canExport,
@@ -164,6 +174,7 @@ function sourceAlignmentFor({
           ? "true"
           : "false"
         : "not applicable",
+    eligibilityReason: warning || "source guard passed",
     exportEligibleLabel: canExport ? "true" : "false",
     fallbackLabel: isFallback ? "true · Fallback preview only" : "false",
     hasMatchingSource,
@@ -172,6 +183,13 @@ function sourceAlignmentFor({
       kind === "weekly" && source && "revisionNumber" in source
         ? `v${source.revisionNumber ?? 1}`
         : "not applicable",
+    selectedCanonicalLabel,
+    selectedRevisionLabel:
+      kind === "weekly" && selectedSource && "revisionNumber" in selectedSource
+        ? `v${selectedSource.revisionNumber ?? 1}`
+        : "not applicable",
+    selectedSourceSlug: selectedSource?.slug ?? "No selected source",
+    selectedSourceStatus: selectedSource?.status ?? "No selected source",
     sourceDate: sourceDateLabelFor(kind, source),
     sourcePeriod: kind,
     sourceSlug: source?.slug ?? "No matching source",
@@ -1140,6 +1158,7 @@ function SocialPackPreview({
 export function SocialIntelligencePackStudio({
   dailyDraft,
   defaultKind = "daily",
+  selectedWeeklyDraft,
   weeklyDraft,
 }: SocialIntelligencePackStudioProps) {
   const [activeKind, setActiveKind] = useState<SocialPackKind>(defaultKind);
@@ -1159,6 +1178,7 @@ export function SocialIntelligencePackStudio({
     dailyDraft,
     kind: activeKind,
     pack: activePack,
+    selectedWeeklyDraft,
     weeklyDraft,
   });
   const quality = useMemo(() => detectSocialPackQualityIssues(activePack), [activePack]);
@@ -1356,6 +1376,11 @@ export function SocialIntelligencePackStudio({
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Source slug: <span className="text-[var(--ixai-cream)]">{sourceAlignment.sourceSlug}</span>
         </p>
+        {activeKind === "weekly" ? (
+          <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+            Selected slug: <span className="text-[var(--ixai-cream)]">{sourceAlignment.selectedSourceSlug}</span>
+          </p>
+        ) : null}
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Source title: <span className="text-[var(--ixai-cream)]">{sourceAlignment.sourceTitle}</span>
         </p>
@@ -1365,14 +1390,32 @@ export function SocialIntelligencePackStudio({
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Source status: <span className="text-[var(--ixai-cream)]">{sourceAlignment.sourceStatus}</span>
         </p>
+        {activeKind === "weekly" ? (
+          <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+            Selected status: <span className="text-[var(--ixai-cream)]">{sourceAlignment.selectedSourceStatus}</span>
+          </p>
+        ) : null}
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Revision: <span className="text-[var(--ixai-cream)]">{sourceAlignment.revisionLabel}</span>
         </p>
+        {activeKind === "weekly" ? (
+          <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+            Selected revision: <span className="text-[var(--ixai-cream)]">{sourceAlignment.selectedRevisionLabel}</span>
+          </p>
+        ) : null}
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Canonical: <span className="text-[var(--ixai-cream)]">{sourceAlignment.canonicalLabel}</span>
         </p>
+        {activeKind === "weekly" ? (
+          <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+            Selected canonical: <span className="text-[var(--ixai-cream)]">{sourceAlignment.selectedCanonicalLabel}</span>
+          </p>
+        ) : null}
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Source eligible: <span className="text-[var(--ixai-cream)]">{sourceAlignment.exportEligibleLabel}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Eligibility reason: <span className="text-[var(--ixai-cream)]">{sourceAlignment.eligibilityReason}</span>
         </p>
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Fallback: <span className="text-[var(--ixai-cream)]">{sourceAlignment.fallbackLabel}</span>
