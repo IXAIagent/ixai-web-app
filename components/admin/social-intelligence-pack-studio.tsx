@@ -108,6 +108,79 @@ function packSourceLabel(pack: SocialIntelligencePack) {
   return `${pack.kind} source · ${pack.sourceBriefId.slice(0, 18)}`;
 }
 
+function sourceDateLabelFor(kind: SocialPackKind, draft?: DailyBriefDraft | WeeklyIntelligenceDraft | null) {
+  if (!draft) {
+    return "No matching source";
+  }
+
+  if (kind === "weekly" && "weekStart" in draft) {
+    return `${draft.weekStart} - ${draft.weekEnd}`;
+  }
+
+  return draft.publishedAt ?? draft.updatedAt ?? "Unpublished";
+}
+
+function sourceAlignmentFor({
+  dailyDraft,
+  kind,
+  pack,
+  weeklyDraft,
+}: {
+  dailyDraft?: DailyBriefDraft | null;
+  kind: SocialPackKind;
+  pack: SocialIntelligencePack;
+  weeklyDraft?: WeeklyIntelligenceDraft | null;
+}) {
+  const source = kind === "daily" ? dailyDraft : weeklyDraft;
+  const hasMatchingSource = Boolean(source?.id);
+  const hasSlug = Boolean(source?.slug);
+  const isFallback = !hasMatchingSource || !pack.sourceBriefId;
+  const periodMatches = pack.kind === kind;
+  const weeklyPublishedCanonical =
+    kind !== "weekly" ||
+    (source && "isCanonical" in source && source.status === "published" && source.isCanonical === true);
+  const canExport = hasMatchingSource && hasSlug && periodMatches && !isFallback && weeklyPublishedCanonical;
+  const missingSourceCopy =
+    kind === "daily"
+      ? "找不到對應的 Daily Brief 來源，請先產生或選擇 Daily Brief。"
+      : "找不到對應的 Weekly Brief 來源，請先產生或選擇 Weekly Brief。";
+  const warning = !hasMatchingSource
+    ? missingSourceCopy
+    : !hasSlug
+    ? "此來源缺少 slug，無法匯出為正式社群包。"
+    : !periodMatches
+    ? "Source period mismatch. Daily and Weekly Social Packs must use their own period source."
+    : isFallback
+    ? "此為 fallback preview，不可匯出為正式社群包。"
+    : !weeklyPublishedCanonical
+    ? "目前選取的是 Weekly review / non-canonical 版本。可以預覽，但不可下載 PNG 或複製正式 caption。請先發布成 canonical weekly，再產出正式 Social Pack。"
+    : "";
+
+  return {
+    canExport,
+    canonicalLabel:
+      kind === "weekly" && source && "isCanonical" in source
+        ? source.isCanonical
+          ? "true"
+          : "false"
+        : "not applicable",
+    exportEligibleLabel: canExport ? "true" : "false",
+    fallbackLabel: isFallback ? "true · Fallback preview only" : "false",
+    hasMatchingSource,
+    hasSlug,
+    revisionLabel:
+      kind === "weekly" && source && "revisionNumber" in source
+        ? `v${source.revisionNumber ?? 1}`
+        : "not applicable",
+    sourceDate: sourceDateLabelFor(kind, source),
+    sourcePeriod: kind,
+    sourceSlug: source?.slug ?? "No matching source",
+    sourceStatus: source?.status ?? "No matching source",
+    sourceTitle: source?.title ?? "No matching source",
+    warning,
+  };
+}
+
 function createFileName(kind: SocialPackKind, index: number, format: SocialExportFormat) {
   const prefix = format === "ig_feed_4_5" ? "ig-feed" : "story";
   return `${kind}-${prefix}-social-pack-${String(index + 1).padStart(2, "0")}.png`;
@@ -757,11 +830,13 @@ function SlidePreview({
 }
 
 function SocialPackPreview({
+  disabled = false,
   format,
   onDownload,
   pack,
   registerSlide,
 }: {
+  disabled?: boolean;
   format: SocialExportFormat;
   onDownload: (index: number) => void;
   pack: SocialIntelligencePack;
@@ -778,7 +853,8 @@ function SocialPackPreview({
             slideRef={(node) => registerSlide(index, node)}
           />
           <button
-            className={`${FORMAT_LAYOUT[format].previewWidthClass} max-w-full rounded-lg border border-[rgba(176,141,87,0.28)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] transition hover:bg-[rgba(176,141,87,0.1)]`}
+            className={`${FORMAT_LAYOUT[format].previewWidthClass} max-w-full rounded-lg border border-[rgba(176,141,87,0.28)] px-3 py-2 text-xs font-semibold text-[var(--ixai-gold)] transition hover:bg-[rgba(176,141,87,0.1)] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-transparent`}
+            disabled={disabled}
             onClick={() => onDownload(index)}
             type="button"
           >
@@ -806,12 +882,25 @@ export function SocialIntelligencePackStudio({
   const weeklyPack = useMemo(() => generateWeeklySocialPack(weeklyDraft), [weeklyDraft]);
   const activePack = activeKind === "daily" ? dailyPack : weeklyPack;
   const activeFormatConfig = socialExportFormats[activeFormat];
+  const dailySourceReady = Boolean(dailyDraft?.id && dailyDraft.slug);
+  const weeklySourceReady = Boolean(weeklyDraft?.id && weeklyDraft.slug);
+  const sourceAlignment = sourceAlignmentFor({
+    dailyDraft,
+    kind: activeKind,
+    pack: activePack,
+    weeklyDraft,
+  });
 
   function registerSlide(index: number, node: HTMLElement | null) {
     slideRefs.current[index] = node;
   }
 
   async function copyCaption() {
+    if (!sourceAlignment.canExport) {
+      setCopyState(sourceAlignment.warning || "No matching source is available for this period.");
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(activePack.caption);
       setCopyState("Caption copied. Review before posting to FB / IG / LINE.");
@@ -821,6 +910,11 @@ export function SocialIntelligencePackStudio({
   }
 
   async function exportSlide(index: number) {
+    if (!sourceAlignment.canExport) {
+      setExportState(sourceAlignment.warning || "No matching source is available for this period.");
+      return;
+    }
+
     const node = slideRefs.current[index];
 
     if (!node) {
@@ -850,6 +944,11 @@ export function SocialIntelligencePackStudio({
   }
 
   async function exportCurrentPack() {
+    if (!sourceAlignment.canExport) {
+      setExportState(sourceAlignment.warning || "No matching source is available for this period.");
+      return;
+    }
+
     setIsExporting(true);
     setExportState(`Exporting ${activePack.kind} pack...`);
 
@@ -907,11 +1006,20 @@ export function SocialIntelligencePackStudio({
               activeKind === "daily"
                 ? "bg-[var(--ixai-gold)] text-[var(--ixai-forest)]"
                 : "border border-white/10 text-[rgba(245,240,230,0.72)] hover:bg-white/[0.055]"
-            }`}
+            } disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/[0.035] disabled:text-[rgba(245,240,230,0.36)]`}
+            disabled={!dailySourceReady}
             onClick={() => {
+              if (!dailySourceReady) {
+                return;
+              }
               setActiveKind("daily");
               setCopyState("Daily caption ready for manual publishing.");
             }}
+            title={
+              dailySourceReady
+                ? "Daily Social Pack must be generated from the current Daily Brief source."
+                : "找不到對應的 Daily Brief 來源，請先產生或選擇 Daily Brief。"
+            }
             type="button"
           >
             Generate Daily Social Pack
@@ -921,11 +1029,20 @@ export function SocialIntelligencePackStudio({
               activeKind === "weekly"
                 ? "bg-[var(--ixai-gold)] text-[var(--ixai-forest)]"
                 : "border border-white/10 text-[rgba(245,240,230,0.72)] hover:bg-white/[0.055]"
-            }`}
+            } disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/[0.035] disabled:text-[rgba(245,240,230,0.36)]`}
+            disabled={!weeklySourceReady}
             onClick={() => {
+              if (!weeklySourceReady) {
+                return;
+              }
               setActiveKind("weekly");
               setCopyState("Weekly caption ready for manual publishing.");
             }}
+            title={
+              weeklySourceReady
+                ? "Weekly Social Pack must be generated from the current Weekly Brief source."
+                : "找不到對應的 Weekly Brief 來源，請先產生或選擇 Weekly Brief。"
+            }
             type="button"
           >
             Generate Weekly Social Pack
@@ -955,7 +1072,45 @@ export function SocialIntelligencePackStudio({
         <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
           Publish mode: <span className="text-[var(--ixai-cream)]">manual review only</span>
         </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Source period: <span className="text-[var(--ixai-cream)]">{sourceAlignment.sourcePeriod}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Source slug: <span className="text-[var(--ixai-cream)]">{sourceAlignment.sourceSlug}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Source title: <span className="text-[var(--ixai-cream)]">{sourceAlignment.sourceTitle}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Source date: <span className="text-[var(--ixai-cream)]">{sourceAlignment.sourceDate}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Source status: <span className="text-[var(--ixai-cream)]">{sourceAlignment.sourceStatus}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Revision: <span className="text-[var(--ixai-cream)]">{sourceAlignment.revisionLabel}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Canonical: <span className="text-[var(--ixai-cream)]">{sourceAlignment.canonicalLabel}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Export eligible: <span className="text-[var(--ixai-cream)]">{sourceAlignment.exportEligibleLabel}</span>
+        </p>
+        <p className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          Fallback: <span className="text-[var(--ixai-cream)]">{sourceAlignment.fallbackLabel}</span>
+        </p>
       </div>
+
+      {!sourceAlignment.canExport ? (
+        <div className="mt-4 rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(176,141,87,0.1)] p-3 text-sm leading-6 text-[var(--ixai-cream)]">
+          <p className="font-semibold">
+            {sourceAlignment.warning || "No matching source is available for this period."}
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.58)]">
+            Daily Social Pack must be generated from the current Daily Brief source. Weekly Social Pack must be generated from the current Weekly Brief source.
+          </p>
+        </div>
+      ) : null}
 
       <div
         className="mt-5 rounded-lg border border-white/10 p-4"
@@ -1004,15 +1159,16 @@ export function SocialIntelligencePackStudio({
           </div>
           <button
             className="rounded-lg bg-[var(--ixai-gold)] px-4 py-2 text-sm font-semibold text-[var(--ixai-forest)] disabled:cursor-wait disabled:opacity-60"
-            disabled={isExporting}
+            disabled={isExporting || !sourceAlignment.canExport}
             onClick={exportCurrentPack}
             type="button"
           >
-            {isExporting ? "Exporting..." : "Export Current Pack"}
+            {isExporting ? "Exporting..." : sourceAlignment.canExport ? "Export Current Pack" : "Export disabled"}
           </button>
         </div>
         <div className="mt-5 overflow-x-hidden">
           <SocialPackPreview
+            disabled={!sourceAlignment.canExport}
             format={activeFormat}
             onDownload={exportSlide}
             pack={activePack}
@@ -1029,7 +1185,8 @@ export function SocialIntelligencePackStudio({
               Copy Caption
             </p>
             <button
-              className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[var(--ixai-forest)]"
+              className="rounded-lg bg-[var(--ixai-gold)] px-3 py-2 text-xs font-semibold text-[var(--ixai-forest)] disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!sourceAlignment.canExport}
               onClick={copyCaption}
               type="button"
             >
