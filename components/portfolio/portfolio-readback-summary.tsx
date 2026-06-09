@@ -8,6 +8,7 @@ import {
   Coins,
   Database,
   Gauge,
+  Layers3,
   ShieldAlert,
 } from "lucide-react";
 
@@ -17,6 +18,7 @@ import type {
   PortfolioDashboardRiskStatus,
   PortfolioDashboardSummary,
 } from "@/src/lib/portfolio/dashboard";
+import type { AssetCategory } from "@/src/lib/portfolio/assets";
 
 type ReadbackVariant = "portfolio" | "fcn" | "risk" | "pro";
 
@@ -26,6 +28,15 @@ type DashboardResponse = {
 };
 
 const EMPTY_SUMMARY: PortfolioDashboardSummary = {
+  assetAllocationSummary: [],
+  assetCategoryCounts: {
+    CASH: 0,
+    CRYPTO: 0,
+    DUAL: 0,
+    FCN: 0,
+    GRID: 0,
+    STOCK: 0,
+  },
   cryptoCount: 0,
   cryptoDualCount: 0,
   cryptoGridCount: 0,
@@ -72,6 +83,7 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   portfolioHealthScore: 100,
   portfolioRiskScore: 0,
   portfolioStatus: "Healthy",
+  portfolioAssetCategories: [],
   riskDistribution: { high: 0, low: 0, moderate: 0 },
   riskNarrative:
     "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
@@ -132,6 +144,15 @@ const RISK_CLASS: Record<PortfolioDashboardRiskStatus, string> = {
     "border-[color-mix(in_srgb,var(--ixai-risk-watch)_38%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_12%,white)] text-[color-mix(in_srgb,var(--ixai-risk-watch)_68%,var(--ixai-forest))]",
 };
 
+const ASSET_CATEGORY_LABEL: Record<AssetCategory, string> = {
+  CASH: "Cash",
+  CRYPTO: "Crypto",
+  DUAL: "Dual",
+  FCN: "FCN",
+  GRID: "Grid",
+  STOCK: "Stock",
+};
+
 function formatApprox(value: number) {
   if (!Number.isFinite(value) || value <= 0) {
     return "0";
@@ -153,6 +174,14 @@ function formatPercent(value: number | null) {
 
   const sign = value > 0 ? "+" : "";
   return `${sign}${value.toFixed(2)}%`;
+}
+
+function formatShare(value: number | null) {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return "--";
+  }
+
+  return `${value.toFixed(1)}%`;
 }
 
 function getWorstOfStatusCopy(status: PortfolioDashboardSummary["fcnWorstOfSummaries"][number]["status"]) {
@@ -245,6 +274,9 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
   );
   const riskDistribution = summary.riskDistribution ?? { high: 0, low: 0, moderate: 0 };
   const monitoringHighlights = summary.monitoringHighlights ?? [];
+  const portfolioAssetCategories = summary.portfolioAssetCategories ?? [];
+  const assetAllocationSummary = summary.assetAllocationSummary ?? [];
+  const assetCategoryCounts = summary.assetCategoryCounts ?? EMPTY_SUMMARY.assetCategoryCounts;
   const primaryWorstOf = useMemo(() => {
     const ready = fcnWorstOfSummaries
       .filter((item) => item.status === "ready" && typeof item.worstUnderlyingReturnPct === "number")
@@ -364,6 +396,89 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
               </p>
               <p className="mt-2 text-xs leading-6 text-[var(--ixai-forest-soft)]">
                 只代表監控條件已儲存，不代表策略執行。
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.82)] p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  Multi-Asset Portfolio Foundation
+                </p>
+                <h3 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+                  資產類別讀取層
+                </h3>
+                <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                  IXAI 目前以既有儲存資料彙整 FCN、Stock、Crypto、Grid、Dual 與 Cash 類別；尚未新增輸入表單或外部行情。
+                </p>
+              </div>
+              <FeatureIcon icon={Layers3} size="sm" shadow={false} />
+            </div>
+
+            <div className="mt-4 grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="rounded-xl border border-[var(--ixai-border)] bg-white/75 p-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  Asset Categories
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {portfolioAssetCategories.map((category) => (
+                    <span
+                      className="rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(176,141,87,0.08)] px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]"
+                      key={category}
+                    >
+                      {ASSET_CATEGORY_LABEL[category]}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-[var(--ixai-border)] bg-white/75 p-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  Asset Counts
+                </p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                  {portfolioAssetCategories.map((category) => (
+                    <div
+                      className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.70)] p-3"
+                      key={category}
+                    >
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                        {ASSET_CATEGORY_LABEL[category]}
+                      </p>
+                      <p className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
+                        {numberLabel(assetCategoryCounts[category] ?? 0)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3 rounded-xl border border-[var(--ixai-border)] bg-white/75 p-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                Allocation Summary
+              </p>
+              <div className="mt-3 grid gap-2">
+                {assetAllocationSummary.map((item) => (
+                  <div
+                    className="grid gap-2 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.70)] p-3 text-sm sm:grid-cols-[1fr_auto_auto]"
+                    key={item.category}
+                  >
+                    <span className="font-semibold text-[var(--ixai-forest)]">
+                      {ASSET_CATEGORY_LABEL[item.category]}
+                    </span>
+                    <span className="text-[var(--ixai-forest-soft)]">
+                      {numberLabel(item.count)} items
+                    </span>
+                    <span className="font-mono text-[var(--ixai-forest)]">
+                      {formatApprox(item.valueApprox)} · {formatShare(item.sharePct)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
+                Grid / Dual 目前為 Crypto strategy subcategory；估值不重複計入 Crypto 總額。
               </p>
             </div>
           </div>

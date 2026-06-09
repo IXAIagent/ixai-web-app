@@ -6,6 +6,56 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.87 — Multi-Asset Portfolio Foundation
+
+Why:
+
+- v1.80-v1.86 built the App-owned Portfolio / FCN persistence layer, FCN risk and intelligence readback, Portfolio Intelligence Dashboard, and Membership / Entitlement foundation.
+- IXAI needed a normalized multi-asset vocabulary before expanding stock, ETF, crypto, grid, dual, and cash workflows.
+- The product direction is now a Multi-Asset AI Risk Platform rather than an FCN-only intelligence surface.
+
+What Changed:
+
+- Added `src/lib/portfolio/assets.ts`.
+- Introduced normalized asset categories: FCN, STOCK, CRYPTO, GRID, DUAL, and CASH.
+- Added additive dashboard fields:
+  - `assetAllocationSummary`
+  - `assetCategoryCounts`
+  - `portfolioAssetCategories`
+- Added a `Multi-Asset Portfolio Foundation` readback section to the Portfolio summary component.
+- Updated architecture documentation around:
+
+```text
+Portfolio
+├─ FCN
+├─ Stocks
+├─ Crypto
+├─ Grid
+├─ Dual
+└─ Cash
+```
+
+Key Decisions:
+
+- v1.87 adds no migration and no Supabase schema change.
+- Grid and Dual are treated as crypto strategy subcategories for count visibility, without double-counting their value outside the Crypto total.
+- Cash is reserved as a future category and remains zero until a cash model is approved.
+- Dashboard changes are additive only and use existing stored portfolio data.
+
+Out of Scope:
+
+- No Stock, Crypto, Grid, Dual, or Cash input forms.
+- No auth, membership, entitlement, or billing changes.
+- No market data API, broker integration, or trading execution.
+- No AI API integration.
+
+Next:
+
+- v1.88 Stock Portfolio Foundation.
+- v1.89 Crypto / Grid Foundation.
+- v1.90 Unified Risk Engine.
+- v2.0 SaaS Beta.
+
 ## v1.86 — Membership & Entitlement Foundation
 
 Why:
