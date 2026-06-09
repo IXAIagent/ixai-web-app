@@ -43,9 +43,29 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   incompleteValuationCount: 0,
   fcnExposureSummary: [],
   fcnWorstOfRanking: [],
+  concentrationNarrative:
+    "Portfolio FCN exposure is not concentrated in repeated underlyings based on the current stored data.",
+  intelligenceSummary: {
+    complianceNote: "Monitoring and risk-awareness only. Not investment advice.",
+    concentrationNarrative:
+      "Portfolio FCN exposure is not concentrated in repeated underlyings based on the current stored data.",
+    nearKiNarrative:
+      "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
+    riskBand: "Low Risk",
+    riskNarrative:
+      "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
+    worstOfNarrative:
+      "Worst-of interpretation is waiting for complete initial and current prices across FCN underlyings.",
+  },
+  nearKiNarrative:
+    "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
   nearKiCount: 0,
   portfolioCount: 0,
   portfolioRiskScore: 0,
+  riskNarrative:
+    "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
+  worstOfNarrative:
+    "Worst-of interpretation is waiting for complete initial and current prices across FCN underlyings.",
   portfolios: [],
   state: "unauthenticated",
   stockCount: 0,
@@ -448,6 +468,42 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
               </div>
               <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
                 Risk Dashboard MVP 僅為監控與風險意識工具，不代表買賣建議、產品推薦或收益承諾。
+              </p>
+            </div>
+          ) : null}
+
+          {shouldShowRiskDashboard ? (
+            <div className="mt-5 rounded-2xl border border-[rgba(176,141,87,0.30)] bg-[rgba(176,141,87,0.08)] p-4">
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  FCN Intelligence MVP
+                </p>
+                <h3 className="text-xl font-semibold text-[var(--ixai-forest)]">
+                  {summary.intelligenceSummary.riskBand}
+                </h3>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {[
+                  ["Risk Narrative", summary.riskNarrative],
+                  ["Worst-of Narrative", summary.worstOfNarrative],
+                  ["Concentration Narrative", summary.concentrationNarrative],
+                  ["Near-KI Narrative", summary.nearKiNarrative],
+                ].map(([label, copyText]) => (
+                  <div
+                    className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-3"
+                    key={label}
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                      {label}
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                      {copyText}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
+                Monitoring and risk-awareness only. Not investment advice.
               </p>
             </div>
           ) : null}

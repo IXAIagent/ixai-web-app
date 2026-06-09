@@ -7,6 +7,10 @@ import {
   type FCNExposureSummary,
   type FCNWorstOfRankingItem,
 } from "@/src/lib/fcn/risk-score";
+import {
+  buildFcnIntelligenceSummary,
+  type FCNIntelligenceSummary,
+} from "@/src/lib/fcn/intelligence";
 import { PortfolioRequestError, listPortfolios } from "@/src/lib/portfolio/server";
 import { PositionRequestError } from "@/src/lib/positions/supabase";
 import { listCryptoPositions } from "@/src/lib/crypto/server";
@@ -41,8 +45,13 @@ export type PortfolioDashboardSummary = {
   highLevelRiskStatus: PortfolioDashboardRiskStatus;
   fcnExposureSummary: FCNExposureSummary[];
   fcnWorstOfRanking: FCNWorstOfRankingItem[];
+  concentrationNarrative: string;
+  intelligenceSummary: FCNIntelligenceSummary;
+  nearKiNarrative: string;
   nearKiCount: number;
   portfolioRiskScore: number;
+  riskNarrative: string;
+  worstOfNarrative: string;
   portfolios: Pick<Portfolio, "baseCurrency" | "id" | "name" | "status">[];
   generatedAt: string;
 };
@@ -76,9 +85,29 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   incompleteValuationCount: 0,
   fcnExposureSummary: [],
   fcnWorstOfRanking: [],
+  concentrationNarrative:
+    "Portfolio FCN exposure is not concentrated in repeated underlyings based on the current stored data.",
+  intelligenceSummary: {
+    complianceNote: "Monitoring and risk-awareness only. Not investment advice.",
+    concentrationNarrative:
+      "Portfolio FCN exposure is not concentrated in repeated underlyings based on the current stored data.",
+    nearKiNarrative:
+      "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
+    riskBand: "Low Risk",
+    riskNarrative:
+      "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
+    worstOfNarrative:
+      "Worst-of interpretation is waiting for complete initial and current prices across FCN underlyings.",
+  },
+  nearKiNarrative:
+    "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
   nearKiCount: 0,
   portfolioCount: 0,
   portfolioRiskScore: 0,
+  riskNarrative:
+    "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
+  worstOfNarrative:
+    "Worst-of interpretation is waiting for complete initial and current prices across FCN underlyings.",
   portfolios: [],
   state: "ready",
   stockCount: 0,
@@ -216,6 +245,12 @@ export async function getPortfolioDashboardSummary(
       kiDistances,
       worstOfRanking: fcnWorstOfRanking,
     });
+    const intelligenceSummary = buildFcnIntelligenceSummary({
+      exposureSummary: fcnExposureSummary,
+      nearKiCount,
+      riskScore: portfolioRiskScore,
+      worstOfRanking: fcnWorstOfRanking,
+    });
     const cryptoGridCount = activeCrypto.filter(isCryptoGrid).length;
     const cryptoDualCount = activeCrypto.filter(isCryptoDual).length;
     const incompleteValuationCount =
@@ -259,9 +294,14 @@ export async function getPortfolioDashboardSummary(
       incompleteValuationCount,
       fcnExposureSummary,
       fcnWorstOfRanking,
+      concentrationNarrative: intelligenceSummary.concentrationNarrative,
+      intelligenceSummary,
+      nearKiNarrative: intelligenceSummary.nearKiNarrative,
       nearKiCount,
       portfolioCount: portfolios.length,
       portfolioRiskScore,
+      riskNarrative: intelligenceSummary.riskNarrative,
+      worstOfNarrative: intelligenceSummary.worstOfNarrative,
       portfolios: portfolios.map((portfolio) => ({
         baseCurrency: portfolio.baseCurrency,
         id: portfolio.id,

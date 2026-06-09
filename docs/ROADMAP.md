@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.83 / FCN Risk Engine`
+`v1.84 / FCN Intelligence Layer MVP`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, and the first FCN Risk Engine MVP. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Risk Engine MVP, and first FCN Intelligence Layer MVP. Current priority remains the main product line:
 
-- FCN Risk Engine staging validation.
+- FCN Intelligence Layer staging validation.
 - Portfolio Intelligence.
 - SaaS Membership / Entitlement.
 - Legacy Pro gradual retirement into IXAI App.
@@ -47,7 +47,16 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Confirm mobile readback safety on `/risk` and `/pro`.
 - Confirm no Supabase schema change is required.
 
-### v1.84 — SaaS Membership / Feature Gate
+### v1.84 — FCN Intelligence Layer
+
+- Risk narrative.
+- Worst-of narrative.
+- Concentration narrative.
+- Near-KI narrative.
+- Deterministic interpretation only.
+- No OpenAI API and no external market data.
+
+### v1.85 — SaaS Membership / Feature Gate
 
 - Free.
 - Pro.
@@ -56,7 +65,7 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Portfolio / FCN / Risk Engine limits.
 - Feature access must be enforced through membership / entitlement logic, not frontend hiding alone.
 
-### v1.85 — Portfolio Intelligence Dashboard
+### v1.86 — Portfolio Intelligence Dashboard
 
 - Asset allocation.
 - Concentration.
@@ -65,7 +74,7 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - AI summary.
 - Compliance-safe monitoring language only.
 
-### v1.86 — Stock / Crypto Position Expansion
+### v1.87 — Stock / Crypto Position Expansion
 
 - Stock positions.
 - ETF positions.

@@ -6,6 +6,42 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.84 — FCN Intelligence Layer MVP
+
+Why:
+
+- v1.83 turned stored FCN data into deterministic risk calculations.
+- IXAI needed the first interpretation layer so Risk / Pro surfaces can explain what those calculations mean without using an AI API or external market data.
+
+What Changed:
+
+- Added `src/lib/fcn/intelligence.ts`.
+- Added deterministic FCN narratives:
+  - risk narrative.
+  - Worst-of narrative.
+  - concentration narrative.
+  - Near-KI narrative.
+- Added additive dashboard fields: `intelligenceSummary`, `riskNarrative`, `worstOfNarrative`, `concentrationNarrative`, and `nearKiNarrative`.
+- Added `FCN Intelligence MVP` readback on Risk / Pro surfaces.
+
+Key Decisions:
+
+- v1.84 does not use OpenAI or any AI API.
+- Narratives are deterministic and based only on existing FCN positions, underlyings, Worst-of output, and Risk Engine output.
+- All wording remains monitoring and risk-awareness only.
+
+Out of Scope:
+
+- No migration.
+- No Supabase schema change.
+- No auth, membership, entitlement, or billing changes.
+- No external market data.
+- No trading or personalized advice language.
+
+Next:
+
+- v1.85 should introduce SaaS Membership / Feature Gate for Portfolio / FCN / Risk workflows.
+
 ## v1.83 — FCN Risk Engine
 
 Why:

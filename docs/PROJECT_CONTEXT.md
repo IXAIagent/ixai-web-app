@@ -54,7 +54,7 @@ Production foundation:
 
 Current development version:
 
-`v1.83 — FCN Risk Engine`
+`v1.84 — FCN Intelligence Layer MVP`
 
 Current production state:
 
@@ -67,7 +67,7 @@ Current production state:
 
 IXAI has moved from a demonstration-oriented public intelligence App into a logged-in product where users can create Portfolio / FCN records and persist them in Supabase. The App now owns the first real personal-data layer for future Portfolio Intelligence, FCN Risk Engine, and Pro workflows.
 
-v1.82.1 began the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. v1.83 extends that into the first portfolio-level FCN Risk Engine layer: KI distance, risk level, portfolio risk score, concentration exposure, and Worst-of ranking. It uses manual stored prices only and does not connect real market data.
+v1.82.1 began the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. v1.83 extended that into the first portfolio-level FCN Risk Engine layer: KI distance, risk level, portfolio risk score, concentration exposure, and Worst-of ranking. v1.84 adds the first FCN Intelligence Layer: deterministic risk, Worst-of, concentration, and Near-KI narratives. These layers use manual stored prices only and do not connect real market data or AI APIs.
 
 Validated production behavior:
 
@@ -110,7 +110,7 @@ Still not complete:
 
 Current Development Version:
 
-`v1.83 — FCN Risk Engine`
+`v1.84 — FCN Intelligence Layer MVP`
 
 Current Core Flow:
 
@@ -119,7 +119,7 @@ Landing
 → Onboarding
 → Account
 → Portfolio / FCN data entry
-→ Worst-of / FCN Risk / Pro readback
+→ Worst-of / FCN Risk / Intelligence / Pro readback
 ```
 
 Public Intelligence Funnel:
@@ -137,7 +137,7 @@ Product Layers:
 - Public Intelligence: acquisition, trust building, daily/weekly market awareness, shareable intelligence.
 - Account Intelligence: identity continuity, Watchlist Intelligence Lite, preference memory, LINE readiness.
 - Portfolio / FCN Intelligence: production persistence for Portfolio containers, FCN positions, underlyings, Stock / Crypto foundations, and dashboard readback.
-- FCN Risk Engine: Worst-of, KI distance, portfolio risk score, concentration exposure, and Worst-of ranking start from stored manual prices; KO distance, observation calendar, coupon calendar, and AI risk summary remain future work.
+- FCN Risk / Intelligence Engine: Worst-of, KI distance, portfolio risk score, concentration exposure, Worst-of ranking, and deterministic intelligence narratives start from stored manual prices; KO distance, observation calendar, coupon calendar, AI risk summary, and entitlement gating remain future work.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 
