@@ -6,6 +6,47 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.82.1 — FCN Worst-of Engine MVP
+
+Why:
+
+- v1.80 / v1.81 moved Portfolio and FCN persistence into production.
+- The next product step is turning stored FCN underlyings into risk-awareness readback, starting with Worst-of.
+
+What Changed:
+
+- Added a pure FCN Worst-of calculation helper for stored FCN underlyings.
+- Calculated each underlying return percentage using stored `initial_price` and `current_price`.
+- Added additive `worstOfSummary` fields to FCN position readback.
+- Added additive Worst-of summary counts to Portfolio dashboard readback.
+- Added minimal Worst-of readback on FCN / Risk / Pro surfaces.
+
+Validation:
+
+- No production Supabase migration is required because `fcn_underlyings.current_price` already exists.
+- Validation should include `git diff --check`, lint, and build because TypeScript / runtime code changed.
+
+Key Decisions:
+
+- Worst-of MVP uses only stored manual prices.
+- No external market data provider is connected.
+- Missing current price returns an explicit `missing_current_price` status.
+- Output remains monitoring / risk awareness, not investment advice.
+
+Out of Scope:
+
+- No KI distance.
+- No KO distance.
+- No coupon calendar.
+- No observation calendar.
+- No FCN risk score.
+- No AI summary.
+- No membership / billing / entitlement changes.
+
+Next:
+
+- v1.82.2 — KI Distance Engine.
+
 ## v1.81 — FCN Foundation
 
 Why:

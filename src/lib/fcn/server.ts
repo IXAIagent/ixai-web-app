@@ -1,4 +1,5 @@
 import { getSupabaseServerConfig } from "@/src/lib/supabase/server";
+import { calculateFcnWorstOf } from "@/src/lib/fcn/risk";
 import {
   FCN_CURRENCIES,
   FCN_STATUSES,
@@ -397,7 +398,7 @@ function toUnderlying(row: FCNUnderlyingRow): FCNUnderlying {
 }
 
 function toPosition(row: FCNPositionRow, underlyings: FCNUnderlying[] = []): FCNPosition {
-  return {
+  const position = {
     couponRatePct: row.coupon_rate_pct,
     createdAt: row.created_at,
     currency: row.currency,
@@ -419,6 +420,11 @@ function toPosition(row: FCNPositionRow, underlyings: FCNUnderlying[] = []): FCN
     underlyings,
     updatedAt: row.updated_at,
     userId: row.user_id,
+  };
+
+  return {
+    ...position,
+    worstOfSummary: calculateFcnWorstOf(position),
   };
 }
 

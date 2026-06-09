@@ -4,13 +4,14 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.81 / Portfolio + FCN Foundation`
+`v1.82.1 / FCN Worst-of Engine MVP`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation and FCN Foundation production release. Current priority now returns to the main product line:
+IXAI has completed the Portfolio Foundation and FCN Foundation production release. The current v1.82 track should be built in small risk-engine increments, starting with FCN Worst-of MVP:
 
-- FCN Risk Engine.
+- FCN Worst-of readback from stored underlyings.
+- KI Distance Engine next.
 - Portfolio Intelligence.
 - SaaS Membership / Entitlement.
 - Legacy Pro gradual retirement into IXAI App.
@@ -21,13 +22,13 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 
 ### v1.82 — FCN Risk Engine
 
-- Worst-of.
-- Distance to KI.
-- Distance to KO.
-- Strike distance.
-- Observation calendar.
-- Coupon calendar.
-- FCN risk score.
+- v1.82.1: Worst-of MVP from stored `initial_price` / `current_price`.
+- v1.82.2: Distance to KI.
+- v1.82.3: Distance to KO.
+- v1.82.4: Strike distance.
+- v1.82.5: Observation calendar.
+- v1.82.6: Coupon calendar.
+- v1.82.7: FCN risk score.
 - Monitoring / risk-awareness output only; no personalized product advice.
 
 ### v1.83 — SaaS Membership / Feature Gate

@@ -48,9 +48,13 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 ## B0. v1.80 / v1.81 Production Status — Portfolio + FCN Foundation
 
-Current Version:
+Production foundation:
 
 `v1.81 — Portfolio + FCN Foundation`
+
+Current development version:
+
+`v1.82.1 — FCN Worst-of Engine MVP`
 
 Current production state:
 
@@ -62,6 +66,8 @@ Current production state:
 - Production tables confirmed: `portfolios`, `fcn_positions`, `fcn_underlyings`, `stock_positions`, `crypto_positions`.
 
 IXAI has moved from a demonstration-oriented public intelligence App into a logged-in product where users can create Portfolio / FCN records and persist them in Supabase. The App now owns the first real personal-data layer for future Portfolio Intelligence, FCN Risk Engine, and Pro workflows.
+
+v1.82.1 begins the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. It uses manual `initial_price` / `current_price` values only and does not connect real market data.
 
 Validated production behavior:
 
@@ -90,7 +96,6 @@ Current mainline relationship:
 
 Still not complete:
 
-- FCN Worst-of engine.
 - Distance to KI / KO.
 - Strike distance.
 - Observation calendar.
@@ -103,9 +108,9 @@ Still not complete:
 
 ## Current Product State
 
-Current Version:
+Current Development Version:
 
-`v1.81 — Portfolio + FCN Foundation`
+`v1.82.1 — FCN Worst-of Engine MVP`
 
 Current Core Flow:
 
@@ -114,7 +119,7 @@ Landing
 → Onboarding
 → Account
 → Portfolio / FCN data entry
-→ Risk / Pro readback
+→ Worst-of / Risk / Pro readback
 ```
 
 Public Intelligence Funnel:
@@ -132,7 +137,8 @@ Product Layers:
 - Public Intelligence: acquisition, trust building, daily/weekly market awareness, shareable intelligence.
 - Account Intelligence: identity continuity, Watchlist Intelligence Lite, preference memory, LINE readiness.
 - Portfolio / FCN Intelligence: production persistence for Portfolio containers, FCN positions, underlyings, Stock / Crypto foundations, and dashboard readback.
-- Pro Intelligence: future FCN Risk Engine, Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
+- FCN Risk Engine: Worst-of MVP starts from stored manual prices; KI / KO distance, observation calendar, coupon calendar, and risk score remain future work.
+- Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 
 ## v1.67.0 — App ↔ Pro SSO Launch Prototype
