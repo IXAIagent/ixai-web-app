@@ -60,6 +60,13 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   nearKiNarrative:
     "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
   nearKiCount: 0,
+  entitlements: {
+    canViewFcn: true,
+    canViewPortfolio: true,
+    canViewPro: false,
+    canViewRisk: true,
+  },
+  membershipTier: "free",
   monitoringHighlights: ["Portfolio status is Healthy with health score 100."],
   portfolioCount: 0,
   portfolioHealthScore: 100,
