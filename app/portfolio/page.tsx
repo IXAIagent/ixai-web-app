@@ -10,6 +10,8 @@ import {
   PieChart,
 } from "lucide-react";
 
+import { PortfolioForm } from "@/components/portfolio/portfolio-form";
+import { PortfolioReadbackSummary } from "@/components/portfolio/portfolio-readback-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -106,6 +108,10 @@ export default function PortfolioPage() {
             </div>
           </aside>
         </div>
+
+        <PortfolioReadbackSummary variant="portfolio" />
+
+        <PortfolioForm />
 
         <section className="grid gap-4 md:grid-cols-3">
           {WHY_IT_MATTERS.map((item) => (

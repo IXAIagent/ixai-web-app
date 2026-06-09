@@ -14,6 +14,8 @@ import {
   Sparkles,
   TrendingDown,
 } from "lucide-react";
+import { FCNWizard } from "@/components/fcn/fcn-wizard";
+import { PortfolioReadbackSummary } from "@/components/portfolio/portfolio-readback-summary";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 // v1.64.0 — FCN education + conversion page. The App owns FCN education;
@@ -134,6 +136,10 @@ export default function FCNPage() {
           </Link>
         </div>
       </section>
+
+      <PortfolioReadbackSummary variant="fcn" />
+
+      <FCNWizard />
 
       {/* 2. What is FCN */}
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">

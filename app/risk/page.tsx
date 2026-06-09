@@ -11,6 +11,7 @@ import {
   Waves,
 } from "lucide-react";
 
+import { PortfolioReadbackSummary } from "@/components/portfolio/portfolio-readback-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -112,6 +113,8 @@ export default function RiskPage() {
             </div>
           </aside>
         </div>
+
+        <PortfolioReadbackSummary variant="risk" />
 
         <section className="grid gap-4 md:grid-cols-3">
           {WHY_IT_MATTERS.map((item) => (
