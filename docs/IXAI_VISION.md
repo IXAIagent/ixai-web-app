@@ -59,6 +59,12 @@ It may eventually provide:
 
 Membership should represent deeper intelligence relationship, not access to signals. Pro should not be positioned as a paid tip service, auto-trading layer, or guaranteed-return product.
 
+## Portfolio / FCN Intelligence Layer
+
+Portfolio Intelligence and FCN Intelligence are now the first real personal-data layers in IXAI App. v1.80 / v1.81 established production persistence for Portfolio containers, FCN positions, FCN underlyings, Stock positions, and Crypto positions.
+
+This does not turn IXAI into a signal-selling product. Pro membership should represent deeper risk workflow, portfolio organization, FCN monitoring, and intelligence continuity. SaaS monetization should use membership, entitlement, and feature gating rather than trading advice, target prices, guaranteed returns, or buy/sell recommendations.
+
 ## Future Wealth OS
 
 The long-term direction is:

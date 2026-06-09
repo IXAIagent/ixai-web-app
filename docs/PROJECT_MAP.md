@@ -24,6 +24,13 @@ Role:
 - Current Vercel / public app mainline.
 - Owns the public IXAI experience: landing, onboarding, Daily Brief, Weekly Intelligence, Share Intelligence, Account, Pro Preview, Admin Editorial Studio, and Social Intelligence Pack Studio.
 
+Production data ownership update:
+
+- `app/ixai-web-app` now owns the real Portfolio / FCN production data layer.
+- Production persistence contracts include `portfolios`, `fcn_positions`, `fcn_underlyings`, `stock_positions`, and `crypto_positions`.
+- Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
+- Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
+
 Current architecture:
 
 - Next.js App Router.

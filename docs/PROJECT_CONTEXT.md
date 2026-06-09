@@ -46,11 +46,66 @@ This origin matters because IXAI's product center is not "content marketing" or 
 
 The current IXAI public app is live and deployed on Vercel, with `https://app.ixuan.ai` as the production public domain.
 
+## B0. v1.80 / v1.81 Production Status — Portfolio + FCN Foundation
+
+Current Version:
+
+`v1.81 — Portfolio + FCN Foundation`
+
+Current production state:
+
+- Production domain: `https://app.ixuan.ai`.
+- Vercel production deployment: Ready.
+- Production Supabase project: `IXAIagent's Project`.
+- Production Supabase Project ID: `uoyeeojnyswytutmhptk`.
+- Production migrations applied: `009_portfolio_foundation.sql`, `010_fcn_position_foundation.sql`, `011_stock_crypto_position_foundation.sql`.
+- Production tables confirmed: `portfolios`, `fcn_positions`, `fcn_underlyings`, `stock_positions`, `crypto_positions`.
+
+IXAI has moved from a demonstration-oriented public intelligence App into a logged-in product where users can create Portfolio / FCN records and persist them in Supabase. The App now owns the first real personal-data layer for future Portfolio Intelligence, FCN Risk Engine, and Pro workflows.
+
+Validated production behavior:
+
+- Portfolio creation succeeds in app.ixuan.ai.
+- FCN Wizard reads Portfolio dropdown options.
+- FCN can attach to a Portfolio.
+- Risk / Pro readback surfaces can display data-layer status.
+
+Validated staging behavior before production:
+
+- Migration PASS.
+- Lint PASS.
+- Build PASS.
+- Static API audit PASS.
+- Authenticated CRUD PASS.
+- User A / User B ownership isolation PASS.
+- Unauthenticated 401 PASS.
+- Soft archive PASS.
+- UI smoke QA PASS.
+
+Current mainline relationship:
+
+- `app/ixai-web-app` is the active production App and should be the home of future Pro features.
+- Legacy Pro remains reference-only and should gradually retire rather than be migrated wholesale.
+- Reusable Legacy Pro concepts may inform FCN, Risk, Portfolio, Crypto, News Intelligence, and multilingual modules, but not legacy JWT login, localStorage token auth, direct browser-to-FastAPI protected requests, or the old AppShell architecture.
+
+Still not complete:
+
+- FCN Worst-of engine.
+- Distance to KI / KO.
+- Strike distance.
+- Observation calendar.
+- Coupon calendar.
+- FCN risk score.
+- AI Risk Engine.
+- Portfolio Intelligence dashboard.
+- SaaS membership / entitlement limits.
+- Live broker data, live prices, trading execution, or personalized investment advice.
+
 ## Current Product State
 
 Current Version:
 
-`v1.70.2`
+`v1.81 — Portfolio + FCN Foundation`
 
 Current Core Flow:
 
@@ -58,7 +113,8 @@ Current Core Flow:
 Landing
 → Onboarding
 → Account
-→ Future Pro Interest
+→ Portfolio / FCN data entry
+→ Risk / Pro readback
 ```
 
 Public Intelligence Funnel:
@@ -75,7 +131,8 @@ Product Layers:
 
 - Public Intelligence: acquisition, trust building, daily/weekly market awareness, shareable intelligence.
 - Account Intelligence: identity continuity, Watchlist Intelligence Lite, preference memory, LINE readiness.
-- Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, FCN risk workflow.
+- Portfolio / FCN Intelligence: production persistence for Portfolio containers, FCN positions, underlyings, Stock / Crypto foundations, and dashboard readback.
+- Pro Intelligence: future FCN Risk Engine, Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 
 ## v1.67.0 — App ↔ Pro SSO Launch Prototype

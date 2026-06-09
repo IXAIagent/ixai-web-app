@@ -6,6 +6,12 @@ This document is the Origin Layer for IXAI. It explains why the product exists, 
 
 IXAI did not begin as an AI app, a SaaS landing page, or a generic market dashboard.
 
+## v1.80 / v1.81 Product Transition
+
+v1.80 / v1.81 marks the transition from AI Morning Brief / public intelligence into real Portfolio + FCN data persistence. Users can now create Portfolio containers and FCN records inside the production App, making the original internal FCN advisory workflow visible as a SaaS-ready data foundation.
+
+This is the bridge from internal FCN monitoring and advisory memory into App-native Portfolio Intelligence. Future work should deepen FCN risk awareness, worst-of monitoring, KI / KO distance, coupon schedules, and portfolio overlap analysis without becoming product advice or trading instruction.
+
 The true origin was the daily operating work around 一玄投資 and FCN advisory: understanding client exposures, watching market risk, reading cross-asset news, and turning scattered information into a useful decision-support workflow.
 
 The long product path is:

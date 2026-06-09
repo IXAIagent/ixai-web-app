@@ -6,6 +6,118 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.81 — FCN Foundation
+
+Why:
+
+- IXAI needed the first production-ready FCN persistence workflow inside the active App, not only FCN education or Legacy Pro references.
+- FCN advisory workflow is the strongest bridge from I-Xuan's origin into SaaS-ready Portfolio Intelligence.
+
+What Changed:
+
+- Added FCN position persistence with user ownership and portfolio attachment.
+- Added FCN underlyings persistence so each FCN can store symbols, markets, initial/current prices, KI/KO/strike reference prices, and metadata.
+- Added App API routes for FCN create, read, update, and soft archive.
+- Added FCN Wizard UI that can read active Portfolio options and create an FCN under a selected Portfolio.
+- Connected FCN readback into FCN / Risk / Pro surfaces as data-layer status.
+
+Validation:
+
+- Staging migrations 009 / 010 / 011 passed.
+- Static API audit passed.
+- Authenticated FCN CRUD passed.
+- User A / User B ownership isolation passed.
+- Unauthenticated access returned 401.
+- Soft archive passed.
+- Production UI confirmed FCN Wizard can read Portfolio dropdown and create FCN under a Portfolio.
+
+Production Deployment:
+
+- PR `feat: portfolio foundation and fcn foundation v1.80 v1.81` was merged into `main`.
+- Vercel production deployment is Ready.
+- Production domain: `https://app.ixuan.ai`.
+- Production Supabase project: `IXAIagent's Project` / `uoyeeojnyswytutmhptk`.
+- Production tables confirmed: `fcn_positions`, `fcn_underlyings`, plus Portfolio / Stock / Crypto foundation tables.
+
+Key Decisions:
+
+- FCN storage is an App-owned production persistence contract.
+- FCN monitoring remains risk-awareness and workflow support.
+- FCN creation does not calculate worst-of, distance to KI/KO, coupon status, or risk score yet.
+- Legacy Pro remains reference-only; future FCN Pro features should be built inside `app/ixai-web-app`.
+
+Out of Scope:
+
+- No FCN Risk Engine.
+- No personalized product recommendation.
+- No buy/sell advice.
+- No broker or trading execution.
+- No Stripe billing.
+- No Legacy Pro backend migration.
+
+Next:
+
+- v1.82 should build FCN Risk Engine: worst-of, KI/KO distance, strike distance, observation calendar, coupon calendar, and FCN risk score.
+
+## v1.80 — Portfolio Foundation
+
+Why:
+
+- IXAI had completed Public Intelligence, Account, and Pro SSO MVP work, but users could not yet persist personal asset containers in the production App.
+- Portfolio Foundation is the first step from a demonstration-oriented App into a user-owned data workflow.
+
+What Changed:
+
+- Added production Portfolio persistence contract through `portfolios`.
+- Added Stock and Crypto position storage foundations for future Portfolio Intelligence expansion.
+- Added Dashboard readback summary for Portfolio / FCN / Stock / Crypto counts and approximate stored-value fields.
+- Added Portfolio Form so authenticated users can create Portfolio containers in App.
+- Added API routes for Portfolio CRUD, Stock CRUD, Crypto CRUD, and dashboard readback.
+
+Validation:
+
+- Staging migration validation passed.
+- Lint passed.
+- Build passed.
+- Static API audit passed.
+- Authenticated Portfolio / Stock / Crypto CRUD passed.
+- User A / User B ownership isolation passed.
+- Unauthenticated private API access returned 401.
+- Soft archive passed.
+- UI smoke QA passed.
+
+Production Deployment:
+
+- PR `feat: portfolio foundation and fcn foundation v1.80 v1.81` was merged into `main`.
+- Vercel production deployment is Ready.
+- Production domain: `https://app.ixuan.ai`.
+- Production Supabase project: `IXAIagent's Project` / `uoyeeojnyswytutmhptk`.
+- Production migrations applied: `009_portfolio_foundation.sql`, `010_fcn_position_foundation.sql`, `011_stock_crypto_position_foundation.sql`.
+- Production tables confirmed: `portfolios`, `fcn_positions`, `fcn_underlyings`, `stock_positions`, `crypto_positions`.
+
+Key Decisions:
+
+- App `app/ixai-web-app` is the active product mainline and now owns real Portfolio / FCN data persistence.
+- Portfolio / FCN / Stock / Crypto records must preserve Supabase ownership isolation and RLS.
+- DELETE behavior is soft archive for user-facing workflows.
+- Production migration must be staged and validated before production application.
+
+Out of Scope:
+
+- No FCN calculation engine.
+- No Portfolio AI analysis.
+- No live prices.
+- No broker integration.
+- No automated trading.
+- No personalized investment advice.
+- No Stripe billing.
+
+Next:
+
+- v1.82 FCN Risk Engine.
+- v1.83 SaaS Membership / Feature Gate.
+- v1.84 Portfolio Intelligence Dashboard.
+
 ## v1.83.x Social Pack Stabilization Incident
 
 Why:

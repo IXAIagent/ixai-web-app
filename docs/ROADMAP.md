@@ -4,16 +4,66 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.83.8d / Project Stabilization`
+`v1.81 / Portfolio + FCN Foundation`
 
 ## Current Priority
 
-Current priority is Project Stabilization / Documentation Governance.
+IXAI has completed the Portfolio Foundation and FCN Foundation production release. Current priority now returns to the main product line:
 
-- Do not enter v1.90 or a new feature mainline until Social Pack regression governance is complete.
-- Social Pack / Weekly Export must pass the regression gate defined in `docs/PROJECT_RULES.md`.
-- Return to App / Pro integration only after Social Pack production behavior is confirmed by user-facing production evidence, not only fixture, build, lint, or mobile smoke checks.
-- Treat v1.82-v1.83.8d as a process-correction incident, not a clean success sequence.
+- FCN Risk Engine.
+- Portfolio Intelligence.
+- SaaS Membership / Entitlement.
+- Legacy Pro gradual retirement into IXAI App.
+
+Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack export regresses again and the incident-prevention rules in `docs/PROJECT_RULES.md` are followed.
+
+## Future Version Plan
+
+### v1.82 — FCN Risk Engine
+
+- Worst-of.
+- Distance to KI.
+- Distance to KO.
+- Strike distance.
+- Observation calendar.
+- Coupon calendar.
+- FCN risk score.
+- Monitoring / risk-awareness output only; no personalized product advice.
+
+### v1.83 — SaaS Membership / Feature Gate
+
+- Free.
+- Pro.
+- Advisor.
+- Entitlement-based feature gating.
+- Portfolio / FCN / Risk Engine limits.
+- Feature access must be enforced through membership / entitlement logic, not frontend hiding alone.
+
+### v1.84 — Portfolio Intelligence Dashboard
+
+- Asset allocation.
+- Concentration.
+- Exposure analysis.
+- FCN overlap.
+- AI summary.
+- Compliance-safe monitoring language only.
+
+### v1.85 — Stock / Crypto Position Expansion
+
+- Stock positions.
+- ETF positions.
+- Crypto spot.
+- Grid / dual investment future-ready fields.
+- No broker execution and no automated trading.
+
+### v1.90+ — IXAI AI Wealth Intelligence OS
+
+- Multi-Asset.
+- Multi-Market.
+- Multi-Broker readiness.
+- AI Monitoring.
+- No automated trading.
+- No buy/sell recommendations.
 
 ## Related Strategic Documents
 

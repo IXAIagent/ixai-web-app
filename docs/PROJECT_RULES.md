@@ -25,6 +25,29 @@ Public and admin surfaces must remain separated:
 
 Do not merge these shells without an explicit architecture audit.
 
+## A1. Production Persistence Contract Rules
+
+Portfolio / FCN / Stock / Crypto tables are production persistence contracts.
+
+Current production contracts:
+
+- `portfolios`
+- `fcn_positions`
+- `fcn_underlyings`
+- `stock_positions`
+- `crypto_positions`
+
+Rules:
+
+- Do not casually rename, rewrite, or delete these schemas without a migration plan, staging validation, rollback plan, and explicit approval.
+- Portfolio / FCN / Risk features must preserve Supabase ownership isolation and RLS.
+- Every private Portfolio / FCN / Stock / Crypto API must validate the authenticated Supabase user and must not allow cross-user reads or writes.
+- Production migrations must be staged first and validated with authenticated CRUD, User A / User B isolation, unauthenticated 401 behavior, soft archive, lint, build, and UI smoke checks.
+- SaaS feature gating must use membership / entitlement logic. Do not expose paid Pro features only by frontend hiding.
+- FCN Risk Engine must remain monitoring, risk awareness, and workflow support. It must not output personalized product advice, product recommendation, buy/sell instruction, guaranteed coupon language, target price, or automated trading instruction.
+- Legacy Pro data and JWT/session patterns must not be migrated wholesale into the production App. Reuse product concepts, not the legacy auth architecture.
+
+
 The root route `/` is the public product landing surface. It should explain IXAI and route users into onboarding, Pro preview, LINE, or account flows. Do not convert it back into a login-only gate without explicit product approval.
 
 Public, preview, account, LINE, and Pro surfaces should share one user journey:
