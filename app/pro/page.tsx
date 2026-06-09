@@ -9,6 +9,7 @@ import {
   Radar,
   ShieldCheck,
 } from "lucide-react";
+import { PortfolioReadbackSummary } from "@/components/portfolio/portfolio-readback-summary";
 import { ProSsoLaunchButton } from "@/components/pro/pro-sso-launch-button";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -90,6 +91,8 @@ export default function ProPage() {
           </Link>
         </div>
       </section>
+
+      <PortfolioReadbackSummary variant="pro" />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.88)] p-4 sm:p-6">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
