@@ -4,14 +4,15 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.86 / Membership & Entitlement Foundation`
+`v1.87 / Multi-Asset Portfolio Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, and Membership / Entitlement Foundation. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, and the Multi-Asset Portfolio Foundation. Current priority remains the main product line:
 
-- Membership / Entitlement validation on `/account` and `/pro`.
-- Upgrade Flow and Pricing Page planning.
+- Stock Portfolio Foundation.
+- Crypto / Grid Foundation.
+- Unified Risk Engine planning.
 - Legacy Pro gradual retirement into IXAI App.
 
 Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack export regresses again and the incident-prevention rules in `docs/PROJECT_RULES.md` are followed.
@@ -76,30 +77,47 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - `/pro` visible membership guard.
 - Feature access must be enforced through membership / entitlement logic, not frontend hiding alone.
 
-### v1.87 — Upgrade Flow / Pricing Page / Legacy Pro Migration
+### v1.87 — Multi-Asset Portfolio Foundation
 
-- Upgrade flow.
-- Pricing page.
+- Normalize portfolio asset categories:
+  - FCN.
+  - STOCK.
+  - CRYPTO.
+  - GRID.
+  - DUAL.
+  - CASH.
+- Add portfolio asset abstraction layer.
+- Add asset category counts and allocation summary to dashboard readback.
+- No migration, no schema change, no input forms, no market data API.
+
+### v1.88 — Stock Portfolio Foundation
+
+- Stock / ETF portfolio readback expansion.
+- Stock position monitoring UX planning.
+- Asset allocation and concentration foundation.
+- No broker execution and no personalized trading advice.
+
+### v1.89 — Crypto / Grid Foundation
+
+- Crypto spot portfolio expansion.
+- Grid strategy monitoring foundation.
+- Dual investment monitoring foundation.
+- No exchange execution and no automated trading.
+
+### v1.90 — Unified Risk Engine
+
+- Combine FCN, stock, crypto, grid, dual, and cash awareness into a unified risk model.
+- Cross-asset concentration.
+- Cross-market exposure.
+- Compliance-safe monitoring language only.
+
+### v2.0 — SaaS Beta
+
+- Free / Basic / Pro product packaging.
+- Upgrade flow and pricing page.
 - Legacy Pro migration / retirement plan.
 - Server-enforced paid API gates.
 - No payment provider until explicitly approved.
-
-### v1.88 — Portfolio Intelligence Expansion
-
-- Asset allocation.
-- Concentration.
-- Exposure analysis.
-- FCN overlap.
-- AI summary.
-- Compliance-safe monitoring language only.
-
-### v1.89 — Stock / Crypto Position Expansion
-
-- Stock positions.
-- ETF positions.
-- Crypto spot.
-- Grid / dual investment future-ready fields.
-- No broker execution and no automated trading.
 
 ### v1.90+ — IXAI AI Wealth Intelligence OS
 

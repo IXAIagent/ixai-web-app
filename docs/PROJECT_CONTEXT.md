@@ -54,7 +54,7 @@ Production foundation:
 
 Current development version:
 
-`v1.86 — Membership & Entitlement Foundation`
+`v1.87 — Multi-Asset Portfolio Foundation`
 
 Current production state:
 
@@ -67,7 +67,7 @@ Current production state:
 
 IXAI has moved from a demonstration-oriented public intelligence App into a logged-in product where users can create Portfolio / FCN records and persist them in Supabase. The App now owns the first real personal-data layer for future Portfolio Intelligence, FCN Risk Engine, and Pro workflows.
 
-v1.82.1 began the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. v1.83 extended that into the first portfolio-level FCN Risk Engine layer: KI distance, risk level, portfolio risk score, concentration exposure, and Worst-of ranking. v1.84 adds the first FCN Intelligence Layer: deterministic risk, Worst-of, concentration, and Near-KI narratives. v1.85 combines these existing fields into the first Portfolio Intelligence Dashboard MVP on Risk / Pro surfaces: portfolio health score, portfolio status, risk distribution, and monitoring highlights. v1.86 adds the first Membership / Entitlement foundation for Free / Basic / Pro access rules without introducing payment or schema migration.
+v1.82.1 began the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. v1.83 extended that into the first portfolio-level FCN Risk Engine layer: KI distance, risk level, portfolio risk score, concentration exposure, and Worst-of ranking. v1.84 adds the first FCN Intelligence Layer: deterministic risk, Worst-of, concentration, and Near-KI narratives. v1.85 combines these existing fields into the first Portfolio Intelligence Dashboard MVP on Risk / Pro surfaces: portfolio health score, portfolio status, risk distribution, and monitoring highlights. v1.86 adds the first Membership / Entitlement foundation for Free / Basic / Pro access rules without introducing payment or schema migration. v1.87 shifts the portfolio architecture from FCN-centric readback toward a Multi-Asset AI Risk Platform by normalizing FCN, Stock, Crypto, Grid, Dual, and Cash categories.
 
 Validated production behavior:
 
@@ -102,15 +102,16 @@ Still not complete:
 - Observation calendar.
 - Coupon calendar.
 - AI Risk Engine.
-- Portfolio Intelligence dashboard.
-- SaaS membership / entitlement limits.
+- Unified multi-asset risk engine.
+- Stock / Crypto / Cash input expansion.
+- SaaS membership / entitlement limits and payment flow.
 - Live broker data, live prices, trading execution, or personalized investment advice.
 
 ## Current Product State
 
 Current Development Version:
 
-`v1.86 — Membership & Entitlement Foundation`
+`v1.87 — Multi-Asset Portfolio Foundation`
 
 Current Core Flow:
 
@@ -119,7 +120,7 @@ Landing
 → Onboarding
 → Account
 → Portfolio / FCN data entry
-→ Worst-of / FCN Risk / Intelligence / Portfolio Dashboard / Pro readback
+→ Worst-of / FCN Risk / Intelligence / Multi-Asset Portfolio Dashboard / Pro readback
 → Membership / Entitlement visibility
 ```
 
@@ -137,10 +138,11 @@ Product Layers:
 
 - Public Intelligence: acquisition, trust building, daily/weekly market awareness, shareable intelligence.
 - Account Intelligence: identity continuity, Watchlist Intelligence Lite, preference memory, LINE readiness.
-- Portfolio / FCN Intelligence: production persistence for Portfolio containers, FCN positions, underlyings, Stock / Crypto foundations, and dashboard readback.
+- Multi-Asset Portfolio Intelligence: production persistence for Portfolio containers, FCN positions, underlyings, Stock / Crypto foundations, normalized asset categories, and dashboard readback.
 - FCN Risk / Intelligence Engine: Worst-of, KI distance, portfolio risk score, concentration exposure, Worst-of ranking, and deterministic intelligence narratives start from stored manual prices; KO distance, observation calendar, coupon calendar, AI risk summary, and entitlement gating remain future work.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
+- Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 

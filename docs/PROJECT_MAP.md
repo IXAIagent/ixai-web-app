@@ -28,6 +28,7 @@ Production data ownership update:
 
 - `app/ixai-web-app` now owns the real Portfolio / FCN production data layer.
 - Production persistence contracts include `portfolios`, `fcn_positions`, `fcn_underlyings`, `stock_positions`, and `crypto_positions`.
+- v1.87 adds the App-native Multi-Asset Portfolio abstraction for FCN, Stocks, Crypto, Grid, Dual, and Cash.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
 
@@ -36,6 +37,17 @@ Current architecture:
 - Next.js App Router.
 - Supabase / Next API routes / editorial static and dynamic intelligence.
 - Public Intelligence, Account Intelligence, Social Intelligence, Daily / Weekly engines, and admin workflows.
+- Multi-Asset Portfolio architecture:
+
+```text
+Portfolio
+├─ FCN
+├─ Stocks
+├─ Crypto
+├─ Grid
+├─ Dual
+└─ Cash
+```
 
 This is the future product mainline.
 

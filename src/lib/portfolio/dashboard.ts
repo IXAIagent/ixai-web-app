@@ -27,6 +27,13 @@ import {
   type PortfolioStatusLabel,
 } from "@/src/lib/portfolio/intelligence";
 import {
+  EMPTY_ASSET_CATEGORY_COUNTS,
+  buildPortfolioAssetSummary,
+  type AssetCategory,
+  type PortfolioAssetCategoryCounts,
+  type PortfolioAssetSummary,
+} from "@/src/lib/portfolio/assets";
+import {
   PortfolioRequestError,
   getCurrentSupabaseUser,
   listPortfolios,
@@ -43,6 +50,8 @@ export type PortfolioDashboardRiskStatus = "clear" | "watch" | "elevated";
 export type PortfolioDashboardState = "ready" | "unauthenticated" | "error";
 
 export type PortfolioDashboardSummary = {
+  assetAllocationSummary: PortfolioAssetSummary[];
+  assetCategoryCounts: PortfolioAssetCategoryCounts;
   state: PortfolioDashboardState;
   portfolioCount: number;
   fcnCount: number;
@@ -74,6 +83,7 @@ export type PortfolioDashboardSummary = {
   portfolioHealthScore: number;
   portfolioRiskScore: number;
   portfolioStatus: PortfolioStatusLabel;
+  portfolioAssetCategories: AssetCategory[];
   riskDistribution: PortfolioRiskDistribution;
   riskNarrative: string;
   worstOfNarrative: string;
@@ -93,6 +103,8 @@ export type PortfolioDashboardFcnWorstOfSummary = {
 };
 
 const EMPTY_SUMMARY: PortfolioDashboardSummary = {
+  assetAllocationSummary: [],
+  assetCategoryCounts: EMPTY_ASSET_CATEGORY_COUNTS,
   cryptoCount: 0,
   cryptoDualCount: 0,
   cryptoGridCount: 0,
@@ -134,6 +146,7 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   portfolioHealthScore: 100,
   portfolioRiskScore: 0,
   portfolioStatus: "Healthy",
+  portfolioAssetCategories: [],
   riskDistribution: { high: 0, low: 0, moderate: 0 },
   riskNarrative:
     "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
@@ -325,6 +338,16 @@ export async function getPortfolioDashboardSummary(
     });
     const cryptoGridCount = activeCrypto.filter(isCryptoGrid).length;
     const cryptoDualCount = activeCrypto.filter(isCryptoDual).length;
+    const assetSummary = buildPortfolioAssetSummary({
+      cryptoCount: activeCrypto.length,
+      cryptoDualCount,
+      cryptoGridCount,
+      cryptoMarketValueApprox,
+      fcnCount: activeFcns.length,
+      fcnNotionalApprox,
+      stockCount: activeStocks.length,
+      stockMarketValueApprox,
+    });
     const incompleteValuationCount =
       activeFcns.filter((position) => !position.notionalAmount).length +
       activeStocks.filter((position) => !position.currentPrice).length +
@@ -332,6 +355,8 @@ export async function getPortfolioDashboardSummary(
     const activePositions = activeFcns.length + activeStocks.length + activeCrypto.length;
 
     return {
+      assetAllocationSummary: assetSummary.assetAllocationSummary,
+      assetCategoryCounts: assetSummary.assetCategoryCounts,
       cryptoCount: activeCrypto.length,
       cryptoDualCount,
       cryptoGridCount,
@@ -377,6 +402,7 @@ export async function getPortfolioDashboardSummary(
       portfolioHealthScore,
       portfolioRiskScore,
       portfolioStatus,
+      portfolioAssetCategories: assetSummary.portfolioAssetCategories,
       riskDistribution,
       riskNarrative: intelligenceSummary.riskNarrative,
       worstOfNarrative: intelligenceSummary.worstOfNarrative,
