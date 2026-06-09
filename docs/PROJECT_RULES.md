@@ -44,6 +44,10 @@ Rules:
 - Every private Portfolio / FCN / Stock / Crypto API must validate the authenticated Supabase user and must not allow cross-user reads or writes.
 - Production migrations must be staged first and validated with authenticated CRUD, User A / User B isolation, unauthenticated 401 behavior, soft archive, lint, build, and UI smoke checks.
 - SaaS feature gating must use membership / entitlement logic. Do not expose paid Pro features only by frontend hiding.
+- v1.86 membership tiers are `free`, `basic`, and `pro`; do not introduce payment-provider-specific logic into this foundation without a separate approved billing version.
+- Free / Basic may access Portfolio, FCN, and Risk foundation surfaces; full Pro Workspace access requires `canViewPro`.
+- Paid Pro-only APIs must enforce entitlement server-side. A frontend disabled button or hidden card is not sufficient for production access control.
+- Legacy Pro compatibility may map explicit `legacy_pro` / manual access flags to Pro tier, but do not migrate Legacy Pro JWT, localStorage auth, or direct FastAPI protected request patterns into the production App.
 - FCN Risk Engine must remain monitoring, risk awareness, and workflow support. It must not output personalized product advice, product recommendation, buy/sell instruction, guaranteed coupon language, target price, or automated trading instruction.
 - Legacy Pro data and JWT/session patterns must not be migrated wholesale into the production App. Reuse product concepts, not the legacy auth architecture.
 

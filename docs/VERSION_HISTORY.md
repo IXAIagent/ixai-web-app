@@ -6,6 +6,41 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.86 — Membership & Entitlement Foundation
+
+Why:
+
+- v1.80-v1.85 built real Portfolio / FCN persistence, Worst-of, Risk Engine, Intelligence Layer, and Portfolio Intelligence Dashboard.
+- IXAI needed the first SaaS entitlement foundation before adding pricing, upgrade flows, or paid Pro feature limits.
+
+What Changed:
+
+- Added App membership tier normalization around `free`, `basic`, and `pro`.
+- Added entitlement matrix for Portfolio, FCN, Risk, and Pro.
+- Added `resolveLegacyProAccess()` compatibility for legacy/manual Pro flags.
+- Added additive dashboard fields: `membershipTier` and `entitlements`.
+- Added Membership Status display on `/pro` and `/account`.
+- Added a visible `/pro` membership guard that shows `IXAI Pro Membership Required` for non-Pro tiers.
+
+Key Decisions:
+
+- v1.86 does not implement payment.
+- No Supabase schema migration is added.
+- Free and Basic can view Portfolio / FCN / Risk foundation surfaces; Pro is reserved for full Pro Workspace access.
+- The `/pro` guard is visible and non-redirecting to avoid redirect loops with client-side Supabase sessions.
+- Legacy Pro compatibility is preserved through metadata/profile flags without migrating legacy JWT/localStorage patterns.
+
+Out of Scope:
+
+- No Stripe, LINE Pay, ECPay, NewebPay, or OpenAI billing.
+- No auth redesign.
+- No Social Pack, Daily Intelligence, or Weekly Intelligence changes.
+- No production membership pricing or checkout.
+
+Next:
+
+- v1.87 should plan Upgrade Flow, Pricing Page, and Legacy Pro migration / retirement.
+
 ## v1.85 — Portfolio Intelligence Dashboard MVP
 
 Why:
@@ -44,7 +79,7 @@ Out of Scope:
 
 Next:
 
-- v1.86 should plan SaaS Membership / Entitlement and feature gating for Free / Pro / Advisor workflows.
+- v1.86 should plan SaaS Membership / Entitlement and feature gating for Free / Basic / Pro workflows.
 
 ## v1.84 — FCN Intelligence Layer MVP
 

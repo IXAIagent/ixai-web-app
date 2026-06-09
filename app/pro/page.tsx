@@ -10,6 +10,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { PortfolioReadbackSummary } from "@/components/portfolio/portfolio-readback-summary";
+import { MembershipStatusCard } from "@/components/membership/membership-status-card";
 import { ProSsoLaunchButton } from "@/components/pro/pro-sso-launch-button";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -91,6 +92,8 @@ export default function ProPage() {
           </Link>
         </div>
       </section>
+
+      <MembershipStatusCard variant="pro" />
 
       <PortfolioReadbackSummary variant="pro" />
 

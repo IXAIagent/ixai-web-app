@@ -12,6 +12,13 @@ import {
   type FCNIntelligenceSummary,
 } from "@/src/lib/fcn/intelligence";
 import {
+  getEntitlements,
+  getMembershipTier,
+  type IXAIAppEntitlements,
+  type MembershipTier,
+} from "@/src/lib/membership/entitlements";
+import { getMembershipByEmail } from "@/src/lib/membership/memberships";
+import {
   buildMonitoringHighlights,
   buildPortfolioStatus,
   calculatePortfolioHealthScore,
@@ -19,7 +26,11 @@ import {
   type PortfolioRiskDistribution,
   type PortfolioStatusLabel,
 } from "@/src/lib/portfolio/intelligence";
-import { PortfolioRequestError, listPortfolios } from "@/src/lib/portfolio/server";
+import {
+  PortfolioRequestError,
+  getCurrentSupabaseUser,
+  listPortfolios,
+} from "@/src/lib/portfolio/server";
 import { PositionRequestError } from "@/src/lib/positions/supabase";
 import { listCryptoPositions } from "@/src/lib/crypto/server";
 import { listStockPositions } from "@/src/lib/stock/server";
@@ -57,6 +68,8 @@ export type PortfolioDashboardSummary = {
   intelligenceSummary: FCNIntelligenceSummary;
   nearKiNarrative: string;
   nearKiCount: number;
+  entitlements: IXAIAppEntitlements;
+  membershipTier: MembershipTier;
   monitoringHighlights: string[];
   portfolioHealthScore: number;
   portfolioRiskScore: number;
@@ -114,6 +127,8 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   nearKiNarrative:
     "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
   nearKiCount: 0,
+  entitlements: getEntitlements("free"),
+  membershipTier: "free",
   monitoringHighlights: ["Portfolio status is Healthy with health score 100."],
   portfolioCount: 0,
   portfolioHealthScore: 100,
@@ -202,10 +217,36 @@ function isStorageConfigError(error: unknown) {
   );
 }
 
+async function resolveMembershipEntitlements(email: string | null) {
+  if (!email) {
+    return {
+      entitlements: getEntitlements("free"),
+      membershipTier: "free" as MembershipTier,
+    };
+  }
+
+  try {
+    const membership = await getMembershipByEmail(email);
+    const membershipTier = getMembershipTier(membership);
+
+    return {
+      entitlements: getEntitlements(membershipTier),
+      membershipTier,
+    };
+  } catch {
+    return {
+      entitlements: getEntitlements("free"),
+      membershipTier: "free" as MembershipTier,
+    };
+  }
+}
+
 export async function getPortfolioDashboardSummary(
   authorizationHeader: string | null,
 ): Promise<PortfolioDashboardSummary> {
   try {
+    const user = await getCurrentSupabaseUser(authorizationHeader);
+    const { entitlements, membershipTier } = await resolveMembershipEntitlements(user.email);
     const [portfolios, fcnPositions, stockPositions, cryptoPositions] = await Promise.all([
       listPortfolios(authorizationHeader),
       listFCNPositions(authorizationHeader),
@@ -329,6 +370,8 @@ export async function getPortfolioDashboardSummary(
       intelligenceSummary,
       nearKiNarrative: intelligenceSummary.nearKiNarrative,
       nearKiCount,
+      entitlements,
+      membershipTier,
       monitoringHighlights,
       portfolioCount: portfolios.length,
       portfolioHealthScore,
