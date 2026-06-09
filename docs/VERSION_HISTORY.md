@@ -6,6 +6,46 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.85 — Portfolio Intelligence Dashboard MVP
+
+Why:
+
+- v1.80 / v1.81 created production Portfolio and FCN persistence.
+- v1.82.1 added FCN Worst-of readback.
+- v1.83 added FCN Risk Engine aggregation.
+- v1.84 added deterministic FCN Intelligence narratives.
+- IXAI needed a readable SaaS dashboard layer that combines these existing pieces on `/risk` and `/pro`.
+
+What Changed:
+
+- Added `src/lib/portfolio/intelligence.ts`.
+- Added deterministic Portfolio Intelligence helpers:
+  - portfolio health score.
+  - portfolio status.
+  - risk distribution.
+  - monitoring highlights.
+- Added additive dashboard fields: `portfolioHealthScore`, `portfolioStatus`, `riskDistribution`, and `monitoringHighlights`.
+- Added `Portfolio Intelligence Dashboard MVP` readback on Risk / Pro surfaces.
+
+Key Decisions:
+
+- v1.85 does not add any migration or Supabase schema change.
+- Portfolio health is calculated only from existing Risk Engine, Worst-of, Near-KI, and concentration fields.
+- Monitoring highlights are deterministic and compliance-safe.
+- Existing FCN Worst-of MVP, FCN Risk Engine MVP, and FCN Intelligence MVP sections remain visible.
+
+Out of Scope:
+
+- No auth, membership, entitlement, or billing changes.
+- No OpenAI API.
+- No external market data API.
+- No cron, broker, or trading changes.
+- No personalized investment advice, target price, expected return, or buy/sell language.
+
+Next:
+
+- v1.86 should plan SaaS Membership / Entitlement and feature gating for Free / Pro / Advisor workflows.
+
 ## v1.84 — FCN Intelligence Layer MVP
 
 Why:
@@ -40,7 +80,7 @@ Out of Scope:
 
 Next:
 
-- v1.85 should introduce SaaS Membership / Feature Gate for Portfolio / FCN / Risk workflows.
+- v1.85 should combine FCN Risk and Intelligence fields into a readable Portfolio Intelligence Dashboard.
 
 ## v1.83 — FCN Risk Engine
 

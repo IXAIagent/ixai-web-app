@@ -4,14 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.84 / FCN Intelligence Layer MVP`
+`v1.85 / Portfolio Intelligence Dashboard MVP`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Risk Engine MVP, and first FCN Intelligence Layer MVP. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, and first Portfolio Intelligence Dashboard MVP. Current priority remains the main product line:
 
-- FCN Intelligence Layer staging validation.
-- Portfolio Intelligence.
+- Portfolio Intelligence Dashboard validation on `/risk` and `/pro`.
 - SaaS Membership / Entitlement.
 - Legacy Pro gradual retirement into IXAI App.
 
@@ -56,7 +55,17 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Deterministic interpretation only.
 - No OpenAI API and no external market data.
 
-### v1.85 — SaaS Membership / Feature Gate
+### v1.85 — Portfolio Intelligence Dashboard
+
+- Portfolio health score.
+- Portfolio status.
+- Risk distribution.
+- Monitoring highlights.
+- Risk / Pro dashboard readback.
+- Retain FCN Worst-of MVP, FCN Risk Engine MVP, and FCN Intelligence MVP sections.
+- Compliance-safe monitoring language only.
+
+### v1.86 — SaaS Membership / Feature Gate
 
 - Free.
 - Pro.
@@ -65,7 +74,7 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Portfolio / FCN / Risk Engine limits.
 - Feature access must be enforced through membership / entitlement logic, not frontend hiding alone.
 
-### v1.86 — Portfolio Intelligence Dashboard
+### v1.87 — Portfolio Intelligence Expansion
 
 - Asset allocation.
 - Concentration.
@@ -74,7 +83,7 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - AI summary.
 - Compliance-safe monitoring language only.
 
-### v1.87 — Stock / Crypto Position Expansion
+### v1.88 — Stock / Crypto Position Expansion
 
 - Stock positions.
 - ETF positions.

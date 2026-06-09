@@ -11,6 +11,14 @@ import {
   buildFcnIntelligenceSummary,
   type FCNIntelligenceSummary,
 } from "@/src/lib/fcn/intelligence";
+import {
+  buildMonitoringHighlights,
+  buildPortfolioStatus,
+  calculatePortfolioHealthScore,
+  calculateRiskDistribution,
+  type PortfolioRiskDistribution,
+  type PortfolioStatusLabel,
+} from "@/src/lib/portfolio/intelligence";
 import { PortfolioRequestError, listPortfolios } from "@/src/lib/portfolio/server";
 import { PositionRequestError } from "@/src/lib/positions/supabase";
 import { listCryptoPositions } from "@/src/lib/crypto/server";
@@ -49,7 +57,11 @@ export type PortfolioDashboardSummary = {
   intelligenceSummary: FCNIntelligenceSummary;
   nearKiNarrative: string;
   nearKiCount: number;
+  monitoringHighlights: string[];
+  portfolioHealthScore: number;
   portfolioRiskScore: number;
+  portfolioStatus: PortfolioStatusLabel;
+  riskDistribution: PortfolioRiskDistribution;
   riskNarrative: string;
   worstOfNarrative: string;
   portfolios: Pick<Portfolio, "baseCurrency" | "id" | "name" | "status">[];
@@ -102,8 +114,12 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   nearKiNarrative:
     "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
   nearKiCount: 0,
+  monitoringHighlights: ["Portfolio status is Healthy with health score 100."],
   portfolioCount: 0,
+  portfolioHealthScore: 100,
   portfolioRiskScore: 0,
+  portfolioStatus: "Healthy",
+  riskDistribution: { high: 0, low: 0, moderate: 0 },
   riskNarrative:
     "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
   worstOfNarrative:
@@ -245,6 +261,21 @@ export async function getPortfolioDashboardSummary(
       kiDistances,
       worstOfRanking: fcnWorstOfRanking,
     });
+    const riskDistribution = calculateRiskDistribution(fcnWorstOfRanking);
+    const portfolioHealthScore = calculatePortfolioHealthScore({
+      exposureSummary: fcnExposureSummary,
+      nearKiCount,
+      riskScore: portfolioRiskScore,
+    });
+    const portfolioStatus = buildPortfolioStatus(portfolioHealthScore);
+    const monitoringHighlights = buildMonitoringHighlights({
+      exposureSummary: fcnExposureSummary,
+      nearKiCount,
+      portfolioHealthScore,
+      portfolioStatus,
+      riskDistribution,
+      worstOfRanking: fcnWorstOfRanking,
+    });
     const intelligenceSummary = buildFcnIntelligenceSummary({
       exposureSummary: fcnExposureSummary,
       nearKiCount,
@@ -298,8 +329,12 @@ export async function getPortfolioDashboardSummary(
       intelligenceSummary,
       nearKiNarrative: intelligenceSummary.nearKiNarrative,
       nearKiCount,
+      monitoringHighlights,
       portfolioCount: portfolios.length,
+      portfolioHealthScore,
       portfolioRiskScore,
+      portfolioStatus,
+      riskDistribution,
       riskNarrative: intelligenceSummary.riskNarrative,
       worstOfNarrative: intelligenceSummary.worstOfNarrative,
       portfolios: portfolios.map((portfolio) => ({
