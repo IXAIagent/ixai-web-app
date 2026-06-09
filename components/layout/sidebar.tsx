@@ -32,6 +32,7 @@ const navGroups: Array<{
     items: [
       { label: "自選觀察", href: "/watchlist" },
       { label: "我的 IXAI", href: "/account" },
+      { label: "Portfolio Center", href: "/my-ixai/portfolio" },
     ],
   },
   {

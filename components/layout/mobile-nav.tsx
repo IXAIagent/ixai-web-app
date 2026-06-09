@@ -68,7 +68,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "我的",
     href: "/account",
     icon: UserCircle,
-    matchPrefixes: ["/account", "/login", "/register"],
+    matchPrefixes: ["/account", "/my-ixai", "/login", "/register"],
   },
 ];
 

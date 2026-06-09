@@ -7,6 +7,7 @@ import {
   ArrowRight,
   BarChart3,
   BookOpen,
+  BriefcaseBusiness,
   Bug,
   Eye,
   FileText,
@@ -76,6 +77,7 @@ const DRAWER_SECTIONS: DrawerSection[] = [
     title: "IXAI",
     entries: [
       { label: "我的 IXAI", href: "/account", icon: UserCircle },
+      { label: "Portfolio Center", href: "/my-ixai/portfolio", icon: BriefcaseBusiness },
       { label: "IXAI Pro", href: "/pro", icon: Sparkles },
       { label: "關於一玄", href: "/about", icon: Info },
     ],
