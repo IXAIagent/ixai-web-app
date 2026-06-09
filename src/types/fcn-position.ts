@@ -12,6 +12,33 @@ export type FCNObservationScheduleItem = {
   status?: string;
 };
 
+export type FCNWorstOfStatus =
+  | "invalid_initial_price"
+  | "missing_current_price"
+  | "missing_underlyings"
+  | "ready";
+
+export type FCNUnderlyingWorstOfReturn = {
+  currentPrice: number | null;
+  initialPrice: number | null;
+  name: string | null;
+  status: Exclude<FCNWorstOfStatus, "missing_underlyings">;
+  symbol: string;
+  underlyingId: string;
+  underlyingReturnPct: number | null;
+};
+
+export type FCNWorstOfSummary = {
+  riskEngineVersion: "v1.82.1";
+  status: FCNWorstOfStatus;
+  underlyings: FCNUnderlyingWorstOfReturn[];
+  worstUnderlyingCurrentPrice: number | null;
+  worstUnderlyingInitialPrice: number | null;
+  worstUnderlyingName: string | null;
+  worstUnderlyingReturnPct: number | null;
+  worstUnderlyingSymbol: string | null;
+};
+
 export type FCNUnderlying = {
   id: string;
   userId: string;
@@ -48,6 +75,7 @@ export type FCNPosition = {
   observationSchedule: FCNObservationScheduleItem[];
   metadata: Record<string, unknown>;
   underlyings: FCNUnderlying[];
+  worstOfSummary: FCNWorstOfSummary;
   createdAt: string;
   updatedAt: string;
 };

@@ -4,6 +4,7 @@ import { PositionRequestError } from "@/src/lib/positions/supabase";
 import { listCryptoPositions } from "@/src/lib/crypto/server";
 import { listStockPositions } from "@/src/lib/stock/server";
 import type { CryptoPosition } from "@/src/types/crypto-position";
+import type { FCNWorstOfStatus } from "@/src/types/fcn-position";
 import type { Portfolio } from "@/src/types/portfolio";
 import type { StockPosition } from "@/src/types/stock-position";
 
@@ -21,12 +22,28 @@ export type PortfolioDashboardSummary = {
   fcnNotionalApprox: number;
   cryptoMarketValueApprox: number;
   fcnUnderlyingCount: number;
+  fcnWorstOfInvalidInitialPriceCount: number;
+  fcnWorstOfMissingCurrentPriceCount: number;
+  fcnWorstOfMissingUnderlyingsCount: number;
+  fcnWorstOfReadyCount: number;
+  fcnWorstOfSummaries: PortfolioDashboardFcnWorstOfSummary[];
   cryptoGridCount: number;
   cryptoDualCount: number;
   incompleteValuationCount: number;
   highLevelRiskStatus: PortfolioDashboardRiskStatus;
   portfolios: Pick<Portfolio, "baseCurrency" | "id" | "name" | "status">[];
   generatedAt: string;
+};
+
+export type PortfolioDashboardFcnWorstOfSummary = {
+  fcnId: string;
+  fcnName: string;
+  status: FCNWorstOfStatus;
+  worstUnderlyingCurrentPrice: number | null;
+  worstUnderlyingInitialPrice: number | null;
+  worstUnderlyingName: string | null;
+  worstUnderlyingReturnPct: number | null;
+  worstUnderlyingSymbol: string | null;
 };
 
 const EMPTY_SUMMARY: PortfolioDashboardSummary = {
@@ -37,6 +54,11 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   fcnCount: 0,
   fcnNotionalApprox: 0,
   fcnUnderlyingCount: 0,
+  fcnWorstOfInvalidInitialPriceCount: 0,
+  fcnWorstOfMissingCurrentPriceCount: 0,
+  fcnWorstOfMissingUnderlyingsCount: 0,
+  fcnWorstOfReadyCount: 0,
+  fcnWorstOfSummaries: [],
   generatedAt: "",
   highLevelRiskStatus: "clear",
   incompleteValuationCount: 0,
@@ -74,6 +96,7 @@ function calculateRiskStatus(input: {
   cryptoGridCount: number;
   fcnCount: number;
   fcnUnderlyingCount: number;
+  lowestWorstOfReturnPct: number | null;
   incompleteValuationCount: number;
 }): PortfolioDashboardRiskStatus {
   if (input.activePositions === 0) {
@@ -83,6 +106,7 @@ function calculateRiskStatus(input: {
   if (
     input.fcnCount >= 3 ||
     input.fcnUnderlyingCount >= 8 ||
+    (input.lowestWorstOfReturnPct !== null && input.lowestWorstOfReturnPct <= -20) ||
     input.cryptoGridCount + input.cryptoDualCount >= 2 ||
     input.incompleteValuationCount >= 5
   ) {
@@ -90,6 +114,13 @@ function calculateRiskStatus(input: {
   }
 
   return "watch";
+}
+
+function countWorstOfStatus(
+  summaries: PortfolioDashboardFcnWorstOfSummary[],
+  status: FCNWorstOfStatus,
+) {
+  return summaries.filter((summary) => summary.status === status).length;
 }
 
 function isAuthError(error: unknown) {
@@ -141,6 +172,21 @@ export async function getPortfolioDashboardSummary(
       (sum, position) => sum + position.underlyings.length,
       0,
     );
+    const fcnWorstOfSummaries = activeFcns.map((position) => ({
+      fcnId: position.id,
+      fcnName: position.name,
+      status: position.worstOfSummary.status,
+      worstUnderlyingCurrentPrice: position.worstOfSummary.worstUnderlyingCurrentPrice,
+      worstUnderlyingInitialPrice: position.worstOfSummary.worstUnderlyingInitialPrice,
+      worstUnderlyingName: position.worstOfSummary.worstUnderlyingName,
+      worstUnderlyingReturnPct: position.worstOfSummary.worstUnderlyingReturnPct,
+      worstUnderlyingSymbol: position.worstOfSummary.worstUnderlyingSymbol,
+    }));
+    const readyWorstOfReturns = fcnWorstOfSummaries
+      .map((summary) => summary.worstUnderlyingReturnPct)
+      .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+    const lowestWorstOfReturnPct =
+      readyWorstOfReturns.length > 0 ? Math.min(...readyWorstOfReturns) : null;
     const cryptoGridCount = activeCrypto.filter(isCryptoGrid).length;
     const cryptoDualCount = activeCrypto.filter(isCryptoDual).length;
     const incompleteValuationCount =
@@ -157,6 +203,20 @@ export async function getPortfolioDashboardSummary(
       fcnCount: activeFcns.length,
       fcnNotionalApprox,
       fcnUnderlyingCount,
+      fcnWorstOfInvalidInitialPriceCount: countWorstOfStatus(
+        fcnWorstOfSummaries,
+        "invalid_initial_price",
+      ),
+      fcnWorstOfMissingCurrentPriceCount: countWorstOfStatus(
+        fcnWorstOfSummaries,
+        "missing_current_price",
+      ),
+      fcnWorstOfMissingUnderlyingsCount: countWorstOfStatus(
+        fcnWorstOfSummaries,
+        "missing_underlyings",
+      ),
+      fcnWorstOfReadyCount: countWorstOfStatus(fcnWorstOfSummaries, "ready"),
+      fcnWorstOfSummaries,
       generatedAt: new Date().toISOString(),
       highLevelRiskStatus: calculateRiskStatus({
         activePositions,
@@ -165,6 +225,7 @@ export async function getPortfolioDashboardSummary(
         fcnCount: activeFcns.length,
         fcnUnderlyingCount,
         incompleteValuationCount,
+        lowestWorstOfReturnPct,
       }),
       incompleteValuationCount,
       portfolioCount: portfolios.length,

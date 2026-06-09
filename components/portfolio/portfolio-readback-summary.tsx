@@ -33,6 +33,11 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   fcnCount: 0,
   fcnNotionalApprox: 0,
   fcnUnderlyingCount: 0,
+  fcnWorstOfInvalidInitialPriceCount: 0,
+  fcnWorstOfMissingCurrentPriceCount: 0,
+  fcnWorstOfMissingUnderlyingsCount: 0,
+  fcnWorstOfReadyCount: 0,
+  fcnWorstOfSummaries: [],
   generatedAt: "",
   highLevelRiskStatus: "clear",
   incompleteValuationCount: 0,
@@ -106,6 +111,24 @@ function numberLabel(value: number) {
   return new Intl.NumberFormat("zh-TW").format(value);
 }
 
+function formatPercent(value: number | null) {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return "--";
+  }
+
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toFixed(2)}%`;
+}
+
+function getWorstOfStatusCopy(status: PortfolioDashboardSummary["fcnWorstOfSummaries"][number]["status"]) {
+  return {
+    invalid_initial_price: "初始價格待補",
+    missing_current_price: "尚未有現價",
+    missing_underlyings: "尚未有連結標的",
+    ready: "可計算",
+  }[status];
+}
+
 export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: ReadbackVariant }) {
   const [summary, setSummary] = useState<PortfolioDashboardSummary>(EMPTY_SUMMARY);
   const [status, setStatus] = useState<"error" | "loading" | "ready" | "unauthenticated">(
@@ -171,6 +194,20 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
 
   const copy = VARIANT_COPY[variant];
   const hasAnyData = summary.portfolioCount + summary.fcnCount + summary.stockCount + summary.cryptoCount > 0;
+  const shouldShowWorstOf = variant === "fcn" || variant === "pro" || variant === "risk";
+  const fcnWorstOfSummaries = useMemo(
+    () => summary.fcnWorstOfSummaries ?? [],
+    [summary.fcnWorstOfSummaries],
+  );
+  const primaryWorstOf = useMemo(() => {
+    const ready = fcnWorstOfSummaries
+      .filter((item) => item.status === "ready" && typeof item.worstUnderlyingReturnPct === "number")
+      .toSorted(
+        (a, b) => (a.worstUnderlyingReturnPct ?? 0) - (b.worstUnderlyingReturnPct ?? 0),
+      )[0];
+
+    return ready ?? fcnWorstOfSummaries[0] ?? null;
+  }, [fcnWorstOfSummaries]);
   const stats = useMemo(
     () => [
       { icon: BriefcaseBusiness, label: "Portfolio", value: numberLabel(summary.portfolioCount) },
@@ -284,6 +321,51 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
               </p>
             </div>
           </div>
+
+          {shouldShowWorstOf ? (
+            <div className="mt-5 rounded-2xl border border-[rgba(176,141,87,0.30)] bg-[rgba(176,141,87,0.08)] p-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                    FCN Worst-of MVP
+                  </p>
+                  {primaryWorstOf ? (
+                    <>
+                      <p className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+                        {primaryWorstOf.status === "ready"
+                          ? `${primaryWorstOf.worstUnderlyingSymbol ?? "--"} · ${formatPercent(
+                              primaryWorstOf.worstUnderlyingReturnPct,
+                            )}`
+                          : getWorstOfStatusCopy(primaryWorstOf.status)}
+                      </p>
+                      <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                        {primaryWorstOf.status === "ready"
+                          ? `${primaryWorstOf.fcnName} 的目前 Worst-of 為 ${
+                              primaryWorstOf.worstUnderlyingName ??
+                              primaryWorstOf.worstUnderlyingSymbol ??
+                              "未命名標的"
+                            }。`
+                          : "尚未有現價或完整標的價格，待補價格後計算 Worst-of。"}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                      尚未有 FCN 連結標的可計算 Worst-of。
+                    </p>
+                  )}
+                </div>
+                <div className="grid min-w-[160px] gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                  <span>可計算：{numberLabel(summary.fcnWorstOfReadyCount ?? 0)}</span>
+                  <span>缺現價：{numberLabel(summary.fcnWorstOfMissingCurrentPriceCount ?? 0)}</span>
+                  <span>缺標的：{numberLabel(summary.fcnWorstOfMissingUnderlyingsCount ?? 0)}</span>
+                  <span>初始價待補：{numberLabel(summary.fcnWorstOfInvalidInitialPriceCount ?? 0)}</span>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
+                Worst-of 僅使用已儲存的手動價格欄位計算，不串接即時行情，不構成投資建議。
+              </p>
+            </div>
+          ) : null}
 
           <div className={`mt-5 rounded-2xl border p-4 text-sm leading-7 ${RISK_CLASS[summary.highLevelRiskStatus]}`}>
             <div className="flex items-start gap-3">
