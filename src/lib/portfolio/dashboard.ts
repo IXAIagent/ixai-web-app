@@ -1,5 +1,36 @@
 import { FcnRequestError, listFCNPositions } from "@/src/lib/fcn/server";
-import { PortfolioRequestError, listPortfolios } from "@/src/lib/portfolio/server";
+import {
+  buildConcentrationExposureSummary,
+  buildWorstOfRanking,
+  calculateKiDistance,
+  calculatePortfolioRiskScore,
+  type FCNExposureSummary,
+  type FCNWorstOfRankingItem,
+} from "@/src/lib/fcn/risk-score";
+import {
+  buildFcnIntelligenceSummary,
+  type FCNIntelligenceSummary,
+} from "@/src/lib/fcn/intelligence";
+import {
+  getEntitlements,
+  getMembershipTier,
+  type IXAIAppEntitlements,
+  type MembershipTier,
+} from "@/src/lib/membership/entitlements";
+import { getMembershipByEmail } from "@/src/lib/membership/memberships";
+import {
+  buildMonitoringHighlights,
+  buildPortfolioStatus,
+  calculatePortfolioHealthScore,
+  calculateRiskDistribution,
+  type PortfolioRiskDistribution,
+  type PortfolioStatusLabel,
+} from "@/src/lib/portfolio/intelligence";
+import {
+  PortfolioRequestError,
+  getCurrentSupabaseUser,
+  listPortfolios,
+} from "@/src/lib/portfolio/server";
 import { PositionRequestError } from "@/src/lib/positions/supabase";
 import { listCryptoPositions } from "@/src/lib/crypto/server";
 import { listStockPositions } from "@/src/lib/stock/server";
@@ -31,6 +62,21 @@ export type PortfolioDashboardSummary = {
   cryptoDualCount: number;
   incompleteValuationCount: number;
   highLevelRiskStatus: PortfolioDashboardRiskStatus;
+  fcnExposureSummary: FCNExposureSummary[];
+  fcnWorstOfRanking: FCNWorstOfRankingItem[];
+  concentrationNarrative: string;
+  intelligenceSummary: FCNIntelligenceSummary;
+  nearKiNarrative: string;
+  nearKiCount: number;
+  entitlements: IXAIAppEntitlements;
+  membershipTier: MembershipTier;
+  monitoringHighlights: string[];
+  portfolioHealthScore: number;
+  portfolioRiskScore: number;
+  portfolioStatus: PortfolioStatusLabel;
+  riskDistribution: PortfolioRiskDistribution;
+  riskNarrative: string;
+  worstOfNarrative: string;
   portfolios: Pick<Portfolio, "baseCurrency" | "id" | "name" | "status">[];
   generatedAt: string;
 };
@@ -62,7 +108,37 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   generatedAt: "",
   highLevelRiskStatus: "clear",
   incompleteValuationCount: 0,
+  fcnExposureSummary: [],
+  fcnWorstOfRanking: [],
+  concentrationNarrative:
+    "Portfolio FCN exposure is not concentrated in repeated underlyings based on the current stored data.",
+  intelligenceSummary: {
+    complianceNote: "Monitoring and risk-awareness only. Not investment advice.",
+    concentrationNarrative:
+      "Portfolio FCN exposure is not concentrated in repeated underlyings based on the current stored data.",
+    nearKiNarrative:
+      "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
+    riskBand: "Low Risk",
+    riskNarrative:
+      "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
+    worstOfNarrative:
+      "Worst-of interpretation is waiting for complete initial and current prices across FCN underlyings.",
+  },
+  nearKiNarrative:
+    "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
+  nearKiCount: 0,
+  entitlements: getEntitlements("free"),
+  membershipTier: "free",
+  monitoringHighlights: ["Portfolio status is Healthy with health score 100."],
   portfolioCount: 0,
+  portfolioHealthScore: 100,
+  portfolioRiskScore: 0,
+  portfolioStatus: "Healthy",
+  riskDistribution: { high: 0, low: 0, moderate: 0 },
+  riskNarrative:
+    "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
+  worstOfNarrative:
+    "Worst-of interpretation is waiting for complete initial and current prices across FCN underlyings.",
   portfolios: [],
   state: "ready",
   stockCount: 0,
@@ -141,10 +217,36 @@ function isStorageConfigError(error: unknown) {
   );
 }
 
+async function resolveMembershipEntitlements(email: string | null) {
+  if (!email) {
+    return {
+      entitlements: getEntitlements("free"),
+      membershipTier: "free" as MembershipTier,
+    };
+  }
+
+  try {
+    const membership = await getMembershipByEmail(email);
+    const membershipTier = getMembershipTier(membership);
+
+    return {
+      entitlements: getEntitlements(membershipTier),
+      membershipTier,
+    };
+  } catch {
+    return {
+      entitlements: getEntitlements("free"),
+      membershipTier: "free" as MembershipTier,
+    };
+  }
+}
+
 export async function getPortfolioDashboardSummary(
   authorizationHeader: string | null,
 ): Promise<PortfolioDashboardSummary> {
   try {
+    const user = await getCurrentSupabaseUser(authorizationHeader);
+    const { entitlements, membershipTier } = await resolveMembershipEntitlements(user.email);
     const [portfolios, fcnPositions, stockPositions, cryptoPositions] = await Promise.all([
       listPortfolios(authorizationHeader),
       listFCNPositions(authorizationHeader),
@@ -187,6 +289,40 @@ export async function getPortfolioDashboardSummary(
       .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
     const lowestWorstOfReturnPct =
       readyWorstOfReturns.length > 0 ? Math.min(...readyWorstOfReturns) : null;
+    const fcnExposureSummary = buildConcentrationExposureSummary(activeFcns);
+    const fcnWorstOfRanking = buildWorstOfRanking(activeFcns);
+    const kiDistances = activeFcns.flatMap((position) =>
+      position.underlyings.map(calculateKiDistance),
+    );
+    const nearKiCount = kiDistances.filter(
+      (item) => typeof item.distanceToKiPct === "number" && item.distanceToKiPct <= 10,
+    ).length;
+    const portfolioRiskScore = calculatePortfolioRiskScore({
+      exposureSummary: fcnExposureSummary,
+      kiDistances,
+      worstOfRanking: fcnWorstOfRanking,
+    });
+    const riskDistribution = calculateRiskDistribution(fcnWorstOfRanking);
+    const portfolioHealthScore = calculatePortfolioHealthScore({
+      exposureSummary: fcnExposureSummary,
+      nearKiCount,
+      riskScore: portfolioRiskScore,
+    });
+    const portfolioStatus = buildPortfolioStatus(portfolioHealthScore);
+    const monitoringHighlights = buildMonitoringHighlights({
+      exposureSummary: fcnExposureSummary,
+      nearKiCount,
+      portfolioHealthScore,
+      portfolioStatus,
+      riskDistribution,
+      worstOfRanking: fcnWorstOfRanking,
+    });
+    const intelligenceSummary = buildFcnIntelligenceSummary({
+      exposureSummary: fcnExposureSummary,
+      nearKiCount,
+      riskScore: portfolioRiskScore,
+      worstOfRanking: fcnWorstOfRanking,
+    });
     const cryptoGridCount = activeCrypto.filter(isCryptoGrid).length;
     const cryptoDualCount = activeCrypto.filter(isCryptoDual).length;
     const incompleteValuationCount =
@@ -228,7 +364,22 @@ export async function getPortfolioDashboardSummary(
         lowestWorstOfReturnPct,
       }),
       incompleteValuationCount,
+      fcnExposureSummary,
+      fcnWorstOfRanking,
+      concentrationNarrative: intelligenceSummary.concentrationNarrative,
+      intelligenceSummary,
+      nearKiNarrative: intelligenceSummary.nearKiNarrative,
+      nearKiCount,
+      entitlements,
+      membershipTier,
+      monitoringHighlights,
       portfolioCount: portfolios.length,
+      portfolioHealthScore,
+      portfolioRiskScore,
+      portfolioStatus,
+      riskDistribution,
+      riskNarrative: intelligenceSummary.riskNarrative,
+      worstOfNarrative: intelligenceSummary.worstOfNarrative,
       portfolios: portfolios.map((portfolio) => ({
         baseCurrency: portfolio.baseCurrency,
         id: portfolio.id,

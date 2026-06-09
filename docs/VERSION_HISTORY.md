@@ -6,6 +6,155 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.86 — Membership & Entitlement Foundation
+
+Why:
+
+- v1.80-v1.85 built real Portfolio / FCN persistence, Worst-of, Risk Engine, Intelligence Layer, and Portfolio Intelligence Dashboard.
+- IXAI needed the first SaaS entitlement foundation before adding pricing, upgrade flows, or paid Pro feature limits.
+
+What Changed:
+
+- Added App membership tier normalization around `free`, `basic`, and `pro`.
+- Added entitlement matrix for Portfolio, FCN, Risk, and Pro.
+- Added `resolveLegacyProAccess()` compatibility for legacy/manual Pro flags.
+- Added additive dashboard fields: `membershipTier` and `entitlements`.
+- Added Membership Status display on `/pro` and `/account`.
+- Added a visible `/pro` membership guard that shows `IXAI Pro Membership Required` for non-Pro tiers.
+
+Key Decisions:
+
+- v1.86 does not implement payment.
+- No Supabase schema migration is added.
+- Free and Basic can view Portfolio / FCN / Risk foundation surfaces; Pro is reserved for full Pro Workspace access.
+- The `/pro` guard is visible and non-redirecting to avoid redirect loops with client-side Supabase sessions.
+- Legacy Pro compatibility is preserved through metadata/profile flags without migrating legacy JWT/localStorage patterns.
+
+Out of Scope:
+
+- No Stripe, LINE Pay, ECPay, NewebPay, or OpenAI billing.
+- No auth redesign.
+- No Social Pack, Daily Intelligence, or Weekly Intelligence changes.
+- No production membership pricing or checkout.
+
+Next:
+
+- v1.87 should plan Upgrade Flow, Pricing Page, and Legacy Pro migration / retirement.
+
+## v1.85 — Portfolio Intelligence Dashboard MVP
+
+Why:
+
+- v1.80 / v1.81 created production Portfolio and FCN persistence.
+- v1.82.1 added FCN Worst-of readback.
+- v1.83 added FCN Risk Engine aggregation.
+- v1.84 added deterministic FCN Intelligence narratives.
+- IXAI needed a readable SaaS dashboard layer that combines these existing pieces on `/risk` and `/pro`.
+
+What Changed:
+
+- Added `src/lib/portfolio/intelligence.ts`.
+- Added deterministic Portfolio Intelligence helpers:
+  - portfolio health score.
+  - portfolio status.
+  - risk distribution.
+  - monitoring highlights.
+- Added additive dashboard fields: `portfolioHealthScore`, `portfolioStatus`, `riskDistribution`, and `monitoringHighlights`.
+- Added `Portfolio Intelligence Dashboard MVP` readback on Risk / Pro surfaces.
+
+Key Decisions:
+
+- v1.85 does not add any migration or Supabase schema change.
+- Portfolio health is calculated only from existing Risk Engine, Worst-of, Near-KI, and concentration fields.
+- Monitoring highlights are deterministic and compliance-safe.
+- Existing FCN Worst-of MVP, FCN Risk Engine MVP, and FCN Intelligence MVP sections remain visible.
+
+Out of Scope:
+
+- No auth, membership, entitlement, or billing changes.
+- No OpenAI API.
+- No external market data API.
+- No cron, broker, or trading changes.
+- No personalized investment advice, target price, expected return, or buy/sell language.
+
+Next:
+
+- v1.86 should plan SaaS Membership / Entitlement and feature gating for Free / Basic / Pro workflows.
+
+## v1.84 — FCN Intelligence Layer MVP
+
+Why:
+
+- v1.83 turned stored FCN data into deterministic risk calculations.
+- IXAI needed the first interpretation layer so Risk / Pro surfaces can explain what those calculations mean without using an AI API or external market data.
+
+What Changed:
+
+- Added `src/lib/fcn/intelligence.ts`.
+- Added deterministic FCN narratives:
+  - risk narrative.
+  - Worst-of narrative.
+  - concentration narrative.
+  - Near-KI narrative.
+- Added additive dashboard fields: `intelligenceSummary`, `riskNarrative`, `worstOfNarrative`, `concentrationNarrative`, and `nearKiNarrative`.
+- Added `FCN Intelligence MVP` readback on Risk / Pro surfaces.
+
+Key Decisions:
+
+- v1.84 does not use OpenAI or any AI API.
+- Narratives are deterministic and based only on existing FCN positions, underlyings, Worst-of output, and Risk Engine output.
+- All wording remains monitoring and risk-awareness only.
+
+Out of Scope:
+
+- No migration.
+- No Supabase schema change.
+- No auth, membership, entitlement, or billing changes.
+- No external market data.
+- No trading or personalized advice language.
+
+Next:
+
+- v1.85 should combine FCN Risk and Intelligence fields into a readable Portfolio Intelligence Dashboard.
+
+## v1.83 — FCN Risk Engine
+
+Why:
+
+- v1.82.1 established Worst-of readback from stored FCN underlyings.
+- IXAI needed the first portfolio-level FCN risk aggregation before expanding into SaaS gating or broader Portfolio Intelligence.
+
+What Changed:
+
+- Added `src/lib/fcn/risk-score.ts`.
+- Added KI distance calculation.
+- Added risk level calculation.
+- Added portfolio risk score calculation.
+- Added FCN concentration exposure aggregation.
+- Added FCN Worst-of ranking aggregation.
+- Added additive dashboard fields: `portfolioRiskScore`, `nearKiCount`, `fcnExposureSummary`, and `fcnWorstOfRanking`.
+- Added Risk Dashboard MVP readback on Risk / Pro surfaces.
+
+Key Decisions:
+
+- v1.83 uses existing stored manual prices only.
+- No migration or schema change is required.
+- Dashboard fields are additive and do not break existing API consumers.
+- Risk output remains monitoring and risk awareness, not product recommendation.
+
+Out of Scope:
+
+- No live market prices.
+- No AI summary.
+- No coupon calendar.
+- No observation calendar.
+- No auth, membership, entitlement, billing, or Legacy Pro changes.
+
+Next:
+
+- v1.83.1 should validate Risk Engine fields in staging.
+- v1.84 should continue toward Portfolio Intelligence Dashboard.
+
 ## v1.82.1 — FCN Worst-of Engine MVP
 
 Why:

@@ -41,7 +41,42 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   generatedAt: "",
   highLevelRiskStatus: "clear",
   incompleteValuationCount: 0,
+  fcnExposureSummary: [],
+  fcnWorstOfRanking: [],
+  concentrationNarrative:
+    "Portfolio FCN exposure is not concentrated in repeated underlyings based on the current stored data.",
+  intelligenceSummary: {
+    complianceNote: "Monitoring and risk-awareness only. Not investment advice.",
+    concentrationNarrative:
+      "Portfolio FCN exposure is not concentrated in repeated underlyings based on the current stored data.",
+    nearKiNarrative:
+      "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
+    riskBand: "Low Risk",
+    riskNarrative:
+      "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
+    worstOfNarrative:
+      "Worst-of interpretation is waiting for complete initial and current prices across FCN underlyings.",
+  },
+  nearKiNarrative:
+    "No stored FCN underlyings are currently near KI thresholds based on available manual prices.",
+  nearKiCount: 0,
+  entitlements: {
+    canViewFcn: true,
+    canViewPortfolio: true,
+    canViewPro: false,
+    canViewRisk: true,
+  },
+  membershipTier: "free",
+  monitoringHighlights: ["Portfolio status is Healthy with health score 100."],
   portfolioCount: 0,
+  portfolioHealthScore: 100,
+  portfolioRiskScore: 0,
+  portfolioStatus: "Healthy",
+  riskDistribution: { high: 0, low: 0, moderate: 0 },
+  riskNarrative:
+    "Portfolio FCN risk is low based on the currently stored manual prices, with no near-KI concentration detected.",
+  worstOfNarrative:
+    "Worst-of interpretation is waiting for complete initial and current prices across FCN underlyings.",
   portfolios: [],
   state: "unauthenticated",
   stockCount: 0,
@@ -195,10 +230,21 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
   const copy = VARIANT_COPY[variant];
   const hasAnyData = summary.portfolioCount + summary.fcnCount + summary.stockCount + summary.cryptoCount > 0;
   const shouldShowWorstOf = variant === "fcn" || variant === "pro" || variant === "risk";
+  const shouldShowRiskDashboard = variant === "pro" || variant === "risk";
   const fcnWorstOfSummaries = useMemo(
     () => summary.fcnWorstOfSummaries ?? [],
     [summary.fcnWorstOfSummaries],
   );
+  const fcnWorstOfRanking = useMemo(
+    () => summary.fcnWorstOfRanking ?? [],
+    [summary.fcnWorstOfRanking],
+  );
+  const fcnExposureSummary = useMemo(
+    () => summary.fcnExposureSummary ?? [],
+    [summary.fcnExposureSummary],
+  );
+  const riskDistribution = summary.riskDistribution ?? { high: 0, low: 0, moderate: 0 };
+  const monitoringHighlights = summary.monitoringHighlights ?? [];
   const primaryWorstOf = useMemo(() => {
     const ready = fcnWorstOfSummaries
       .filter((item) => item.status === "ready" && typeof item.worstUnderlyingReturnPct === "number")
@@ -363,6 +409,189 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
               </div>
               <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
                 Worst-of 僅使用已儲存的手動價格欄位計算，不串接即時行情，不構成投資建議。
+              </p>
+            </div>
+          ) : null}
+
+          {shouldShowRiskDashboard ? (
+            <div className="mt-5 rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.88)] p-4">
+              <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                    Portfolio Intelligence Dashboard MVP
+                  </p>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-xl border border-[var(--ixai-border)] bg-white/75 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                        Portfolio Health
+                      </p>
+                      <p className="mt-2 text-3xl font-semibold text-[var(--ixai-forest)]">
+                        {numberLabel(summary.portfolioHealthScore ?? 0)}
+                        <span className="ml-1 text-sm font-medium text-[var(--ixai-forest-soft)]">
+                          / 100
+                        </span>
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-[var(--ixai-border)] bg-white/75 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                        Portfolio Status
+                      </p>
+                      <p className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
+                        {summary.portfolioStatus}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
+                    Monitoring and risk-awareness only. Not investment advice.
+                  </p>
+                </div>
+                <div className="grid gap-3">
+                  <div className="rounded-xl border border-[var(--ixai-border)] bg-white/75 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                      Risk Distribution
+                    </p>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                      {[
+                        ["Low Risk", riskDistribution.low],
+                        ["Moderate Risk", riskDistribution.moderate],
+                        ["High Risk", riskDistribution.high],
+                      ].map(([label, value]) => (
+                        <div
+                          className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.70)] p-3"
+                          key={label}
+                        >
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                            {label}
+                          </p>
+                          <p className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
+                            {numberLabel(Number(value))}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-[var(--ixai-border)] bg-white/75 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                      Monitoring Highlights
+                    </p>
+                    <ul className="mt-3 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                      {monitoringHighlights.slice(0, 5).map((item) => (
+                        <li className="flex gap-2" key={item}>
+                          <span className="mt-3 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--ixai-gold)]" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {shouldShowRiskDashboard ? (
+            <div className="mt-5 rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/75 p-4">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                    Risk Dashboard MVP
+                  </p>
+                  <p className="mt-2 text-3xl font-semibold text-[var(--ixai-forest)]">
+                    {numberLabel(summary.portfolioRiskScore ?? 0)}
+                    <span className="ml-1 text-sm font-medium text-[var(--ixai-forest-soft)]">
+                      / 100
+                    </span>
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                    Near KI Count：{numberLabel(summary.nearKiCount ?? 0)}。此分數只用已儲存資料做風險意識排序。
+                  </p>
+                </div>
+                <div className="grid gap-3 text-sm lg:min-w-[460px] lg:grid-cols-2">
+                  <div className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3">
+                    <p className="font-semibold text-[var(--ixai-forest)]">
+                      Worst-of Ranking Top 5
+                    </p>
+                    <div className="mt-3 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                      {fcnWorstOfRanking.slice(0, 5).length > 0 ? (
+                        fcnWorstOfRanking.slice(0, 5).map((item) => (
+                          <div className="flex items-center justify-between gap-3" key={item.fcnId}>
+                            <span className="min-w-0 truncate">
+                              {item.underlyingSymbol ?? "--"} · {item.fcnName}
+                            </span>
+                            <span className="font-mono text-[var(--ixai-forest)]">
+                              {formatPercent(item.returnPct)}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <p>尚未有可計算 Worst-of ranking 的 FCN。</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3">
+                    <p className="font-semibold text-[var(--ixai-forest)]">
+                      Concentration Exposure Top 5
+                    </p>
+                    <div className="mt-3 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                      {fcnExposureSummary.slice(0, 5).length > 0 ? (
+                        fcnExposureSummary.slice(0, 5).map((item) => (
+                          <div
+                            className="flex items-center justify-between gap-3"
+                            key={item.underlyingSymbol}
+                          >
+                            <span className="min-w-0 truncate">
+                              {item.underlyingSymbol}
+                              {item.underlyingName ? ` · ${item.underlyingName}` : ""}
+                            </span>
+                            <span className="font-mono text-[var(--ixai-forest)]">
+                              {numberLabel(item.count)}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <p>尚未有 FCN 標的集中度資料。</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
+                Risk Dashboard MVP 僅為監控與風險意識工具，不代表買賣建議、產品推薦或收益承諾。
+              </p>
+            </div>
+          ) : null}
+
+          {shouldShowRiskDashboard ? (
+            <div className="mt-5 rounded-2xl border border-[rgba(176,141,87,0.30)] bg-[rgba(176,141,87,0.08)] p-4">
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  FCN Intelligence MVP
+                </p>
+                <h3 className="text-xl font-semibold text-[var(--ixai-forest)]">
+                  {summary.intelligenceSummary.riskBand}
+                </h3>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {[
+                  ["Risk Narrative", summary.riskNarrative],
+                  ["Worst-of Narrative", summary.worstOfNarrative],
+                  ["Concentration Narrative", summary.concentrationNarrative],
+                  ["Near-KI Narrative", summary.nearKiNarrative],
+                ].map(([label, copyText]) => (
+                  <div
+                    className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-3"
+                    key={label}
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                      {label}
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                      {copyText}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
+                Monitoring and risk-awareness only. Not investment advice.
               </p>
             </div>
           ) : null}

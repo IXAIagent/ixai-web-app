@@ -1,6 +1,6 @@
 import { getSupabaseRestConfig } from "@/src/lib/supabase/server";
 
-export type MembershipPlan = "free" | "pro" | "enterprise";
+export type MembershipPlan = "free" | "basic" | "pro" | "enterprise";
 export type MembershipStatus = "active" | "expired" | "cancelled" | "trial";
 export type MembershipPersistenceMode = "supabase" | "memory";
 

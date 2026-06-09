@@ -4,6 +4,7 @@ import { WatchlistIntelligenceLite } from "@/components/account/watchlist-intell
 import { AccountPanel } from "@/components/auth/account-panel";
 import { LineDeliveryFoundationCard } from "@/components/intelligence/line-delivery-foundation-card";
 import { ConnectLineCard } from "@/components/line/connect-line-card";
+import { MembershipStatusCard } from "@/components/membership/membership-status-card";
 import { ProLabConnectionCard } from "@/components/pro/pro-lab-connection-card";
 import { ProSsoLaunchButton } from "@/components/pro/pro-sso-launch-button";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -46,6 +47,7 @@ export default function AccountPage() {
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
           Pro 串接 · 會員方案 · 功能權限
         </p>
+        <MembershipStatusCard variant="account" />
         <ProLabConnectionCard source="account" showBackendStatus showProAccess />
       </section>
 

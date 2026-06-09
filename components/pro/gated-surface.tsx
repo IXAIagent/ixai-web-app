@@ -14,7 +14,7 @@ export function GatedSurface({
   surface,
 }: {
   children: ReactNode;
-  membership?: "free" | "pro" | "enterprise";
+  membership?: "basic" | "free" | "pro" | "enterprise";
   source?: string;
   surface: IntelligenceSurface;
 }) {

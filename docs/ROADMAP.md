@@ -4,16 +4,14 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.82.1 / FCN Worst-of Engine MVP`
+`v1.86 / Membership & Entitlement Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation and FCN Foundation production release. The current v1.82 track should be built in small risk-engine increments, starting with FCN Worst-of MVP:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, and Membership / Entitlement Foundation. Current priority remains the main product line:
 
-- FCN Worst-of readback from stored underlyings.
-- KI Distance Engine next.
-- Portfolio Intelligence.
-- SaaS Membership / Entitlement.
+- Membership / Entitlement validation on `/account` and `/pro`.
+- Upgrade Flow and Pricing Page planning.
 - Legacy Pro gradual retirement into IXAI App.
 
 Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack export regresses again and the incident-prevention rules in `docs/PROJECT_RULES.md` are followed.
@@ -31,16 +29,62 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - v1.82.7: FCN risk score.
 - Monitoring / risk-awareness output only; no personalized product advice.
 
-### v1.83 — SaaS Membership / Feature Gate
+### v1.83 — FCN Risk Engine
+
+- KI distance.
+- Risk level.
+- Portfolio risk score.
+- Concentration exposure.
+- Worst-of ranking.
+- Additive Risk / Pro dashboard readback.
+- No live market data and no personalized product advice.
+
+### v1.83.1 — FCN Risk Engine Staging Validation
+
+- Validate dashboard additive fields.
+- Validate FCN Risk Engine output with staging data.
+- Confirm mobile readback safety on `/risk` and `/pro`.
+- Confirm no Supabase schema change is required.
+
+### v1.84 — FCN Intelligence Layer
+
+- Risk narrative.
+- Worst-of narrative.
+- Concentration narrative.
+- Near-KI narrative.
+- Deterministic interpretation only.
+- No OpenAI API and no external market data.
+
+### v1.85 — Portfolio Intelligence Dashboard
+
+- Portfolio health score.
+- Portfolio status.
+- Risk distribution.
+- Monitoring highlights.
+- Risk / Pro dashboard readback.
+- Retain FCN Worst-of MVP, FCN Risk Engine MVP, and FCN Intelligence MVP sections.
+- Compliance-safe monitoring language only.
+
+### v1.86 — Membership & Entitlement Foundation
 
 - Free.
+- Basic.
 - Pro.
-- Advisor.
 - Entitlement-based feature gating.
-- Portfolio / FCN / Risk Engine limits.
+- Portfolio / FCN / Risk / Pro access matrix.
+- `membershipTier` and `entitlements` dashboard fields.
+- `/pro` visible membership guard.
 - Feature access must be enforced through membership / entitlement logic, not frontend hiding alone.
 
-### v1.84 — Portfolio Intelligence Dashboard
+### v1.87 — Upgrade Flow / Pricing Page / Legacy Pro Migration
+
+- Upgrade flow.
+- Pricing page.
+- Legacy Pro migration / retirement plan.
+- Server-enforced paid API gates.
+- No payment provider until explicitly approved.
+
+### v1.88 — Portfolio Intelligence Expansion
 
 - Asset allocation.
 - Concentration.
@@ -49,7 +93,7 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - AI summary.
 - Compliance-safe monitoring language only.
 
-### v1.85 — Stock / Crypto Position Expansion
+### v1.89 — Stock / Crypto Position Expansion
 
 - Stock positions.
 - ETF positions.
