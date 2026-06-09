@@ -6,6 +6,46 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.88 — Portfolio Center UI MVP
+
+Why:
+
+- v1.82-v1.87 created real dashboard fields, but users still needed a dedicated place to read them as a coherent control surface.
+- IXAI needed the first visible Portfolio Center to connect Portfolio Foundation, FCN Risk Engine, FCN Intelligence, Portfolio Intelligence Dashboard, Membership, and Multi-Asset Foundation.
+
+What Changed:
+
+- Added `app/my-ixai/portfolio/page.tsx`.
+- Added `components/portfolio/portfolio-center-dashboard.tsx`.
+- Kept `/portfolio` as the Portfolio Input / product explanation route.
+- Introduced `/my-ixai/portfolio` as the Portfolio Center Dashboard / readback route.
+- Added desktop sidebar and mobile drawer navigation entry for Portfolio Center.
+- Displayed:
+  - Portfolio Overview.
+  - Multi-Asset Allocation.
+  - FCN Risk Dashboard.
+  - Portfolio Intelligence.
+  - Membership Status.
+
+Key Decisions:
+
+- v1.88 does not add a new engine.
+- v1.88 uses existing `/api/portfolio/dashboard` and `PortfolioDashboardSummary`.
+- Dashboard changes are UI-only and additive.
+- Upgrade CTA remains a placeholder and does not introduce billing.
+
+Out of Scope:
+
+- No migration or Supabase schema change.
+- No auth, membership, or entitlement logic change.
+- No market data API, broker integration, AI API, payment, or trading function.
+- No Daily / Weekly / Social Pack or LINE changes.
+
+Next:
+
+- v1.89 Portfolio Center QA / Mobile Polish.
+- v1.90 Billing Foundation only after Portfolio Center and membership UX are stable.
+
 ## v1.87 — Multi-Asset Portfolio Foundation
 
 Why:
