@@ -1,4 +1,12 @@
 import { FcnRequestError, listFCNPositions } from "@/src/lib/fcn/server";
+import {
+  buildConcentrationExposureSummary,
+  buildWorstOfRanking,
+  calculateKiDistance,
+  calculatePortfolioRiskScore,
+  type FCNExposureSummary,
+  type FCNWorstOfRankingItem,
+} from "@/src/lib/fcn/risk-score";
 import { PortfolioRequestError, listPortfolios } from "@/src/lib/portfolio/server";
 import { PositionRequestError } from "@/src/lib/positions/supabase";
 import { listCryptoPositions } from "@/src/lib/crypto/server";
@@ -31,6 +39,10 @@ export type PortfolioDashboardSummary = {
   cryptoDualCount: number;
   incompleteValuationCount: number;
   highLevelRiskStatus: PortfolioDashboardRiskStatus;
+  fcnExposureSummary: FCNExposureSummary[];
+  fcnWorstOfRanking: FCNWorstOfRankingItem[];
+  nearKiCount: number;
+  portfolioRiskScore: number;
   portfolios: Pick<Portfolio, "baseCurrency" | "id" | "name" | "status">[];
   generatedAt: string;
 };
@@ -62,7 +74,11 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   generatedAt: "",
   highLevelRiskStatus: "clear",
   incompleteValuationCount: 0,
+  fcnExposureSummary: [],
+  fcnWorstOfRanking: [],
+  nearKiCount: 0,
   portfolioCount: 0,
+  portfolioRiskScore: 0,
   portfolios: [],
   state: "ready",
   stockCount: 0,
@@ -187,6 +203,19 @@ export async function getPortfolioDashboardSummary(
       .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
     const lowestWorstOfReturnPct =
       readyWorstOfReturns.length > 0 ? Math.min(...readyWorstOfReturns) : null;
+    const fcnExposureSummary = buildConcentrationExposureSummary(activeFcns);
+    const fcnWorstOfRanking = buildWorstOfRanking(activeFcns);
+    const kiDistances = activeFcns.flatMap((position) =>
+      position.underlyings.map(calculateKiDistance),
+    );
+    const nearKiCount = kiDistances.filter(
+      (item) => typeof item.distanceToKiPct === "number" && item.distanceToKiPct <= 10,
+    ).length;
+    const portfolioRiskScore = calculatePortfolioRiskScore({
+      exposureSummary: fcnExposureSummary,
+      kiDistances,
+      worstOfRanking: fcnWorstOfRanking,
+    });
     const cryptoGridCount = activeCrypto.filter(isCryptoGrid).length;
     const cryptoDualCount = activeCrypto.filter(isCryptoDual).length;
     const incompleteValuationCount =
@@ -228,7 +257,11 @@ export async function getPortfolioDashboardSummary(
         lowestWorstOfReturnPct,
       }),
       incompleteValuationCount,
+      fcnExposureSummary,
+      fcnWorstOfRanking,
+      nearKiCount,
       portfolioCount: portfolios.length,
+      portfolioRiskScore,
       portfolios: portfolios.map((portfolio) => ({
         baseCurrency: portfolio.baseCurrency,
         id: portfolio.id,

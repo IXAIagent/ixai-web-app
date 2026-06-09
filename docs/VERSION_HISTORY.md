@@ -6,6 +6,44 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.83 — FCN Risk Engine
+
+Why:
+
+- v1.82.1 established Worst-of readback from stored FCN underlyings.
+- IXAI needed the first portfolio-level FCN risk aggregation before expanding into SaaS gating or broader Portfolio Intelligence.
+
+What Changed:
+
+- Added `src/lib/fcn/risk-score.ts`.
+- Added KI distance calculation.
+- Added risk level calculation.
+- Added portfolio risk score calculation.
+- Added FCN concentration exposure aggregation.
+- Added FCN Worst-of ranking aggregation.
+- Added additive dashboard fields: `portfolioRiskScore`, `nearKiCount`, `fcnExposureSummary`, and `fcnWorstOfRanking`.
+- Added Risk Dashboard MVP readback on Risk / Pro surfaces.
+
+Key Decisions:
+
+- v1.83 uses existing stored manual prices only.
+- No migration or schema change is required.
+- Dashboard fields are additive and do not break existing API consumers.
+- Risk output remains monitoring and risk awareness, not product recommendation.
+
+Out of Scope:
+
+- No live market prices.
+- No AI summary.
+- No coupon calendar.
+- No observation calendar.
+- No auth, membership, entitlement, billing, or Legacy Pro changes.
+
+Next:
+
+- v1.83.1 should validate Risk Engine fields in staging.
+- v1.84 should continue toward Portfolio Intelligence Dashboard.
+
 ## v1.82.1 — FCN Worst-of Engine MVP
 
 Why:

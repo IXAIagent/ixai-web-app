@@ -41,7 +41,11 @@ const EMPTY_SUMMARY: PortfolioDashboardSummary = {
   generatedAt: "",
   highLevelRiskStatus: "clear",
   incompleteValuationCount: 0,
+  fcnExposureSummary: [],
+  fcnWorstOfRanking: [],
+  nearKiCount: 0,
   portfolioCount: 0,
+  portfolioRiskScore: 0,
   portfolios: [],
   state: "unauthenticated",
   stockCount: 0,
@@ -195,9 +199,18 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
   const copy = VARIANT_COPY[variant];
   const hasAnyData = summary.portfolioCount + summary.fcnCount + summary.stockCount + summary.cryptoCount > 0;
   const shouldShowWorstOf = variant === "fcn" || variant === "pro" || variant === "risk";
+  const shouldShowRiskDashboard = variant === "pro" || variant === "risk";
   const fcnWorstOfSummaries = useMemo(
     () => summary.fcnWorstOfSummaries ?? [],
     [summary.fcnWorstOfSummaries],
+  );
+  const fcnWorstOfRanking = useMemo(
+    () => summary.fcnWorstOfRanking ?? [],
+    [summary.fcnWorstOfRanking],
+  );
+  const fcnExposureSummary = useMemo(
+    () => summary.fcnExposureSummary ?? [],
+    [summary.fcnExposureSummary],
   );
   const primaryWorstOf = useMemo(() => {
     const ready = fcnWorstOfSummaries
@@ -363,6 +376,78 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
               </div>
               <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
                 Worst-of 僅使用已儲存的手動價格欄位計算，不串接即時行情，不構成投資建議。
+              </p>
+            </div>
+          ) : null}
+
+          {shouldShowRiskDashboard ? (
+            <div className="mt-5 rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/75 p-4">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                    Risk Dashboard MVP
+                  </p>
+                  <p className="mt-2 text-3xl font-semibold text-[var(--ixai-forest)]">
+                    {numberLabel(summary.portfolioRiskScore ?? 0)}
+                    <span className="ml-1 text-sm font-medium text-[var(--ixai-forest-soft)]">
+                      / 100
+                    </span>
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                    Near KI Count：{numberLabel(summary.nearKiCount ?? 0)}。此分數只用已儲存資料做風險意識排序。
+                  </p>
+                </div>
+                <div className="grid gap-3 text-sm lg:min-w-[460px] lg:grid-cols-2">
+                  <div className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3">
+                    <p className="font-semibold text-[var(--ixai-forest)]">
+                      Worst-of Ranking Top 5
+                    </p>
+                    <div className="mt-3 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                      {fcnWorstOfRanking.slice(0, 5).length > 0 ? (
+                        fcnWorstOfRanking.slice(0, 5).map((item) => (
+                          <div className="flex items-center justify-between gap-3" key={item.fcnId}>
+                            <span className="min-w-0 truncate">
+                              {item.underlyingSymbol ?? "--"} · {item.fcnName}
+                            </span>
+                            <span className="font-mono text-[var(--ixai-forest)]">
+                              {formatPercent(item.returnPct)}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <p>尚未有可計算 Worst-of ranking 的 FCN。</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3">
+                    <p className="font-semibold text-[var(--ixai-forest)]">
+                      Concentration Exposure Top 5
+                    </p>
+                    <div className="mt-3 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                      {fcnExposureSummary.slice(0, 5).length > 0 ? (
+                        fcnExposureSummary.slice(0, 5).map((item) => (
+                          <div
+                            className="flex items-center justify-between gap-3"
+                            key={item.underlyingSymbol}
+                          >
+                            <span className="min-w-0 truncate">
+                              {item.underlyingSymbol}
+                              {item.underlyingName ? ` · ${item.underlyingName}` : ""}
+                            </span>
+                            <span className="font-mono text-[var(--ixai-forest)]">
+                              {numberLabel(item.count)}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <p>尚未有 FCN 標的集中度資料。</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-6 text-[rgba(9,41,31,0.58)]">
+                Risk Dashboard MVP 僅為監控與風險意識工具，不代表買賣建議、產品推薦或收益承諾。
               </p>
             </div>
           ) : null}

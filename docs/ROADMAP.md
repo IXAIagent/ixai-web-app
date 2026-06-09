@@ -4,14 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.82.1 / FCN Worst-of Engine MVP`
+`v1.83 / FCN Risk Engine`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation and FCN Foundation production release. The current v1.82 track should be built in small risk-engine increments, starting with FCN Worst-of MVP:
+IXAI has completed the Portfolio Foundation, FCN Foundation, and the first FCN Risk Engine MVP. Current priority remains the main product line:
 
-- FCN Worst-of readback from stored underlyings.
-- KI Distance Engine next.
+- FCN Risk Engine staging validation.
 - Portfolio Intelligence.
 - SaaS Membership / Entitlement.
 - Legacy Pro gradual retirement into IXAI App.
@@ -31,7 +30,24 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - v1.82.7: FCN risk score.
 - Monitoring / risk-awareness output only; no personalized product advice.
 
-### v1.83 — SaaS Membership / Feature Gate
+### v1.83 — FCN Risk Engine
+
+- KI distance.
+- Risk level.
+- Portfolio risk score.
+- Concentration exposure.
+- Worst-of ranking.
+- Additive Risk / Pro dashboard readback.
+- No live market data and no personalized product advice.
+
+### v1.83.1 — FCN Risk Engine Staging Validation
+
+- Validate dashboard additive fields.
+- Validate FCN Risk Engine output with staging data.
+- Confirm mobile readback safety on `/risk` and `/pro`.
+- Confirm no Supabase schema change is required.
+
+### v1.84 — SaaS Membership / Feature Gate
 
 - Free.
 - Pro.
@@ -40,7 +56,7 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Portfolio / FCN / Risk Engine limits.
 - Feature access must be enforced through membership / entitlement logic, not frontend hiding alone.
 
-### v1.84 — Portfolio Intelligence Dashboard
+### v1.85 — Portfolio Intelligence Dashboard
 
 - Asset allocation.
 - Concentration.
@@ -49,7 +65,7 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - AI summary.
 - Compliance-safe monitoring language only.
 
-### v1.85 — Stock / Crypto Position Expansion
+### v1.86 — Stock / Crypto Position Expansion
 
 - Stock positions.
 - ETF positions.
