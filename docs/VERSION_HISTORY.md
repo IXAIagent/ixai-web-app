@@ -6,6 +6,39 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.96 — Portfolio Dashboard Foundation
+
+Why:
+
+- v1.90-v1.95 established the Portfolio input, CRUD, data model, repository, persistence, and ownership validation layers.
+- IXAI needed the first user-visible dashboard layer that reads directly from the Repository instead of relying on mock display data.
+
+What Changed:
+
+- Added a Portfolio Dashboard Foundation section inside `/my-ixai/portfolio`.
+- The dashboard reads accounts, assets, and positions through `PortfolioPersistenceProvider` and the Repository Layer.
+- Added repository-sourced totals for accounts, assets, and positions.
+- Added asset category allocation for FCN, STOCK, CRYPTO, GRID, DUAL, and CASH.
+- Added provider allocation for MANUAL, BINANCE, BYBIT, OKX, CTBC, FUBON, YUANTA, IBKR, FIRSTRRADE, and CSV.
+- Added region allocation for TW, HK, CN, JP, KR, US, EU, and GLOBAL.
+- Updated the Architecture Map with Portfolio Dashboard Foundation and Portfolio Intelligence (Coming Soon).
+
+Key Decisions:
+
+- v1.96 is visualization only.
+- No new API route or duplicate data source is introduced.
+- No chart library is added.
+- No market data, news, AI commentary, broker sync, membership, or entitlement logic is changed.
+
+Out of Scope:
+
+- No migration, schema change, auth change, membership change, entitlement change, CSV import processing, broker sync, market data integration, news API, AI integration, FCN engine, or risk engine work.
+
+Next:
+
+- Validate dashboard output with authenticated production/staging users.
+- Continue toward CSV Import MVP or holding-aware news only after dashboard persistence is stable.
+
 ## v1.94 — Portfolio Persistence Foundation
 
 Why:

@@ -4,15 +4,15 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.94 / Portfolio Persistence Foundation`
+`v1.96 / Portfolio Dashboard Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, first Portfolio Data Model Foundation, first Portfolio Repository Foundation, and first Portfolio Persistence Foundation. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, first Portfolio Data Model Foundation, first Portfolio Repository Foundation, first Portfolio Persistence Foundation, first Ownership Validation layer, and first Repository-driven Portfolio Dashboard Foundation. Current priority remains the main product line:
 
+- Validate the Repository-driven Portfolio Dashboard with authenticated User A / User B.
 - Validate Supabase-backed Create / Read asset persistence with authenticated User A / User B.
-- Validate Repository contract boundaries before introducing Supabase persistence.
-- Validate the Portfolio Account → Asset → Position model and migration foundation in staging before connecting UI persistence.
+- Validate the Portfolio Account → Asset → Position model under real dashboard readback.
 - Keep Stock / Crypto / Grid / Dual / Cash expansion behind a clear data-entry and validation plan.
 - Keep CRUD persistence behind explicit Supabase API and RLS validation.
 - Plan CSV Import MVP after data model migration validation.
@@ -194,20 +194,61 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Keep Update Asset and Delete Asset Coming Soon.
 - No migration, schema change, API route, auth, membership, entitlement, CSV upload, broker sync, market data, news API, FCN engine, intelligence engine, or risk engine change.
 
-### v1.95 — CSV Import MVP
+### v1.95 — Portfolio Ownership Validation MVP
+
+- Add Ownership Validation Status inside Portfolio Center.
+- Display current user id, account id, account count, asset count, position count, repository source, and RLS status.
+- Confirm Asset Create re-reads repository data after persistence.
+- Keep isolation enforced by authenticated user scope and Supabase RLS.
+- No auth, membership, entitlement, schema, or API route changes.
+
+### v1.96 — Portfolio Dashboard Foundation
+
+- Add repository-driven dashboard section inside `/my-ixai/portfolio`.
+- Display total accounts, total assets, and total positions.
+- Display asset category allocation:
+  - FCN.
+  - STOCK.
+  - CRYPTO.
+  - GRID.
+  - DUAL.
+  - CASH.
+- Display provider allocation:
+  - MANUAL.
+  - BINANCE.
+  - BYBIT.
+  - OKX.
+  - CTBC.
+  - FUBON.
+  - YUANTA.
+  - IBKR.
+  - FIRSTRRADE.
+  - CSV.
+- Display region allocation:
+  - TW.
+  - HK.
+  - CN.
+  - JP.
+  - KR.
+  - US.
+  - EU.
+  - GLOBAL.
+- No migration, schema change, API route, auth, membership, entitlement, market data, news, AI, broker sync, or FCN engine change.
+
+### v1.97 — CSV Import MVP
 
 - Map CSV rows into Portfolio Account → Asset → Position.
 - Use v1.92 model as the import target.
 - Validate rows before persistence.
 - No broker API or automatic sync.
 
-### v1.96 — Holding-Aware News Engine
+### v1.98 — Holding-Aware News Engine
 
 - Use Portfolio Assets and FCN underlyings to identify relevant news categories.
 - Add risk impact note and IXAI perspective architecture.
 - No AI API until explicitly approved.
 
-### v1.97 — Portfolio Input QA / Mobile Polish
+### v1.99 — Portfolio Input QA / Mobile Polish
 
 - Validate `/my-ixai/input` and `/my-ixai/portfolio/assets` at 375px, 768px, and desktop widths.
 - Confirm no horizontal overflow.
@@ -215,21 +256,21 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Confirm placeholder CTAs do not imply live CSV upload, broker sync, payment, or external integrations.
 - Confirm model foundation stays pure and does not call DB / API / browser storage.
 
-### v1.98 — Stock Portfolio Foundation
+### v2.0 — Stock Portfolio Foundation
 
 - Stock / ETF portfolio readback expansion.
 - Stock position monitoring UX planning.
 - Asset allocation and concentration foundation.
 - No broker execution and no personalized trading advice.
 
-### v1.99 — Crypto / Grid Foundation
+### v2.1 — Crypto / Grid Foundation
 
 - Crypto spot portfolio expansion.
 - Grid strategy monitoring foundation.
 - Dual investment monitoring foundation.
 - No exchange execution and no automated trading.
 
-### v2.0 — Unified Risk Engine
+### v2.2 — Unified Risk Engine
 
 - Combine FCN, stock, crypto, grid, dual, and cash awareness into a unified risk model.
 - Cross-asset concentration.

@@ -80,8 +80,8 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         status: "enabled",
       },
       {
-        copy: "Portfolio Center 已能讀取 health、risk、asset 與 membership fields。",
-        label: "Portfolio Dashboard",
+        copy: "Repository-driven dashboard 已可顯示 accounts、assets、positions、provider 與 region allocation。",
+        label: "Portfolio Dashboard Foundation",
         status: "mvp",
       },
     ],
@@ -180,6 +180,11 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
   {
     copy: "未啟用；目前沒有 AI API 或個人化代理。",
     label: "AI Advisory Agent",
+    status: "coming_soon",
+  },
+  {
+    copy: "未啟用；未產生 AI commentary 或 holding-aware intelligence。",
+    label: "Portfolio Intelligence",
     status: "coming_soon",
   },
 ];
@@ -282,7 +287,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio Intelligence（Coming Soon）。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>
