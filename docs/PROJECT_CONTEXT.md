@@ -54,7 +54,7 @@ Production foundation:
 
 Current development version:
 
-`v1.92 — Portfolio Data Model Foundation`
+`v1.94 — Portfolio Persistence Foundation`
 
 Current production state:
 
@@ -67,7 +67,7 @@ Current production state:
 
 IXAI has moved from a demonstration-oriented public intelligence App into a logged-in product where users can create Portfolio / FCN records and persist them in Supabase. The App now owns the first real personal-data layer for future Portfolio Intelligence, FCN Risk Engine, and Pro workflows.
 
-v1.82.1 began the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. v1.83 extended that into the first portfolio-level FCN Risk Engine layer: KI distance, risk level, portfolio risk score, concentration exposure, and Worst-of ranking. v1.84 adds the first FCN Intelligence Layer: deterministic risk, Worst-of, concentration, and Near-KI narratives. v1.85 combines these existing fields into the first Portfolio Intelligence Dashboard MVP on Risk / Pro surfaces: portfolio health score, portfolio status, risk distribution, and monitoring highlights. v1.86 adds the first Membership / Entitlement foundation for Free / Basic / Pro access rules without introducing payment or schema migration. v1.87 shifts the portfolio architecture from FCN-centric readback toward a Multi-Asset AI Risk Platform by normalizing FCN, Stock, Crypto, Grid, Dual, and Cash categories. v1.88 makes those fields visible in the first dedicated Portfolio Center at `/my-ixai/portfolio`. v1.89 adds an IXAI Architecture Map so users can understand the Portfolio, FCN, Risk, Intelligence, Membership, and Readback capabilities currently enabled. v1.90 adds `/my-ixai/input` as the Asset Input Hub and defines the first global asset input model for future manual input, CSV import, broker sync, holding-aware news, and multilingual portfolio workflows. v1.91 adds `/my-ixai/portfolio/assets` as a mock-only Asset Management Center that validates Create / Read / Update / Delete UI and state behavior without writing to Supabase. v1.92 adds the formal Account → Asset → Position data model foundation and an additive Supabase schema / RLS foundation for future persistent multi-asset CRUD.
+v1.82.1 began the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. v1.83 extended that into the first portfolio-level FCN Risk Engine layer: KI distance, risk level, portfolio risk score, concentration exposure, and Worst-of ranking. v1.84 adds the first FCN Intelligence Layer: deterministic risk, Worst-of, concentration, and Near-KI narratives. v1.85 combines these existing fields into the first Portfolio Intelligence Dashboard MVP on Risk / Pro surfaces: portfolio health score, portfolio status, risk distribution, and monitoring highlights. v1.86 adds the first Membership / Entitlement foundation for Free / Basic / Pro access rules without introducing payment or schema migration. v1.87 shifts the portfolio architecture from FCN-centric readback toward a Multi-Asset AI Risk Platform by normalizing FCN, Stock, Crypto, Grid, Dual, and Cash categories. v1.88 makes those fields visible in the first dedicated Portfolio Center at `/my-ixai/portfolio`. v1.89 adds an IXAI Architecture Map so users can understand the Portfolio, FCN, Risk, Intelligence, Membership, and Readback capabilities currently enabled. v1.90 adds `/my-ixai/input` as the Asset Input Hub and defines the first global asset input model for future manual input, CSV import, broker sync, holding-aware news, and multilingual portfolio workflows. v1.91 adds `/my-ixai/portfolio/assets` as a mock-only Asset Management Center that validates Create / Read / Update / Delete UI and state behavior without writing to Supabase. v1.92 adds the formal Account → Asset → Position data model foundation and an additive Supabase schema / RLS foundation for future persistent multi-asset CRUD. v1.93 adds the Portfolio Repository Layer so UI can depend on a stable contract before Supabase persistence is connected. v1.94 connects the Repository Layer to Supabase for Create Asset and Read Asset only, while Update / Delete remain future work.
 
 Validated production behavior:
 
@@ -111,7 +111,7 @@ Still not complete:
 
 Current Development Version:
 
-`v1.92 — Portfolio Data Model Foundation`
+`v1.94 — Portfolio Persistence Foundation`
 
 Current Core Flow:
 
@@ -151,6 +151,8 @@ Product Layers:
 - Portfolio Input Foundation: v1.90 adds `/my-ixai/input` as the Asset Input Hub and defines a pure TypeScript global asset model for FCN, Stock, Crypto, Grid, Dual, Cash, CSV import, future broker / exchange / bank sources, global regions, and supported language codes. It adds no DB, API, migration, market data, broker, news, or AI integration.
 - Portfolio CRUD Foundation: v1.91 adds `/my-ixai/portfolio/assets` as a mock-only Asset Management Center with create, read, update, and delete UI state. It adds no DB, API, migration, auth, membership, broker, news, AI, or trading integration.
 - Portfolio Data Model Foundation: v1.92 adds Portfolio Account → Asset → Position types, mock repositories, and additive Supabase migration foundation for `portfolio_accounts`, `portfolio_assets`, and `portfolio_positions`. UI persistence is still not connected.
+- Portfolio Repository Foundation: v1.93 adds the Repository contract between UI and future persistence. The active repository source is mock-only; Supabase persistence remains Coming Soon.
+- Portfolio Persistence Foundation: v1.94 adds Supabase-backed repository read/create for Asset Management Center. It uses authenticated Supabase sessions and RLS; Update / Delete remain Coming Soon.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 

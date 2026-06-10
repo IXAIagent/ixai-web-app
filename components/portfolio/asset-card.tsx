@@ -20,9 +20,11 @@ function formatDate(value: string) {
 export function AssetCard({
   asset,
   onDelete,
+  mutationsDisabled = false,
   onEdit,
 }: {
   asset: PortfolioCrudAsset;
+  mutationsDisabled?: boolean;
   onDelete: (asset: PortfolioCrudAsset) => void;
   onEdit: (asset: PortfolioCrudAsset) => void;
 }) {
@@ -69,20 +71,22 @@ export function AssetCard({
 
         <div className="grid gap-2 sm:flex sm:justify-end">
           <button
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[rgba(9,41,31,0.16)] bg-white px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] transition hover:bg-[rgba(9,41,31,0.04)]"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[rgba(9,41,31,0.16)] bg-white px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] transition hover:bg-[rgba(9,41,31,0.04)] disabled:cursor-not-allowed disabled:opacity-55"
+            disabled={mutationsDisabled}
             onClick={() => onEdit(asset)}
             type="button"
           >
             <Edit3 className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-            Edit Asset
+            {mutationsDisabled ? "Edit Coming Soon" : "Edit Asset"}
           </button>
           <button
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[color-mix(in_srgb,var(--ixai-risk-watch)_36%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_8%,white)] px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] transition hover:bg-[color-mix(in_srgb,var(--ixai-risk-watch)_12%,white)]"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[color-mix(in_srgb,var(--ixai-risk-watch)_36%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_8%,white)] px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] transition hover:bg-[color-mix(in_srgb,var(--ixai-risk-watch)_12%,white)] disabled:cursor-not-allowed disabled:opacity-55"
+            disabled={mutationsDisabled}
             onClick={() => onDelete(asset)}
             type="button"
           >
             <Trash2 className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-            Delete Asset
+            {mutationsDisabled ? "Delete Coming Soon" : "Delete Asset"}
           </button>
         </div>
       </div>

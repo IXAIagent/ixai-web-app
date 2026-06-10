@@ -36,7 +36,7 @@ export function AssetForm({
 }: {
   editingAsset: PortfolioCrudAsset | null;
   onCancelEdit: () => void;
-  onSubmit: (input: PortfolioCrudAssetInput, editingAssetId?: string) => void;
+  onSubmit: (input: PortfolioCrudAssetInput, editingAssetId?: string) => Promise<void> | void;
 }) {
   const [input, setInput] = useState<PortfolioCrudAssetInput>(() =>
     getInitialInput(editingAsset),
@@ -44,8 +44,9 @@ export function AssetForm({
   const [errors, setErrors] = useState<
     Partial<Record<keyof PortfolioCrudAssetInput, string>>
   >({});
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const result = validatePortfolioCrudAssetInput(input);
     setErrors(result.errors);
@@ -54,17 +55,22 @@ export function AssetForm({
       return;
     }
 
-    onSubmit(
-      {
-        ...input,
-        name: input.name.trim(),
-        notes: input.notes?.trim(),
-      },
-      editingAsset?.id,
-    );
+    setSubmitting(true);
+    try {
+      await onSubmit(
+        {
+          ...input,
+          name: input.name.trim(),
+          notes: input.notes?.trim(),
+        },
+        editingAsset?.id,
+      );
 
-    if (!editingAsset) {
-      setInput(DEFAULT_PORTFOLIO_CRUD_INPUT);
+      if (!editingAsset) {
+        setInput(DEFAULT_PORTFOLIO_CRUD_INPUT);
+      }
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -177,10 +183,11 @@ export function AssetForm({
       </label>
 
       <button
+        disabled={submitting}
         className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:-translate-y-0.5 sm:w-fit"
         type="submit"
       >
-        {editingAsset ? "Update Asset" : "Add Asset"}
+        {submitting ? "Saving..." : editingAsset ? "Update Asset" : "Add Asset"}
       </button>
     </form>
   );

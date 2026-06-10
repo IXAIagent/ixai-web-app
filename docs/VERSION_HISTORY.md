@@ -6,6 +6,71 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.94 — Portfolio Persistence Foundation
+
+Why:
+
+- v1.93 created the Repository contract, but the Portfolio system was still mock-only.
+- IXAI needed the first low-risk connection from Asset Management UI to Supabase persistence before CSV Import can land.
+
+What Changed:
+
+- Added `supabase-portfolio-repository.ts`.
+- Added `portfolio-persistence-provider.ts`.
+- Connected `/my-ixai/portfolio/assets` read/create flow to Supabase repository mode.
+- Asset create writes to `portfolio_assets` under the authenticated user.
+- The repository ensures a default `MANUAL` portfolio account exists for the user before creating an asset.
+- Portfolio Center now shows Persistence Layer: Enabled.
+- Architecture Map now includes Portfolio Persistence Foundation.
+
+Key Decisions:
+
+- v1.94 only implements Create Asset and Read Asset.
+- Update Asset and Delete Asset remain Coming Soon.
+- No service role key is used.
+- No API route is added.
+- Supabase RLS remains the ownership enforcement layer.
+
+Out of Scope:
+
+- No migration, schema change, auth change, membership change, entitlement change, CSV upload, broker sync, market data, news API, FCN engine, intelligence engine, risk engine, update persistence, or delete persistence.
+
+Next:
+
+- Run manual authenticated User A / User B ownership validation.
+- v1.95 CSV Import MVP can target the repository after persistence validation.
+
+## v1.93 — Portfolio Repository Foundation
+
+Why:
+
+- v1.92 defined the Account → Asset → Position data model, but UI still needed an abstraction layer before future Supabase persistence.
+- IXAI needs repository boundaries so UI, CSV import, and future database adapters can evolve without coupling directly to Supabase implementation details.
+
+What Changed:
+
+- Added `src/lib/portfolio/repository/`.
+- Added Portfolio Repository contracts for accounts, assets, and positions.
+- Added a mock Portfolio Repository backed by v1.92 mock data.
+- Updated v1.91 CRUD mock adapter to load through the Repository Layer.
+- Added `Repository Status` to Portfolio Center.
+- Added Portfolio Repository Foundation to the Architecture Map.
+
+Key Decisions:
+
+- v1.93 is repository architecture only.
+- Mock Repository is the only active source.
+- Persistence Layer remains Coming Soon.
+- No Supabase reads / writes, no API routes, no migration application, and no auth / membership / entitlement changes.
+
+Out of Scope:
+
+- No CSV upload, broker sync, market data API, news API, intelligence engine, FCN engine, or risk engine work.
+
+Next:
+
+- Future work can add a Supabase repository implementation behind the same contract after staging validation.
+
 ## v1.92 — Portfolio Data Model Foundation
 
 Why:
