@@ -10,6 +10,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 
+import { PortfolioArchitectureMap } from "@/components/portfolio/portfolio-architecture-map";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
 import type { AssetCategory } from "@/src/lib/portfolio/assets";
@@ -203,6 +204,8 @@ export function PortfolioCenterDashboard() {
           ))}
         </div>
       </section>
+
+      <PortfolioArchitectureMap />
 
       <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
         <div className="flex items-start gap-3">
@@ -440,7 +443,7 @@ export function PortfolioCenterDashboard() {
       </section>
 
       <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(9,41,31,0.04)] p-5 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-        本頁僅用於資產整理、風險監控與資訊閱讀，不構成投資建議、買賣建議、目標價、報酬承諾或自動交易。
+        本頁僅用於資產整理、風險監控與資訊閱讀，不構成投資建議、交易指令、價格預測、績效承諾或自動交易。
       </section>
     </div>
   );

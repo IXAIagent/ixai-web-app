@@ -54,7 +54,7 @@ Production foundation:
 
 Current development version:
 
-`v1.88 — Portfolio Center UI MVP`
+`v1.89 — Portfolio Architecture Visualization MVP`
 
 Current production state:
 
@@ -67,7 +67,7 @@ Current production state:
 
 IXAI has moved from a demonstration-oriented public intelligence App into a logged-in product where users can create Portfolio / FCN records and persist them in Supabase. The App now owns the first real personal-data layer for future Portfolio Intelligence, FCN Risk Engine, and Pro workflows.
 
-v1.82.1 began the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. v1.83 extended that into the first portfolio-level FCN Risk Engine layer: KI distance, risk level, portfolio risk score, concentration exposure, and Worst-of ranking. v1.84 adds the first FCN Intelligence Layer: deterministic risk, Worst-of, concentration, and Near-KI narratives. v1.85 combines these existing fields into the first Portfolio Intelligence Dashboard MVP on Risk / Pro surfaces: portfolio health score, portfolio status, risk distribution, and monitoring highlights. v1.86 adds the first Membership / Entitlement foundation for Free / Basic / Pro access rules without introducing payment or schema migration. v1.87 shifts the portfolio architecture from FCN-centric readback toward a Multi-Asset AI Risk Platform by normalizing FCN, Stock, Crypto, Grid, Dual, and Cash categories. v1.88 makes those fields visible in the first dedicated Portfolio Center at `/my-ixai/portfolio`.
+v1.82.1 began the FCN Risk Engine in the smallest possible increment: Worst-of readback from already stored FCN underlyings. v1.83 extended that into the first portfolio-level FCN Risk Engine layer: KI distance, risk level, portfolio risk score, concentration exposure, and Worst-of ranking. v1.84 adds the first FCN Intelligence Layer: deterministic risk, Worst-of, concentration, and Near-KI narratives. v1.85 combines these existing fields into the first Portfolio Intelligence Dashboard MVP on Risk / Pro surfaces: portfolio health score, portfolio status, risk distribution, and monitoring highlights. v1.86 adds the first Membership / Entitlement foundation for Free / Basic / Pro access rules without introducing payment or schema migration. v1.87 shifts the portfolio architecture from FCN-centric readback toward a Multi-Asset AI Risk Platform by normalizing FCN, Stock, Crypto, Grid, Dual, and Cash categories. v1.88 makes those fields visible in the first dedicated Portfolio Center at `/my-ixai/portfolio`. v1.89 adds an IXAI Architecture Map so users can understand the Portfolio, FCN, Risk, Intelligence, Membership, and Readback capabilities currently enabled.
 
 Validated production behavior:
 
@@ -111,7 +111,7 @@ Still not complete:
 
 Current Development Version:
 
-`v1.88 — Portfolio Center UI MVP`
+`v1.89 — Portfolio Architecture Visualization MVP`
 
 Current Core Flow:
 
@@ -145,6 +145,7 @@ Product Layers:
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
 - Portfolio Center UI: v1.88 adds `/my-ixai/portfolio` as the first user control surface for Portfolio Overview, Multi-Asset Allocation, FCN Risk Dashboard, Portfolio Intelligence, and Membership Status. `/portfolio` remains the input route.
+- Portfolio Architecture Visualization: v1.89 adds an IXAI Architecture Map inside Portfolio Center to show enabled Portfolio, Risk, Intelligence, Membership, and Readback layers, plus Coming Soon boundaries for Broker Integration, Market Data API, Payment / Billing, and AI Advisory Agent.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 

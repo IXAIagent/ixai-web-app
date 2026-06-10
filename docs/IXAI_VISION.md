@@ -75,9 +75,9 @@ Portfolio
 └─ Cash
 ```
 
-v1.88 turns this architecture into the first Portfolio Center UI. The product should keep separating input routes from dashboard routes: `/portfolio` is for creating and explaining Portfolio data, while `/my-ixai/portfolio` is the user's readback and control surface.
+v1.88 turns this architecture into the first Portfolio Center UI. v1.89 adds the Architecture Map so users can understand which Portfolio, FCN, Risk, Intelligence, Membership, and Readback modules are enabled. The product should keep separating input routes from dashboard routes: `/portfolio` is for creating and explaining Portfolio data, while `/my-ixai/portfolio` is the user's readback, architecture, and control surface.
 
-This does not turn IXAI into a signal-selling product. Pro membership should represent deeper risk workflow, portfolio organization, FCN monitoring, and intelligence continuity. SaaS monetization should use membership, entitlement, and feature gating rather than trading advice, target prices, guaranteed returns, or buy/sell recommendations.
+This does not turn IXAI into a signal-selling product. Pro membership should represent deeper risk workflow, portfolio organization, FCN monitoring, and intelligence continuity. SaaS monetization should use membership, entitlement, and feature gating rather than trading calls, price prediction products, performance promises, or automated execution.
 
 ## Future Wealth OS
 
