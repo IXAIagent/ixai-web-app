@@ -34,6 +34,7 @@ const navGroups: Array<{
       { label: "我的 IXAI", href: "/account" },
       { label: "Portfolio Center", href: "/my-ixai/portfolio" },
       { label: "Asset Input", href: "/my-ixai/input" },
+      { label: "Portfolio Assets", href: "/my-ixai/portfolio/assets" },
     ],
   },
   {

@@ -40,6 +40,12 @@ export default function MyIxaiPortfolioPage() {
               </Link>
               <Link
                 className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-white/[0.12]"
+                href="/my-ixai/portfolio/assets"
+              >
+                管理資產
+              </Link>
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-white/[0.12]"
                 href="/fcn"
               >
                 建立 FCN

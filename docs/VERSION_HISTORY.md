@@ -6,6 +6,41 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.91 — Portfolio CRUD Foundation MVP
+
+Why:
+
+- v1.90 established the global Asset Input model, but users still needed a visible Asset Management Center that demonstrates Create / Read / Update / Delete flows.
+- IXAI needed the first UI foundation for future Supabase-backed asset CRUD without prematurely changing schema or API contracts.
+
+What Changed:
+
+- Added `/my-ixai/portfolio/assets`.
+- Added `components/portfolio/asset-list.tsx`.
+- Added `components/portfolio/asset-card.tsx`.
+- Added `components/portfolio/asset-form.tsx`.
+- Added `components/portfolio/delete-asset-dialog.tsx`.
+- Added mock CRUD model files under `src/lib/portfolio/crud/`.
+- Added mock assets: FCN717N, FCN715N, BTC Grid, ETH Grid, and USDT Cash.
+- Added navigation entries for Portfolio Assets.
+- Updated Portfolio Architecture Map to include Portfolio CRUD Foundation.
+
+Key Decisions:
+
+- v1.91 is mock-only and frontend-state-only.
+- No Supabase write, no API route, no migration, no schema change, no auth change, and no membership / entitlement change.
+- Mobile uses stacked asset cards; desktop uses a responsive grid.
+
+Out of Scope:
+
+- No Broker API, Binance API, securities API, News API, AI API, or trading function.
+- No production persistence for new asset records.
+
+Next:
+
+- Validate the UX and mobile behavior before connecting to a persistent data layer.
+- Future CRUD persistence must use staged Supabase validation and preserve ownership isolation.
+
 ## v1.90 — Portfolio Input Foundation + Global Asset Model Foundation
 
 Why:

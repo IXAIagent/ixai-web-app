@@ -40,6 +40,16 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         status: "enabled",
       },
       {
+        copy: "Asset Input Hub 已定義 FCN、Stock、Crypto、Grid、Dual、Cash 輸入語言。",
+        label: "Portfolio Input Foundation",
+        status: "mvp",
+      },
+      {
+        copy: "Asset Management Center 以 mock state 驗證 Create / Read / Update / Delete。",
+        label: "Portfolio CRUD Foundation",
+        status: "mvp",
+      },
+      {
         copy: "FCN、Stock、Crypto、Grid、Dual、Cash 類別已完成架構抽象。",
         label: "Multi-Asset Foundation",
         status: "mvp",
@@ -197,7 +207,7 @@ export function PortfolioArchitectureMap() {
             IXAI 投資系統架構
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            目前已啟用的 Portfolio、FCN、Risk、Intelligence 與 Membership 能力。
+            目前已啟用的 Portfolio、Input、CRUD、FCN、Risk、Intelligence 與 Membership 能力。
           </p>
         </div>
         <FeatureIcon icon={Layers3} shadow={false} />
@@ -252,6 +262,8 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Dashboard。
+        {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>
     </section>
