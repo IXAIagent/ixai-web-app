@@ -4,14 +4,15 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.90 / Portfolio Input Foundation + Global Asset Model Foundation`
+`v1.91 / Portfolio CRUD Foundation MVP`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, and the first Portfolio Input Foundation. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, and first mock-only Portfolio CRUD Foundation. Current priority remains the main product line:
 
-- Validate `/my-ixai/input` as the Asset Input Hub.
+- Validate `/my-ixai/portfolio/assets` as the Asset Management Center.
 - Keep Stock / Crypto / Grid / Dual / Cash expansion behind a clear data-entry and validation plan.
+- Keep CRUD persistence behind explicit Supabase API and RLS validation.
 - Plan CSV Import MVP only after input model and mobile UX remain stable.
 - Billing Foundation only after membership and Portfolio Center UX are stable.
 
@@ -138,28 +139,38 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Prepare holding-aware news intelligence architecture without adding news API or AI API.
 - No migration, schema, API, broker, market data, payment, or trading function.
 
-### v1.91 — Portfolio Input QA / Mobile Polish
+### v1.91 — Portfolio CRUD Foundation MVP
 
-- Validate `/my-ixai/input` at 375px, 768px, and desktop widths.
+- Add `/my-ixai/portfolio/assets` as Asset Management Center.
+- Add mock-only Create / Read / Update / Delete interactions.
+- Add asset list, asset card, asset form, and delete confirmation dialog.
+- Use v1.90 asset categories: FCN, STOCK, CRYPTO, GRID, DUAL, CASH.
+- Mobile stacked cards; desktop responsive grid.
+- No migration, schema change, Supabase write, API route, auth, membership, external data, or trading function.
+
+### v1.92 — Portfolio Input QA / Mobile Polish
+
+- Validate `/my-ixai/input` and `/my-ixai/portfolio/assets` at 375px, 768px, and desktop widths.
 - Confirm no horizontal overflow.
+- Confirm mock CRUD copy does not imply persistence.
 - Confirm placeholder CTAs do not imply live CSV upload, broker sync, payment, or external integrations.
 - Confirm model foundation stays pure and does not call DB / API / browser storage.
 
-### v1.92 — Stock Portfolio Foundation
+### v1.93 — Stock Portfolio Foundation
 
 - Stock / ETF portfolio readback expansion.
 - Stock position monitoring UX planning.
 - Asset allocation and concentration foundation.
 - No broker execution and no personalized trading advice.
 
-### v1.93 — Crypto / Grid Foundation
+### v1.94 — Crypto / Grid Foundation
 
 - Crypto spot portfolio expansion.
 - Grid strategy monitoring foundation.
 - Dual investment monitoring foundation.
 - No exchange execution and no automated trading.
 
-### v1.94 — Unified Risk Engine
+### v1.95 — Unified Risk Engine
 
 - Combine FCN, stock, crypto, grid, dual, and cash awareness into a unified risk model.
 - Cross-asset concentration.
