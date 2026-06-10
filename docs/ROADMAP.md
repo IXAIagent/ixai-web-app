@@ -4,16 +4,16 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.91 / Portfolio CRUD Foundation MVP`
+`v1.92 / Portfolio Data Model Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, and first mock-only Portfolio CRUD Foundation. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, and first Portfolio Data Model Foundation. Current priority remains the main product line:
 
-- Validate `/my-ixai/portfolio/assets` as the Asset Management Center.
+- Validate the Portfolio Account → Asset → Position model and migration foundation in staging before connecting UI persistence.
 - Keep Stock / Crypto / Grid / Dual / Cash expansion behind a clear data-entry and validation plan.
 - Keep CRUD persistence behind explicit Supabase API and RLS validation.
-- Plan CSV Import MVP only after input model and mobile UX remain stable.
+- Plan CSV Import MVP after data model migration validation.
 - Billing Foundation only after membership and Portfolio Center UX are stable.
 
 Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack export regresses again and the incident-prevention rules in `docs/PROJECT_RULES.md` are followed.
@@ -148,7 +148,33 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Mobile stacked cards; desktop responsive grid.
 - No migration, schema change, Supabase write, API route, auth, membership, external data, or trading function.
 
-### v1.92 — Portfolio Input QA / Mobile Polish
+### v1.92 — Portfolio Data Model Foundation
+
+- Add Portfolio Account → Asset → Position TypeScript model.
+- Add mock account / asset / position repository.
+- Add additive Supabase migration foundation:
+  - `portfolio_accounts`.
+  - `portfolio_assets`.
+  - `portfolio_positions`.
+- Add owner-only RLS foundation.
+- Add Portfolio Center Data Model Status.
+- Do not connect UI to Supabase yet.
+- No Broker API, News API, AI API, Market Data API, real import, real sync, auth, membership, entitlement, or trading function.
+
+### v1.93 — CSV Import MVP
+
+- Map CSV rows into Portfolio Account → Asset → Position.
+- Use v1.92 model as the import target.
+- Validate rows before persistence.
+- No broker API or automatic sync.
+
+### v1.94 — Holding-Aware News Engine
+
+- Use Portfolio Assets and FCN underlyings to identify relevant news categories.
+- Add risk impact note and IXAI perspective architecture.
+- No AI API until explicitly approved.
+
+### v1.95 — Portfolio Input QA / Mobile Polish
 
 - Validate `/my-ixai/input` and `/my-ixai/portfolio/assets` at 375px, 768px, and desktop widths.
 - Confirm no horizontal overflow.
@@ -156,21 +182,21 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Confirm placeholder CTAs do not imply live CSV upload, broker sync, payment, or external integrations.
 - Confirm model foundation stays pure and does not call DB / API / browser storage.
 
-### v1.93 — Stock Portfolio Foundation
+### v1.96 — Stock Portfolio Foundation
 
 - Stock / ETF portfolio readback expansion.
 - Stock position monitoring UX planning.
 - Asset allocation and concentration foundation.
 - No broker execution and no personalized trading advice.
 
-### v1.94 — Crypto / Grid Foundation
+### v1.97 — Crypto / Grid Foundation
 
 - Crypto spot portfolio expansion.
 - Grid strategy monitoring foundation.
 - Dual investment monitoring foundation.
 - No exchange execution and no automated trading.
 
-### v1.95 — Unified Risk Engine
+### v1.98 — Unified Risk Engine
 
 - Combine FCN, stock, crypto, grid, dual, and cash awareness into a unified risk model.
 - Cross-asset concentration.
