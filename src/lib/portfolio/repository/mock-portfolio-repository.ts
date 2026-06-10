@@ -73,6 +73,18 @@ export function createMockPortfolioRepository(): PortfolioRepository {
       return [...assets];
     },
 
+    async getOwnershipValidationStatus() {
+      return {
+        accountCount: mockPortfolioAccounts.length,
+        assetCount: assets.length,
+        currentAccountId: mockPortfolioAccounts[0]?.id ?? null,
+        currentUserId: mockPortfolioAccounts[0]?.userId ?? "mock-user",
+        positionCount: positions.length,
+        repositorySource: "mock_repository",
+        rlsStatus: "mock_only",
+      };
+    },
+
     async getPositions() {
       return [...positions];
     },

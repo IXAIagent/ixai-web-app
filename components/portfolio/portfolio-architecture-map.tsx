@@ -65,6 +65,11 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         status: "mvp",
       },
       {
+        copy: "顯示 current user、account、asset、position 與 RLS owner-scoped status，驗證資料隔離。",
+        label: "Portfolio Ownership Validation",
+        status: "mvp",
+      },
+      {
         copy: "FCN、Stock、Crypto、Grid、Dual、Cash 類別已完成架構抽象。",
         label: "Multi-Asset Foundation",
         status: "mvp",
@@ -277,7 +282,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Dashboard。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>
