@@ -30,6 +30,7 @@ Production data ownership update:
 - Production persistence contracts include `portfolios`, `fcn_positions`, `fcn_underlyings`, `stock_positions`, and `crypto_positions`.
 - v1.87 adds the App-native Multi-Asset Portfolio abstraction for FCN, Stocks, Crypto, Grid, Dual, and Cash.
 - v1.88 adds `/my-ixai/portfolio` as the first App-native Portfolio Center UI, while `/portfolio` remains the Portfolio Input route.
+- v1.89 adds an IXAI Architecture Map inside `/my-ixai/portfolio` so users can see enabled Portfolio, Risk, Intelligence, Membership, and Readback modules.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
 
@@ -52,7 +53,7 @@ Portfolio
 
 - Portfolio route split:
   - `/portfolio`: Portfolio Input, creation, and product explanation.
-  - `/my-ixai/portfolio`: Portfolio Center dashboard and readback.
+  - `/my-ixai/portfolio`: Portfolio Center dashboard, readback, and architecture visualization.
 
 This is the future product mainline.
 

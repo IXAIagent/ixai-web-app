@@ -4,15 +4,15 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.88 / Portfolio Center UI MVP`
+`v1.89 / Portfolio Architecture Visualization MVP`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, and the first Portfolio Center UI MVP. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, and Portfolio Architecture Visualization MVP. Current priority remains the main product line:
 
 - Portfolio Center QA / Mobile Polish.
-- Stock Portfolio Foundation planning.
-- Crypto / Grid Foundation planning.
+- Decide whether v1.90 should be Portfolio Input v2 or Billing Foundation.
+- Keep Stock / Crypto / Grid expansion behind a clear data-entry and validation plan.
 - Billing Foundation only after membership and Portfolio Center UX are stable.
 
 Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack export regresses again and the incident-prevention rules in `docs/PROJECT_RULES.md` are followed.
@@ -102,28 +102,55 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
   - Membership status and feature availability.
 - No new API, schema, market data, AI, payment, or trading function.
 
-### v1.89 — Portfolio Center QA / Mobile Polish
+### v1.89 — Portfolio Architecture Visualization MVP
+
+- Add IXAI Architecture Map inside `/my-ixai/portfolio`.
+- Visualize completed v1.80-v1.88 capabilities:
+  - Portfolio Layer.
+  - Risk & Intelligence Layer.
+  - Membership Layer.
+  - Readback Layer.
+- Show future boundaries as Coming Soon:
+  - Broker Integration.
+  - Market Data API.
+  - Payment / Billing.
+  - AI Advisory Agent.
+- No new API, schema, AI, market data, broker, payment, or trading function.
+
+### v1.90 — Portfolio Center QA / Mobile Polish
 
 - Validate `/my-ixai/portfolio` at 375px, 768px, and desktop widths.
 - Confirm no horizontal overflow.
 - Confirm dashboard sections are readable for real users.
 - Confirm CTA placeholders do not imply payment is live.
 
-### v1.90 — Stock Portfolio Foundation
+### v1.90 Option A — Portfolio Input v2
+
+- Improve portfolio creation workflow.
+- Plan Stock / Crypto / Cash input UX.
+- Keep data-entry changes staged and validated.
+
+### v1.90 Option B — Billing Foundation
+
+- Plan upgrade flow.
+- Plan pricing page.
+- Keep payment provider work explicitly approved and isolated.
+
+### v1.91 — Stock Portfolio Foundation
 
 - Stock / ETF portfolio readback expansion.
 - Stock position monitoring UX planning.
 - Asset allocation and concentration foundation.
 - No broker execution and no personalized trading advice.
 
-### v1.91 — Crypto / Grid Foundation
+### v1.92 — Crypto / Grid Foundation
 
 - Crypto spot portfolio expansion.
 - Grid strategy monitoring foundation.
 - Dual investment monitoring foundation.
 - No exchange execution and no automated trading.
 
-### v1.92 — Unified Risk Engine
+### v1.93 — Unified Risk Engine
 
 - Combine FCN, stock, crypto, grid, dual, and cash awareness into a unified risk model.
 - Cross-asset concentration.

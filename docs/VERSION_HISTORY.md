@@ -6,6 +6,43 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.89 — Portfolio Architecture Visualization MVP
+
+Why:
+
+- v1.80-v1.88 completed multiple Portfolio, FCN, Risk, Intelligence, Membership, Multi-Asset, and Portfolio Center capabilities.
+- Users needed a clear architecture map inside Portfolio Center to understand what IXAI has enabled and what is still future work.
+
+What Changed:
+
+- Added `components/portfolio/portfolio-architecture-map.tsx`.
+- Added an `IXAI Architecture Map` section inside `/my-ixai/portfolio`.
+- Visualized:
+  - Portfolio Layer.
+  - Risk & Intelligence Layer.
+  - Membership Layer.
+  - Readback Layer.
+  - Future boundaries.
+- Added status labels: Enabled, MVP, Coming Soon.
+
+Key Decisions:
+
+- v1.89 is visualization only.
+- It does not add a new risk engine, API, database table, market data integration, AI API, broker connection, payment flow, or trading function.
+- `/my-ixai/portfolio` continues to be the Portfolio Center main control surface.
+
+Out of Scope:
+
+- No migration or Supabase schema change.
+- No auth or membership / entitlement logic change.
+- No Daily / Weekly / Social Pack / LINE changes.
+- No payment / billing.
+- No trading function.
+
+Next:
+
+- v1.90 Portfolio Input v2 or v1.90 Billing Foundation, depending on business priority.
+
 ## v1.88 — Portfolio Center UI MVP
 
 Why:
