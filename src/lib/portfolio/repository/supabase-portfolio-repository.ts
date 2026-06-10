@@ -246,6 +246,41 @@ export const supabasePortfolioRepository: PortfolioRepository = {
     return ((data ?? []) as PortfolioAssetRow[]).map(mapAsset);
   },
 
+  async getOwnershipValidationStatus() {
+    const { supabase, userId } = await getSupabaseOrThrow();
+
+    const [accountsResult, assetsResult, positionsResult] = await Promise.all([
+      supabase
+        .from("portfolio_accounts")
+        .select("id", { count: "exact", head: false })
+        .eq("user_id", userId)
+        .order("created_at", { ascending: true })
+        .limit(1),
+      supabase
+        .from("portfolio_assets")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId),
+      supabase
+        .from("portfolio_positions")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId),
+    ]);
+
+    if (accountsResult.error || assetsResult.error || positionsResult.error) {
+      throw new Error("Unable to validate portfolio ownership");
+    }
+
+    return {
+      accountCount: accountsResult.count ?? 0,
+      assetCount: assetsResult.count ?? 0,
+      currentAccountId: accountsResult.data?.[0]?.id ?? null,
+      currentUserId: userId,
+      positionCount: positionsResult.count ?? 0,
+      repositorySource: "supabase_repository",
+      rlsStatus: "owner_scoped",
+    };
+  },
+
   async getPositions() {
     const { supabase, userId } = await getSupabaseOrThrow();
     const { data, error } = await supabase

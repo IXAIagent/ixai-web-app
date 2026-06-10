@@ -4,10 +4,22 @@ import type { PortfolioPositionRepository } from "@/src/lib/portfolio/repository
 
 export type PortfolioRepository = PortfolioAccountRepository &
   PortfolioAssetRepository &
-  PortfolioPositionRepository;
+  PortfolioPositionRepository & {
+    getOwnershipValidationStatus(): Promise<PortfolioOwnershipValidationStatus>;
+  };
 
 export type PortfolioRepositoryStatus = {
   persistenceLayer: "coming_soon" | "enabled" | "mock" | "supabase";
   repositoryLayer: "enabled";
   source: "mock_repository" | "supabase_repository";
+};
+
+export type PortfolioOwnershipValidationStatus = {
+  accountCount: number;
+  assetCount: number;
+  currentAccountId: string | null;
+  currentUserId: string | null;
+  positionCount: number;
+  repositorySource: "mock_repository" | "supabase_repository";
+  rlsStatus: "mock_only" | "owner_scoped" | "unauthenticated";
 };

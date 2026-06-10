@@ -9,6 +9,7 @@ import { DeleteAssetDialog } from "@/components/portfolio/delete-asset-dialog";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import type { PortfolioAsset } from "@/src/lib/portfolio/data-model/portfolio-asset-types";
 import { getPortfolioRepository } from "@/src/lib/portfolio/repository/portfolio-persistence-provider";
+import type { PortfolioOwnershipValidationStatus } from "@/src/lib/portfolio/repository/portfolio-repository";
 import type {
   PortfolioCrudAsset,
   PortfolioCrudAssetInput,
@@ -40,15 +41,29 @@ export function AssetList() {
   const [pendingDeleteAsset, setPendingDeleteAsset] = useState<PortfolioCrudAsset | null>(null);
   const [loadStatus, setLoadStatus] = useState<"error" | "loading" | "ready">("loading");
   const [message, setMessage] = useState<string | null>(null);
+  const [validationStatus, setValidationStatus] =
+    useState<PortfolioOwnershipValidationStatus | null>(null);
 
   useEffect(() => {
     let active = true;
 
-    void portfolioRepository
-      .getAssets()
-      .then((repositoryAssets) => {
+    async function loadRepositoryState() {
+      const [repositoryAssets, ownershipStatus] = await Promise.all([
+        portfolioRepository.getAssets(),
+        portfolioRepository.getOwnershipValidationStatus(),
+      ]);
+
+      return {
+        ownershipStatus,
+        repositoryAssets,
+      };
+    }
+
+    void loadRepositoryState()
+      .then(({ ownershipStatus, repositoryAssets }) => {
         if (active) {
           setAssets(repositoryAssets.map(mapAssetToCrudAsset));
+          setValidationStatus(ownershipStatus);
           setLoadStatus("ready");
         }
       })
@@ -77,7 +92,7 @@ export function AssetList() {
     }
 
     try {
-      const createdAsset = await portfolioRepository.createAsset({
+      await portfolioRepository.createAsset({
         accountId: "manual-account-created-by-repository",
         category: input.category,
         currency: input.currency,
@@ -90,9 +105,15 @@ export function AssetList() {
         symbol: buildSymbol(input),
       });
 
-      setAssets((current) => [mapAssetToCrudAsset(createdAsset), ...current]);
+      const [repositoryAssets, ownershipStatus] = await Promise.all([
+        portfolioRepository.getAssets(),
+        portfolioRepository.getOwnershipValidationStatus(),
+      ]);
+
+      setAssets(repositoryAssets.map(mapAssetToCrudAsset));
+      setValidationStatus(ownershipStatus);
       setLoadStatus("ready");
-      setMessage("Asset created in Supabase portfolio_assets.");
+      setMessage("Asset created in Supabase portfolio_assets and re-read from repository.");
     } catch {
       setMessage("無法建立 Asset。請確認已登入，且 v1.92 migration 已套用到目前 Supabase 專案。");
     }
@@ -139,13 +160,52 @@ export function AssetList() {
           {[
             ["Active Assets", activeAssets.length],
             ["Persistence Records", assets.length],
-            ["Update / Delete", "Coming Soon"],
+            ["RLS Status", validationStatus?.rlsStatus ?? "Pending"],
           ].map(([label, value]) => (
             <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4" key={label}>
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/54">
                 {label}
               </p>
               <p className="mt-2 text-3xl font-semibold text-[var(--ixai-cream)]">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Ownership Validation Status
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Supabase Repository Readback
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              Asset Create 後會重新讀取 portfolio_assets；隔離邏輯依 authenticated user 與 RLS，不做 client-side 偽隔離。
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            ["Repository Source", validationStatus?.repositorySource ?? "pending"],
+            ["Current User ID", validationStatus?.currentUserId ?? "unauthenticated"],
+            ["Current Account ID", validationStatus?.currentAccountId ?? "none"],
+            ["Account Count", validationStatus?.accountCount ?? 0],
+            ["Asset Count", validationStatus?.assetCount ?? 0],
+            ["Position Count", validationStatus?.positionCount ?? 0],
+          ].map(([label, value]) => (
+            <div
+              className="min-w-0 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 break-words font-mono text-sm font-semibold text-[var(--ixai-forest)]">
                 {value}
               </p>
             </div>
