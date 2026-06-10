@@ -6,6 +6,40 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.92 — Portfolio Data Model Foundation
+
+Why:
+
+- v1.91 validated mock CRUD UI, but IXAI needed a formal data model before real CSV import, broker sync, and persistent asset management.
+- The product needs a stable Account → Asset → Position foundation that can support FCN, Stock, Crypto, Grid, Dual, and Cash without coupling to any external provider.
+
+What Changed:
+
+- Added `src/lib/portfolio/data-model/`.
+- Added Portfolio Account, Portfolio Asset, Portfolio Position, and unified Portfolio Data Model types.
+- Added mock repositories for accounts, assets, and positions.
+- Added additive migration `012_portfolio_data_model_foundation.sql`.
+- Added `portfolio_accounts`, `portfolio_assets`, and `portfolio_positions` schema foundation.
+- Added owner-only RLS foundation.
+- Added Portfolio Center `Data Model Status` readback from mock repository.
+- Added Portfolio Data Model Foundation to the Architecture Map.
+
+Key Decisions:
+
+- v1.92 does not connect UI to Supabase.
+- Migration is additive and must be staged before any production application.
+- `marketValue` remains nullable because v1.92 does not connect market data.
+- v1.91 CRUD mock derives from v1.92 model mock data to avoid sample drift.
+
+Out of Scope:
+
+- No Broker API, Binance API, securities API, News API, AI API, Market Data API, real import, real sync, auth change, membership change, entitlement change, or trading function.
+
+Next:
+
+- v1.93 CSV Import MVP can map imported rows into Account → Asset → Position.
+- v1.94 Holding-Aware News Engine can use this model to connect holdings to relevant news and risk notes.
+
 ## v1.91 — Portfolio CRUD Foundation MVP
 
 Why:

@@ -15,6 +15,9 @@ import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
 import type { AssetCategory } from "@/src/lib/portfolio/assets";
 import type { PortfolioDashboardSummary } from "@/src/lib/portfolio/dashboard";
+import { mockPortfolioAccounts } from "@/src/lib/portfolio/data-model/mock/mock-accounts";
+import { mockPortfolioDataModelAssets } from "@/src/lib/portfolio/data-model/mock/mock-assets";
+import { mockPortfolioPositions } from "@/src/lib/portfolio/data-model/mock/mock-positions";
 
 type DashboardResponse = {
   ok: boolean;
@@ -206,6 +209,47 @@ export function PortfolioCenterDashboard() {
       </section>
 
       <PortfolioArchitectureMap />
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Data Model Status
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Portfolio Account → Asset → Position
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v1.92 建立正式資料模型基礎；目前 Portfolio Center 先用 mock repository 顯示模型狀態。
+            </p>
+          </div>
+          <FeatureIcon icon={BadgeCheck} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {[
+            ["Accounts", mockPortfolioAccounts.length],
+            ["Assets", mockPortfolioDataModelAssets.length],
+            ["Positions", mockPortfolioPositions.length],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 text-3xl font-semibold text-[var(--ixai-forest)]">
+                {numberLabel(Number(value))}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          這是資料模型 foundation 狀態，不代表已啟用 Broker Sync、CSV Import、Market Data 或交易功能。
+        </p>
+      </section>
 
       <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
         <div className="flex items-start gap-3">

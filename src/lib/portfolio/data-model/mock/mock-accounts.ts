@@ -1,0 +1,40 @@
+import type { PortfolioAccount } from "@/src/lib/portfolio/data-model/portfolio-account-types";
+
+export const mockPortfolioAccounts: PortfolioAccount[] = [
+  {
+    accountType: "structured_product",
+    createdAt: "2026-06-01T09:00:00.000Z",
+    currency: "USD",
+    id: "mock-account-manual-fcn",
+    isActive: true,
+    name: "Manual FCN Account",
+    provider: "MANUAL",
+    region: "US",
+    updatedAt: "2026-06-01T09:00:00.000Z",
+    userId: "mock-user",
+  },
+  {
+    accountType: "crypto_exchange",
+    createdAt: "2026-06-03T09:00:00.000Z",
+    currency: "USDT",
+    id: "mock-account-binance",
+    isActive: true,
+    name: "Binance Strategy Account",
+    provider: "BINANCE",
+    region: "GLOBAL",
+    updatedAt: "2026-06-03T09:00:00.000Z",
+    userId: "mock-user",
+  },
+  {
+    accountType: "manual",
+    createdAt: "2026-06-05T09:00:00.000Z",
+    currency: "USDT",
+    id: "mock-account-cash",
+    isActive: true,
+    name: "Manual Cash Account",
+    provider: "MANUAL",
+    region: "GLOBAL",
+    updatedAt: "2026-06-05T09:00:00.000Z",
+    userId: "mock-user",
+  },
+];
