@@ -6,6 +6,43 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.90 — Portfolio Input Foundation + Global Asset Model Foundation
+
+Why:
+
+- v1.80-v1.89 created the production Portfolio / FCN foundation, FCN risk and intelligence layers, Portfolio Center UI, Membership foundation, Multi-Asset Foundation, and Architecture Map.
+- IXAI needed one unified asset input language before adding Stock, Crypto, Grid, Dual, Cash, CSV import, Broker Sync, holding-aware news, and multi-language workflows.
+
+What Changed:
+
+- Added `/my-ixai/input` as the Asset Input Hub.
+- Added `components/portfolio/asset-input-hub.tsx`.
+- Added pure model foundation under `src/lib/portfolio/input/`.
+- Defined asset categories: FCN, STOCK, CRYPTO, GRID, DUAL, CASH.
+- Defined input modes: manual, csv, broker_sync, exchange_sync, bank_statement.
+- Added CSV import template and validation placeholders.
+- Added i18n / global market foundation for zh-TW, zh-CN, en-US, ja-JP, ko-KR and TW / HK / CN / JP / KR / US / EU / GLOBAL.
+- Added Asset Input navigation in desktop sidebar and mobile drawer.
+
+Key Decisions:
+
+- v1.90 is a foundation and architecture version, not a CRUD or import implementation.
+- No database schema, migration, API route, file upload, market data, broker sync, news API, AI API, payment, or trading function is added.
+- `/portfolio` remains the Portfolio input / product route, `/my-ixai/portfolio` remains the Portfolio Center dashboard, and `/my-ixai/input` becomes the global input foundation route.
+
+Out of Scope:
+
+- No Supabase schema change.
+- No auth or membership / entitlement change.
+- No Daily / Weekly / Social Pack / LINE work.
+- No real CSV parsing.
+- No external integrations.
+
+Next:
+
+- v1.91 Portfolio Input QA / Mobile Polish or first Stock / Crypto input planning.
+- CSV Import MVP should come only after the model and UX foundation are validated.
+
 ## v1.89 — Portfolio Architecture Visualization MVP
 
 Why:
