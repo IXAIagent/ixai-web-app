@@ -78,6 +78,7 @@ const DRAWER_SECTIONS: DrawerSection[] = [
     entries: [
       { label: "我的 IXAI", href: "/account", icon: UserCircle },
       { label: "Portfolio Center", href: "/my-ixai/portfolio", icon: BriefcaseBusiness },
+      { label: "Asset Input", href: "/my-ixai/input", icon: FileText },
       { label: "IXAI Pro", href: "/pro", icon: Sparkles },
       { label: "關於一玄", href: "/about", icon: Info },
     ],

@@ -4,15 +4,15 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.89 / Portfolio Architecture Visualization MVP`
+`v1.90 / Portfolio Input Foundation + Global Asset Model Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, and Portfolio Architecture Visualization MVP. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, and the first Portfolio Input Foundation. Current priority remains the main product line:
 
-- Portfolio Center QA / Mobile Polish.
-- Decide whether v1.90 should be Portfolio Input v2 or Billing Foundation.
-- Keep Stock / Crypto / Grid expansion behind a clear data-entry and validation plan.
+- Validate `/my-ixai/input` as the Asset Input Hub.
+- Keep Stock / Crypto / Grid / Dual / Cash expansion behind a clear data-entry and validation plan.
+- Plan CSV Import MVP only after input model and mobile UX remain stable.
 - Billing Foundation only after membership and Portfolio Center UX are stable.
 
 Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack export regresses again and the incident-prevention rules in `docs/PROJECT_RULES.md` are followed.
@@ -117,40 +117,49 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
   - AI Advisory Agent.
 - No new API, schema, AI, market data, broker, payment, or trading function.
 
-### v1.90 — Portfolio Center QA / Mobile Polish
+### v1.90 — Portfolio Input Foundation + Global Asset Model Foundation
 
-- Validate `/my-ixai/portfolio` at 375px, 768px, and desktop widths.
+- Add `/my-ixai/input` as Asset Input Hub.
+- Define input modes:
+  - Manual Input.
+  - CSV Import.
+  - Broker Sync.
+  - Exchange Sync.
+  - Bank Statement Import.
+- Define asset categories:
+  - FCN.
+  - STOCK.
+  - CRYPTO.
+  - GRID.
+  - DUAL.
+  - CASH.
+- Add CSV template / validation foundation without parsing or upload.
+- Add i18n / global market foundation for Taiwan, Hong Kong, China, Japan, Korea, United States, Europe, and Global workflows.
+- Prepare holding-aware news intelligence architecture without adding news API or AI API.
+- No migration, schema, API, broker, market data, payment, or trading function.
+
+### v1.91 — Portfolio Input QA / Mobile Polish
+
+- Validate `/my-ixai/input` at 375px, 768px, and desktop widths.
 - Confirm no horizontal overflow.
-- Confirm dashboard sections are readable for real users.
-- Confirm CTA placeholders do not imply payment is live.
+- Confirm placeholder CTAs do not imply live CSV upload, broker sync, payment, or external integrations.
+- Confirm model foundation stays pure and does not call DB / API / browser storage.
 
-### v1.90 Option A — Portfolio Input v2
-
-- Improve portfolio creation workflow.
-- Plan Stock / Crypto / Cash input UX.
-- Keep data-entry changes staged and validated.
-
-### v1.90 Option B — Billing Foundation
-
-- Plan upgrade flow.
-- Plan pricing page.
-- Keep payment provider work explicitly approved and isolated.
-
-### v1.91 — Stock Portfolio Foundation
+### v1.92 — Stock Portfolio Foundation
 
 - Stock / ETF portfolio readback expansion.
 - Stock position monitoring UX planning.
 - Asset allocation and concentration foundation.
 - No broker execution and no personalized trading advice.
 
-### v1.92 — Crypto / Grid Foundation
+### v1.93 — Crypto / Grid Foundation
 
 - Crypto spot portfolio expansion.
 - Grid strategy monitoring foundation.
 - Dual investment monitoring foundation.
 - No exchange execution and no automated trading.
 
-### v1.93 — Unified Risk Engine
+### v1.94 — Unified Risk Engine
 
 - Combine FCN, stock, crypto, grid, dual, and cash awareness into a unified risk model.
 - Cross-asset concentration.
