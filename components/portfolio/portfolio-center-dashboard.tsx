@@ -5,6 +5,7 @@ import {
   BadgeCheck,
   BriefcaseBusiness,
   Crown,
+  Database,
   Layers3,
   LineChart,
   ShieldAlert,
@@ -249,6 +250,43 @@ export function PortfolioCenterDashboard() {
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           這是資料模型 foundation 狀態，不代表已啟用 Broker Sync、CSV Import、Market Data 或交易功能。
         </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Repository Status
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              UI → Repository → Mock Repository
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v1.94 將 Repository Layer 接到 Supabase Persistence，先啟用 Create Asset 與 Read Asset。
+            </p>
+          </div>
+          <FeatureIcon icon={Database} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {[
+            ["Repository Layer", "Enabled"],
+            ["Persistence Layer", "Enabled"],
+            ["Update / Delete", "Coming Soon"],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 sm:p-6">
