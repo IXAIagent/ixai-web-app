@@ -104,7 +104,7 @@ export function MobileDrawer({
       title: "產品",
       entries: [
         { label: "FCN", href: "/fcn", icon: ShieldCheck },
-        { label: "IXAI Pro", href: "/pro", icon: Sparkles },
+        { label: "IXAI Platform", href: "/pro", icon: Sparkles },
         { label: "About 一玄", href: "/about", icon: Info },
         ...(isAuthenticated
           ? [

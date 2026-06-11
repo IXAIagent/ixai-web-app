@@ -57,7 +57,7 @@ export function Sidebar() {
       heading: "產品",
       items: [
         { label: "FCN", href: "/fcn" },
-        { label: "IXAI Pro", href: "/pro" },
+        { label: "IXAI Platform", href: "/pro" },
         { label: "About 一玄", href: "/about" },
         ...(isAuthenticated
           ? [
