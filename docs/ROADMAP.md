@@ -4,17 +4,19 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v2.11 / Legacy Pro Migration Audit and Product Inventory`
+`v3.00 / UX IA Foundation`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is architecture stabilization before v3.00:
+Current priority is UX / IA foundation before moving modules:
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
+- Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
+- Do not add new investment features in v3.00.
 - Do not add more Portfolio Center modules until the current surface is split into clear centers.
-- Prepare v3.00 UX / IA Refactor around Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings.
+- Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
 
@@ -71,13 +73,17 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 
 ### v3.00 — UX / IA Refactor
 
-- Split the overgrown Portfolio Center into dedicated centers.
-- Preserve existing routes where possible and introduce low-risk route wrappers before moving logic.
-- Move risk-heavy modules into Risk Center.
-- Move FCN-specific modules into FCN Center.
-- Move Daily / Weekly / Watchlist / News / Commentary into Intelligence Center.
-- Move membership, language, broker connections, notifications, and preferences into Settings.
+- Route and navigation foundation only.
+- Preserve existing public content routes.
+- Add placeholders for `/my-ixai/home`, `/my-ixai/risk`, `/my-ixai/fcn`, `/my-ixai/intelligence`, and `/my-ixai/settings`.
 - Keep `/portfolio` as input / creation and `/my-ixai/portfolio` as Portfolio Center.
+- No new investment features, providers, broker integrations, recommendation logic, schema, migrations, API routes, auth changes, or membership changes.
+
+### v3.01 — Risk Center Decomposition
+
+- Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
+- Keep existing engine logic unchanged.
+- Prefer route-level composition before rewriting dashboard components.
 
 ### v3.10 — Intelligence Center Migration
 

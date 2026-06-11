@@ -32,9 +32,14 @@ const navGroups: Array<{
     items: [
       { label: "自選觀察", href: "/watchlist" },
       { label: "我的 IXAI", href: "/account" },
+      { label: "Workspace Home", href: "/my-ixai/home" },
       { label: "Portfolio Center", href: "/my-ixai/portfolio" },
+      { label: "Risk Center", href: "/my-ixai/risk" },
+      { label: "FCN Center", href: "/my-ixai/fcn" },
+      { label: "Intelligence Center", href: "/my-ixai/intelligence" },
       { label: "Asset Input", href: "/my-ixai/input" },
       { label: "Portfolio Assets", href: "/my-ixai/portfolio/assets" },
+      { label: "Settings", href: "/my-ixai/settings" },
     ],
   },
   {

@@ -54,6 +54,7 @@ Production data ownership update:
 - v2.10 adds Portfolio FCN Risk Engine Foundation by converting FCN assets, underlyings, exposure, concentration, correlation, and stress-test reports into market-agnostic deterministic FCN-risk readback. It still does not connect real market data, broker sync, external AI, recommendation changes, or trading.
 - v2.10a adds a docs-first Global Market Foundation Review. It validates Portfolio Core engine consistency, global market readiness, FCN global expansion, multi-language readiness, multi-broker readiness, Legacy Pro migration, Portfolio Center complexity, and v2.11 platform IA direction without changing product code.
 - v2.11 adds the Legacy Pro Migration Audit and Product Inventory. It is the pre-v3.00 source of truth for which Legacy Pro concepts are migrated, partially migrated, missing, or should be retired. Read `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` before moving Legacy Pro ideas into the active App.
+- v3.00 adds the UX / IA Foundation route structure for `/my-ixai`, `/my-ixai/home`, `/my-ixai/risk`, `/my-ixai/fcn`, `/my-ixai/intelligence`, and `/my-ixai/settings`. It is route and navigation foundation only; it does not move engine logic or add features.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -155,10 +156,16 @@ v2.11 center ownership rule:
 - Settings owns membership, entitlements, language, notifications, broker connections, data privacy, and preferences.
 
 - Portfolio route split:
+  - `/my-ixai`: Workspace index and center directory.
+  - `/my-ixai/home`: Future logged-in workspace home placeholder.
   - `/portfolio`: Portfolio Input, creation, and product explanation.
   - `/my-ixai/portfolio`: Portfolio Center dashboard, readback, and architecture visualization.
   - `/my-ixai/input`: Asset Input Hub, global input model foundation, CSV / broker / market / language readiness.
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
+  - `/my-ixai/risk`: Risk Center placeholder.
+  - `/my-ixai/fcn`: FCN Center placeholder.
+  - `/my-ixai/intelligence`: Intelligence Center placeholder.
+  - `/my-ixai/settings`: Settings placeholder.
 
 This is the future product mainline.
 
