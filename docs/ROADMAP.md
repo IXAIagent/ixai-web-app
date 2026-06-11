@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.01 / Navigation Separation Foundation`
+`v3.02 / Workspace Entry Migration`
 
 ## Current Priority
 
@@ -15,7 +15,10 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
 - Use `docs/V301_NAVIGATION_SEPARATION_FOUNDATION.md` as the navigation separation rule for public website versus Workspace application surfaces.
-- Do not add new investment features in v3.00 / v3.01.
+- Use `docs/V302_WORKSPACE_ENTRY_MIGRATION.md` as the source of truth for Login / Register / Account entry flow.
+- Do not add new investment features in v3.00 / v3.01 / v3.02.
+- Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
+- `/account` is a legacy transitional page, not the primary Workspace entry.
 - Public navigation and Workspace navigation must remain separate.
 - Do not add more Portfolio Center modules until the current surface is split into clear centers.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
@@ -88,7 +91,14 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Workspace navigation keeps Workspace Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, Settings, and `返回官網`.
 - Do not change auth, membership, entitlement, route URLs, public content, engine logic, API contracts, schema, migrations, or providers.
 
-### v3.02 — Risk Center Decomposition
+### v3.02 — Workspace Entry Migration
+
+- Redirect successful Login / Register flows to `/my-ixai/home`.
+- Convert `/account` into a legacy transitional page with primary CTA to Workspace Home.
+- Remove `/account` as the primary IXAI Pro / Legacy Pro entry.
+- Keep auth provider, membership, entitlement, engines, API contracts, schema, migrations, market data, and broker logic unchanged.
+
+### v3.03 — Risk Center Decomposition
 
 - Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
 - Keep existing engine logic unchanged.

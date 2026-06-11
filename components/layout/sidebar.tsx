@@ -1,35 +1,21 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useIdentity } from "@/components/auth/auth-provider";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { ShellNavButton, ShellSidebarSection, shellTokens } from "@/components/shell/shell-primitives";
 import { Eyebrow } from "@/components/ui/eyebrow";
 
 type NavGroup = {
   heading: string;
-  items: Array<{ external?: boolean; label: string; href: string; primary?: boolean }>;
+  items: Array<{
+    action?: "signOut";
+    external?: boolean;
+    label: string;
+    href: string;
+    primary?: boolean;
+  }>;
 };
-
-const publicNavGroups: NavGroup[] = [
-  {
-    heading: "官網",
-    items: [
-      { label: "市場首頁", href: "/", primary: true },
-      { label: "每日晨報", href: "/daily-brief" },
-      { label: "市場總覽", href: "/market" },
-      { label: "每週情報", href: "/weekly-brief" },
-    ],
-  },
-  {
-    heading: "產品",
-    items: [
-      { label: "FCN", href: "/fcn" },
-      { label: "IXAI Pro", href: "/pro" },
-      { label: "About 一玄", href: "/about" },
-      { label: "登入", href: "/login" },
-    ],
-  },
-];
 
 const workspaceNavGroups: NavGroup[] = [
   {
@@ -47,13 +33,41 @@ const workspaceNavGroups: NavGroup[] = [
     heading: "Exit",
     items: [
       { label: "返回官網", href: "/" },
+      { action: "signOut", label: "登出", href: "/login" },
     ],
   },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { mounted, session, signOut } = useIdentity();
   const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
+  const isAuthenticated = mounted && session.mode === "authenticated";
+  const publicNavGroups: NavGroup[] = [
+    {
+      heading: "官網",
+      items: [
+        { label: "市場首頁", href: "/", primary: true },
+        { label: "每日晨報", href: "/daily-brief" },
+        { label: "市場總覽", href: "/market" },
+        { label: "每週情報", href: "/weekly-brief" },
+      ],
+    },
+    {
+      heading: "產品",
+      items: [
+        { label: "FCN", href: "/fcn" },
+        { label: "IXAI Pro", href: "/pro" },
+        { label: "About 一玄", href: "/about" },
+        ...(isAuthenticated
+          ? [
+              { label: "我的 IXAI Workspace", href: "/my-ixai/home" },
+              { action: "signOut" as const, label: "登出", href: "/login" },
+            ]
+          : [{ label: "登入", href: "/login" }]),
+      ],
+    },
+  ];
   const navGroups = isWorkspaceRoute ? workspaceNavGroups : publicNavGroups;
   const title = isWorkspaceRoute ? "IXAI Workspace" : "市場情報";
   const subtitle = isWorkspaceRoute ? "登入後的產品工作區。" : "每日市場情報入口。";
@@ -91,6 +105,7 @@ export function Sidebar() {
                 href={item.href}
                 key={item.label}
                 label={item.label}
+                onClick={item.action === "signOut" ? signOut : undefined}
               />
             ))}
           </ShellSidebarSection>

@@ -19,6 +19,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
+import { useIdentity } from "@/components/auth/auth-provider";
 
 // v1.32.1 — IXAI Intelligence OS mobile drawer.
 //
@@ -33,8 +34,9 @@ import {
 //   - active route highlight matches each entry's prefix
 
 type DrawerEntry = {
+  action?: "signOut";
   label: string;
-  href: string;
+  href?: string;
   icon: typeof FileText;
   external?: boolean;
   matchPrefix?: string;
@@ -44,27 +46,6 @@ type DrawerSection = {
   title: string;
   entries: DrawerEntry[];
 };
-
-const PUBLIC_DRAWER_SECTIONS: DrawerSection[] = [
-  {
-    title: "官網",
-    entries: [
-      { label: "市場首頁", href: "/", icon: Home },
-      { label: "每日晨報", href: "/daily-brief", icon: FileText },
-      { label: "市場總覽", href: "/market", icon: BarChart3 },
-      { label: "每週情報", href: "/weekly-brief", icon: Newspaper },
-    ],
-  },
-  {
-    title: "產品",
-    entries: [
-      { label: "FCN", href: "/fcn", icon: ShieldCheck },
-      { label: "IXAI Pro", href: "/pro", icon: Sparkles },
-      { label: "About 一玄", href: "/about", icon: Info },
-      { label: "登入", href: "/login", icon: BookOpen },
-    ],
-  },
-];
 
 const WORKSPACE_DRAWER_SECTIONS: DrawerSection[] = [
   {
@@ -82,12 +63,13 @@ const WORKSPACE_DRAWER_SECTIONS: DrawerSection[] = [
     title: "Exit",
     entries: [
       { label: "返回官網", href: "/", icon: Globe2 },
+      { action: "signOut", label: "登出", href: "/login", icon: BookOpen },
     ],
   },
 ];
 
 function isEntryActive(pathname: string, entry: DrawerEntry): boolean {
-  const target = entry.matchPrefix ?? entry.href.split("#")[0];
+  const target = entry.matchPrefix ?? entry.href?.split("#")[0];
   if (!target) {
     return false;
   }
@@ -105,8 +87,35 @@ export function MobileDrawer({
   onClose: () => void;
 }) {
   const pathname = usePathname();
+  const { mounted, session, signOut } = useIdentity();
   const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
-  const drawerSections = isWorkspaceRoute ? WORKSPACE_DRAWER_SECTIONS : PUBLIC_DRAWER_SECTIONS;
+  const isAuthenticated = mounted && session.mode === "authenticated";
+  const publicDrawerSections: DrawerSection[] = [
+    {
+      title: "官網",
+      entries: [
+        { label: "市場首頁", href: "/", icon: Home },
+        { label: "每日晨報", href: "/daily-brief", icon: FileText },
+        { label: "市場總覽", href: "/market", icon: BarChart3 },
+        { label: "每週情報", href: "/weekly-brief", icon: Newspaper },
+      ],
+    },
+    {
+      title: "產品",
+      entries: [
+        { label: "FCN", href: "/fcn", icon: ShieldCheck },
+        { label: "IXAI Pro", href: "/pro", icon: Sparkles },
+        { label: "About 一玄", href: "/about", icon: Info },
+        ...(isAuthenticated
+          ? [
+              { label: "我的 IXAI Workspace", href: "/my-ixai/home", icon: Home },
+              { action: "signOut" as const, label: "登出", href: "/login", icon: BookOpen },
+            ]
+          : [{ label: "登入", href: "/login", icon: BookOpen }]),
+      ],
+    },
+  ];
+  const drawerSections = isWorkspaceRoute ? WORKSPACE_DRAWER_SECTIONS : publicDrawerSections;
   const eyebrow = isWorkspaceRoute ? "IXAI WORKSPACE" : "IXAI 官網導覽";
   const subtitle = isWorkspaceRoute ? "Portfolio · Risk · FCN · Intelligence" : "市場情報 · 教育 · About";
 
@@ -187,6 +196,37 @@ export function MobileDrawer({
                 {section.entries.map((entry) => {
                   const Icon = entry.icon;
                   const active = isEntryActive(pathname, entry);
+                  const handleEntryClick = () => {
+                    if (entry.action === "signOut") {
+                      signOut();
+                    }
+                    handleLinkClick();
+                  };
+
+                  if (!entry.href) {
+                    return (
+                      <button
+                        className={`flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition active:scale-[0.99] ${
+                          active
+                            ? "border border-[rgba(176,141,87,0.40)] bg-[rgba(245,240,230,0.10)] text-[var(--ixai-cream)]"
+                            : "text-[rgba(245,240,230,0.78)] hover:bg-white/[0.055]"
+                        }`}
+                        key={entry.label}
+                        onClick={handleEntryClick}
+                        type="button"
+                      >
+                        <Icon
+                          aria-hidden="true"
+                          className={`h-4 w-4 ${active ? "text-[var(--ixai-gold)]" : "text-[rgba(245,240,230,0.78)]"}`}
+                        />
+                        <span className="flex-1">{entry.label}</span>
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="h-3.5 w-3.5 text-[rgba(245,240,230,0.55)]"
+                        />
+                      </button>
+                    );
+                  }
 
                   return (
                     <Link
@@ -198,7 +238,7 @@ export function MobileDrawer({
                       }`}
                       href={entry.href}
                       key={entry.label}
-                      onClick={handleLinkClick}
+                      onClick={handleEntryClick}
                       rel={entry.external ? "noopener noreferrer" : undefined}
                       target={entry.external ? "_blank" : undefined}
                     >
