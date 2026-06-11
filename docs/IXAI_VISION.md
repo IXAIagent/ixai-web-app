@@ -118,6 +118,8 @@ v3.05a treats the legacy FastAPI backend as a product-memory reference for futur
 
 v3.06 turns Asset Input into the first usable Workspace onboarding flow for Stock / ETF, Crypto, and FCN. The strategic purpose is simple: users should know where to create holdings before IXAI can explain valuation, exposure, risk, FCN status, and intelligence. The implementation remains local/mock for Stock and Crypto and preserves existing FCN submit behavior, keeping the product aligned with the principle of small, verifiable steps before broker sync, real market data, or AI providers.
 
+v3.08 connects the FCN input path to FCN Center. This is the first visible structured-product workspace loop: users can enter FCN conditions, barriers, observation dates, coupon dates, and underlyings, then see those draft records inside `/my-ixai/fcn`. The release keeps FCN Center local/mock and non-advisory while establishing the product direction: FCN Center should own structured-product monitoring, not the generic Portfolio Center or public education pages.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text
