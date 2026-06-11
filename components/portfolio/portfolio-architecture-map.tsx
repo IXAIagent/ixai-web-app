@@ -129,6 +129,11 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         label: "Portfolio Exposure Engine Foundation",
         status: "mvp",
       },
+      {
+        copy: "Mock concentration engine 已可從 exposure report 產生 symbol、FCN underlying、asset type、provider 與 region 集中度摘要。",
+        label: "Portfolio Concentration Engine Foundation",
+        status: "mvp",
+      },
     ],
   },
   {
@@ -220,6 +225,11 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
   {
     copy: "未啟用；尚未連接 real-time portfolio valuation、broker positions 或 live cost basis sync。",
     label: "Real-Time Portfolio Engine",
+    status: "coming_soon",
+  },
+  {
+    copy: "未啟用；尚未建立 asset correlation、cross-symbol sensitivity 或共振風險模型。",
+    label: "Portfolio Correlation Engine",
     status: "coming_soon",
   },
   {
@@ -342,7 +352,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Portfolio Valuation Engine Foundation → Portfolio Exposure Engine Foundation → Real-Time Portfolio Engine（Coming Soon）。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Portfolio Valuation Engine Foundation → Portfolio Exposure Engine Foundation → Portfolio Concentration Engine Foundation → Portfolio Correlation Engine（Coming Soon）。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>
