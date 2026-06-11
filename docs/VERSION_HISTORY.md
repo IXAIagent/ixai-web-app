@@ -6,6 +6,38 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.04 — Portfolio Valuation Engine Foundation
+
+Why:
+
+- v2.03 established deterministic mock market snapshots, but Portfolio Center still needed a valuation layer that converts market snapshots into portfolio value and allocation metrics.
+- IXAI needs a valuation contract before real market data, broker sync, or real-time portfolio engines are considered.
+
+What Changed:
+
+- Added `src/lib/portfolio/valuation/`.
+- Added `PortfolioValuation`, `PortfolioAllocation`, and `PortfolioValuationReport` types.
+- Added `PortfolioValuationEngine` contract.
+- Added deterministic `mockPortfolioValuationEngine`.
+- Added `buildPortfolioValuation()` using repository accounts, assets, positions, and existing market data feed.
+- Added Portfolio Valuation and Portfolio Allocation readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Valuation Engine Foundation and Real-Time Portfolio Engine (Coming Soon).
+
+Key Decisions:
+
+- v2.04 is foundation-only.
+- Valuation output is deterministic and mock-only.
+- The layer reuses repository assets, positions, and v2.03 market snapshots.
+- Missing price or position data uses safe stored-value fallback instead of fake live prices.
+
+Out of Scope:
+
+- No Yahoo Finance, Binance, CoinGecko, Finnhub, Polygon, broker sync, recommendation logic, trading logic, Supabase schema change, migration, API route, auth change, membership change, or entitlement change.
+
+Next:
+
+- Future work may define real-time valuation governance, provider freshness rules, broker sync boundaries, and persistent valuation snapshots before any real provider is connected.
+
 ## v2.03 — Portfolio Market Data Foundation
 
 Why:
