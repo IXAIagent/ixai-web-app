@@ -26,6 +26,8 @@ import type {
 import type { PortfolioAsset } from "@/src/lib/portfolio/data-model/portfolio-asset-types";
 import type { PortfolioPosition } from "@/src/lib/portfolio/data-model/portfolio-position-types";
 import type { PortfolioInputRegion } from "@/src/lib/portfolio/input/asset-types";
+import { buildPortfolioIntelligence } from "@/src/lib/portfolio/intelligence-engine/intelligence-score-builder";
+import type { PortfolioIntelligenceScore } from "@/src/lib/portfolio/intelligence-engine/intelligence-engine-types";
 import { buildPortfolioNewsFeed } from "@/src/lib/portfolio/news/news-service";
 import type { PortfolioNewsFeed } from "@/src/lib/portfolio/news/news-types";
 import { getPortfolioRepository } from "@/src/lib/portfolio/repository/portfolio-persistence-provider";
@@ -161,6 +163,8 @@ export function PortfolioCenterDashboard() {
   const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
   const [portfolioCommentaryFeed, setPortfolioCommentaryFeed] =
     useState<PortfolioCommentaryFeed | null>(null);
+  const [portfolioIntelligenceScore, setPortfolioIntelligenceScore] =
+    useState<PortfolioIntelligenceScore | null>(null);
   const [status, setStatus] = useState<"error" | "loading" | "ready" | "unauthenticated">(
     "loading",
   );
@@ -175,6 +179,7 @@ export function PortfolioCenterDashboard() {
       setOwnershipStatus(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
+      setPortfolioIntelligenceScore(null);
       setStatus("unauthenticated");
       return;
     }
@@ -198,6 +203,12 @@ export function PortfolioCenterDashboard() {
       ]);
       const newsFeed = await buildPortfolioNewsFeed({ assets });
       const commentaryFeed = await buildPortfolioCommentary({ newsFeed });
+      const intelligenceScore = await buildPortfolioIntelligence({
+        accounts,
+        assets,
+        commentary: commentaryFeed,
+        newsFeed,
+      });
       const payload = (await response.json().catch(() => ({}))) as DashboardResponse;
 
       if (!response.ok || !payload.summary) {
@@ -208,6 +219,7 @@ export function PortfolioCenterDashboard() {
         setRepositoryPositions(positions);
         setPortfolioNewsFeed(newsFeed);
         setPortfolioCommentaryFeed(commentaryFeed);
+        setPortfolioIntelligenceScore(intelligenceScore);
         setStatus(response.status === 401 ? "unauthenticated" : "error");
         return;
       }
@@ -219,6 +231,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryPositions(positions);
       setPortfolioNewsFeed(newsFeed);
       setPortfolioCommentaryFeed(commentaryFeed);
+      setPortfolioIntelligenceScore(intelligenceScore);
       setStatus("ready");
     } catch {
       setSummary(null);
@@ -228,6 +241,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryPositions([]);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
+      setPortfolioIntelligenceScore(null);
       setStatus("error");
     }
   }, []);
@@ -717,6 +731,67 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           AI Commentary Foundation 僅使用 mock commentary logic。僅供監控與風險意識，不構成投資建議、績效承諾或自動交易。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Intelligence Engine
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Portfolio Intelligence Score
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.00 將 Repository、News Feed 與 AI Commentary Foundation 串成第一版 Portfolio Intelligence Engine scoring layer。
+            </p>
+          </div>
+          <FeatureIcon icon={ShieldAlert} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {[
+            ["Health Score", portfolioIntelligenceScore?.healthScore ?? 0],
+            ["Risk Score", portfolioIntelligenceScore?.riskScore ?? 0],
+            ["Concentration", portfolioIntelligenceScore?.concentrationScore ?? 0],
+            ["Diversification", portfolioIntelligenceScore?.diversificationScore ?? 0],
+            ["Overall Rating", portfolioIntelligenceScore?.overallRating ?? "pending"],
+          ].map(([label, value]) => {
+            const displayValue =
+              typeof value === "number" ? numberLabel(value) : value;
+
+            return (
+              <div
+                className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+                key={label}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  {label}
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)] sm:text-3xl">
+                  {displayValue}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+          <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+            Portfolio Intelligence Summary
+          </p>
+          <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            {portfolioIntelligenceScore?.summary ??
+              "Portfolio Intelligence Engine is ready, but no score is available yet."}
+          </p>
+          <p className="mt-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+            Generated Time: {portfolioIntelligenceScore?.generatedAt ?? "--"}
+          </p>
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio Intelligence Engine Foundation 僅使用 mock scoring。僅供監控與風險意識，不構成投資建議、績效承諾或自動交易。
         </p>
       </section>
 
