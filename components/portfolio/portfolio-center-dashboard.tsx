@@ -26,6 +26,11 @@ import type {
 import type { PortfolioAsset } from "@/src/lib/portfolio/data-model/portfolio-asset-types";
 import type { PortfolioPosition } from "@/src/lib/portfolio/data-model/portfolio-position-types";
 import type { PortfolioInputRegion } from "@/src/lib/portfolio/input/asset-types";
+import { buildPortfolioExposure } from "@/src/lib/portfolio/exposure/exposure-builder";
+import type {
+  PortfolioExposureItem,
+  PortfolioExposureReport,
+} from "@/src/lib/portfolio/exposure/exposure-types";
 import { buildPortfolioIntelligence } from "@/src/lib/portfolio/intelligence-engine/intelligence-score-builder";
 import type { PortfolioIntelligenceScore } from "@/src/lib/portfolio/intelligence-engine/intelligence-engine-types";
 import { buildPortfolioMarketSnapshots } from "@/src/lib/portfolio/market-data/market-data-builder";
@@ -222,6 +227,46 @@ function AllocationGroup({
   );
 }
 
+function ExposureGroup({
+  items,
+  title,
+}: {
+  items: PortfolioExposureItem[];
+  title: string;
+}) {
+  return (
+    <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+      <h3 className="text-base font-semibold text-[var(--ixai-forest)]">{title}</h3>
+      {items.length > 0 ? (
+        <div className="mt-4 grid gap-3">
+          {items.map((item) => (
+            <div className="grid gap-2" key={`${item.category}-${item.key}`}>
+              <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                <span className="font-semibold text-[var(--ixai-forest)]">
+                  {item.label}
+                </span>
+                <span className="font-mono text-[var(--ixai-forest-soft)]">
+                  {formatMoney(item.marketValue)} · {formatShare(item.percentage)}
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-[rgba(9,41,31,0.08)]">
+                <div
+                  className="h-full rounded-full bg-[var(--ixai-gold)]"
+                  style={{ width: `${Math.max(0, Math.min(100, item.percentage))}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          目前沒有可計算的 exposure。
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function PortfolioCenterDashboard() {
   const [summary, setSummary] = useState<PortfolioDashboardSummary | null>(null);
   const [ownershipStatus, setOwnershipStatus] =
@@ -233,6 +278,8 @@ export function PortfolioCenterDashboard() {
     useState<PortfolioMarketDataFeed | null>(null);
   const [portfolioValuationReport, setPortfolioValuationReport] =
     useState<PortfolioValuationReport | null>(null);
+  const [portfolioExposureReport, setPortfolioExposureReport] =
+    useState<PortfolioExposureReport | null>(null);
   const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
   const [portfolioCommentaryFeed, setPortfolioCommentaryFeed] =
     useState<PortfolioCommentaryFeed | null>(null);
@@ -256,6 +303,7 @@ export function PortfolioCenterDashboard() {
       setOwnershipStatus(null);
       setPortfolioMarketDataFeed(null);
       setPortfolioValuationReport(null);
+      setPortfolioExposureReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -289,6 +337,13 @@ export function PortfolioCenterDashboard() {
         marketDataFeed,
         positions,
       });
+      const exposureReport = await buildPortfolioExposure({
+        accounts,
+        assets,
+        marketDataFeed,
+        positions,
+        valuationReport,
+      });
       const newsFeed = await buildPortfolioNewsFeed({ assets });
       const commentaryFeed = await buildPortfolioCommentary({ newsFeed });
       const intelligenceScore = await buildPortfolioIntelligence({
@@ -315,6 +370,7 @@ export function PortfolioCenterDashboard() {
         setRepositoryPositions(positions);
         setPortfolioMarketDataFeed(marketDataFeed);
         setPortfolioValuationReport(valuationReport);
+        setPortfolioExposureReport(exposureReport);
         setPortfolioNewsFeed(newsFeed);
         setPortfolioCommentaryFeed(commentaryFeed);
         setPortfolioIntelligenceScore(intelligenceScore);
@@ -331,6 +387,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryPositions(positions);
       setPortfolioMarketDataFeed(marketDataFeed);
       setPortfolioValuationReport(valuationReport);
+      setPortfolioExposureReport(exposureReport);
       setPortfolioNewsFeed(newsFeed);
       setPortfolioCommentaryFeed(commentaryFeed);
       setPortfolioIntelligenceScore(intelligenceScore);
@@ -345,6 +402,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryPositions([]);
       setPortfolioMarketDataFeed(null);
       setPortfolioValuationReport(null);
+      setPortfolioExposureReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -383,6 +441,7 @@ export function PortfolioCenterDashboard() {
   const marketSnapshots = portfolioMarketDataFeed?.snapshots.slice(0, 8) ?? [];
   const portfolioValuation = portfolioValuationReport?.valuation;
   const portfolioAllocation = portfolioValuationReport?.allocation;
+  const topExposureItems = portfolioExposureReport?.topExposures.slice(0, 5) ?? [];
   const latestHeadlines = portfolioNewsFeed?.items.slice(0, 5) ?? [];
   const latestCommentary = portfolioCommentaryFeed?.items.slice(0, 5) ?? [];
   const entitlements = summary?.entitlements;
@@ -645,6 +704,106 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Dashboard Foundation 僅做資料視覺化；不包含新聞、AI commentary、券商同步、CSV import processing、行情或交易功能。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Exposure Engine
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Exposure Dashboard Foundation
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.05 使用 Portfolio Valuation、mock market snapshots 與 repository assets 產生 exposure readback，協助理解 asset type、symbol、region 與 provider 集中度。
+            </p>
+          </div>
+          <FeatureIcon icon={Layers3} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Total Market Value", formatMoney(portfolioExposureReport?.totalMarketValue ?? 0)],
+            ["Top Exposure Count", numberLabel(topExposureItems.length)],
+            ["Generated Time", portfolioExposureReport?.generatedAt ?? "--"],
+            ["Engine Source", portfolioExposureReport ? "mock" : "pending"],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            Top Exposures
+          </h3>
+          {topExposureItems.length > 0 ? (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+              {topExposureItems.map((item) => (
+                <article
+                  className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.70)] p-3"
+                  key={`${item.category}-${item.key}`}
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(176,141,87,0.10)] px-2.5 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest)]">
+                      {item.category}
+                    </span>
+                    <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                      {formatShare(item.percentage)}
+                    </span>
+                  </div>
+                  <p className="mt-3 break-words text-xl font-semibold text-[var(--ixai-forest)]">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 font-mono text-sm text-[var(--ixai-forest-soft)]">
+                    {formatMoney(item.marketValue)}
+                  </p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              目前沒有可顯示的 top exposure。
+            </p>
+          )}
+        </div>
+
+        <div className="mt-5 grid gap-4 xl:grid-cols-2">
+          <ExposureGroup
+            items={portfolioExposureReport?.assetTypeExposure ?? []}
+            title="Asset Type Exposure"
+          />
+          <ExposureGroup
+            items={portfolioExposureReport?.symbolExposure ?? []}
+            title="Symbol / Underlying Exposure"
+          />
+          <ExposureGroup
+            items={portfolioExposureReport?.regionExposure ?? []}
+            title="Region Exposure"
+          />
+          <ExposureGroup
+            items={portfolioExposureReport?.providerExposure ?? []}
+            title="Provider Exposure"
+          />
+        </div>
+
+        <p className="mt-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          {portfolioExposureReport?.summary ??
+            "Portfolio Exposure Engine is ready, but no exposure report is available yet."}
+        </p>
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio Exposure Engine Foundation 使用 deterministic mock exposure logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
         </p>
       </section>
 
