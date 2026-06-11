@@ -23,6 +23,11 @@ import type {
   PortfolioConcentrationItem,
   PortfolioConcentrationReport,
 } from "@/src/lib/portfolio/concentration/concentration-types";
+import { buildPortfolioCorrelation } from "@/src/lib/portfolio/correlation/correlation-builder";
+import type {
+  PortfolioCorrelationPair,
+  PortfolioCorrelationReport,
+} from "@/src/lib/portfolio/correlation/correlation-types";
 import type { PortfolioDashboardSummary } from "@/src/lib/portfolio/dashboard";
 import type {
   PortfolioAccount,
@@ -302,6 +307,29 @@ function ConcentrationMetric({
   );
 }
 
+function CorrelationPairCard({ pair }: { pair: PortfolioCorrelationPair }) {
+  return (
+    <article className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="break-words text-lg font-semibold text-[var(--ixai-forest)]">
+          {pair.leftLabel} ↔ {pair.rightLabel}
+        </p>
+        <span className="rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(176,141,87,0.10)] px-2.5 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest)]">
+          {pair.level}
+        </span>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+          Score {numberLabel(pair.score)}
+        </span>
+      </div>
+      <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+        {pair.rationale}
+      </p>
+    </article>
+  );
+}
+
 export function PortfolioCenterDashboard() {
   const [summary, setSummary] = useState<PortfolioDashboardSummary | null>(null);
   const [ownershipStatus, setOwnershipStatus] =
@@ -317,6 +345,8 @@ export function PortfolioCenterDashboard() {
     useState<PortfolioExposureReport | null>(null);
   const [portfolioConcentrationReport, setPortfolioConcentrationReport] =
     useState<PortfolioConcentrationReport | null>(null);
+  const [portfolioCorrelationReport, setPortfolioCorrelationReport] =
+    useState<PortfolioCorrelationReport | null>(null);
   const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
   const [portfolioCommentaryFeed, setPortfolioCommentaryFeed] =
     useState<PortfolioCommentaryFeed | null>(null);
@@ -342,6 +372,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioValuationReport(null);
       setPortfolioExposureReport(null);
       setPortfolioConcentrationReport(null);
+      setPortfolioCorrelationReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -385,6 +416,10 @@ export function PortfolioCenterDashboard() {
       const concentrationReport = await buildPortfolioConcentration({
         exposureReport,
       });
+      const correlationReport = await buildPortfolioCorrelation({
+        concentrationReport,
+        exposureReport,
+      });
       const newsFeed = await buildPortfolioNewsFeed({ assets });
       const commentaryFeed = await buildPortfolioCommentary({ newsFeed });
       const intelligenceScore = await buildPortfolioIntelligence({
@@ -413,6 +448,7 @@ export function PortfolioCenterDashboard() {
         setPortfolioValuationReport(valuationReport);
         setPortfolioExposureReport(exposureReport);
         setPortfolioConcentrationReport(concentrationReport);
+        setPortfolioCorrelationReport(correlationReport);
         setPortfolioNewsFeed(newsFeed);
         setPortfolioCommentaryFeed(commentaryFeed);
         setPortfolioIntelligenceScore(intelligenceScore);
@@ -431,6 +467,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioValuationReport(valuationReport);
       setPortfolioExposureReport(exposureReport);
       setPortfolioConcentrationReport(concentrationReport);
+      setPortfolioCorrelationReport(correlationReport);
       setPortfolioNewsFeed(newsFeed);
       setPortfolioCommentaryFeed(commentaryFeed);
       setPortfolioIntelligenceScore(intelligenceScore);
@@ -447,6 +484,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioValuationReport(null);
       setPortfolioExposureReport(null);
       setPortfolioConcentrationReport(null);
+      setPortfolioCorrelationReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -950,6 +988,119 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Portfolio Concentration Engine Foundation 使用 deterministic mock concentration logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Correlation Engine
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Correlation Dashboard Foundation
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.07 將 Exposure Report 與 Concentration Report 轉成 deterministic mock correlation pairs，協助閱讀 TSLA / NVDA、BTC / ETH 等共振風險情境。
+            </p>
+          </div>
+          <FeatureIcon icon={Layers3} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Correlation Score", numberLabel(portfolioCorrelationReport?.correlationScore ?? 0)],
+            ["Correlation Risk Level", portfolioCorrelationReport?.level ?? "LOW"],
+            ["High Count", numberLabel(portfolioCorrelationReport?.highCorrelationCount ?? 0)],
+            ["Generated Time", portfolioCorrelationReport?.generatedAt ?? "--"],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {[
+            ["High Correlation", portfolioCorrelationReport?.highCorrelationCount ?? 0],
+            ["Medium Correlation", portfolioCorrelationReport?.mediumCorrelationCount ?? 0],
+            ["Low Correlation", portfolioCorrelationReport?.lowCorrelationCount ?? 0],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
+                {numberLabel(Number(value))}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            Top Correlation Pairs
+          </h3>
+          {portfolioCorrelationReport &&
+          portfolioCorrelationReport.topCorrelationPairs.length > 0 ? (
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              {portfolioCorrelationReport.topCorrelationPairs.map((pair) => (
+                <CorrelationPairCard
+                  key={`${pair.leftSymbol}-${pair.rightSymbol}`}
+                  pair={pair}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              目前沒有 mock correlation pair。
+            </p>
+          )}
+        </div>
+
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">Alerts</h3>
+            {portfolioCorrelationReport && portfolioCorrelationReport.alerts.length > 0 ? (
+              <ul className="mt-3 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {portfolioCorrelationReport.alerts.map((alert) => (
+                  <li
+                    className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] px-3 py-2"
+                    key={alert}
+                  >
+                    {alert}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                目前沒有 correlation alert。
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">Summary</h3>
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              {portfolioCorrelationReport?.summary ??
+                "Portfolio Correlation Engine is ready, but no correlation report is available yet."}
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio Correlation Engine Foundation 使用 deterministic mock correlation logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
         </p>
       </section>
 

@@ -4,11 +4,11 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v2.06 / Portfolio Concentration Engine Foundation`
+`v2.07 / Portfolio Correlation Engine Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, first Portfolio Data Model Foundation, first Portfolio Repository Foundation, first Portfolio Persistence Foundation, first Ownership Validation layer, first Repository-driven Portfolio Dashboard Foundation, first Portfolio News Intelligence Foundation, first mock Portfolio News Provider Foundation, first mock Portfolio AI Commentary Foundation, first mock Portfolio Intelligence Engine Foundation, first mock Portfolio Risk Engine Foundation, first mock Portfolio Recommendation Engine Foundation, first mock Portfolio Market Data Foundation, first mock Portfolio Valuation Engine Foundation, first mock Portfolio Exposure Engine Foundation, and first mock Portfolio Concentration Engine Foundation. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, first Portfolio Data Model Foundation, first Portfolio Repository Foundation, first Portfolio Persistence Foundation, first Ownership Validation layer, first Repository-driven Portfolio Dashboard Foundation, first Portfolio News Intelligence Foundation, first mock Portfolio News Provider Foundation, first mock Portfolio AI Commentary Foundation, first mock Portfolio Intelligence Engine Foundation, first mock Portfolio Risk Engine Foundation, first mock Portfolio Recommendation Engine Foundation, first mock Portfolio Market Data Foundation, first mock Portfolio Valuation Engine Foundation, first mock Portfolio Exposure Engine Foundation, first mock Portfolio Concentration Engine Foundation, and first mock Portfolio Correlation Engine Foundation. Current priority remains the main product line:
 
 - Validate Portfolio Intelligence Universe output with authenticated repository data.
 - Validate Portfolio News Feed output with repository-driven symbols and the mock provider.
@@ -21,6 +21,7 @@ IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine
 - Validate Portfolio Allocation metrics by asset type, provider, and region.
 - Validate Portfolio Exposure output by asset type, symbol, FCN underlying, crypto, region, and provider.
 - Validate Portfolio Concentration output by top symbol, FCN underlying, asset type, provider, and region.
+- Validate Portfolio Correlation output by high / medium / low pair counts and deterministic top correlation pairs.
 - Validate the Repository-driven Portfolio Dashboard with authenticated User A / User B.
 - Validate Supabase-backed Create / Read asset persistence with authenticated User A / User B.
 - Validate the Portfolio Account → Asset → Position model under real dashboard readback.
@@ -344,15 +345,18 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 
 ### v2.07 — Portfolio Correlation Engine Foundation
 
-- Define portfolio correlation and co-movement boundaries before any live provider or broker-backed risk model.
-- Keep deterministic mock logic until concentration output is validated.
-- No external market data, broker sync, AI provider, recommendation logic, or trading feature.
+- Add Portfolio Correlation types.
+- Add Correlation Engine contract.
+- Add deterministic mock correlation engine.
+- Build Portfolio Correlation Report from the existing Portfolio Exposure Report and Portfolio Concentration Report.
+- Display Correlation Score, Correlation Risk Level, High / Medium / Low Counts, Top Correlation Pairs, Alerts, Summary, and Generated Time inside `/my-ixai/portfolio`.
+- No real market provider, broker sync, API route, migration, schema change, recommendation logic change, or trading function.
 
-### v2.08 — Portfolio Real-Time Engine Foundation
+### v2.08 — Portfolio Scenario Engine Foundation
 
-- Define real-time portfolio engine boundaries before provider-backed valuation.
-- Keep market data provider quality, staleness, and attribution checks explicit.
-- No live provider or broker sync until product, security, and data-governance checks are approved.
+- Define stress scenario and factor-shock boundaries after correlation output is validated.
+- Keep scenario logic deterministic until real market data and broker sync are approved.
+- No live provider, broker sync, external AI, recommendation logic, or trading feature.
 
 ### v2.09 — Broker Sync Foundation Planning
 
