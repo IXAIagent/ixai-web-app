@@ -4,11 +4,21 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v2.10a / Global Market Foundation Review`
+`v2.11 / Legacy Pro Migration Audit and Product Inventory`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, and Global Market Foundation Review. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
+
+Current priority is architecture stabilization before v3.00:
+
+- Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
+- Do not add more Portfolio Center modules until the current surface is split into clear centers.
+- Prepare v3.00 UX / IA Refactor around Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings.
+- Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
+- Keep Social Pack as a distribution asset, not the core product engine.
+
+Operational validation priorities remain:
 
 - Validate Portfolio Intelligence Universe output with authenticated repository data.
 - Validate Portfolio News Feed output with repository-driven symbols and the mock provider.
@@ -25,7 +35,7 @@ IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine
 - Validate Portfolio Scenario output by technology selloff, crypto correction, FCN underlying stress, regional shock, and concentration shock.
 - Validate Portfolio Stress Test output by global equity shock, crypto crash, FCN worst-of shock, high correlation shock, concentration breakdown, and regional crisis.
 - Validate Portfolio FCN Risk output by FCN count, exposure, repeated underlyings, concentration, correlation, stress-test sensitivity, and global market readiness.
-- Execute Platform IA Refactor before adding more Portfolio Center dashboard modules.
+- Execute v3.00 Platform IA Refactor before adding more Portfolio Center dashboard modules.
 - Split Portfolio Center complexity into Portfolio Center, Risk Center, Intelligence Center, FCN Center, and Settings.
 - Preserve global market readiness across asset types, region enums, provider enums, market data interfaces, news interfaces, language interfaces, and localization surfaces.
 - Validate the Repository-driven Portfolio Dashboard with authenticated User A / User B.
@@ -39,6 +49,65 @@ IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine
 Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack export regresses again and the incident-prevention rules in `docs/PROJECT_RULES.md` are followed.
 
 ## Future Version Plan
+
+### v2.11 — Legacy Pro Migration Audit and Product Inventory
+
+- Docs-first audit of Legacy Pro, AI Morning Brief, FCN Monitoring, Intelligence modules, Portfolio modules, and existing App functionality.
+- Product inventory matrix across feature, current location, migration status, and future center.
+- Migration status estimates:
+  - Legacy Pro migration: 45%.
+  - Active App migration: 72%.
+  - Global market readiness: 58%.
+  - Multi-language readiness: 35%.
+  - Multi-broker readiness: 28%.
+- Confirms v3.00 centers:
+  - Home.
+  - Portfolio Center.
+  - Risk Center.
+  - FCN Center.
+  - Intelligence Center.
+  - Settings.
+- No product code, API, schema, migration, auth, broker, market data, or AI provider changes.
+
+### v3.00 — UX / IA Refactor
+
+- Split the overgrown Portfolio Center into dedicated centers.
+- Preserve existing routes where possible and introduce low-risk route wrappers before moving logic.
+- Move risk-heavy modules into Risk Center.
+- Move FCN-specific modules into FCN Center.
+- Move Daily / Weekly / Watchlist / News / Commentary into Intelligence Center.
+- Move membership, language, broker connections, notifications, and preferences into Settings.
+- Keep `/portfolio` as input / creation and `/my-ixai/portfolio` as Portfolio Center.
+
+### v3.10 — Intelligence Center Migration
+
+- Consolidate Daily Intelligence, Weekly Intelligence, watchlists, market news, AI commentary, and Social Pack distribution into one Intelligence Center.
+- Use Legacy Pro market/news/workspace ideas as reference only.
+- Do not reintroduce legacy JWT, localStorage token auth, or direct browser-to-FastAPI protected calls.
+
+### v3.11 — FCN Center Phase 1
+
+- Separate FCN positions, underlyings, worst-of, KI / KO, observation calendar, coupon calendar, and FCN Risk Engine readback from generic Portfolio Center.
+- Maintain global FCN readiness across US, TW, HK, CN, JP, KR, EU, SG, crypto-linked FCN, and future structured products.
+
+### v3.12 — Settings and Preferences Foundation
+
+- Migrate Legacy Pro preference concepts into App-native account settings.
+- Cover language, region, notifications, delivery channels, default landing, compact mode, advanced intelligence preference, and risk interpretation mode.
+
+### v3.13 — Real Market Data Provider Foundation
+
+- Replace deterministic mock market snapshots behind the existing provider contract.
+- Add source, timestamp, stale-data, provider health, and failure semantics before using values in production risk readback.
+
+### v3.14 — Broker Adapter Security Foundation
+
+- Define read-only broker sync, consent, credential storage, audit log, refresh, revocation, rate limits, and partial-sync failure states.
+
+### v3.15 — Legacy Pro Decommission Plan
+
+- Mark each Legacy Pro screen as replaced, migrated conceptually, retained as reference, or retired.
+- Preserve product ideas and discard unsafe legacy auth/data patterns.
 
 ### v1.82 — FCN Risk Engine
 
