@@ -112,6 +112,8 @@ v3.03 repositions `/pro` as the public IXAI Platform page. It should introduce I
 
 v3.04 establishes Asset Input Center as the canonical Workspace asset onboarding surface. Users should understand that assets are created inside `/my-ixai/input`, while public education pages explain concepts and lead users into the Workspace. FCN Wizard now belongs to `/my-ixai/input/fcn`; public `/fcn` should remain education and risk literacy, not data entry.
 
+v3.05 makes Portfolio Center a readable workspace page for normal users instead of an engineering-heavy module dump. Portfolio should explain assets, holdings, next actions, and the basic risk relationship before showing deeper engines. Public platform CTA surfaces must remain legible and high contrast because trust begins with basic usability.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text

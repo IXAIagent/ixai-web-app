@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.04 / Asset Input Center`
+`v3.05 / Portfolio Workspace Foundation + CTA Fix`
 
 ## Current Priority
 
@@ -18,11 +18,13 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V302_WORKSPACE_ENTRY_MIGRATION.md` as the source of truth for Login / Register / Account entry flow.
 - Use `docs/V303_IXAI_PLATFORM_PAGE.md` as the source of truth for `/pro` public platform positioning.
 - Use `docs/V304_ASSET_INPUT_CENTER.md` as the source of truth for Workspace asset onboarding and FCN Wizard ownership.
-- Do not add new investment features in v3.00 / v3.01 / v3.02 / v3.03 / v3.04.
+- Use `docs/V305_PORTFOLIO_WORKSPACE_FOUNDATION.md` as the source of truth for Portfolio Workspace foundation and `/pro` CTA contrast.
+- Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
 - `/pro` is now the public IXAI Platform introduction and conversion page, not the primary Legacy Pro entry.
 - `/my-ixai/input` is now the canonical Asset Input Center. FCN Wizard belongs to `/my-ixai/input/fcn`, not public `/fcn`.
+- `/my-ixai/portfolio` should be understandable as a Workspace homepage, not an engineering dashboard dump.
 - Public navigation and Workspace navigation must remain separate.
 - Do not add more Portfolio Center modules until the current surface is split into clear centers.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
@@ -118,7 +120,15 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Add Asset Input to Workspace navigation and Workspace Home shortcuts.
 - Keep schema, migrations, API, auth, membership, broker, market data, recommendation logic, and trading logic unchanged.
 
-### v3.05 — Risk Center Decomposition
+### v3.05 — Portfolio Workspace Foundation + CTA Fix
+
+- Turn `/my-ixai/portfolio` into a user-readable Portfolio Workspace homepage.
+- Add Portfolio Overview, Holdings Summary, Risk Snapshot, and Quick Actions sections.
+- Keep data mock/placeholder only; do not connect real risk engines or new APIs.
+- Fix `/pro` CTA contrast so hero and pricing buttons are visible.
+- Keep schema, migrations, API, auth, membership, entitlements, broker, market data, AI, recommendation, and trading logic unchanged.
+
+### v3.06 — Risk Center Decomposition
 
 - Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
 - Keep existing engine logic unchanged.

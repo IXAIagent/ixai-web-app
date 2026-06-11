@@ -59,6 +59,7 @@ Production data ownership update:
 - v3.02 makes `/my-ixai/home` the authenticated entry after login / register and changes `/account` into a legacy transitional page that points users into Workspace.
 - v3.03 repositions `/pro` as the public IXAI Platform introduction and conversion page. It is no longer the primary Legacy Pro or membership-status entry.
 - v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding surface and moves FCN Wizard ownership from public `/fcn` into `/my-ixai/input/fcn`.
+- v3.05 turns `/my-ixai/portfolio` into a user-readable Portfolio Workspace homepage and fixes `/pro` CTA contrast.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -165,7 +166,7 @@ v2.11 center ownership rule:
   - `/my-ixai`: Workspace index and center directory.
   - `/my-ixai/home`: Future logged-in workspace home placeholder.
   - `/portfolio`: Portfolio Input, creation, and product explanation.
-  - `/my-ixai/portfolio`: Portfolio Center dashboard, readback, and architecture visualization.
+  - `/my-ixai/portfolio`: Portfolio Workspace homepage with overview, holdings summary, risk snapshot, and quick actions.
   - `/my-ixai/input`: Asset Input Center, global input model foundation, CSV / broker / market / language readiness.
   - `/my-ixai/input/stock`: Stock / ETF input foundation route.
   - `/my-ixai/input/crypto`: Crypto input foundation route.
