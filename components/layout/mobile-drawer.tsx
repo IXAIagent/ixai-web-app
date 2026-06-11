@@ -53,6 +53,7 @@ const WORKSPACE_DRAWER_SECTIONS: DrawerSection[] = [
     entries: [
       { label: "Workspace Home", href: "/my-ixai/home", icon: Home },
       { label: "Portfolio Center", href: "/my-ixai/portfolio", icon: BriefcaseBusiness },
+      { label: "Asset Input", href: "/my-ixai/input", icon: FileText },
       { label: "Risk Center", href: "/my-ixai/risk", icon: ShieldAlert },
       { label: "FCN Center", href: "/my-ixai/fcn", icon: ShieldCheck },
       { label: "Intelligence Center", href: "/my-ixai/intelligence", icon: Newspaper },

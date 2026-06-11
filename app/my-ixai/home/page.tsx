@@ -1,7 +1,9 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  Bitcoin,
   BriefcaseBusiness,
+  CandlestickChart,
   Home,
   Newspaper,
   Settings,
@@ -51,6 +53,27 @@ const workspaceCards = [
   },
 ];
 
+const assetShortcutCards = [
+  {
+    description: "從 Asset Input 建立股票 / ETF 資料入口，未來串接 Portfolio 與 Risk readback。",
+    href: "/my-ixai/input/stock",
+    icon: CandlestickChart,
+    label: "新增股票",
+  },
+  {
+    description: "建立 Crypto 資產輸入入口，預留 spot、Grid、Dual 與 exchange sync。",
+    href: "/my-ixai/input/crypto",
+    icon: Bitcoin,
+    label: "新增 Crypto",
+  },
+  {
+    description: "使用 FCN Wizard 建立 FCN 部位，讓資料進入 Workspace 風險流程。",
+    href: "/my-ixai/input/fcn",
+    icon: ShieldCheck,
+    label: "新增 FCN",
+  },
+];
+
 export default function MyIxaiHomePage() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
@@ -79,6 +102,47 @@ export default function MyIxaiHomePage() {
           >
             返回官網
           </Link>
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+              Asset Onboarding
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              快速新增資產
+            </h2>
+          </div>
+          <Link
+            className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] sm:w-fit"
+            href="/my-ixai/input"
+          >
+            Asset Input Center
+            <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          </Link>
+        </div>
+
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          {assetShortcutCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <Link
+                className="group flex min-h-36 flex-col justify-between rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-[var(--ixai-forest)] transition hover:-translate-y-0.5 hover:bg-white/80"
+                href={card.href}
+                key={card.href}
+              >
+                <span className="inline-flex items-center gap-2 text-sm font-semibold">
+                  <Icon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+                  {card.label}
+                </span>
+                <span className="mt-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                  {card.description}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
