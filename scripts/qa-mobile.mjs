@@ -68,10 +68,10 @@ const routeSpecs = [
     path: "/pro",
     kind: "protected",
     visibleText: [
-      "IXAI Pro：為需要持續監控風險的投資人打造",
-      "開啟 IXAI Pro",
-      "了解 FCN 監控",
-      "預約顧問諮詢",
+      "IXAI：AI 投資風控平台",
+      "IXAI Platform",
+      "免費開始使用",
+      "進入 IXAI Workspace",
     ],
   },
   {

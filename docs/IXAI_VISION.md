@@ -108,6 +108,8 @@ v3.01 separates the public website navigation from the Workspace application nav
 
 v3.02 makes that mental model concrete by sending Login / Register success into `/my-ixai/home`. `/account` becomes a legacy transitional page instead of the main IXAI Pro entry. This keeps the product promise simple: public website first, then a focused IXAI Workspace.
 
+v3.03 repositions `/pro` as the public IXAI Platform page. It should introduce IXAI as an AI investment risk platform, not as the old Legacy Pro launch surface. The page explains the product philosophy, Portfolio / Risk / FCN / Intelligence workflows, future roadmap, future pricing direction, and advisory origin while preserving strict non-advice language.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text

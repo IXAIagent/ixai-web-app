@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.02 / Workspace Entry Migration`
+`v3.03 / IXAI Platform Page`
 
 ## Current Priority
 
@@ -16,9 +16,11 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
 - Use `docs/V301_NAVIGATION_SEPARATION_FOUNDATION.md` as the navigation separation rule for public website versus Workspace application surfaces.
 - Use `docs/V302_WORKSPACE_ENTRY_MIGRATION.md` as the source of truth for Login / Register / Account entry flow.
-- Do not add new investment features in v3.00 / v3.01 / v3.02.
+- Use `docs/V303_IXAI_PLATFORM_PAGE.md` as the source of truth for `/pro` public platform positioning.
+- Do not add new investment features in v3.00 / v3.01 / v3.02 / v3.03.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
+- `/pro` is now the public IXAI Platform introduction and conversion page, not the primary Legacy Pro entry.
 - Public navigation and Workspace navigation must remain separate.
 - Do not add more Portfolio Center modules until the current surface is split into clear centers.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
@@ -98,7 +100,14 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Remove `/account` as the primary IXAI Pro / Legacy Pro entry.
 - Keep auth provider, membership, entitlement, engines, API contracts, schema, migrations, market data, and broker logic unchanged.
 
-### v3.03 — Risk Center Decomposition
+### v3.03 — IXAI Platform Page
+
+- Reposition `/pro` as the public IXAI Platform introduction and conversion page.
+- Explain IXAI as an AI investment risk platform for Portfolio, Risk, FCN, and Intelligence workflows.
+- Document future pricing direction without fixed pricing.
+- Keep membership, entitlement, auth, schema, migrations, broker, market data, AI provider, and trading logic unchanged.
+
+### v3.04 — Risk Center Decomposition
 
 - Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
 - Keep existing engine logic unchanged.
