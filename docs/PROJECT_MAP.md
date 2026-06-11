@@ -38,6 +38,7 @@ Production data ownership update:
 - v1.94 connects the Portfolio Repository Layer to Supabase persistence for Create Asset and Read Asset only. Update / Delete remain Coming Soon.
 - v1.95 adds Ownership Validation readback for current user, current account, account count, asset count, position count, repository source, and RLS status.
 - v1.96 adds the first Repository-driven Portfolio Dashboard Foundation inside `/my-ixai/portfolio`, including account / asset / position totals, asset category allocation, provider allocation, and region allocation.
+- v1.97 adds Portfolio News Intelligence Foundation by generating an Intelligence Universe from repository assets. This prepares future holding-aware news and AI commentary without connecting providers.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
 
@@ -80,6 +81,10 @@ Supabase Repository
 portfolio_accounts / portfolio_assets / portfolio_positions
 ↓
 Portfolio Dashboard Foundation
+↓
+Portfolio News Intelligence Foundation
+↓
+News Provider Layer / AI Commentary Layer (Coming Soon)
 ```
 
 - Portfolio route split:

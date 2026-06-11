@@ -6,6 +6,39 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.97 — Portfolio News Intelligence Foundation
+
+Why:
+
+- v1.96 made repository-backed portfolio data visible in the Portfolio Dashboard.
+- IXAI now needs a safe intermediate layer between personal holdings and future news / AI commentary systems.
+
+What Changed:
+
+- Added `src/lib/portfolio/intelligence/`.
+- Added the Portfolio Intelligence Universe engine.
+- Mapped repository assets into tracked symbols:
+  - STOCK and CRYPTO use asset symbols.
+  - FCN uses `metadata.underlyings`.
+  - GRID and DUAL normalize common pair symbols such as `BTCUSDT` to `BTC`.
+  - CASH is ignored.
+- Added a Portfolio Intelligence Universe section inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio News Intelligence Foundation, News Provider Layer (Coming Soon), and AI Commentary Layer (Coming Soon).
+
+Key Decisions:
+
+- v1.97 is foundation-only.
+- No News API, AI provider, market data provider, or broker integration is connected.
+- The universe is repository-driven only and does not introduce duplicate data sources.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, news API, OpenAI, Claude, Gemini, market data, or broker sync.
+
+Next:
+
+- Future versions may add a News Provider Layer after compliance and provider rules are defined.
+
 ## v1.96 — Portfolio Dashboard Foundation
 
 Why:

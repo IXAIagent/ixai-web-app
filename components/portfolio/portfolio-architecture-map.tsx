@@ -84,6 +84,11 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         label: "Portfolio Dashboard Foundation",
         status: "mvp",
       },
+      {
+        copy: "根據 Repository 資產產生去重排序的 tracked symbols，作為未來新聞與 AI commentary 的 universe。",
+        label: "Portfolio News Intelligence Foundation",
+        status: "mvp",
+      },
     ],
   },
   {
@@ -183,8 +188,13 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
     status: "coming_soon",
   },
   {
-    copy: "未啟用；未產生 AI commentary 或 holding-aware intelligence。",
-    label: "Portfolio Intelligence",
+    copy: "未啟用；尚未連接新聞來源或 provider ranking。",
+    label: "News Provider Layer",
+    status: "coming_soon",
+  },
+  {
+    copy: "未啟用；尚未產生 AI commentary 或 holding-aware interpretation。",
+    label: "AI Commentary Layer",
     status: "coming_soon",
   },
 ];
@@ -287,7 +297,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio Intelligence（Coming Soon）。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → News Provider Layer（Coming Soon）→ AI Commentary Layer（Coming Soon）。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>
