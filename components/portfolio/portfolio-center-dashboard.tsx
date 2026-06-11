@@ -30,6 +30,8 @@ import { buildPortfolioIntelligence } from "@/src/lib/portfolio/intelligence-eng
 import type { PortfolioIntelligenceScore } from "@/src/lib/portfolio/intelligence-engine/intelligence-engine-types";
 import { buildPortfolioNewsFeed } from "@/src/lib/portfolio/news/news-service";
 import type { PortfolioNewsFeed } from "@/src/lib/portfolio/news/news-types";
+import { buildPortfolioRecommendations } from "@/src/lib/portfolio/recommendation/recommendation-builder";
+import type { PortfolioRecommendationReport } from "@/src/lib/portfolio/recommendation/recommendation-types";
 import { getPortfolioRepository } from "@/src/lib/portfolio/repository/portfolio-persistence-provider";
 import type { PortfolioOwnershipValidationStatus } from "@/src/lib/portfolio/repository/portfolio-repository";
 import { buildPortfolioRiskReport } from "@/src/lib/portfolio/risk/risk-score-builder";
@@ -169,6 +171,8 @@ export function PortfolioCenterDashboard() {
     useState<PortfolioIntelligenceScore | null>(null);
   const [portfolioRiskReport, setPortfolioRiskReport] =
     useState<PortfolioRiskReport | null>(null);
+  const [portfolioRecommendationReport, setPortfolioRecommendationReport] =
+    useState<PortfolioRecommendationReport | null>(null);
   const [status, setStatus] = useState<"error" | "loading" | "ready" | "unauthenticated">(
     "loading",
   );
@@ -185,6 +189,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
       setPortfolioRiskReport(null);
+      setPortfolioRecommendationReport(null);
       setStatus("unauthenticated");
       return;
     }
@@ -219,6 +224,9 @@ export function PortfolioCenterDashboard() {
         assets,
         positions,
       });
+      const recommendationReport = await buildPortfolioRecommendations({
+        riskReport,
+      });
       const payload = (await response.json().catch(() => ({}))) as DashboardResponse;
 
       if (!response.ok || !payload.summary) {
@@ -231,6 +239,7 @@ export function PortfolioCenterDashboard() {
         setPortfolioCommentaryFeed(commentaryFeed);
         setPortfolioIntelligenceScore(intelligenceScore);
         setPortfolioRiskReport(riskReport);
+        setPortfolioRecommendationReport(recommendationReport);
         setStatus(response.status === 401 ? "unauthenticated" : "error");
         return;
       }
@@ -244,6 +253,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioCommentaryFeed(commentaryFeed);
       setPortfolioIntelligenceScore(intelligenceScore);
       setPortfolioRiskReport(riskReport);
+      setPortfolioRecommendationReport(recommendationReport);
       setStatus("ready");
     } catch {
       setSummary(null);
@@ -255,6 +265,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
       setPortfolioRiskReport(null);
+      setPortfolioRecommendationReport(null);
       setStatus("error");
     }
   }, []);
@@ -890,6 +901,99 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Portfolio Risk Engine Foundation 僅使用 mock deterministic scoring。僅供監控與風險意識，不構成投資建議、績效承諾或自動交易。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Recommendation Engine
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Portfolio Recommendation Prompts
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.02 將 Risk Report 接到 deterministic Recommendation Engine，產生監控型 workflow prompts；不連接 AI、新聞、行情、券商或交易系統。
+            </p>
+          </div>
+          <FeatureIcon icon={ShieldAlert} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {[
+            ["Recommendation Count", portfolioRecommendationReport?.recommendationCount ?? 0],
+            ["High Priority Count", portfolioRecommendationReport?.highPriorityCount ?? 0],
+            ["Generated Time", portfolioRecommendationReport?.generatedAt ?? "--"],
+          ].map(([label, value]) => {
+            const displayValue =
+              typeof value === "number" ? numberLabel(value) : value;
+
+            return (
+              <div
+                className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+                key={label}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  {label}
+                </p>
+                <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                  {displayValue}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+          <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+            Recommendation Cards
+          </p>
+          {portfolioRecommendationReport &&
+          portfolioRecommendationReport.recommendations.length > 0 ? (
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              {portfolioRecommendationReport.recommendations.map((item) => (
+                <article
+                  className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.70)] p-3"
+                  key={item.id}
+                >
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(176,141,87,0.10)] px-2.5 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest)]">
+                        {item.category}
+                      </span>
+                      <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        Priority {item.priority}
+                      </span>
+                      <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        Severity {item.severity}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              目前沒有 recommendation prompt。Risk Report 產生後，這裡會顯示 deterministic monitoring prompts。
+            </p>
+          )}
+          <p className="mt-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            {portfolioRecommendationReport?.summary ??
+              "Portfolio Recommendation Engine is ready, but no recommendation report is available yet."}
+          </p>
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio Recommendation Engine Foundation 僅使用 deterministic mock prompts。僅供監控與風險意識，不構成投資建議、交易指令、價格目標或自動交易。
         </p>
       </section>
 

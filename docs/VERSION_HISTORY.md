@@ -6,6 +6,38 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.02 — Portfolio Recommendation Engine Foundation
+
+Why:
+
+- v2.01 introduced a deterministic Portfolio Risk Engine, but the product still needed a safe next layer that converts risk states into monitoring prompts.
+- IXAI needs a recommendation-shaped foundation before any broker sync, market data, or real AI workflow is considered.
+
+What Changed:
+
+- Added `src/lib/portfolio/recommendation/`.
+- Added `PortfolioRecommendation` types and category / severity / priority definitions.
+- Added `PortfolioRecommendationEngine` contract.
+- Added deterministic `mockPortfolioRecommendationEngine`.
+- Added `buildPortfolioRecommendations()` from the current Portfolio Risk Report.
+- Added Portfolio Recommendation Engine readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Recommendation Engine Foundation and Broker Sync Foundation (Coming Soon).
+
+Key Decisions:
+
+- v2.02 is foundation-only.
+- Recommendation output is deterministic monitoring language.
+- The layer reuses the existing Portfolio Risk Report and does not create a duplicate data source.
+- Output must remain monitoring and risk-awareness only.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, market data, broker sync, News API, external AI, trading function, Daily / Weekly / Social Pack change, or ticker-specific order instruction.
+
+Next:
+
+- Future work may validate recommendation wording, governance, and broker-sync boundaries before any persistent recommendation workflow is introduced.
+
 ## v2.01 — Portfolio Risk Engine Foundation
 
 Why:
