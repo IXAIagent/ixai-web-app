@@ -6,6 +6,41 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.10a — Global Market Foundation Review
+
+Why:
+
+- v2.10 completed the Portfolio Core Engine Foundation chain through FCN Risk.
+- Before adding more platform features, IXAI needed a docs-first architecture review for global markets, global FCN products, multi-language readiness, multi-broker readiness, Legacy Pro migration, and future real market data.
+
+What Changed:
+
+- Added `docs/GLOBAL_MARKET_FOUNDATION_REVIEW_V210A.md`.
+- Reviewed architecture consistency, engine dependency chain, builder structure, provider structure, and dashboard integration.
+- Reviewed global market compatibility across US, TW, HK, CN, JP, KR, EU, SG, Crypto, FCN, and structured products.
+- Reviewed FCN expansion beyond US underlyings.
+- Reviewed multi-language, multi-broker, Legacy Pro migration, Portfolio Center complexity, and production readiness.
+- Proposed v2.11 Platform IA Refactor.
+
+Key Decisions:
+
+- v2.10a is docs-first.
+- No new engine, UI redesign, migration, schema change, API change, auth change, membership change, entitlement change, provider connection, external AI, market data, broker sync, or trading feature.
+- Portfolio Center is now too dense for continued single-page expansion.
+- v2.11 should split the platform into Home, Portfolio Center, Risk Center, Intelligence Center, FCN Center, and Settings.
+
+Out of Scope:
+
+- No product code, API, schema, migration, UI redesign, provider integration, broker sync, real market data, external AI, or trading logic.
+
+Next:
+
+- v2.11 Platform IA Refactor.
+- v2.12 Broker Integration Foundation.
+- v2.13 Real Market Data Foundation.
+- v2.14 Global Market Center Foundation.
+- v2.15 Legacy Pro Migration Phase 1.
+
 ## v2.10 — Portfolio FCN Risk Engine Foundation
 
 Why:

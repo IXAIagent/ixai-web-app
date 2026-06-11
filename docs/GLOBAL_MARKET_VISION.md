@@ -15,6 +15,8 @@ AI Risk Platform
 
 IXAI should not be treated as a US-only, Taiwan-only, English-only, or single-broker system. Every major portfolio, risk, market data, news, and language interface should be designed with global expansion in mind, even when the first implementation uses deterministic mock data or a narrow MVP dataset.
 
+v2.10a adds the first formal Global Market Foundation Review. See `docs/GLOBAL_MARKET_FOUNDATION_REVIEW_V210A.md` before changing portfolio engine assumptions, FCN underlying assumptions, region / provider enums, market data interfaces, news interfaces, localization surfaces, broker readiness, or Legacy Pro migration boundaries.
+
 ## Supported Markets
 
 Strategic direction:
@@ -110,6 +112,13 @@ Purpose:
 - Review future support for TW / HK / CN / JP / KR / EU / SG.
 - Review crypto-linked structured products.
 - Review future broker integration compatibility.
+
+v2.10a outcome:
+
+- Proceed to v2.11 Platform IA Refactor before adding more Portfolio Center modules.
+- Keep engines market-agnostic.
+- Do not connect real market data or broker sync until provider governance exists.
+- Do not migrate Legacy Pro auth/session architecture into the App.
 
 ## Compliance Boundary
 
