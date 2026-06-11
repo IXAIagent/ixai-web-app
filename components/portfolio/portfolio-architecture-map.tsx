@@ -114,6 +114,11 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         label: "Portfolio Recommendation Engine Foundation",
         status: "mvp",
       },
+      {
+        copy: "Mock market data provider 已可把 tracked symbols 轉成 deterministic market snapshots，尚未連接真實行情來源。",
+        label: "Portfolio Market Data Foundation",
+        status: "mvp",
+      },
     ],
   },
   {
@@ -198,8 +203,8 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
     status: "coming_soon",
   },
   {
-    copy: "未啟用；目前只使用已儲存的手動資料。",
-    label: "Market Data API",
+    copy: "未啟用；尚未連接 Yahoo Finance、Binance、CoinGecko、Finnhub、Polygon 或其他行情來源。",
+    label: "Real Market Data Provider",
     status: "coming_soon",
   },
   {
@@ -322,7 +327,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Broker Sync Foundation（Coming Soon）。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Real Market Data Provider（Coming Soon）。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>

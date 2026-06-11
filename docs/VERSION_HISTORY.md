@@ -6,6 +6,38 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.03 — Portfolio Market Data Foundation
+
+Why:
+
+- v2.02 completed the first deterministic recommendation foundation, but Portfolio Center still lacked a safe market snapshot layer.
+- IXAI needs a provider contract and dashboard shape before any real market data provider is considered.
+
+What Changed:
+
+- Added `src/lib/portfolio/market-data/`.
+- Added `PortfolioMarketSnapshot` and `PortfolioMarketDataFeed` types.
+- Added `PortfolioMarketDataProvider` contract.
+- Added deterministic `mockMarketDataProvider`.
+- Added `buildPortfolioMarketSnapshots()` using the existing Intelligence Universe.
+- Added Portfolio Market Data readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Market Data Foundation and Real Market Data Provider (Coming Soon).
+
+Key Decisions:
+
+- v2.03 is foundation-only.
+- Market snapshots are deterministic mock values.
+- The builder reuses the existing Portfolio Intelligence Universe and does not duplicate symbol extraction.
+- No real provider, API route, migration, broker integration, recommendation logic, or trading logic is introduced.
+
+Out of Scope:
+
+- No Yahoo Finance, Binance, CoinGecko, Finnhub, Polygon, OpenAI, Claude, Gemini, News API, market data API, broker sync, Supabase schema change, API route, auth change, membership change, entitlement change, recommendation logic, or trading feature.
+
+Next:
+
+- Future work may define provider governance, staleness policy, attribution, and data-quality checks before any real market data provider is connected.
+
 ## v2.02 — Portfolio Recommendation Engine Foundation
 
 Why:
