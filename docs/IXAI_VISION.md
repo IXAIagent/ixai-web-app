@@ -110,6 +110,8 @@ v3.02 makes that mental model concrete by sending Login / Register success into 
 
 v3.03 repositions `/pro` as the public IXAI Platform page. It should introduce IXAI as an AI investment risk platform, not as the old Legacy Pro launch surface. The page explains the product philosophy, Portfolio / Risk / FCN / Intelligence workflows, future roadmap, future pricing direction, and advisory origin while preserving strict non-advice language.
 
+v3.04 establishes Asset Input Center as the canonical Workspace asset onboarding surface. Users should understand that assets are created inside `/my-ixai/input`, while public education pages explain concepts and lead users into the Workspace. FCN Wizard now belongs to `/my-ixai/input/fcn`; public `/fcn` should remain education and risk literacy, not data entry.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text
@@ -152,6 +154,8 @@ After v2.10a, the platform IA direction is:
 Home
 ↓
 Portfolio Center
+↓
+Asset Input
 ↓
 Risk Center
 ↓

@@ -58,6 +58,7 @@ Production data ownership update:
 - v3.01 separates public website navigation from Workspace application navigation. Public routes keep brand / education / lead-generation navigation. `/my-ixai/*` routes get Workspace-only navigation plus an explicit `返回官網` exit.
 - v3.02 makes `/my-ixai/home` the authenticated entry after login / register and changes `/account` into a legacy transitional page that points users into Workspace.
 - v3.03 repositions `/pro` as the public IXAI Platform introduction and conversion page. It is no longer the primary Legacy Pro or membership-status entry.
+- v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding surface and moves FCN Wizard ownership from public `/fcn` into `/my-ixai/input/fcn`.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -144,6 +145,7 @@ Platform IA direction after v2.10a:
 ```text
 Home
 ├─ Portfolio Center
+├─ Asset Input
 ├─ Risk Center
 ├─ Intelligence Center
 ├─ FCN Center
@@ -152,7 +154,8 @@ Home
 
 v2.11 center ownership rule:
 
-- Portfolio Center owns accounts, assets, positions, valuation, allocation, exposure, import, and repository status.
+- Portfolio Center owns accounts, assets, positions, valuation, allocation, exposure, and repository status.
+- Asset Input owns asset onboarding for Stock / ETF, Crypto, FCN, and future import workflows.
 - Risk Center owns concentration, correlation, scenario, stress test, risk report, and monitoring prompts.
 - FCN Center owns FCN positions, underlyings, worst-of, KI / KO, observation calendar, coupon calendar, and FCN risk.
 - Intelligence Center owns Daily, Weekly, watchlist intelligence, market news, AI commentary, and Social Pack distribution.
@@ -163,7 +166,10 @@ v2.11 center ownership rule:
   - `/my-ixai/home`: Future logged-in workspace home placeholder.
   - `/portfolio`: Portfolio Input, creation, and product explanation.
   - `/my-ixai/portfolio`: Portfolio Center dashboard, readback, and architecture visualization.
-  - `/my-ixai/input`: Asset Input Hub, global input model foundation, CSV / broker / market / language readiness.
+  - `/my-ixai/input`: Asset Input Center, global input model foundation, CSV / broker / market / language readiness.
+  - `/my-ixai/input/stock`: Stock / ETF input foundation route.
+  - `/my-ixai/input/crypto`: Crypto input foundation route.
+  - `/my-ixai/input/fcn`: FCN Wizard route and canonical FCN data-entry surface.
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
   - `/my-ixai/risk`: Risk Center placeholder.
   - `/my-ixai/fcn`: FCN Center placeholder.
@@ -173,7 +179,7 @@ v2.11 center ownership rule:
 - Navigation split:
   - Public navigation mode: `/`, `/daily-brief`, `/market`, `/weekly-brief`, `/fcn`, `/pro`, `/about`, `/login`.
   - `/pro`: IXAI Platform public introduction and conversion page.
-  - Workspace navigation mode: `/my-ixai`, `/my-ixai/home`, `/my-ixai/portfolio`, `/my-ixai/risk`, `/my-ixai/fcn`, `/my-ixai/intelligence`, `/my-ixai/settings`.
+  - Workspace navigation mode: `/my-ixai`, `/my-ixai/home`, `/my-ixai/portfolio`, `/my-ixai/input`, `/my-ixai/risk`, `/my-ixai/fcn`, `/my-ixai/intelligence`, `/my-ixai/settings`.
   - Workspace navigation may include `返回官網` to `/`; it should not include the full public website menu.
   - Authenticated entry: Login / Register success should land on `/my-ixai/home`.
   - `/account`: Legacy transitional page only; it should not be the primary Pro / Legacy Pro entry.

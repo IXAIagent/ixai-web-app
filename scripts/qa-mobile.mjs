@@ -57,7 +57,7 @@ const routeSpecs = [
   {
     path: "/fcn",
     kind: "protected",
-    visibleText: ["FCN 教育", "什麼是 FCN", "了解 IXAI Pro"],
+    visibleText: ["FCN 教育", "什麼是 FCN", "了解 IXAI Platform", "前往 Workspace 建立 FCN"],
   },
   {
     path: "/risk",

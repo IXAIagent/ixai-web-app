@@ -14,8 +14,6 @@ import {
   Sparkles,
   TrendingDown,
 } from "lucide-react";
-import { FCNWizard } from "@/components/fcn/fcn-wizard";
-import { PortfolioReadbackSummary } from "@/components/portfolio/portfolio-readback-summary";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 // v1.64.0 — FCN education + conversion page. The App owns FCN education;
@@ -110,21 +108,21 @@ export default function FCNPage() {
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-7 text-white/72 sm:text-base sm:leading-8">
           一玄以投資顧問經驗，協助投資人理解 FCN 的收益結構、KI / KO、Worst-of 風險與配息觀察日。
-          本頁是教育與風險說明，個人化監控屬於 IXAI Pro。
+          本頁是教育與風險說明；FCN 建立與個人化監控已移到登入後 Workspace。
         </p>
         <div className="mt-5 grid gap-2 sm:flex sm:flex-wrap">
           <Link
             className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold"
             href="/pro"
           >
-            了解 IXAI Pro
+            了解 IXAI Platform
             <ArrowRight className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] transition hover:bg-white/[0.12]"
-            href="/account"
+            href="/my-ixai/input/fcn"
           >
-            申請 Pro 測試
+            前往 Workspace 建立 FCN
             <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
           <Link
@@ -137,9 +135,28 @@ export default function FCNPage() {
         </div>
       </section>
 
-      <PortfolioReadbackSummary variant="fcn" />
-
-      <FCNWizard />
+      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.92)] p-4 sm:p-6">
+        <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
+              Workspace FCN Input
+            </p>
+            <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ixai-forest)] sm:text-2xl">
+              FCN Wizard 已移到 Workspace Asset Input。
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              Public FCN 頁面保留教育、Worst-of、KI / KO、案例與 FAQ。需要建立 FCN 部位時，請登入後從 Asset Input Center 進入 FCN Wizard。
+            </p>
+          </div>
+          <Link
+            className="ixai-cta-forest inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-5 py-3 text-sm font-semibold text-[var(--ixai-cream)]"
+            href="/my-ixai/input/fcn"
+          >
+            前往 Workspace 建立 FCN
+            <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
 
       {/* 2. What is FCN */}
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
@@ -294,7 +311,7 @@ export default function FCNPage() {
               IXAI Pro 的 FCN 監控
             </p>
             <h2 className="mt-2 text-xl font-semibold leading-7 sm:text-2xl">
-              完整 FCN 監控屬於 IXAI Pro 功能。
+            完整 FCN 監控屬於 IXAI Workspace / Platform 的進階功能。
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-7 text-white/72">
               Pro 把 FCN 教育延伸為持續監控與風險工作流；不提供買賣指令、商品推薦、保證收益或自動交易。
@@ -321,14 +338,14 @@ export default function FCNPage() {
             className="ixai-cta-cream inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold"
             href="/pro"
           >
-            查看 IXAI Pro
+            查看 IXAI Platform
             <ArrowRight className="h-4 w-4 text-[var(--ixai-forest)]" aria-hidden="true" />
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] transition hover:bg-white/[0.12]"
-            href="/account"
+            href="/my-ixai/input/fcn"
           >
-            申請 Pro 測試
+            建立 FCN 部位
             <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
@@ -362,7 +379,7 @@ export default function FCNPage() {
       {/* 10. Compliance note */}
       <p className="rounded-md border border-[var(--ixai-border)] bg-white/45 px-4 py-3 text-xs leading-6 text-[var(--ixai-ink-muted)]">
         本頁為教育與風險說明，不構成個別投資建議、買賣指令、商品推薦或報酬保證。
-        個人化監控與資產審視屬於 IXAI Pro 或一玄投資顧問服務範圍。
+        個人化監控與資產審視屬於 IXAI Workspace / Platform 或一玄投資顧問服務範圍。
       </p>
     </main>
   );

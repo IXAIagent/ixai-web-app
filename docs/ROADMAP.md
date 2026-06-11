@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.03 / IXAI Platform Page`
+`v3.04 / Asset Input Center`
 
 ## Current Priority
 
@@ -17,10 +17,12 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V301_NAVIGATION_SEPARATION_FOUNDATION.md` as the navigation separation rule for public website versus Workspace application surfaces.
 - Use `docs/V302_WORKSPACE_ENTRY_MIGRATION.md` as the source of truth for Login / Register / Account entry flow.
 - Use `docs/V303_IXAI_PLATFORM_PAGE.md` as the source of truth for `/pro` public platform positioning.
-- Do not add new investment features in v3.00 / v3.01 / v3.02 / v3.03.
+- Use `docs/V304_ASSET_INPUT_CENTER.md` as the source of truth for Workspace asset onboarding and FCN Wizard ownership.
+- Do not add new investment features in v3.00 / v3.01 / v3.02 / v3.03 / v3.04.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
 - `/pro` is now the public IXAI Platform introduction and conversion page, not the primary Legacy Pro entry.
+- `/my-ixai/input` is now the canonical Asset Input Center. FCN Wizard belongs to `/my-ixai/input/fcn`, not public `/fcn`.
 - Public navigation and Workspace navigation must remain separate.
 - Do not add more Portfolio Center modules until the current surface is split into clear centers.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
@@ -107,7 +109,16 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Document future pricing direction without fixed pricing.
 - Keep membership, entitlement, auth, schema, migrations, broker, market data, AI provider, and trading logic unchanged.
 
-### v3.04 — Risk Center Decomposition
+### v3.04 — Asset Input Center
+
+- Make `/my-ixai/input` the canonical Workspace asset onboarding surface.
+- Add Workspace input routes for Stock / ETF, Crypto, and FCN.
+- Move FCN Wizard ownership from public `/fcn` to `/my-ixai/input/fcn`.
+- Keep public `/fcn` as education, Worst-of, KI / KO, case study, FAQ, and Workspace CTA.
+- Add Asset Input to Workspace navigation and Workspace Home shortcuts.
+- Keep schema, migrations, API, auth, membership, broker, market data, recommendation logic, and trading logic unchanged.
+
+### v3.05 — Risk Center Decomposition
 
 - Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
 - Keep existing engine logic unchanged.

@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v3.03 — IXAI Platform Page`
+`v3.04 — Asset Input Center`
 
 Current production state:
 
@@ -86,6 +86,8 @@ v3.01 separates public website navigation from Workspace application navigation.
 v3.02 makes `/my-ixai/home` the authenticated entry point. Login and Register success flows should land in Workspace Home. `/account` is now a legacy transitional page with a primary CTA into Workspace, not the main Pro / Legacy Pro entry.
 
 v3.03 repositions `/pro` as the public IXAI Platform introduction and conversion page. `/pro` should explain what IXAI is, why it differs from normal investment apps, how it supports Portfolio / Risk / FCN / Intelligence workflows, future roadmap, future pricing direction, and founder / advisory philosophy. It should not be treated as the primary Legacy Pro or membership-status entry.
+
+v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding surface. FCN Wizard ownership moves from public `/fcn` to `/my-ixai/input/fcn`; public `/fcn` should remain education, Worst-of, KI / KO, case study, FAQ, and Workspace CTA only. Do not place data-entry workflows back into public FCN.
 
 Validated production behavior:
 
@@ -129,7 +131,7 @@ Still not complete:
 
 Current Development Version:
 
-`v3.03 — IXAI Platform Page`
+`v3.04 — Asset Input Center`
 
 Current Core Flow:
 
@@ -140,7 +142,7 @@ Landing
 → Portfolio / FCN data entry
 → Worst-of / FCN Risk / Intelligence / Multi-Asset Portfolio Dashboard / Pro readback
 → Portfolio Center
-→ Asset Input Hub
+→ Asset Input Center
 → Asset Management Center
 → Portfolio Recommendation Engine readback
 → Portfolio Market Data readback
@@ -205,6 +207,7 @@ Product Layers:
 - Navigation Separation Foundation: v3.01 separates public website navigation from Workspace application navigation across desktop sidebar, mobile drawer, and mobile bottom navigation. It keeps public content routes intact and does not change auth, membership, entitlement, APIs, schema, migrations, engines, providers, or recommendation logic.
 - Workspace Entry Migration: v3.02 makes `/my-ixai/home` the logged-in entry point, updates `/account` into a transition page, and removes Legacy Pro as the primary post-login path. It does not redesign auth, change auth provider behavior, alter membership / entitlement rules, add APIs, change schema, add migrations, or modify engines.
 - IXAI Platform Page: v3.03 repositions `/pro` into a public product-positioning and conversion page for IXAI Platform. It removes the page's dependency on Legacy Pro launch / membership readback while keeping the route stable and public. It does not change membership, entitlement, auth, schema, migrations, broker integrations, external AI, market data providers, APIs, or trading logic.
+- Asset Input Center: v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding route, adds Stock / ETF, Crypto, and FCN child routes, and moves FCN Wizard ownership into `/my-ixai/input/fcn`. Public `/fcn` remains educational and should not own data-entry workflow.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 

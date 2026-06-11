@@ -17,6 +17,7 @@ export default function MyIxaiFcnPage() {
       eyebrow="FCN Center"
       icon={ShieldCheck}
       links={[
+        { href: "/my-ixai/input/fcn", label: "新增 FCN" },
         { href: "/fcn", label: "FCN Education" },
         { href: "/my-ixai/portfolio", label: "Portfolio Center" },
       ]}
