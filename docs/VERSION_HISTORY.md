@@ -6,6 +6,37 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.98 — Portfolio News Provider Foundation
+
+Why:
+
+- v1.97 created the Portfolio Intelligence Universe, but it intentionally stopped before provider architecture.
+- IXAI needs a safe intermediate provider contract before any real News API, AI commentary, or market data provider is introduced.
+
+What Changed:
+
+- Added `src/lib/portfolio/news/`.
+- Added `PortfolioNewsItem` and `PortfolioNewsProvider`.
+- Added `buildPortfolioNewsFeed()` to connect Repository assets, Intelligence Universe symbols, and a provider result.
+- Added a mock news provider covering `BTC`, `ETH`, `AAPL`, `TSLA`, `MSFT`, `ORCL`, `MDB`, `NVDA`, `AVGO`, `PLTR`, and `GOOGL`.
+- Added Portfolio News Feed readback inside `/my-ixai/portfolio`.
+- Updated the Architecture Map with Portfolio News Provider Foundation and kept AI Commentary Layer as Coming Soon.
+
+Key Decisions:
+
+- v1.98 is provider foundation only.
+- The active provider is mock-only.
+- The dashboard uses repository-driven assets and the v1.97 Intelligence Universe; it does not create a duplicate asset source.
+- External News API, AI commentary, market data, and broker sync remain explicitly out of scope.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, FCN engine change, Daily / Weekly / Social Pack change, News API, OpenAI, Claude, Gemini, Yahoo API, market data, broker sync, or trading function.
+
+Next:
+
+- Define provider governance, attribution, source quality rules, and compliance boundaries before connecting any real news provider.
+
 ## v1.97 — Portfolio News Intelligence Foundation
 
 Why:

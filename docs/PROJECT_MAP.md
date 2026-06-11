@@ -39,6 +39,7 @@ Production data ownership update:
 - v1.95 adds Ownership Validation readback for current user, current account, account count, asset count, position count, repository source, and RLS status.
 - v1.96 adds the first Repository-driven Portfolio Dashboard Foundation inside `/my-ixai/portfolio`, including account / asset / position totals, asset category allocation, provider allocation, and region allocation.
 - v1.97 adds Portfolio News Intelligence Foundation by generating an Intelligence Universe from repository assets. This prepares future holding-aware news and AI commentary without connecting providers.
+- v1.98 adds Portfolio News Provider Foundation by connecting the Intelligence Universe to a mock news provider and Portfolio News Feed readback. It still does not connect external News API, AI, market data, broker sync, or trading.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
 
@@ -84,7 +85,9 @@ Portfolio Dashboard Foundation
 ↓
 Portfolio News Intelligence Foundation
 ↓
-News Provider Layer / AI Commentary Layer (Coming Soon)
+Portfolio News Provider Foundation
+↓
+External News API / AI Commentary Layer (Coming Soon)
 ```
 
 - Portfolio route split:

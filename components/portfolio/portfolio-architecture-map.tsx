@@ -89,6 +89,11 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         label: "Portfolio News Intelligence Foundation",
         status: "mvp",
       },
+      {
+        copy: "Mock news provider 已可把 tracked symbols 轉成 Portfolio News Feed，尚未連接外部新聞來源。",
+        label: "Portfolio News Provider Foundation",
+        status: "mvp",
+      },
     ],
   },
   {
@@ -188,8 +193,8 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
     status: "coming_soon",
   },
   {
-    copy: "未啟用；尚未連接新聞來源或 provider ranking。",
-    label: "News Provider Layer",
+    copy: "未啟用；尚未連接真實新聞來源、provider ranking 或外部 feed。",
+    label: "External News API",
     status: "coming_soon",
   },
   {
@@ -297,7 +302,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → News Provider Layer（Coming Soon）→ AI Commentary Layer（Coming Soon）。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → AI Commentary Layer（Coming Soon）。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>
