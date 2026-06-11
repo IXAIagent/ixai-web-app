@@ -22,6 +22,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/LEGACY_BACKEND_INVENTORY_AUDIT_V305A.md` as the source of truth for reusable legacy backend modules and migration sequencing.
 - Use `docs/V306_ASSET_INPUT_COMPLETION.md` as the source of truth for Stock, Crypto, FCN, Review Summary, and Recent Inputs behavior.
 - Use `docs/V308_FCN_CENTER_DATA_WIRING.md` as the source of truth for the first FCN Input → FCN Draft Store → FCN Center data flow.
+- v3.08a fixes FCN Draft Store persistence so FCN Wizard writes to the same localStorage-backed store that FCN Center reads, with Recent Inputs fallback hydration.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
@@ -171,6 +172,7 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Wire `/my-ixai/input/fcn` FCN Wizard output into a local FCN Draft Store.
 - Display FCN overview, position readback, underlying exposure, coupon calendar, and detail panel.
 - Keep local/mock state only; do not add Supabase persistence, API routes, broker integration, market data, AI provider, Telegram, scheduler, or trading logic.
+- v3.08a ensures FCN Center reads the same persisted local draft store after navigation, reload, focus, pageshow, and new-tab access.
 
 ### v3.10 — Intelligence Center Migration
 

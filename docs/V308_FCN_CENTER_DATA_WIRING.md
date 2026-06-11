@@ -46,6 +46,21 @@ src/lib/portfolio/input/fcn-draft-store.ts
 
 The store uses local browser storage and a browser event to keep Workspace surfaces synchronized.
 
+## v3.08a Draft Store Fix
+
+v3.08a tightens the data wiring after a production-like check showed that FCN Center could appear while a newly created FCN draft was not visible.
+
+Fixes:
+
+- `FCNWizard` submit now writes directly to the local FCN Draft Store.
+- The FCN Draft Store exports and uses one canonical key: `ixai.fcn.drafts.v308`.
+- FCN Center reads the same key on mount.
+- FCN Center also reloads drafts on `focus`, `pageshow`, and cross-tab `storage` events.
+- `Portfolio Recent Inputs` and `FCN Draft Store` remain separate stores, but FCN submit writes to both.
+- If the draft store is empty but legacy Recent Inputs contain FCN entries, FCN Center hydrates minimal legacy draft readback instead of showing an empty state.
+
+This keeps the v3.08 flow local/browser-only while preventing navigation or reload from losing draft visibility.
+
 ## FCN Center Sections
 
 ### 1. FCN Overview
@@ -125,6 +140,8 @@ It does not migrate:
 - `/my-ixai/fcn` can read the draft.
 - FCN Center shows notional, strike, KI, KO, observation, coupon, and underlyings.
 - `/my-ixai/portfolio` still shows recent FCN input through the existing Recent Inputs panel.
+- Reloading `/my-ixai/fcn` keeps the draft visible because the source is localStorage, not React state.
+- Opening `/my-ixai/fcn` in another tab on the same origin keeps the draft visible.
 - Mobile layout remains single-column at 375px.
 - No API route, schema, migration, broker, market data, AI provider, Telegram, or trading change.
 

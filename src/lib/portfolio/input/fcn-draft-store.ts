@@ -1,3 +1,5 @@
+import { loadRecentPortfolioInputs } from "@/src/lib/portfolio/input/recent-inputs";
+
 export type FCNDraftUnderlying = {
   currentPrice?: string;
   id: string;
@@ -39,8 +41,8 @@ export type FCNDraftRecord = {
 export type FCNDraftInput = Omit<FCNDraftRecord, "createdAt" | "id" | "source">;
 
 export const FCN_DRAFT_STORE_EVENT = "ixai:fcn-drafts:changed";
+export const FCN_DRAFT_STORAGE_KEY = "ixai.fcn.drafts.v308";
 
-const FCN_DRAFT_STORAGE_KEY = "ixai.fcn.drafts.v308";
 const MAX_FCN_DRAFTS = 24;
 
 function canUseLocalStorage() {
@@ -89,7 +91,19 @@ export function loadFcnDrafts(): FCNDraftRecord[] {
     return [];
   }
 
-  return parseDrafts(window.localStorage.getItem(FCN_DRAFT_STORAGE_KEY));
+  const drafts = parseDrafts(window.localStorage.getItem(FCN_DRAFT_STORAGE_KEY));
+
+  if (drafts.length > 0) {
+    return drafts;
+  }
+
+  const legacyDrafts = loadLegacyRecentFcnDrafts();
+
+  if (legacyDrafts.length > 0) {
+    persistFcnDrafts(legacyDrafts);
+  }
+
+  return legacyDrafts;
 }
 
 export function saveFcnDraft(input: FCNDraftInput) {
@@ -104,15 +118,10 @@ export function saveFcnDraft(input: FCNDraftInput) {
     return nextDraft;
   }
 
-  const current = loadFcnDrafts();
+  const current = parseDrafts(window.localStorage.getItem(FCN_DRAFT_STORAGE_KEY));
   const next = [nextDraft, ...current].slice(0, MAX_FCN_DRAFTS);
 
-  try {
-    window.localStorage.setItem(FCN_DRAFT_STORAGE_KEY, JSON.stringify(next));
-    window.dispatchEvent(new CustomEvent(FCN_DRAFT_STORE_EVENT));
-  } catch {
-    // Local draft persistence must not block the FCN input workflow.
-  }
+  persistFcnDrafts(next);
 
   return nextDraft;
 }
@@ -124,4 +133,48 @@ export function parseDraftNumber(value?: string) {
 
   const parsed = Number(value.replace(/,/g, "").trim());
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+function persistFcnDrafts(drafts: FCNDraftRecord[]) {
+  if (!canUseLocalStorage()) {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(FCN_DRAFT_STORAGE_KEY, JSON.stringify(drafts));
+    window.dispatchEvent(new CustomEvent(FCN_DRAFT_STORE_EVENT));
+  } catch {
+    // Local draft persistence must not block the FCN input workflow.
+  }
+}
+
+function loadLegacyRecentFcnDrafts(): FCNDraftRecord[] {
+  return loadRecentPortfolioInputs()
+    .filter((input) => input.category === "FCN")
+    .map((input) => ({
+      createdAt: input.createdAt,
+      currency: inferCurrency(input.details),
+      id: `legacy-${input.id}`,
+      name: input.title,
+      notionalAmount: inferNotional(input.details),
+      observationFrequency: inferObservationFrequency(input.details),
+      schedule: [],
+      source: "local_mock" as const,
+      underlyings: [],
+    }));
+}
+
+function inferCurrency(details: string[]) {
+  const notionalDetail = details.find((detail) => /^[A-Z]{3}\s+/u.test(detail.trim()));
+  return notionalDetail?.trim().split(/\s+/u)[0] ?? "USD";
+}
+
+function inferNotional(details: string[]) {
+  const notionalDetail = details.find((detail) => /^[A-Z]{3}\s+/u.test(detail.trim()));
+  return notionalDetail?.trim().split(/\s+/u).slice(1).join(" ") || undefined;
+}
+
+function inferObservationFrequency(details: string[]) {
+  const observationDetail = details.find((detail) => detail.toLowerCase().includes("observation"));
+  return observationDetail?.replace(/observation/iu, "").trim() || "Monthly";
 }
