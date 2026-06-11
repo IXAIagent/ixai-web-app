@@ -52,6 +52,7 @@ Production data ownership update:
 - v2.08 adds Portfolio Scenario Engine Foundation by converting valuation, exposure, concentration, and correlation reports into market-agnostic deterministic scenario readback. It still does not connect real market data, broker sync, external AI, recommendation changes, or trading.
 - v2.09 adds Portfolio Stress Test Engine Foundation by converting valuation, exposure, concentration, correlation, and scenario reports into market-agnostic deterministic stress-test readback. It still does not connect real market data, broker sync, external AI, recommendation changes, or trading.
 - v2.10 adds Portfolio FCN Risk Engine Foundation by converting FCN assets, underlyings, exposure, concentration, correlation, and stress-test reports into market-agnostic deterministic FCN-risk readback. It still does not connect real market data, broker sync, external AI, recommendation changes, or trading.
+- v2.10a adds a docs-first Global Market Foundation Review. It validates Portfolio Core engine consistency, global market readiness, FCN global expansion, multi-language readiness, multi-broker readiness, Legacy Pro migration, Portfolio Center complexity, and v2.11 platform IA direction without changing product code.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -126,7 +127,20 @@ Portfolio FCN Risk Engine Foundation
 ↓
 Portfolio Core Engine Foundation Complete
 ↓
-Global Market Foundation Review / Real Market Data Provider / Broker Sync Foundation / External News API (Coming Soon)
+Global Market Foundation Review
+↓
+Platform IA Refactor / Real Market Data Provider / Broker Sync Foundation / External News API (Coming Soon)
+```
+
+Platform IA direction after v2.10a:
+
+```text
+Home
+├─ Portfolio Center
+├─ Risk Center
+├─ Intelligence Center
+├─ FCN Center
+└─ Settings
 ```
 
 - Portfolio route split:
