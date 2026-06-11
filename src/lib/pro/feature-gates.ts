@@ -1,3 +1,5 @@
+import { getEntitlements } from "@/src/lib/membership/entitlements";
+
 export type IXAIPlanCode = "free" | "personal" | "pro" | "enterprise" | string;
 
 export type IXAIEntitlements = {
@@ -11,15 +13,24 @@ export type IXAIEntitlements = {
   weekly_brief: boolean;
 };
 
+function toLegacyFeatureEntitlements(tier: "basic" | "free" | "pro"): IXAIEntitlements {
+  const appEntitlements = getEntitlements(tier);
+
+  return {
+    ai_copilot: appEntitlements.canViewPro,
+    daily_brief: true,
+    fcn_monitoring: appEntitlements.canViewFcn,
+    portfolio: appEntitlements.canViewPortfolio,
+    pro_preview: appEntitlements.canViewPro,
+    risk_engine: appEntitlements.canViewRisk,
+    watchlist: true,
+    weekly_brief: true,
+  };
+}
+
+// Source of truth: src/lib/membership/entitlements.ts.
 export const FREE_ENTITLEMENTS: IXAIEntitlements = {
-  ai_copilot: false,
-  daily_brief: true,
-  fcn_monitoring: false,
-  portfolio: false,
-  pro_preview: false,
-  risk_engine: false,
-  watchlist: true,
-  weekly_brief: true,
+  ...toLegacyFeatureEntitlements("free"),
 };
 
 export const BETA_OPEN_ACCESS_ENABLED = true;

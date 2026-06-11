@@ -3,6 +3,11 @@ import {
   getMembershipByEmail,
   type MembershipRecord,
 } from "@/src/lib/membership/memberships";
+import {
+  getEntitlements,
+  getMembershipTier,
+  type IXAIAppEntitlements,
+} from "@/src/lib/membership/entitlements";
 import { getSupabaseServerConfig } from "@/src/lib/supabase/server";
 
 export type ProAccessStatus =
@@ -20,6 +25,7 @@ export type ProAccessState = {
   canOpenPro: boolean;
   canUsePortfolio: boolean;
   canUseFCN: boolean;
+  canUseRisk: boolean;
   billingRequired: boolean;
   source: ProAccessSource;
   reason: string;
@@ -45,10 +51,23 @@ const NOT_CONNECTED_ACCESS: ProAccessState = {
   canOpenPro: false,
   canUseFCN: false,
   canUsePortfolio: false,
+  canUseRisk: false,
   reason: "Sign in to connect your App identity before Pro access can be evaluated.",
   source: "fallback",
   status: "not_connected",
 };
+
+function toAccessBooleans(entitlements: IXAIAppEntitlements) {
+  return {
+    canUseFCN: entitlements.canViewFcn,
+    canUsePortfolio: entitlements.canViewPortfolio,
+    canUseRisk: entitlements.canViewRisk,
+  };
+}
+
+function getMembershipEntitlements(membership: MembershipRecord | null) {
+  return getEntitlements(getMembershipTier(membership));
+}
 
 function hasExpired(membership: MembershipRecord) {
   if (membership.status === "expired") {
@@ -91,11 +110,12 @@ function buildAccessFromMembership(
   }
 
   if (!membership) {
+    const access = toAccessBooleans(getEntitlements("free"));
+
     return {
+      ...access,
       billingRequired: true,
       canOpenPro: false,
-      canUseFCN: false,
-      canUsePortfolio: false,
       reason:
         "Your App identity is connected. Pro backend account linking is in progress. Full Pro access will require preview approval or paid entitlement.",
       source: identity.source,
@@ -104,11 +124,12 @@ function buildAccessFromMembership(
   }
 
   if (membership.status === "cancelled") {
+    const access = toAccessBooleans(getMembershipEntitlements(membership));
+
     return {
+      ...access,
       billingRequired: true,
       canOpenPro: false,
-      canUseFCN: false,
-      canUsePortfolio: false,
       reason: "Pro access was revoked or cancelled.",
       source: identity.source,
       status: "revoked",
@@ -116,24 +137,28 @@ function buildAccessFromMembership(
   }
 
   if (hasExpired(membership)) {
+    const access = toAccessBooleans(getMembershipEntitlements(membership));
+
     return {
+      ...access,
       billingRequired: true,
       canOpenPro: false,
-      canUseFCN: false,
-      canUsePortfolio: false,
       reason: "Pro access has expired. Billing or manual renewal will be required.",
       source: identity.source,
       status: "expired",
     };
   }
 
-  if (membership.plan === "pro" || membership.plan === "enterprise") {
+  const tier = getMembershipTier(membership);
+  const entitlements = getEntitlements(tier);
+  const access = toAccessBooleans(entitlements);
+
+  if (entitlements.canViewPro) {
     return {
+      ...access,
       billingRequired: false,
       canOpenPro: true,
-      canUseFCN: true,
-      canUsePortfolio: true,
-      reason: "You have active Pro access. Backend portfolio integration is being staged.",
+      reason: "You have active IXAI Pro access.",
       source: identity.source,
       status: "active",
     };
@@ -141,10 +166,9 @@ function buildAccessFromMembership(
 
   if (isProCandidate(membership, identity)) {
     return {
+      ...access,
       billingRequired: true,
       canOpenPro: true,
-      canUseFCN: false,
-      canUsePortfolio: false,
       reason:
         "You have preview access. Portfolio / FCN backend integration is still being connected.",
       source: identity.source,
@@ -153,10 +177,9 @@ function buildAccessFromMembership(
   }
 
   return {
+    ...access,
     billingRequired: true,
     canOpenPro: false,
-    canUseFCN: false,
-    canUsePortfolio: false,
     reason:
       "Your App identity is connected. Pro backend account linking is in progress. Full Pro access will require preview approval or paid entitlement.",
     source: identity.source,
@@ -173,11 +196,12 @@ export async function resolveProAccess(identity: ProAccessIdentity): Promise<Pro
     const membership = await getMembershipByEmail(identity.email);
     return buildAccessFromMembership(membership, identity);
   } catch {
+    const access = toAccessBooleans(getEntitlements("free"));
+
     return {
+      ...access,
       billingRequired: true,
       canOpenPro: false,
-      canUseFCN: false,
-      canUsePortfolio: false,
       reason: "Unable to verify Pro access. Safe fallback keeps paid features closed.",
       source: "fallback",
       status: "connected",
