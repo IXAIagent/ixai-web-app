@@ -62,6 +62,7 @@ Production data ownership update:
 - v3.05 turns `/my-ixai/portfolio` into a user-readable Portfolio Workspace homepage and fixes `/pro` CTA contrast.
 - v3.06 upgrades Asset Input from placeholder into usable Stock / ETF, Crypto, and FCN input flows, adds shared Input Review, and shows local mock Recent Inputs in Portfolio Center.
 - v3.08 connects `/my-ixai/input/fcn` to `/my-ixai/fcn` through a local FCN Draft Store. FCN Center now reads draft FCN positions, notional, barriers, observation dates, coupon dates, and underlyings without adding API, schema, market data, AI, broker, Telegram, scheduler, or trading logic.
+- v3.08a fixes FCN Draft Store persistence and fallback hydration so FCN Center reads the same localStorage-backed data that FCN Wizard writes.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -175,7 +176,7 @@ v2.11 center ownership rule:
   - `/my-ixai/input/fcn`: FCN Wizard route and canonical FCN data-entry surface with Basic, Barrier, Observation, Dates, Underlyings, and Review.
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
   - `/my-ixai/risk`: Risk Center placeholder.
-  - `/my-ixai/fcn`: FCN Center readback for local FCN drafts, underlyings, KI / KO, observation dates, coupon dates, and detail review.
+  - `/my-ixai/fcn`: FCN Center readback for localStorage-backed FCN drafts, underlyings, KI / KO, observation dates, coupon dates, and detail review.
   - `/my-ixai/intelligence`: Intelligence Center placeholder.
   - `/my-ixai/settings`: Settings placeholder.
 

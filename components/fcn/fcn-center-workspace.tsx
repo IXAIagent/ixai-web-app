@@ -179,15 +179,23 @@ export function FcnCenterWorkspace() {
     function syncDrafts() {
       const nextDrafts = loadFcnDrafts();
       setDrafts(nextDrafts);
-      setSelectedDraftId((current) => current ?? nextDrafts[0]?.id ?? null);
+      setSelectedDraftId((current) =>
+        current && nextDrafts.some((draft) => draft.id === current)
+          ? current
+          : nextDrafts[0]?.id ?? null,
+      );
     }
 
     syncDrafts();
     window.addEventListener(FCN_DRAFT_STORE_EVENT, syncDrafts);
+    window.addEventListener("focus", syncDrafts);
+    window.addEventListener("pageshow", syncDrafts);
     window.addEventListener("storage", syncDrafts);
 
     return () => {
       window.removeEventListener(FCN_DRAFT_STORE_EVENT, syncDrafts);
+      window.removeEventListener("focus", syncDrafts);
+      window.removeEventListener("pageshow", syncDrafts);
       window.removeEventListener("storage", syncDrafts);
     };
   }, []);

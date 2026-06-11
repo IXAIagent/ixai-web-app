@@ -97,6 +97,8 @@ v3.06 upgrades Asset Input from placeholder into usable Workspace input flows. `
 
 v3.08 wires the FCN Input flow into the first real FCN Center readback. `/my-ixai/input/fcn` now writes FCN draft data into a local FCN Draft Store, and `/my-ixai/fcn` reads that store to display FCN overview, position cards, underlying exposure, coupon calendar, and detail panel. This is local/mock state only and does not add Supabase persistence, API routes, broker integration, market data, external AI, Telegram, scheduler, or trading logic.
 
+v3.08a fixes the FCN Draft Store visibility path. FCN Wizard submit writes to the canonical local draft key, FCN Center reads the same key, FCN Center refreshes draft state on mount / focus / pageshow / storage, and legacy FCN Recent Inputs can hydrate minimal draft readback if the dedicated draft store is empty. This prevents the Portfolio Recent Inputs surface from showing an FCN while FCN Center incorrectly shows an empty state.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -221,6 +223,7 @@ Product Layers:
 - Asset Input Center: v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding route, adds Stock / ETF, Crypto, and FCN child routes, and moves FCN Wizard ownership into `/my-ixai/input/fcn`. Public `/fcn` remains educational and should not own data-entry workflow.
 - Portfolio Workspace Foundation: v3.05 makes `/my-ixai/portfolio` readable to normal users with Overview, Holdings Summary, Risk Snapshot, and Quick Actions. It does not add APIs, schema changes, real risk engine connections, broker integration, market data, AI, recommendation logic, or trading logic.
 - FCN Center Data Wiring: v3.08 connects FCN Wizard local draft output to `/my-ixai/fcn`, making FCN Center the first structured-product readback surface for draft positions, underlyings, KI / KO, observation dates, coupon dates, and detail review.
+- FCN Draft Store Fix: v3.08a makes the readback persistent across navigation, reload, and same-origin new tabs by using localStorage as the source of truth instead of React-only state.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 
