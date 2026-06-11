@@ -6,6 +6,70 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.08 — Portfolio Scenario Engine Foundation
+
+Why:
+
+- v2.07 added correlation readback, but IXAI still needed a deterministic scenario layer before any future stress-test engine.
+- Scenario output helps connect valuation, exposure, concentration, and correlation into simple what-if monitoring readback.
+
+What Changed:
+
+- Added `src/lib/portfolio/scenario/`.
+- Added `PortfolioScenarioReport`, `PortfolioScenario`, `PortfolioScenarioResult`, and `PortfolioScenarioLevel`.
+- Added `PortfolioScenarioEngine` contract.
+- Added deterministic `mockPortfolioScenarioEngine`.
+- Added `buildPortfolioScenarioReport()` from existing valuation, exposure, concentration, and correlation reports.
+- Added Portfolio Scenario Engine readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Scenario Engine Foundation and Portfolio Stress Test Engine Foundation (Coming Soon).
+
+Key Decisions:
+
+- v2.08 is foundation-only.
+- Scenario output is deterministic and mock-only.
+- The layer is market-agnostic and must support future global markets rather than US-only assets.
+- The scenario library covers technology selloff, crypto correction, FCN underlying stress, regional shock, and concentration shock.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, broker sync, external market data, external AI, recommendation logic change, or trading feature.
+
+Next:
+
+- Future work may define stress-test, factor-shock, and multi-period drawdown models after scenario output is validated.
+
+## v2.07 — Portfolio Correlation Engine Foundation
+
+Why:
+
+- v2.06 added concentration readback, but IXAI still needed a layer that can identify deterministic mock co-movement pairs before scenario modeling.
+- Correlation is the bridge between concentration reporting and future scenario / stress-testing models.
+
+What Changed:
+
+- Added `src/lib/portfolio/correlation/`.
+- Added `PortfolioCorrelationReport`, `PortfolioCorrelationPair`, and `PortfolioCorrelationLevel`.
+- Added `PortfolioCorrelationEngine` contract.
+- Added deterministic `mockPortfolioCorrelationEngine`.
+- Added `buildPortfolioCorrelation()` from the existing `PortfolioExposureReport` and `PortfolioConcentrationReport`.
+- Added Portfolio Correlation Engine readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Correlation Engine Foundation and Portfolio Scenario Engine (Coming Soon).
+
+Key Decisions:
+
+- v2.07 is foundation-only.
+- Correlation output is deterministic and mock-only.
+- The layer reuses existing exposure and concentration reports and does not duplicate valuation, exposure, or concentration logic.
+- High / medium / low pairs are generated only from known supported symbols or low-correlation diversification cases.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, broker sync, external market data, external AI, recommendation logic change, or trading feature.
+
+Next:
+
+- Future work may define scenario, stress, and cross-asset sensitivity models after correlation output is validated.
+
 ## v2.06 — Portfolio Concentration Engine Foundation
 
 Why:
