@@ -23,6 +23,7 @@ import type {
 import type { PortfolioAsset } from "@/src/lib/portfolio/data-model/portfolio-asset-types";
 import type { PortfolioPosition } from "@/src/lib/portfolio/data-model/portfolio-position-types";
 import type { PortfolioInputRegion } from "@/src/lib/portfolio/input/asset-types";
+import { buildPortfolioNewsIntelligenceFoundation } from "@/src/lib/portfolio/intelligence/intelligence-builder";
 import { getPortfolioRepository } from "@/src/lib/portfolio/repository/portfolio-persistence-provider";
 import type { PortfolioOwnershipValidationStatus } from "@/src/lib/portfolio/repository/portfolio-repository";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
@@ -231,6 +232,10 @@ export function PortfolioCenterDashboard() {
     [repositoryAccounts, repositoryAssets],
   );
   const repositoryRegionTotal = repositoryAccounts.length + repositoryAssets.length;
+  const intelligenceUniverse = useMemo(
+    () => buildPortfolioNewsIntelligenceFoundation(repositoryAssets),
+    [repositoryAssets],
+  );
   const entitlements = summary?.entitlements;
   const fcnWorstOfRanking = useMemo(
     () => summary?.fcnWorstOfRanking?.slice(0, 5) ?? [],
@@ -491,6 +496,69 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Dashboard Foundation 僅做資料視覺化；不包含新聞、AI commentary、券商同步、CSV import processing、行情或交易功能。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Intelligence Universe
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              未來新聞與 AI 觀察的標的宇宙
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v1.97 只根據 Repository 資產資料產生 tracked symbols；不連接新聞、AI、行情或券商。
+            </p>
+          </div>
+          <FeatureIcon icon={LineChart} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {[
+            ["Total Tracked Symbols", intelligenceUniverse.totalTrackedSymbols],
+            ["Source Mentions", intelligenceUniverse.sourceCount],
+            ["Ignored Cash Assets", intelligenceUniverse.ignoredCashCount],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 text-3xl font-semibold text-[var(--ixai-forest)]">
+                {numberLabel(Number(value))}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+          <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+            Symbol List
+          </p>
+          {intelligenceUniverse.symbols.length > 0 ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {intelligenceUniverse.symbols.map((symbol) => (
+                <span
+                  className="inline-flex max-w-full rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(176,141,87,0.10)] px-3 py-1.5 font-mono text-xs font-semibold text-[var(--ixai-forest)]"
+                  key={symbol}
+                >
+                  {symbol}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              尚未有可追蹤標的。新增 Stock、Crypto、Grid、Dual 或含 underlyings 的 FCN 後，這裡會形成 Intelligence Universe。
+            </p>
+          )}
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Intelligence Universe 是持倉關聯觀察清單，不代表投資建議、新聞推薦、交易指令或 AI commentary。
         </p>
       </section>
 
