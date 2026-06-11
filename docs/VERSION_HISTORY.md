@@ -6,6 +6,38 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.06 — Portfolio Concentration Engine Foundation
+
+Why:
+
+- v2.05 added exposure readback, but IXAI still needed a layer that identifies where exposure becomes concentration risk.
+- Concentration is the bridge between exposure reporting and future correlation / real-time portfolio risk models.
+
+What Changed:
+
+- Added `src/lib/portfolio/concentration/`.
+- Added `PortfolioConcentrationReport`, `PortfolioConcentrationItem`, and `PortfolioConcentrationLevel`.
+- Added `PortfolioConcentrationEngine` contract.
+- Added deterministic `mockPortfolioConcentrationEngine`.
+- Added `buildPortfolioConcentration()` from the existing `PortfolioExposureReport`.
+- Added Portfolio Concentration Engine readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Concentration Engine Foundation and Portfolio Correlation Engine (Coming Soon).
+
+Key Decisions:
+
+- v2.06 is foundation-only.
+- Concentration output is deterministic and mock-only.
+- The layer reuses the existing Exposure Report and does not duplicate valuation or exposure logic.
+- Alerts are generated only for high or critical concentration.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, broker sync, external market data, external AI, recommendation logic change, or trading feature.
+
+Next:
+
+- Future work may define correlation, cross-symbol sensitivity, and portfolio co-movement models after concentration output is validated.
+
 ## v2.05 — Portfolio Exposure Engine Foundation
 
 Why:

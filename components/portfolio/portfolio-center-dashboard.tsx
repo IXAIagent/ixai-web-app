@@ -18,6 +18,11 @@ import type { AssetCategory } from "@/src/lib/portfolio/assets";
 import { PORTFOLIO_ASSET_CATEGORIES } from "@/src/lib/portfolio/assets";
 import { buildPortfolioCommentary } from "@/src/lib/portfolio/commentary/commentary-builder";
 import type { PortfolioCommentaryFeed } from "@/src/lib/portfolio/commentary/commentary-types";
+import { buildPortfolioConcentration } from "@/src/lib/portfolio/concentration/concentration-builder";
+import type {
+  PortfolioConcentrationItem,
+  PortfolioConcentrationReport,
+} from "@/src/lib/portfolio/concentration/concentration-types";
 import type { PortfolioDashboardSummary } from "@/src/lib/portfolio/dashboard";
 import type {
   PortfolioAccount,
@@ -267,6 +272,36 @@ function ExposureGroup({
   );
 }
 
+function ConcentrationMetric({
+  item,
+  label,
+}: {
+  item: PortfolioConcentrationItem | null | undefined;
+  label: string;
+}) {
+  return (
+    <div className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4">
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+        {label}
+      </p>
+      <p className="mt-2 break-words text-xl font-semibold text-[var(--ixai-forest)]">
+        {item?.label ?? "--"}
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <span className="rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(176,141,87,0.10)] px-2.5 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest)]">
+          {item?.level ?? "LOW"}
+        </span>
+        <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+          {formatShare(item?.percentage ?? null)}
+        </span>
+      </div>
+      <p className="mt-3 font-mono text-sm text-[var(--ixai-forest-soft)]">
+        {formatMoney(item?.marketValue ?? 0)}
+      </p>
+    </div>
+  );
+}
+
 export function PortfolioCenterDashboard() {
   const [summary, setSummary] = useState<PortfolioDashboardSummary | null>(null);
   const [ownershipStatus, setOwnershipStatus] =
@@ -280,6 +315,8 @@ export function PortfolioCenterDashboard() {
     useState<PortfolioValuationReport | null>(null);
   const [portfolioExposureReport, setPortfolioExposureReport] =
     useState<PortfolioExposureReport | null>(null);
+  const [portfolioConcentrationReport, setPortfolioConcentrationReport] =
+    useState<PortfolioConcentrationReport | null>(null);
   const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
   const [portfolioCommentaryFeed, setPortfolioCommentaryFeed] =
     useState<PortfolioCommentaryFeed | null>(null);
@@ -304,6 +341,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioMarketDataFeed(null);
       setPortfolioValuationReport(null);
       setPortfolioExposureReport(null);
+      setPortfolioConcentrationReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -344,6 +382,9 @@ export function PortfolioCenterDashboard() {
         positions,
         valuationReport,
       });
+      const concentrationReport = await buildPortfolioConcentration({
+        exposureReport,
+      });
       const newsFeed = await buildPortfolioNewsFeed({ assets });
       const commentaryFeed = await buildPortfolioCommentary({ newsFeed });
       const intelligenceScore = await buildPortfolioIntelligence({
@@ -371,6 +412,7 @@ export function PortfolioCenterDashboard() {
         setPortfolioMarketDataFeed(marketDataFeed);
         setPortfolioValuationReport(valuationReport);
         setPortfolioExposureReport(exposureReport);
+        setPortfolioConcentrationReport(concentrationReport);
         setPortfolioNewsFeed(newsFeed);
         setPortfolioCommentaryFeed(commentaryFeed);
         setPortfolioIntelligenceScore(intelligenceScore);
@@ -388,6 +430,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioMarketDataFeed(marketDataFeed);
       setPortfolioValuationReport(valuationReport);
       setPortfolioExposureReport(exposureReport);
+      setPortfolioConcentrationReport(concentrationReport);
       setPortfolioNewsFeed(newsFeed);
       setPortfolioCommentaryFeed(commentaryFeed);
       setPortfolioIntelligenceScore(intelligenceScore);
@@ -403,6 +446,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioMarketDataFeed(null);
       setPortfolioValuationReport(null);
       setPortfolioExposureReport(null);
+      setPortfolioConcentrationReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -804,6 +848,108 @@ export function PortfolioCenterDashboard() {
         </p>
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Portfolio Exposure Engine Foundation 使用 deterministic mock exposure logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Concentration Engine
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Concentration Dashboard Foundation
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.06 將 Exposure Report 轉成集中度摘要，顯示 symbol、FCN underlying、asset type、provider 與 region 的最高集中度。
+            </p>
+          </div>
+          <FeatureIcon icon={ShieldAlert} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            [
+              "Overall Concentration",
+              portfolioConcentrationReport?.overallConcentration ?? "LOW",
+            ],
+            [
+              "Concentration Score",
+              numberLabel(portfolioConcentrationReport?.concentrationScore ?? 0),
+            ],
+            ["Alert Count", numberLabel(portfolioConcentrationReport?.alerts.length ?? 0)],
+            ["Generated Time", portfolioConcentrationReport?.generatedAt ?? "--"],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          <ConcentrationMetric
+            item={portfolioConcentrationReport?.topSymbol}
+            label="Top Symbol"
+          />
+          <ConcentrationMetric
+            item={portfolioConcentrationReport?.topFcnUnderlying}
+            label="Top FCN Underlying"
+          />
+          <ConcentrationMetric
+            item={portfolioConcentrationReport?.topAssetType}
+            label="Top Asset Type"
+          />
+          <ConcentrationMetric
+            item={portfolioConcentrationReport?.topProvider}
+            label="Top Provider"
+          />
+          <ConcentrationMetric
+            item={portfolioConcentrationReport?.topRegion}
+            label="Top Region"
+          />
+        </div>
+
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">Alerts</h3>
+            {portfolioConcentrationReport &&
+            portfolioConcentrationReport.alerts.length > 0 ? (
+              <ul className="mt-3 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {portfolioConcentrationReport.alerts.map((alert) => (
+                  <li
+                    className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] px-3 py-2"
+                    key={alert}
+                  >
+                    {alert}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                目前沒有 concentration alert。
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">Summary</h3>
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              {portfolioConcentrationReport?.summary ??
+                "Portfolio Concentration Engine is ready, but no concentration report is available yet."}
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio Concentration Engine Foundation 使用 deterministic mock concentration logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
         </p>
       </section>
 
