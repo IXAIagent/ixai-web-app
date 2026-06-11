@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v3.06 — Asset Input Completion`
+`v3.08 — FCN Center Data Wiring`
 
 Current production state:
 
@@ -94,6 +94,8 @@ v3.05 turns `/my-ixai/portfolio` into the first user-readable Portfolio Workspac
 v3.05a audits `/Users/itsunkuo/Desktop/IXAI_PROJECTS/backend/ixai_agent` as the legacy FastAPI backend inventory. The audit identifies reusable concepts for Asset Input, CSV import, FCN monitoring, risk alerts, market intelligence, scheduler, notification, position lifecycle, models, tests, services, and API routes. The rule is explicit: migrate concepts by contract and App-native rewrite, not by copying the legacy backend, templates, JWT auth, localStorage token flow, or direct browser-to-FastAPI protected calls.
 
 v3.06 upgrades Asset Input from placeholder into usable Workspace input flows. `/my-ixai/input/stock` now supports Stock / ETF input fields and local preview. `/my-ixai/input/crypto` now supports Crypto input fields and local preview. `/my-ixai/input/fcn` keeps the FCN Wizard but extends it with Basic, Barrier, Observation Frequency, Observation Dates, Underlyings, and final Input Review. `/my-ixai/portfolio` now displays local mock Recent Inputs so the user can see the path from input to Portfolio readback. This version does not add schema, migration, API, auth, membership, broker, market data, external AI, recommendation, or trading changes.
+
+v3.08 wires the FCN Input flow into the first real FCN Center readback. `/my-ixai/input/fcn` now writes FCN draft data into a local FCN Draft Store, and `/my-ixai/fcn` reads that store to display FCN overview, position cards, underlying exposure, coupon calendar, and detail panel. This is local/mock state only and does not add Supabase persistence, API routes, broker integration, market data, external AI, Telegram, scheduler, or trading logic.
 
 Validated production behavior:
 
@@ -137,7 +139,7 @@ Still not complete:
 
 Current Development Version:
 
-`v3.06 — Asset Input Completion`
+`v3.08 — FCN Center Data Wiring`
 
 Current Core Flow:
 
@@ -150,6 +152,8 @@ Landing
 → Portfolio Center
 → Asset Input Center
 → Usable Stock / Crypto / FCN Input
+→ FCN Draft Store
+→ FCN Center readback
 → Asset Management Center
 → Portfolio Recommendation Engine readback
 → Portfolio Market Data readback
@@ -216,6 +220,7 @@ Product Layers:
 - IXAI Platform Page: v3.03 repositions `/pro` into a public product-positioning and conversion page for IXAI Platform. It removes the page's dependency on Legacy Pro launch / membership readback while keeping the route stable and public. It does not change membership, entitlement, auth, schema, migrations, broker integrations, external AI, market data providers, APIs, or trading logic.
 - Asset Input Center: v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding route, adds Stock / ETF, Crypto, and FCN child routes, and moves FCN Wizard ownership into `/my-ixai/input/fcn`. Public `/fcn` remains educational and should not own data-entry workflow.
 - Portfolio Workspace Foundation: v3.05 makes `/my-ixai/portfolio` readable to normal users with Overview, Holdings Summary, Risk Snapshot, and Quick Actions. It does not add APIs, schema changes, real risk engine connections, broker integration, market data, AI, recommendation logic, or trading logic.
+- FCN Center Data Wiring: v3.08 connects FCN Wizard local draft output to `/my-ixai/fcn`, making FCN Center the first structured-product readback surface for draft positions, underlyings, KI / KO, observation dates, coupon dates, and detail review.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 

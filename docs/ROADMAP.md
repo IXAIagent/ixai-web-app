@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.06 / Asset Input Completion`
+`v3.08 / FCN Center Data Wiring`
 
 ## Current Priority
 
@@ -21,6 +21,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V305_PORTFOLIO_WORKSPACE_FOUNDATION.md` as the source of truth for Portfolio Workspace foundation and `/pro` CTA contrast.
 - Use `docs/LEGACY_BACKEND_INVENTORY_AUDIT_V305A.md` as the source of truth for reusable legacy backend modules and migration sequencing.
 - Use `docs/V306_ASSET_INPUT_COMPLETION.md` as the source of truth for Stock, Crypto, FCN, Review Summary, and Recent Inputs behavior.
+- Use `docs/V308_FCN_CENTER_DATA_WIRING.md` as the source of truth for the first FCN Input → FCN Draft Store → FCN Center data flow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
@@ -28,6 +29,7 @@ Current priority is UX / IA foundation before moving modules:
 - `/my-ixai/input` is now the canonical Asset Input Center. FCN Wizard belongs to `/my-ixai/input/fcn`, not public `/fcn`.
 - `/my-ixai/input/stock`, `/my-ixai/input/crypto`, and `/my-ixai/input/fcn` now own the first usable asset-input flows.
 - `/my-ixai/portfolio` now reads local mock Recent Inputs to make the input-to-portfolio flow visible.
+- `/my-ixai/fcn` now reads local FCN Draft Store data so FCN Input can feed FCN Center readback.
 - `/my-ixai/portfolio` should be understandable as a Workspace homepage, not an engineering dashboard dump.
 - Legacy backend modules should be migrated by contract and rewrite, not copied wholesale.
 - Highest-priority legacy backend candidates are CSV import, risk alerts, FCN monitoring / schedules, portfolio-aware news relevance, and scheduler / notification review.
@@ -162,6 +164,13 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
 - Keep existing engine logic unchanged.
 - Prefer route-level composition before rewriting dashboard components.
+
+### v3.08 — FCN Center Data Wiring
+
+- Convert `/my-ixai/fcn` from placeholder into the first FCN Workspace readback.
+- Wire `/my-ixai/input/fcn` FCN Wizard output into a local FCN Draft Store.
+- Display FCN overview, position readback, underlying exposure, coupon calendar, and detail panel.
+- Keep local/mock state only; do not add Supabase persistence, API routes, broker integration, market data, AI provider, Telegram, scheduler, or trading logic.
 
 ### v3.10 — Intelligence Center Migration
 
