@@ -4,9 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  BriefcaseBusiness,
   FileText,
+  Home,
+  Newspaper,
   Sparkles,
   ShieldCheck,
+  ShieldAlert,
   UserCircle,
   type LucideIcon,
 } from "lucide-react";
@@ -35,7 +39,7 @@ type NavItem = {
   center?: boolean;
 };
 
-const NAV_ITEMS: NavItem[] = [
+const PUBLIC_NAV_ITEMS: NavItem[] = [
   {
     key: "brief",
     label: "晨報",
@@ -72,6 +76,42 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+const WORKSPACE_NAV_ITEMS: NavItem[] = [
+  {
+    key: "home",
+    label: "Home",
+    href: "/my-ixai/home",
+    icon: Home,
+    matchPrefixes: ["/my-ixai/home"],
+  },
+  {
+    key: "portfolio",
+    label: "Portfolio",
+    href: "/my-ixai/portfolio",
+    icon: BriefcaseBusiness,
+    matchPrefixes: ["/my-ixai/portfolio", "/my-ixai/input"],
+  },
+  {
+    key: "risk",
+    label: "Risk",
+    href: "/my-ixai/risk",
+    icon: ShieldAlert,
+  },
+  {
+    key: "fcn",
+    label: "FCN",
+    href: "/my-ixai/fcn",
+    icon: ShieldCheck,
+  },
+  {
+    key: "intel",
+    label: "Intel",
+    href: "/my-ixai/intelligence",
+    icon: Newspaper,
+    matchPrefixes: ["/my-ixai/intelligence", "/my-ixai/settings"],
+  },
+];
+
 function matchActive(pathname: string, item: NavItem): boolean {
   const prefixes = item.matchPrefixes ?? [item.href];
 
@@ -98,6 +138,8 @@ function matchActive(pathname: string, item: NavItem): boolean {
 
 export function MobileNav() {
   const pathname = usePathname();
+  const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
+  const navItems = isWorkspaceRoute ? WORKSPACE_NAV_ITEMS : PUBLIC_NAV_ITEMS;
 
   return (
     <nav
@@ -105,7 +147,7 @@ export function MobileNav() {
       className="fixed inset-x-0 bottom-0 z-30 border-t border-[rgba(176,141,87,0.30)] bg-[rgba(8,34,26,0.97)] px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 shadow-[0_-14px_40px_rgba(9,41,31,0.24)] backdrop-blur md:hidden"
     >
       <div className="relative mx-auto grid max-w-xl grid-cols-5 items-end gap-1">
-        {NAV_ITEMS.map((item) => {
+        {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = matchActive(pathname, item);
 

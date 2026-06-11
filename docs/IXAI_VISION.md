@@ -104,6 +104,8 @@ This split protects the core vision: IXAI should feel like an organized wealth i
 
 v3.00 establishes this split as route and navigation foundation only. It intentionally does not add new investment features, market data providers, broker integrations, recommendation logic, schema changes, auth changes, or membership changes. The purpose is to make the product legible before v3.01 begins moving specific module families into their long-term centers.
 
+v3.01 separates the public website navigation from the Workspace application navigation. The public layer remains the brand, education, SEO, and lead-generation surface. The Workspace layer becomes the logged-in product surface for Home, Portfolio, Risk, FCN, Intelligence, and Settings. This preserves the user mental model: one enters through the website, logs in, and then works inside a focused IXAI Workspace rather than seeing public and private product routes mixed in one menu.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text

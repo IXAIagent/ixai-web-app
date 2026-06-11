@@ -8,19 +8,15 @@ import {
   BarChart3,
   BookOpen,
   BriefcaseBusiness,
-  Bug,
-  Database,
-  Eye,
   FileText,
+  Globe2,
   Home,
   Info,
-  MessageSquare,
   Newspaper,
   Settings,
   ShieldCheck,
   ShieldAlert,
   Sparkles,
-  UserCircle,
   X,
 } from "lucide-react";
 
@@ -49,55 +45,43 @@ type DrawerSection = {
   entries: DrawerEntry[];
 };
 
-const DRAWER_SECTIONS: DrawerSection[] = [
+const PUBLIC_DRAWER_SECTIONS: DrawerSection[] = [
   {
-    title: "市場情報",
+    title: "官網",
     entries: [
+      { label: "市場首頁", href: "/", icon: Home },
       { label: "每日晨報", href: "/daily-brief", icon: FileText },
+      { label: "市場總覽", href: "/market", icon: BarChart3 },
       { label: "每週情報", href: "/weekly-brief", icon: Newspaper },
     ],
   },
   {
-    title: "市場",
+    title: "產品",
     entries: [
-      { label: "市場總覽", href: "/market", icon: BarChart3 },
-      { label: "關注清單", href: "/watchlist", icon: Eye },
+      { label: "FCN", href: "/fcn", icon: ShieldCheck },
+      { label: "IXAI Pro", href: "/pro", icon: Sparkles },
+      { label: "About 一玄", href: "/about", icon: Info },
+      { label: "登入", href: "/login", icon: BookOpen },
     ],
   },
+];
+
+const WORKSPACE_DRAWER_SECTIONS: DrawerSection[] = [
   {
-    title: "FCN",
+    title: "Workspace",
     entries: [
-      { label: "認識 FCN", href: "/fcn", icon: ShieldCheck },
-      {
-        label: "FCN 觀念",
-        href: "/fcn#learn-fcn",
-        icon: BookOpen,
-        matchPrefix: "/fcn",
-      },
-    ],
-  },
-  {
-    title: "IXAI",
-    entries: [
-      { label: "我的 IXAI", href: "/account", icon: UserCircle },
       { label: "Workspace Home", href: "/my-ixai/home", icon: Home },
       { label: "Portfolio Center", href: "/my-ixai/portfolio", icon: BriefcaseBusiness },
       { label: "Risk Center", href: "/my-ixai/risk", icon: ShieldAlert },
       { label: "FCN Center", href: "/my-ixai/fcn", icon: ShieldCheck },
       { label: "Intelligence Center", href: "/my-ixai/intelligence", icon: Newspaper },
-      { label: "Asset Input", href: "/my-ixai/input", icon: FileText },
-      { label: "Portfolio Assets", href: "/my-ixai/portfolio/assets", icon: Database },
       { label: "Settings", href: "/my-ixai/settings", icon: Settings },
-      { label: "IXAI Pro", href: "/pro", icon: Sparkles },
-      { label: "關於一玄", href: "/about", icon: Info },
     ],
   },
   {
-    title: "設定與回饋",
+    title: "Exit",
     entries: [
-      { label: "提供意見", href: "/feedback", icon: MessageSquare },
-      { label: "通知設定", href: "/settings/notifications", icon: Settings },
-      { label: "回報問題", href: "/feedback", icon: Bug, matchPrefix: "/feedback" },
+      { label: "返回官網", href: "/", icon: Globe2 },
     ],
   },
 ];
@@ -121,6 +105,10 @@ export function MobileDrawer({
   onClose: () => void;
 }) {
   const pathname = usePathname();
+  const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
+  const drawerSections = isWorkspaceRoute ? WORKSPACE_DRAWER_SECTIONS : PUBLIC_DRAWER_SECTIONS;
+  const eyebrow = isWorkspaceRoute ? "IXAI WORKSPACE" : "IXAI 官網導覽";
+  const subtitle = isWorkspaceRoute ? "Portfolio · Risk · FCN · Intelligence" : "市場情報 · 教育 · About";
 
   // Body scroll lock + ESC close while open.
   useEffect(() => {
@@ -173,10 +161,10 @@ export function MobileDrawer({
         <header className="flex items-start justify-between gap-3 border-b border-white/10 px-5 pb-4 pt-[calc(env(safe-area-inset-top)+0.8rem)]">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-              IXAI 市場情報
+              {eyebrow}
             </p>
             <p className="mt-1 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
-              IXAI 一玄 · AI 財富情報
+              {subtitle}
             </p>
           </div>
           <button
@@ -191,7 +179,7 @@ export function MobileDrawer({
 
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <div className="flex flex-col gap-5">
-            {DRAWER_SECTIONS.map((section) => (
+            {drawerSections.map((section) => (
               <div className="flex flex-col gap-1.5" key={section.title}>
                 <p className="px-3 font-mono text-[10px] uppercase tracking-[0.22em] text-[rgba(245,240,230,0.42)]">
                   {section.title}
@@ -232,7 +220,9 @@ export function MobileDrawer({
         </nav>
 
         <footer className="border-t border-white/10 px-5 pb-[calc(env(safe-area-inset-bottom)+0.85rem)] pt-3 text-xs leading-6 text-[rgba(245,240,230,0.42)]">
-          IXAI Public Intelligence · 不構成投資建議或績效保證。
+          {isWorkspaceRoute
+            ? "IXAI Workspace · 監控與風險意識用途，不構成投資建議。"
+            : "IXAI Public Intelligence · 不構成投資建議或績效保證。"}
         </footer>
       </aside>
     </div>
