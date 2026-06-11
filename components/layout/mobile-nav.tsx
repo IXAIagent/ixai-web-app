@@ -14,6 +14,7 @@ import {
   UserCircle,
   type LucideIcon,
 } from "lucide-react";
+import { useIdentity } from "@/components/auth/auth-provider";
 
 // v1.32.1 — Mobile Intelligence Navigation.
 //
@@ -138,8 +139,22 @@ function matchActive(pathname: string, item: NavItem): boolean {
 
 export function MobileNav() {
   const pathname = usePathname();
+  const { mounted, session } = useIdentity();
   const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
-  const navItems = isWorkspaceRoute ? WORKSPACE_NAV_ITEMS : PUBLIC_NAV_ITEMS;
+  const isAuthenticated = mounted && session.mode === "authenticated";
+  const publicNavItems = isAuthenticated
+    ? PUBLIC_NAV_ITEMS.map((item) =>
+        item.key === "me"
+          ? {
+              ...item,
+              href: "/my-ixai/home",
+              label: "Workspace",
+              matchPrefixes: ["/my-ixai"],
+            }
+          : item,
+      )
+    : PUBLIC_NAV_ITEMS;
+  const navItems = isWorkspaceRoute ? WORKSPACE_NAV_ITEMS : publicNavItems;
 
   return (
     <nav

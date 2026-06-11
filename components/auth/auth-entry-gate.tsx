@@ -142,11 +142,11 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-7 text-white/68 sm:mt-5">
             開始建立個人市場觀察系統：每日市場 intelligence、FCN 教育、AI risk monitoring，
-            以及未來可升級的 IXAI Pro AI Wealth Operating System。
+            以及未來可逐步擴充的 IXAI Workspace。
           </p>
           <p className="mt-5 rounded-lg border border-white/10 bg-white/[0.055] p-3 text-xs leading-6 text-white/58">
-            IXAI Public App 是一個帳號型 intelligence funnel。建立帳號後，你的 Watchlist、
-            偏好與未來 Pro workflow 才能形成連續的市場記憶。
+            IXAI Public App 是進入 Workspace 的前台入口。建立帳號後，你的 Watchlist、
+            偏好與未來 Portfolio / Risk / FCN / Intelligence workflow 才能形成連續的市場記憶。
           </p>
         </div>
 
@@ -158,8 +158,8 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
             進入 IXAI
           </h2>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-ink-muted)]">
-            建立 IXAI Account 後即可進入 Public Intelligence Layer，閱讀每日市場情報、
-            建立個人自選觀察，並為未來 IXAI Pro continuity 做準備。
+            建立 IXAI Account 後即可進入 IXAI Workspace，閱讀每日市場情報、
+            建立個人自選觀察，並逐步連接 Portfolio、Risk、FCN 與 Intelligence workflow。
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -185,7 +185,7 @@ export function AuthEntryGate({ children }: Readonly<{ children: React.ReactNode
               Personal: Watchlist 與偏好逐步建立。
             </p>
             <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-3">
-              Pro: 未來連接風險監控與 Portfolio Intelligence。
+              Workspace: 未來連接風險監控、FCN 與 Portfolio Intelligence。
             </p>
           </div>
         </div>

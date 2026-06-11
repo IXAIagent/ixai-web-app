@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { useIdentity } from "@/components/auth/auth-provider";
 
@@ -15,6 +15,7 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
   const searchParams = useSearchParams();
   const {
     authConfigured,
+    mounted,
     registerWithPassword,
     session,
     signInWithPassword,
@@ -37,17 +38,23 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
   const displayMessage = message || routeMessage;
   const heroTitle = isLogin ? "進入 IXAI" : "建立 IXAI Account";
   const heroCopy = isLogin
-    ? "使用你的 IXAI Account 登入，回到每日市場情報、自選觀察、偏好設定與 IXAI Pro 連接入口。"
-    : "建立帳號後，IXAI 會逐步保存你的市場偏好、自選觀察與未來 IXAI Pro continuity。";
+    ? "使用你的 IXAI Account 登入，回到 IXAI Workspace。"
+    : "建立帳號後，IXAI 會逐步保存你的市場偏好、自選觀察與 Workspace continuity。";
   const formTitle = isLogin ? "登入" : "建立帳號";
   const formSubtitle = isLogin
     ? "輸入 Email 與密碼即可進入 IXAI。"
     : "用 Email 建立 IXAI Account。";
   const authHint = authConfigured
     ? isLogin
-      ? "登入後即可回到 Account、Daily Brief、Watchlist 與 IXAI Pro 入口。"
-      : "建立帳號後即可在此裝置保存 IXAI session；跨裝置同步與 Pro handoff 將分階段開放。"
+      ? "登入後會進入 IXAI Workspace Home。"
+      : "建立帳號後即可在此裝置保存 IXAI session，並進入 IXAI Workspace Home。"
     : "IXAI Account production auth 尚未設定。";
+
+  useEffect(() => {
+    if (mounted && session.mode === "authenticated") {
+      router.replace("/my-ixai/home");
+    }
+  }, [mounted, router, session.mode]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -66,7 +73,7 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
     setIsSubmitting(false);
 
     if (result.authenticated || session.mode === "authenticated") {
-      router.push("/account");
+      router.push("/my-ixai/home");
     }
   }
 
@@ -85,7 +92,7 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
         </p>
         <div className="mt-5 rounded-lg border border-white/12 bg-white/6 p-4 text-xs leading-6 text-white/64">
           {isLogin
-            ? "如果你剛從 IXAI Pro 登出，請在這裡重新登入 App，再開啟 IXAI Pro。"
+            ? "登入後會進入 IXAI Workspace，從 Home 開始管理 Portfolio、Risk、FCN 與 Intelligence。"
             : "已有帳號的使用者不需要重新建立帳號，可直接前往登入。"}
         </div>
       </div>
@@ -176,7 +183,7 @@ export function PasswordAuthForm({ mode }: PasswordAuthFormProps) {
             </p>
           )}
           <p className="mt-2 text-xs">
-            IXAI Pro 共用帳號、Watchlist 同步與通知偏好仍屬未來功能；本頁先建立 Public App identity foundation。
+            IXAI Workspace 將逐步承接 Portfolio、Risk、FCN、Intelligence 與 Settings；本頁只處理登入入口。
           </p>
         </div>
       </form>

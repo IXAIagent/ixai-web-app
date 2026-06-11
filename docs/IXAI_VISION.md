@@ -106,6 +106,8 @@ v3.00 establishes this split as route and navigation foundation only. It intenti
 
 v3.01 separates the public website navigation from the Workspace application navigation. The public layer remains the brand, education, SEO, and lead-generation surface. The Workspace layer becomes the logged-in product surface for Home, Portfolio, Risk, FCN, Intelligence, and Settings. This preserves the user mental model: one enters through the website, logs in, and then works inside a focused IXAI Workspace rather than seeing public and private product routes mixed in one menu.
 
+v3.02 makes that mental model concrete by sending Login / Register success into `/my-ixai/home`. `/account` becomes a legacy transitional page instead of the main IXAI Pro entry. This keeps the product promise simple: public website first, then a focused IXAI Workspace.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text
