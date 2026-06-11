@@ -144,14 +144,14 @@ export default function ProPage() {
             </div>
             <div className="mt-6 grid gap-2 sm:flex sm:flex-wrap">
               <Link
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(245,240,230,0.72)] bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)] shadow-[0_10px_30px_rgba(0,0,0,0.16)] transition hover:-translate-y-0.5"
                 href="/register"
               >
                 免費開始使用
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <Link
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)] transition hover:bg-white/[0.12]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.60)] bg-[rgba(245,240,230,0.12)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[rgba(245,240,230,0.18)]"
                 href="/my-ixai/home"
               >
                 進入 IXAI Workspace
@@ -180,7 +180,10 @@ export default function ProPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.88)] p-4 sm:p-6">
+      <section
+        className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.88)] p-4 sm:p-6"
+        id="future-pricing"
+      >
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--ixai-gold)]">
           Why IXAI
         </p>
@@ -302,6 +305,22 @@ export default function ProPage() {
             </article>
           ))}
         </div>
+        <div className="mt-5 grid gap-2 sm:flex sm:flex-wrap">
+          <Link
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(9,41,31,0.18)] bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:-translate-y-0.5"
+            href="/pro#future-pricing"
+          >
+            了解方案
+            <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          </Link>
+          <Link
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.42)] bg-white/80 px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)] transition hover:bg-white"
+            href="/register"
+          >
+            加入等待名單
+            <BellRing className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          </Link>
+        </div>
       </section>
 
       <section className="grid gap-3 lg:grid-cols-[1fr_0.8fr]">
@@ -335,13 +354,13 @@ export default function ProPage() {
           </p>
           <div className="mt-5 grid gap-2">
             <Link
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(245,240,230,0.72)] bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)] transition hover:-translate-y-0.5"
               href="/register"
             >
               免費開始使用
             </Link>
             <Link
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-[var(--ixai-cream)]"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[rgba(176,141,87,0.60)] bg-[rgba(245,240,230,0.12)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] transition hover:bg-[rgba(245,240,230,0.18)]"
               href="/my-ixai/home"
             >
               進入 IXAI Workspace
