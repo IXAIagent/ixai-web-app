@@ -4,11 +4,11 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v2.08 / Portfolio Scenario Engine Foundation`
+`v2.09 / Portfolio Stress Test Engine Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, and mock Scenario Engine foundations. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, and mock Stress Test Engine foundations. Current priority remains the main product line:
 
 - Validate Portfolio Intelligence Universe output with authenticated repository data.
 - Validate Portfolio News Feed output with repository-driven symbols and the mock provider.
@@ -23,6 +23,7 @@ IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine
 - Validate Portfolio Concentration output by top symbol, FCN underlying, asset type, provider, and region.
 - Validate Portfolio Correlation output by high / medium / low pair counts and deterministic top correlation pairs.
 - Validate Portfolio Scenario output by technology selloff, crypto correction, FCN underlying stress, regional shock, and concentration shock.
+- Validate Portfolio Stress Test output by global equity shock, crypto crash, FCN worst-of shock, high correlation shock, concentration breakdown, and regional crisis.
 - Preserve global market readiness across asset types, region enums, provider enums, market data interfaces, news interfaces, language interfaces, and localization surfaces.
 - Validate the Repository-driven Portfolio Dashboard with authenticated User A / User B.
 - Validate Supabase-backed Create / Read asset persistence with authenticated User A / User B.
@@ -366,11 +367,21 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 
 ### v2.09 — Portfolio Stress Test Engine Foundation
 
-- Define full stress-test framework boundaries after scenario output is validated.
-- Keep factor shocks, multi-period drawdown simulation, and provider-backed stress input out of scope until approved.
+- Add Portfolio Stress Test types.
+- Add Stress Test Engine contract.
+- Add deterministic mock stress-test engine.
+- Build Portfolio Stress Test Report from valuation, exposure, concentration, correlation, and scenario reports.
+- Display Stress Test Count, Worst Stress Test, Average Stress Impact, Stress Risk Level, Capital Preservation Warning, Stress Test Cards, Alerts, Summary, and Generated Time inside `/my-ixai/portfolio`.
+- Keep stress-test logic deterministic and market-agnostic until real market data and broker sync are approved.
 - No live provider, broker sync, external AI, recommendation logic, or trading feature.
 
-### v2.10 — Broker Sync Foundation Planning
+### v2.10 — FCN Risk Engine Foundation
+
+- Review how Stress Test output can inform FCN monitoring workflows.
+- Keep KI / KO / worst-of production rules separate from generic portfolio stress tests until approved.
+- No broker API, real market data, external AI, personalized advice, or trading execution.
+
+### v2.10a — Broker Sync Foundation Planning
 
 - Define broker sync boundaries before any provider connection.
 - Keep Supabase ownership, membership, and compliance gates explicit.

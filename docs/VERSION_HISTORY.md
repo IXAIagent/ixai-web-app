@@ -6,6 +6,38 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.09 — Portfolio Stress Test Engine Foundation
+
+Why:
+
+- v2.08 added scenario readback, but IXAI still needed a deterministic stress-test layer before any future real-time risk or FCN risk expansion.
+- Stress tests help translate valuation, exposure, concentration, correlation, and scenario readback into severe-but-explainable portfolio shock cases.
+
+What Changed:
+
+- Added `src/lib/portfolio/stress-test/`.
+- Added `PortfolioStressTestReport`, `PortfolioStressTestCase`, `PortfolioStressTestResult`, and `PortfolioStressTestLevel`.
+- Added `PortfolioStressTestEngine` contract.
+- Added deterministic `mockPortfolioStressTestEngine`.
+- Added `buildPortfolioStressTestReport()` from existing valuation, exposure, concentration, correlation, and scenario reports.
+- Added Portfolio Stress Test Engine readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Stress Test Engine Foundation and FCN Risk Engine Foundation (Coming Soon).
+
+Key Decisions:
+
+- v2.09 is foundation-only.
+- Stress-test output is deterministic and mock-only.
+- The layer is market-agnostic and must support future global markets rather than US-only assets.
+- The stress-test library covers global equity shock, crypto crash, FCN worst-of shock, high correlation shock, concentration breakdown, and regional crisis.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, broker sync, external market data, external AI, recommendation logic change, or trading feature.
+
+Next:
+
+- Future work may define FCN risk integration, factor-shock governance, real provider freshness rules, and multi-period drawdown models after stress-test output is validated.
+
 ## v2.08 — Portfolio Scenario Engine Foundation
 
 Why:
