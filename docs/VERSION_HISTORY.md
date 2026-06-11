@@ -6,6 +6,39 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.05 — Portfolio Exposure Engine Foundation
+
+Why:
+
+- v2.04 established portfolio valuation and allocation metrics, but IXAI still needed an exposure layer that translates value into concentration readback.
+- Exposure is the bridge between valuation and future real-time portfolio monitoring.
+
+What Changed:
+
+- Added `src/lib/portfolio/exposure/`.
+- Added `PortfolioExposureReport` and `PortfolioExposureItem` types.
+- Added `PortfolioExposureEngine` contract.
+- Added deterministic `mockPortfolioExposureEngine`.
+- Added `buildPortfolioExposure()` reusing the existing Market Data and Valuation builders.
+- Added Portfolio Exposure Engine readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Exposure Engine Foundation and Real-Time Portfolio Engine (Coming Soon).
+
+Key Decisions:
+
+- v2.05 is foundation-only.
+- Exposure output is deterministic and mock-only.
+- The layer reuses repository assets, market snapshots, and valuation output.
+- FCN exposure can be split across stored underlyings from asset metadata.
+- GRID and DUAL symbols normalize crypto pairs such as `BTCUSDT` to `BTC`.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, FCN engine change, Daily / Weekly / Social Pack change, external market data, broker sync, external AI, recommendation logic change, or trading feature.
+
+Next:
+
+- Future work may define real-time portfolio engine rules, exposure threshold governance, and provider-backed exposure validation before any live market data or broker sync is connected.
+
 ## v2.04 — Portfolio Valuation Engine Foundation
 
 Why:
