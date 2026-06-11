@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.05 / Portfolio Workspace Foundation + CTA Fix`
+`v3.05a / Legacy Backend Inventory Audit`
 
 ## Current Priority
 
@@ -19,12 +19,15 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V303_IXAI_PLATFORM_PAGE.md` as the source of truth for `/pro` public platform positioning.
 - Use `docs/V304_ASSET_INPUT_CENTER.md` as the source of truth for Workspace asset onboarding and FCN Wizard ownership.
 - Use `docs/V305_PORTFOLIO_WORKSPACE_FOUNDATION.md` as the source of truth for Portfolio Workspace foundation and `/pro` CTA contrast.
+- Use `docs/LEGACY_BACKEND_INVENTORY_AUDIT_V305A.md` as the source of truth for reusable legacy backend modules and migration sequencing.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
 - `/pro` is now the public IXAI Platform introduction and conversion page, not the primary Legacy Pro entry.
 - `/my-ixai/input` is now the canonical Asset Input Center. FCN Wizard belongs to `/my-ixai/input/fcn`, not public `/fcn`.
 - `/my-ixai/portfolio` should be understandable as a Workspace homepage, not an engineering dashboard dump.
+- Legacy backend modules should be migrated by contract and rewrite, not copied wholesale.
+- Highest-priority legacy backend candidates are CSV import, risk alerts, FCN monitoring / schedules, portfolio-aware news relevance, and scheduler / notification review.
 - Public navigation and Workspace navigation must remain separate.
 - Do not add more Portfolio Center modules until the current surface is split into clear centers.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
@@ -127,6 +130,19 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Keep data mock/placeholder only; do not connect real risk engines or new APIs.
 - Fix `/pro` CTA contrast so hero and pricing buttons are visible.
 - Keep schema, migrations, API, auth, membership, entitlements, broker, market data, AI, recommendation, and trading logic unchanged.
+
+### v3.05a — Legacy Backend Inventory Audit
+
+- Audit `/backend/ixai_agent` as a FastAPI / SQLAlchemy / Alembic legacy backend reference.
+- Identify reusable modules for Asset Input, FCN Monitoring, Risk Alerts, Market Intelligence, Scheduler, Notifications, Position Lifecycle, database models, tests, services, and API routes.
+- Record that legacy backend concepts should migrate into App-native centers by contract and rewrite, not by wholesale code copy.
+- Establish the recommended migration order:
+  - v3.06 Asset Input Completion.
+  - v3.07 Risk Alerts Migration.
+  - v3.08 FCN Center Migration.
+  - v3.09 Intelligence Center Migration.
+  - v3.10 Scheduler / Notification Review.
+- No product code, schema, migration, API, auth, UI, broker, market data, external AI, or production behavior changes.
 
 ### v3.06 — Risk Center Decomposition
 

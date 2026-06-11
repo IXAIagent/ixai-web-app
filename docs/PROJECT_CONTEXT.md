@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v3.05 — Portfolio Workspace Foundation + CTA Fix`
+`v3.05a — Legacy Backend Inventory Audit`
 
 Current production state:
 
@@ -90,6 +90,8 @@ v3.03 repositions `/pro` as the public IXAI Platform introduction and conversion
 v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding surface. FCN Wizard ownership moves from public `/fcn` to `/my-ixai/input/fcn`; public `/fcn` should remain education, Worst-of, KI / KO, case study, FAQ, and Workspace CTA only. Do not place data-entry workflows back into public FCN.
 
 v3.05 turns `/my-ixai/portfolio` into the first user-readable Portfolio Workspace homepage. The page should explain Portfolio Overview, Holdings Summary, Risk Snapshot, and Quick Actions without connecting new APIs or real engines. v3.05 also fixes `/pro` CTA contrast so public conversion buttons remain visible.
+
+v3.05a audits `/Users/itsunkuo/Desktop/IXAI_PROJECTS/backend/ixai_agent` as the legacy FastAPI backend inventory. The audit identifies reusable concepts for Asset Input, CSV import, FCN monitoring, risk alerts, market intelligence, scheduler, notification, position lifecycle, models, tests, services, and API routes. The rule is explicit: migrate concepts by contract and App-native rewrite, not by copying the legacy backend, templates, JWT auth, localStorage token flow, or direct browser-to-FastAPI protected calls.
 
 Validated production behavior:
 
@@ -133,7 +135,7 @@ Still not complete:
 
 Current Development Version:
 
-`v3.05 — Portfolio Workspace Foundation + CTA Fix`
+`v3.05a — Legacy Backend Inventory Audit`
 
 Current Core Flow:
 
