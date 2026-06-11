@@ -259,4 +259,4 @@ Viewports:
 
 ## 12. Next Step
 
-After v3.00 is reviewed visually, proceed to v3.01 as the first actual decomposition step. v3.01 should move one module family only, preferably Risk Center ownership of Concentration / Correlation / Scenario / Stress Test.
+After v3.00 is reviewed visually, v3.01 should first separate public website navigation from Workspace application navigation. Only after that navigation separation is stable should v3.02 move one module family, preferably Risk Center ownership of Concentration / Correlation / Scenario / Stress Test.

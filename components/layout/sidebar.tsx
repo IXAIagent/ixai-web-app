@@ -1,64 +1,66 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { AccountStatus } from "@/components/auth/account-status";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
 import { ShellNavButton, ShellSidebarSection, shellTokens } from "@/components/shell/shell-primitives";
 import { Eyebrow } from "@/components/ui/eyebrow";
 
-// v1.7: nav grouped into workflow tiers instead of 7 flat peers.
-// Mirrors the homepage hierarchy: daily workflow → market reference →
-// personal monitoring → membership → brand.
-const navGroups: Array<{
+type NavGroup = {
   heading: string;
   items: Array<{ external?: boolean; label: string; href: string; primary?: boolean }>;
-}> = [
+};
+
+const publicNavGroups: NavGroup[] = [
   {
-    heading: "每日",
+    heading: "官網",
     items: [
       { label: "市場首頁", href: "/", primary: true },
       { label: "每日晨報", href: "/daily-brief" },
-    ],
-  },
-  {
-    heading: "市場",
-    items: [
       { label: "市場總覽", href: "/market" },
       { label: "每週情報", href: "/weekly-brief" },
     ],
   },
   {
-    heading: "個人",
+    heading: "產品",
     items: [
-      { label: "自選觀察", href: "/watchlist" },
-      { label: "我的 IXAI", href: "/account" },
+      { label: "FCN", href: "/fcn" },
+      { label: "IXAI Pro", href: "/pro" },
+      { label: "About 一玄", href: "/about" },
+      { label: "登入", href: "/login" },
+    ],
+  },
+];
+
+const workspaceNavGroups: NavGroup[] = [
+  {
+    heading: "Workspace",
+    items: [
       { label: "Workspace Home", href: "/my-ixai/home" },
       { label: "Portfolio Center", href: "/my-ixai/portfolio" },
       { label: "Risk Center", href: "/my-ixai/risk" },
       { label: "FCN Center", href: "/my-ixai/fcn" },
       { label: "Intelligence Center", href: "/my-ixai/intelligence" },
-      { label: "Asset Input", href: "/my-ixai/input" },
-      { label: "Portfolio Assets", href: "/my-ixai/portfolio/assets" },
       { label: "Settings", href: "/my-ixai/settings" },
     ],
   },
   {
-    heading: "會員",
+    heading: "Exit",
     items: [
-      { label: "FCN", href: "/fcn" },
-      { label: "IXAI Pro", href: "/pro" },
-    ],
-  },
-  {
-    heading: "品牌",
-    items: [
-      { label: "About 一玄", href: "/about" },
+      { label: "返回官網", href: "/" },
     ],
   },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
+  const navGroups = isWorkspaceRoute ? workspaceNavGroups : publicNavGroups;
+  const title = isWorkspaceRoute ? "IXAI Workspace" : "市場情報";
+  const subtitle = isWorkspaceRoute ? "登入後的產品工作區。" : "每日市場情報入口。";
+  const footerLabel = isWorkspaceRoute ? "Workspace Mode" : "Public Website";
+  const footerText = isWorkspaceRoute
+    ? "Portfolio、Risk、FCN、Intelligence 與 Settings 已分離成工作區導覽。"
+    : "官網導覽保留品牌、教育與市場內容，不混入 Workspace。";
 
   return (
     <aside className={`fixed inset-y-0 left-0 z-30 hidden ${shellTokens.publicSidebarWidth} border-r border-[rgba(176,141,87,0.22)] bg-[#071f17] text-[var(--ixai-cream)] md:flex md:flex-col`}>
@@ -70,12 +72,12 @@ export function Sidebar() {
               IXAI
             </Eyebrow>
             <h1 className="mt-1 text-sm font-semibold tracking-normal">
-              市場情報
+              {title}
             </h1>
           </div>
         </div>
         <p className="mt-3 text-xs leading-5 text-[rgba(245,240,230,0.50)]">
-          每日市場情報入口。
+          {subtitle}
         </p>
       </div>
 
@@ -96,13 +98,12 @@ export function Sidebar() {
       </nav>
 
       <div className="m-2.5 grid gap-2">
-        <AccountStatus />
         <div className="rounded-lg border border-white/10 bg-white/[0.045] p-3">
           <Eyebrow mono className="text-[10px]">
-            風險狀態
+            {footerLabel}
           </Eyebrow>
           <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.62)]">
-            Risk-on 偏正向，但利率仍是估值壓力源。
+            {footerText}
           </p>
         </div>
       </div>

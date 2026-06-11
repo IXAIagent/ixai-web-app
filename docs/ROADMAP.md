@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.00 / UX IA Foundation`
+`v3.01 / Navigation Separation Foundation`
 
 ## Current Priority
 
@@ -14,7 +14,9 @@ Current priority is UX / IA foundation before moving modules:
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
-- Do not add new investment features in v3.00.
+- Use `docs/V301_NAVIGATION_SEPARATION_FOUNDATION.md` as the navigation separation rule for public website versus Workspace application surfaces.
+- Do not add new investment features in v3.00 / v3.01.
+- Public navigation and Workspace navigation must remain separate.
 - Do not add more Portfolio Center modules until the current surface is split into clear centers.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
@@ -79,7 +81,14 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Keep `/portfolio` as input / creation and `/my-ixai/portfolio` as Portfolio Center.
 - No new investment features, providers, broker integrations, recommendation logic, schema, migrations, API routes, auth changes, or membership changes.
 
-### v3.01 — Risk Center Decomposition
+### v3.01 — Navigation Separation Foundation
+
+- Separate Public Website Navigation from Workspace Application Navigation.
+- Public navigation keeps market homepage, Daily Brief, Market, Weekly, FCN, IXAI Pro, About, and Login.
+- Workspace navigation keeps Workspace Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, Settings, and `返回官網`.
+- Do not change auth, membership, entitlement, route URLs, public content, engine logic, API contracts, schema, migrations, or providers.
+
+### v3.02 — Risk Center Decomposition
 
 - Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
 - Keep existing engine logic unchanged.
