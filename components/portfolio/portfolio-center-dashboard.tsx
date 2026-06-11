@@ -23,7 +23,8 @@ import type {
 import type { PortfolioAsset } from "@/src/lib/portfolio/data-model/portfolio-asset-types";
 import type { PortfolioPosition } from "@/src/lib/portfolio/data-model/portfolio-position-types";
 import type { PortfolioInputRegion } from "@/src/lib/portfolio/input/asset-types";
-import { buildPortfolioNewsIntelligenceFoundation } from "@/src/lib/portfolio/intelligence/intelligence-builder";
+import { buildPortfolioNewsFeed } from "@/src/lib/portfolio/news/news-service";
+import type { PortfolioNewsFeed } from "@/src/lib/portfolio/news/news-types";
 import { getPortfolioRepository } from "@/src/lib/portfolio/repository/portfolio-persistence-provider";
 import type { PortfolioOwnershipValidationStatus } from "@/src/lib/portfolio/repository/portfolio-repository";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
@@ -146,6 +147,7 @@ export function PortfolioCenterDashboard() {
   const [repositoryAccounts, setRepositoryAccounts] = useState<PortfolioAccount[]>([]);
   const [repositoryAssets, setRepositoryAssets] = useState<PortfolioAsset[]>([]);
   const [repositoryPositions, setRepositoryPositions] = useState<PortfolioPosition[]>([]);
+  const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
   const [status, setStatus] = useState<"error" | "loading" | "ready" | "unauthenticated">(
     "loading",
   );
@@ -179,6 +181,7 @@ export function PortfolioCenterDashboard() {
         portfolioRepository.getAssets(),
         portfolioRepository.getPositions(),
       ]);
+      const newsFeed = await buildPortfolioNewsFeed({ assets });
       const payload = (await response.json().catch(() => ({}))) as DashboardResponse;
 
       if (!response.ok || !payload.summary) {
@@ -187,6 +190,7 @@ export function PortfolioCenterDashboard() {
         setRepositoryAccounts(accounts);
         setRepositoryAssets(assets);
         setRepositoryPositions(positions);
+        setPortfolioNewsFeed(newsFeed);
         setStatus(response.status === 401 ? "unauthenticated" : "error");
         return;
       }
@@ -196,6 +200,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryAccounts(accounts);
       setRepositoryAssets(assets);
       setRepositoryPositions(positions);
+      setPortfolioNewsFeed(newsFeed);
       setStatus("ready");
     } catch {
       setSummary(null);
@@ -203,6 +208,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryAccounts([]);
       setRepositoryAssets([]);
       setRepositoryPositions([]);
+      setPortfolioNewsFeed(null);
       setStatus("error");
     }
   }, []);
@@ -232,10 +238,8 @@ export function PortfolioCenterDashboard() {
     [repositoryAccounts, repositoryAssets],
   );
   const repositoryRegionTotal = repositoryAccounts.length + repositoryAssets.length;
-  const intelligenceUniverse = useMemo(
-    () => buildPortfolioNewsIntelligenceFoundation(repositoryAssets),
-    [repositoryAssets],
-  );
+  const intelligenceUniverse = portfolioNewsFeed?.universe;
+  const latestHeadlines = portfolioNewsFeed?.items.slice(0, 5) ?? [];
   const entitlements = summary?.entitlements;
   const fcnWorstOfRanking = useMemo(
     () => summary?.fcnWorstOfRanking?.slice(0, 5) ?? [],
@@ -503,13 +507,13 @@ export function PortfolioCenterDashboard() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-              Portfolio Intelligence Universe
+              Portfolio News Feed
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-              未來新聞與 AI 觀察的標的宇宙
+              Intelligence Universe → Mock News Provider
             </h2>
             <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              v1.97 只根據 Repository 資產資料產生 tracked symbols；不連接新聞、AI、行情或券商。
+              v1.98 建立 Portfolio → Intelligence Universe → News Provider → Portfolio News Feed 的資料流；目前使用 mock provider，不連接外部新聞、AI、行情或券商。
             </p>
           </div>
           <FeatureIcon icon={LineChart} shadow={false} />
@@ -517,10 +521,14 @@ export function PortfolioCenterDashboard() {
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           {[
-            ["Total Tracked Symbols", intelligenceUniverse.totalTrackedSymbols],
-            ["Source Mentions", intelligenceUniverse.sourceCount],
-            ["Ignored Cash Assets", intelligenceUniverse.ignoredCashCount],
-          ].map(([label, value]) => (
+            ["News Provider Status", portfolioNewsFeed?.providerStatus ?? "pending"],
+            ["Tracked Symbols", intelligenceUniverse?.totalTrackedSymbols ?? 0],
+            ["News Count", portfolioNewsFeed?.newsCount ?? 0],
+          ].map(([label, value]) => {
+            const displayValue =
+              typeof value === "number" ? numberLabel(value) : value;
+
+            return (
             <div
               className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
               key={label}
@@ -529,17 +537,18 @@ export function PortfolioCenterDashboard() {
                 {label}
               </p>
               <p className="mt-2 text-3xl font-semibold text-[var(--ixai-forest)]">
-                {numberLabel(Number(value))}
+                {displayValue}
               </p>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
           <p className="text-sm font-semibold text-[var(--ixai-forest)]">
-            Symbol List
+            Tracked Symbols
           </p>
-          {intelligenceUniverse.symbols.length > 0 ? (
+          {intelligenceUniverse && intelligenceUniverse.symbols.length > 0 ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {intelligenceUniverse.symbols.map((symbol) => (
                 <span
@@ -557,8 +566,45 @@ export function PortfolioCenterDashboard() {
           )}
         </div>
 
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+          <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+            Latest Headlines
+          </p>
+          {latestHeadlines.length > 0 ? (
+            <div className="mt-3 grid gap-3">
+              {latestHeadlines.map((item) => (
+                <article
+                  className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.70)] p-3"
+                  key={item.id}
+                >
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="font-mono text-xs font-semibold text-[var(--ixai-gold)]">
+                        {item.symbol} · {item.category}
+                      </p>
+                      <h3 className="mt-1 text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                        {item.summary}
+                      </p>
+                    </div>
+                    <p className="shrink-0 text-xs text-[var(--ixai-forest-soft)]">
+                      {item.source}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              目前 mock provider 沒有符合 tracked symbols 的 headline。新增支援標的後可產生 foundation feed。
+            </p>
+          )}
+        </div>
+
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-          Intelligence Universe 是持倉關聯觀察清單，不代表投資建議、新聞推薦、交易指令或 AI commentary。
+          Portfolio News Feed 目前只使用 mock provider 進行資料流驗證，不代表投資建議、新聞推薦、交易指令或 AI commentary。
         </p>
       </section>
 

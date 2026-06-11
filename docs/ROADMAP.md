@@ -4,13 +4,14 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v1.97 / Portfolio News Intelligence Foundation`
+`v1.98 / Portfolio News Provider Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, first Portfolio Data Model Foundation, first Portfolio Repository Foundation, first Portfolio Persistence Foundation, first Ownership Validation layer, first Repository-driven Portfolio Dashboard Foundation, and first Portfolio News Intelligence Foundation. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, first Portfolio Data Model Foundation, first Portfolio Repository Foundation, first Portfolio Persistence Foundation, first Ownership Validation layer, first Repository-driven Portfolio Dashboard Foundation, first Portfolio News Intelligence Foundation, and first mock Portfolio News Provider Foundation. Current priority remains the main product line:
 
 - Validate Portfolio Intelligence Universe output with authenticated repository data.
+- Validate Portfolio News Feed output with repository-driven symbols and the mock provider.
 - Validate the Repository-driven Portfolio Dashboard with authenticated User A / User B.
 - Validate Supabase-backed Create / Read asset persistence with authenticated User A / User B.
 - Validate the Portfolio Account → Asset → Position model under real dashboard readback.
@@ -246,20 +247,31 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Display tracked symbol badges inside `/my-ixai/portfolio`.
 - No News API, OpenAI, Claude, Gemini, market data, broker sync, API route, migration, schema, auth, membership, or entitlement changes.
 
-### v1.98 — CSV Import MVP
+### v1.98 — Portfolio News Provider Foundation
+
+- Add Portfolio News Provider contract.
+- Add mock news provider for supported tracked symbols.
+- Build Portfolio News Feed from:
+  - Repository assets.
+  - Intelligence Universe.
+  - News Provider.
+- Display News Provider Status, tracked symbols, news count, and latest mock headlines inside `/my-ixai/portfolio`.
+- No external News API, OpenAI, Claude, Gemini, market data, broker sync, API route, migration, schema, auth, membership, entitlement, or FCN engine change.
+
+### v1.99 — CSV Import MVP
 
 - Map CSV rows into Portfolio Account → Asset → Position.
 - Use v1.92 model as the import target.
 - Validate rows before persistence.
 - No broker API or automatic sync.
 
-### v1.99 — Holding-Aware News Engine
+### v2.0 — Holding-Aware News Engine
 
 - Use Portfolio Assets and FCN underlyings to identify relevant news categories.
 - Add risk impact note and IXAI perspective architecture.
 - No AI API until explicitly approved.
 
-### v2.0 — Portfolio Input QA / Mobile Polish
+### v2.1 — Portfolio Input QA / Mobile Polish
 
 - Validate `/my-ixai/input` and `/my-ixai/portfolio/assets` at 375px, 768px, and desktop widths.
 - Confirm no horizontal overflow.
@@ -267,28 +279,28 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Confirm placeholder CTAs do not imply live CSV upload, broker sync, payment, or external integrations.
 - Confirm model foundation stays pure and does not call DB / API / browser storage.
 
-### v2.1 — Stock Portfolio Foundation
+### v2.2 — Stock Portfolio Foundation
 
 - Stock / ETF portfolio readback expansion.
 - Stock position monitoring UX planning.
 - Asset allocation and concentration foundation.
 - No broker execution and no personalized trading advice.
 
-### v2.2 — Crypto / Grid Foundation
+### v2.3 — Crypto / Grid Foundation
 
 - Crypto spot portfolio expansion.
 - Grid strategy monitoring foundation.
 - Dual investment monitoring foundation.
 - No exchange execution and no automated trading.
 
-### v2.3 — Unified Risk Engine
+### v2.4 — Unified Risk Engine
 
 - Combine FCN, stock, crypto, grid, dual, and cash awareness into a unified risk model.
 - Cross-asset concentration.
 - Cross-market exposure.
 - Compliance-safe monitoring language only.
 
-### v2.0 — SaaS Beta
+### v2.5 — SaaS Beta
 
 - Free / Basic / Pro product packaging.
 - Upgrade flow and pricing page.
