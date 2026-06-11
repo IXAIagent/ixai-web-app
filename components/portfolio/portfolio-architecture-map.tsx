@@ -140,9 +140,9 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         status: "mvp",
       },
       {
-        copy: "未啟用；尚未建立 stress scenario、factor shock 或 multi-asset drawdown simulation。",
-        label: "Portfolio Scenario Engine",
-        status: "coming_soon",
+        copy: "Mock scenario engine 已可從 valuation、exposure、concentration 與 correlation reports 產生 deterministic scenario impact readback。",
+        label: "Portfolio Scenario Engine Foundation",
+        status: "mvp",
       },
     ],
   },
@@ -238,8 +238,8 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
     status: "coming_soon",
   },
   {
-    copy: "未啟用；尚未建立 stress scenario、factor shock 或 multi-asset drawdown simulation。",
-    label: "Portfolio Scenario Engine",
+    copy: "未啟用；尚未建立 full stress-test framework、factor shock library 或 multi-period drawdown simulation。",
+    label: "Portfolio Stress Test Engine",
     status: "coming_soon",
   },
   {
@@ -362,7 +362,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Portfolio Valuation Engine Foundation → Portfolio Exposure Engine Foundation → Portfolio Concentration Engine Foundation → Portfolio Correlation Engine Foundation → Portfolio Scenario Engine（Coming Soon）。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Portfolio Valuation Engine Foundation → Portfolio Exposure Engine Foundation → Portfolio Concentration Engine Foundation → Portfolio Correlation Engine Foundation → Portfolio Scenario Engine Foundation → Portfolio Stress Test Engine（Coming Soon）。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>

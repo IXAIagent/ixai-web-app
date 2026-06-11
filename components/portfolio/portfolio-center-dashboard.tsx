@@ -53,6 +53,11 @@ import { getPortfolioRepository } from "@/src/lib/portfolio/repository/portfolio
 import type { PortfolioOwnershipValidationStatus } from "@/src/lib/portfolio/repository/portfolio-repository";
 import { buildPortfolioRiskReport } from "@/src/lib/portfolio/risk/risk-score-builder";
 import type { PortfolioRiskReport } from "@/src/lib/portfolio/risk/risk-types";
+import { buildPortfolioScenarioReport } from "@/src/lib/portfolio/scenario/scenario-builder";
+import type {
+  PortfolioScenarioReport,
+  PortfolioScenarioResult,
+} from "@/src/lib/portfolio/scenario/scenario-types";
 import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/valuation-builder";
 import type {
   PortfolioAllocationItem,
@@ -330,6 +335,58 @@ function CorrelationPairCard({ pair }: { pair: PortfolioCorrelationPair }) {
   );
 }
 
+function ScenarioResultCard({ result }: { result: PortfolioScenarioResult }) {
+  return (
+    <article className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+            {result.scenario.type.replaceAll("_", " ")}
+          </p>
+          <h3 className="mt-1 break-words text-lg font-semibold text-[var(--ixai-forest)]">
+            {result.scenario.name}
+          </h3>
+        </div>
+        <span className="rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(176,141,87,0.10)] px-2.5 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest)]">
+          {result.level}
+        </span>
+      </div>
+      <div className="mt-4 grid gap-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span>Estimated Impact</span>
+          <span className="font-mono text-[var(--ixai-forest)]">
+            {formatPercent(result.estimatedImpactPct)}
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span>Estimated Value</span>
+          <span className="font-mono text-[var(--ixai-forest)]">
+            {formatSignedMoney(result.estimatedImpactValue)}
+          </span>
+        </div>
+      </div>
+      <p className="mt-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+        Assumption: {result.scenario.assumption}
+      </p>
+      <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+        {result.summary}
+      </p>
+      {result.affectedAssets.length > 0 ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {result.affectedAssets.slice(0, 6).map((asset) => (
+            <span
+              className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]"
+              key={asset}
+            >
+              {asset}
+            </span>
+          ))}
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
 export function PortfolioCenterDashboard() {
   const [summary, setSummary] = useState<PortfolioDashboardSummary | null>(null);
   const [ownershipStatus, setOwnershipStatus] =
@@ -347,6 +404,8 @@ export function PortfolioCenterDashboard() {
     useState<PortfolioConcentrationReport | null>(null);
   const [portfolioCorrelationReport, setPortfolioCorrelationReport] =
     useState<PortfolioCorrelationReport | null>(null);
+  const [portfolioScenarioReport, setPortfolioScenarioReport] =
+    useState<PortfolioScenarioReport | null>(null);
   const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
   const [portfolioCommentaryFeed, setPortfolioCommentaryFeed] =
     useState<PortfolioCommentaryFeed | null>(null);
@@ -373,6 +432,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioExposureReport(null);
       setPortfolioConcentrationReport(null);
       setPortfolioCorrelationReport(null);
+      setPortfolioScenarioReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -420,6 +480,12 @@ export function PortfolioCenterDashboard() {
         concentrationReport,
         exposureReport,
       });
+      const scenarioReport = await buildPortfolioScenarioReport({
+        concentrationReport,
+        correlationReport,
+        exposureReport,
+        valuationReport,
+      });
       const newsFeed = await buildPortfolioNewsFeed({ assets });
       const commentaryFeed = await buildPortfolioCommentary({ newsFeed });
       const intelligenceScore = await buildPortfolioIntelligence({
@@ -449,6 +515,7 @@ export function PortfolioCenterDashboard() {
         setPortfolioExposureReport(exposureReport);
         setPortfolioConcentrationReport(concentrationReport);
         setPortfolioCorrelationReport(correlationReport);
+        setPortfolioScenarioReport(scenarioReport);
         setPortfolioNewsFeed(newsFeed);
         setPortfolioCommentaryFeed(commentaryFeed);
         setPortfolioIntelligenceScore(intelligenceScore);
@@ -468,6 +535,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioExposureReport(exposureReport);
       setPortfolioConcentrationReport(concentrationReport);
       setPortfolioCorrelationReport(correlationReport);
+      setPortfolioScenarioReport(scenarioReport);
       setPortfolioNewsFeed(newsFeed);
       setPortfolioCommentaryFeed(commentaryFeed);
       setPortfolioIntelligenceScore(intelligenceScore);
@@ -485,6 +553,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioExposureReport(null);
       setPortfolioConcentrationReport(null);
       setPortfolioCorrelationReport(null);
+      setPortfolioScenarioReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -1101,6 +1170,102 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Portfolio Correlation Engine Foundation 使用 deterministic mock correlation logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Scenario Engine
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Scenario Dashboard Foundation
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.08 將 valuation、exposure、concentration 與 correlation reports 轉成 market-agnostic deterministic scenarios，支援未來 US / TW / HK / CN / JP / KR / EU / Crypto / FCN 情境模型。
+            </p>
+          </div>
+          <FeatureIcon icon={ShieldAlert} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Scenario Count", numberLabel(portfolioScenarioReport?.totalScenarios ?? 0)],
+            [
+              "Worst Scenario",
+              portfolioScenarioReport?.worstScenario?.scenario.name ?? "--",
+            ],
+            ["Average Impact", formatPercent(portfolioScenarioReport?.averageImpactPct ?? null)],
+            ["Scenario Risk Level", portfolioScenarioReport?.scenarioRiskLevel ?? "LOW"],
+            ["Generated Time", portfolioScenarioReport?.generatedAt ?? "--"],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            Scenario Cards
+          </h3>
+          {portfolioScenarioReport && portfolioScenarioReport.results.length > 0 ? (
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              {portfolioScenarioReport.results.map((result) => (
+                <ScenarioResultCard
+                  key={result.scenario.id}
+                  result={result}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              目前沒有 mock scenario result。
+            </p>
+          )}
+        </div>
+
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">Alerts</h3>
+            {portfolioScenarioReport && portfolioScenarioReport.alerts.length > 0 ? (
+              <ul className="mt-3 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {portfolioScenarioReport.alerts.map((alert) => (
+                  <li
+                    className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] px-3 py-2"
+                    key={alert}
+                  >
+                    {alert}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                目前沒有 scenario alert。
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">Summary</h3>
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              {portfolioScenarioReport?.summary ??
+                "Portfolio Scenario Engine is ready, but no scenario report is available yet."}
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio Scenario Engine Foundation 使用 market-agnostic deterministic mock scenario logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
         </p>
       </section>
 
