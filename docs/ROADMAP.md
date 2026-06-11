@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.05a / Legacy Backend Inventory Audit`
+`v3.06 / Asset Input Completion`
 
 ## Current Priority
 
@@ -20,11 +20,14 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V304_ASSET_INPUT_CENTER.md` as the source of truth for Workspace asset onboarding and FCN Wizard ownership.
 - Use `docs/V305_PORTFOLIO_WORKSPACE_FOUNDATION.md` as the source of truth for Portfolio Workspace foundation and `/pro` CTA contrast.
 - Use `docs/LEGACY_BACKEND_INVENTORY_AUDIT_V305A.md` as the source of truth for reusable legacy backend modules and migration sequencing.
+- Use `docs/V306_ASSET_INPUT_COMPLETION.md` as the source of truth for Stock, Crypto, FCN, Review Summary, and Recent Inputs behavior.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
 - `/pro` is now the public IXAI Platform introduction and conversion page, not the primary Legacy Pro entry.
 - `/my-ixai/input` is now the canonical Asset Input Center. FCN Wizard belongs to `/my-ixai/input/fcn`, not public `/fcn`.
+- `/my-ixai/input/stock`, `/my-ixai/input/crypto`, and `/my-ixai/input/fcn` now own the first usable asset-input flows.
+- `/my-ixai/portfolio` now reads local mock Recent Inputs to make the input-to-portfolio flow visible.
 - `/my-ixai/portfolio` should be understandable as a Workspace homepage, not an engineering dashboard dump.
 - Legacy backend modules should be migrated by contract and rewrite, not copied wholesale.
 - Highest-priority legacy backend candidates are CSV import, risk alerts, FCN monitoring / schedules, portfolio-aware news relevance, and scheduler / notification review.
@@ -144,7 +147,17 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
   - v3.10 Scheduler / Notification Review.
 - No product code, schema, migration, API, auth, UI, broker, market data, external AI, or production behavior changes.
 
-### v3.06 — Risk Center Decomposition
+### v3.06 — Asset Input Completion
+
+- Upgrade `/my-ixai/input/stock` from placeholder to usable Stock / ETF input form.
+- Upgrade `/my-ixai/input/crypto` from placeholder to usable Crypto input form.
+- Extend `/my-ixai/input/fcn` with FCN Basic, Barrier, Observation, Observation Dates, Underlyings, and Review Summary.
+- Add a shared Input Review pattern for Stock, Crypto, and FCN.
+- Add local mock Recent Inputs to `/my-ixai/portfolio`.
+- Keep local mock state only for Stock / Crypto and preserve existing FCN submit behavior.
+- No schema, migration, API, auth, membership, entitlement, broker, market data, external AI, recommendation, or trading changes.
+
+### v3.07 — Risk Center Decomposition
 
 - Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
 - Keep existing engine logic unchanged.
