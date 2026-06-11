@@ -197,8 +197,9 @@ Social Pack Note:
 
 Role:
 
-- Active backend mainline candidate.
-- FastAPI service for portfolio, FCN, crypto, cash, account, intelligence, alert, import, preferences, and market endpoints.
+- Legacy backend mainline candidate and product-memory reference.
+- FastAPI service for portfolio, FCN, crypto, cash, account, intelligence, alert, import, preferences, scheduler, notification, and market endpoints.
+- v3.05a inventories this backend in `docs/LEGACY_BACKEND_INVENTORY_AUDIT_V305A.md`.
 
 Current architecture:
 
@@ -209,6 +210,17 @@ Current architecture:
 - JWT auth currently separate from the production frontend's Supabase identity model.
 
 Future integration should happen through a clear boundary, likely a Next API proxy / backend client layer that maps Supabase identity to backend account context.
+
+Migration guidance after v3.05a:
+
+- Treat the backend as a reference library, not a codebase to copy wholesale.
+- High-value migration candidates:
+  - CSV import preview / validation / audit into `/my-ixai/input`.
+  - FCN monitor, Worst-of, KI / KO, observation, and coupon schedule concepts into `/my-ixai/fcn`.
+  - Risk alert taxonomy into `/my-ixai/risk`.
+  - Portfolio-aware news relevance / impact / priority into `/my-ixai/intelligence`.
+  - Scheduler and notification concepts into a future scheduler / notification service.
+- Do not migrate legacy templates, localStorage token auth, legacy JWT identity, direct browser-to-FastAPI protected calls, `.next` artifacts, or real market data / LLM providers without dedicated governance.
 
 ## frontend/ixai-website-clean
 

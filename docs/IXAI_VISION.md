@@ -114,6 +114,8 @@ v3.04 establishes Asset Input Center as the canonical Workspace asset onboarding
 
 v3.05 makes Portfolio Center a readable workspace page for normal users instead of an engineering-heavy module dump. Portfolio should explain assets, holdings, next actions, and the basic risk relationship before showing deeper engines. Public platform CTA surfaces must remain legible and high contrast because trust begins with basic usability.
 
+v3.05a treats the legacy FastAPI backend as a product-memory reference for future migration. Its strongest reusable concepts are CSV import, FCN monitoring, risk alerts, portfolio-aware news intelligence, scheduler, notifications, and behavioral tests. IXAI should absorb these concepts into Workspace centers through App-native contracts and rewrites, not by copying legacy auth, templates, localStorage token flows, or direct backend browser workflows.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text
