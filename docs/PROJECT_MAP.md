@@ -40,6 +40,7 @@ Production data ownership update:
 - v1.96 adds the first Repository-driven Portfolio Dashboard Foundation inside `/my-ixai/portfolio`, including account / asset / position totals, asset category allocation, provider allocation, and region allocation.
 - v1.97 adds Portfolio News Intelligence Foundation by generating an Intelligence Universe from repository assets. This prepares future holding-aware news and AI commentary without connecting providers.
 - v1.98 adds Portfolio News Provider Foundation by connecting the Intelligence Universe to a mock news provider and Portfolio News Feed readback. It still does not connect external News API, AI, market data, broker sync, or trading.
+- v1.99 adds Portfolio AI Commentary Foundation by connecting Portfolio News Feed to a mock commentary provider. It does not connect OpenAI, Claude, Gemini, Anthropic, News API, market data, broker sync, or trading.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
 
@@ -87,7 +88,9 @@ Portfolio News Intelligence Foundation
 ↓
 Portfolio News Provider Foundation
 ↓
-External News API / AI Commentary Layer (Coming Soon)
+Portfolio AI Commentary Foundation
+↓
+Portfolio Intelligence Engine / External News API (Coming Soon)
 ```
 
 - Portfolio route split:
