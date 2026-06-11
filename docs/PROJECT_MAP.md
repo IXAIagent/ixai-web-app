@@ -42,6 +42,7 @@ Production data ownership update:
 - v1.98 adds Portfolio News Provider Foundation by connecting the Intelligence Universe to a mock news provider and Portfolio News Feed readback. It still does not connect external News API, AI, market data, broker sync, or trading.
 - v1.99 adds Portfolio AI Commentary Foundation by connecting Portfolio News Feed to a mock commentary provider. It does not connect OpenAI, Claude, Gemini, Anthropic, News API, market data, broker sync, or trading.
 - v2.00 adds Portfolio Intelligence Engine Foundation by combining repository assets, mock news feed, and mock commentary into deterministic health, risk, concentration, and diversification scores. It still does not connect external AI, news, market data, broker sync, or trading.
+- v2.01 adds Portfolio Risk Engine Foundation by generating deterministic risk reports from repository accounts, assets, and positions. It still does not add recommendation logic, external providers, broker sync, or trading.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
 
@@ -93,7 +94,9 @@ Portfolio AI Commentary Foundation
 ↓
 Portfolio Intelligence Engine Foundation
 ↓
-Portfolio Risk Engine / External News API (Coming Soon)
+Portfolio Risk Engine Foundation
+↓
+Portfolio Recommendation Engine / External News API (Coming Soon)
 ```
 
 - Portfolio route split:

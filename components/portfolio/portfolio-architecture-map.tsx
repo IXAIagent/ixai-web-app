@@ -104,6 +104,11 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         label: "Portfolio Intelligence Engine Foundation",
         status: "mvp",
       },
+      {
+        copy: "Mock risk engine 已可根據 symbol concentration、FCN、crypto-like assets、cash buffer 與 diversification 產生 risk report。",
+        label: "Portfolio Risk Engine Foundation",
+        status: "mvp",
+      },
     ],
   },
   {
@@ -208,8 +213,8 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
     status: "coming_soon",
   },
   {
-    copy: "未啟用；尚未建立跨資產風險模型、情境分析或正式風險引擎。",
-    label: "Portfolio Risk Engine",
+    copy: "未啟用；尚未建立推薦、排序、行動建議或個人化決策引擎。",
+    label: "Portfolio Recommendation Engine",
     status: "coming_soon",
   },
 ];
@@ -312,7 +317,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine（Coming Soon）。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine（Coming Soon）。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>
