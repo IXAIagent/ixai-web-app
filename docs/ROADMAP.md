@@ -4,11 +4,11 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v2.03 / Portfolio Market Data Foundation`
+`v2.04 / Portfolio Valuation Engine Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, first Portfolio Data Model Foundation, first Portfolio Repository Foundation, first Portfolio Persistence Foundation, first Ownership Validation layer, first Repository-driven Portfolio Dashboard Foundation, first Portfolio News Intelligence Foundation, first mock Portfolio News Provider Foundation, first mock Portfolio AI Commentary Foundation, first mock Portfolio Intelligence Engine Foundation, first mock Portfolio Risk Engine Foundation, first mock Portfolio Recommendation Engine Foundation, and first mock Portfolio Market Data Foundation. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, FCN Intelligence Layer MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, first Portfolio Center UI MVP, Portfolio Architecture Visualization MVP, first Portfolio Input Foundation, first mock-only Portfolio CRUD Foundation, first Portfolio Data Model Foundation, first Portfolio Repository Foundation, first Portfolio Persistence Foundation, first Ownership Validation layer, first Repository-driven Portfolio Dashboard Foundation, first Portfolio News Intelligence Foundation, first mock Portfolio News Provider Foundation, first mock Portfolio AI Commentary Foundation, first mock Portfolio Intelligence Engine Foundation, first mock Portfolio Risk Engine Foundation, first mock Portfolio Recommendation Engine Foundation, first mock Portfolio Market Data Foundation, and first mock Portfolio Valuation Engine Foundation. Current priority remains the main product line:
 
 - Validate Portfolio Intelligence Universe output with authenticated repository data.
 - Validate Portfolio News Feed output with repository-driven symbols and the mock provider.
@@ -17,6 +17,8 @@ IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine
 - Validate Portfolio Risk Engine output from repository accounts, assets, positions, and deterministic risk rules.
 - Validate Portfolio Recommendation Engine prompts from deterministic risk reports while preserving strict compliance language.
 - Validate Portfolio Market Data snapshots from repository-driven Intelligence Universe symbols and deterministic mock provider.
+- Validate Portfolio Valuation output from repository assets, positions, and mock market snapshots.
+- Validate Portfolio Allocation metrics by asset type, provider, and region.
 - Validate the Repository-driven Portfolio Dashboard with authenticated User A / User B.
 - Validate Supabase-backed Create / Read asset persistence with authenticated User A / User B.
 - Validate the Portfolio Account → Asset → Position model under real dashboard readback.
@@ -310,20 +312,30 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Display Market Data Status, Provider Source, Tracked Symbols, Snapshot Count, Updated Time, and Market Snapshot Cards inside `/my-ixai/portfolio`.
 - No real market provider, no Yahoo Finance, no Binance, no CoinGecko, no Finnhub, no Polygon, no API route, no migration, no schema change, no broker sync, no recommendation logic, and no trading function.
 
-### v2.04 — Broker Sync Foundation Planning
+### v2.04 — Portfolio Valuation Engine Foundation
+
+- Add Portfolio Valuation types.
+- Add Portfolio Allocation types.
+- Add Valuation Engine contract.
+- Add deterministic mock valuation engine.
+- Build Portfolio Valuation Report from repository assets, positions, and mock market snapshots.
+- Display Total Cost Basis, Total Market Value, Unrealized P/L, Unrealized Return, and allocation metrics inside `/my-ixai/portfolio`.
+- No real market provider, broker sync, API route, migration, schema change, recommendation logic, or trading function.
+
+### v2.05 — Broker Sync Foundation Planning
 
 - Define broker sync boundaries before any provider connection.
 - Keep Supabase ownership, membership, and compliance gates explicit.
 - No broker API until product, security, and data-governance checks are approved.
 
-### v2.05 — CSV Import MVP
+### v2.06 — CSV Import MVP
 
 - Map CSV rows into Portfolio Account → Asset → Position.
 - Use v1.92 model as the import target.
 - Validate rows before persistence.
 - No broker API or automatic sync.
 
-### v2.06 — Holding-Aware News Engine
+### v2.07 — Holding-Aware News Engine
 
 - Use Portfolio Assets and FCN underlyings to identify relevant news categories.
 - Add risk impact note and IXAI perspective architecture.

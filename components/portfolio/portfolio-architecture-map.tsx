@@ -119,6 +119,11 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         label: "Portfolio Market Data Foundation",
         status: "mvp",
       },
+      {
+        copy: "Mock valuation engine 已可用 repository assets、positions 與 market snapshots 產生 portfolio value 與 allocation metrics。",
+        label: "Portfolio Valuation Engine Foundation",
+        status: "mvp",
+      },
     ],
   },
   {
@@ -205,6 +210,11 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
   {
     copy: "未啟用；尚未連接 Yahoo Finance、Binance、CoinGecko、Finnhub、Polygon 或其他行情來源。",
     label: "Real Market Data Provider",
+    status: "coming_soon",
+  },
+  {
+    copy: "未啟用；尚未連接 real-time portfolio valuation、broker positions 或 live cost basis sync。",
+    label: "Real-Time Portfolio Engine",
     status: "coming_soon",
   },
   {
@@ -327,7 +337,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Real Market Data Provider（Coming Soon）。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Portfolio Valuation Engine Foundation → Real-Time Portfolio Engine（Coming Soon）。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>

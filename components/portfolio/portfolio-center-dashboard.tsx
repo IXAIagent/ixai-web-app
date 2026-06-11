@@ -38,6 +38,11 @@ import { getPortfolioRepository } from "@/src/lib/portfolio/repository/portfolio
 import type { PortfolioOwnershipValidationStatus } from "@/src/lib/portfolio/repository/portfolio-repository";
 import { buildPortfolioRiskReport } from "@/src/lib/portfolio/risk/risk-score-builder";
 import type { PortfolioRiskReport } from "@/src/lib/portfolio/risk/risk-types";
+import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/valuation-builder";
+import type {
+  PortfolioAllocationItem,
+  PortfolioValuationReport,
+} from "@/src/lib/portfolio/valuation/valuation-types";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
 
 type DashboardResponse = {
@@ -107,6 +112,24 @@ function formatApprox(value: number) {
   }).format(value);
 }
 
+function formatMoney(value: number) {
+  if (!Number.isFinite(value)) {
+    return "0";
+  }
+
+  return new Intl.NumberFormat("zh-TW", {
+    maximumFractionDigits: 0,
+  }).format(Math.abs(value));
+}
+
+function formatSignedMoney(value: number) {
+  if (!Number.isFinite(value) || value === 0) {
+    return "0";
+  }
+
+  return `${value > 0 ? "+" : "-"}${formatMoney(value)}`;
+}
+
 function formatPercent(value: number | null) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return "--";
@@ -159,6 +182,46 @@ function countBy<T extends string>(values: T[]) {
   );
 }
 
+function AllocationGroup({
+  items,
+  title,
+}: {
+  items: PortfolioAllocationItem[];
+  title: string;
+}) {
+  return (
+    <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+      <h3 className="text-base font-semibold text-[var(--ixai-forest)]">{title}</h3>
+      {items.length > 0 ? (
+        <div className="mt-4 grid gap-3">
+          {items.map((item) => (
+            <div className="grid gap-2" key={item.key}>
+              <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                <span className="font-semibold text-[var(--ixai-forest)]">
+                  {item.label}
+                </span>
+                <span className="font-mono text-[var(--ixai-forest-soft)]">
+                  {formatMoney(item.marketValue)} · {formatShare(item.sharePercent)}
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-[rgba(9,41,31,0.08)]">
+                <div
+                  className="h-full rounded-full bg-[var(--ixai-gold)]"
+                  style={{ width: `${Math.max(0, Math.min(100, item.sharePercent))}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          目前沒有可計算的 allocation。
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function PortfolioCenterDashboard() {
   const [summary, setSummary] = useState<PortfolioDashboardSummary | null>(null);
   const [ownershipStatus, setOwnershipStatus] =
@@ -168,6 +231,8 @@ export function PortfolioCenterDashboard() {
   const [repositoryPositions, setRepositoryPositions] = useState<PortfolioPosition[]>([]);
   const [portfolioMarketDataFeed, setPortfolioMarketDataFeed] =
     useState<PortfolioMarketDataFeed | null>(null);
+  const [portfolioValuationReport, setPortfolioValuationReport] =
+    useState<PortfolioValuationReport | null>(null);
   const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
   const [portfolioCommentaryFeed, setPortfolioCommentaryFeed] =
     useState<PortfolioCommentaryFeed | null>(null);
@@ -190,6 +255,7 @@ export function PortfolioCenterDashboard() {
       setSummary(null);
       setOwnershipStatus(null);
       setPortfolioMarketDataFeed(null);
+      setPortfolioValuationReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -217,6 +283,12 @@ export function PortfolioCenterDashboard() {
         portfolioRepository.getPositions(),
       ]);
       const marketDataFeed = await buildPortfolioMarketSnapshots({ assets });
+      const valuationReport = await buildPortfolioValuation({
+        accounts,
+        assets,
+        marketDataFeed,
+        positions,
+      });
       const newsFeed = await buildPortfolioNewsFeed({ assets });
       const commentaryFeed = await buildPortfolioCommentary({ newsFeed });
       const intelligenceScore = await buildPortfolioIntelligence({
@@ -242,6 +314,7 @@ export function PortfolioCenterDashboard() {
         setRepositoryAssets(assets);
         setRepositoryPositions(positions);
         setPortfolioMarketDataFeed(marketDataFeed);
+        setPortfolioValuationReport(valuationReport);
         setPortfolioNewsFeed(newsFeed);
         setPortfolioCommentaryFeed(commentaryFeed);
         setPortfolioIntelligenceScore(intelligenceScore);
@@ -257,6 +330,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryAssets(assets);
       setRepositoryPositions(positions);
       setPortfolioMarketDataFeed(marketDataFeed);
+      setPortfolioValuationReport(valuationReport);
       setPortfolioNewsFeed(newsFeed);
       setPortfolioCommentaryFeed(commentaryFeed);
       setPortfolioIntelligenceScore(intelligenceScore);
@@ -270,6 +344,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryAssets([]);
       setRepositoryPositions([]);
       setPortfolioMarketDataFeed(null);
+      setPortfolioValuationReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -306,6 +381,8 @@ export function PortfolioCenterDashboard() {
   const repositoryRegionTotal = repositoryAccounts.length + repositoryAssets.length;
   const intelligenceUniverse = portfolioNewsFeed?.universe;
   const marketSnapshots = portfolioMarketDataFeed?.snapshots.slice(0, 8) ?? [];
+  const portfolioValuation = portfolioValuationReport?.valuation;
+  const portfolioAllocation = portfolioValuationReport?.allocation;
   const latestHeadlines = portfolioNewsFeed?.items.slice(0, 5) ?? [];
   const latestCommentary = portfolioCommentaryFeed?.items.slice(0, 5) ?? [];
   const entitlements = summary?.entitlements;
@@ -662,6 +739,77 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Portfolio Market Data Foundation 僅使用 deterministic mock provider。僅供資料流驗證與風險監控 UI，不構成投資建議、即時行情、交易指令或績效承諾。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Valuation
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Valuation Engine Foundation
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.04 使用 Repository Assets、Positions 與 mock market snapshots 建立 Portfolio Value 與 Allocation Metrics；目前不連接真實行情、券商或交易系統。
+            </p>
+          </div>
+          <FeatureIcon icon={LineChart} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Total Cost Basis", formatMoney(portfolioValuation?.totalCostBasis ?? 0)],
+            ["Total Market Value", formatMoney(portfolioValuation?.totalMarketValue ?? 0)],
+            ["Unrealized P/L", formatSignedMoney(portfolioValuation?.unrealizedPnL ?? 0)],
+            ["Unrealized Return", formatPercent(portfolioValuation?.unrealizedPnLPercent ?? 0)],
+            ["Asset Count", numberLabel(portfolioValuation?.assetCount ?? 0)],
+            ["Position Count", numberLabel(portfolioValuation?.positionCount ?? 0)],
+            ["Provider Source", portfolioValuationReport?.providerSource ?? "mock"],
+            ["Generated Time", portfolioValuation?.generatedAt ?? "--"],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Allocation
+            </p>
+            <h3 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
+              Asset Type、Provider 與 Region Allocation
+            </h3>
+          </div>
+          <div className="mt-4 grid gap-4 xl:grid-cols-3">
+            <AllocationGroup
+              items={portfolioAllocation?.byAssetType ?? []}
+              title="Asset Type Allocation"
+            />
+            <AllocationGroup
+              items={portfolioAllocation?.byProvider ?? []}
+              title="Provider Allocation"
+            />
+            <AllocationGroup
+              items={portfolioAllocation?.byRegion ?? []}
+              title="Region Allocation"
+            />
+          </div>
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio Valuation Engine Foundation 僅使用 deterministic mock valuation。若 position 或 price 資料不足，系統會使用已儲存 cost basis / market value 作為 safe fallback。僅供監控與風險意識，不構成投資建議、即時估值、績效承諾或自動交易。
         </p>
       </section>
 
