@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BadgeCheck,
+  BrainCircuit,
   BriefcaseBusiness,
   Crown,
   Database,
@@ -15,6 +16,8 @@ import { PortfolioArchitectureMap } from "@/components/portfolio/portfolio-archi
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import type { AssetCategory } from "@/src/lib/portfolio/assets";
 import { PORTFOLIO_ASSET_CATEGORIES } from "@/src/lib/portfolio/assets";
+import { buildPortfolioCommentary } from "@/src/lib/portfolio/commentary/commentary-builder";
+import type { PortfolioCommentaryFeed } from "@/src/lib/portfolio/commentary/commentary-types";
 import type { PortfolioDashboardSummary } from "@/src/lib/portfolio/dashboard";
 import type {
   PortfolioAccount,
@@ -113,6 +116,14 @@ function formatShare(value: number | null) {
   return `${value.toFixed(1)}%`;
 }
 
+function formatConfidence(value: number) {
+  if (!Number.isFinite(value)) {
+    return "--";
+  }
+
+  return `${Math.round(value * 100)}%`;
+}
+
 function getPortfolioStatusCopy(status: PortfolioDashboardSummary["portfolioStatus"]) {
   return {
     "Elevated Risk": "風險升高",
@@ -148,6 +159,8 @@ export function PortfolioCenterDashboard() {
   const [repositoryAssets, setRepositoryAssets] = useState<PortfolioAsset[]>([]);
   const [repositoryPositions, setRepositoryPositions] = useState<PortfolioPosition[]>([]);
   const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
+  const [portfolioCommentaryFeed, setPortfolioCommentaryFeed] =
+    useState<PortfolioCommentaryFeed | null>(null);
   const [status, setStatus] = useState<"error" | "loading" | "ready" | "unauthenticated">(
     "loading",
   );
@@ -160,6 +173,8 @@ export function PortfolioCenterDashboard() {
     if (!headers) {
       setSummary(null);
       setOwnershipStatus(null);
+      setPortfolioNewsFeed(null);
+      setPortfolioCommentaryFeed(null);
       setStatus("unauthenticated");
       return;
     }
@@ -182,6 +197,7 @@ export function PortfolioCenterDashboard() {
         portfolioRepository.getPositions(),
       ]);
       const newsFeed = await buildPortfolioNewsFeed({ assets });
+      const commentaryFeed = await buildPortfolioCommentary({ newsFeed });
       const payload = (await response.json().catch(() => ({}))) as DashboardResponse;
 
       if (!response.ok || !payload.summary) {
@@ -191,6 +207,7 @@ export function PortfolioCenterDashboard() {
         setRepositoryAssets(assets);
         setRepositoryPositions(positions);
         setPortfolioNewsFeed(newsFeed);
+        setPortfolioCommentaryFeed(commentaryFeed);
         setStatus(response.status === 401 ? "unauthenticated" : "error");
         return;
       }
@@ -201,6 +218,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryAssets(assets);
       setRepositoryPositions(positions);
       setPortfolioNewsFeed(newsFeed);
+      setPortfolioCommentaryFeed(commentaryFeed);
       setStatus("ready");
     } catch {
       setSummary(null);
@@ -209,6 +227,7 @@ export function PortfolioCenterDashboard() {
       setRepositoryAssets([]);
       setRepositoryPositions([]);
       setPortfolioNewsFeed(null);
+      setPortfolioCommentaryFeed(null);
       setStatus("error");
     }
   }, []);
@@ -240,6 +259,7 @@ export function PortfolioCenterDashboard() {
   const repositoryRegionTotal = repositoryAccounts.length + repositoryAssets.length;
   const intelligenceUniverse = portfolioNewsFeed?.universe;
   const latestHeadlines = portfolioNewsFeed?.items.slice(0, 5) ?? [];
+  const latestCommentary = portfolioCommentaryFeed?.items.slice(0, 5) ?? [];
   const entitlements = summary?.entitlements;
   const fcnWorstOfRanking = useMemo(
     () => summary?.fcnWorstOfRanking?.slice(0, 5) ?? [],
@@ -605,6 +625,98 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Portfolio News Feed 目前只使用 mock provider 進行資料流驗證，不代表投資建議、新聞推薦、交易指令或 AI commentary。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio AI Commentary
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Commentary Layer
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v1.99 將 Portfolio News Feed 接到 mock commentary provider，建立未來 Intelligence Engine 的解讀層基礎；目前不連接任何 AI provider。
+            </p>
+          </div>
+          <FeatureIcon icon={BrainCircuit} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {[
+            ["Commentary Count", portfolioCommentaryFeed?.commentaryCount ?? 0],
+            ["Bullish Signals", portfolioCommentaryFeed?.bullishCount ?? 0],
+            ["Neutral Signals", portfolioCommentaryFeed?.neutralCount ?? 0],
+            ["Bearish Signals", portfolioCommentaryFeed?.bearishCount ?? 0],
+            [
+              "Volatile / Risk Watch",
+              (portfolioCommentaryFeed?.volatileCount ?? 0) +
+                (portfolioCommentaryFeed?.riskWatchCount ?? 0),
+            ],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 text-3xl font-semibold text-[var(--ixai-forest)]">
+                {numberLabel(Number(value))}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+          <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+            Latest Commentary
+          </p>
+          {latestCommentary.length > 0 ? (
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              {latestCommentary.map((item) => (
+                <article
+                  className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.70)] p-3"
+                  key={item.id}
+                >
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(176,141,87,0.10)] px-2.5 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest)]">
+                        {item.symbol}
+                      </span>
+                      <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        {item.sentiment}
+                      </span>
+                      <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        Risk {item.riskLevel}
+                      </span>
+                      <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        Confidence {formatConfidence(item.confidence)}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
+                        {item.headline}
+                      </h3>
+                      <p className="mt-1 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                        {item.summary}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              目前沒有 mock commentary。當 News Feed 產生符合支援標的的項目後，這裡會顯示 foundation commentary。
+            </p>
+          )}
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          AI Commentary Foundation 僅使用 mock commentary logic。僅供監控與風險意識，不構成投資建議、績效承諾或自動交易。
         </p>
       </section>
 

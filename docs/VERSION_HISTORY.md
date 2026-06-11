@@ -6,6 +6,38 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v1.99 — Portfolio AI Commentary Foundation
+
+Why:
+
+- v1.98 established the Portfolio News Provider Foundation, but the flow still stopped at mock headlines.
+- IXAI needs a safe commentary abstraction before any real AI provider or intelligence engine is introduced.
+
+What Changed:
+
+- Added `src/lib/portfolio/commentary/`.
+- Added `PortfolioCommentary` types for sentiment, risk level, category, confidence, headline, and summary.
+- Added `PortfolioCommentaryProvider`.
+- Added `mockCommentaryProvider` using deterministic symbol-based logic.
+- Added `buildPortfolioCommentary()` to consume the existing v1.98 Portfolio News Feed.
+- Added Portfolio AI Commentary readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio AI Commentary Foundation and Portfolio Intelligence Engine (Coming Soon).
+
+Key Decisions:
+
+- v1.99 is foundation-only.
+- Commentary is mock-only and does not call any AI provider.
+- The builder uses the existing News Feed and does not duplicate Intelligence Universe or News Provider logic.
+- Output stays in monitoring and risk-awareness language.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, FCN engine change, Daily / Weekly / Social Pack change, OpenAI, Claude, Gemini, Anthropic, LangChain, LlamaIndex, News API, market data API, broker API, service role, or trading feature.
+
+Next:
+
+- v2.00 may define the Portfolio Intelligence Engine Foundation after commentary quality, provider governance, attribution, and compliance rules are approved.
+
 ## v1.98 — Portfolio News Provider Foundation
 
 Why:
