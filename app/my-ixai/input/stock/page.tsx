@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowLeft, CandlestickChart, FileText } from "lucide-react";
+import { ArrowLeft, CandlestickChart } from "lucide-react";
 
+import { StockInputForm } from "@/components/portfolio/stock-input-form";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -39,26 +40,7 @@ export default function MyIxaiStockInputPage() {
           </div>
         </div>
 
-        <section className="grid gap-3 md:grid-cols-3">
-          {[
-            ["股票代號", "預留 symbol、region、currency 與 account alias 欄位方向。"],
-            ["成本與股數", "未來承接 quantity、cost basis、market value 與 valuation date。"],
-            ["CSV / Broker", "預留匯入與同步入口；本版不連接外部服務。"],
-          ].map(([title, copy]) => (
-            <article
-              className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4"
-              key={title}
-            >
-              <FeatureIcon icon={FileText} size="sm" shadow={false} />
-              <h2 className="mt-3 text-base font-semibold text-[var(--ixai-forest)]">
-                {title}
-              </h2>
-              <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                {copy}
-              </p>
-            </article>
-          ))}
-        </section>
+        <StockInputForm />
 
         <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           本頁僅用於資產資料整理與輸入流程規劃，不構成投資建議、買賣建議、目標價、報酬承諾或自動交易。

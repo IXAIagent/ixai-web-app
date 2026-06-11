@@ -60,6 +60,7 @@ Production data ownership update:
 - v3.03 repositions `/pro` as the public IXAI Platform introduction and conversion page. It is no longer the primary Legacy Pro or membership-status entry.
 - v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding surface and moves FCN Wizard ownership from public `/fcn` into `/my-ixai/input/fcn`.
 - v3.05 turns `/my-ixai/portfolio` into a user-readable Portfolio Workspace homepage and fixes `/pro` CTA contrast.
+- v3.06 upgrades Asset Input from placeholder into usable Stock / ETF, Crypto, and FCN input flows, adds shared Input Review, and shows local mock Recent Inputs in Portfolio Center.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -168,9 +169,9 @@ v2.11 center ownership rule:
   - `/portfolio`: Portfolio Input, creation, and product explanation.
   - `/my-ixai/portfolio`: Portfolio Workspace homepage with overview, holdings summary, risk snapshot, and quick actions.
   - `/my-ixai/input`: Asset Input Center, global input model foundation, CSV / broker / market / language readiness.
-  - `/my-ixai/input/stock`: Stock / ETF input foundation route.
-  - `/my-ixai/input/crypto`: Crypto input foundation route.
-  - `/my-ixai/input/fcn`: FCN Wizard route and canonical FCN data-entry surface.
+  - `/my-ixai/input/stock`: Usable Stock / ETF input form with local preview.
+  - `/my-ixai/input/crypto`: Usable Crypto input form with local preview.
+  - `/my-ixai/input/fcn`: FCN Wizard route and canonical FCN data-entry surface with Basic, Barrier, Observation, Dates, Underlyings, and Review.
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
   - `/my-ixai/risk`: Risk Center placeholder.
   - `/my-ixai/fcn`: FCN Center placeholder.

@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v3.05a — Legacy Backend Inventory Audit`
+`v3.06 — Asset Input Completion`
 
 Current production state:
 
@@ -92,6 +92,8 @@ v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding surface. F
 v3.05 turns `/my-ixai/portfolio` into the first user-readable Portfolio Workspace homepage. The page should explain Portfolio Overview, Holdings Summary, Risk Snapshot, and Quick Actions without connecting new APIs or real engines. v3.05 also fixes `/pro` CTA contrast so public conversion buttons remain visible.
 
 v3.05a audits `/Users/itsunkuo/Desktop/IXAI_PROJECTS/backend/ixai_agent` as the legacy FastAPI backend inventory. The audit identifies reusable concepts for Asset Input, CSV import, FCN monitoring, risk alerts, market intelligence, scheduler, notification, position lifecycle, models, tests, services, and API routes. The rule is explicit: migrate concepts by contract and App-native rewrite, not by copying the legacy backend, templates, JWT auth, localStorage token flow, or direct browser-to-FastAPI protected calls.
+
+v3.06 upgrades Asset Input from placeholder into usable Workspace input flows. `/my-ixai/input/stock` now supports Stock / ETF input fields and local preview. `/my-ixai/input/crypto` now supports Crypto input fields and local preview. `/my-ixai/input/fcn` keeps the FCN Wizard but extends it with Basic, Barrier, Observation Frequency, Observation Dates, Underlyings, and final Input Review. `/my-ixai/portfolio` now displays local mock Recent Inputs so the user can see the path from input to Portfolio readback. This version does not add schema, migration, API, auth, membership, broker, market data, external AI, recommendation, or trading changes.
 
 Validated production behavior:
 
@@ -135,7 +137,7 @@ Still not complete:
 
 Current Development Version:
 
-`v3.05a — Legacy Backend Inventory Audit`
+`v3.06 — Asset Input Completion`
 
 Current Core Flow:
 
@@ -147,6 +149,7 @@ Landing
 → Worst-of / FCN Risk / Intelligence / Multi-Asset Portfolio Dashboard / Pro readback
 → Portfolio Center
 → Asset Input Center
+→ Usable Stock / Crypto / FCN Input
 → Asset Management Center
 → Portfolio Recommendation Engine readback
 → Portfolio Market Data readback
