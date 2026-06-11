@@ -4,11 +4,11 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v2.09 / Portfolio Stress Test Engine Foundation`
+`v2.10 / Portfolio FCN Risk Engine Foundation`
 
 ## Current Priority
 
-IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, and mock Stress Test Engine foundations. Current priority remains the main product line:
+IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, and mock Portfolio FCN Risk Engine foundations. Current priority remains the main product line:
 
 - Validate Portfolio Intelligence Universe output with authenticated repository data.
 - Validate Portfolio News Feed output with repository-driven symbols and the mock provider.
@@ -24,6 +24,7 @@ IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine
 - Validate Portfolio Correlation output by high / medium / low pair counts and deterministic top correlation pairs.
 - Validate Portfolio Scenario output by technology selloff, crypto correction, FCN underlying stress, regional shock, and concentration shock.
 - Validate Portfolio Stress Test output by global equity shock, crypto crash, FCN worst-of shock, high correlation shock, concentration breakdown, and regional crisis.
+- Validate Portfolio FCN Risk output by FCN count, exposure, repeated underlyings, concentration, correlation, stress-test sensitivity, and global market readiness.
 - Preserve global market readiness across asset types, region enums, provider enums, market data interfaces, news interfaces, language interfaces, and localization surfaces.
 - Validate the Repository-driven Portfolio Dashboard with authenticated User A / User B.
 - Validate Supabase-backed Create / Read asset persistence with authenticated User A / User B.
@@ -377,11 +378,37 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 
 ### v2.10 — FCN Risk Engine Foundation
 
-- Review how Stress Test output can inform FCN monitoring workflows.
-- Keep KI / KO / worst-of production rules separate from generic portfolio stress tests until approved.
-- No broker API, real market data, external AI, personalized advice, or trading execution.
+- Add Portfolio FCN Risk types.
+- Add FCN Risk Engine contract.
+- Add deterministic mock FCN-risk engine.
+- Build Portfolio FCN Risk Report from portfolio assets, exposure, concentration, correlation, and stress-test reports.
+- Display FCN Count, FCN Exposure, FCN Risk Score, FCN Risk Level, Underlying Count, Repeated Underlying Count, Correlation Count, Stress-Test Sensitivity, Alerts, Summary, and Generated Time inside `/my-ixai/portfolio`.
+- Keep FCN-risk logic deterministic and market-agnostic until real market data, broker sync, and product-level FCN governance are approved.
+- No broker API, real market data, external AI, personalized advice, recommendation logic change, or trading execution.
 
-### v2.10a — Broker Sync Foundation Planning
+### v2.10a — Global Market Foundation Review
+
+- Review all Portfolio Foundation engines and ensure global market compatibility.
+- Review Asset Types.
+- Review Region Enums.
+- Review Provider Enums.
+- Review Market Data Interfaces.
+- Review News Interfaces.
+- Review Language Interfaces.
+- Review Localization Readiness.
+- Confirm FCN support beyond US equities:
+  - Taiwan equities.
+  - Hong Kong equities.
+  - China A-Shares.
+  - Japan equities.
+  - Korea equities.
+  - European equities.
+  - Singapore equities.
+  - Crypto-linked structured products.
+- Review future broker integration compatibility.
+- No broker API, market data API, AI API, migration, schema change, or trading function.
+
+### v2.10b — Broker Sync Foundation Planning
 
 - Define broker sync boundaries before any provider connection.
 - Keep Supabase ownership, membership, and compliance gates explicit.

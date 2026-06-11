@@ -41,6 +41,8 @@ import type {
   PortfolioExposureItem,
   PortfolioExposureReport,
 } from "@/src/lib/portfolio/exposure/exposure-types";
+import { buildPortfolioFCNRiskReport } from "@/src/lib/portfolio/fcn-risk/fcn-risk-builder";
+import type { PortfolioFCNRiskReport } from "@/src/lib/portfolio/fcn-risk/fcn-risk-types";
 import { buildPortfolioIntelligence } from "@/src/lib/portfolio/intelligence-engine/intelligence-score-builder";
 import type { PortfolioIntelligenceScore } from "@/src/lib/portfolio/intelligence-engine/intelligence-engine-types";
 import { buildPortfolioMarketSnapshots } from "@/src/lib/portfolio/market-data/market-data-builder";
@@ -465,6 +467,8 @@ export function PortfolioCenterDashboard() {
     useState<PortfolioScenarioReport | null>(null);
   const [portfolioStressTestReport, setPortfolioStressTestReport] =
     useState<PortfolioStressTestReport | null>(null);
+  const [portfolioFCNRiskReport, setPortfolioFCNRiskReport] =
+    useState<PortfolioFCNRiskReport | null>(null);
   const [portfolioNewsFeed, setPortfolioNewsFeed] = useState<PortfolioNewsFeed | null>(null);
   const [portfolioCommentaryFeed, setPortfolioCommentaryFeed] =
     useState<PortfolioCommentaryFeed | null>(null);
@@ -493,6 +497,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioCorrelationReport(null);
       setPortfolioScenarioReport(null);
       setPortfolioStressTestReport(null);
+      setPortfolioFCNRiskReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -553,6 +558,13 @@ export function PortfolioCenterDashboard() {
         scenarioReport,
         valuationReport,
       });
+      const fcnRiskReport = await buildPortfolioFCNRiskReport({
+        assets,
+        concentrationReport,
+        correlationReport,
+        exposureReport,
+        stressTestReport,
+      });
       const newsFeed = await buildPortfolioNewsFeed({ assets });
       const commentaryFeed = await buildPortfolioCommentary({ newsFeed });
       const intelligenceScore = await buildPortfolioIntelligence({
@@ -584,6 +596,7 @@ export function PortfolioCenterDashboard() {
         setPortfolioCorrelationReport(correlationReport);
         setPortfolioScenarioReport(scenarioReport);
         setPortfolioStressTestReport(stressTestReport);
+        setPortfolioFCNRiskReport(fcnRiskReport);
         setPortfolioNewsFeed(newsFeed);
         setPortfolioCommentaryFeed(commentaryFeed);
         setPortfolioIntelligenceScore(intelligenceScore);
@@ -605,6 +618,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioCorrelationReport(correlationReport);
       setPortfolioScenarioReport(scenarioReport);
       setPortfolioStressTestReport(stressTestReport);
+      setPortfolioFCNRiskReport(fcnRiskReport);
       setPortfolioNewsFeed(newsFeed);
       setPortfolioCommentaryFeed(commentaryFeed);
       setPortfolioIntelligenceScore(intelligenceScore);
@@ -624,6 +638,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioCorrelationReport(null);
       setPortfolioScenarioReport(null);
       setPortfolioStressTestReport(null);
+      setPortfolioFCNRiskReport(null);
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
@@ -1445,6 +1460,95 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Portfolio Stress Test Engine Foundation 使用 deterministic mock stress-test logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio FCN Risk Engine
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock FCN Risk Dashboard Foundation
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.10 將 FCN assets、underlyings、exposure、concentration、correlation 與 stress-test output 轉成 market-agnostic deterministic FCN risk readback，支援未來 US / TW / HK / CN / JP / KR / EU / SG / Crypto-linked FCN。
+            </p>
+          </div>
+          <FeatureIcon icon={ShieldAlert} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["FCN Count", numberLabel(portfolioFCNRiskReport?.fcnCount ?? 0)],
+            ["FCN Exposure", formatPercent(portfolioFCNRiskReport?.fcnExposurePct ?? null)],
+            ["FCN Risk Score", numberLabel(portfolioFCNRiskReport?.fcnRiskScore ?? 0)],
+            ["FCN Risk Level", portfolioFCNRiskReport?.fcnRiskLevel ?? "LOW"],
+            ["Underlying Count", numberLabel(portfolioFCNRiskReport?.underlyingCount ?? 0)],
+            [
+              "Repeated Underlyings",
+              numberLabel(portfolioFCNRiskReport?.repeatedUnderlyingCount ?? 0),
+            ],
+            [
+              "Correlation Count",
+              numberLabel(portfolioFCNRiskReport?.correlatedUnderlyingCount ?? 0),
+            ],
+            [
+              "Stress Sensitivity",
+              formatPercent(portfolioFCNRiskReport?.stressTestSensitivityPct ?? null),
+            ],
+            ["Generated Time", portfolioFCNRiskReport?.generatedAt ?? "--"],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+              key={label}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                {label}
+              </p>
+              <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">FCN Alerts</h3>
+            {portfolioFCNRiskReport && portfolioFCNRiskReport.alerts.length > 0 ? (
+              <ul className="mt-3 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {portfolioFCNRiskReport.alerts.map((alert) => (
+                  <li
+                    className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] px-3 py-2"
+                    key={alert.id}
+                  >
+                    <span className="block font-semibold text-[var(--ixai-forest)]">
+                      {alert.title} · {alert.level}
+                    </span>
+                    <span>{alert.description}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                目前沒有 FCN risk alert。
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">Summary</h3>
+            <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              {portfolioFCNRiskReport?.summary ??
+                "Portfolio FCN Risk Engine is ready, but no FCN risk report is available yet."}
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio FCN Risk Engine Foundation 使用 deterministic mock FCN-risk logic。僅供監控與風險意識，不構成投資建議、交易指令、價格目標、報酬承諾或自動交易。
         </p>
       </section>
 

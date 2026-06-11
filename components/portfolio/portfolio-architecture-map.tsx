@@ -149,6 +149,11 @@ const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         label: "Portfolio Stress Test Engine Foundation",
         status: "mvp",
       },
+      {
+        copy: "Mock FCN risk engine 已可從 FCN assets、underlyings、exposure、concentration、correlation 與 stress-test reports 產生 deterministic FCN risk readback。",
+        label: "Portfolio FCN Risk Engine Foundation",
+        status: "mvp",
+      },
     ],
   },
   {
@@ -243,8 +248,8 @@ const FUTURE_ITEMS: ArchitectureItem[] = [
     status: "coming_soon",
   },
   {
-    copy: "未啟用；尚未將 stress-test output 接回 FCN KI / KO / worst-of production risk workflow。",
-    label: "FCN Risk Engine Foundation",
+    copy: "Portfolio core engines 已完成 foundation chain；下一步是 platform review、global market review 與 provider governance。",
+    label: "Portfolio Core Engine Foundation Complete",
     status: "coming_soon",
   },
   {
@@ -367,7 +372,7 @@ export function PortfolioArchitectureMap() {
       </div>
 
       <p className="mt-5 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Portfolio Valuation Engine Foundation → Portfolio Exposure Engine Foundation → Portfolio Concentration Engine Foundation → Portfolio Correlation Engine Foundation → Portfolio Scenario Engine Foundation → Portfolio Stress Test Engine Foundation → FCN Risk Engine Foundation（Coming Soon）。
+        Portfolio Foundation → Portfolio Input Foundation → Portfolio CRUD Foundation → Portfolio Data Model Foundation → Portfolio Repository Foundation → Portfolio Persistence Foundation → Portfolio Ownership Validation → Portfolio Dashboard Foundation → Portfolio News Intelligence Foundation → Portfolio News Provider Foundation → Portfolio AI Commentary Foundation → Portfolio Intelligence Engine Foundation → Portfolio Risk Engine Foundation → Portfolio Recommendation Engine Foundation → Portfolio Market Data Foundation → Portfolio Valuation Engine Foundation → Portfolio Exposure Engine Foundation → Portfolio Concentration Engine Foundation → Portfolio Correlation Engine Foundation → Portfolio Scenario Engine Foundation → Portfolio Stress Test Engine Foundation → Portfolio FCN Risk Engine Foundation → Portfolio Core Engine Foundation Complete。
         {" "}
         這些模組代表系統能力，並不構成投資建議、交易指令或績效承諾。
       </p>

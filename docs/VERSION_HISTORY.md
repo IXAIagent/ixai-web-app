@@ -6,6 +6,38 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.10 — Portfolio FCN Risk Engine Foundation
+
+Why:
+
+- v2.09 added stress-test readback, but IXAI still needed a portfolio-level FCN risk layer that translates FCN assets, underlyings, exposure, concentration, correlation, and stress-test output into FCN-specific risk monitoring.
+- This completes the Portfolio Core Engine Foundation chain before Platform Review.
+
+What Changed:
+
+- Added `src/lib/portfolio/fcn-risk/`.
+- Added `PortfolioFCNRiskReport`, `PortfolioFCNRiskPosition`, `PortfolioFCNRiskAlert`, and `PortfolioFCNRiskLevel`.
+- Added `PortfolioFCNRiskEngine` contract.
+- Added deterministic `mockPortfolioFCNRiskEngine`.
+- Added `buildPortfolioFCNRiskReport()` from portfolio assets and existing exposure, concentration, correlation, and stress-test reports.
+- Added Portfolio FCN Risk Engine readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio FCN Risk Engine Foundation and Portfolio Core Engine Foundation Complete.
+
+Key Decisions:
+
+- v2.10 is foundation-only.
+- FCN risk output is deterministic and mock-only.
+- The layer is market-agnostic and must support FCN underlyings beyond US equities.
+- FCN identification uses `category === "FCN"` and / or `metadata.underlyings`.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, broker sync, external market data, external AI, recommendation logic change, or trading feature.
+
+Next:
+
+- v2.10a should run Global Market Foundation Review across asset types, region enums, provider enums, market data interfaces, news interfaces, language interfaces, FCN underlyings, and future broker compatibility before new platform layers proceed.
+
 ## v2.09 — Portfolio Stress Test Engine Foundation
 
 Why:

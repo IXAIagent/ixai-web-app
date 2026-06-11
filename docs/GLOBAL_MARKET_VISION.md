@@ -1,0 +1,124 @@
+# IXAI Global Market Vision
+
+This document defines the global market principle that should guide future IXAI portfolio, FCN, risk, intelligence, localization, and provider architecture.
+
+## IXAI Global Market Principle
+
+IXAI is designed as a:
+
+```text
+Global Multi-Asset
+Multi-Broker
+Multi-Market
+AI Risk Platform
+```
+
+IXAI should not be treated as a US-only, Taiwan-only, English-only, or single-broker system. Every major portfolio, risk, market data, news, and language interface should be designed with global expansion in mind, even when the first implementation uses deterministic mock data or a narrow MVP dataset.
+
+## Supported Markets
+
+Strategic direction:
+
+- US Equities.
+- Taiwan Equities.
+- Hong Kong Equities.
+- China A-Shares.
+- Japan Equities.
+- Korea Equities.
+- European Equities.
+- Singapore Equities.
+- Crypto Assets.
+- FCN Structured Products.
+
+These markets represent product direction, not a claim that all data providers, broker integrations, or real-time feeds are active today.
+
+## Supported Languages
+
+Strategic direction:
+
+- Traditional Chinese (`zh-TW`).
+- Simplified Chinese (`zh-CN`).
+- English (`en-US`).
+- Japanese (`ja-JP`).
+- Korean (`ko-KR`).
+
+Future-ready:
+
+- English (`en-GB`).
+- French.
+- German.
+
+Language support should be treated as a product architecture requirement, not a late visual translation layer.
+
+## Architecture Principle
+
+All engines must be market-agnostic, including:
+
+- Valuation Engine.
+- Exposure Engine.
+- Concentration Engine.
+- Correlation Engine.
+- Scenario Engine.
+- Stress Test Engine.
+- FCN Risk Engine.
+- Future Engines.
+
+Engines should not assume:
+
+- US-only.
+- Taiwan-only.
+- English-only.
+
+Data models should preserve region, market, provider, currency, language, and symbol context whenever possible.
+
+## FCN Principle
+
+FCN underlyings may originate from:
+
+- United States.
+- Hong Kong.
+- China.
+- Japan.
+- Korea.
+- Europe.
+- Global Indexes.
+- Future Markets.
+
+IXAI FCN engines must support global underlyings. FCN risk, worst-of, KI / KO, exposure, concentration, correlation, scenario, and future stress-test logic should not assume that all underlyings are US equities.
+
+v2.10 Portfolio FCN Risk Engine Foundation extends this principle to portfolio-level FCN readback. FCN risk scoring must recognize underlyings across US, Taiwan, Hong Kong, China A-Shares, Japan, Korea, Europe, Singapore, crypto-linked FCN, global indexes, and future structured products.
+
+## Roadmap Implication
+
+The roadmap should include:
+
+```text
+v2.10a — Global Market Foundation Review
+```
+
+Purpose:
+
+- Review all Portfolio Foundation engines for global market compatibility.
+- Review Asset Types.
+- Review Region Enums.
+- Review Provider Enums.
+- Review Market Data Interfaces.
+- Review News Interfaces.
+- Review Language Interfaces.
+- Review Localization Readiness.
+- Review FCN support beyond US equities.
+- Review future support for TW / HK / CN / JP / KR / EU / SG.
+- Review crypto-linked structured products.
+- Review future broker integration compatibility.
+
+## Compliance Boundary
+
+Global market support does not change IXAI's compliance posture.
+
+IXAI remains:
+
+- Monitoring and risk-awareness oriented.
+- Not a broker.
+- Not a trading execution system.
+- Not a personalized buy / sell recommendation system.
+- Not a guaranteed-return or signal-selling product.
