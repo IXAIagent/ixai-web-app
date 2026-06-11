@@ -32,6 +32,8 @@ import { buildPortfolioNewsFeed } from "@/src/lib/portfolio/news/news-service";
 import type { PortfolioNewsFeed } from "@/src/lib/portfolio/news/news-types";
 import { getPortfolioRepository } from "@/src/lib/portfolio/repository/portfolio-persistence-provider";
 import type { PortfolioOwnershipValidationStatus } from "@/src/lib/portfolio/repository/portfolio-repository";
+import { buildPortfolioRiskReport } from "@/src/lib/portfolio/risk/risk-score-builder";
+import type { PortfolioRiskReport } from "@/src/lib/portfolio/risk/risk-types";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
 
 type DashboardResponse = {
@@ -165,6 +167,8 @@ export function PortfolioCenterDashboard() {
     useState<PortfolioCommentaryFeed | null>(null);
   const [portfolioIntelligenceScore, setPortfolioIntelligenceScore] =
     useState<PortfolioIntelligenceScore | null>(null);
+  const [portfolioRiskReport, setPortfolioRiskReport] =
+    useState<PortfolioRiskReport | null>(null);
   const [status, setStatus] = useState<"error" | "loading" | "ready" | "unauthenticated">(
     "loading",
   );
@@ -180,6 +184,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
+      setPortfolioRiskReport(null);
       setStatus("unauthenticated");
       return;
     }
@@ -209,6 +214,11 @@ export function PortfolioCenterDashboard() {
         commentary: commentaryFeed,
         newsFeed,
       });
+      const riskReport = await buildPortfolioRiskReport({
+        accounts,
+        assets,
+        positions,
+      });
       const payload = (await response.json().catch(() => ({}))) as DashboardResponse;
 
       if (!response.ok || !payload.summary) {
@@ -220,6 +230,7 @@ export function PortfolioCenterDashboard() {
         setPortfolioNewsFeed(newsFeed);
         setPortfolioCommentaryFeed(commentaryFeed);
         setPortfolioIntelligenceScore(intelligenceScore);
+        setPortfolioRiskReport(riskReport);
         setStatus(response.status === 401 ? "unauthenticated" : "error");
         return;
       }
@@ -232,6 +243,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioNewsFeed(newsFeed);
       setPortfolioCommentaryFeed(commentaryFeed);
       setPortfolioIntelligenceScore(intelligenceScore);
+      setPortfolioRiskReport(riskReport);
       setStatus("ready");
     } catch {
       setSummary(null);
@@ -242,6 +254,7 @@ export function PortfolioCenterDashboard() {
       setPortfolioNewsFeed(null);
       setPortfolioCommentaryFeed(null);
       setPortfolioIntelligenceScore(null);
+      setPortfolioRiskReport(null);
       setStatus("error");
     }
   }, []);
@@ -792,6 +805,91 @@ export function PortfolioCenterDashboard() {
 
         <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Portfolio Intelligence Engine Foundation 僅使用 mock scoring。僅供監控與風險意識，不構成投資建議、績效承諾或自動交易。
+        </p>
+      </section>
+
+      <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.86)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Portfolio Risk Engine
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              Mock Portfolio Risk Report
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              v2.01 建立第一版 deterministic risk report，使用 repository assets、accounts 與 positions，不接行情、新聞或 AI provider。
+            </p>
+          </div>
+          <FeatureIcon icon={ShieldAlert} shadow={false} />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Overall Risk", portfolioRiskReport?.overallRisk ?? "PENDING"],
+            ["Risk Score", portfolioRiskReport?.riskScore ?? 0],
+            ["Concentration Risk", portfolioRiskReport?.concentrationRisk ?? "PENDING"],
+            ["Diversification Risk", portfolioRiskReport?.diversificationRisk ?? "PENDING"],
+            ["FCN Risk", portfolioRiskReport?.fcnRisk ?? "PENDING"],
+            ["Crypto Risk", portfolioRiskReport?.cryptoRisk ?? "PENDING"],
+            ["Cash Buffer Risk", portfolioRiskReport?.cashBufferRisk ?? "PENDING"],
+            ["Generated Time", portfolioRiskReport?.generatedAt ?? "--"],
+          ].map(([label, value]) => {
+            const displayValue =
+              typeof value === "number" ? numberLabel(value) : value;
+
+            return (
+              <div
+                className="rounded-xl border border-[var(--ixai-border)] bg-white/78 p-4"
+                key={label}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  {label}
+                </p>
+                <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                  {displayValue}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+              Summary
+            </p>
+            <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              {portfolioRiskReport?.summary ??
+                "Portfolio Risk Engine is ready, but no risk report is available yet."}
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4">
+            <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+              Alerts
+            </p>
+            {portfolioRiskReport && portfolioRiskReport.alerts.length > 0 ? (
+              <ul className="mt-2 grid gap-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {portfolioRiskReport.alerts.map((alert) => (
+                  <li
+                    className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.08)] px-3 py-2"
+                    key={alert}
+                  >
+                    {alert}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                目前沒有 mock risk alert。
+              </p>
+            )}
+          </div>
+        </div>
+
+        <p className="mt-4 rounded-xl border border-[rgba(176,141,87,0.28)] bg-[rgba(176,141,87,0.08)] p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Portfolio Risk Engine Foundation 僅使用 mock deterministic scoring。僅供監控與風險意識，不構成投資建議、績效承諾或自動交易。
         </p>
       </section>
 

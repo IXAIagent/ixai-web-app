@@ -6,6 +6,38 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v2.01 — Portfolio Risk Engine Foundation
+
+Why:
+
+- v2.00 introduced a mock Portfolio Intelligence Engine score, but IXAI still needed a separate risk report layer.
+- Portfolio risk needs its own foundation before any recommendation, market data, or broker workflow is considered.
+
+What Changed:
+
+- Added `src/lib/portfolio/risk/`.
+- Added `PortfolioRiskLevel` and `PortfolioRiskReport`.
+- Added `PortfolioRiskEngine` contract.
+- Added deterministic `mockPortfolioRiskEngine`.
+- Added `buildPortfolioRiskReport()` from repository accounts, assets, and positions.
+- Added Portfolio Risk Engine readback inside `/my-ixai/portfolio`.
+- Updated Architecture Map with Portfolio Risk Engine Foundation and Portfolio Recommendation Engine (Coming Soon).
+
+Key Decisions:
+
+- v2.01 is foundation-only.
+- Risk scoring is deterministic mock logic.
+- No recommendation logic is introduced.
+- Output remains monitoring and risk-awareness only.
+
+Out of Scope:
+
+- No migration, schema change, API route, auth change, membership change, entitlement change, market data, News API, broker sync, recommendation logic, Daily / Weekly / Social Pack change, or trading feature.
+
+Next:
+
+- Future work may define risk model QA, scenario language, and persistence strategy before any recommendation or provider-based layer is considered.
+
 ## v2.00 — Portfolio Intelligence Engine Foundation
 
 Why:
