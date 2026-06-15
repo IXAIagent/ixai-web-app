@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v3.05a — Legacy Backend Inventory Audit`
+`v3.09 — FCN Position Foundation`
 
 Current production state:
 
@@ -92,6 +92,8 @@ v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding surface. F
 v3.05 turns `/my-ixai/portfolio` into the first user-readable Portfolio Workspace homepage. The page should explain Portfolio Overview, Holdings Summary, Risk Snapshot, and Quick Actions without connecting new APIs or real engines. v3.05 also fixes `/pro` CTA contrast so public conversion buttons remain visible.
 
 v3.05a audits `/Users/itsunkuo/Desktop/IXAI_PROJECTS/backend/ixai_agent` as the legacy FastAPI backend inventory. The audit identifies reusable concepts for Asset Input, CSV import, FCN monitoring, risk alerts, market intelligence, scheduler, notification, position lifecycle, models, tests, services, and API routes. The rule is explicit: migrate concepts by contract and App-native rewrite, not by copying the legacy backend, templates, JWT auth, localStorage token flow, or direct browser-to-FastAPI protected calls.
+
+v3.09 closes the first active-app FCN loop: `/my-ixai/input/fcn` creates FCN positions through `POST /api/fcn`, the existing API writes Supabase `fcn_positions` and `fcn_underlyings`, and `/my-ixai/fcn` now reads the same persisted records through `GET /api/fcn`. FCN Center displays count, notional, position cards, issuer, strike, KI, KO, underlyings, observation / coupon schedule, created date, and empty / unauthenticated states. v3.09 does not add migration, schema change, market data, broker sync, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, legacy frontend, or FastAPI backend changes.
 
 Validated production behavior:
 
@@ -135,7 +137,7 @@ Still not complete:
 
 Current Development Version:
 
-`v3.05a — Legacy Backend Inventory Audit`
+`v3.09 — FCN Position Foundation`
 
 Current Core Flow:
 
@@ -161,6 +163,7 @@ Landing
 → Legacy Pro Migration Audit and Product Inventory
 → UX IA route foundation
 → Membership / Entitlement visibility
+→ FCN Position readback in FCN Center
 ```
 
 Public Intelligence Funnel:
@@ -214,6 +217,7 @@ Product Layers:
 - Asset Input Center: v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding route, adds Stock / ETF, Crypto, and FCN child routes, and moves FCN Wizard ownership into `/my-ixai/input/fcn`. Public `/fcn` remains educational and should not own data-entry workflow.
 - Portfolio Workspace Foundation: v3.05 makes `/my-ixai/portfolio` readable to normal users with Overview, Holdings Summary, Risk Snapshot, and Quick Actions. It does not add APIs, schema changes, real risk engine connections, broker integration, market data, AI, recommendation logic, or trading logic.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
+- FCN Position Foundation: v3.09 makes `/my-ixai/fcn` a real readback surface for existing Supabase-backed FCN positions created by `/my-ixai/input/fcn`. It uses the existing `/api/fcn` data path and does not introduce a local draft store, schema change, market data, broker sync, AI provider, recommendation logic, or trading logic.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 
 ## v1.67.0 — App ↔ Pro SSO Launch Prototype
