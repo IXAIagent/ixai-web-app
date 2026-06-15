@@ -20,13 +20,18 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V304_ASSET_INPUT_CENTER.md` as the source of truth for Workspace asset onboarding and FCN Wizard ownership.
 - Use `docs/V305_PORTFOLIO_WORKSPACE_FOUNDATION.md` as the source of truth for Portfolio Workspace foundation and `/pro` CTA contrast.
 - Use `docs/LEGACY_BACKEND_INVENTORY_AUDIT_V305A.md` as the source of truth for reusable legacy backend modules and migration sequencing.
+- Use `docs/V306_ASSET_INPUT_COMPLETION.md` as the source of truth for Stock, Crypto, FCN, Review Summary, and Recent Inputs behavior.
+- Use `docs/V308_FCN_CENTER_DATA_WIRING.md` as the source of truth for the first local FCN Input → FCN Draft Store → FCN Center data flow.
 - Use `docs/V309_APP_CURRENT_STATE_AUDIT.md` and `docs/V309_FCN_POSITION_FOUNDATION.md` as the source of truth for the active-app FCN loop.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
 - `/pro` is now the public IXAI Platform introduction and conversion page, not the primary Legacy Pro entry.
 - `/my-ixai/input` is now the canonical Asset Input Center. FCN Wizard belongs to `/my-ixai/input/fcn`, not public `/fcn`.
+- `/my-ixai/input/stock`, `/my-ixai/input/crypto`, and `/my-ixai/input/fcn` own the first usable asset-input flows.
+- `/my-ixai/portfolio` can show local mock Recent Inputs to make the input-to-portfolio flow visible.
 - `/my-ixai/portfolio` should be understandable as a Workspace homepage, not an engineering dashboard dump.
+- `/my-ixai/fcn` previously used a v3.08 local FCN Draft Store readback, but v3.09 promotes `/api/fcn` / Supabase readback as the active product source.
 - `/my-ixai/fcn` now reads existing Supabase-backed FCN positions from `/api/fcn`; do not reintroduce a separate permanent local draft source unless the product explicitly defines a draft-to-position lifecycle.
 - Legacy backend modules should be migrated by contract and rewrite, not copied wholesale.
 - Highest-priority legacy backend candidates are CSV import, risk alerts, FCN monitoring / schedules, portfolio-aware news relevance, and scheduler / notification review.
@@ -146,6 +151,23 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
   - v3.10 Intelligence Center Migration.
   - v3.10 Scheduler / Notification Review.
 - No product code, schema, migration, API, auth, UI, broker, market data, external AI, or production behavior changes.
+
+### v3.06 — Asset Input Completion
+
+- Upgrade `/my-ixai/input/stock` from placeholder to usable Stock / ETF input form.
+- Upgrade `/my-ixai/input/crypto` from placeholder to usable Crypto input form.
+- Extend `/my-ixai/input/fcn` with FCN Basic, Barrier, Observation, Observation Dates, Underlyings, and Review Summary.
+- Add a shared Input Review pattern for Stock, Crypto, and FCN.
+- Add local mock Recent Inputs to `/my-ixai/portfolio`.
+- Keep local mock state only for Stock / Crypto and preserve existing FCN submit behavior.
+- Do not add Supabase persistence, API routes, broker integration, market data, AI provider, Telegram, scheduler, or trading logic.
+
+### v3.08 — FCN Center Data Wiring
+
+- Connect `/my-ixai/input/fcn` to `/my-ixai/fcn` through a local FCN Draft Store.
+- Display FCN draft count, notional, underlyings, observation dates, coupon dates, and detail panel in FCN Center.
+- v3.08a fixes draft persistence so FCN Wizard writes to the same localStorage-backed key that FCN Center reads.
+- Keep this as a local/mock bridge only; v3.09 supersedes it with Supabase-backed FCN Position readback.
 
 ### v3.09 — FCN Position Foundation
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowLeft, Bitcoin, WalletCards } from "lucide-react";
+import { ArrowLeft, Bitcoin } from "lucide-react";
 
+import { CryptoInputForm } from "@/components/portfolio/crypto-input-form";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -39,26 +40,7 @@ export default function MyIxaiCryptoInputPage() {
           </div>
         </div>
 
-        <section className="grid gap-3 md:grid-cols-3">
-          {[
-            ["Crypto Spot", "預留 BTC、ETH 與其他數位資產的基礎持倉欄位。"],
-            ["Grid / Dual", "預留 Grid 與 Dual Investment 的策略資料與風險監控方向。"],
-            ["Exchange Sync", "預留 Binance、Bybit、OKX 等交易所同步入口；本版不連線。"],
-          ].map(([title, copy]) => (
-            <article
-              className="rounded-xl border border-[var(--ixai-border)] bg-white/72 p-4"
-              key={title}
-            >
-              <FeatureIcon icon={WalletCards} size="sm" shadow={false} />
-              <h2 className="mt-3 text-base font-semibold text-[var(--ixai-forest)]">
-                {title}
-              </h2>
-              <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                {copy}
-              </p>
-            </article>
-          ))}
-        </section>
+        <CryptoInputForm />
 
         <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           本頁僅用於資產資料整理與輸入流程規劃，不構成投資建議、買賣建議、目標價、報酬承諾或自動交易。

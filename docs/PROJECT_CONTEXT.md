@@ -93,6 +93,10 @@ v3.05 turns `/my-ixai/portfolio` into the first user-readable Portfolio Workspac
 
 v3.05a audits `/Users/itsunkuo/Desktop/IXAI_PROJECTS/backend/ixai_agent` as the legacy FastAPI backend inventory. The audit identifies reusable concepts for Asset Input, CSV import, FCN monitoring, risk alerts, market intelligence, scheduler, notification, position lifecycle, models, tests, services, and API routes. The rule is explicit: migrate concepts by contract and App-native rewrite, not by copying the legacy backend, templates, JWT auth, localStorage token flow, or direct browser-to-FastAPI protected calls.
 
+v3.06 upgrades Asset Input from placeholder into usable Workspace input flows. `/my-ixai/input/stock` supports Stock / ETF input fields and local preview. `/my-ixai/input/crypto` supports Crypto input fields and local preview. `/my-ixai/input/fcn` keeps the FCN Wizard and extends it with Basic, Barrier, Observation Frequency, Observation Dates, Underlyings, and final Input Review. `/my-ixai/portfolio` displays local mock Recent Inputs so the user can see the path from input to Portfolio readback. This version does not add schema, migration, API, auth, membership, broker, market data, external AI, recommendation, or trading changes.
+
+v3.08 wires the FCN Input flow into the first FCN Center readback using local/mock state. `/my-ixai/input/fcn` writes FCN draft data into a local FCN Draft Store, and `/my-ixai/fcn` reads that store to display FCN overview, position cards, underlying exposure, coupon calendar, and detail panel. v3.08a fixes the FCN Draft Store visibility path so FCN Wizard writes to the canonical local draft key and FCN Center reads the same key.
+
 v3.09 closes the first active-app FCN loop: `/my-ixai/input/fcn` creates FCN positions through `POST /api/fcn`, the existing API writes Supabase `fcn_positions` and `fcn_underlyings`, and `/my-ixai/fcn` now reads the same persisted records through `GET /api/fcn`. FCN Center displays count, notional, position cards, issuer, strike, KI, KO, underlyings, observation / coupon schedule, created date, and empty / unauthenticated states. v3.09 does not add migration, schema change, market data, broker sync, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, legacy frontend, or FastAPI backend changes.
 
 Validated production behavior:
@@ -162,6 +166,8 @@ Landing
 → Global Market Foundation Review
 → Legacy Pro Migration Audit and Product Inventory
 → UX IA route foundation
+→ Asset Input usable local workflows
+→ FCN Draft Store local readback
 → Membership / Entitlement visibility
 → FCN Position readback in FCN Center
 ```
@@ -217,6 +223,7 @@ Product Layers:
 - Asset Input Center: v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding route, adds Stock / ETF, Crypto, and FCN child routes, and moves FCN Wizard ownership into `/my-ixai/input/fcn`. Public `/fcn` remains educational and should not own data-entry workflow.
 - Portfolio Workspace Foundation: v3.05 makes `/my-ixai/portfolio` readable to normal users with Overview, Holdings Summary, Risk Snapshot, and Quick Actions. It does not add APIs, schema changes, real risk engine connections, broker integration, market data, AI, recommendation logic, or trading logic.
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
+- FCN Draft Store Transition: v3.08 / v3.08a created a local draft-store bridge from FCN Wizard to FCN Center. v3.09 supersedes that as the primary product source of truth by reading persisted `/api/fcn` records from Supabase.
 - FCN Position Foundation: v3.09 makes `/my-ixai/fcn` a real readback surface for existing Supabase-backed FCN positions created by `/my-ixai/input/fcn`. It uses the existing `/api/fcn` data path and does not introduce a local draft store, schema change, market data, broker sync, AI provider, recommendation logic, or trading logic.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 

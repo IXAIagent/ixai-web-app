@@ -1,7 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -14,24 +13,11 @@ import {
   Trash2,
 } from "lucide-react";
 
+import { InputReviewSummary } from "@/components/portfolio/input-review-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
-import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
-import { FCN_CURRENCIES, type FCNCurrency, type FCNPosition } from "@/src/types/fcn-position";
-import type { Portfolio } from "@/src/types/portfolio";
-
-type PortfolioListResponse = {
-  message?: string;
-  ok: boolean;
-  portfolios?: Portfolio[];
-  status?: string;
-};
-
-type FCNCreateResponse = {
-  message?: string;
-  ok: boolean;
-  position?: FCNPosition;
-  status?: string;
-};
+import { saveFcnDraft } from "@/src/lib/portfolio/input/fcn-draft-store";
+import { saveRecentPortfolioInput } from "@/src/lib/portfolio/input/recent-inputs";
+import { FCN_CURRENCIES, type FCNCurrency } from "@/src/types/fcn-position";
 
 type UnderlyingDraft = {
   currentPrice: string;
@@ -59,7 +45,7 @@ type BasicDraft = {
   issuer: string;
   name: string;
   notionalAmount: string;
-  portfolioId: string;
+  tenor: string;
 };
 
 type TermsDraft = {
@@ -69,14 +55,19 @@ type TermsDraft = {
   strikePct: string;
 };
 
+type ObservationDraft = {
+  frequency: "Annual" | "Monthly" | "Quarterly" | "Semiannual";
+};
+
 const MAX_UNDERLYINGS = 6;
 const DEFAULT_CURRENCY: FCNCurrency = "USD";
 
 const STEPS = [
   "基本資訊",
-  "連結標的",
-  "產品條件",
+  "Barrier",
+  "Observation",
   "觀察日程",
+  "連結標的",
   "確認建立",
 ] as const;
 
@@ -121,7 +112,7 @@ function initialBasicDraft(): BasicDraft {
     issuer: "",
     name: "",
     notionalAmount: "",
-    portfolioId: "",
+    tenor: "",
   };
 }
 
@@ -131,6 +122,12 @@ function initialTermsDraft(): TermsDraft {
     kiPct: "",
     koPct: "",
     strikePct: "",
+  };
+}
+
+function initialObservationDraft(): ObservationDraft {
+  return {
+    frequency: "Monthly",
   };
 }
 
@@ -154,116 +151,28 @@ function displayOptional(value: string, fallback = "未填") {
   return value.trim() || fallback;
 }
 
-function errorMessageFromStatus(status?: string, fallback?: string) {
-  if (status === "not_authenticated") {
-    return "請先登入 IXAI，再建立 FCN。";
-  }
-
-  if (status === "supabase_not_configured") {
-    return "FCN 儲存尚未設定，請稍後再試。";
-  }
-
-  if (status === "invalid_input") {
-    return fallback || "請確認 FCN 欄位格式。";
-  }
-
-  if (status === "not_found") {
-    return "找不到可使用的 Portfolio，請先建立 Portfolio。";
-  }
-
-  return fallback || "FCN 建立失敗，請稍後再試。";
-}
-
 export function FCNWizard() {
-  const router = useRouter();
   const [activeStep, setActiveStep] = useState(0);
-  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
-  const [portfolioStatus, setPortfolioStatus] = useState<"idle" | "loading" | "ready" | "unauthenticated" | "error">(
-    "idle",
-  );
   const [basic, setBasic] = useState<BasicDraft>(() => initialBasicDraft());
   const [terms, setTerms] = useState<TermsDraft>(() => initialTermsDraft());
+  const [observation, setObservation] = useState<ObservationDraft>(() => initialObservationDraft());
   const [underlyings, setUnderlyings] = useState<UnderlyingDraft[]>(() => [createEmptyUnderlying()]);
   const [schedule, setSchedule] = useState<ScheduleDraft[]>(() => [createEmptyScheduleItem()]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const selectedPortfolio = useMemo(
-    () => portfolios.find((portfolio) => portfolio.id === basic.portfolioId) ?? null,
-    [basic.portfolioId, portfolios],
-  );
-
-  const loadPortfolios = useCallback(async () => {
-    setPortfolioStatus("loading");
-
-    try {
-      const headers = await getSupabaseAuthorizationHeaders();
-
-      if (!headers) {
-        setPortfolioStatus("unauthenticated");
-        setPortfolios([]);
-        return;
-      }
-
-      const response = await fetch("/api/portfolio", {
-        cache: "no-store",
-        headers,
-      });
-      const payload = (await response.json().catch(() => ({}))) as PortfolioListResponse;
-
-      if (!response.ok || !payload.ok) {
-        setPortfolioStatus("error");
-        setPortfolios([]);
-        return;
-      }
-
-      const activePortfolios = (payload.portfolios ?? []).filter(
-        (portfolio) => portfolio.status === "active",
-      );
-
-      setPortfolios(activePortfolios);
-      setPortfolioStatus("ready");
-      setBasic((current) => ({
-        ...current,
-        portfolioId:
-          current.portfolioId || activePortfolios.length === 0
-            ? current.portfolioId
-            : activePortfolios[0]?.id ?? "",
-      }));
-    } catch {
-      setPortfolioStatus("error");
-      setPortfolios([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    queueMicrotask(() => {
-      void loadPortfolios();
-    });
-  }, [loadPortfolios]);
-
   function resetWizard() {
     setActiveStep(0);
-    setBasic((current) => ({
-      ...initialBasicDraft(),
-      portfolioId: current.portfolioId,
-    }));
+    setBasic(initialBasicDraft());
     setTerms(initialTermsDraft());
+    setObservation(initialObservationDraft());
     setUnderlyings([createEmptyUnderlying()]);
     setSchedule([createEmptyScheduleItem()]);
   }
 
   function validateStep(step: number) {
     if (step === 0) {
-      if (portfolios.length === 0) {
-        throw new Error("請先建立 Portfolio，再新增 FCN。");
-      }
-
-      if (!basic.portfolioId) {
-        throw new Error("請選擇 Portfolio。");
-      }
-
       if (!basic.name.trim()) {
         throw new Error("請輸入 FCN 名稱。");
       }
@@ -273,6 +182,23 @@ export function FCNWizard() {
     }
 
     if (step === 1) {
+      parseOptionalNumber(terms.koPct, "KO 比例");
+      parseOptionalNumber(terms.kiPct, "KI 比例");
+      parseOptionalNumber(terms.strikePct, "履約比例");
+      parseOptionalNumber(terms.couponRatePct, "配息率");
+    }
+
+    if (step === 3) {
+      schedule.forEach((item, index) => {
+        const hasAnyValue = item.label.trim() || item.observationDate || item.couponDate;
+
+        if (hasAnyValue && !item.observationDate) {
+          throw new Error(`第 ${index + 1} 筆日程請輸入觀察日。`);
+        }
+      });
+    }
+
+    if (step === 4) {
       if (underlyings.length < 1) {
         throw new Error("至少需要 1 個連結標的。");
       }
@@ -288,23 +214,6 @@ export function FCNWizard() {
         parseOptionalNumber(underlying.koPrice, `第 ${index + 1} 個標的 KO 價格`);
         parseOptionalNumber(underlying.strikePrice, `第 ${index + 1} 個標的履約價格`);
         parseOptionalNumber(underlying.weightPct, `第 ${index + 1} 個標的權重`);
-      });
-    }
-
-    if (step === 2) {
-      parseOptionalNumber(terms.koPct, "KO 比例");
-      parseOptionalNumber(terms.kiPct, "KI 比例");
-      parseOptionalNumber(terms.strikePct, "履約比例");
-      parseOptionalNumber(terms.couponRatePct, "配息率");
-    }
-
-    if (step === 3) {
-      schedule.forEach((item, index) => {
-        const hasAnyValue = item.label.trim() || item.observationDate || item.couponDate;
-
-        if (hasAnyValue && !item.observationDate) {
-          throw new Error(`第 ${index + 1} 筆日程請輸入觀察日。`);
-        }
       });
     }
   }
@@ -368,44 +277,6 @@ export function FCNWizard() {
     );
   }
 
-  function buildPayload() {
-    const schedulePayload = schedule
-      .filter((item) => item.label.trim() || item.observationDate || item.couponDate)
-      .map((item) => ({
-        couponPaymentDate: item.couponDate || undefined,
-        observationEnd: item.observationDate || undefined,
-        observationStart: item.observationDate || undefined,
-        periodLabel: item.label.trim() || undefined,
-        status: "scheduled",
-      }));
-
-    return {
-      couponRatePct: parseOptionalNumber(terms.couponRatePct || basic.couponRatePct, "配息率"),
-      currency: basic.currency,
-      issuer: basic.issuer.trim() || null,
-      kiPct: parseOptionalNumber(terms.kiPct, "KI 比例"),
-      koPct: parseOptionalNumber(terms.koPct, "KO 比例"),
-      maturityDate: schedulePayload.at(-1)?.observationEnd ?? null,
-      name: basic.name.trim(),
-      notionalAmount: parseOptionalNumber(basic.notionalAmount, "名目本金"),
-      observationSchedule: schedulePayload,
-      portfolioId: basic.portfolioId,
-      startDate: schedulePayload[0]?.observationStart ?? null,
-      strikePct: parseOptionalNumber(terms.strikePct, "履約比例"),
-      underlyings: underlyings.map((underlying) => ({
-        currentPrice: parseOptionalNumber(underlying.currentPrice, "目前價格"),
-        initialPrice: parseOptionalNumber(underlying.initialPrice, "初始價格"),
-        kiPrice: parseOptionalNumber(underlying.kiPrice, "KI 價格"),
-        koPrice: parseOptionalNumber(underlying.koPrice, "KO 價格"),
-        market: underlying.market.trim() || null,
-        name: underlying.name.trim() || null,
-        strikePrice: parseOptionalNumber(underlying.strikePrice, "履約價格"),
-        symbol: underlying.symbol.trim().toUpperCase(),
-        weightPct: parseOptionalNumber(underlying.weightPct, "權重"),
-      })),
-    };
-  }
-
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -414,8 +285,8 @@ export function FCNWizard() {
     try {
       validateStep(0);
       validateStep(1);
-      validateStep(2);
       validateStep(3);
+      validateStep(4);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "請確認 FCN 欄位。");
       return;
@@ -424,43 +295,58 @@ export function FCNWizard() {
     setIsSubmitting(true);
 
     try {
-      const headers = await getSupabaseAuthorizationHeaders();
-
-      if (!headers) {
-        setError("請先登入 IXAI，再建立 FCN。");
-        return;
-      }
-
-      const response = await fetch("/api/fcn", {
-        body: JSON.stringify(buildPayload()),
-        cache: "no-store",
-        headers: {
-          ...headers,
-          "content-type": "application/json",
-        },
-        method: "POST",
+      const savedDraft = saveFcnDraft({
+        couponRatePct: terms.couponRatePct || basic.couponRatePct,
+        currency: basic.currency,
+        issuer: basic.issuer.trim() || undefined,
+        kiPct: terms.kiPct.trim() || undefined,
+        koPct: terms.koPct.trim() || undefined,
+        name: basic.name.trim(),
+        notionalAmount: basic.notionalAmount.trim() || undefined,
+        observationFrequency: observation.frequency,
+        schedule: schedule
+          .filter((item) => item.label.trim() || item.observationDate || item.couponDate)
+          .map((item) => ({
+            couponDate: item.couponDate || undefined,
+            id: item.id,
+            label: item.label.trim() || undefined,
+            observationDate: item.observationDate || undefined,
+          })),
+        strikePct: terms.strikePct.trim() || undefined,
+        tenor: basic.tenor.trim() || undefined,
+        underlyings: underlyings.map((underlying) => ({
+          currentPrice: underlying.currentPrice.trim() || undefined,
+          id: underlying.id,
+          initialPrice: underlying.initialPrice.trim() || undefined,
+          kiPrice: underlying.kiPrice.trim() || undefined,
+          koPrice: underlying.koPrice.trim() || undefined,
+          market: underlying.market.trim() || undefined,
+          name: underlying.name.trim() || undefined,
+          strikePrice: underlying.strikePrice.trim() || undefined,
+          symbol: underlying.symbol.trim().toUpperCase(),
+          weightPct: underlying.weightPct.trim() || undefined,
+        })),
       });
-      const payload = (await response.json().catch(() => ({}))) as FCNCreateResponse;
-
-      if (!response.ok || !payload.ok || !payload.position) {
-        setError(errorMessageFromStatus(payload.status, payload.message));
-        return;
-      }
-
-      setSuccess(`已建立「${payload.position.name}」。`);
+      saveRecentPortfolioInput({
+        category: "FCN",
+        details: [
+          `${basic.currency} ${basic.notionalAmount.trim() || "notional pending"}`,
+          `${underlyings.length} underlyings`,
+          `${observation.frequency} observation`,
+        ],
+        title: savedDraft.name,
+      });
+      setSuccess(`已建立 FCN Draft「${savedDraft.name}」，可在 FCN Center 查看。`);
       resetWizard();
       window.dispatchEvent(new CustomEvent("ixai:portfolio:changed"));
-      router.refresh();
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "FCN 建立失敗，請稍後再試。");
+      setError(submitError instanceof Error ? submitError.message : "FCN Draft 建立失敗，請稍後再試。");
     } finally {
       setIsSubmitting(false);
     }
   }
 
   const canAddUnderlying = underlyings.length < MAX_UNDERLYINGS;
-  const hasPortfolioOptions = portfolios.length > 0;
-
   return (
     <section className="rounded-3xl border border-[rgba(9,41,31,0.14)] bg-[rgba(255,250,240,0.92)] p-5 shadow-[0_18px_48px_rgba(9,41,31,0.07)] sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -514,48 +400,10 @@ export function FCNWizard() {
       <form className="mt-5 grid gap-5" onSubmit={handleSubmit}>
         {activeStep === 0 ? (
           <div className="grid gap-4">
-            {portfolioStatus === "loading" ? (
-              <p className="rounded-lg border border-[var(--ixai-border)] bg-white/65 p-3 text-sm text-[var(--ixai-forest-soft)]">
-                正在讀取 Portfolio...
-              </p>
-            ) : null}
-            {portfolioStatus === "unauthenticated" ? (
-              <p className="rounded-lg border border-[color-mix(in_srgb,var(--ixai-risk-watch)_34%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_8%,white)] p-3 text-sm leading-6 text-[var(--ixai-forest)]">
-                請先登入 IXAI，再建立 FCN。
-              </p>
-            ) : null}
-            {portfolioStatus === "error" ? (
-              <p className="rounded-lg border border-[color-mix(in_srgb,var(--ixai-risk-elevated)_34%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-elevated)_8%,white)] p-3 text-sm leading-6 text-[var(--ixai-forest)]">
-                Portfolio 讀取失敗，請稍後重試。
-              </p>
-            ) : null}
-            {portfolioStatus === "ready" && !hasPortfolioOptions ? (
-              <p className="rounded-lg border border-[color-mix(in_srgb,var(--ixai-risk-watch)_34%,var(--ixai-border))] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_8%,white)] p-3 text-sm leading-6 text-[var(--ixai-forest)]">
-                請先建立 Portfolio，再新增 FCN。你可以先到本頁上方的 Portfolio 區塊建立資產容器。
-              </p>
-            ) : null}
-
-            <label className={LABEL_CLASS} htmlFor="fcn-portfolio">
-              Portfolio
-              <select
-                className={FIELD_INPUT_CLASS}
-                disabled={!hasPortfolioOptions}
-                id="fcn-portfolio"
-                name="portfolioId"
-                onChange={(event) =>
-                  setBasic((current) => ({ ...current, portfolioId: event.target.value }))
-                }
-                required
-                value={basic.portfolioId}
-              >
-                <option value="">選擇 Portfolio</option>
-                {portfolios.map((portfolio) => (
-                  <option key={portfolio.id} value={portfolio.id}>
-                    {portfolio.name} · {portfolio.baseCurrency}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <p className="rounded-lg border border-[var(--ixai-border)] bg-white/65 p-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              v3.08 先建立本機 FCN Draft。提交後會同步到 Portfolio Recent Inputs 與 FCN Center；
+              Supabase persistence、Portfolio attachment、edit/delete 與 cross-device sync 留待後續版本。
+            </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className={LABEL_CLASS} htmlFor="fcn-name">
@@ -593,7 +441,7 @@ export function FCNWizard() {
               </label>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <label className={LABEL_CLASS} htmlFor="fcn-currency">
                 幣別
                 <select
@@ -643,11 +491,27 @@ export function FCNWizard() {
                   value={basic.couponRatePct}
                 />
               </label>
+              <label className={LABEL_CLASS} htmlFor="fcn-tenor">
+                Tenor（選填）
+                <input
+                  autoComplete="off"
+                  className={FIELD_INPUT_CLASS}
+                  id="fcn-tenor"
+                  maxLength={40}
+                  name="tenor"
+                  onChange={(event) =>
+                    setBasic((current) => ({ ...current, tenor: event.target.value }))
+                  }
+                  placeholder="例如：6M / 12M"
+                  type="text"
+                  value={basic.tenor}
+                />
+              </label>
             </div>
           </div>
         ) : null}
 
-        {activeStep === 1 ? (
+        {activeStep === 4 ? (
           <div className="grid gap-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -775,7 +639,7 @@ export function FCNWizard() {
           </div>
         ) : null}
 
-        {activeStep === 2 ? (
+        {activeStep === 1 ? (
           <div className="grid gap-4">
             <div>
               <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
@@ -840,6 +704,41 @@ export function FCNWizard() {
                   value={terms.couponRatePct}
                 />
               </label>
+            </div>
+          </div>
+        ) : null}
+
+        {activeStep === 2 ? (
+          <div className="grid gap-4">
+            <div>
+              <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+                Observation
+              </h3>
+              <p className="mt-1 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                記錄 FCN 觀察頻率。實際日期可在下一步逐筆新增。
+              </p>
+            </div>
+            <label className={LABEL_CLASS} htmlFor="fcn-observation-frequency">
+              Observation Frequency
+              <select
+                className={FIELD_INPUT_CLASS}
+                id="fcn-observation-frequency"
+                onChange={(event) =>
+                  setObservation({
+                    frequency: event.target.value as ObservationDraft["frequency"],
+                  })
+                }
+                value={observation.frequency}
+              >
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+                <option value="Semiannual">Semiannual</option>
+                <option value="Annual">Annual</option>
+              </select>
+            </label>
+            <div className="rounded-2xl border border-[var(--ixai-border)] bg-white/65 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              目前頻率：<span className="font-semibold text-[var(--ixai-forest)]">{observation.frequency}</span>。
+              本欄位先作為 Workspace input metadata，不改 API 或資料庫 schema。
             </div>
           </div>
         ) : null}
@@ -919,7 +818,7 @@ export function FCNWizard() {
           </div>
         ) : null}
 
-        {activeStep === 4 ? (
+        {activeStep === 5 ? (
           <div className="grid gap-4">
             <div>
               <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
@@ -930,10 +829,42 @@ export function FCNWizard() {
               </p>
             </div>
 
+            <InputReviewSummary
+              assetType="FCN"
+              sections={[
+                {
+                  items: [
+                    ["FCN Name", displayOptional(basic.name)],
+                    ["Issuer", displayOptional(basic.issuer)],
+                    ["Currency", basic.currency],
+                    ["Tenor", displayOptional(basic.tenor)],
+                  ],
+                  title: "Key Fields",
+                },
+                {
+                  items: [
+                    ["Strike", displayOptional(terms.strikePct)],
+                    ["KI", displayOptional(terms.kiPct)],
+                    ["KO", displayOptional(terms.koPct)],
+                    ["Coupon", displayOptional(terms.couponRatePct || basic.couponRatePct)],
+                  ],
+                  title: "Risk Fields",
+                },
+                {
+                  items: [
+                    ["Observation", observation.frequency],
+                    ["Dates", `${schedule.filter((item) => item.observationDate).length}`],
+                    ["Underlyings", `${underlyings.length}`],
+                  ],
+                  title: "Observation Fields",
+                },
+              ]}
+            />
+
             <div className="grid gap-3 sm:grid-cols-2">
               {[
                 ["FCN 名稱", displayOptional(basic.name)],
-                ["Portfolio", selectedPortfolio?.name ?? "未選擇"],
+                ["Source", "Local FCN Draft Store"],
                 ["幣別", basic.currency],
                 ["名目本金", displayOptional(basic.notionalAmount)],
                 ["KI / KO / Strike", `${displayOptional(terms.kiPct)} / ${displayOptional(terms.koPct)} / ${displayOptional(terms.strikePct)}`],
