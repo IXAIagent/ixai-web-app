@@ -40,6 +40,39 @@ Next:
 - v3.41 should define deterministic portfolio-aware news relevance.
 - v3.42 should define commentary / intelligence memory readiness before any external AI provider is approved.
 
+## v4.00 — Intelligence + Market Integration Program
+
+Why:
+
+- IXAI now has many strong foundations: Public Market, Portfolio Center, Asset Input, FCN Intelligence Center, Global Risk Center, public Daily / Weekly Intelligence, portfolio engine foundations, and Legacy Pro migration audits.
+- User value remains weaker than the foundations because Market, Portfolio, FCN, Risk, and Intelligence are not yet connected into one operating workflow.
+
+What Changed:
+
+- Added `docs/V400_INTELLIGENCE_MARKET_INTEGRATION_PROGRAM.md`.
+- Audited current route / center readiness across Market, Workspace Home, Portfolio Center, Asset Input, FCN Center, Risk Center, Intelligence Center, and Settings.
+- Audited available data sources for FCN, Stock, Crypto, Portfolio Dashboard, Portfolio Repository, public Market, news, Daily / Weekly, manual price overlays, and mock portfolio engines.
+- Proposed Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA.
+- Recorded a v4.00 sprint plan: v4.00a Architecture Audit, v4.01 Portfolio Truth Layer, v4.02 Workspace Market Service, v4.03 FCN Real Risk Integration, v4.04 Intelligence Center V2, and v4.05 Integration QA.
+
+Key Decisions:
+
+- v4.00 is not another page.
+- v4.00 is the integration layer between Market, Portfolio, FCN, Risk, and Intelligence.
+- Existing FCN, market, portfolio, risk, and intelligence foundations should be reused rather than rebuilt.
+
+Out of Scope:
+
+- No product code, new external market provider, external news provider, OpenAI / Claude / Gemini, broker sync, Telegram / LINE push, payment, trading, personalized buy/sell recommendation, schema change, migration, Social Pack change, admin editorial change, auth change, or membership change.
+
+Next:
+
+- v4.01 Portfolio Truth Layer.
+- v4.02 Workspace Market Service.
+- v4.03 FCN Real Risk Integration.
+- v4.04 Intelligence Center V2.
+- v4.05 Integration QA.
+
 ## v2.10a — Global Market Foundation Review
 
 Why:
