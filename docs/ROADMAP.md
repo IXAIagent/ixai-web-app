@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.03 / Risk Intelligence Layer`
+`v4.04 / Intelligence Readback Layer`
 
 ## Current Priority
 
@@ -31,6 +31,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V401_PORTFOLIO_TRUTH_LAYER.md` as the source of truth for the first shared FCN / Stock / Crypto / Portfolio Dashboard readback layer across Portfolio, Risk, and Intelligence.
 - Use `docs/V402_PORTFOLIO_INTELLIGENCE_UI.md` as the source of truth for Portfolio Center visualization of the shared Truth Layer.
 - Use `docs/V403_RISK_INTELLIGENCE_LAYER.md` as the source of truth for Risk Center consumption of Truth Layer concentration, top exposure, FCN worst-of, and data quality readback.
+- Use `docs/V404_INTELLIGENCE_READBACK_LAYER.md` as the source of truth for Intelligence Center consumption of Portfolio Truth and Risk Intelligence summaries.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -53,6 +54,7 @@ Current priority is UX / IA foundation before moving modules:
 - v4.01 resolves the first truth-layer gap by normalizing existing `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` readback without adding schema, migration, API route, market data, broker sync, AI, or trading logic.
 - v4.02 makes that Truth Layer visible inside Portfolio Center through holdings summary, counts-based allocation, top symbol occurrence, data health, and missing-data warnings.
 - v4.03 makes that Truth Layer useful inside Risk Center through concentration risk, top exposure aggregation, FCN worst-of summary, and data quality risk readback.
+- v4.04 makes Portfolio Truth and Risk Intelligence visible inside Intelligence Center through portfolio summary, risk snapshot, exposure summary, and readiness warnings.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -259,10 +261,11 @@ Suggested v4.00 sprint order:
 2. `v4.01` Portfolio Truth Layer.
 3. `v4.02` Portfolio Intelligence UI.
 4. `v4.03` Risk Intelligence Layer.
-5. `v4.04` Workspace Market Service.
-6. `v4.05` FCN Real Risk Integration.
-7. `v4.06` Intelligence Center V2.
-8. `v4.07` Integration QA / Release Hardening.
+5. `v4.04` Intelligence Readback Layer.
+6. `v4.05` Workspace Market Service.
+7. `v4.06` FCN Real Risk Integration.
+8. `v4.07` Intelligence Center V2.
+9. `v4.08` Integration QA / Release Hardening.
 
 ### v4.01 — Portfolio Truth Layer
 
@@ -288,6 +291,13 @@ Suggested v4.00 sprint order:
 - Reuse v3.20 FCN Intelligence Center helper output for FCN worst-of readback; do not duplicate FCN calculations.
 - Keep the existing v3.30 Foundation Score and data source status behavior.
 - Do not add market data, broker sync, AI commentary, recommendation logic, schema, migration, API routes, auth, membership, Social Pack, admin editorial, or trading behavior.
+
+### v4.04 — Intelligence Readback Layer
+
+- Reuse the Portfolio Truth Layer and Risk Intelligence Layer inside `/my-ixai/intelligence`.
+- Add portfolio intelligence summary, risk snapshot summary, exposure intelligence summary, and readiness warning summary.
+- Keep Daily / Weekly / Market entry points, FCN highlights, news readiness, commentary readiness, and source status intact.
+- Do not add AI commentary, LLM integration, market data, broker sync, news provider, recommendation logic, schema, migration, API routes, auth, membership, Social Pack, admin editorial, or trading behavior.
 
 ### v3.32 — Settings and Preferences Foundation
 

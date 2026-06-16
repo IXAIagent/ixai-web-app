@@ -70,10 +70,11 @@ Next:
 - v4.01 Portfolio Truth Layer.
 - v4.02 Portfolio Intelligence UI.
 - v4.03 Risk Intelligence Layer.
-- v4.04 Workspace Market Service.
-- v4.05 FCN Real Risk Integration.
-- v4.06 Intelligence Center V2.
-- v4.07 Integration QA.
+- v4.04 Intelligence Readback Layer.
+- v4.05 Workspace Market Service.
+- v4.06 FCN Real Risk Integration.
+- v4.07 Intelligence Center V2.
+- v4.08 Integration QA.
 
 ## v4.01 — Portfolio Truth Layer
 
@@ -105,10 +106,11 @@ Next:
 
 - v4.02 Portfolio Intelligence UI.
 - v4.03 Risk Intelligence Layer.
-- v4.04 Workspace Market Service.
-- v4.05 FCN Real Risk Integration.
-- v4.06 Intelligence Center V2.
-- v4.07 Integration QA.
+- v4.04 Intelligence Readback Layer.
+- v4.05 Workspace Market Service.
+- v4.06 FCN Real Risk Integration.
+- v4.07 Intelligence Center V2.
+- v4.08 Integration QA.
 
 ## v4.02 — Portfolio Intelligence UI
 
@@ -138,10 +140,11 @@ Out of Scope:
 Next:
 
 - v4.03 Risk Intelligence Layer.
-- v4.04 Workspace Market Service.
-- v4.05 FCN Real Risk Integration.
-- v4.06 Intelligence Center V2.
-- v4.07 Integration QA.
+- v4.04 Intelligence Readback Layer.
+- v4.05 Workspace Market Service.
+- v4.06 FCN Real Risk Integration.
+- v4.07 Intelligence Center V2.
+- v4.08 Integration QA.
 
 ## v4.03 — Risk Intelligence Layer
 
@@ -171,10 +174,43 @@ Out of Scope:
 
 Next:
 
-- v4.04 Workspace Market Service.
-- v4.05 FCN Real Risk Integration.
-- v4.06 Intelligence Center V2.
-- v4.07 Integration QA.
+- v4.04 Intelligence Readback Layer.
+- v4.05 Workspace Market Service.
+- v4.06 FCN Real Risk Integration.
+- v4.07 Intelligence Center V2.
+- v4.08 Integration QA.
+
+## v4.04 — Intelligence Readback Layer
+
+Why:
+
+- v4.01 created Portfolio Truth and v4.03 created Risk Intelligence readback.
+- Intelligence Center needed to consume both layers directly so it could summarize portfolio context, risk context, exposure context, and readiness warnings without inventing AI commentary, news, market data, or recommendations.
+
+What Changed:
+
+- Added `docs/V404_INTELLIGENCE_READBACK_LAYER.md`.
+- Extended Intelligence Center readback with portfolio intelligence summary, risk snapshot summary, exposure intelligence summary, and readiness warning summary.
+- Updated `/my-ixai/intelligence` with an Intelligence Readback Layer section.
+- Reused Portfolio Truth Layer and Risk Intelligence Layer output.
+- Preserved Daily / Weekly / Market entries, FCN highlights, news readiness, commentary readiness, source status, and compliance footer.
+
+Key Decisions:
+
+- v4.04 is a readback consumption layer, not an AI, news, market data, or recommendation sprint.
+- Exposure remains occurrence-based until valuation and market data are approved for this surface.
+- Risk summary is reused from the Risk Intelligence Layer instead of duplicated inside Intelligence Center.
+
+Out of Scope:
+
+- No schema change, migration, new API route, AI commentary, LLM integration, external market provider, external news provider, broker sync, recommendation logic, auth change, membership change, Social Pack change, admin editorial change, or trading behavior.
+
+Next:
+
+- v4.05 Workspace Market Service.
+- v4.06 FCN Real Risk Integration.
+- v4.07 Intelligence Center V2.
+- v4.08 Integration QA.
 
 ## v2.10a — Global Market Foundation Review
 

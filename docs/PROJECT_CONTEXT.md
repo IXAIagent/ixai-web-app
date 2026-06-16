@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.03 — Risk Intelligence Layer`
+`v4.04 — Intelligence Readback Layer`
 
 Current production state:
 
@@ -115,6 +115,8 @@ v4.02 builds the Portfolio Intelligence UI on top of the v4.01 Truth Layer. `/my
 
 v4.03 adds the Risk Intelligence Layer on top of the v4.01 Truth Layer. `/my-ixai/risk` now shows deterministic concentration risk, top exposure aggregation, FCN worst-of summary, and data quality risk summary while reusing v3.20 FCN helper output. It adds no market data, broker sync, AI commentary, recommendation logic, trading functionality, schema, migration, API route, auth, membership, Social Pack, or admin editorial changes.
 
+v4.04 adds the Intelligence Readback Layer on top of Portfolio Truth and Risk Intelligence. `/my-ixai/intelligence` now shows portfolio intelligence summary, risk snapshot summary, exposure intelligence summary, and readiness warning summary while preserving Daily / Weekly / Market entries, FCN highlights, news readiness, commentary readiness, and compliance boundaries. It adds no AI commentary, LLM integration, market data, broker sync, news provider, recommendation logic, trading functionality, schema, migration, API route, auth, membership, Social Pack, or admin editorial changes.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -157,7 +159,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.03 — Risk Intelligence Layer`
+`v4.04 — Intelligence Readback Layer`
 
 Current Core Flow:
 
@@ -190,6 +192,7 @@ Landing
 → FCN Intelligence Center with lifecycle, manual price overlay, timeline, and concentration
 → Global Risk Center with FCN risk summary, multi-asset readiness, upcoming risk events, data source status, and deterministic foundation score
 → Risk Intelligence Layer with concentration, top exposure, FCN worst-of, and data quality readback
+→ Intelligence Readback Layer with portfolio summary, risk snapshot, exposure summary, and readiness warnings
 → Intelligence Center with Daily / Weekly / Market entries, FCN highlights, portfolio-aware readiness, news readiness, and commentary readiness
 → v4.00 Integration Program connecting Market, Portfolio, FCN, Risk, and Intelligence through truth-layer and market-service planning
 → Portfolio Truth Layer shared by Portfolio Center, Risk Center, and Intelligence Center
@@ -218,6 +221,7 @@ Product Layers:
 - Portfolio Truth Layer: v4.01 provides the first shared readback across Portfolio Center, Risk Center, and Intelligence Center. It reports FCN / Stock / Crypto counts, known notional, source status, available symbols, and missing-data warnings from existing active-app APIs only.
 - Portfolio Intelligence UI: v4.02 makes the Truth Layer visible inside Portfolio Center through counts-based allocation, holdings summary, top symbol occurrence, source health, and missing-data warnings. It remains a UI / visualization layer only.
 - Risk Intelligence Layer: v4.03 makes the Truth Layer visible inside Risk Center through concentration risk, top exposure aggregation, FCN worst-of summary, and data quality risk summary. It remains deterministic and does not add market data, AI, broker sync, recommendations, or trading behavior.
+- Intelligence Readback Layer: v4.04 makes Portfolio Truth and Risk Intelligence visible inside Intelligence Center through portfolio summary, risk snapshot summary, exposure intelligence summary, and readiness warning summary. It does not add AI commentary, LLM integration, news provider, market data, broker sync, recommendations, or trading behavior.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
