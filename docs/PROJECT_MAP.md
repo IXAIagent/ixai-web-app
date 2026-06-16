@@ -61,8 +61,9 @@ Production data ownership update:
 - v3.04 makes `/my-ixai/input` the canonical Workspace asset onboarding surface and moves FCN Wizard ownership from public `/fcn` into `/my-ixai/input/fcn`.
 - v3.05 turns `/my-ixai/portfolio` into a user-readable Portfolio Workspace homepage and fixes `/pro` CTA contrast.
 - v3.06 upgrades Asset Input from placeholder into usable Stock / ETF, Crypto, and FCN input flows, adds shared Input Review, and shows local mock Recent Inputs in Portfolio Center.
-- v3.08 connects `/my-ixai/input/fcn` to `/my-ixai/fcn` through a local FCN Draft Store. FCN Center now reads draft FCN positions, notional, barriers, observation dates, coupon dates, and underlyings without adding API, schema, market data, AI, broker, Telegram, scheduler, or trading logic.
+- v3.08 connects `/my-ixai/input/fcn` to `/my-ixai/fcn` through a local FCN Draft Store. FCN Center reads draft FCN positions, notional, barriers, observation dates, coupon dates, and underlyings without adding API, schema, market data, AI, broker, Telegram, scheduler, or trading logic.
 - v3.08a fixes FCN Draft Store persistence and fallback hydration so FCN Center reads the same localStorage-backed data that FCN Wizard writes.
+- v3.09 turns `/my-ixai/fcn` from placeholder into an FCN Position readback surface that uses the existing `/api/fcn` and Supabase `fcn_positions` / `fcn_underlyings` persistence path created by the FCN Wizard.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -161,7 +162,7 @@ v2.11 center ownership rule:
 - Portfolio Center owns accounts, assets, positions, valuation, allocation, exposure, and repository status.
 - Asset Input owns asset onboarding for Stock / ETF, Crypto, FCN, and future import workflows.
 - Risk Center owns concentration, correlation, scenario, stress test, risk report, and monitoring prompts.
-- FCN Center owns FCN positions, underlyings, worst-of, KI / KO, observation calendar, coupon calendar, and FCN risk. v3.08 begins this ownership with local draft readback before persistence or market data.
+- FCN Center owns FCN positions, underlyings, worst-of, KI / KO, observation calendar, coupon calendar, and FCN risk.
 - Intelligence Center owns Daily, Weekly, watchlist intelligence, market news, AI commentary, and Social Pack distribution.
 - Settings owns membership, entitlements, language, notifications, broker connections, data privacy, and preferences.
 
@@ -176,7 +177,7 @@ v2.11 center ownership rule:
   - `/my-ixai/input/fcn`: FCN Wizard route and canonical FCN data-entry surface with Basic, Barrier, Observation, Dates, Underlyings, and Review.
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
   - `/my-ixai/risk`: Risk Center placeholder.
-  - `/my-ixai/fcn`: FCN Center readback for localStorage-backed FCN drafts, underlyings, KI / KO, observation dates, coupon dates, and detail review.
+  - `/my-ixai/fcn`: FCN Center readback for persisted FCN positions, underlyings, barrier terms, observation schedule, and coupon dates.
   - `/my-ixai/intelligence`: Intelligence Center placeholder.
   - `/my-ixai/settings`: Settings placeholder.
 
@@ -203,6 +204,7 @@ Role:
 - Legacy backend mainline candidate and product-memory reference.
 - FastAPI service for portfolio, FCN, crypto, cash, account, intelligence, alert, import, preferences, scheduler, notification, and market endpoints.
 - v3.05a inventories this backend in `docs/LEGACY_BACKEND_INVENTORY_AUDIT_V305A.md`.
+- v3.09 keeps FCN Center in the active Next.js App. Do not migrate legacy backend FCN monitor code directly; use it only as conceptual reference for future FCN Center phases.
 
 Current architecture:
 
