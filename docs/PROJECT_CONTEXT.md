@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v3.09 — FCN Position Foundation`
+`v3.20 — FCN Intelligence Center`
 
 Current production state:
 
@@ -99,6 +99,10 @@ v3.08 wires the FCN Input flow into the first FCN Center readback using local/mo
 
 v3.09 closes the first active-app FCN loop: `/my-ixai/input/fcn` creates FCN positions through `POST /api/fcn`, the existing API writes Supabase `fcn_positions` and `fcn_underlyings`, and `/my-ixai/fcn` now reads the same persisted records through `GET /api/fcn`. FCN Center displays count, notional, position cards, issuer, strike, KI, KO, underlyings, observation / coupon schedule, created date, and empty / unauthenticated states. v3.09 does not add migration, schema change, market data, broker sync, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, legacy frontend, or FastAPI backend changes.
 
+v3.10 upgrades `/my-ixai/fcn` into the first FCN risk-monitoring workspace. It keeps the v3.09 Supabase `/api/fcn` data path and adds FCN risk summary, underlying concentration, KI distance readback, worst underlying, and per-position risk status using stored current price only. Missing current price or invalid KI data remains `UNKNOWN`. v3.10 does not add migration, schema change, API route, external market data, broker sync, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, auth, or membership changes.
+
+v3.20 upgrades `/my-ixai/fcn` into the FCN Intelligence Center. It folds the separate v3.11-v3.14 FCN follow-up plan into one integrated FCN workspace: lifecycle readback and filters, manual current-price overlay, FCN Timeline / Event Center, Risk Engine v2 scoring, and richer underlying concentration. It preserves the existing `/api/fcn` / Supabase readback path. Manual price updates are browser-local overlays only and do not write to Supabase. v3.20 does not add migration, schema change, external market data, broker sync, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, auth, or membership changes.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -126,11 +130,11 @@ Current mainline relationship:
 
 Still not complete:
 
-- Distance to KI / KO.
+- Full KI / KO monitoring, price freshness, and live-price-backed distance semantics.
 - KO distance.
 - Strike distance.
-- Observation calendar.
-- Coupon calendar.
+- Full observation calendar and notification workflow.
+- Full coupon calendar and payment tracking workflow.
 - AI Risk Engine.
 - Unified multi-asset risk engine.
 - Stock / Crypto / Cash input expansion.
@@ -141,7 +145,7 @@ Still not complete:
 
 Current Development Version:
 
-`v3.09 — FCN Position Foundation`
+`v3.20 — FCN Intelligence Center`
 
 Current Core Flow:
 
@@ -170,6 +174,8 @@ Landing
 → FCN Draft Store local readback
 → Membership / Entitlement visibility
 → FCN Position readback in FCN Center
+→ FCN KI-distance risk monitoring in FCN Center
+→ FCN Intelligence Center with lifecycle, manual price overlay, timeline, and concentration
 ```
 
 Public Intelligence Funnel:
@@ -187,7 +193,7 @@ Product Layers:
 - Public Intelligence: acquisition, trust building, daily/weekly market awareness, shareable intelligence.
 - Account Intelligence: identity continuity, Watchlist Intelligence Lite, preference memory, LINE readiness.
 - Multi-Asset Portfolio Intelligence: production persistence for Portfolio containers, FCN positions, underlyings, Stock / Crypto foundations, normalized asset categories, and dashboard readback.
-- FCN Risk / Intelligence Engine: Worst-of, KI distance, portfolio risk score, concentration exposure, Worst-of ranking, and deterministic intelligence narratives start from stored manual prices; KO distance, observation calendar, coupon calendar, AI risk summary, and entitlement gating remain future work.
+- FCN Risk / Intelligence Engine: Worst-of, KI distance, lifecycle status, manual local price overlay, event timeline, risk score, concentration exposure, Worst-of ranking, and deterministic intelligence narratives start from persisted FCN records and user-entered prices; persisted price update, KO distance, alert delivery, AI risk summary, and entitlement gating remain future work.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
@@ -225,6 +231,8 @@ Product Layers:
 - Pro Intelligence: future Portfolio Intelligence, Risk Intelligence, AI Alerts, and SaaS-gated Pro workflows inside the active App.
 - FCN Draft Store Transition: v3.08 / v3.08a created a local draft-store bridge from FCN Wizard to FCN Center. v3.09 supersedes that as the primary product source of truth by reading persisted `/api/fcn` records from Supabase.
 - FCN Position Foundation: v3.09 makes `/my-ixai/fcn` a real readback surface for existing Supabase-backed FCN positions created by `/my-ixai/input/fcn`. It uses the existing `/api/fcn` data path and does not introduce a local draft store, schema change, market data, broker sync, AI provider, recommendation logic, or trading logic.
+- FCN Risk Foundation: v3.10 adds first-pass risk monitoring to `/my-ixai/fcn`: high-risk count, watch count, unknown-data count, underlying concentration, worst underlying, worst KI distance, and per-position GREEN / YELLOW / RED / UNKNOWN status. It uses stored current price only and does not add live market data or external providers.
+- FCN Intelligence Center: v3.20 upgrades `/my-ixai/fcn` into the practical FCN workspace with lifecycle filters, local manual price overlay, timeline / event center, Risk Engine v2 score, and concentration analysis. It does not add schema, migration, live market data, broker sync, AI provider, recommendation logic, or trading logic.
 - Admin / Editorial Intelligence: human-reviewed Daily / Weekly generation, Provider Health, Coverage Score, Social Pack production, and future Publish Center operations.
 
 ## v1.67.0 — App ↔ Pro SSO Launch Prototype
