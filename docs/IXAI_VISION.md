@@ -120,6 +120,8 @@ v3.06 turns Asset Input into the first usable Workspace onboarding flow for Stoc
 
 v3.08 connects the FCN input path to FCN Center. This is the first visible structured-product workspace loop: users can enter FCN conditions, barriers, observation dates, coupon dates, and underlyings, then see those draft records inside `/my-ixai/fcn`. The release keeps FCN Center local/mock and non-advisory while establishing the product direction: FCN Center should own structured-product monitoring, not the generic Portfolio Center or public education pages.
 
+v3.30 starts the Global Risk Center foundation. The Risk Center should become the place where FCN, Stock, Crypto, Grid, Dual, concentration, events, and future global risk readback are organized for monitoring. The first implementation intentionally reuses FCN Intelligence Center risk output and shows Stock / Crypto / Grid / Dual as readiness layers only. This protects the product from pretending unfinished data sources are live risk engines.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text
@@ -185,6 +187,8 @@ The Portfolio Scenario Layer should translate valuation, exposure, concentration
 The Portfolio Stress Test Layer should translate valuation, exposure, concentration, correlation, and scenario readback into market-agnostic deterministic severe-shock cases. It should support future global markets and remain a monitoring layer, not a forecast, recommendation, capital call, or trading layer.
 
 The Portfolio FCN Risk Layer should translate FCN assets, underlyings, exposure, concentration, correlation, and stress-test sensitivity into structured-product monitoring readback. It must support future FCN products linked to US, Taiwan, Hong Kong, China, Japan, Korea, Europe, Singapore, crypto, global indexes, and future structured markets. It is not a product recommendation, coupon promise, trading signal, or automated execution layer.
+
+The Global Risk Center should unify these layers into a user-facing risk workspace over time. Its first responsibility is clarity: show what data is ready, what is partial, what is placeholder, and what is explicitly not enabled. It should remain market-agnostic and compliance-first as it expands from FCN into Stock, Crypto, Grid, Dual, and future global market risk surfaces.
 
 This layer must remain monitoring and risk-awareness oriented. It is not a place for investment advice, trading instructions, performance promises, or automated execution.
 

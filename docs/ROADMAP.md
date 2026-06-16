@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.20 / FCN Intelligence Center`
+`v3.30 / Global Risk Center Foundation`
 
 ## Current Priority
 
@@ -25,6 +25,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V309_APP_CURRENT_STATE_AUDIT.md` and `docs/V309_FCN_POSITION_FOUNDATION.md` as the source of truth for the active-app FCN loop.
 - Use `docs/V310_FCN_RISK_FOUNDATION.md` as the source of truth for FCN Center KI-distance risk readback from persisted FCN positions.
 - Use `docs/V320_FCN_INTELLIGENCE_CENTER.md` as the source of truth for the integrated FCN lifecycle, manual price, timeline, Risk v2, and concentration workspace.
+- Use `docs/V330_GLOBAL_RISK_CENTER_FOUNDATION.md` as the source of truth for the first `/my-ixai/risk` Global Risk Center foundation.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
@@ -37,6 +38,7 @@ Current priority is UX / IA foundation before moving modules:
 - `/my-ixai/fcn` now reads existing Supabase-backed FCN positions from `/api/fcn`; do not reintroduce a separate permanent local draft source unless the product explicitly defines a draft-to-position lifecycle.
 - `/my-ixai/fcn` now adds v3.10 risk monitoring readback using stored current price only. Missing current price remains `UNKNOWN`; do not imply live market data.
 - `/my-ixai/fcn` is now the v3.20 FCN Intelligence Center. Manual price updates are local overlays only; do not claim Supabase persistence or live market data.
+- `/my-ixai/risk` is now the v3.30 Global Risk Center foundation. It reuses v3.20 FCN risk readback, shows multi-asset readiness, lists upcoming FCN risk events, and reports data source status without adding live market data, broker sync, AI, or trading logic.
 - Legacy backend modules should be migrated by contract and rewrite, not copied wholesale.
 - Highest-priority legacy backend candidates are CSV import, risk alerts, FCN monitoring / schedules, portfolio-aware news relevance, and scheduler / notification review.
 - Public navigation and Workspace navigation must remain separate.
@@ -202,15 +204,25 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 
 ### v3.30 — Global Risk Center Foundation
 
-- Connect FCN Center, Portfolio Center, and Risk Center through shared risk contracts.
-- Move broader concentration, correlation, scenario, and stress-test ownership into a user-facing Global Risk Center.
-- Keep monitoring / risk-awareness language; do not introduce trading instructions or personalized recommendations.
+- Replace the `/my-ixai/risk` placeholder with the first working Global Risk Center.
+- Reuse v3.20 FCN Intelligence Center calculations for FCN risk summary and upcoming FCN events.
+- Add Stock / Crypto / Grid / Dual readiness cards without building full risk engines.
+- Add Data Source Status for FCN API, Stock API, Crypto API, Manual Price Overlay, and Live Market Data.
+- Add a deterministic `Foundation Score` weighted by FCN RED / YELLOW / UNKNOWN readback.
+- Keep monitoring / risk-awareness language; do not introduce trading instructions, personalized recommendations, live market data, broker sync, AI providers, or schema changes.
 
 ### v3.31 — Intelligence Center Migration
 
 - Consolidate Daily Intelligence, Weekly Intelligence, watchlists, market news, AI commentary, and Social Pack distribution into one Intelligence Center.
 - Use Legacy Pro market/news/workspace ideas as reference only.
 - Do not reintroduce legacy JWT, localStorage token auth, or direct browser-to-FastAPI protected calls.
+
+### v3.40 — Global Risk Center Expansion
+
+- Expand Risk Center from FCN-led foundation into multi-asset risk readback after Stock / Crypto / Grid / Dual data contracts are mature.
+- Move appropriate concentration, correlation, scenario, and stress-test ownership from Portfolio Center into Risk Center.
+- Add explicit data-source freshness and provider-health semantics before live market data is used in risk readback.
+- Keep the product boundary as monitoring and risk-awareness only; no trading instructions, order execution, broker sync, personalized recommendations, or AI advisory claims.
 
 ### v3.32 — Settings and Preferences Foundation
 

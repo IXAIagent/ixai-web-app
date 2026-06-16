@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v3.20 — FCN Intelligence Center`
+`v3.30 — Global Risk Center Foundation`
 
 Current production state:
 
@@ -102,6 +102,10 @@ v3.09 closes the first active-app FCN loop: `/my-ixai/input/fcn` creates FCN pos
 v3.10 upgrades `/my-ixai/fcn` into the first FCN risk-monitoring workspace. It keeps the v3.09 Supabase `/api/fcn` data path and adds FCN risk summary, underlying concentration, KI distance readback, worst underlying, and per-position risk status using stored current price only. Missing current price or invalid KI data remains `UNKNOWN`. v3.10 does not add migration, schema change, API route, external market data, broker sync, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, auth, or membership changes.
 
 v3.20 upgrades `/my-ixai/fcn` into the FCN Intelligence Center. It folds the separate v3.11-v3.14 FCN follow-up plan into one integrated FCN workspace: lifecycle readback and filters, manual current-price overlay, FCN Timeline / Event Center, Risk Engine v2 scoring, and richer underlying concentration. It preserves the existing `/api/fcn` / Supabase readback path. Manual price updates are browser-local overlays only and do not write to Supabase. v3.20 does not add migration, schema change, external market data, broker sync, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, auth, or membership changes.
+
+v3.30 upgrades `/my-ixai/risk` from placeholder into the first Global Risk Center foundation. It reuses v3.20 FCN Intelligence Center helpers for FCN risk summary and upcoming FCN events, reads existing FCN / Stock / Crypto API paths for readiness, derives Grid / Dual readiness from crypto position metadata, and reports data source status. The v3.30 Foundation Score is deterministic and currently weighted by FCN RED / YELLOW / UNKNOWN readback only. v3.30 does not add migration, schema change, live market data, broker sync, AI provider, recommendation logic, trading logic, auth, or membership changes.
+
+Future v3.40 Global Risk Center expansion should only proceed after Stock / Crypto / Grid / Dual data contracts are mature enough for real risk readback. Until then, v3.30 keeps those assets as readiness cards and keeps live market data explicitly disabled.
 
 Validated production behavior:
 
@@ -145,7 +149,7 @@ Still not complete:
 
 Current Development Version:
 
-`v3.20 — FCN Intelligence Center`
+`v3.30 — Global Risk Center Foundation`
 
 Current Core Flow:
 
@@ -176,6 +180,7 @@ Landing
 → FCN Position readback in FCN Center
 → FCN KI-distance risk monitoring in FCN Center
 → FCN Intelligence Center with lifecycle, manual price overlay, timeline, and concentration
+→ Global Risk Center with FCN risk summary, multi-asset readiness, upcoming risk events, data source status, and deterministic foundation score
 ```
 
 Public Intelligence Funnel:
@@ -194,6 +199,7 @@ Product Layers:
 - Account Intelligence: identity continuity, Watchlist Intelligence Lite, preference memory, LINE readiness.
 - Multi-Asset Portfolio Intelligence: production persistence for Portfolio containers, FCN positions, underlyings, Stock / Crypto foundations, normalized asset categories, and dashboard readback.
 - FCN Risk / Intelligence Engine: Worst-of, KI distance, lifecycle status, manual local price overlay, event timeline, risk score, concentration exposure, Worst-of ranking, and deterministic intelligence narratives start from persisted FCN records and user-entered prices; persisted price update, KO distance, alert delivery, AI risk summary, and entitlement gating remain future work.
+- Global Risk Center Foundation: v3.30 makes `/my-ixai/risk` a first working risk workspace by reusing FCN v3.20 readback, showing Stock / Crypto / Grid / Dual readiness, listing upcoming FCN events, and reporting data source status. It is not a full multi-asset risk engine yet.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

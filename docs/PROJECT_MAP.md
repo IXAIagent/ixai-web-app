@@ -66,6 +66,7 @@ Production data ownership update:
 - v3.09 turns `/my-ixai/fcn` from placeholder into an FCN Position readback surface that uses the existing `/api/fcn` and Supabase `fcn_positions` / `fcn_underlyings` persistence path created by the FCN Wizard.
 - v3.10 turns `/my-ixai/fcn` into the first FCN risk-monitoring workspace by adding KI-distance readback, GREEN / YELLOW / RED / UNKNOWN status, high-risk / watch counts, and underlying concentration from persisted FCN records only.
 - v3.20 turns `/my-ixai/fcn` into the FCN Intelligence Center with lifecycle filters, manual local price overlay, timeline / event center, Risk Engine v2 score, and concentration analysis while preserving `/api/fcn` / Supabase readback.
+- v3.30 turns `/my-ixai/risk` from placeholder into the first Global Risk Center foundation. It reuses v3.20 FCN Intelligence Center helpers, reads existing FCN / Stock / Crypto API paths for readiness, derives Grid / Dual readiness, lists upcoming FCN risk events, and reports data source status without adding live market data, broker sync, AI, schema changes, or trading logic.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -178,7 +179,7 @@ v2.11 center ownership rule:
   - `/my-ixai/input/crypto`: Usable Crypto input form with local preview.
   - `/my-ixai/input/fcn`: FCN Wizard route and canonical FCN data-entry surface with Basic, Barrier, Observation, Dates, Underlyings, and Review.
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
-  - `/my-ixai/risk`: Risk Center placeholder.
+  - `/my-ixai/risk`: Global Risk Center foundation with FCN risk summary, multi-asset readiness, upcoming FCN events, data source status, and deterministic Foundation Score.
   - `/my-ixai/fcn`: FCN Intelligence Center for persisted FCN positions, lifecycle readback, manual local price overlay, KI-distance risk scoring, timeline events, concentration, observation schedule, and coupon dates.
   - `/my-ixai/intelligence`: Intelligence Center placeholder.
   - `/my-ixai/settings`: Settings placeholder.
