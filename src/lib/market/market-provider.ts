@@ -18,10 +18,14 @@ export interface MarketProvider {
 }
 
 export interface MarketProviderRegistryEntry {
+  description: string;
   id: string;
   label: string;
   provider: MarketProvider;
   status: MarketProviderStatus;
+  supportedSymbols: string[];
+  supportsNews: boolean;
+  supportsQuotes: boolean;
 }
 
 export type MarketProviderId = "mock";

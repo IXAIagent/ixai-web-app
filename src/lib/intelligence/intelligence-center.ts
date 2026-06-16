@@ -11,6 +11,7 @@ import type {
   IntelligenceReadbackSummary,
   IntelligenceReadinessWarningSummary,
 } from "@/src/lib/intelligence/intelligence-center-types";
+import { getMarketProviderStatus } from "@/src/lib/market/market-center";
 import type {
   PortfolioTruthReadback,
   PortfolioTruthSourceStatus,
@@ -346,6 +347,7 @@ export function buildIntelligenceCenterReadback(input: {
         "Workspace-specific market modules are not duplicated in this sprint.",
       ),
     ],
+    marketReadiness: getMarketProviderStatus(),
     newsReadiness: [
       source("Daily / Weekly Public Intelligence", "ready", "Public Daily and Weekly routes remain available."),
       source(

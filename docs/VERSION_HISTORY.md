@@ -53,7 +53,7 @@ What Changed:
 - Audited current route / center readiness across Market, Workspace Home, Portfolio Center, Asset Input, FCN Center, Risk Center, Intelligence Center, and Settings.
 - Audited available data sources for FCN, Stock, Crypto, Portfolio Dashboard, Portfolio Repository, public Market, news, Daily / Weekly, manual price overlays, and mock portfolio engines.
 - Proposed Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA.
-- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Workspace Market Service, v4.07 FCN Real Risk Integration, v4.08 Intelligence Center V2, and v4.09 Integration QA.
+- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Market Readiness UI, v4.07 Workspace Market Service, v4.08 FCN Real Risk Integration, v4.09 Intelligence Center V2, and v4.10 Integration QA.
 
 Key Decisions:
 
@@ -72,10 +72,11 @@ Next:
 - v4.03 Risk Intelligence Layer.
 - v4.04 Intelligence Readback Layer.
 - v4.05 Market Abstraction Layer.
-- v4.06 Workspace Market Service.
-- v4.07 FCN Real Risk Integration.
-- v4.08 Intelligence Center V2.
-- v4.09 Integration QA.
+- v4.06 Market Readiness UI.
+- v4.07 Workspace Market Service.
+- v4.08 FCN Real Risk Integration.
+- v4.09 Intelligence Center V2.
+- v4.10 Integration QA.
 
 ## v4.01 — Portfolio Truth Layer
 
@@ -109,10 +110,11 @@ Next:
 - v4.03 Risk Intelligence Layer.
 - v4.04 Intelligence Readback Layer.
 - v4.05 Market Abstraction Layer.
-- v4.06 Workspace Market Service.
-- v4.07 FCN Real Risk Integration.
-- v4.08 Intelligence Center V2.
-- v4.09 Integration QA.
+- v4.06 Market Readiness UI.
+- v4.07 Workspace Market Service.
+- v4.08 FCN Real Risk Integration.
+- v4.09 Intelligence Center V2.
+- v4.10 Integration QA.
 
 ## v4.02 — Portfolio Intelligence UI
 
@@ -144,10 +146,11 @@ Next:
 - v4.03 Risk Intelligence Layer.
 - v4.04 Intelligence Readback Layer.
 - v4.05 Market Abstraction Layer.
-- v4.06 Workspace Market Service.
-- v4.07 FCN Real Risk Integration.
-- v4.08 Intelligence Center V2.
-- v4.09 Integration QA.
+- v4.06 Market Readiness UI.
+- v4.07 Workspace Market Service.
+- v4.08 FCN Real Risk Integration.
+- v4.09 Intelligence Center V2.
+- v4.10 Integration QA.
 
 ## v4.03 — Risk Intelligence Layer
 
@@ -179,10 +182,11 @@ Next:
 
 - v4.04 Intelligence Readback Layer.
 - v4.05 Market Abstraction Layer.
-- v4.06 Workspace Market Service.
-- v4.07 FCN Real Risk Integration.
-- v4.08 Intelligence Center V2.
-- v4.09 Integration QA.
+- v4.06 Market Readiness UI.
+- v4.07 Workspace Market Service.
+- v4.08 FCN Real Risk Integration.
+- v4.09 Intelligence Center V2.
+- v4.10 Integration QA.
 
 ## v4.04 — Intelligence Readback Layer
 
@@ -212,10 +216,11 @@ Out of Scope:
 Next:
 
 - v4.05 Market Abstraction Layer.
-- v4.06 Workspace Market Service.
-- v4.07 FCN Real Risk Integration.
-- v4.08 Intelligence Center V2.
-- v4.09 Integration QA.
+- v4.06 Market Readiness UI.
+- v4.07 Workspace Market Service.
+- v4.08 FCN Real Risk Integration.
+- v4.09 Intelligence Center V2.
+- v4.10 Integration QA.
 
 ## v4.05 — Market Abstraction Layer
 
@@ -245,10 +250,42 @@ Out of Scope:
 
 Next:
 
-- v4.06 Workspace Market Service.
-- v4.07 FCN Real Risk Integration.
-- v4.08 Intelligence Center V2.
-- v4.09 Integration QA.
+- v4.06 Market Readiness UI.
+- v4.07 Workspace Market Service.
+- v4.08 FCN Real Risk Integration.
+- v4.09 Intelligence Center V2.
+- v4.10 Integration QA.
+
+## v4.06 — Market Readiness UI
+
+Why:
+
+- v4.05 created provider contracts, but the Workspace still needed a visible way to inspect market provider readiness before any real provider is connected.
+- Intelligence Center is the right first surface because it already owns market source readiness and compliance boundaries.
+
+What Changed:
+
+- Added `docs/V406_MARKET_READINESS_UI.md`.
+- Extended Market Abstraction Layer registry metadata with provider description, quote/news support flags, and supported mock symbols.
+- Added Market Readiness readback to Intelligence Center.
+- Added a Market Readiness section to `/my-ixai/intelligence`.
+
+Key Decisions:
+
+- v4.06 is registry-readiness UI only.
+- The UI uses `MockProvider` and provider registry metadata only.
+- No quote or news provider methods are called for live data.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, broker integration, external service, API route, database change, schema change, migration, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.07 Workspace Market Service.
+- v4.08 FCN Real Risk Integration.
+- v4.09 Intelligence Center V2.
+- v4.10 Integration QA.
 
 ## v2.10a — Global Market Foundation Review
 

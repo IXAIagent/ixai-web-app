@@ -82,3 +82,24 @@ export interface MarketNewsSnapshot {
   status: MarketProviderStatus;
   warnings: string[];
 }
+
+export interface MarketProviderReadiness {
+  description: string;
+  id: string;
+  label: string;
+  status: MarketProviderStatus;
+  supportedSymbols: string[];
+  supportsNews: boolean;
+  supportsQuotes: boolean;
+}
+
+export interface MarketProviderStatusSnapshot {
+  generatedAt: string;
+  mockProviderCount: number;
+  newsProviderCount: number;
+  providerCount: number;
+  providers: MarketProviderReadiness[];
+  quoteProviderCount: number;
+  summary: string;
+  supportedSymbols: string[];
+}

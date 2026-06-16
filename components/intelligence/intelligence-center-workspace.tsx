@@ -46,6 +46,14 @@ const STATUS_CLASS: Record<IntelligenceCenterStatus, string> = {
   unavailable: "border-[color-mix(in_srgb,var(--ixai-risk-critical)_32%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_8%,white)] text-[var(--ixai-forest)]",
 };
 
+const MARKET_STATUS_CLASS = {
+  disabled: "border-slate-200 bg-slate-50 text-slate-700",
+  mock: "border-[color-mix(in_srgb,var(--ixai-gold)_44%,transparent)] bg-[rgba(255,250,240,0.82)] text-[var(--ixai-forest)]",
+  placeholder: "border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] text-[var(--ixai-forest-soft)]",
+  ready: "border-[color-mix(in_srgb,var(--ixai-risk-clear)_34%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-clear)_10%,white)] text-[var(--ixai-forest)]",
+  unavailable: "border-[color-mix(in_srgb,var(--ixai-risk-critical)_32%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_8%,white)] text-[var(--ixai-forest)]",
+};
+
 function formatNumber(value: number | null | undefined) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return "--";
@@ -68,6 +76,20 @@ function StatusBadge({ status }: { status: IntelligenceCenterStatus }) {
       className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${STATUS_CLASS[status]}`}
     >
       {STATUS_LABEL[status]}
+    </span>
+  );
+}
+
+function MarketStatusBadge({
+  status,
+}: {
+  status: keyof typeof MARKET_STATUS_CLASS;
+}) {
+  return (
+    <span
+      className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${MARKET_STATUS_CLASS[status]}`}
+    >
+      {status.toUpperCase()}
     </span>
   );
 }
@@ -615,6 +637,95 @@ export function IntelligenceCenterWorkspace() {
               No upcoming FCN intelligence events are available from stored FCN timelines.
             </p>
           )}
+        </section>
+
+        <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+          <div className="flex items-center gap-3">
+            <FeatureIcon icon={BarChart3} shadow={false} />
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+                Market Readiness
+              </p>
+              <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
+                Provider registry and contract coverage
+              </h2>
+            </div>
+          </div>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            {readback.marketReadiness.summary}
+          </p>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              ["Providers", readback.marketReadiness.providerCount],
+              ["Quote Contracts", readback.marketReadiness.quoteProviderCount],
+              ["News Contracts", readback.marketReadiness.newsProviderCount],
+              ["Mock Providers", readback.marketReadiness.mockProviderCount],
+            ].map(([label, value]) => (
+              <article
+                className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+                key={label}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  {label}
+                </p>
+                <p className="mt-2 break-words font-mono text-2xl font-semibold text-[var(--ixai-forest)]">
+                  {formatNumber(Number(value))}
+                </p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            {readback.marketReadiness.providers.map((provider) => (
+              <article
+                className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+                key={provider.id}
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                      {provider.id}
+                    </p>
+                    <h3 className="mt-2 text-base font-semibold text-[var(--ixai-forest)]">
+                      {provider.label}
+                    </h3>
+                  </div>
+                  <MarketStatusBadge status={provider.status} />
+                </div>
+                <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                  {provider.description}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
+                    Quotes: {provider.supportsQuotes ? "Contract Ready" : "Not Ready"}
+                  </span>
+                  <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
+                    News: {provider.supportsNews ? "Contract Ready" : "Not Ready"}
+                  </span>
+                  <span className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
+                    Symbols: {formatNumber(provider.supportedSymbols.length)}
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+              Mock Contract Coverage
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {readback.marketReadiness.supportedSymbols.map((symbol) => (
+                <span
+                  className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]"
+                  key={symbol}
+                >
+                  {symbol}
+                </span>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="grid gap-5 lg:grid-cols-2">

@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.05 / Market Abstraction Layer`
+`v4.06 / Market Readiness UI`
 
 ## Current Priority
 
@@ -33,6 +33,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V403_RISK_INTELLIGENCE_LAYER.md` as the source of truth for Risk Center consumption of Truth Layer concentration, top exposure, FCN worst-of, and data quality readback.
 - Use `docs/V404_INTELLIGENCE_READBACK_LAYER.md` as the source of truth for Intelligence Center consumption of Portfolio Truth and Risk Intelligence summaries.
 - Use `docs/V405_MARKET_ABSTRACTION_LAYER.md` as the source of truth for market provider contracts, snapshots, news shapes, registry, and deterministic mock provider.
+- Use `docs/V406_MARKET_READINESS_UI.md` as the source of truth for Intelligence Center market provider registry readiness UI.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -57,6 +58,7 @@ Current priority is UX / IA foundation before moving modules:
 - v4.03 makes that Truth Layer useful inside Risk Center through concentration risk, top exposure aggregation, FCN worst-of summary, and data quality risk readback.
 - v4.04 makes Portfolio Truth and Risk Intelligence visible inside Intelligence Center through portfolio summary, risk snapshot, exposure summary, and readiness warnings.
 - v4.05 adds the Market Abstraction Layer provider contracts and mock provider foundation without connecting external APIs.
+- v4.06 makes Market Abstraction Layer registry readiness visible inside Intelligence Center without calling external providers.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -265,10 +267,11 @@ Suggested v4.00 sprint order:
 4. `v4.03` Risk Intelligence Layer.
 5. `v4.04` Intelligence Readback Layer.
 6. `v4.05` Market Abstraction Layer.
-7. `v4.06` Workspace Market Service.
-8. `v4.07` FCN Real Risk Integration.
-9. `v4.08` Intelligence Center V2.
-10. `v4.09` Integration QA / Release Hardening.
+7. `v4.06` Market Readiness UI.
+8. `v4.07` Workspace Market Service.
+9. `v4.08` FCN Real Risk Integration.
+10. `v4.09` Intelligence Center V2.
+11. `v4.10` Integration QA / Release Hardening.
 
 ### v4.01 — Portfolio Truth Layer
 
@@ -308,6 +311,13 @@ Suggested v4.00 sprint order:
 - Add deterministic `MockProvider` for contract validation only.
 - Keep existing public market utilities untouched.
 - Do not add Yahoo API, Binance API, CoinGecko API, broker integration, API keys, external news provider, external service, database change, schema change, migration, or API route.
+
+### v4.06 — Market Readiness UI
+
+- Reuse v4.05 Market Abstraction Layer inside `/my-ixai/intelligence`.
+- Add Market Readiness section showing provider registry status, quote/news contract coverage, mock provider count, and supported mock symbols.
+- Use only `MockProvider` and provider registry metadata.
+- Do not add Yahoo API, Binance API, broker integrations, external services, API routes, database changes, schema changes, or migrations.
 
 ### v3.32 — Settings and Preferences Foundation
 

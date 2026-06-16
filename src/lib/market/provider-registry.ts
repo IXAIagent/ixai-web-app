@@ -35,6 +35,9 @@ const mockQuoteData = {
     region: MarketRegion;
   }
 >;
+const MOCK_MARKET_SYMBOLS = Object.keys(mockQuoteData).sort((a, b) =>
+  a.localeCompare(b),
+);
 
 function normalizeSymbol(symbol: string) {
   return symbol.trim().toUpperCase();
@@ -147,10 +150,14 @@ export const MockProvider = mockMarketProvider;
 
 export const marketProviderRegistry = [
   {
+    description: mockMarketProvider.description,
     id: mockMarketProvider.id,
     label: mockMarketProvider.label,
     provider: mockMarketProvider,
     status: mockMarketProvider.status,
+    supportedSymbols: MOCK_MARKET_SYMBOLS,
+    supportsNews: mockMarketProvider.supportsNews,
+    supportsQuotes: mockMarketProvider.supportsQuotes,
   },
 ] satisfies MarketProviderRegistryEntry[];
 
@@ -162,9 +169,21 @@ export function getMarketProvider(providerId: MarketProviderId = MOCK_PROVIDER_I
 }
 
 export function listMarketProviders() {
-  return marketProviderRegistry.map(({ id, label, status }) => ({
+  return marketProviderRegistry.map(({
+    description,
     id,
     label,
     status,
+    supportedSymbols,
+    supportsNews,
+    supportsQuotes,
+  }) => ({
+    description,
+    id,
+    label,
+    status,
+    supportedSymbols,
+    supportsNews,
+    supportsQuotes,
   }));
 }
