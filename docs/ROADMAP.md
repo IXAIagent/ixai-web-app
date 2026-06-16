@@ -153,8 +153,10 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
   - v3.08 FCN Center Migration.
   - v3.09 FCN Position Foundation.
   - v3.10 FCN Risk Foundation.
-  - v3.11 Intelligence Center Migration.
-  - v3.12 Scheduler / Notification Review.
+- Historical note: the separate v3.11-v3.14 FCN follow-up plan was folded into
+  v3.20 FCN Intelligence Center. Post-v3.20 work now points toward v3.30
+  Global Risk Center, v3.31 Intelligence Center Migration, and v3.32 Settings
+  and Preferences Foundation.
 - No product code, schema, migration, API, auth, UI, broker, market data, external AI, or production behavior changes.
 
 ### v3.06 — Asset Input Completion
