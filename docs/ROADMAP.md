@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.09 / FCN Position Foundation`
+`v3.20 / FCN Intelligence Center`
 
 ## Current Priority
 
@@ -23,6 +23,8 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V306_ASSET_INPUT_COMPLETION.md` as the source of truth for Stock, Crypto, FCN, Review Summary, and Recent Inputs behavior.
 - Use `docs/V308_FCN_CENTER_DATA_WIRING.md` as the source of truth for the first local FCN Input → FCN Draft Store → FCN Center data flow.
 - Use `docs/V309_APP_CURRENT_STATE_AUDIT.md` and `docs/V309_FCN_POSITION_FOUNDATION.md` as the source of truth for the active-app FCN loop.
+- Use `docs/V310_FCN_RISK_FOUNDATION.md` as the source of truth for FCN Center KI-distance risk readback from persisted FCN positions.
+- Use `docs/V320_FCN_INTELLIGENCE_CENTER.md` as the source of truth for the integrated FCN lifecycle, manual price, timeline, Risk v2, and concentration workspace.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
@@ -33,6 +35,8 @@ Current priority is UX / IA foundation before moving modules:
 - `/my-ixai/portfolio` should be understandable as a Workspace homepage, not an engineering dashboard dump.
 - `/my-ixai/fcn` previously used a v3.08 local FCN Draft Store readback, but v3.09 promotes `/api/fcn` / Supabase readback as the active product source.
 - `/my-ixai/fcn` now reads existing Supabase-backed FCN positions from `/api/fcn`; do not reintroduce a separate permanent local draft source unless the product explicitly defines a draft-to-position lifecycle.
+- `/my-ixai/fcn` now adds v3.10 risk monitoring readback using stored current price only. Missing current price remains `UNKNOWN`; do not imply live market data.
+- `/my-ixai/fcn` is now the v3.20 FCN Intelligence Center. Manual price updates are local overlays only; do not claim Supabase persistence or live market data.
 - Legacy backend modules should be migrated by contract and rewrite, not copied wholesale.
 - Highest-priority legacy backend candidates are CSV import, risk alerts, FCN monitoring / schedules, portfolio-aware news relevance, and scheduler / notification review.
 - Public navigation and Workspace navigation must remain separate.
@@ -148,8 +152,9 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
   - v3.07 Risk Alerts Migration.
   - v3.08 FCN Center Migration.
   - v3.09 FCN Position Foundation.
-  - v3.10 Intelligence Center Migration.
-  - v3.10 Scheduler / Notification Review.
+  - v3.10 FCN Risk Foundation.
+  - v3.11 Intelligence Center Migration.
+  - v3.12 Scheduler / Notification Review.
 - No product code, schema, migration, API, auth, UI, broker, market data, external AI, or production behavior changes.
 
 ### v3.06 — Asset Input Completion
@@ -176,38 +181,50 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Display FCN count, notional, position cards, issuer, strike, KI, KO, underlyings, observation schedule, coupon dates, created date, and empty / unauthenticated states.
 - Do not add schema, migration, market data, broker sync, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, legacy frontend, or FastAPI backend changes.
 
-### v3.10 — Risk Center Decomposition
+### v3.10 — FCN Risk Foundation
 
-- Move concentration, correlation, scenario, and stress-test ownership out of Portfolio Center.
-- Keep existing engine logic unchanged.
-- Prefer route-level composition before rewriting dashboard components.
+- Add the first `/my-ixai/fcn` risk-monitoring layer on top of persisted FCN positions.
+- Display high-risk count, watch count, unknown-data count, underlying concentration, worst underlying, worst KI distance, and per-position risk status.
+- Calculate KI distance as `(current_price - ki_price) / ki_price * 100` using stored current price only.
+- Keep missing current price as `UNKNOWN`; do not add or imply live market data.
+- Do not add schema, migration, API route, broker sync, market data provider, AI provider, recommendation logic, trading logic, Daily / Weekly, Social Pack, public `/fcn`, or auth / membership changes.
 
-### v3.11 — Intelligence Center Migration
+### v3.20 — FCN Intelligence Center
+
+- Fold the separate v3.11 / v3.12 / v3.13 / v3.14 FCN follow-up plan into one integrated FCN upgrade.
+- Upgrade `/my-ixai/fcn` into a practical FCN management and risk workspace.
+- Add lifecycle readback and filters, manual local price overlay, timeline / event center, Risk Engine v2 scoring, and richer underlying concentration.
+- Preserve v3.09 `/api/fcn` / Supabase readback and v3.10 risk summary behavior.
+- Keep manual price updates local until a dedicated persistence path is approved.
+- Do not add schema, migration, external market data, broker sync, AI provider, recommendation logic, trading logic, public `/fcn`, Daily / Weekly, Social Pack, auth, or membership changes.
+
+### v3.30 — Global Risk Center Foundation
+
+- Connect FCN Center, Portfolio Center, and Risk Center through shared risk contracts.
+- Move broader concentration, correlation, scenario, and stress-test ownership into a user-facing Global Risk Center.
+- Keep monitoring / risk-awareness language; do not introduce trading instructions or personalized recommendations.
+
+### v3.31 — Intelligence Center Migration
 
 - Consolidate Daily Intelligence, Weekly Intelligence, watchlists, market news, AI commentary, and Social Pack distribution into one Intelligence Center.
 - Use Legacy Pro market/news/workspace ideas as reference only.
 - Do not reintroduce legacy JWT, localStorage token auth, or direct browser-to-FastAPI protected calls.
 
-### v3.12 — FCN Center Phase 2
-
-- Add edit/archive lifecycle, fuller Worst-of, KI / KO, observation calendar, coupon calendar, and FCN Risk Engine readback to the FCN Center.
-- Maintain global FCN readiness across US, TW, HK, CN, JP, KR, EU, SG, crypto-linked FCN, and future structured products.
-
-### v3.13 — Settings and Preferences Foundation
+### v3.32 — Settings and Preferences Foundation
 
 - Migrate Legacy Pro preference concepts into App-native account settings.
 - Cover language, region, notifications, delivery channels, default landing, compact mode, advanced intelligence preference, and risk interpretation mode.
 
-### v3.14 — Real Market Data Provider Foundation
+### v3.33 — Real Market Data Provider Foundation
 
 - Replace deterministic mock market snapshots behind the existing provider contract.
 - Add source, timestamp, stale-data, provider health, and failure semantics before using values in production risk readback.
 
-### v3.15 — Broker Adapter Security Foundation
+### v3.34 — Broker Adapter Security Foundation
 
 - Define read-only broker sync, consent, credential storage, audit log, refresh, revocation, rate limits, and partial-sync failure states.
 
-### v3.16 — Legacy Pro Decommission Plan
+### v3.35 — Legacy Pro Decommission Plan
 
 - Mark each Legacy Pro screen as replaced, migrated conceptually, retained as reference, or retired.
 - Preserve product ideas and discard unsafe legacy auth/data patterns.

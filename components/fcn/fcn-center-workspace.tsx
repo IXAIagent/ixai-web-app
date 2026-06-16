@@ -3,18 +3,37 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
+  Archive,
   ArrowRight,
   CalendarDays,
-  CircleDollarSign,
+  Gauge,
   Layers3,
   Loader2,
+  PencilLine,
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import {
+  buildFcnIntelligenceCenterReadback,
+  calculateUnderlyingRisk,
+  isVisibleForLifecycleFilter,
+  type FCNConcentrationItem,
+  type FCNIntelligenceRiskStatus,
+  type FCNLifecycleFilter,
+  type FCNLifecycleStatus,
+  type FCNManualPriceOverrides,
+  type FCNPositionRiskReadback,
+  type FCNTimelineEvent,
+} from "@/src/lib/fcn/intelligence-center";
+import {
+  FCN_MANUAL_PRICE_EVENT,
+  loadFcnManualPriceOverrides,
+  saveFcnManualPriceOverrides,
+} from "@/src/lib/fcn/manual-price-overrides";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
-import type { FCNPosition } from "@/src/types/fcn-position";
+import type { FCNPosition, FCNUnderlying } from "@/src/types/fcn-position";
 
 type FCNListResponse = {
   message?: string;
@@ -25,12 +44,88 @@ type FCNListResponse = {
 
 type LoadStatus = "error" | "loading" | "ready" | "unauthenticated";
 
+type FCNPriceUpdateRow = {
+  currentPrice: number | null;
+  distanceToKiPct: number | null;
+  fcnCount: number;
+  kiPrice: number | null;
+  missingPrice: boolean;
+  status: FCNIntelligenceRiskStatus;
+  symbol: string;
+};
+
 const STATUS_LABEL: Record<LoadStatus, string> = {
   error: "Readback Error",
   loading: "Loading",
   ready: "Enabled",
   unauthenticated: "Sign In Required",
 };
+
+const RISK_STATUS_LABEL: Record<FCNIntelligenceRiskStatus, string> = {
+  GREEN: "GREEN",
+  RED: "RED",
+  UNKNOWN: "UNKNOWN",
+  YELLOW: "YELLOW",
+};
+
+const RISK_STATUS_COPY: Record<FCNIntelligenceRiskStatus, string> = {
+  GREEN: "Worst KI distance is above 10%.",
+  RED: "At least one underlying is at or below KI.",
+  UNKNOWN: "Current price or KI input is missing.",
+  YELLOW: "Worst KI distance is within 10%.",
+};
+
+const RISK_STATUS_CLASS: Record<FCNIntelligenceRiskStatus, string> = {
+  GREEN: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  RED: "border-rose-200 bg-rose-50 text-rose-800",
+  UNKNOWN: "border-slate-200 bg-slate-50 text-slate-700",
+  YELLOW: "border-amber-200 bg-amber-50 text-amber-800",
+};
+
+const RISK_DOT_CLASS: Record<FCNIntelligenceRiskStatus, string> = {
+  GREEN: "bg-emerald-500",
+  RED: "bg-rose-500",
+  UNKNOWN: "bg-slate-400",
+  YELLOW: "bg-amber-500",
+};
+
+const LIFECYCLE_STATUS_LABEL: Record<FCNLifecycleStatus, string> = {
+  ACTIVE: "ACTIVE",
+  ARCHIVED: "ARCHIVED",
+  CALLED: "CALLED",
+  MATURED: "MATURED",
+  UNKNOWN: "UNKNOWN",
+};
+
+const LIFECYCLE_STATUS_CLASS: Record<FCNLifecycleStatus, string> = {
+  ACTIVE: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  ARCHIVED: "border-slate-200 bg-slate-50 text-slate-700",
+  CALLED: "border-sky-200 bg-sky-50 text-sky-800",
+  MATURED: "border-violet-200 bg-violet-50 text-violet-800",
+  UNKNOWN: "border-amber-200 bg-amber-50 text-amber-800",
+};
+
+const EVENT_TYPE_LABEL: Record<FCNTimelineEvent["eventType"], string> = {
+  coupon_observation: "Coupon Observation",
+  coupon_payment: "Coupon Payment",
+  ko_observation: "KO Observation",
+  maturity: "Maturity",
+};
+
+const EVENT_STATUS_LABEL: Record<FCNTimelineEvent["status"], string> = {
+  overdue: "Overdue",
+  today: "Today",
+  upcoming: "Upcoming",
+};
+
+const LIFECYCLE_FILTERS: Array<{ label: string; value: FCNLifecycleFilter }> = [
+  { label: "Active", value: "active" },
+  { label: "All", value: "all" },
+  { label: "Archived", value: "archived" },
+  { label: "Matured / Called", value: "closed" },
+];
+
+const MAX_TIMELINE_EVENTS = 10;
 
 function formatDate(value: string | null | undefined) {
   if (!value) {
@@ -69,25 +164,12 @@ function formatPercent(value: number | null | undefined) {
   return `${formatNumber(value, 2)}%`;
 }
 
-function buildTotalNotionalLabel(positions: FCNPosition[]) {
-  const totals = new Map<string, number>();
-
-  positions.forEach((position) => {
-    if (typeof position.notionalAmount !== "number" || !Number.isFinite(position.notionalAmount)) {
-      return;
-    }
-
-    totals.set(position.currency, (totals.get(position.currency) ?? 0) + position.notionalAmount);
-  });
-
-  if (totals.size === 0) {
-    return "未填";
+function formatSignedPercent(value: number | null | undefined) {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return "UNKNOWN";
   }
 
-  return Array.from(totals.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([currency, total]) => `${currency} ${formatNumber(total)}`)
-    .join(" / ");
+  return `${value >= 0 ? "+" : ""}${formatNumber(value, 2)}%`;
 }
 
 function getObservationFrequencyLabel(position: FCNPosition) {
@@ -104,39 +186,15 @@ function getObservationFrequencyLabel(position: FCNPosition) {
   return "未設定";
 }
 
-function getUpcomingCouponCount(positions: FCNPosition[]) {
-  const now = new Date();
-
-  return positions.reduce((count, position) => {
-    const futureCoupons = position.observationSchedule.filter((item) => {
-      if (!item.couponPaymentDate) {
-        return false;
-      }
-
-      const couponDate = new Date(item.couponPaymentDate);
-      return !Number.isNaN(couponDate.getTime()) && couponDate >= now;
-    });
-
-    return count + futureCoupons.length;
-  }, 0);
-}
-
-function getUniqueUnderlyingCount(positions: FCNPosition[]) {
-  const symbols = new Set<string>();
-
-  positions.forEach((position) => {
-    position.underlyings.forEach((underlying) => {
-      if (underlying.symbol) {
-        symbols.add(underlying.symbol);
-      }
-    });
-  });
-
-  return symbols.size;
-}
-
-function getUnderlyingExposure(positions: FCNPosition[]) {
-  const counts = new Map<string, number>();
+function getUniqueUnderlyingPriceRows(
+  positions: FCNPosition[],
+  manualPrices: FCNManualPriceOverrides,
+) {
+  const rows = new Map<
+    string,
+    FCNPriceUpdateRow
+  >();
+  const seenBySymbol = new Map<string, Set<string>>();
 
   positions.forEach((position) => {
     position.underlyings.forEach((underlying) => {
@@ -146,30 +204,53 @@ function getUnderlyingExposure(positions: FCNPosition[]) {
         return;
       }
 
-      counts.set(symbol, (counts.get(symbol) ?? 0) + 1);
+      const risk = calculateUnderlyingRisk(underlying, manualPrices);
+      const seenPositions = seenBySymbol.get(symbol) ?? new Set<string>();
+      const existing =
+        rows.get(symbol) ??
+        ({
+          currentPrice: risk.currentPrice,
+          distanceToKiPct: risk.distanceToKiPct,
+          fcnCount: 0,
+          kiPrice: underlying.kiPrice,
+          missingPrice: risk.missingCurrentPrice,
+          status: risk.status,
+          symbol,
+        } satisfies FCNPriceUpdateRow);
+
+      if (!seenPositions.has(position.id)) {
+        existing.fcnCount += 1;
+        seenPositions.add(position.id);
+        seenBySymbol.set(symbol, seenPositions);
+      }
+
+      if (
+        existing.distanceToKiPct === null ||
+        (risk.distanceToKiPct !== null && risk.distanceToKiPct < existing.distanceToKiPct)
+      ) {
+        existing.currentPrice = risk.currentPrice;
+        existing.distanceToKiPct = risk.distanceToKiPct;
+        existing.kiPrice = underlying.kiPrice;
+        existing.status = risk.status;
+      }
+
+      existing.missingPrice = existing.missingPrice || risk.missingCurrentPrice;
+      rows.set(symbol, existing);
     });
   });
 
-  return Array.from(counts.entries())
-    .map(([symbol, count]) => ({ count, symbol }))
-    .sort((a, b) => b.count - a.count || a.symbol.localeCompare(b.symbol));
+  return Array.from(rows.values()).toSorted(
+    (a, b) => b.fcnCount - a.fcnCount || a.symbol.localeCompare(b.symbol),
+  );
 }
 
-function getCouponSchedule(positions: FCNPosition[]) {
-  return positions
-    .flatMap((position) =>
-      position.observationSchedule.map((item, index) => ({
-        ...item,
-        fcnId: position.id,
-        fcnName: position.name,
-        index,
-      })),
-    )
-    .sort((a, b) => {
-      const aDate = a.observationEnd ?? a.observationStart ?? "";
-      const bDate = b.observationEnd ?? b.observationStart ?? "";
-      return aDate.localeCompare(bDate);
-    });
+function parseManualPrice(value: string) {
+  if (!value.trim()) {
+    return null;
+  }
+
+  const parsed = Number(value.replace(/,/g, "").trim());
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 }
 
 function MetricTile({
@@ -194,45 +275,93 @@ function MetricTile({
   );
 }
 
-function ScheduleCard({ item }: { item: ReturnType<typeof getCouponSchedule>[number] }) {
+function RiskBadge({ status }: { status: FCNIntelligenceRiskStatus }) {
   return (
-    <article className="rounded-xl border border-[var(--ixai-border)] bg-white/80 p-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+    <span
+      className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${RISK_STATUS_CLASS[status]}`}
+    >
+      <span className={`h-2 w-2 rounded-full ${RISK_DOT_CLASS[status]}`} />
+      {RISK_STATUS_LABEL[status]}
+    </span>
+  );
+}
+
+function LifecycleBadge({ status }: { status: FCNLifecycleStatus }) {
+  return (
+    <span
+      className={`inline-flex w-fit rounded-full border px-3 py-1 text-xs font-semibold ${LIFECYCLE_STATUS_CLASS[status]}`}
+    >
+      {LIFECYCLE_STATUS_LABEL[status]}
+    </span>
+  );
+}
+
+function UnderlyingRiskCard({
+  manualPrices,
+  underlying,
+}: {
+  manualPrices: FCNManualPriceOverrides;
+  underlying: FCNUnderlying;
+}) {
+  const underlyingRisk = calculateUnderlyingRisk(underlying, manualPrices);
+
+  return (
+    <article className="rounded-lg border border-[var(--ixai-border)] bg-white/74 p-3">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-            {item.periodLabel || `Observation ${item.index + 1}`}
+          <p className="break-words font-mono text-sm font-semibold text-[var(--ixai-forest)]">
+            {underlying.symbol}
           </p>
-          <h3 className="mt-2 text-base font-semibold text-[var(--ixai-forest)]">
-            {item.fcnName}
-          </h3>
+          <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+            {underlying.name || "Name 未填"} {underlying.market ? `· ${underlying.market}` : ""}
+          </p>
         </div>
-        <span className="inline-flex w-fit rounded-full border border-[rgba(176,141,87,0.34)] bg-[rgba(176,141,87,0.08)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ixai-forest)]">
-          {item.status || "scheduled"}
-        </span>
+        <RiskBadge status={underlyingRisk.status} />
       </div>
-      <dl className="mt-4 grid gap-2 sm:grid-cols-2">
-        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.68)] p-3">
-          <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Observation Date
-          </dt>
-          <dd className="mt-1 text-sm font-semibold text-[var(--ixai-forest)]">
-            {formatDate(item.observationEnd ?? item.observationStart)}
+      <dl className="mt-3 grid gap-2 text-xs text-[var(--ixai-forest-soft)]">
+        <div className="flex justify-between gap-3">
+          <dt>Initial</dt>
+          <dd className="font-semibold text-[var(--ixai-forest)]">
+            {formatNumber(underlying.initialPrice, 2)}
           </dd>
         </div>
-        <div className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.68)] p-3">
-          <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Coupon Date
-          </dt>
-          <dd className="mt-1 text-sm font-semibold text-[var(--ixai-forest)]">
-            {formatDate(item.couponPaymentDate)}
+        <div className="flex justify-between gap-3">
+          <dt>Current</dt>
+          <dd className="font-semibold text-[var(--ixai-forest)]">
+            {formatNumber(underlyingRisk.currentPrice, 2)}
+          </dd>
+        </div>
+        <div className="flex justify-between gap-3">
+          <dt>KI / KO</dt>
+          <dd className="font-semibold text-[var(--ixai-forest)]">
+            {formatNumber(underlying.kiPrice, 2)} / {formatNumber(underlying.koPrice, 2)}
+          </dd>
+        </div>
+        <div className="flex justify-between gap-3">
+          <dt>KI Distance</dt>
+          <dd className="font-semibold text-[var(--ixai-forest)]">
+            {formatSignedPercent(underlyingRisk.distanceToKiPct)}
           </dd>
         </div>
       </dl>
+      {underlyingRisk.missingCurrentPrice ? (
+        <p className="mt-3 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+          Missing stored current price. KI distance is unavailable until price is recorded.
+        </p>
+      ) : null}
     </article>
   );
 }
 
-function FcnPositionCard({ position }: { position: FCNPosition }) {
+function FcnPositionCard({
+  position,
+  risk,
+  manualPrices,
+}: {
+  manualPrices: FCNManualPriceOverrides;
+  position: FCNPosition;
+  risk: FCNPositionRiskReadback;
+}) {
   const schedulePreview = position.observationSchedule.slice(0, 3);
 
   return (
@@ -264,7 +393,11 @@ function FcnPositionCard({ position }: { position: FCNPosition }) {
           ["Coupon", formatPercent(position.couponRatePct)],
           ["Observation", getObservationFrequencyLabel(position)],
           ["Underlying Count", String(position.underlyings.length)],
-          ["Worst-of Status", position.worstOfSummary.status],
+          ["Lifecycle", LIFECYCLE_STATUS_LABEL[risk.lifecycleStatus]],
+          ["Risk Status", RISK_STATUS_LABEL[risk.riskStatus]],
+          ["Risk Score", risk.riskScore === null ? "UNKNOWN" : String(risk.riskScore)],
+          ["Worst Underlying", risk.worstUnderlying?.underlying.symbol ?? "UNKNOWN"],
+          ["Worst KI Distance", formatSignedPercent(risk.worstKiDistancePct)],
         ].map(([label, value]) => (
           <div
             className="min-w-0 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3"
@@ -280,6 +413,47 @@ function FcnPositionCard({ position }: { position: FCNPosition }) {
         ))}
       </dl>
 
+      <section className={`mt-5 rounded-xl border p-4 ${RISK_STATUS_CLASS[risk.riskStatus]}`}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
+              Position Risk Status
+            </p>
+            <p className="mt-2 text-sm font-semibold">{RISK_STATUS_COPY[risk.riskStatus]}</p>
+            <p className="mt-2 text-xs leading-5">
+              Worst underlying: {risk.worstUnderlying?.underlying.symbol ?? "UNKNOWN"} · Worst KI
+              distance: {formatSignedPercent(risk.worstKiDistancePct)} · Score:{" "}
+              {risk.riskScore === null ? "UNKNOWN" : risk.riskScore}
+            </p>
+            {risk.missingPriceCount > 0 ? (
+              <p className="mt-2 text-xs leading-5">
+                {risk.missingPriceCount} underlying
+                {risk.missingPriceCount > 1 ? "s are" : " is"} missing stored current price.
+              </p>
+            ) : null}
+            {risk.invalidDataCount > 0 ? (
+              <p className="mt-2 text-xs leading-5">
+                {risk.invalidDataCount} underlying
+                {risk.invalidDataCount > 1 ? "s have" : " has"} invalid initial or KI input.
+              </p>
+            ) : null}
+          </div>
+          <div className="flex flex-col items-start gap-2 sm:items-end">
+            <RiskBadge status={risk.riskStatus} />
+            <LifecycleBadge status={risk.lifecycleStatus} />
+            <button
+              className="inline-flex w-fit cursor-not-allowed items-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-1.5 text-xs font-semibold text-[var(--ixai-forest-soft)] opacity-70"
+              disabled
+              title="Lifecycle persistence requires a dedicated API QA task."
+              type="button"
+            >
+              <Archive className="h-3.5 w-3.5" aria-hidden="true" />
+              {risk.lifecycleStatus === "ARCHIVED" ? "Restore disabled" : "Archive disabled"}
+            </button>
+          </div>
+        </div>
+      </section>
+
       <section className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.56)] p-4">
         <div className="flex items-center gap-2">
           <FeatureIcon icon={Layers3} size="sm" shadow={false} />
@@ -288,37 +462,11 @@ function FcnPositionCard({ position }: { position: FCNPosition }) {
         {position.underlyings.length > 0 ? (
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {position.underlyings.map((underlying) => (
-              <article
-                className="rounded-lg border border-[var(--ixai-border)] bg-white/74 p-3"
+              <UnderlyingRiskCard
                 key={underlying.id}
-              >
-                <p className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
-                  {underlying.symbol}
-                </p>
-                <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                  {underlying.name || "Name 未填"} {underlying.market ? `· ${underlying.market}` : ""}
-                </p>
-                <dl className="mt-3 grid gap-2 text-xs text-[var(--ixai-forest-soft)]">
-                  <div className="flex justify-between gap-3">
-                    <dt>Initial</dt>
-                    <dd className="font-semibold text-[var(--ixai-forest)]">
-                      {formatNumber(underlying.initialPrice, 2)}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt>Current</dt>
-                    <dd className="font-semibold text-[var(--ixai-forest)]">
-                      {formatNumber(underlying.currentPrice, 2)}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt>KI / KO</dt>
-                    <dd className="font-semibold text-[var(--ixai-forest)]">
-                      {formatNumber(underlying.kiPrice, 2)} / {formatNumber(underlying.koPrice, 2)}
-                    </dd>
-                  </div>
-                </dl>
-              </article>
+                manualPrices={manualPrices}
+                underlying={underlying}
+              />
             ))}
           </div>
         ) : (
@@ -360,7 +508,291 @@ function FcnPositionCard({ position }: { position: FCNPosition }) {
   );
 }
 
+function LifecyclePanel({
+  activeFilter,
+  onFilterChange,
+  summary,
+}: {
+  activeFilter: FCNLifecycleFilter;
+  onFilterChange: (filter: FCNLifecycleFilter) => void;
+  summary: {
+    activeCount: number;
+    archivedCount: number;
+    calledCount: number;
+    maturedCount: number;
+    unknownStatusCount: number;
+  };
+}) {
+  return (
+    <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Lifecycle
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+            FCN Lifecycle Status
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            Default view shows ACTIVE and UNKNOWN FCNs. Archive / restore persistence is disabled
+            until a dedicated lifecycle QA task approves the existing API path.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {LIFECYCLE_FILTERS.map((filter) => (
+            <button
+              className={`min-h-10 rounded-lg border px-3 py-2 text-sm font-semibold ${
+                activeFilter === filter.value
+                  ? "border-[var(--ixai-forest)] bg-[var(--ixai-forest)] text-[var(--ixai-cream)]"
+                  : "border-[var(--ixai-border)] bg-white text-[var(--ixai-forest)]"
+              }`}
+              key={filter.value}
+              onClick={() => onFilterChange(filter.value)}
+              type="button"
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {[
+          ["Active", summary.activeCount],
+          ["Archived", summary.archivedCount],
+          ["Matured", summary.maturedCount],
+          ["Called", summary.calledCount],
+          ["Unknown", summary.unknownStatusCount],
+        ].map(([label, value]) => (
+          <div
+            className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+            key={label}
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+              {label}
+            </p>
+            <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-forest)]">
+              {value}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PriceUpdatePanel({
+  manualPrices,
+  onPriceChange,
+  priceInputs,
+  rows,
+}: {
+  manualPrices: FCNManualPriceOverrides;
+  onPriceChange: (symbol: string, value: string) => void;
+  priceInputs: Record<string, string>;
+  rows: FCNPriceUpdateRow[];
+}) {
+  return (
+    <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+      <div className="flex items-center gap-3">
+        <FeatureIcon icon={PencilLine} shadow={false} />
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Price Update
+          </p>
+          <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
+            Manual Current Price Overlay
+          </h2>
+        </div>
+      </div>
+      <p className="mt-3 max-w-4xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+        手動價格只儲存在本機瀏覽器 localStorage，用於立即重算本頁 KI distance 與風險狀態。
+        這不是 live market data，也不會寫入 Supabase。
+      </p>
+      {rows.length > 0 ? (
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
+          {rows.map((row) => (
+            <article
+              className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+              key={row.symbol}
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">
+                    {row.symbol}
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                    {row.fcnCount} FCN exposure{row.fcnCount > 1 ? "s" : ""} · KI{" "}
+                    {formatNumber(row.kiPrice, 2)}
+                  </p>
+                </div>
+                <RiskBadge status={row.status} />
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+                <label className="block">
+                  <span className="text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                    Current Price
+                  </span>
+                  <input
+                    className="mt-1 min-h-11 w-full rounded-lg border border-[var(--ixai-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] outline-none focus:border-[var(--ixai-gold)]"
+                    inputMode="decimal"
+                    onChange={(event) => onPriceChange(row.symbol, event.target.value)}
+                    placeholder={row.currentPrice === null ? "Missing price" : String(row.currentPrice)}
+                    value={priceInputs[row.symbol] ?? ""}
+                  />
+                </label>
+                <button
+                  className="min-h-11 rounded-lg border border-[var(--ixai-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)]"
+                  onClick={() => onPriceChange(row.symbol, "")}
+                  type="button"
+                >
+                  Clear
+                </button>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                Current: {formatNumber(row.currentPrice, 2)} · KI Distance:{" "}
+                {formatSignedPercent(row.distanceToKiPct)}
+                {manualPrices[row.symbol] !== undefined ? " · Local override active" : ""}
+              </p>
+              {row.missingPrice ? (
+                <p className="mt-2 text-xs font-semibold text-amber-700">
+                  Missing stored current price. Add a manual price to calculate risk locally.
+                </p>
+              ) : null}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          目前沒有可更新的 FCN underlyings。
+        </p>
+      )}
+    </section>
+  );
+}
+
+function TimelinePanel({ events }: { events: FCNTimelineEvent[] }) {
+  const visibleEvents = events.filter((event) => event.status !== "overdue").slice(0, MAX_TIMELINE_EVENTS);
+  const overdueCount = events.filter((event) => event.status === "overdue").length;
+
+  return (
+    <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+      <div className="flex items-center gap-3">
+        <FeatureIcon icon={CalendarDays} shadow={false} />
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Timeline / Event Center
+          </p>
+          <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
+            Upcoming FCN Events
+          </h2>
+        </div>
+      </div>
+      {overdueCount > 0 ? (
+        <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-semibold text-amber-800">
+          {overdueCount} stored event{overdueCount > 1 ? "s are" : " is"} overdue and should be
+          reviewed for lifecycle cleanup.
+        </p>
+      ) : null}
+      {visibleEvents.length > 0 ? (
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
+          {visibleEvents.map((event) => (
+            <article
+              className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+              key={`${event.fcnId}-${event.eventType}-${event.date}-${event.note}`}
+            >
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                    {EVENT_TYPE_LABEL[event.eventType]}
+                  </p>
+                  <h3 className="mt-2 text-base font-semibold text-[var(--ixai-forest)]">
+                    {event.fcnName}
+                  </h3>
+                </div>
+                <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
+                  {EVENT_STATUS_LABEL[event.status]}
+                </span>
+              </div>
+              <p className="mt-3 text-sm font-semibold text-[var(--ixai-forest)]">
+                {formatDate(event.date)}
+              </p>
+              <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                {event.note}
+              </p>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          目前沒有 upcoming observation、coupon payment、KO observation 或 maturity events。
+        </p>
+      )}
+    </section>
+  );
+}
+
+function ConcentrationPanel({ items }: { items: FCNConcentrationItem[] }) {
+  return (
+    <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+      <div className="flex items-center gap-3">
+        <FeatureIcon icon={Gauge} shadow={false} />
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Underlying Concentration
+          </p>
+          <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
+            標的集中度
+          </h2>
+        </div>
+      </div>
+      {items.length > 0 ? (
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <article
+              className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+              key={item.symbol}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-mono text-lg font-semibold text-[var(--ixai-forest)]">
+                    {item.symbol}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                    {item.symbol} × {item.fcnCount}
+                  </p>
+                </div>
+                <RiskBadge status={item.riskStatus} />
+              </div>
+              <dl className="mt-4 grid gap-2 text-xs text-[var(--ixai-forest-soft)]">
+                <div className="flex justify-between gap-3">
+                  <dt>Total Notional</dt>
+                  <dd className="font-semibold text-[var(--ixai-forest)]">
+                    {formatNumber(item.totalNotional)}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt>Missing Price</dt>
+                  <dd className="font-semibold text-[var(--ixai-forest)]">
+                    {item.missingPrice ? "Yes" : "No"}
+                  </dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          目前 FCN 尚未儲存 underlyings。
+        </p>
+      )}
+    </section>
+  );
+}
+
 export function FCNCenterWorkspace() {
+  const [lifecycleFilter, setLifecycleFilter] = useState<FCNLifecycleFilter>("active");
+  const [manualPrices, setManualPrices] = useState<FCNManualPriceOverrides>({});
+  const [priceInputs, setPriceInputs] = useState<Record<string, string>>({});
   const [positions, setPositions] = useState<FCNPosition[]>([]);
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [message, setMessage] = useState<string | null>(null);
@@ -406,13 +838,63 @@ export function FCNCenterWorkspace() {
     });
   }, [loadPositions]);
 
-  const totalNotional = useMemo(() => buildTotalNotionalLabel(positions), [positions]);
-  const upcomingCouponCount = useMemo(() => getUpcomingCouponCount(positions), [positions]);
-  const uniqueUnderlyingCount = useMemo(() => getUniqueUnderlyingCount(positions), [positions]);
-  const underlyingExposure = useMemo(() => getUnderlyingExposure(positions), [positions]);
-  const couponSchedule = useMemo(() => getCouponSchedule(positions), [positions]);
+  useEffect(() => {
+    const loadManualPrices = () => {
+      const stored = loadFcnManualPriceOverrides();
+      setManualPrices(stored);
+      setPriceInputs(
+        Object.fromEntries(
+          Object.entries(stored).map(([symbol, value]) => [symbol, String(value)]),
+        ),
+      );
+    };
+
+    loadManualPrices();
+    window.addEventListener(FCN_MANUAL_PRICE_EVENT, loadManualPrices);
+
+    return () => {
+      window.removeEventListener(FCN_MANUAL_PRICE_EVENT, loadManualPrices);
+    };
+  }, []);
+
+  const intelligence = useMemo(
+    () => buildFcnIntelligenceCenterReadback(positions, manualPrices),
+    [manualPrices, positions],
+  );
+  const priceRows = useMemo(
+    () => getUniqueUnderlyingPriceRows(positions, manualPrices),
+    [manualPrices, positions],
+  );
+  const visiblePositions = useMemo(
+    () =>
+      positions.filter((position) => {
+        const positionRisk = intelligence.positionRisks.get(position.id);
+        return isVisibleForLifecycleFilter(positionRisk?.lifecycleStatus ?? "UNKNOWN", lifecycleFilter);
+      }),
+    [intelligence.positionRisks, lifecycleFilter, positions],
+  );
 
   const showEmptyState = status === "ready" && positions.length === 0;
+
+  function handleManualPriceChange(symbol: string, value: string) {
+    const normalizedSymbol = symbol.trim().toUpperCase();
+    setPriceInputs((current) => ({
+      ...current,
+      [normalizedSymbol]: value,
+    }));
+
+    const parsed = parseManualPrice(value);
+    const nextPrices = { ...manualPrices };
+
+    if (parsed === null) {
+      delete nextPrices[normalizedSymbol];
+    } else {
+      nextPrices[normalizedSymbol] = parsed;
+    }
+
+    setManualPrices(nextPrices);
+    saveFcnManualPriceOverrides(nextPrices);
+  }
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -421,24 +903,48 @@ export function FCNCenterWorkspace() {
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start">
             <div className="min-w-0">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
-                FCN Center
+                v3.20 FCN Intelligence Center
               </p>
               <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-5xl">
-                FCN Position Foundation
+                FCN Management and Risk Workspace
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/74 sm:text-base sm:leading-8">
                 從現有 FCN Wizard 與 Supabase persistence 讀取 FCN positions、
-                underlyings、barrier terms 與 observation schedule，建立第一條 Input → FCN Center readback。
+                underlyings、barrier terms 與 observation schedule，加入 lifecycle、manual price
+                overlay、timeline、concentration 與 Risk Engine v2 readback。
               </p>
             </div>
             <FeatureIcon icon={ShieldCheck} shadow={false} tone="cream" />
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricTile label="FCN Count" value={String(positions.length)} />
-            <MetricTile label="Total Notional" value={totalNotional} />
-            <MetricTile label="Upcoming Coupons" value={String(upcomingCouponCount)} />
-            <MetricTile label="Unique Underlyings" value={String(uniqueUnderlyingCount)} />
+            <MetricTile label="Total FCNs" value={String(intelligence.summary.totalCount)} />
+            <MetricTile label="Total Notional" value={intelligence.summary.totalNotionalLabel} />
+            <MetricTile
+              label="High Risk Positions"
+              note="Underlying at or below KI."
+              value={String(intelligence.summary.highRiskCount)}
+            />
+            <MetricTile
+              label="Watch Positions"
+              note="Worst KI distance within 10%."
+              value={String(intelligence.summary.watchCount)}
+            />
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            <MetricTile
+              label="Unknown Risk Data"
+              note="Missing current price or invalid KI input."
+              value={String(intelligence.summary.unknownRiskCount)}
+            />
+            <MetricTile
+              label="Upcoming Events"
+              value={String(intelligence.summary.upcomingEventsCount)}
+            />
+            <MetricTile
+              label="Unique Underlyings"
+              value={String(intelligence.summary.uniqueUnderlyingCount)}
+            />
           </div>
         </section>
 
@@ -449,11 +955,12 @@ export function FCNCenterWorkspace() {
                 Data Path
               </p>
               <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                FCN Wizard → API → Supabase → FCN Center
+                FCN Wizard → API → Supabase → FCN Intelligence Center
               </h2>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
                 本頁使用現有 `/api/fcn` 與 authenticated Supabase session，不新增 migration、
-                market data、AI provider、broker sync 或 localStorage draft store。
+                market data、AI provider、broker sync 或 schema。Manual price overlay 只存於本機，
+                用於本頁即時計算。
               </p>
             </div>
             <button
@@ -476,6 +983,9 @@ export function FCNCenterWorkspace() {
               ["Readback Status", STATUS_LABEL[status]],
               ["Repository Source", "Supabase /api/fcn"],
               ["Persistence", "fcn_positions + fcn_underlyings"],
+              ["Manual Prices", "localStorage overlay"],
+              ["Risk Engine", "FCN Risk v2"],
+              ["External Providers", "None"],
             ].map(([label, value]) => (
               <div
                 className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -553,77 +1063,71 @@ export function FCNCenterWorkspace() {
 
         {positions.length > 0 ? (
           <>
-            <section className="grid gap-4">{positions.map((position) => (
-              <FcnPositionCard key={position.id} position={position} />
-            ))}</section>
+            <LifecyclePanel
+              activeFilter={lifecycleFilter}
+              onFilterChange={setLifecycleFilter}
+              summary={intelligence.summary}
+            />
+
+            <PriceUpdatePanel
+              manualPrices={manualPrices}
+              onPriceChange={handleManualPriceChange}
+              priceInputs={priceInputs}
+              rows={priceRows}
+            />
 
             <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
-              <div className="flex items-center gap-3">
-                <FeatureIcon icon={CircleDollarSign} shadow={false} />
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                    Underlying Exposure
+                    Positions
                   </p>
-                  <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-                    標的出現次數
+                  <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+                    FCN Position Risk Readback
                   </h2>
+                  <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                    Showing {visiblePositions.length} position
+                    {visiblePositions.length === 1 ? "" : "s"} for the selected lifecycle filter.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                  Lifecycle actions are read-only in v3.20. Archive / restore is disabled until
+                  persistence QA is approved.
                 </div>
               </div>
-              {underlyingExposure.length > 0 ? (
-                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {underlyingExposure.map((item) => (
-                    <article
-                      className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
-                      key={item.symbol}
-                    >
-                      <p className="font-mono text-lg font-semibold text-[var(--ixai-forest)]">
-                        {item.symbol}
-                      </p>
-                      <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                        {item.count} position{item.count > 1 ? "s" : ""}
-                      </p>
-                    </article>
-                  ))}
+              {visiblePositions.length > 0 ? (
+                <div className="mt-5 grid gap-4">
+                  {visiblePositions.map((position) => {
+                    const risk = intelligence.positionRisks.get(position.id);
+
+                    if (!risk) {
+                      return null;
+                    }
+
+                    return (
+                      <FcnPositionCard
+                        key={position.id}
+                        manualPrices={manualPrices}
+                        position={position}
+                        risk={risk}
+                      />
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                  目前 FCN 尚未儲存 underlyings。
+                  目前沒有符合此 lifecycle filter 的 FCN。
                 </p>
               )}
             </section>
 
-            <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
-              <div className="flex items-center gap-3">
-                <FeatureIcon icon={CalendarDays} shadow={false} />
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                    Coupon Calendar
-                  </p>
-                  <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-                    Observation / Coupon Readback
-                  </h2>
-                </div>
-              </div>
-              {couponSchedule.length > 0 ? (
-                <div className="mt-5 grid gap-3 lg:grid-cols-2">
-                  {couponSchedule.map((item) => (
-                    <ScheduleCard
-                      item={item}
-                      key={`${item.fcnId}-${item.observationEnd ?? item.observationStart ?? item.index}`}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                  目前沒有 observation / coupon schedule。
-                </p>
-              )}
-            </section>
+            <TimelinePanel events={intelligence.timeline} />
+            <ConcentrationPanel items={intelligence.concentration} />
           </>
         ) : null}
 
         <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-          本頁僅用於 FCN 部位 readback、條件整理與風險監控資料準備。不接外部行情、不接 AI、不接券商、
+          本頁僅用於 FCN 部位 readback、生命週期整理、手動價格覆蓋、事件檢視與風險監控。不接外部行情、不接 AI、不接券商、
           不提供投資建議、產品推薦、買賣建議、目標價、報酬承諾或自動交易。
         </p>
       </section>
