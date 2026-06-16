@@ -43,14 +43,14 @@ Main branch state during this audit:
 
 - `/market`: public Market Overview with quote / market intelligence components and provider-status copy.
 - `/my-ixai/home`: Workspace landing placeholder / directory.
-- `/my-ixai/portfolio`: user-readable Portfolio Workspace homepage, but core overview cards still show foundation / placeholder values.
+- `/my-ixai/portfolio`: user-readable Portfolio Workspace homepage. v4.01 adds shared Portfolio Truth readback so overview counts can reflect existing FCN / Stock / Crypto records instead of static placeholders.
 - `/my-ixai/input`: canonical Asset Input Center.
 - `/my-ixai/input/fcn`: FCN Wizard and active FCN data-entry surface.
 - `/my-ixai/input/stock`: Stock / ETF input surface, still mostly input/readiness.
 - `/my-ixai/input/crypto`: Crypto input surface, still mostly input/readiness.
 - `/my-ixai/fcn`: FCN Intelligence Center with Supabase `/api/fcn` readback, lifecycle, manual local price overlay, timeline, risk scoring, and concentration.
-- `/my-ixai/risk`: Global Risk Center foundation using FCN v3.20 helper output plus Stock / Crypto / Grid / Dual readiness.
-- `/my-ixai/intelligence`: placeholder on current main. A v3.40 branch exists conceptually, but `docs/V340_INTELLIGENCE_CENTER_V1.md` is not present on main during this audit.
+- `/my-ixai/risk`: Global Risk Center foundation using FCN v3.20 helper output plus Stock / Crypto / Grid / Dual readiness. v4.01 adds Portfolio Truth source status and holdings counts.
+- `/my-ixai/intelligence`: Intelligence Center v1 with Daily / Weekly / Market entries, FCN highlights, portfolio-aware readiness, news readiness, commentary readiness, and v4.01 Portfolio Truth source status.
 - `/my-ixai/settings`: placeholder.
 
 ## 4. Current Route / Center Map
@@ -451,7 +451,41 @@ Out of scope:
 
 - schema/migration, broker sync, live market data.
 
-### v4.02 — Workspace Market Service
+v4.01 implementation note:
+
+- `src/lib/portfolio/truth/*` now provides the shared readback contract.
+- Portfolio Center, Risk Center, and Intelligence Center consume the same Portfolio Truth Layer.
+- Existing FCN / Stock / Crypto / Portfolio Dashboard APIs are reused; no new API route, schema, migration, provider, AI, broker, or trading behavior is added.
+
+### v4.02 — Portfolio Intelligence UI
+
+Goal:
+
+- Turn the v4.01 Portfolio Truth Layer into visible Portfolio Center intelligence.
+
+Likely files:
+
+- `components/portfolio/portfolio-truth-summary.tsx`
+- `src/lib/portfolio/truth/*`
+- `docs/V402_PORTFOLIO_INTELLIGENCE_UI.md`
+
+Data sources:
+
+- Portfolio Truth Layer only.
+- Existing `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` through that layer.
+
+Validation:
+
+- `git diff --check`
+- `npm run lint`
+- `npm run build`
+- route smoke `/my-ixai/portfolio`.
+
+Out of scope:
+
+- AI, external market data, news provider, broker sync, recommendations, schema/migration, and trading logic.
+
+### v4.03 — Workspace Market Service
 
 Goal:
 
@@ -477,7 +511,7 @@ Out of scope:
 
 - new providers, provider credentials, broker data.
 
-### v4.03 — FCN Real Risk Integration
+### v4.04 — FCN Real Risk Integration
 
 Goal:
 
@@ -504,7 +538,7 @@ Out of scope:
 
 - live-market claims, persisted price update, alert push.
 
-### v4.04 — Intelligence Center V2
+### v4.05 — Intelligence Center V2
 
 Goal:
 
@@ -532,7 +566,7 @@ Out of scope:
 
 - external AI/news provider, personalized advice.
 
-### v4.05 — Integration QA / Release Hardening
+### v4.06 — Integration QA / Release Hardening
 
 Goal:
 

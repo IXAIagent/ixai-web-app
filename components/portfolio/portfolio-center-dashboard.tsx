@@ -12,6 +12,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 
+import { WorkspaceMarketStatus } from "@/components/market/workspace-market-status";
 import { PortfolioArchitectureMap } from "@/components/portfolio/portfolio-architecture-map";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import type { AssetCategory } from "@/src/lib/portfolio/assets";
@@ -756,6 +757,8 @@ export function PortfolioCenterDashboard() {
       </section>
 
       <PortfolioArchitectureMap />
+
+      <WorkspaceMarketStatus contextLabel="Portfolio Center" />
 
       <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

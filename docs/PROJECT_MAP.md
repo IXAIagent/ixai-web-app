@@ -69,6 +69,15 @@ Production data ownership update:
 - v3.30 turns `/my-ixai/risk` from placeholder into the first Global Risk Center foundation. It reuses v3.20 FCN Intelligence Center helpers, reads existing FCN / Stock / Crypto API paths for readiness, derives Grid / Dual readiness, lists upcoming FCN risk events, and reports data source status without adding live market data, broker sync, AI, schema changes, or trading logic.
 - v3.40 turns `/my-ixai/intelligence` from placeholder into the first usable Intelligence Center. It links Daily / Weekly / Market public sources, reuses FCN v3.20 highlights, reads existing FCN / Stock / Crypto / Portfolio Dashboard APIs for readiness, and labels News / Commentary as readiness without adding external AI, external news, broker sync, market data providers, schema changes, or trading logic.
 - v4.00 plans the Intelligence + Market Integration Program. It is not another page; it is the integration layer between Public Market, Portfolio Center, FCN Center, Global Risk Center, and Intelligence Center. The program should add a Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA in small sprints without rebuilding existing systems.
+- v4.01 adds the Portfolio Truth Layer as the first shared readback layer across `/my-ixai/portfolio`, `/my-ixai/risk`, and `/my-ixai/intelligence`. It normalizes existing FCN / Stock / Crypto / Portfolio Dashboard API data into counts, known notional, source status, missing-data warnings, and available symbols without adding schema, migration, providers, AI, broker sync, or trading logic.
+- v4.02 adds Portfolio Intelligence UI inside `/my-ixai/portfolio`. It visualizes the v4.01 Truth Layer with counts-based allocation, holdings summary, top symbol occurrence, source health, and missing-data warnings without adding schema, migration, providers, AI, broker sync, recommendation logic, or trading behavior.
+- v4.03 adds Risk Intelligence Layer inside `/my-ixai/risk`. It extends the v4.01 Truth Layer with concentration and data-quality risk summaries, then reuses v3.20 FCN helper output for FCN worst-of readback without adding market data, AI, broker sync, recommendations, or trading behavior.
+- v4.04 adds Intelligence Readback Layer inside `/my-ixai/intelligence`. It reuses Portfolio Truth and Risk Intelligence readback for portfolio summary, risk snapshot, exposure summary, and readiness warnings without adding AI commentary, LLM integration, news provider, market data, broker sync, recommendations, or trading behavior.
+- v4.05 adds `src/lib/market/` as the Market Abstraction Layer. It defines provider-agnostic quote, snapshot, news, provider, registry, and market center contracts with a deterministic MockProvider only.
+- v4.06 adds Market Readiness UI inside `/my-ixai/intelligence`. It displays provider registry status, contract coverage, and supported mock symbols from v4.05 metadata only.
+- v4.07 adds Provider Health Framework under `src/lib/market/`. It defines provider status, data freshness, provider priority, health summary, and fallback policy contracts with deterministic mock health data only.
+- v4.08 adds Market Service Layer under `src/lib/market/market-service.ts`. It exposes unified quote, snapshot, news, provider-health, and readiness entrypoints and surfaces service-status readback inside Intelligence Center without connecting external providers.
+- v4.09 adds Workspace Market Integration by reusing the Market Service Layer in Portfolio Center, Risk Center, and Intelligence Center as read-only readiness, provider health, and fallback policy awareness.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -78,6 +87,7 @@ Current architecture:
 - Next.js App Router.
 - Supabase / Next API routes / editorial static and dynamic intelligence.
 - Public Intelligence, Account Intelligence, Social Intelligence, Daily / Weekly engines, and admin workflows.
+- Market Abstraction Layer under `src/lib/market/` for future Workspace market provider contracts. v4.05 contract layer is mock-only, v4.06 surfaces registry readiness, v4.07 adds provider health / fallback policy contracts, v4.08 adds unified market service entrypoints, and v4.09 surfaces those entrypoints across Portfolio, Risk, and Intelligence without connecting external providers.
 - Multi-Asset Portfolio architecture:
 
 ```text
@@ -167,9 +177,15 @@ v4.00 integration direction:
 ```text
 Public Market
 ↓
+Market Service Layer
+↓
 Workspace Market Service
 ↓
+Portfolio / Risk / Intelligence market readiness
+↓
 Portfolio Truth Layer
+↓
+Portfolio / Risk / Intelligence shared readback
 ↓
 FCN Intelligence Center
 ↓
@@ -199,9 +215,9 @@ v2.11 center ownership rule:
   - `/my-ixai/input/crypto`: Usable Crypto input form with local preview.
   - `/my-ixai/input/fcn`: FCN Wizard route and canonical FCN data-entry surface with Basic, Barrier, Observation, Dates, Underlyings, and Review.
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
-  - `/my-ixai/risk`: Global Risk Center foundation with FCN risk summary, multi-asset readiness, upcoming FCN events, data source status, and deterministic Foundation Score.
+  - `/my-ixai/risk`: Global Risk Center foundation with FCN risk summary, multi-asset readiness, upcoming FCN events, data source status, deterministic Foundation Score, and v4.03 Risk Intelligence Layer readback.
   - `/my-ixai/fcn`: FCN Intelligence Center for persisted FCN positions, lifecycle readback, manual local price overlay, KI-distance risk scoring, timeline events, concentration, observation schedule, and coupon dates.
-  - `/my-ixai/intelligence`: Intelligence Center v1 with Daily / Weekly / Market entries, FCN highlights, portfolio-aware readiness, news readiness, commentary readiness, source status, and compliance footer.
+  - `/my-ixai/intelligence`: Intelligence Center with Daily / Weekly / Market entries, FCN highlights, Portfolio Truth summary, Risk Intelligence snapshot, exposure summary, Market Readiness UI, readiness warnings, news readiness, commentary readiness, source status, and compliance footer.
   - `/my-ixai/settings`: Settings placeholder.
 
 - Navigation split:

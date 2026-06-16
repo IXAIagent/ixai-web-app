@@ -208,6 +208,8 @@ Intelligence
 
 This means IXAI needs a Portfolio Truth Layer, a Workspace Market Service, FCN real-risk source semantics, and an Intelligence Center that aggregates rather than invents. Market data, news, and commentary must always carry source and readiness labels before being used in personal workflow surfaces.
 
+v4.01 establishes the first Portfolio Truth Layer. Portfolio Center, Global Risk Center, and Intelligence Center now share one normalized readback for FCN, Stock, Crypto, known notional, source status, missing-data warnings, and available symbols. This makes the Workspace feel more coherent without adding new providers, AI, broker sync, schema changes, trading logic, or recommendation behavior.
+
 This layer must remain monitoring and risk-awareness oriented. It is not a place for investment advice, trading instructions, performance promises, or automated execution.
 
 This does not turn IXAI into a signal-selling product. Pro membership should represent deeper risk workflow, portfolio organization, FCN monitoring, and intelligence continuity. SaaS monetization should use membership, entitlement, and feature gating rather than trading calls, price prediction products, performance promises, or automated execution.

@@ -53,7 +53,7 @@ What Changed:
 - Audited current route / center readiness across Market, Workspace Home, Portfolio Center, Asset Input, FCN Center, Risk Center, Intelligence Center, and Settings.
 - Audited available data sources for FCN, Stock, Crypto, Portfolio Dashboard, Portfolio Repository, public Market, news, Daily / Weekly, manual price overlays, and mock portfolio engines.
 - Proposed Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA.
-- Recorded a v4.00 sprint plan: v4.00a Architecture Audit, v4.01 Portfolio Truth Layer, v4.02 Workspace Market Service, v4.03 FCN Real Risk Integration, v4.04 Intelligence Center V2, and v4.05 Integration QA.
+- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Market Readiness UI, v4.07 Provider Health Framework, v4.08 Market Service Layer, v4.09 Workspace Market Integration, v4.10 FCN Real Risk Integration, v4.11 Intelligence Center V2, and v4.12 Integration QA.
 
 Key Decisions:
 
@@ -68,10 +68,333 @@ Out of Scope:
 Next:
 
 - v4.01 Portfolio Truth Layer.
-- v4.02 Workspace Market Service.
-- v4.03 FCN Real Risk Integration.
-- v4.04 Intelligence Center V2.
-- v4.05 Integration QA.
+- v4.02 Portfolio Intelligence UI.
+- v4.03 Risk Intelligence Layer.
+- v4.04 Intelligence Readback Layer.
+- v4.05 Market Abstraction Layer.
+- v4.06 Market Readiness UI.
+- v4.07 Provider Health Framework.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.01 — Portfolio Truth Layer
+
+Why:
+
+- Portfolio Center, Risk Center, and Intelligence Center were reading related holdings data through separate paths.
+- Portfolio Center could still show placeholder / zero counts while FCN / Stock / Crypto records existed elsewhere.
+
+What Changed:
+
+- Added `docs/V401_PORTFOLIO_TRUTH_LAYER.md`.
+- Added a shared Portfolio Truth Layer under `src/lib/portfolio/truth/`.
+- Normalized existing `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` readback into holdings counts, known notional, source status, missing-data warnings, and available symbols.
+- Updated Portfolio Center to consume Portfolio Truth instead of static zero overview cards.
+- Updated Risk Center to consume Portfolio Truth while preserving the existing v3.30 FCN-led Foundation Score.
+- Updated Intelligence Center to consume Portfolio Truth for portfolio-aware readiness and available symbols without inventing news, prices, or AI commentary.
+
+Key Decisions:
+
+- v4.01 is a shared readback layer, not a new investment feature.
+- Existing FCN, Stock, Crypto, and Portfolio Dashboard APIs are reused rather than rebuilt.
+- Missing prices or cost data are labeled as missing; IXAI does not invent market value.
+
+Out of Scope:
+
+- No schema change, migration, new API route, external market provider, external news provider, OpenAI / Claude / Gemini, broker sync, Telegram / LINE push, payment, trading, personalized buy/sell recommendation, Social Pack change, admin editorial change, auth change, or membership change.
+
+Next:
+
+- v4.02 Portfolio Intelligence UI.
+- v4.03 Risk Intelligence Layer.
+- v4.04 Intelligence Readback Layer.
+- v4.05 Market Abstraction Layer.
+- v4.06 Market Readiness UI.
+- v4.07 Provider Health Framework.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.02 — Portfolio Intelligence UI
+
+Why:
+
+- v4.01 created a shared Portfolio Truth Layer, but Portfolio Center still needed clearer visualization for users.
+- IXAI needed visible portfolio intelligence without adding AI, market data, broker sync, trading logic, or new data sources.
+
+What Changed:
+
+- Added `docs/V402_PORTFOLIO_INTELLIGENCE_UI.md`.
+- Extended the Portfolio Truth Layer with top symbol occurrence readback.
+- Added counts-based Stock / FCN / Crypto allocation to Portfolio Center.
+- Added Portfolio Holdings Summary, Top Exposure Summary, Portfolio Data Health, and Missing Data Warning panels.
+
+Key Decisions:
+
+- v4.02 is UI / visualization only.
+- Allocation is count-based when valuation is unavailable.
+- Top exposure means occurrence count only, not exposure value or recommendation priority.
+- Existing Truth Layer data remains the only source.
+
+Out of Scope:
+
+- No schema change, migration, new API route, external market provider, external news provider, AI provider, broker sync, recommendation logic, auth change, membership change, Social Pack change, admin editorial change, or trading behavior.
+
+Next:
+
+- v4.03 Risk Intelligence Layer.
+- v4.04 Intelligence Readback Layer.
+- v4.05 Market Abstraction Layer.
+- v4.06 Market Readiness UI.
+- v4.07 Provider Health Framework.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.03 — Risk Intelligence Layer
+
+Why:
+
+- v4.01 created the shared Portfolio Truth Layer and v4.02 made it visible in Portfolio Center.
+- Risk Center needed a deterministic readback layer that turns shared holdings truth into concentration, top exposure, FCN worst-of, and data-quality risk summaries.
+
+What Changed:
+
+- Added `docs/V403_RISK_INTELLIGENCE_LAYER.md`.
+- Extended Portfolio Truth Layer with `PortfolioTruthRiskSummary`.
+- Added concentration risk and data quality risk readback derived from existing FCN / Stock / Crypto / Portfolio Dashboard sources.
+- Updated Global Risk Center readback with Risk Intelligence output.
+- Updated `/my-ixai/risk` with a Risk Intelligence Layer section.
+- Reused v3.20 FCN Intelligence Center helpers for FCN worst-of readback.
+
+Key Decisions:
+
+- v4.03 is a Risk Center consumption layer, not a new market-data or AI sprint.
+- Top exposure remains occurrence-based until valuation and market data are approved for this surface.
+- FCN risk calculations remain owned by the FCN helper layer and are not duplicated.
+
+Out of Scope:
+
+- No schema change, migration, new API route, external market provider, external news provider, AI provider, broker sync, recommendation logic, auth change, membership change, Social Pack change, admin editorial change, or trading behavior.
+
+Next:
+
+- v4.04 Intelligence Readback Layer.
+- v4.05 Market Abstraction Layer.
+- v4.06 Market Readiness UI.
+- v4.07 Provider Health Framework.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.04 — Intelligence Readback Layer
+
+Why:
+
+- v4.01 created Portfolio Truth and v4.03 created Risk Intelligence readback.
+- Intelligence Center needed to consume both layers directly so it could summarize portfolio context, risk context, exposure context, and readiness warnings without inventing AI commentary, news, market data, or recommendations.
+
+What Changed:
+
+- Added `docs/V404_INTELLIGENCE_READBACK_LAYER.md`.
+- Extended Intelligence Center readback with portfolio intelligence summary, risk snapshot summary, exposure intelligence summary, and readiness warning summary.
+- Updated `/my-ixai/intelligence` with an Intelligence Readback Layer section.
+- Reused Portfolio Truth Layer and Risk Intelligence Layer output.
+- Preserved Daily / Weekly / Market entries, FCN highlights, news readiness, commentary readiness, source status, and compliance footer.
+
+Key Decisions:
+
+- v4.04 is a readback consumption layer, not an AI, news, market data, or recommendation sprint.
+- Exposure remains occurrence-based until valuation and market data are approved for this surface.
+- Risk summary is reused from the Risk Intelligence Layer instead of duplicated inside Intelligence Center.
+
+Out of Scope:
+
+- No schema change, migration, new API route, AI commentary, LLM integration, external market provider, external news provider, broker sync, recommendation logic, auth change, membership change, Social Pack change, admin editorial change, or trading behavior.
+
+Next:
+
+- v4.05 Market Abstraction Layer.
+- v4.06 Market Readiness UI.
+- v4.07 Provider Health Framework.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.05 — Market Abstraction Layer
+
+Why:
+
+- Portfolio, Risk, and Intelligence now share readback layers, but future market-aware workflow needs provider-agnostic contracts before any real market provider is connected.
+- IXAI needed a safe foundation for quote, snapshot, and news shapes that does not couple Workspace features directly to Yahoo, Binance, CoinGecko, broker feeds, or external news providers.
+
+What Changed:
+
+- Added `docs/V405_MARKET_ABSTRACTION_LAYER.md`.
+- Added `src/lib/market/market-types.ts`.
+- Added `src/lib/market/market-provider.ts`.
+- Added `src/lib/market/provider-registry.ts`.
+- Added `src/lib/market/market-center.ts`.
+- Added deterministic `MockProvider` / `mockMarketProvider` for contract validation only.
+
+Key Decisions:
+
+- v4.05 is provider-contract foundation only.
+- Existing public market and market-data utilities are not removed, rewritten, or replaced.
+- Real provider connection requires a later explicit sprint.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, CoinGecko API, broker integration, API key, external news provider, external service, database change, schema change, migration, API route, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.06 Market Readiness UI.
+- v4.07 Provider Health Framework.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.06 — Market Readiness UI
+
+Why:
+
+- v4.05 created provider contracts, but the Workspace still needed a visible way to inspect market provider readiness before any real provider is connected.
+- Intelligence Center is the right first surface because it already owns market source readiness and compliance boundaries.
+
+What Changed:
+
+- Added `docs/V406_MARKET_READINESS_UI.md`.
+- Extended Market Abstraction Layer registry metadata with provider description, quote/news support flags, and supported mock symbols.
+- Added Market Readiness readback to Intelligence Center.
+- Added a Market Readiness section to `/my-ixai/intelligence`.
+
+Key Decisions:
+
+- v4.06 is registry-readiness UI only.
+- The UI uses `MockProvider` and provider registry metadata only.
+- No quote or news provider methods are called for live data.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, broker integration, external service, API route, database change, schema change, migration, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.07 Provider Health Framework.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.07 — Provider Health Framework
+
+Why:
+
+- v4.05 created provider contracts and v4.06 made registry readiness visible, but future Workspace Market Service needs health, freshness, priority, and fallback semantics before any real provider is connected.
+
+What Changed:
+
+- Added `docs/V407_PROVIDER_HEALTH_FRAMEWORK.md`.
+- Added `src/lib/market/provider-health.ts`.
+- Added `ProviderStatus`, `DataFreshness`, `ProviderPriority`, and `ProviderHealthSummary`.
+- Added fallback policy support.
+- Exposed deterministic mock provider health through `market-center.ts`.
+
+Key Decisions:
+
+- v4.07 is provider-health contract foundation only.
+- Health data is deterministic and mock-only.
+- Fallback policy points to the mock provider until real provider routing is explicitly approved.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, external service, API route, database change, schema change, migration, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.08 — Market Service Layer
+
+Why:
+
+- v4.05 created provider contracts, v4.06 surfaced registry readiness, and v4.07 added provider-health / fallback metadata.
+- IXAI needed one stable Workspace market-service boundary before any future real provider integration.
+
+What Changed:
+
+- Added `docs/V408_MARKET_SERVICE_LAYER.md`.
+- Added `src/lib/market/market-service.ts`.
+- Added unified service entrypoints: `getQuote()`, `getQuotes()`, `getMarketSnapshot()`, `getMarketNews()`, `getProviderHealth()`, and `getMarketReadiness()`.
+- Reused the Market Abstraction Layer, Provider Health Framework, provider registry, market center helpers, and deterministic `MockProvider`.
+- Added Market Service Status readback to `/my-ixai/intelligence`.
+
+Key Decisions:
+
+- v4.08 is a service-boundary sprint only.
+- Market readiness and provider health remain metadata/readiness surfaces.
+- Live market data is not enabled.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, external provider, external service, API route, database change, schema change, migration, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.09 Workspace Market Integration.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.09 — Workspace Market Integration
+
+Why:
+
+- v4.08 created the Market Service Layer, but Portfolio Center, Risk Center, and Intelligence Center still needed a consistent read-only market readiness surface.
+- IXAI needed provider health and fallback policy awareness visible across the Workspace before any future live provider integration.
+
+What Changed:
+
+- Added `docs/V409_WORKSPACE_MARKET_INTEGRATION.md`.
+- Added `components/market/workspace-market-status.tsx`.
+- Integrated Market Service readiness into Portfolio Center, Risk Center, and Intelligence Center.
+- Replaced Intelligence Center's local market-service status UI with the shared Workspace Market Status component.
+- Displayed market readiness, provider health, and fallback policy awareness without fetching quotes or calling external providers.
+
+Key Decisions:
+
+- v4.09 is Workspace integration only.
+- Market status remains read-only provider metadata.
+- Live quote fetching is intentionally not enabled.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, external provider, external service, API route, database change, schema change, migration, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v2.10a — Global Market Foundation Review
 
