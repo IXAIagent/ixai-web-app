@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v3.30 — Global Risk Center Foundation`
+`v3.40 — Intelligence Center v1`
 
 Current production state:
 
@@ -106,6 +106,8 @@ v3.20 upgrades `/my-ixai/fcn` into the FCN Intelligence Center. It folds the sep
 v3.30 upgrades `/my-ixai/risk` from placeholder into the first Global Risk Center foundation. It reuses v3.20 FCN Intelligence Center helpers for FCN risk summary and upcoming FCN events, reads existing FCN / Stock / Crypto API paths for readiness, derives Grid / Dual readiness from crypto position metadata, and reports data source status. The v3.30 Foundation Score is deterministic and currently weighted by FCN RED / YELLOW / UNKNOWN readback only. v3.30 does not add migration, schema change, live market data, broker sync, AI provider, recommendation logic, trading logic, auth, or membership changes.
 
 Future v3.40 Global Risk Center expansion should only proceed after Stock / Crypto / Grid / Dual data contracts are mature enough for real risk readback. Until then, v3.30 keeps those assets as readiness cards and keeps live market data explicitly disabled.
+
+v3.40 upgrades `/my-ixai/intelligence` from placeholder into the first usable Intelligence Center. It keeps Daily / Weekly / Market as public source routes, adds Workspace entry points, reuses FCN v3.20 helper output for FCN highlights, reads existing FCN / Stock / Crypto / Portfolio Dashboard APIs for readiness, and clearly labels News Feed and Commentary as readiness layers. v3.40 does not add migration, schema change, new API route, external news provider, external AI provider, broker sync, trading logic, public Daily / Weekly changes, Social Pack changes, auth, or membership changes.
 
 Validated production behavior:
 
@@ -149,7 +151,7 @@ Still not complete:
 
 Current Development Version:
 
-`v3.30 — Global Risk Center Foundation`
+`v3.40 — Intelligence Center v1`
 
 Current Core Flow:
 
@@ -181,6 +183,7 @@ Landing
 → FCN KI-distance risk monitoring in FCN Center
 → FCN Intelligence Center with lifecycle, manual price overlay, timeline, and concentration
 → Global Risk Center with FCN risk summary, multi-asset readiness, upcoming risk events, data source status, and deterministic foundation score
+→ Intelligence Center with Daily / Weekly / Market entries, FCN highlights, portfolio-aware readiness, news readiness, and commentary readiness
 ```
 
 Public Intelligence Funnel:
@@ -200,6 +203,7 @@ Product Layers:
 - Multi-Asset Portfolio Intelligence: production persistence for Portfolio containers, FCN positions, underlyings, Stock / Crypto foundations, normalized asset categories, and dashboard readback.
 - FCN Risk / Intelligence Engine: Worst-of, KI distance, lifecycle status, manual local price overlay, event timeline, risk score, concentration exposure, Worst-of ranking, and deterministic intelligence narratives start from persisted FCN records and user-entered prices; persisted price update, KO distance, alert delivery, AI risk summary, and entitlement gating remain future work.
 - Global Risk Center Foundation: v3.30 makes `/my-ixai/risk` a first working risk workspace by reusing FCN v3.20 readback, showing Stock / Crypto / Grid / Dual readiness, listing upcoming FCN events, and reporting data source status. It is not a full multi-asset risk engine yet.
+- Intelligence Center v1: v3.40 makes `/my-ixai/intelligence` a first working intelligence workspace by linking Daily / Weekly / Market sources, surfacing FCN highlights, and labeling portfolio-aware news / commentary readiness without external providers.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

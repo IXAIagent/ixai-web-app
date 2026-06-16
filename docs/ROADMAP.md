@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.30 / Global Risk Center Foundation`
+`v3.40 / Intelligence Center v1`
 
 ## Current Priority
 
@@ -26,6 +26,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V310_FCN_RISK_FOUNDATION.md` as the source of truth for FCN Center KI-distance risk readback from persisted FCN positions.
 - Use `docs/V320_FCN_INTELLIGENCE_CENTER.md` as the source of truth for the integrated FCN lifecycle, manual price, timeline, Risk v2, and concentration workspace.
 - Use `docs/V330_GLOBAL_RISK_CENTER_FOUNDATION.md` as the source of truth for the first `/my-ixai/risk` Global Risk Center foundation.
+- Use `docs/V340_INTELLIGENCE_CENTER_V1.md` as the source of truth for the first usable `/my-ixai/intelligence` workspace.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
@@ -39,6 +40,7 @@ Current priority is UX / IA foundation before moving modules:
 - `/my-ixai/fcn` now adds v3.10 risk monitoring readback using stored current price only. Missing current price remains `UNKNOWN`; do not imply live market data.
 - `/my-ixai/fcn` is now the v3.20 FCN Intelligence Center. Manual price updates are local overlays only; do not claim Supabase persistence or live market data.
 - `/my-ixai/risk` is now the v3.30 Global Risk Center foundation. It reuses v3.20 FCN risk readback, shows multi-asset readiness, lists upcoming FCN risk events, and reports data source status without adding live market data, broker sync, AI, or trading logic.
+- `/my-ixai/intelligence` is now the v3.40 Intelligence Center v1. It connects Daily / Weekly / Market entry points, FCN highlights, portfolio-aware readiness, news readiness, commentary readiness, and compliance boundaries without adding external AI, external news, broker sync, market data providers, or trading logic.
 - Legacy backend modules should be migrated by contract and rewrite, not copied wholesale.
 - Highest-priority legacy backend candidates are CSV import, risk alerts, FCN monitoring / schedules, portfolio-aware news relevance, and scheduler / notification review.
 - Public navigation and Workspace navigation must remain separate.
@@ -216,6 +218,15 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Consolidate Daily Intelligence, Weekly Intelligence, watchlists, market news, AI commentary, and Social Pack distribution into one Intelligence Center.
 - Use Legacy Pro market/news/workspace ideas as reference only.
 - Do not reintroduce legacy JWT, localStorage token auth, or direct browser-to-FastAPI protected calls.
+
+### v3.40 — Intelligence Center v1
+
+- Replace the `/my-ixai/intelligence` placeholder with the first usable Intelligence Center.
+- Add Daily Brief, Weekly Intelligence, and Market Overview entry points.
+- Add portfolio-aware highlights from existing FCN / Stock / Crypto / Portfolio Dashboard readiness.
+- Reuse v3.20 FCN Intelligence Center helpers for FCN highlights and upcoming FCN events.
+- Add News Feed Readiness and Commentary Readiness with explicit mock / provider boundaries.
+- Keep public Daily / Weekly, public Market, admin editorial workflows, Social Pack, auth, membership, schema, migrations, external AI, external news, market data provider, broker sync, and trading logic unchanged.
 
 ### v3.40 — Global Risk Center Expansion
 

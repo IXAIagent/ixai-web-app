@@ -122,6 +122,8 @@ v3.08 connects the FCN input path to FCN Center. This is the first visible struc
 
 v3.30 starts the Global Risk Center foundation. The Risk Center should become the place where FCN, Stock, Crypto, Grid, Dual, concentration, events, and future global risk readback are organized for monitoring. The first implementation intentionally reuses FCN Intelligence Center risk output and shows Stock / Crypto / Grid / Dual as readiness layers only. This protects the product from pretending unfinished data sources are live risk engines.
 
+v3.40 starts Intelligence Center productization. Intelligence Center should help users move from public reading into a personal workflow: Daily / Weekly context, market overview, FCN highlights, portfolio-aware readiness, news readiness, and commentary readiness. The first implementation intentionally does not connect external AI or external news providers. It organizes existing sources and labels unfinished layers clearly.
+
 The Portfolio AI Commentary Layer should sit in this sequence:
 
 ```text
