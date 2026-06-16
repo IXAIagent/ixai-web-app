@@ -53,7 +53,7 @@ What Changed:
 - Audited current route / center readiness across Market, Workspace Home, Portfolio Center, Asset Input, FCN Center, Risk Center, Intelligence Center, and Settings.
 - Audited available data sources for FCN, Stock, Crypto, Portfolio Dashboard, Portfolio Repository, public Market, news, Daily / Weekly, manual price overlays, and mock portfolio engines.
 - Proposed Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA.
-- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Workspace Market Service, v4.05 FCN Real Risk Integration, v4.06 Intelligence Center V2, and v4.07 Integration QA.
+- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Workspace Market Service, v4.07 FCN Real Risk Integration, v4.08 Intelligence Center V2, and v4.09 Integration QA.
 
 Key Decisions:
 
@@ -71,10 +71,11 @@ Next:
 - v4.02 Portfolio Intelligence UI.
 - v4.03 Risk Intelligence Layer.
 - v4.04 Intelligence Readback Layer.
-- v4.05 Workspace Market Service.
-- v4.06 FCN Real Risk Integration.
-- v4.07 Intelligence Center V2.
-- v4.08 Integration QA.
+- v4.05 Market Abstraction Layer.
+- v4.06 Workspace Market Service.
+- v4.07 FCN Real Risk Integration.
+- v4.08 Intelligence Center V2.
+- v4.09 Integration QA.
 
 ## v4.01 — Portfolio Truth Layer
 
@@ -107,10 +108,11 @@ Next:
 - v4.02 Portfolio Intelligence UI.
 - v4.03 Risk Intelligence Layer.
 - v4.04 Intelligence Readback Layer.
-- v4.05 Workspace Market Service.
-- v4.06 FCN Real Risk Integration.
-- v4.07 Intelligence Center V2.
-- v4.08 Integration QA.
+- v4.05 Market Abstraction Layer.
+- v4.06 Workspace Market Service.
+- v4.07 FCN Real Risk Integration.
+- v4.08 Intelligence Center V2.
+- v4.09 Integration QA.
 
 ## v4.02 — Portfolio Intelligence UI
 
@@ -141,10 +143,11 @@ Next:
 
 - v4.03 Risk Intelligence Layer.
 - v4.04 Intelligence Readback Layer.
-- v4.05 Workspace Market Service.
-- v4.06 FCN Real Risk Integration.
-- v4.07 Intelligence Center V2.
-- v4.08 Integration QA.
+- v4.05 Market Abstraction Layer.
+- v4.06 Workspace Market Service.
+- v4.07 FCN Real Risk Integration.
+- v4.08 Intelligence Center V2.
+- v4.09 Integration QA.
 
 ## v4.03 — Risk Intelligence Layer
 
@@ -175,10 +178,11 @@ Out of Scope:
 Next:
 
 - v4.04 Intelligence Readback Layer.
-- v4.05 Workspace Market Service.
-- v4.06 FCN Real Risk Integration.
-- v4.07 Intelligence Center V2.
-- v4.08 Integration QA.
+- v4.05 Market Abstraction Layer.
+- v4.06 Workspace Market Service.
+- v4.07 FCN Real Risk Integration.
+- v4.08 Intelligence Center V2.
+- v4.09 Integration QA.
 
 ## v4.04 — Intelligence Readback Layer
 
@@ -207,10 +211,44 @@ Out of Scope:
 
 Next:
 
-- v4.05 Workspace Market Service.
-- v4.06 FCN Real Risk Integration.
-- v4.07 Intelligence Center V2.
-- v4.08 Integration QA.
+- v4.05 Market Abstraction Layer.
+- v4.06 Workspace Market Service.
+- v4.07 FCN Real Risk Integration.
+- v4.08 Intelligence Center V2.
+- v4.09 Integration QA.
+
+## v4.05 — Market Abstraction Layer
+
+Why:
+
+- Portfolio, Risk, and Intelligence now share readback layers, but future market-aware workflow needs provider-agnostic contracts before any real market provider is connected.
+- IXAI needed a safe foundation for quote, snapshot, and news shapes that does not couple Workspace features directly to Yahoo, Binance, CoinGecko, broker feeds, or external news providers.
+
+What Changed:
+
+- Added `docs/V405_MARKET_ABSTRACTION_LAYER.md`.
+- Added `src/lib/market/market-types.ts`.
+- Added `src/lib/market/market-provider.ts`.
+- Added `src/lib/market/provider-registry.ts`.
+- Added `src/lib/market/market-center.ts`.
+- Added deterministic `MockProvider` / `mockMarketProvider` for contract validation only.
+
+Key Decisions:
+
+- v4.05 is provider-contract foundation only.
+- Existing public market and market-data utilities are not removed, rewritten, or replaced.
+- Real provider connection requires a later explicit sprint.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, CoinGecko API, broker integration, API key, external news provider, external service, database change, schema change, migration, API route, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.06 Workspace Market Service.
+- v4.07 FCN Real Risk Integration.
+- v4.08 Intelligence Center V2.
+- v4.09 Integration QA.
 
 ## v2.10a — Global Market Foundation Review
 
