@@ -54,6 +54,14 @@ const MARKET_STATUS_CLASS = {
   unavailable: "border-[color-mix(in_srgb,var(--ixai-risk-critical)_32%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_8%,white)] text-[var(--ixai-forest)]",
 };
 
+const PROVIDER_HEALTH_CLASS = {
+  disabled: "border-slate-200 bg-slate-50 text-slate-700",
+  healthy: "border-[color-mix(in_srgb,var(--ixai-risk-clear)_34%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-clear)_10%,white)] text-[var(--ixai-forest)]",
+  mock: "border-[color-mix(in_srgb,var(--ixai-gold)_44%,transparent)] bg-[rgba(255,250,240,0.82)] text-[var(--ixai-forest)]",
+  placeholder: "border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] text-[var(--ixai-forest-soft)]",
+  unavailable: "border-[color-mix(in_srgb,var(--ixai-risk-critical)_32%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_8%,white)] text-[var(--ixai-forest)]",
+};
+
 function formatNumber(value: number | null | undefined) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return "--";
@@ -88,6 +96,20 @@ function MarketStatusBadge({
   return (
     <span
       className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${MARKET_STATUS_CLASS[status]}`}
+    >
+      {status.toUpperCase()}
+    </span>
+  );
+}
+
+function ProviderHealthBadge({
+  status,
+}: {
+  status: keyof typeof PROVIDER_HEALTH_CLASS;
+}) {
+  return (
+    <span
+      className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${PROVIDER_HEALTH_CLASS[status]}`}
     >
       {status.toUpperCase()}
     </span>
@@ -725,6 +747,115 @@ export function IntelligenceCenterWorkspace() {
                 </span>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+          <div className="flex items-center gap-3">
+            <FeatureIcon icon={Gauge} shadow={false} />
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+                Market Service Status
+              </p>
+              <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
+                Unified market service entrypoints
+              </h2>
+            </div>
+          </div>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            {readback.marketServiceReadiness.summary}
+          </p>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              [
+                "Entrypoints",
+                readback.marketServiceReadiness.serviceEntrypoints.length,
+              ],
+              ["Health Items", readback.marketServiceReadiness.health.providerCount],
+              ["Mock Providers", readback.marketServiceReadiness.health.mockProviderCount],
+              [
+                "Primary Provider",
+                readback.marketServiceReadiness.health.primaryProviderId ?? "--",
+              ],
+            ].map(([label, value]) => (
+              <article
+                className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+                key={label}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  {label}
+                </p>
+                <p className="mt-2 break-words font-mono text-2xl font-semibold text-[var(--ixai-forest)]">
+                  {typeof value === "number" ? formatNumber(value) : value}
+                </p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                Service Entrypoints
+              </p>
+              <div className="mt-4 grid gap-3">
+                {readback.marketServiceReadiness.serviceEntrypoints.map((entrypoint) => (
+                  <div
+                    className="rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3"
+                    key={entrypoint.name}
+                  >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
+                        {entrypoint.name}
+                      </p>
+                      <span className="w-fit rounded-full border border-[color-mix(in_srgb,var(--ixai-risk-clear)_34%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-clear)_10%,white)] px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
+                        {entrypoint.enabled ? "Enabled" : "Disabled"}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                      {entrypoint.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                Provider Health
+              </p>
+              <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                {readback.marketServiceReadiness.health.summary}
+              </p>
+              <div className="mt-4 grid gap-3">
+                {readback.marketServiceReadiness.health.items.map((provider) => (
+                  <div
+                    className="rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3"
+                    key={provider.id}
+                  >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                          {provider.priority} / {provider.dataFreshness.replaceAll("_", " ")}
+                        </p>
+                        <h3 className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">
+                          {provider.label}
+                        </h3>
+                      </div>
+                      <ProviderHealthBadge status={provider.status} />
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                      {provider.summary}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                Fallback policy: {readback.marketServiceReadiness.health.fallbackPolicy.policy.replaceAll("_", " ")} to{" "}
+                {readback.marketServiceReadiness.health.fallbackPolicy.fallbackProviderId}.{" "}
+                {readback.marketServiceReadiness.health.fallbackPolicy.reason}
+              </p>
+            </article>
           </div>
         </section>
 

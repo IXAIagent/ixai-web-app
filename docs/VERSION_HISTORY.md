@@ -53,7 +53,7 @@ What Changed:
 - Audited current route / center readiness across Market, Workspace Home, Portfolio Center, Asset Input, FCN Center, Risk Center, Intelligence Center, and Settings.
 - Audited available data sources for FCN, Stock, Crypto, Portfolio Dashboard, Portfolio Repository, public Market, news, Daily / Weekly, manual price overlays, and mock portfolio engines.
 - Proposed Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA.
-- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Market Readiness UI, v4.07 Provider Health Framework, v4.08 Workspace Market Service, v4.09 FCN Real Risk Integration, v4.10 Intelligence Center V2, and v4.11 Integration QA.
+- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Market Readiness UI, v4.07 Provider Health Framework, v4.08 Market Service Layer, v4.09 Workspace Market Service, v4.10 FCN Real Risk Integration, v4.11 Intelligence Center V2, and v4.12 Integration QA.
 
 Key Decisions:
 
@@ -74,10 +74,11 @@ Next:
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
 - v4.07 Provider Health Framework.
-- v4.08 Workspace Market Service.
-- v4.09 FCN Real Risk Integration.
-- v4.10 Intelligence Center V2.
-- v4.11 Integration QA.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v4.01 — Portfolio Truth Layer
 
@@ -113,10 +114,11 @@ Next:
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
 - v4.07 Provider Health Framework.
-- v4.08 Workspace Market Service.
-- v4.09 FCN Real Risk Integration.
-- v4.10 Intelligence Center V2.
-- v4.11 Integration QA.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v4.02 — Portfolio Intelligence UI
 
@@ -150,10 +152,11 @@ Next:
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
 - v4.07 Provider Health Framework.
-- v4.08 Workspace Market Service.
-- v4.09 FCN Real Risk Integration.
-- v4.10 Intelligence Center V2.
-- v4.11 Integration QA.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v4.03 — Risk Intelligence Layer
 
@@ -187,10 +190,11 @@ Next:
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
 - v4.07 Provider Health Framework.
-- v4.08 Workspace Market Service.
-- v4.09 FCN Real Risk Integration.
-- v4.10 Intelligence Center V2.
-- v4.11 Integration QA.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v4.04 — Intelligence Readback Layer
 
@@ -222,10 +226,11 @@ Next:
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
 - v4.07 Provider Health Framework.
-- v4.08 Workspace Market Service.
-- v4.09 FCN Real Risk Integration.
-- v4.10 Intelligence Center V2.
-- v4.11 Integration QA.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v4.05 — Market Abstraction Layer
 
@@ -257,10 +262,11 @@ Next:
 
 - v4.06 Market Readiness UI.
 - v4.07 Provider Health Framework.
-- v4.08 Workspace Market Service.
-- v4.09 FCN Real Risk Integration.
-- v4.10 Intelligence Center V2.
-- v4.11 Integration QA.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v4.06 — Market Readiness UI
 
@@ -289,10 +295,11 @@ Out of Scope:
 Next:
 
 - v4.07 Provider Health Framework.
-- v4.08 Workspace Market Service.
-- v4.09 FCN Real Risk Integration.
-- v4.10 Intelligence Center V2.
-- v4.11 Integration QA.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v4.07 — Provider Health Framework
 
@@ -320,10 +327,43 @@ Out of Scope:
 
 Next:
 
-- v4.08 Workspace Market Service.
-- v4.09 FCN Real Risk Integration.
-- v4.10 Intelligence Center V2.
-- v4.11 Integration QA.
+- v4.08 Market Service Layer.
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
+
+## v4.08 — Market Service Layer
+
+Why:
+
+- v4.05 created provider contracts, v4.06 surfaced registry readiness, and v4.07 added provider-health / fallback metadata.
+- IXAI needed one stable Workspace market-service boundary before any future real provider integration.
+
+What Changed:
+
+- Added `docs/V408_MARKET_SERVICE_LAYER.md`.
+- Added `src/lib/market/market-service.ts`.
+- Added unified service entrypoints: `getQuote()`, `getQuotes()`, `getMarketSnapshot()`, `getMarketNews()`, `getProviderHealth()`, and `getMarketReadiness()`.
+- Reused the Market Abstraction Layer, Provider Health Framework, provider registry, market center helpers, and deterministic `MockProvider`.
+- Added Market Service Status readback to `/my-ixai/intelligence`.
+
+Key Decisions:
+
+- v4.08 is a service-boundary sprint only.
+- Market readiness and provider health remain metadata/readiness surfaces.
+- Live market data is not enabled.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, external provider, external service, API route, database change, schema change, migration, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.09 Workspace Market Service.
+- v4.10 FCN Real Risk Integration.
+- v4.11 Intelligence Center V2.
+- v4.12 Integration QA.
 
 ## v2.10a — Global Market Foundation Review
 
