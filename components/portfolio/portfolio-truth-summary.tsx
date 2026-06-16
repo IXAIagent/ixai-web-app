@@ -22,6 +22,13 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
+function formatPercent(value: number) {
+  return `${new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+  }).format(value)}%`;
+}
+
 function formatTime(value: string) {
   try {
     return new Intl.DateTimeFormat("zh-TW", {
@@ -33,6 +40,18 @@ function formatTime(value: string) {
   } catch {
     return "剛剛";
   }
+}
+
+function getHealthLabel(status: string) {
+  if (status === "ready" || status === "partial") {
+    return "Ready";
+  }
+
+  if (status === "unavailable" || status === "unauthenticated") {
+    return "Error";
+  }
+
+  return "Missing";
 }
 
 function getStatusClass(status: string) {
@@ -102,6 +121,34 @@ export function PortfolioTruthSummary() {
     ];
   }, [truth]);
 
+  const allocation = useMemo(() => {
+    const total = truth?.counts.totalAssets ?? 0;
+
+    return [
+      {
+        count: truth?.counts.totalStockPositions ?? 0,
+        label: "Stocks",
+        note: "Stock position count",
+        tone: "bg-emerald-600",
+      },
+      {
+        count: truth?.counts.totalFcnPositions ?? 0,
+        label: "FCN",
+        note: "Structured product count",
+        tone: "bg-amber-500",
+      },
+      {
+        count: truth?.counts.totalCryptoPositions ?? 0,
+        label: "Crypto",
+        note: "Crypto / Grid / Dual count",
+        tone: "bg-sky-600",
+      },
+    ].map((item) => ({
+      ...item,
+      percentage: total > 0 ? (item.count / total) * 100 : 0,
+    }));
+  }, [truth]);
+
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -128,7 +175,13 @@ export function PortfolioTruthSummary() {
         v4.01 使用同一份 normalized readback 整合 FCN、Stock、Crypto 與 Portfolio Dashboard 來源。若價格或成本缺漏，IXAI 只顯示已知名目金額，不推估市場價值。
       </p>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-5">
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+          Portfolio Holdings Summary
+        </p>
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -179,6 +232,88 @@ export function PortfolioTruthSummary() {
       </div>
 
       {truth ? (
+        <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+          <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+              Portfolio Allocation
+            </p>
+            <h3 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
+              Counts-based allocation
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              Valuation is incomplete, so v4.02 uses position counts only. No market value is invented.
+            </p>
+            <div className="mt-4 grid gap-3">
+              {allocation.map((item) => (
+                <div key={item.label}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+                      {item.label}
+                    </p>
+                    <p className="font-mono text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                      {item.count} positions / {formatPercent(item.percentage)}
+                    </p>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/80">
+                    <div
+                      className={`h-full rounded-full ${item.tone}`}
+                      style={{ width: `${Math.max(item.percentage, item.count > 0 ? 4 : 0)}%` }}
+                    />
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                    {item.note}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+              Top Exposure Summary
+            </p>
+            <h3 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
+              Most repeated symbols
+            </h3>
+            {truth.symbols.topExposures.length > 0 ? (
+              <div className="mt-4 grid gap-2">
+                {truth.symbols.topExposures.map((exposure) => (
+                  <div
+                    className="flex flex-col gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3 sm:flex-row sm:items-center sm:justify-between"
+                    key={exposure.symbol}
+                  >
+                    <div>
+                      <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">
+                        {exposure.symbol}
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                        {exposure.sources.join(" / ")}
+                      </p>
+                    </div>
+                    <span className="w-fit rounded-full border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.84)] px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
+                      {exposure.occurrenceCount} occurrence{exposure.occurrenceCount === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                No symbols are available from FCN underlyings, Stock positions, or Crypto positions yet.
+              </p>
+            )}
+          </article>
+        </div>
+      ) : null}
+
+      {truth ? (
+        <div className="mt-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+            Portfolio Data Health
+          </p>
+        </div>
+      ) : null}
+
+      {truth ? (
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {truth.dataSourceStatuses.map((source) => (
             <article
@@ -192,7 +327,7 @@ export function PortfolioTruthSummary() {
                 <span
                   className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${getStatusClass(source.status)}`}
                 >
-                  {STATUS_LABEL[source.status]}
+                  {getHealthLabel(source.status)}
                 </span>
               </div>
               <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">

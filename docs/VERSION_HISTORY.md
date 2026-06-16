@@ -68,10 +68,11 @@ Out of Scope:
 Next:
 
 - v4.01 Portfolio Truth Layer.
-- v4.02 Workspace Market Service.
-- v4.03 FCN Real Risk Integration.
-- v4.04 Intelligence Center V2.
-- v4.05 Integration QA.
+- v4.02 Portfolio Intelligence UI.
+- v4.03 Workspace Market Service.
+- v4.04 FCN Real Risk Integration.
+- v4.05 Intelligence Center V2.
+- v4.06 Integration QA.
 
 ## v4.01 — Portfolio Truth Layer
 
@@ -101,10 +102,43 @@ Out of Scope:
 
 Next:
 
-- v4.02 Workspace Market Service.
-- v4.03 FCN Real Risk Integration.
-- v4.04 Intelligence Center V2.
-- v4.05 Integration QA.
+- v4.02 Portfolio Intelligence UI.
+- v4.03 Workspace Market Service.
+- v4.04 FCN Real Risk Integration.
+- v4.05 Intelligence Center V2.
+- v4.06 Integration QA.
+
+## v4.02 — Portfolio Intelligence UI
+
+Why:
+
+- v4.01 created a shared Portfolio Truth Layer, but Portfolio Center still needed clearer visualization for users.
+- IXAI needed visible portfolio intelligence without adding AI, market data, broker sync, trading logic, or new data sources.
+
+What Changed:
+
+- Added `docs/V402_PORTFOLIO_INTELLIGENCE_UI.md`.
+- Extended the Portfolio Truth Layer with top symbol occurrence readback.
+- Added counts-based Stock / FCN / Crypto allocation to Portfolio Center.
+- Added Portfolio Holdings Summary, Top Exposure Summary, Portfolio Data Health, and Missing Data Warning panels.
+
+Key Decisions:
+
+- v4.02 is UI / visualization only.
+- Allocation is count-based when valuation is unavailable.
+- Top exposure means occurrence count only, not exposure value or recommendation priority.
+- Existing Truth Layer data remains the only source.
+
+Out of Scope:
+
+- No schema change, migration, new API route, external market provider, external news provider, AI provider, broker sync, recommendation logic, auth change, membership change, Social Pack change, admin editorial change, or trading behavior.
+
+Next:
+
+- v4.03 Workspace Market Service.
+- v4.04 FCN Real Risk Integration.
+- v4.05 Intelligence Center V2.
+- v4.06 Integration QA.
 
 ## v2.10a — Global Market Foundation Review
 

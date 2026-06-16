@@ -457,7 +457,35 @@ v4.01 implementation note:
 - Portfolio Center, Risk Center, and Intelligence Center consume the same Portfolio Truth Layer.
 - Existing FCN / Stock / Crypto / Portfolio Dashboard APIs are reused; no new API route, schema, migration, provider, AI, broker, or trading behavior is added.
 
-### v4.02 — Workspace Market Service
+### v4.02 — Portfolio Intelligence UI
+
+Goal:
+
+- Turn the v4.01 Portfolio Truth Layer into visible Portfolio Center intelligence.
+
+Likely files:
+
+- `components/portfolio/portfolio-truth-summary.tsx`
+- `src/lib/portfolio/truth/*`
+- `docs/V402_PORTFOLIO_INTELLIGENCE_UI.md`
+
+Data sources:
+
+- Portfolio Truth Layer only.
+- Existing `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` through that layer.
+
+Validation:
+
+- `git diff --check`
+- `npm run lint`
+- `npm run build`
+- route smoke `/my-ixai/portfolio`.
+
+Out of scope:
+
+- AI, external market data, news provider, broker sync, recommendations, schema/migration, and trading logic.
+
+### v4.03 — Workspace Market Service
 
 Goal:
 
@@ -483,7 +511,7 @@ Out of scope:
 
 - new providers, provider credentials, broker data.
 
-### v4.03 — FCN Real Risk Integration
+### v4.04 — FCN Real Risk Integration
 
 Goal:
 
@@ -510,7 +538,7 @@ Out of scope:
 
 - live-market claims, persisted price update, alert push.
 
-### v4.04 — Intelligence Center V2
+### v4.05 — Intelligence Center V2
 
 Goal:
 
@@ -538,7 +566,7 @@ Out of scope:
 
 - external AI/news provider, personalized advice.
 
-### v4.05 — Integration QA / Release Hardening
+### v4.06 — Integration QA / Release Hardening
 
 Goal:
 

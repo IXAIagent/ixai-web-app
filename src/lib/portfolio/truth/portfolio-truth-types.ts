@@ -45,7 +45,14 @@ export interface PortfolioTruthSymbols {
   cryptoSymbols: string[];
   stockSymbols: string[];
   topAvailableSymbols: string[];
+  topExposures: PortfolioTruthSymbolExposure[];
   underlyingSymbols: string[];
+}
+
+export interface PortfolioTruthSymbolExposure {
+  occurrenceCount: number;
+  sources: string[];
+  symbol: string;
 }
 
 export interface PortfolioTruthPositions {

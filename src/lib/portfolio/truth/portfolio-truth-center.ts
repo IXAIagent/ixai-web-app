@@ -3,6 +3,7 @@ import type {
   PortfolioTruthDataSourceStatus,
   PortfolioTruthReadback,
   PortfolioTruthReadinessLevel,
+  PortfolioTruthSymbolExposure,
   PortfolioTruthSourceStatus,
 } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type { CryptoPosition } from "@/src/types/crypto-position";
@@ -20,6 +21,60 @@ function uniqueSorted(values: string[]) {
   return Array.from(new Set(values.map(normalizeSymbol).filter(Boolean))).sort(
     (a, b) => a.localeCompare(b),
   );
+}
+
+function buildTopSymbolExposures(input: BuildPortfolioTruthInput) {
+  const exposures = new Map<string, { count: number; sources: Set<string> }>();
+
+  function addExposure(symbol: string | null | undefined, source: string) {
+    const normalized = normalizeSymbol(symbol);
+
+    if (!normalized) {
+      return;
+    }
+
+    const current = exposures.get(normalized) ?? {
+      count: 0,
+      sources: new Set<string>(),
+    };
+
+    current.count += 1;
+    current.sources.add(source);
+    exposures.set(normalized, current);
+  }
+
+  input.fcnPositions.forEach((position) => {
+    position.underlyings.forEach((underlying) => {
+      addExposure(underlying.symbol, "FCN underlying");
+    });
+  });
+
+  input.stockPositions.forEach((position) => {
+    addExposure(position.symbol, "Stock");
+  });
+
+  input.cryptoPositions.forEach((position) => {
+    addExposure(position.symbol, "Crypto");
+  });
+
+  return Array.from(exposures.entries())
+    .map(
+      ([symbol, exposure]): PortfolioTruthSymbolExposure => ({
+        occurrenceCount: exposure.count,
+        sources: Array.from(exposure.sources).sort((a, b) =>
+          a.localeCompare(b),
+        ),
+        symbol,
+      }),
+    )
+    .sort((a, b) => {
+      if (b.occurrenceCount !== a.occurrenceCount) {
+        return b.occurrenceCount - a.occurrenceCount;
+      }
+
+      return a.symbol.localeCompare(b.symbol);
+    })
+    .slice(0, 5);
 }
 
 function calculateKnownPositionValue(input: {
@@ -188,6 +243,7 @@ export function buildPortfolioTruthReadback(
   const cryptoSymbols = uniqueSorted(
     input.cryptoPositions.map((position) => position.symbol),
   );
+  const topExposures = buildTopSymbolExposures(input);
 
   const dataSourceStatuses: PortfolioTruthDataSourceStatus[] = [
     {
@@ -253,6 +309,19 @@ export function buildPortfolioTruthReadback(
     counts.totalAssets === 0 && !input.unauthenticated
       ? "No FCN, Stock, or Crypto positions are available from the current readback."
       : "",
+    input.fcnPositions.length === 0 && !input.unauthenticated && !input.fcnError
+      ? "No FCN records are available from the current readback."
+      : "",
+    input.stockPositions.length === 0 &&
+    !input.unauthenticated &&
+    !input.stockError
+      ? "No Stock records are available from the current readback."
+      : "",
+    input.cryptoPositions.length === 0 &&
+    !input.unauthenticated &&
+    !input.cryptoError
+      ? "No Crypto records are available from the current readback."
+      : "",
     missingFcnNotionalCount > 0
       ? `${missingFcnNotionalCount} FCN position(s) are missing notional amount.`
       : "",
@@ -296,6 +365,7 @@ export function buildPortfolioTruthReadback(
         ...stockSymbols,
         ...cryptoSymbols,
       ]).slice(0, 12),
+      topExposures,
       underlyingSymbols,
     },
   };
