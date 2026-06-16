@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.06 — Market Readiness UI`
+`v4.07 — Provider Health Framework`
 
 Current production state:
 
@@ -121,6 +121,8 @@ v4.05 adds the Market Abstraction Layer under `src/lib/market/`. It defines Mark
 
 v4.06 adds Market Readiness UI to `/my-ixai/intelligence`. It reuses the v4.05 Market Abstraction Layer and displays provider registry status, quote/news contract coverage, mock provider count, and supported mock symbols. It uses only MockProvider and registry metadata and does not connect Yahoo, Binance, broker integrations, external services, API routes, database changes, schema changes, or migrations.
 
+v4.07 adds the Provider Health Framework under `src/lib/market/`. It defines ProviderStatus, DataFreshness, ProviderPriority, ProviderHealthSummary, fallback policy support, and deterministic mock health data. It exposes provider health through the market center without connecting Yahoo, Binance, external services, API routes, database changes, schema changes, or migrations.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -163,7 +165,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.06 — Market Readiness UI`
+`v4.07 — Provider Health Framework`
 
 Current Core Flow:
 
@@ -199,6 +201,7 @@ Landing
 → Intelligence Readback Layer with portfolio summary, risk snapshot, exposure summary, and readiness warnings
 → Market Abstraction Layer with provider contracts, snapshots, news shapes, registry, and mock provider
 → Market Readiness UI with provider registry status and mock contract coverage
+→ Provider Health Framework with status, freshness, priority, health summary, and fallback policy
 → Intelligence Center with Daily / Weekly / Market entries, FCN highlights, portfolio-aware readiness, news readiness, and commentary readiness
 → v4.00 Integration Program connecting Market, Portfolio, FCN, Risk, and Intelligence through truth-layer and market-service planning
 → Portfolio Truth Layer shared by Portfolio Center, Risk Center, and Intelligence Center
@@ -230,6 +233,7 @@ Product Layers:
 - Intelligence Readback Layer: v4.04 makes Portfolio Truth and Risk Intelligence visible inside Intelligence Center through portfolio summary, risk snapshot summary, exposure intelligence summary, and readiness warning summary. It does not add AI commentary, LLM integration, news provider, market data, broker sync, recommendations, or trading behavior.
 - Market Abstraction Layer: v4.05 defines provider-agnostic market quote, snapshot, and news contracts plus a deterministic MockProvider. It is a contract foundation only and does not connect external APIs or write data.
 - Market Readiness UI: v4.06 makes provider registry readiness visible inside Intelligence Center. It remains metadata-only and does not call external market or news services.
+- Provider Health Framework: v4.07 adds deterministic provider status, data freshness, priority, fallback policy, and health summary contracts for future Workspace Market Service routing.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

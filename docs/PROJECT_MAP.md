@@ -75,6 +75,7 @@ Production data ownership update:
 - v4.04 adds Intelligence Readback Layer inside `/my-ixai/intelligence`. It reuses Portfolio Truth and Risk Intelligence readback for portfolio summary, risk snapshot, exposure summary, and readiness warnings without adding AI commentary, LLM integration, news provider, market data, broker sync, recommendations, or trading behavior.
 - v4.05 adds `src/lib/market/` as the Market Abstraction Layer. It defines provider-agnostic quote, snapshot, news, provider, registry, and market center contracts with a deterministic MockProvider only.
 - v4.06 adds Market Readiness UI inside `/my-ixai/intelligence`. It displays provider registry status, contract coverage, and supported mock symbols from v4.05 metadata only.
+- v4.07 adds Provider Health Framework under `src/lib/market/`. It defines provider status, data freshness, provider priority, health summary, and fallback policy contracts with deterministic mock health data only.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -84,7 +85,7 @@ Current architecture:
 - Next.js App Router.
 - Supabase / Next API routes / editorial static and dynamic intelligence.
 - Public Intelligence, Account Intelligence, Social Intelligence, Daily / Weekly engines, and admin workflows.
-- Market Abstraction Layer under `src/lib/market/` for future Workspace market provider contracts. v4.05 contract layer is mock-only and does not connect external providers.
+- Market Abstraction Layer under `src/lib/market/` for future Workspace market provider contracts. v4.05 contract layer is mock-only, v4.06 surfaces registry readiness, and v4.07 adds provider health / fallback policy contracts without connecting external providers.
 - Multi-Asset Portfolio architecture:
 
 ```text

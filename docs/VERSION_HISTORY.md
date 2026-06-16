@@ -53,7 +53,7 @@ What Changed:
 - Audited current route / center readiness across Market, Workspace Home, Portfolio Center, Asset Input, FCN Center, Risk Center, Intelligence Center, and Settings.
 - Audited available data sources for FCN, Stock, Crypto, Portfolio Dashboard, Portfolio Repository, public Market, news, Daily / Weekly, manual price overlays, and mock portfolio engines.
 - Proposed Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA.
-- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Market Readiness UI, v4.07 Workspace Market Service, v4.08 FCN Real Risk Integration, v4.09 Intelligence Center V2, and v4.10 Integration QA.
+- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Market Readiness UI, v4.07 Provider Health Framework, v4.08 Workspace Market Service, v4.09 FCN Real Risk Integration, v4.10 Intelligence Center V2, and v4.11 Integration QA.
 
 Key Decisions:
 
@@ -73,10 +73,11 @@ Next:
 - v4.04 Intelligence Readback Layer.
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
-- v4.07 Workspace Market Service.
-- v4.08 FCN Real Risk Integration.
-- v4.09 Intelligence Center V2.
-- v4.10 Integration QA.
+- v4.07 Provider Health Framework.
+- v4.08 Workspace Market Service.
+- v4.09 FCN Real Risk Integration.
+- v4.10 Intelligence Center V2.
+- v4.11 Integration QA.
 
 ## v4.01 — Portfolio Truth Layer
 
@@ -111,10 +112,11 @@ Next:
 - v4.04 Intelligence Readback Layer.
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
-- v4.07 Workspace Market Service.
-- v4.08 FCN Real Risk Integration.
-- v4.09 Intelligence Center V2.
-- v4.10 Integration QA.
+- v4.07 Provider Health Framework.
+- v4.08 Workspace Market Service.
+- v4.09 FCN Real Risk Integration.
+- v4.10 Intelligence Center V2.
+- v4.11 Integration QA.
 
 ## v4.02 — Portfolio Intelligence UI
 
@@ -147,10 +149,11 @@ Next:
 - v4.04 Intelligence Readback Layer.
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
-- v4.07 Workspace Market Service.
-- v4.08 FCN Real Risk Integration.
-- v4.09 Intelligence Center V2.
-- v4.10 Integration QA.
+- v4.07 Provider Health Framework.
+- v4.08 Workspace Market Service.
+- v4.09 FCN Real Risk Integration.
+- v4.10 Intelligence Center V2.
+- v4.11 Integration QA.
 
 ## v4.03 — Risk Intelligence Layer
 
@@ -183,10 +186,11 @@ Next:
 - v4.04 Intelligence Readback Layer.
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
-- v4.07 Workspace Market Service.
-- v4.08 FCN Real Risk Integration.
-- v4.09 Intelligence Center V2.
-- v4.10 Integration QA.
+- v4.07 Provider Health Framework.
+- v4.08 Workspace Market Service.
+- v4.09 FCN Real Risk Integration.
+- v4.10 Intelligence Center V2.
+- v4.11 Integration QA.
 
 ## v4.04 — Intelligence Readback Layer
 
@@ -217,10 +221,11 @@ Next:
 
 - v4.05 Market Abstraction Layer.
 - v4.06 Market Readiness UI.
-- v4.07 Workspace Market Service.
-- v4.08 FCN Real Risk Integration.
-- v4.09 Intelligence Center V2.
-- v4.10 Integration QA.
+- v4.07 Provider Health Framework.
+- v4.08 Workspace Market Service.
+- v4.09 FCN Real Risk Integration.
+- v4.10 Intelligence Center V2.
+- v4.11 Integration QA.
 
 ## v4.05 — Market Abstraction Layer
 
@@ -251,10 +256,11 @@ Out of Scope:
 Next:
 
 - v4.06 Market Readiness UI.
-- v4.07 Workspace Market Service.
-- v4.08 FCN Real Risk Integration.
-- v4.09 Intelligence Center V2.
-- v4.10 Integration QA.
+- v4.07 Provider Health Framework.
+- v4.08 Workspace Market Service.
+- v4.09 FCN Real Risk Integration.
+- v4.10 Intelligence Center V2.
+- v4.11 Integration QA.
 
 ## v4.06 — Market Readiness UI
 
@@ -282,10 +288,42 @@ Out of Scope:
 
 Next:
 
-- v4.07 Workspace Market Service.
-- v4.08 FCN Real Risk Integration.
-- v4.09 Intelligence Center V2.
-- v4.10 Integration QA.
+- v4.07 Provider Health Framework.
+- v4.08 Workspace Market Service.
+- v4.09 FCN Real Risk Integration.
+- v4.10 Intelligence Center V2.
+- v4.11 Integration QA.
+
+## v4.07 — Provider Health Framework
+
+Why:
+
+- v4.05 created provider contracts and v4.06 made registry readiness visible, but future Workspace Market Service needs health, freshness, priority, and fallback semantics before any real provider is connected.
+
+What Changed:
+
+- Added `docs/V407_PROVIDER_HEALTH_FRAMEWORK.md`.
+- Added `src/lib/market/provider-health.ts`.
+- Added `ProviderStatus`, `DataFreshness`, `ProviderPriority`, and `ProviderHealthSummary`.
+- Added fallback policy support.
+- Exposed deterministic mock provider health through `market-center.ts`.
+
+Key Decisions:
+
+- v4.07 is provider-health contract foundation only.
+- Health data is deterministic and mock-only.
+- Fallback policy points to the mock provider until real provider routing is explicitly approved.
+
+Out of Scope:
+
+- No Yahoo API, Binance API, external service, API route, database change, schema change, migration, auth change, membership change, recommendation logic, or trading behavior.
+
+Next:
+
+- v4.08 Workspace Market Service.
+- v4.09 FCN Real Risk Integration.
+- v4.10 Intelligence Center V2.
+- v4.11 Integration QA.
 
 ## v2.10a — Global Market Foundation Review
 

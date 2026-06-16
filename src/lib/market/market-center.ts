@@ -2,6 +2,7 @@ import {
   getMarketProvider,
   listMarketProviders,
 } from "@/src/lib/market/provider-registry";
+import { buildProviderHealthSummary } from "@/src/lib/market/provider-health";
 import type { MarketProviderId } from "@/src/lib/market/market-provider";
 import type { MarketProviderStatusSnapshot } from "@/src/lib/market/market-types";
 
@@ -38,4 +39,8 @@ export function getMarketProviderStatus(): MarketProviderStatusSnapshot {
       "Market abstraction registry is available with mock provider metadata only. No external market provider is connected.",
     supportedSymbols,
   };
+}
+
+export function getMarketProviderHealth() {
+  return buildProviderHealthSummary();
 }
