@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.08 / Market Service Layer`
+`v4.09 / Workspace Market Integration`
 
 ## Current Priority
 
@@ -36,6 +36,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V406_MARKET_READINESS_UI.md` as the source of truth for Intelligence Center market provider registry readiness UI.
 - Use `docs/V407_PROVIDER_HEALTH_FRAMEWORK.md` as the source of truth for market provider status, freshness, priority, health summary, and fallback policy contracts.
 - Use `docs/V408_MARKET_SERVICE_LAYER.md` as the source of truth for unified market service entrypoints and Intelligence Center service-status readback.
+- Use `docs/V409_WORKSPACE_MARKET_INTEGRATION.md` as the source of truth for read-only market readiness, provider health, and fallback policy awareness across Portfolio, Risk, and Intelligence Centers.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -63,6 +64,7 @@ Current priority is UX / IA foundation before moving modules:
 - v4.06 makes Market Abstraction Layer registry readiness visible inside Intelligence Center without calling external providers.
 - v4.07 adds Provider Health Framework contracts and deterministic mock health data for future market service routing.
 - v4.08 adds the Market Service Layer with unified quote, snapshot, news, provider-health, and readiness entrypoints while keeping all market data mock/provider-metadata only.
+- v4.09 integrates Market Service readiness into Portfolio Center, Risk Center, and Intelligence Center as read-only market readiness, provider health, and fallback policy awareness.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -274,7 +276,7 @@ Suggested v4.00 sprint order:
 7. `v4.06` Market Readiness UI.
 8. `v4.07` Provider Health Framework.
 9. `v4.08` Market Service Layer.
-10. `v4.09` Workspace Market Service.
+10. `v4.09` Workspace Market Integration.
 11. `v4.10` FCN Real Risk Integration.
 12. `v4.11` Intelligence Center V2.
 13. `v4.12` Integration QA / Release Hardening.
@@ -339,6 +341,13 @@ Suggested v4.00 sprint order:
 - Reuse the Market Abstraction Layer, Provider Health Framework, provider registry, market center helpers, and deterministic `MockProvider`.
 - Add Market Service Status readback inside `/my-ixai/intelligence`.
 - Do not add Yahoo API, Binance API, external providers, API routes, database changes, schema changes, or migrations.
+
+### v4.09 — Workspace Market Integration
+
+- Add a shared Workspace Market Status component.
+- Integrate Market Service readiness into `/my-ixai/portfolio`, `/my-ixai/risk`, and `/my-ixai/intelligence`.
+- Display market readiness, provider health, and fallback policy awareness as read-only metadata.
+- Do not fetch live quotes, call external providers, add API routes, database changes, schema changes, or migrations.
 
 ### v3.32 — Settings and Preferences Foundation
 

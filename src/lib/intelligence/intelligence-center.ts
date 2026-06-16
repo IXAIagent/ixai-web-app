@@ -344,8 +344,8 @@ export function buildIntelligenceCenterReadback(input: {
       ),
       source(
         "Workspace Market Integration",
-        "placeholder",
-        "Workspace-specific market modules are not duplicated in this sprint.",
+        "ready",
+        "Market Service readiness, provider health, and fallback policy metadata are visible across Workspace centers; live market data remains disabled.",
       ),
     ],
     marketReadiness: getMarketProviderStatus(),

@@ -15,6 +15,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+import { WorkspaceMarketStatus } from "@/components/market/workspace-market-status";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { loadFcnManualPriceOverrides } from "@/src/lib/fcn/manual-price-overrides";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
@@ -360,6 +361,8 @@ export function GlobalRiskCenterWorkspace() {
             </span>
           </div>
         </section>
+
+        <WorkspaceMarketStatus contextLabel="Risk Center" />
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
