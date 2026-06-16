@@ -1,9 +1,15 @@
 import type {
   FCNIntelligenceCenterReadback,
   FCNIntelligenceRiskStatus,
+  FCNPositionRiskReadback,
   FCNTimelineEvent,
 } from "@/src/lib/fcn/intelligence-center";
-import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
+import type {
+  PortfolioTruthConcentrationRisk,
+  PortfolioTruthDataQualityRisk,
+  PortfolioTruthReadback,
+  PortfolioTruthSymbolExposure,
+} from "@/src/lib/portfolio/truth/portfolio-truth-types";
 
 export type GlobalRiskDataStatus =
   | "error"
@@ -37,6 +43,22 @@ export interface GlobalRiskScore {
   summary: string;
 }
 
+export interface GlobalRiskFcnWorstOfSummary {
+  highRiskCount: number;
+  missingPriceCount: number;
+  summary: string;
+  unknownRiskCount: number;
+  watchCount: number;
+  worstPosition: FCNPositionRiskReadback | null;
+}
+
+export interface GlobalRiskIntelligenceReadback {
+  concentrationRisk: PortfolioTruthConcentrationRisk;
+  dataQualityRisk: PortfolioTruthDataQualityRisk;
+  fcnWorstOfRisk: GlobalRiskFcnWorstOfSummary;
+  topExposures: PortfolioTruthSymbolExposure[];
+}
+
 export interface GlobalRiskCenterReadback {
   assetReadiness: GlobalRiskAssetReadiness[];
   dataSources: GlobalRiskDataSourceStatus[];
@@ -44,6 +66,7 @@ export interface GlobalRiskCenterReadback {
   fcnRiskBreakdown: Record<FCNIntelligenceRiskStatus, number>;
   generatedAt: string;
   portfolioTruth: PortfolioTruthReadback | null;
+  riskIntelligence: GlobalRiskIntelligenceReadback;
   riskScore: GlobalRiskScore;
   upcomingEvents: FCNTimelineEvent[];
 }

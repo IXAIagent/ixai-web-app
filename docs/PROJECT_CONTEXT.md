@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.02 — Portfolio Intelligence UI`
+`v4.03 — Risk Intelligence Layer`
 
 Current production state:
 
@@ -113,6 +113,8 @@ v4.01 implements the first Portfolio Truth Layer. It normalizes existing `/api/f
 
 v4.02 builds the Portfolio Intelligence UI on top of the v4.01 Truth Layer. `/my-ixai/portfolio` now visualizes holdings summary, counts-based Stock / FCN / Crypto allocation, top symbol occurrence, source health, and missing-data warnings using only existing truth-layer data. It adds no schema, migration, API route, external market provider, external news provider, AI provider, broker sync, auth, membership, Social Pack, admin editorial, recommendation, or trading changes.
 
+v4.03 adds the Risk Intelligence Layer on top of the v4.01 Truth Layer. `/my-ixai/risk` now shows deterministic concentration risk, top exposure aggregation, FCN worst-of summary, and data quality risk summary while reusing v3.20 FCN helper output. It adds no market data, broker sync, AI commentary, recommendation logic, trading functionality, schema, migration, API route, auth, membership, Social Pack, or admin editorial changes.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -155,7 +157,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.02 — Portfolio Intelligence UI`
+`v4.03 — Risk Intelligence Layer`
 
 Current Core Flow:
 
@@ -187,6 +189,7 @@ Landing
 → FCN KI-distance risk monitoring in FCN Center
 → FCN Intelligence Center with lifecycle, manual price overlay, timeline, and concentration
 → Global Risk Center with FCN risk summary, multi-asset readiness, upcoming risk events, data source status, and deterministic foundation score
+→ Risk Intelligence Layer with concentration, top exposure, FCN worst-of, and data quality readback
 → Intelligence Center with Daily / Weekly / Market entries, FCN highlights, portfolio-aware readiness, news readiness, and commentary readiness
 → v4.00 Integration Program connecting Market, Portfolio, FCN, Risk, and Intelligence through truth-layer and market-service planning
 → Portfolio Truth Layer shared by Portfolio Center, Risk Center, and Intelligence Center
@@ -214,6 +217,7 @@ Product Layers:
 - Intelligence + Market Integration Program: v4.00 plans the connective layer between existing centers. It should not rebuild existing FCN, portfolio, market, risk, or intelligence systems; it should normalize data flow, source status, and ownership boundaries so users can understand what matters in their holdings and market context today.
 - Portfolio Truth Layer: v4.01 provides the first shared readback across Portfolio Center, Risk Center, and Intelligence Center. It reports FCN / Stock / Crypto counts, known notional, source status, available symbols, and missing-data warnings from existing active-app APIs only.
 - Portfolio Intelligence UI: v4.02 makes the Truth Layer visible inside Portfolio Center through counts-based allocation, holdings summary, top symbol occurrence, source health, and missing-data warnings. It remains a UI / visualization layer only.
+- Risk Intelligence Layer: v4.03 makes the Truth Layer visible inside Risk Center through concentration risk, top exposure aggregation, FCN worst-of summary, and data quality risk summary. It remains deterministic and does not add market data, AI, broker sync, recommendations, or trading behavior.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

@@ -3,6 +3,8 @@ import type {
   PortfolioTruthDataSourceStatus,
   PortfolioTruthReadback,
   PortfolioTruthReadinessLevel,
+  PortfolioTruthRiskLevel,
+  PortfolioTruthRiskSummary,
   PortfolioTruthSymbolExposure,
   PortfolioTruthSourceStatus,
 } from "@/src/lib/portfolio/truth/portfolio-truth-types";
@@ -73,8 +75,7 @@ function buildTopSymbolExposures(input: BuildPortfolioTruthInput) {
       }
 
       return a.symbol.localeCompare(b.symbol);
-    })
-    .slice(0, 5);
+    });
 }
 
 function calculateKnownPositionValue(input: {
@@ -196,6 +197,152 @@ function getReadinessLevel(
   return "placeholder";
 }
 
+function getConcentrationLevel(input: {
+  repeatedSymbolCount: number;
+  topExposureSharePct: number | null;
+  topOccurrenceCount: number;
+}): PortfolioTruthRiskLevel {
+  if (input.topOccurrenceCount === 0 || input.topExposureSharePct === null) {
+    return "UNKNOWN";
+  }
+
+  if (
+    input.topOccurrenceCount >= 4 ||
+    input.topExposureSharePct >= 50 ||
+    input.repeatedSymbolCount >= 4
+  ) {
+    return "HIGH";
+  }
+
+  if (
+    input.topOccurrenceCount >= 2 ||
+    input.topExposureSharePct >= 30 ||
+    input.repeatedSymbolCount >= 2
+  ) {
+    return "MODERATE";
+  }
+
+  return "LOW";
+}
+
+function buildConcentrationSummary(input: {
+  level: PortfolioTruthRiskLevel;
+  topExposure: PortfolioTruthSymbolExposure | null;
+  topExposureSharePct: number | null;
+}) {
+  if (!input.topExposure) {
+    return "No shared symbol exposure is available yet.";
+  }
+
+  const shareLabel =
+    input.topExposureSharePct === null
+      ? "unknown share"
+      : `${Math.round(input.topExposureSharePct)}% of known symbol occurrences`;
+
+  if (input.level === "HIGH") {
+    return `${input.topExposure.symbol} is the largest repeated exposure with ${input.topExposure.occurrenceCount} occurrence(s), representing ${shareLabel}.`;
+  }
+
+  if (input.level === "MODERATE") {
+    return `${input.topExposure.symbol} appears more than once across known holdings. Concentration is visible but still foundation-level.`;
+  }
+
+  return `Known holdings are currently spread across available symbols. Top symbol: ${input.topExposure.symbol}.`;
+}
+
+function getDataQualityLevel(input: {
+  partialSourceCount: number;
+  unavailableSourceCount: number;
+  warningCount: number;
+}): PortfolioTruthRiskLevel {
+  if (input.unavailableSourceCount > 0 || input.warningCount >= 5) {
+    return "HIGH";
+  }
+
+  if (input.partialSourceCount > 0 || input.warningCount > 0) {
+    return "MODERATE";
+  }
+
+  return "LOW";
+}
+
+function buildRiskSummary(input: {
+  dataSourceStatuses: PortfolioTruthDataSourceStatus[];
+  missingDataWarnings: string[];
+  topExposures: PortfolioTruthSymbolExposure[];
+}): PortfolioTruthRiskSummary {
+  const totalSymbolOccurrences = input.topExposures.reduce(
+    (total, exposure) => total + exposure.occurrenceCount,
+    0,
+  );
+  const topExposure = input.topExposures[0] ?? null;
+  const topExposureSharePct =
+    topExposure && totalSymbolOccurrences > 0
+      ? (topExposure.occurrenceCount / totalSymbolOccurrences) * 100
+      : null;
+  const repeatedSymbolCount = input.topExposures.filter(
+    (exposure) => exposure.occurrenceCount >= 2,
+  ).length;
+  const concentrationLevel = getConcentrationLevel({
+    repeatedSymbolCount,
+    topExposureSharePct,
+    topOccurrenceCount: topExposure?.occurrenceCount ?? 0,
+  });
+  const unavailableSourceCount = input.dataSourceStatuses.filter(
+    (source) => source.status === "unavailable" || source.status === "unauthenticated",
+  ).length;
+  const partialSourceCount = input.dataSourceStatuses.filter(
+    (source) => source.status === "partial",
+  ).length;
+  const dataQualityLevel = getDataQualityLevel({
+    partialSourceCount,
+    unavailableSourceCount,
+    warningCount: input.missingDataWarnings.length,
+  });
+
+  return {
+    concentrationRisk: {
+      level: concentrationLevel,
+      repeatedSymbolCount,
+      score:
+        concentrationLevel === "UNKNOWN"
+          ? null
+          : Math.min(
+              100,
+              Math.round(
+                (topExposureSharePct ?? 0) +
+                  repeatedSymbolCount * 8 +
+                  (topExposure?.occurrenceCount ?? 0) * 5,
+              ),
+            ),
+      summary: buildConcentrationSummary({
+        level: concentrationLevel,
+        topExposure,
+        topExposureSharePct,
+      }),
+      topExposure,
+      topExposureSharePct,
+      totalSymbolOccurrences,
+    },
+    dataQualityRisk: {
+      level: dataQualityLevel,
+      partialSourceCount,
+      score: Math.min(
+        100,
+        unavailableSourceCount * 35 +
+          partialSourceCount * 15 +
+          input.missingDataWarnings.length * 8,
+      ),
+      summary:
+        input.missingDataWarnings.length > 0
+          ? `${input.missingDataWarnings.length} data warning(s) are present across the shared readback.`
+          : "No data quality warnings are present in the shared readback.",
+      unavailableSourceCount,
+      warningCount: input.missingDataWarnings.length,
+    },
+  };
+}
+
 export function buildPortfolioTruthReadback(
   input: BuildPortfolioTruthInput,
 ): PortfolioTruthReadback {
@@ -243,7 +390,7 @@ export function buildPortfolioTruthReadback(
   const cryptoSymbols = uniqueSorted(
     input.cryptoPositions.map((position) => position.symbol),
   );
-  const topExposures = buildTopSymbolExposures(input);
+  const symbolExposures = buildTopSymbolExposures(input);
 
   const dataSourceStatuses: PortfolioTruthDataSourceStatus[] = [
     {
@@ -338,6 +485,12 @@ export function buildPortfolioTruthReadback(
       ? "Portfolio Dashboard summary readback is currently unavailable."
       : "",
   ].filter(Boolean);
+  const topExposures = symbolExposures.slice(0, 5);
+  const risk = buildRiskSummary({
+    dataSourceStatuses,
+    missingDataWarnings,
+    topExposures: symbolExposures,
+  });
 
   return {
     amounts: {
@@ -357,6 +510,7 @@ export function buildPortfolioTruthReadback(
       stock: input.stockPositions,
     },
     readinessLevel: getReadinessLevel(dataSourceStatuses),
+    risk,
     symbols: {
       cryptoSymbols,
       stockSymbols,

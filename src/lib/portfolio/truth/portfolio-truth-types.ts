@@ -55,6 +55,32 @@ export interface PortfolioTruthSymbolExposure {
   symbol: string;
 }
 
+export type PortfolioTruthRiskLevel = "HIGH" | "LOW" | "MODERATE" | "UNKNOWN";
+
+export interface PortfolioTruthConcentrationRisk {
+  level: PortfolioTruthRiskLevel;
+  repeatedSymbolCount: number;
+  score: number | null;
+  summary: string;
+  topExposure: PortfolioTruthSymbolExposure | null;
+  topExposureSharePct: number | null;
+  totalSymbolOccurrences: number;
+}
+
+export interface PortfolioTruthDataQualityRisk {
+  level: PortfolioTruthRiskLevel;
+  partialSourceCount: number;
+  score: number | null;
+  summary: string;
+  unavailableSourceCount: number;
+  warningCount: number;
+}
+
+export interface PortfolioTruthRiskSummary {
+  concentrationRisk: PortfolioTruthConcentrationRisk;
+  dataQualityRisk: PortfolioTruthDataQualityRisk;
+}
+
 export interface PortfolioTruthPositions {
   crypto: CryptoPosition[];
   fcn: FCNPosition[];
@@ -70,6 +96,7 @@ export interface PortfolioTruthReadback {
   portfolioDashboard: PortfolioDashboardSummary | null;
   positions: PortfolioTruthPositions;
   readinessLevel: PortfolioTruthReadinessLevel;
+  risk: PortfolioTruthRiskSummary;
   symbols: PortfolioTruthSymbols;
 }
 

@@ -71,6 +71,7 @@ Production data ownership update:
 - v4.00 plans the Intelligence + Market Integration Program. It is not another page; it is the integration layer between Public Market, Portfolio Center, FCN Center, Global Risk Center, and Intelligence Center. The program should add a Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA in small sprints without rebuilding existing systems.
 - v4.01 adds the Portfolio Truth Layer as the first shared readback layer across `/my-ixai/portfolio`, `/my-ixai/risk`, and `/my-ixai/intelligence`. It normalizes existing FCN / Stock / Crypto / Portfolio Dashboard API data into counts, known notional, source status, missing-data warnings, and available symbols without adding schema, migration, providers, AI, broker sync, or trading logic.
 - v4.02 adds Portfolio Intelligence UI inside `/my-ixai/portfolio`. It visualizes the v4.01 Truth Layer with counts-based allocation, holdings summary, top symbol occurrence, source health, and missing-data warnings without adding schema, migration, providers, AI, broker sync, recommendation logic, or trading behavior.
+- v4.03 adds Risk Intelligence Layer inside `/my-ixai/risk`. It extends the v4.01 Truth Layer with concentration and data-quality risk summaries, then reuses v3.20 FCN helper output for FCN worst-of readback without adding market data, AI, broker sync, recommendations, or trading behavior.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -203,7 +204,7 @@ v2.11 center ownership rule:
   - `/my-ixai/input/crypto`: Usable Crypto input form with local preview.
   - `/my-ixai/input/fcn`: FCN Wizard route and canonical FCN data-entry surface with Basic, Barrier, Observation, Dates, Underlyings, and Review.
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
-  - `/my-ixai/risk`: Global Risk Center foundation with FCN risk summary, multi-asset readiness, upcoming FCN events, data source status, and deterministic Foundation Score.
+  - `/my-ixai/risk`: Global Risk Center foundation with FCN risk summary, multi-asset readiness, upcoming FCN events, data source status, deterministic Foundation Score, and v4.03 Risk Intelligence Layer readback.
   - `/my-ixai/fcn`: FCN Intelligence Center for persisted FCN positions, lifecycle readback, manual local price overlay, KI-distance risk scoring, timeline events, concentration, observation schedule, and coupon dates.
   - `/my-ixai/intelligence`: Intelligence Center v1 with Daily / Weekly / Market entries, FCN highlights, portfolio-aware readiness, news readiness, commentary readiness, source status, and compliance footer.
   - `/my-ixai/settings`: Settings placeholder.

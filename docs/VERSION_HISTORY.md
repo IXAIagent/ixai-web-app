@@ -53,7 +53,7 @@ What Changed:
 - Audited current route / center readiness across Market, Workspace Home, Portfolio Center, Asset Input, FCN Center, Risk Center, Intelligence Center, and Settings.
 - Audited available data sources for FCN, Stock, Crypto, Portfolio Dashboard, Portfolio Repository, public Market, news, Daily / Weekly, manual price overlays, and mock portfolio engines.
 - Proposed Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA.
-- Recorded a v4.00 sprint plan: v4.00a Architecture Audit, v4.01 Portfolio Truth Layer, v4.02 Workspace Market Service, v4.03 FCN Real Risk Integration, v4.04 Intelligence Center V2, and v4.05 Integration QA.
+- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Workspace Market Service, v4.05 FCN Real Risk Integration, v4.06 Intelligence Center V2, and v4.07 Integration QA.
 
 Key Decisions:
 
@@ -69,10 +69,11 @@ Next:
 
 - v4.01 Portfolio Truth Layer.
 - v4.02 Portfolio Intelligence UI.
-- v4.03 Workspace Market Service.
-- v4.04 FCN Real Risk Integration.
-- v4.05 Intelligence Center V2.
-- v4.06 Integration QA.
+- v4.03 Risk Intelligence Layer.
+- v4.04 Workspace Market Service.
+- v4.05 FCN Real Risk Integration.
+- v4.06 Intelligence Center V2.
+- v4.07 Integration QA.
 
 ## v4.01 — Portfolio Truth Layer
 
@@ -103,10 +104,11 @@ Out of Scope:
 Next:
 
 - v4.02 Portfolio Intelligence UI.
-- v4.03 Workspace Market Service.
-- v4.04 FCN Real Risk Integration.
-- v4.05 Intelligence Center V2.
-- v4.06 Integration QA.
+- v4.03 Risk Intelligence Layer.
+- v4.04 Workspace Market Service.
+- v4.05 FCN Real Risk Integration.
+- v4.06 Intelligence Center V2.
+- v4.07 Integration QA.
 
 ## v4.02 — Portfolio Intelligence UI
 
@@ -135,10 +137,44 @@ Out of Scope:
 
 Next:
 
-- v4.03 Workspace Market Service.
-- v4.04 FCN Real Risk Integration.
-- v4.05 Intelligence Center V2.
-- v4.06 Integration QA.
+- v4.03 Risk Intelligence Layer.
+- v4.04 Workspace Market Service.
+- v4.05 FCN Real Risk Integration.
+- v4.06 Intelligence Center V2.
+- v4.07 Integration QA.
+
+## v4.03 — Risk Intelligence Layer
+
+Why:
+
+- v4.01 created the shared Portfolio Truth Layer and v4.02 made it visible in Portfolio Center.
+- Risk Center needed a deterministic readback layer that turns shared holdings truth into concentration, top exposure, FCN worst-of, and data-quality risk summaries.
+
+What Changed:
+
+- Added `docs/V403_RISK_INTELLIGENCE_LAYER.md`.
+- Extended Portfolio Truth Layer with `PortfolioTruthRiskSummary`.
+- Added concentration risk and data quality risk readback derived from existing FCN / Stock / Crypto / Portfolio Dashboard sources.
+- Updated Global Risk Center readback with Risk Intelligence output.
+- Updated `/my-ixai/risk` with a Risk Intelligence Layer section.
+- Reused v3.20 FCN Intelligence Center helpers for FCN worst-of readback.
+
+Key Decisions:
+
+- v4.03 is a Risk Center consumption layer, not a new market-data or AI sprint.
+- Top exposure remains occurrence-based until valuation and market data are approved for this surface.
+- FCN risk calculations remain owned by the FCN helper layer and are not duplicated.
+
+Out of Scope:
+
+- No schema change, migration, new API route, external market provider, external news provider, AI provider, broker sync, recommendation logic, auth change, membership change, Social Pack change, admin editorial change, or trading behavior.
+
+Next:
+
+- v4.04 Workspace Market Service.
+- v4.05 FCN Real Risk Integration.
+- v4.06 Intelligence Center V2.
+- v4.07 Integration QA.
 
 ## v2.10a — Global Market Foundation Review
 
