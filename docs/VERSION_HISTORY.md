@@ -6,6 +6,40 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v3.40 — Intelligence Center v1
+
+Why:
+
+- `/my-ixai/intelligence` was still only a v3.00 placeholder after FCN Center and Risk Center became usable.
+- IXAI needed a first user-facing intelligence workspace that connects public Daily / Weekly / Market sources with portfolio-aware readiness and FCN highlights.
+
+What Changed:
+
+- Added `docs/V340_INTELLIGENCE_CENTER_V1.md`.
+- Added `components/intelligence/intelligence-center-workspace.tsx`.
+- Added `src/lib/intelligence/intelligence-center.ts` and `src/lib/intelligence/intelligence-center-types.ts`.
+- Replaced `/my-ixai/intelligence` placeholder with Intelligence Center v1.
+- Added Daily Brief, Weekly Intelligence, and Market Overview entry points.
+- Added portfolio-aware highlights from existing FCN / Stock / Crypto / Portfolio Dashboard readiness.
+- Reused v3.20 FCN helper output for FCN highlights and upcoming FCN events.
+- Added News Feed Readiness, Commentary Readiness, Source Status, Next Action Panel, and Compliance Footer.
+
+Key Decisions:
+
+- v3.40 is productization, not a new AI provider sprint.
+- Public Daily / Weekly / Market routes remain the source routes.
+- News and Commentary are readiness layers unless existing mock foundation output is explicitly labeled.
+- Legacy Pro concepts are migrated as App-native workflow structure only.
+
+Out of Scope:
+
+- No migration, schema change, new API route, external AI provider, external news provider, live market data provider, broker sync, auth change, membership change, Social Pack change, admin editorial change, trading logic, or buy / sell recommendation.
+
+Next:
+
+- v3.41 should define deterministic portfolio-aware news relevance.
+- v3.42 should define commentary / intelligence memory readiness before any external AI provider is approved.
+
 ## v2.10a — Global Market Foundation Review
 
 Why:
