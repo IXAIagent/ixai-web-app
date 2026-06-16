@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { RecentInputsPanel } from "@/components/portfolio/recent-inputs-panel";
+import { PortfolioTruthSummary } from "@/components/portfolio/portfolio-truth-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -20,13 +21,6 @@ export const metadata = buildPublicMetadata({
     "IXAI Portfolio Center 是 Workspace 內管理股票、Crypto、FCN 與未來多券商資產的首頁。",
   title: "Portfolio Center | 我的 IXAI",
 });
-
-const overviewStats = [
-  { label: "Total Assets", value: "0", note: "尚未建立資產" },
-  { label: "Stocks", value: "0", note: "可從 Asset Input 新增" },
-  { label: "Crypto", value: "0", note: "BTC / ETH 等數位資產" },
-  { label: "FCN", value: "0", note: "FCN Wizard 已移至 Workspace" },
-];
 
 const holdingCards = [
   {
@@ -109,40 +103,7 @@ export default function MyIxaiPortfolioPage() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                Portfolio Overview
-              </p>
-              <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                我的資產總覽
-              </h2>
-            </div>
-            <p className="max-w-xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              v3.05 先建立使用者可理解的 Workspace 首頁；數字為 foundation 狀態，不新增 API 或 schema。
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {overviewStats.map((stat) => (
-              <article
-                className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
-                key={stat.label}
-              >
-                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-                  {stat.label}
-                </p>
-                <p className="mt-3 text-3xl font-semibold text-[var(--ixai-forest)]">
-                  {stat.value}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                  {stat.note}
-                </p>
-              </article>
-            ))}
-          </div>
-        </section>
+        <PortfolioTruthSummary />
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -151,7 +112,7 @@ export default function MyIxaiPortfolioPage() {
                 Holdings Summary
               </p>
               <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                尚未建立資產
+                建立與整理資產
               </h2>
             </div>
             <Link

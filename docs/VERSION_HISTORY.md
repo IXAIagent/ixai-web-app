@@ -73,6 +73,39 @@ Next:
 - v4.04 Intelligence Center V2.
 - v4.05 Integration QA.
 
+## v4.01 — Portfolio Truth Layer
+
+Why:
+
+- Portfolio Center, Risk Center, and Intelligence Center were reading related holdings data through separate paths.
+- Portfolio Center could still show placeholder / zero counts while FCN / Stock / Crypto records existed elsewhere.
+
+What Changed:
+
+- Added `docs/V401_PORTFOLIO_TRUTH_LAYER.md`.
+- Added a shared Portfolio Truth Layer under `src/lib/portfolio/truth/`.
+- Normalized existing `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` readback into holdings counts, known notional, source status, missing-data warnings, and available symbols.
+- Updated Portfolio Center to consume Portfolio Truth instead of static zero overview cards.
+- Updated Risk Center to consume Portfolio Truth while preserving the existing v3.30 FCN-led Foundation Score.
+- Updated Intelligence Center to consume Portfolio Truth for portfolio-aware readiness and available symbols without inventing news, prices, or AI commentary.
+
+Key Decisions:
+
+- v4.01 is a shared readback layer, not a new investment feature.
+- Existing FCN, Stock, Crypto, and Portfolio Dashboard APIs are reused rather than rebuilt.
+- Missing prices or cost data are labeled as missing; IXAI does not invent market value.
+
+Out of Scope:
+
+- No schema change, migration, new API route, external market provider, external news provider, OpenAI / Claude / Gemini, broker sync, Telegram / LINE push, payment, trading, personalized buy/sell recommendation, Social Pack change, admin editorial change, auth change, or membership change.
+
+Next:
+
+- v4.02 Workspace Market Service.
+- v4.03 FCN Real Risk Integration.
+- v4.04 Intelligence Center V2.
+- v4.05 Integration QA.
+
 ## v2.10a — Global Market Foundation Review
 
 Why:

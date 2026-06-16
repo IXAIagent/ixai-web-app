@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.00 — Intelligence + Market Integration Program`
+`v4.01 — Portfolio Truth Layer`
 
 Current production state:
 
@@ -109,6 +109,8 @@ v3.40 upgrades `/my-ixai/intelligence` from placeholder into the first usable In
 
 v4.00 is the Intelligence + Market Integration Program. It is not another page. It is a docs-first architecture plan for connecting Market, Portfolio, FCN, Risk, and Intelligence into one operating workflow. The program should establish a Portfolio Truth Layer, a Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA while preserving the boundaries of no new external market provider, no external news provider, no AI provider, no broker sync, no schema/migration, no trading logic, no Social Pack changes, no admin editorial changes, no auth changes, and no membership changes.
 
+v4.01 implements the first Portfolio Truth Layer. It normalizes existing `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` readback into one shared holdings summary for Portfolio Center, Risk Center, and Intelligence Center. It fixes the product gap where Portfolio Center could show zero assets while FCN / Stock / Crypto records existed elsewhere. v4.01 adds no schema, migration, API route, external market provider, external news provider, AI provider, broker sync, auth, membership, Social Pack, admin editorial, or trading changes.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -151,7 +153,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.00 — Intelligence + Market Integration Program`
+`v4.01 — Portfolio Truth Layer`
 
 Current Core Flow:
 
@@ -185,6 +187,7 @@ Landing
 → Global Risk Center with FCN risk summary, multi-asset readiness, upcoming risk events, data source status, and deterministic foundation score
 → Intelligence Center with Daily / Weekly / Market entries, FCN highlights, portfolio-aware readiness, news readiness, and commentary readiness
 → v4.00 Integration Program connecting Market, Portfolio, FCN, Risk, and Intelligence through truth-layer and market-service planning
+→ Portfolio Truth Layer shared by Portfolio Center, Risk Center, and Intelligence Center
 ```
 
 Public Intelligence Funnel:
@@ -206,6 +209,7 @@ Product Layers:
 - Global Risk Center Foundation: v3.30 makes `/my-ixai/risk` a first working risk workspace by reusing FCN v3.20 readback, showing Stock / Crypto / Grid / Dual readiness, listing upcoming FCN events, and reporting data source status. It is not a full multi-asset risk engine yet.
 - Intelligence Center v1: v3.40 makes `/my-ixai/intelligence` a first working intelligence workspace by linking Daily / Weekly / Market sources, surfacing FCN highlights, and labeling portfolio-aware news / commentary readiness without external providers.
 - Intelligence + Market Integration Program: v4.00 plans the connective layer between existing centers. It should not rebuild existing FCN, portfolio, market, risk, or intelligence systems; it should normalize data flow, source status, and ownership boundaries so users can understand what matters in their holdings and market context today.
+- Portfolio Truth Layer: v4.01 provides the first shared readback across Portfolio Center, Risk Center, and Intelligence Center. It reports FCN / Stock / Crypto counts, known notional, source status, available symbols, and missing-data warnings from existing active-app APIs only.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

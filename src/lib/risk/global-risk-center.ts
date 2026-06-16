@@ -8,6 +8,7 @@ import type {
   GlobalRiskDataStatus,
   GlobalRiskScore,
 } from "@/src/lib/risk/global-risk-types";
+import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type { CryptoPosition } from "@/src/types/crypto-position";
 import type { FCNPosition } from "@/src/types/fcn-position";
 import type { StockPosition } from "@/src/types/stock-position";
@@ -75,6 +76,7 @@ export function buildGlobalRiskCenterReadback(input: {
   fcnError?: boolean;
   fcnPositions: FCNPosition[];
   manualPrices?: FCNManualPriceOverrides;
+  portfolioTruth?: PortfolioTruthReadback | null;
   stockError?: boolean;
   stockPositions: StockPosition[];
   unauthenticated?: boolean;
@@ -149,6 +151,13 @@ export function buildGlobalRiskCenterReadback(input: {
     ],
     dataSources: [
       {
+        label: "Portfolio Truth Layer",
+        note: input.portfolioTruth
+          ? "Shared v4.01 readback used by Portfolio, Risk, and Intelligence Center."
+          : "Shared Portfolio Truth Layer is not attached to this readback.",
+        status: input.portfolioTruth?.readinessLevel ?? "placeholder",
+      },
+      {
         label: "FCN API",
         note: "Existing /api/fcn readback path.",
         status: sourceStatus({
@@ -194,6 +203,7 @@ export function buildGlobalRiskCenterReadback(input: {
       YELLOW: fcn.summary.watchCount,
     },
     generatedAt: new Date().toISOString(),
+    portfolioTruth: input.portfolioTruth ?? null,
     riskScore: buildFoundationScore({
       highRiskCount: fcn.summary.highRiskCount,
       totalCount: fcn.summary.totalCount,

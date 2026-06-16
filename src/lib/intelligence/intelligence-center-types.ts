@@ -1,6 +1,13 @@
 import type { FCNIntelligenceCenterReadback } from "@/src/lib/fcn/intelligence-center";
+import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 
-export type IntelligenceCenterStatus = "error" | "placeholder" | "ready" | "unauthenticated";
+export type IntelligenceCenterStatus =
+  | "error"
+  | "partial"
+  | "placeholder"
+  | "ready"
+  | "unauthenticated"
+  | "unavailable";
 
 export type IntelligenceCenterSourceStatus = {
   label: string;
@@ -23,6 +30,7 @@ export type IntelligenceCenterReadback = {
   highlights: string[];
   marketSnapshot: IntelligenceCenterSourceStatus[];
   newsReadiness: IntelligenceCenterSourceStatus[];
+  portfolioTruth: PortfolioTruthReadback | null;
   portfolioStatus: IntelligenceCenterSourceStatus[];
   sourceStatus: IntelligenceCenterSourceStatus[];
   stats: {

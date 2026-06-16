@@ -17,36 +17,23 @@ import {
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { loadFcnManualPriceOverrides } from "@/src/lib/fcn/manual-price-overrides";
+import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { buildGlobalRiskCenterReadback } from "@/src/lib/risk/global-risk-center";
 import type {
   GlobalRiskAssetReadiness,
   GlobalRiskCenterReadback,
   GlobalRiskDataSourceStatus,
 } from "@/src/lib/risk/global-risk-types";
-import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
-import type { CryptoPosition } from "@/src/types/crypto-position";
-import type { FCNPosition } from "@/src/types/fcn-position";
-import type { StockPosition } from "@/src/types/stock-position";
 
 type LoadStatus = "error" | "loading" | "ready" | "unauthenticated";
 
-type PositionListResponse<T> = {
-  message?: string;
-  ok: boolean;
-  positions?: T[];
-  status?: string;
-};
-
-type ReadResult<T> = {
-  error: boolean;
-  positions: T[];
-};
-
 const STATUS_CLASS = {
   error: "border-rose-200 bg-rose-50 text-rose-800",
+  partial: "border-amber-200 bg-amber-50 text-amber-800",
   placeholder: "border-slate-200 bg-slate-50 text-slate-700",
   ready: "border-emerald-200 bg-emerald-50 text-emerald-800",
   unauthenticated: "border-amber-200 bg-amber-50 text-amber-800",
+  unavailable: "border-rose-200 bg-rose-50 text-rose-800",
 };
 
 const LEVEL_CLASS = {
@@ -78,27 +65,6 @@ function formatDate(value: string | null | undefined) {
     month: "2-digit",
     year: "numeric",
   }).format(date);
-}
-
-async function readPositions<T>(
-  path: string,
-  headers: HeadersInit,
-): Promise<ReadResult<T>> {
-  try {
-    const response = await fetch(path, {
-      cache: "no-store",
-      headers,
-    });
-    const payload = (await response.json().catch(() => ({}))) as PositionListResponse<T>;
-
-    if (!response.ok || !payload.ok) {
-      return { error: true, positions: [] };
-    }
-
-    return { error: false, positions: payload.positions ?? [] };
-  } catch {
-    return { error: true, positions: [] };
-  }
 }
 
 function StatusPill({ status }: { status: GlobalRiskDataSourceStatus["status"] }) {
@@ -205,13 +171,14 @@ export function GlobalRiskCenterWorkspace() {
     setStatus("loading");
     setMessage(null);
 
-    const headers = await getSupabaseAuthorizationHeaders();
+    const truth = await loadPortfolioTruthReadback();
 
-    if (!headers) {
+    if (truth.readinessLevel === "unauthenticated") {
       setReadback(
         buildGlobalRiskCenterReadback({
           cryptoPositions: [],
           fcnPositions: [],
+          portfolioTruth: truth,
           stockPositions: [],
           unauthenticated: true,
         }),
@@ -220,24 +187,25 @@ export function GlobalRiskCenterWorkspace() {
       return;
     }
 
-    const [fcnResult, stockResult, cryptoResult] = await Promise.all([
-      readPositions<FCNPosition>("/api/fcn", headers),
-      readPositions<StockPosition>("/api/stocks", headers),
-      readPositions<CryptoPosition>("/api/crypto", headers),
-    ]);
+    const isUnavailable = (key: "crypto" | "fcn" | "stock") =>
+      truth.dataSourceStatuses.some(
+        (source) => source.key === key && source.status === "unavailable",
+      );
+
     const nextReadback = buildGlobalRiskCenterReadback({
-      cryptoError: cryptoResult.error,
-      cryptoPositions: cryptoResult.positions,
-      fcnError: fcnResult.error,
-      fcnPositions: fcnResult.positions,
+      cryptoError: isUnavailable("crypto"),
+      cryptoPositions: truth.positions.crypto,
+      fcnError: isUnavailable("fcn"),
+      fcnPositions: truth.positions.fcn,
       manualPrices: loadFcnManualPriceOverrides(),
-      stockError: stockResult.error,
-      stockPositions: stockResult.positions,
+      portfolioTruth: truth,
+      stockError: isUnavailable("stock"),
+      stockPositions: truth.positions.stock,
     });
 
     setReadback(nextReadback);
 
-    if (fcnResult.error || stockResult.error || cryptoResult.error) {
+    if (truth.readinessLevel === "unavailable") {
       setStatus("error");
       setMessage("Some risk data sources could not be read. Available sources are still shown.");
       return;
@@ -282,6 +250,11 @@ export function GlobalRiskCenterWorkspace() {
               value={scoreLabel}
             />
             <MetricCard
+              label="Total Holdings"
+              note="Shared Portfolio Truth Layer count."
+              value={formatNumber(readback.portfolioTruth?.counts.totalAssets ?? 0)}
+            />
+            <MetricCard
               label="FCN High Risk"
               note="RED FCN readback from v3.20 logic."
               value={formatNumber(readback.fcn.summary.highRiskCount)}
@@ -291,12 +264,44 @@ export function GlobalRiskCenterWorkspace() {
               note="YELLOW FCN readback from v3.20 logic."
               value={formatNumber(readback.fcn.summary.watchCount)}
             />
-            <MetricCard
-              label="Upcoming Events"
-              note="Stored FCN timeline events only."
-              value={formatNumber(readback.upcomingEvents.length)}
-            />
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+            Portfolio Truth Status
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+            Shared Holdings Readback
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            v4.01 keeps the existing Risk score unchanged, but adds the shared Portfolio Truth Layer so Risk Center can see available FCN, Stock, and Crypto records.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              ["Total Holdings", formatNumber(readback.portfolioTruth?.counts.totalAssets ?? 0)],
+              ["FCN", formatNumber(readback.portfolioTruth?.counts.totalFcnPositions ?? 0)],
+              ["Stocks", formatNumber(readback.portfolioTruth?.counts.totalStockPositions ?? 0)],
+              ["Crypto", formatNumber(readback.portfolioTruth?.counts.totalCryptoPositions ?? 0)],
+            ].map(([label, value]) => (
+              <article
+                className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+                key={label}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  {label}
+                </p>
+                <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                  {value}
+                </p>
+              </article>
+            ))}
+          </div>
+          {readback.portfolioTruth?.missingDataWarnings.length ? (
+            <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
+              {readback.portfolioTruth.missingDataWarnings[0]}
+            </p>
+          ) : null}
         </section>
 
         <section className={`rounded-2xl border p-5 sm:p-6 ${LEVEL_CLASS[readback.riskScore.level]}`}>

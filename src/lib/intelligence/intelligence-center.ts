@@ -8,6 +8,10 @@ import type {
   IntelligenceCenterSourceStatus,
   IntelligenceCenterStatus,
 } from "@/src/lib/intelligence/intelligence-center-types";
+import type {
+  PortfolioTruthReadback,
+  PortfolioTruthSourceStatus,
+} from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type { CryptoPosition } from "@/src/types/crypto-position";
 import type { FCNPosition } from "@/src/types/fcn-position";
 import type { StockPosition } from "@/src/types/stock-position";
@@ -20,6 +24,16 @@ function statusFromCount(input: {
   if (input.unauthenticated) return "unauthenticated";
   if (input.error) return "error";
   return input.count > 0 ? "ready" : "placeholder";
+}
+
+function statusFromTruthStatus(
+  status: PortfolioTruthSourceStatus,
+): IntelligenceCenterStatus {
+  if (status === "unavailable") {
+    return "unavailable";
+  }
+
+  return status;
 }
 
 function source(label: string, status: IntelligenceCenterStatus, note: string): IntelligenceCenterSourceStatus {
@@ -91,7 +105,9 @@ function buildHighlights(input: {
   }
 
   if (input.portfolioCount > 0) {
-    highlights.push(`${input.portfolioCount} portfolios are available for future portfolio-aware intelligence.`);
+    highlights.push(
+      `${input.portfolioCount} holdings are available through the shared Portfolio Truth Layer.`,
+    );
   }
 
   return highlights.slice(0, 5);
@@ -105,12 +121,14 @@ export function buildIntelligenceCenterReadback(input: {
   manualPrices?: FCNManualPriceOverrides;
   portfolioCount?: number;
   portfolioError?: boolean;
+  portfolioTruth?: PortfolioTruthReadback | null;
   stockError?: boolean;
   stockPositions: StockPosition[];
   unauthenticated?: boolean;
 }): IntelligenceCenterReadback {
   const unauthenticated = input.unauthenticated ?? false;
-  const portfolioCount = input.portfolioCount ?? 0;
+  const portfolioCount =
+    input.portfolioCount ?? input.portfolioTruth?.portfolioDashboard?.portfolioCount ?? 0;
   const fcn = buildFcnIntelligenceCenterReadback(input.fcnPositions, input.manualPrices ?? {});
   const fcnStatus = statusFromCount({
     count: input.fcnPositions.length,
@@ -188,13 +206,28 @@ export function buildIntelligenceCenterReadback(input: {
         "No News API, Yahoo, broker, or third-party news provider is connected in v3.40.",
       ),
     ],
+    portfolioTruth: input.portfolioTruth ?? null,
     portfolioStatus: [
+      source(
+        "Portfolio Truth Layer",
+        input.portfolioTruth
+          ? statusFromTruthStatus(input.portfolioTruth.readinessLevel)
+          : "placeholder",
+        "Shared v4.01 readback layer for Portfolio, Risk, and Intelligence Center.",
+      ),
       source("Portfolio Dashboard", portfolioStatus, "Existing /api/portfolio/dashboard readback path."),
       source("FCN Positions", fcnStatus, "Existing /api/fcn readback path reused for FCN highlights."),
       source("Stock Positions", stockStatus, "Existing /api/stocks readback path; intelligence remains readiness-first."),
       source("Crypto Positions", cryptoStatus, "Existing /api/crypto readback path; intelligence remains readiness-first."),
     ],
     sourceStatus: [
+      source(
+        "Portfolio Truth Layer",
+        input.portfolioTruth
+          ? statusFromTruthStatus(input.portfolioTruth.readinessLevel)
+          : "placeholder",
+        "Shared v4.01 readback used before creating portfolio-aware insights.",
+      ),
       source("FCN API", fcnStatus, "Used for FCN intelligence highlights."),
       source("Stock API", stockStatus, "Used for readiness and future portfolio-aware highlights."),
       source("Crypto API", cryptoStatus, "Used for readiness and future portfolio-aware highlights."),
@@ -205,7 +238,7 @@ export function buildIntelligenceCenterReadback(input: {
     stats: {
       cryptoCount: input.cryptoPositions.length,
       fcnCount: input.fcnPositions.length,
-      portfolioCount,
+      portfolioCount: input.portfolioTruth?.counts.totalAssets ?? portfolioCount,
       stockCount: input.stockPositions.length,
     },
   };

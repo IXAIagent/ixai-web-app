@@ -24,49 +24,26 @@ import type {
   IntelligenceCenterSourceStatus,
   IntelligenceCenterStatus,
 } from "@/src/lib/intelligence/intelligence-center-types";
-import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
-import type { CryptoPosition } from "@/src/types/crypto-position";
-import type { FCNPosition } from "@/src/types/fcn-position";
-import type { StockPosition } from "@/src/types/stock-position";
+import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 
 type LoadStatus = "error" | "loading" | "ready" | "unauthenticated";
 
-type PositionListResponse<T> = {
-  ok: boolean;
-  positions?: T[];
-  status?: string;
-};
-
-type PortfolioDashboardResponse = {
-  ok: boolean;
-  status?: string;
-  summary?: {
-    portfolioCount?: number;
-  };
-};
-
-type ReadResult<T> = {
-  error: boolean;
-  positions: T[];
-};
-
-type PortfolioReadResult = {
-  error: boolean;
-  portfolioCount: number;
-};
-
 const STATUS_LABEL: Record<IntelligenceCenterStatus, string> = {
   error: "Needs Review",
+  partial: "Partial",
   placeholder: "Readiness",
   ready: "Ready",
   unauthenticated: "Login Required",
+  unavailable: "Unavailable",
 };
 
 const STATUS_CLASS: Record<IntelligenceCenterStatus, string> = {
   error: "border-[color-mix(in_srgb,var(--ixai-risk-critical)_32%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_8%,white)] text-[var(--ixai-forest)]",
+  partial: "border-[color-mix(in_srgb,var(--ixai-risk-watch)_34%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_10%,white)] text-[var(--ixai-forest)]",
   placeholder: "border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] text-[var(--ixai-forest-soft)]",
   ready: "border-[color-mix(in_srgb,var(--ixai-risk-clear)_34%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-clear)_10%,white)] text-[var(--ixai-forest)]",
   unauthenticated: "border-[color-mix(in_srgb,var(--ixai-risk-watch)_34%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_10%,white)] text-[var(--ixai-forest)]",
+  unavailable: "border-[color-mix(in_srgb,var(--ixai-risk-critical)_32%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_8%,white)] text-[var(--ixai-forest)]",
 };
 
 function formatNumber(value: number | null | undefined) {
@@ -75,48 +52,6 @@ function formatNumber(value: number | null | undefined) {
   }
 
   return new Intl.NumberFormat("en-US").format(value);
-}
-
-async function readPositions<T>(
-  path: string,
-  headers: HeadersInit,
-): Promise<ReadResult<T>> {
-  try {
-    const response = await fetch(path, {
-      cache: "no-store",
-      headers,
-    });
-    const payload = (await response.json().catch(() => ({}))) as PositionListResponse<T>;
-
-    if (!response.ok || !payload.ok) {
-      return { error: true, positions: [] };
-    }
-
-    return { error: false, positions: payload.positions ?? [] };
-  } catch {
-    return { error: true, positions: [] };
-  }
-}
-
-async function readPortfolioDashboard(headers: HeadersInit): Promise<PortfolioReadResult> {
-  try {
-    const response = await fetch("/api/portfolio/dashboard", {
-      cache: "no-store",
-      headers,
-    });
-    const payload = (await response.json().catch(() => ({}))) as PortfolioDashboardResponse;
-
-    if (!response.ok || !payload.ok) {
-      return { error: true, portfolioCount: 0 };
-    }
-
-    return {
-      error: false,
-      portfolioCount: payload.summary?.portfolioCount ?? 0,
-    };
-  } catch {
-    return { error: true, portfolioCount: 0 };
-  }
 }
 
 function buildInitialReadback(): IntelligenceCenterReadback {
@@ -184,13 +119,14 @@ export function IntelligenceCenterWorkspace() {
     setStatus("loading");
     setMessage(null);
 
-    const headers = await getSupabaseAuthorizationHeaders();
+    const truth = await loadPortfolioTruthReadback();
 
-    if (!headers) {
+    if (truth.readinessLevel === "unauthenticated") {
       setReadback(
         buildIntelligenceCenterReadback({
           cryptoPositions: [],
           fcnPositions: [],
+          portfolioTruth: truth,
           stockPositions: [],
           unauthenticated: true,
         }),
@@ -199,28 +135,30 @@ export function IntelligenceCenterWorkspace() {
       return;
     }
 
-    const [portfolioResult, fcnResult, stockResult, cryptoResult] = await Promise.all([
-      readPortfolioDashboard(headers),
-      readPositions<FCNPosition>("/api/fcn", headers),
-      readPositions<StockPosition>("/api/stocks", headers),
-      readPositions<CryptoPosition>("/api/crypto", headers),
-    ]);
+    const isUnavailable = (key: "crypto" | "fcn" | "stock") =>
+      truth.dataSourceStatuses.some(
+        (source) => source.key === key && source.status === "unavailable",
+      );
 
     setReadback(
       buildIntelligenceCenterReadback({
-        cryptoError: cryptoResult.error,
-        cryptoPositions: cryptoResult.positions,
-        fcnError: fcnResult.error,
-        fcnPositions: fcnResult.positions,
+        cryptoError: isUnavailable("crypto"),
+        cryptoPositions: truth.positions.crypto,
+        fcnError: isUnavailable("fcn"),
+        fcnPositions: truth.positions.fcn,
         manualPrices: loadFcnManualPriceOverrides(),
-        portfolioCount: portfolioResult.portfolioCount,
-        portfolioError: portfolioResult.error,
-        stockError: stockResult.error,
-        stockPositions: stockResult.positions,
+        portfolioCount: truth.portfolioDashboard?.portfolioCount ?? 0,
+        portfolioError: truth.dataSourceStatuses.some(
+          (source) =>
+            source.key === "portfolioDashboard" && source.status === "unavailable",
+        ),
+        portfolioTruth: truth,
+        stockError: isUnavailable("stock"),
+        stockPositions: truth.positions.stock,
       }),
     );
 
-    if (portfolioResult.error || fcnResult.error || stockResult.error || cryptoResult.error) {
+    if (truth.readinessLevel === "unavailable") {
       setStatus("error");
       setMessage("Some intelligence sources could not be read. Available readiness states are still shown.");
       return;
@@ -280,11 +218,69 @@ export function IntelligenceCenterWorkspace() {
               value={formatNumber(readback.stats.cryptoCount)}
             />
             <MetricCard
-              label="Portfolios"
-              note="Readiness from existing portfolio dashboard API."
+              label="Truth Assets"
+              note="Shared Portfolio Truth Layer holdings count."
               value={formatNumber(readback.stats.portfolioCount)}
             />
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+                Portfolio Truth Status
+              </p>
+              <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+                Holdings context for future intelligence
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+                Intelligence Center now reads the same v4.01 Portfolio Truth Layer as Portfolio and Risk. This does not invent news, prices, or AI commentary.
+              </p>
+            </div>
+            <StatusBadge status={readback.portfolioTruth?.readinessLevel ?? "placeholder"} />
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              ["Total Holdings", readback.portfolioTruth?.counts.totalAssets ?? 0],
+              ["FCN", readback.portfolioTruth?.counts.totalFcnPositions ?? 0],
+              ["Stocks", readback.portfolioTruth?.counts.totalStockPositions ?? 0],
+              ["Crypto", readback.portfolioTruth?.counts.totalCryptoPositions ?? 0],
+            ].map(([label, value]) => (
+              <article
+                className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+                key={label}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+                  {label}
+                </p>
+                <p className="mt-2 break-words text-lg font-semibold text-[var(--ixai-forest)] sm:text-2xl">
+                  {formatNumber(Number(value))}
+                </p>
+              </article>
+            ))}
+          </div>
+          {readback.portfolioTruth?.symbols.topAvailableSymbols.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {readback.portfolioTruth.symbols.topAvailableSymbols.map((symbol) => (
+                <span
+                  className="rounded-full border border-[var(--ixai-border)] bg-white/75 px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]"
+                  key={symbol}
+                >
+                  {symbol}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              No holdings symbols are available yet for portfolio-aware intelligence.
+            </p>
+          )}
+          {readback.portfolioTruth?.missingDataWarnings.length ? (
+            <p className="mt-4 rounded-xl border border-[color-mix(in_srgb,var(--ixai-risk-watch)_34%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_10%,white)] p-3 text-sm leading-7 text-[var(--ixai-forest)]">
+              {readback.portfolioTruth.missingDataWarnings[0]}
+            </p>
+          ) : null}
         </section>
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">

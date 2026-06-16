@@ -69,6 +69,7 @@ Production data ownership update:
 - v3.30 turns `/my-ixai/risk` from placeholder into the first Global Risk Center foundation. It reuses v3.20 FCN Intelligence Center helpers, reads existing FCN / Stock / Crypto API paths for readiness, derives Grid / Dual readiness, lists upcoming FCN risk events, and reports data source status without adding live market data, broker sync, AI, schema changes, or trading logic.
 - v3.40 turns `/my-ixai/intelligence` from placeholder into the first usable Intelligence Center. It links Daily / Weekly / Market public sources, reuses FCN v3.20 highlights, reads existing FCN / Stock / Crypto / Portfolio Dashboard APIs for readiness, and labels News / Commentary as readiness without adding external AI, external news, broker sync, market data providers, schema changes, or trading logic.
 - v4.00 plans the Intelligence + Market Integration Program. It is not another page; it is the integration layer between Public Market, Portfolio Center, FCN Center, Global Risk Center, and Intelligence Center. The program should add a Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA in small sprints without rebuilding existing systems.
+- v4.01 adds the Portfolio Truth Layer as the first shared readback layer across `/my-ixai/portfolio`, `/my-ixai/risk`, and `/my-ixai/intelligence`. It normalizes existing FCN / Stock / Crypto / Portfolio Dashboard API data into counts, known notional, source status, missing-data warnings, and available symbols without adding schema, migration, providers, AI, broker sync, or trading logic.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -170,6 +171,8 @@ Public Market
 Workspace Market Service
 ↓
 Portfolio Truth Layer
+↓
+Portfolio / Risk / Intelligence shared readback
 ↓
 FCN Intelligence Center
 ↓
