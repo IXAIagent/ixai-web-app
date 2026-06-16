@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v3.40 / Intelligence Center v1`
+`v4.00 / Intelligence + Market Integration Program`
 
 ## Current Priority
 
@@ -27,6 +27,8 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V320_FCN_INTELLIGENCE_CENTER.md` as the source of truth for the integrated FCN lifecycle, manual price, timeline, Risk v2, and concentration workspace.
 - Use `docs/V330_GLOBAL_RISK_CENTER_FOUNDATION.md` as the source of truth for the first `/my-ixai/risk` Global Risk Center foundation.
 - Use `docs/V340_INTELLIGENCE_CENTER_V1.md` as the source of truth for the first usable `/my-ixai/intelligence` workspace.
+- Use `docs/V400_INTELLIGENCE_MARKET_INTEGRATION_PROGRAM.md` as the source of truth for the v4.00 integration program across Market, Portfolio, FCN, Risk, and Intelligence.
+- v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
 - `/account` is a legacy transitional page, not the primary Workspace entry.
@@ -44,7 +46,7 @@ Current priority is UX / IA foundation before moving modules:
 - Legacy backend modules should be migrated by contract and rewrite, not copied wholesale.
 - Highest-priority legacy backend candidates are CSV import, risk alerts, FCN monitoring / schedules, portfolio-aware news relevance, and scheduler / notification review.
 - Public navigation and Workspace navigation must remain separate.
-- Do not add more Portfolio Center modules until the current surface is split into clear centers.
+- Do not add more isolated center modules until the v4.00 truth-layer and market-integration gaps are resolved.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -234,6 +236,25 @@ Do not restart v1.82-v1.83 Social Pack hotfix work unless production Social Pack
 - Move appropriate concentration, correlation, scenario, and stress-test ownership from Portfolio Center into Risk Center.
 - Add explicit data-source freshness and provider-health semantics before live market data is used in risk readback.
 - Keep the product boundary as monitoring and risk-awareness only; no trading instructions, order execution, broker sync, personalized recommendations, or AI advisory claims.
+
+### v4.00 — Intelligence + Market Integration Program
+
+- Treat v4.00 as an integration program, not a single small feature.
+- Connect Market, Portfolio, FCN, Risk, and Intelligence into one user workflow.
+- First establish a Portfolio Truth Layer so Portfolio Center can reconcile `/api/fcn`, `/api/stocks`, `/api/crypto`, `/api/portfolio/dashboard`, and repository assets.
+- Add a Workspace Market Service plan that wraps existing quote / market-intelligence providers with source, timestamp, stale, fallback, and provider-status semantics.
+- Use FCN v3.20 helpers rather than rebuilding FCN risk logic.
+- Prepare Intelligence Center V2 to aggregate Daily / Weekly, Market, Portfolio, FCN, and Risk readback without inventing data.
+- Do not add new external market providers, external news providers, AI providers, broker sync, schema changes, migrations, trading logic, Social Pack changes, admin editorial changes, auth changes, or membership changes.
+
+Suggested v4.00 sprint order:
+
+1. `v4.00a` Architecture Audit.
+2. `v4.01` Portfolio Truth Layer.
+3. `v4.02` Workspace Market Service.
+4. `v4.03` FCN Real Risk Integration.
+5. `v4.04` Intelligence Center V2.
+6. `v4.05` Integration QA / Release Hardening.
 
 ### v3.32 — Settings and Preferences Foundation
 

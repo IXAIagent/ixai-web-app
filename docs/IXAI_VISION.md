@@ -192,6 +192,22 @@ The Portfolio FCN Risk Layer should translate FCN assets, underlyings, exposure,
 
 The Global Risk Center should unify these layers into a user-facing risk workspace over time. Its first responsibility is clarity: show what data is ready, what is partial, what is placeholder, and what is explicitly not enabled. It should remain market-agnostic and compliance-first as it expands from FCN into Stock, Crypto, Grid, Dual, and future global market risk surfaces.
 
+The v4.00 Intelligence + Market Integration Program should connect the product's existing centers instead of adding another isolated module. The long-term operating loop should become:
+
+```text
+Market
+↓
+Portfolio
+↓
+FCN
+↓
+Risk
+↓
+Intelligence
+```
+
+This means IXAI needs a Portfolio Truth Layer, a Workspace Market Service, FCN real-risk source semantics, and an Intelligence Center that aggregates rather than invents. Market data, news, and commentary must always carry source and readiness labels before being used in personal workflow surfaces.
+
 This layer must remain monitoring and risk-awareness oriented. It is not a place for investment advice, trading instructions, performance promises, or automated execution.
 
 This does not turn IXAI into a signal-selling product. Pro membership should represent deeper risk workflow, portfolio organization, FCN monitoring, and intelligence continuity. SaaS monetization should use membership, entitlement, and feature gating rather than trading calls, price prediction products, performance promises, or automated execution.
