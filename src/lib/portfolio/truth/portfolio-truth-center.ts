@@ -59,6 +59,12 @@ function buildTopSymbolExposures(input: BuildPortfolioTruthInput) {
     addExposure(position.symbol, "Crypto");
   });
 
+  input.pendingInputs?.forEach((pendingInput) => {
+    pendingInput.symbols.forEach((symbol) => {
+      addExposure(symbol, `Pending ${pendingInput.category} input`);
+    });
+  });
+
   return Array.from(exposures.entries())
     .map(
       ([symbol, exposure]): PortfolioTruthSymbolExposure => ({
@@ -346,6 +352,10 @@ function buildRiskSummary(input: {
 export function buildPortfolioTruthReadback(
   input: BuildPortfolioTruthInput,
 ): PortfolioTruthReadback {
+  const pendingInputs = input.pendingInputs ?? [];
+  const pendingStockInputs = pendingInputs.filter((item) => item.category === "STOCK");
+  const pendingCryptoInputs = pendingInputs.filter((item) => item.category === "CRYPTO");
+  const pendingFcnInputs = pendingInputs.filter((item) => item.category === "FCN");
   const fcnNotional = input.fcnPositions.reduce(
     (total, position) =>
       isFiniteNumber(position.notionalAmount)
@@ -355,6 +365,11 @@ export function buildPortfolioTruthReadback(
   );
   const stockNotionalKnown = sumKnownStockValue(input.stockPositions);
   const cryptoNotionalKnown = sumKnownCryptoValue(input.cryptoPositions);
+  const pendingKnownNotional = pendingInputs.reduce(
+    (total, item) =>
+      isFiniteNumber(item.knownNotional) ? total + Number(item.knownNotional) : total,
+    0,
+  );
   const totalKnownNotional =
     fcnNotional + stockNotionalKnown + cryptoNotionalKnown;
   const incompleteStockValueCount = countIncompleteKnownValue(
@@ -367,16 +382,23 @@ export function buildPortfolioTruthReadback(
     (position) => !isFiniteNumber(position.notionalAmount),
   ).length;
 
-  const counts = {
-    totalAssets:
+  const totalPersistedAssets =
       input.fcnPositions.length +
       input.stockPositions.length +
-      input.cryptoPositions.length,
-    totalCryptoPositions: input.cryptoPositions.length,
+      input.cryptoPositions.length;
+
+  const counts = {
+    totalAssets: totalPersistedAssets + pendingInputs.length,
+    totalCryptoPositions: input.cryptoPositions.length + pendingCryptoInputs.length,
     totalDualPositions: input.cryptoPositions.filter(isCryptoDual).length,
-    totalFcnPositions: input.fcnPositions.length,
+    totalFcnPositions: input.fcnPositions.length + pendingFcnInputs.length,
     totalGridPositions: input.cryptoPositions.filter(isCryptoGrid).length,
-    totalStockPositions: input.stockPositions.length,
+    totalPendingCryptoInputs: pendingCryptoInputs.length,
+    totalPendingFcnInputs: pendingFcnInputs.length,
+    totalPendingInputs: pendingInputs.length,
+    totalPendingStockInputs: pendingStockInputs.length,
+    totalPersistedAssets,
+    totalStockPositions: input.stockPositions.length + pendingStockInputs.length,
   };
 
   const underlyingSymbols = uniqueSorted(
@@ -390,6 +412,7 @@ export function buildPortfolioTruthReadback(
   const cryptoSymbols = uniqueSorted(
     input.cryptoPositions.map((position) => position.symbol),
   );
+  const pendingSymbols = uniqueSorted(pendingInputs.flatMap((item) => item.symbols));
   const symbolExposures = buildTopSymbolExposures(input);
 
   const dataSourceStatuses: PortfolioTruthDataSourceStatus[] = [
@@ -447,6 +470,15 @@ export function buildPortfolioTruthReadback(
         unauthenticated: input.unauthenticated,
       }),
     },
+    {
+      key: "inputBridge",
+      label: "Input Truth Bridge",
+      note:
+        pendingInputs.length > 0
+          ? "Local pending inputs are visible in Workspace readback but are not persisted server records."
+          : "No local pending inputs are available from the browser bridge.",
+      status: pendingInputs.length > 0 ? "partial" : "placeholder",
+    },
   ];
 
   const missingDataWarnings = [
@@ -456,15 +488,23 @@ export function buildPortfolioTruthReadback(
     counts.totalAssets === 0 && !input.unauthenticated
       ? "No FCN, Stock, or Crypto positions are available from the current readback."
       : "",
-    input.fcnPositions.length === 0 && !input.unauthenticated && !input.fcnError
+    pendingInputs.length > 0
+      ? `${pendingInputs.length} local pending input(s) are included through the v4.10 Input Truth Bridge and still need server persistence.`
+      : "",
+    input.fcnPositions.length === 0 &&
+    pendingFcnInputs.length === 0 &&
+    !input.unauthenticated &&
+    !input.fcnError
       ? "No FCN records are available from the current readback."
       : "",
     input.stockPositions.length === 0 &&
+    pendingStockInputs.length === 0 &&
     !input.unauthenticated &&
     !input.stockError
       ? "No Stock records are available from the current readback."
       : "",
     input.cryptoPositions.length === 0 &&
+    pendingCryptoInputs.length === 0 &&
     !input.unauthenticated &&
     !input.cryptoError
       ? "No Crypto records are available from the current readback."
@@ -496,6 +536,7 @@ export function buildPortfolioTruthReadback(
     amounts: {
       cryptoNotionalKnown,
       fcnNotional,
+      pendingKnownNotional,
       stockNotionalKnown,
       totalKnownNotional,
     },
@@ -503,6 +544,7 @@ export function buildPortfolioTruthReadback(
     dataSourceStatuses,
     lastRefreshedAt: new Date().toISOString(),
     missingDataWarnings,
+    pendingInputs,
     portfolioDashboard: input.portfolioDashboardSummary ?? null,
     positions: {
       crypto: input.cryptoPositions,
@@ -518,6 +560,7 @@ export function buildPortfolioTruthReadback(
         ...underlyingSymbols,
         ...stockSymbols,
         ...cryptoSymbols,
+        ...pendingSymbols,
       ]).slice(0, 12),
       topExposures,
       underlyingSymbols,

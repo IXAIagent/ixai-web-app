@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
 
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
+import { INPUT_TRUTH_BRIDGE_EVENT } from "@/src/lib/portfolio/input/input-truth-bridge";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -85,6 +86,20 @@ export function PortfolioTruthSummary() {
     queueMicrotask(() => {
       void refreshTruth();
     });
+
+    function syncTruth() {
+      void refreshTruth();
+    }
+
+    window.addEventListener(INPUT_TRUTH_BRIDGE_EVENT, syncTruth);
+    window.addEventListener("ixai:portfolio-input:changed", syncTruth);
+    window.addEventListener("storage", syncTruth);
+
+    return () => {
+      window.removeEventListener(INPUT_TRUTH_BRIDGE_EVENT, syncTruth);
+      window.removeEventListener("ixai:portfolio-input:changed", syncTruth);
+      window.removeEventListener("storage", syncTruth);
+    };
   }, []);
 
   const stats = useMemo(() => {
@@ -100,22 +115,34 @@ export function PortfolioTruthSummary() {
     return [
       {
         label: "Total Assets",
-        note: "FCN / Stock / Crypto shared readback",
+        note:
+          truth.counts.totalPendingInputs > 0
+            ? `${truth.counts.totalPersistedAssets} persisted / ${truth.counts.totalPendingInputs} pending`
+            : "Persisted FCN / Stock / Crypto shared readback",
         value: String(truth.counts.totalAssets),
       },
       {
         label: "Stocks",
-        note: "Existing Stock API records",
+        note:
+          truth.counts.totalPendingStockInputs > 0
+            ? `${truth.counts.totalPendingStockInputs} pending local input(s)`
+            : "Existing Stock API records",
         value: String(truth.counts.totalStockPositions),
       },
       {
         label: "Crypto",
-        note: `Grid ${truth.counts.totalGridPositions} / Dual ${truth.counts.totalDualPositions}`,
+        note:
+          truth.counts.totalPendingCryptoInputs > 0
+            ? `${truth.counts.totalPendingCryptoInputs} pending local input(s)`
+            : `Grid ${truth.counts.totalGridPositions} / Dual ${truth.counts.totalDualPositions}`,
         value: String(truth.counts.totalCryptoPositions),
       },
       {
         label: "FCN",
-        note: "Persisted FCN positions",
+        note:
+          truth.counts.totalPendingFcnInputs > 0
+            ? `${truth.counts.totalPendingFcnInputs} pending local input(s)`
+            : "Persisted FCN positions",
         value: String(truth.counts.totalFcnPositions),
       },
     ];
@@ -210,6 +237,9 @@ export function PortfolioTruthSummary() {
           </p>
           <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
             FCN notional plus Stock / Crypto known values only. Missing prices are not fabricated.
+            {truth?.amounts.pendingKnownNotional
+              ? ` Pending input notional: ${formatCurrency(truth.amounts.pendingKnownNotional)}.`
+              : ""}
           </p>
           {truth ? (
             <p className="mt-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
@@ -303,6 +333,47 @@ export function PortfolioTruthSummary() {
             )}
           </article>
         </div>
+      ) : null}
+
+      {truth && truth.pendingInputs.length > 0 ? (
+        <article className="mt-4 rounded-xl border border-[rgba(176,141,87,0.30)] bg-[rgba(176,141,87,0.08)] p-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                Input Truth Bridge
+              </p>
+              <h3 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
+                Pending local inputs
+              </h3>
+            </div>
+            <span className="w-fit rounded-full border border-[rgba(176,141,87,0.38)] bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
+              {truth.pendingInputs.length} pending
+            </span>
+          </div>
+          <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+            These records are browser-local pending inputs. They are included in Workspace readback for continuity, but they are not server-persisted holdings yet.
+          </p>
+          <div className="mt-4 grid gap-2 md:grid-cols-3">
+            {truth.pendingInputs.slice(0, 6).map((input) => (
+              <div
+                className="rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3"
+                key={input.id}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-semibold text-[var(--ixai-forest)]">
+                    {input.title}
+                  </p>
+                  <span className="rounded-full border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] px-2.5 py-1 font-mono text-[10px] font-semibold text-[var(--ixai-forest-soft)]">
+                    {input.category}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                  {input.symbols.length > 0 ? input.symbols.join(" / ") : "No symbol recorded"}
+                </p>
+              </div>
+            ))}
+          </div>
+        </article>
       ) : null}
 
       {truth ? (

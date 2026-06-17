@@ -16,6 +16,7 @@ import {
 import { InputReviewSummary } from "@/components/portfolio/input-review-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { saveFcnDraft } from "@/src/lib/portfolio/input/fcn-draft-store";
+import { savePendingPortfolioInput } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { saveRecentPortfolioInput } from "@/src/lib/portfolio/input/recent-inputs";
 import { FCN_CURRENCIES, type FCNCurrency } from "@/src/types/fcn-position";
 
@@ -336,11 +337,22 @@ export function FCNWizard() {
         ],
         title: savedDraft.name,
       });
-      setSuccess(`已建立 FCN Draft「${savedDraft.name}」，可在 FCN Center 查看。`);
+      savePendingPortfolioInput({
+        category: "FCN",
+        details: [
+          `${basic.currency} ${basic.notionalAmount.trim() || "notional pending"}`,
+          `${underlyings.length} underlyings`,
+          `${observation.frequency} observation`,
+        ],
+        knownNotional: parseOptionalNumber(basic.notionalAmount, "名目本金"),
+        symbols: underlyings.map((underlying) => underlying.symbol.trim().toUpperCase()),
+        title: savedDraft.name,
+      });
+      setSuccess(`已建立 FCN pending input「${savedDraft.name}」，可在 Portfolio Truth 與 FCN Center 看到 pending 狀態。`);
       resetWizard();
       window.dispatchEvent(new CustomEvent("ixai:portfolio:changed"));
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "FCN Draft 建立失敗，請稍後再試。");
+      setError(submitError instanceof Error ? submitError.message : "FCN pending input 建立失敗，請稍後再試。");
     } finally {
       setIsSubmitting(false);
     }
@@ -401,8 +413,7 @@ export function FCNWizard() {
         {activeStep === 0 ? (
           <div className="grid gap-4">
             <p className="rounded-lg border border-[var(--ixai-border)] bg-white/65 p-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-              v3.08 先建立本機 FCN Draft。提交後會同步到 Portfolio Recent Inputs 與 FCN Center；
-              Supabase persistence、Portfolio attachment、edit/delete 與 cross-device sync 留待後續版本。
+              v4.10 會先建立 browser-local pending input，並保留舊 FCN Draft Store 相容層。資料會出現在 Workspace readback；正式 Supabase persistence、Portfolio attachment、edit/delete 與 cross-device sync 留待後續版本。
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -864,7 +875,7 @@ export function FCNWizard() {
             <div className="grid gap-3 sm:grid-cols-2">
               {[
                 ["FCN 名稱", displayOptional(basic.name)],
-                ["Source", "Local FCN Draft Store"],
+                ["Source", "Workspace pending bridge + legacy FCN Draft Store"],
                 ["幣別", basic.currency],
                 ["名目本金", displayOptional(basic.notionalAmount)],
                 ["KI / KO / Strike", `${displayOptional(terms.kiPct)} / ${displayOptional(terms.koPct)} / ${displayOptional(terms.strikePct)}`],

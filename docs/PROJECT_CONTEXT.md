@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.09 — Workspace Market Integration`
+`v4.10 — Input → Truth → Workspace Unification`
 
 Current production state:
 
@@ -129,6 +129,8 @@ v4.09 adds Workspace Market Integration across Portfolio Center, Risk Center, an
 
 V410 adds a docs-only Workspace Full Scan Report in `docs/V410_WORKSPACE_FULL_SCAN_REPORT.md`. The scan confirms that Portfolio Truth is consumed by Portfolio, Risk, and Intelligence, FCN Center reads persisted `/api/fcn` records, and Risk / Intelligence render Workspace Market Status. It also identifies two important wiring gaps: the active `/my-ixai/portfolio` page does not render Workspace Market Status, and the inspected Stock / Crypto / FCN input routes remain local-only or draft-oriented while Portfolio Truth reads persisted APIs.
 
+v4.10 implements Input → Truth → Workspace Unification. It adds a browser-local Input Truth Bridge so Stock / Crypto / FCN pending inputs appear in Portfolio Truth readback without changing API contracts, Supabase schema, migrations, auth, broker sync, market data, AI, or trading logic. It also renders Workspace Market Status on the active `/my-ixai/portfolio` route, surfaces pending FCN inputs in FCN Center, keeps the legacy Recent Inputs and v3.08 FCN Draft Store fallbacks, and updates Workspace Home / Settings / mobile Settings navigation copy.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -171,7 +173,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.09 — Workspace Market Integration`
+`v4.10 — Input → Truth → Workspace Unification`
 
 Current Core Flow:
 
@@ -245,6 +247,7 @@ Product Layers:
 - Market Service Layer: v4.08 adds unified market service entrypoints and Intelligence Center service-status readback while still using only MockProvider and provider metadata.
 - Workspace Market Integration: v4.09 surfaces the same market service readiness, provider health, and fallback policy awareness inside Portfolio Center, Risk Center, and Intelligence Center without fetching quotes.
 - Workspace Full Scan Report: V410 audits the active routes and finds that Risk and Intelligence render Workspace Market Status, but the active Portfolio route still needs the v4.09 market-status component wired into the page actually rendered at `/my-ixai/portfolio`.
+- Input Truth Bridge: v4.10 makes browser-local Stock / Crypto / FCN pending inputs visible to Portfolio Truth and Workspace readback while clearly labeling them as pending rather than server-persisted records.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
