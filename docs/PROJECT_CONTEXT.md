@@ -127,6 +127,8 @@ v4.08 adds the Market Service Layer under `src/lib/market/market-service.ts`. It
 
 v4.09 adds Workspace Market Integration across Portfolio Center, Risk Center, and Intelligence Center. It introduces a shared read-only Workspace Market Status component that displays market readiness, provider health, and fallback policy awareness from the v4.08 Market Service Layer. v4.09 does not fetch quotes, connect Yahoo, Binance, external providers, API routes, database changes, schema changes, or migrations.
 
+V410 adds a docs-only Workspace Full Scan Report in `docs/V410_WORKSPACE_FULL_SCAN_REPORT.md`. The scan confirms that Portfolio Truth is consumed by Portfolio, Risk, and Intelligence, FCN Center reads persisted `/api/fcn` records, and Risk / Intelligence render Workspace Market Status. It also identifies two important wiring gaps: the active `/my-ixai/portfolio` page does not render Workspace Market Status, and the inspected Stock / Crypto / FCN input routes remain local-only or draft-oriented while Portfolio Truth reads persisted APIs.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -242,6 +244,7 @@ Product Layers:
 - Provider Health Framework: v4.07 adds deterministic provider status, data freshness, priority, fallback policy, and health summary contracts for future Workspace Market Service routing.
 - Market Service Layer: v4.08 adds unified market service entrypoints and Intelligence Center service-status readback while still using only MockProvider and provider metadata.
 - Workspace Market Integration: v4.09 surfaces the same market service readiness, provider health, and fallback policy awareness inside Portfolio Center, Risk Center, and Intelligence Center without fetching quotes.
+- Workspace Full Scan Report: V410 audits the active routes and finds that Risk and Intelligence render Workspace Market Status, but the active Portfolio route still needs the v4.09 market-status component wired into the page actually rendered at `/my-ixai/portfolio`.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

@@ -396,6 +396,38 @@ Next:
 - v4.11 Intelligence Center V2.
 - v4.12 Integration QA.
 
+## V410 — Workspace Full Scan Report
+
+Why:
+
+- After v4.09, IXAI needed a full route, navigation, data wiring, UI consistency, and docs-sync scan before starting the next implementation sprint.
+- The active Workspace had several foundations that looked complete in docs but needed verification against the actual rendered routes.
+
+What Changed:
+
+- Added `docs/V410_WORKSPACE_FULL_SCAN_REPORT.md`.
+- Updated `docs/ROADMAP.md`, `docs/PROJECT_CONTEXT.md`, and `docs/PROJECT_MAP.md` with the scan findings.
+- Recorded current route status for Workspace Home, Portfolio Center, Asset Input, Risk Center, FCN Center, Intelligence Center, Settings, auth pages, account transition, and public landing.
+- Recorded data wiring findings for Portfolio Truth, FCN Draft Store, Recent Inputs, FCN Center readback, and Workspace Market Status.
+
+Key Findings:
+
+- Portfolio Truth is consumed by Portfolio, Risk, and Intelligence.
+- FCN Center reads persisted `/api/fcn` records and local manual price overlays.
+- Risk Center and Intelligence Center render Workspace Market Status.
+- The active `/my-ixai/portfolio` route does not render Workspace Market Status even though v4.09 wired it into `PortfolioCenterDashboard`.
+- The inspected Stock / Crypto / FCN input routes are still local-only or draft-oriented and do not yet feed the persisted Truth Layer APIs.
+
+Out of Scope:
+
+- No product code, auth change, Supabase schema change, migration, API contract change, trading logic, investment recommendation logic, broker sync, AI provider, news provider, or market provider connection.
+
+Next:
+
+- v4.10 Market Data Layer.
+- v4.11 FCN Risk Engine.
+- v4.12 Unified Dashboard.
+
 ## v2.10a — Global Market Foundation Review
 
 Why:
