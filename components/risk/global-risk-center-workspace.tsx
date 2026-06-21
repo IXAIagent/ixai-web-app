@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { WorkspaceMarketStatus } from "@/components/market/workspace-market-status";
+import { RiskEngineSummary } from "@/components/risk/risk-engine-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { loadFcnManualPriceOverrides } from "@/src/lib/fcn/manual-price-overrides";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
@@ -342,6 +343,8 @@ export function GlobalRiskCenterWorkspace() {
             </p>
           ) : null}
         </section>
+
+        <RiskEngineSummary />
 
         <section className={`rounded-2xl border p-5 sm:p-6 ${LEVEL_CLASS[readback.riskScore.level]}`}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

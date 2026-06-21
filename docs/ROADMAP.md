@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.30 / Portfolio Valuation Engine`
+`v4.40 / Risk Engine v1`
 
 ## Current Priority
 
@@ -41,6 +41,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V410_INPUT_TRUTH_WORKSPACE_UNIFICATION.md` as the source of truth for the v4.10 browser-local pending input bridge, active Portfolio Market Status wiring, FCN pending readback, Workspace Home / Settings copy cleanup, and mobile Settings navigation cleanup.
 - Use `docs/V420_MARKET_DATA_FOUNDATION.md` as the source of truth for the v4.20 Yahoo Finance / Binance public quote adapters, unified quote result contract, Market Service facade, and Workspace Market Status quote readback.
 - Use `docs/V430_PORTFOLIO_VALUATION_ENGINE.md` as the source of truth for the v4.30 Portfolio Valuation Engine, estimated market value, cost basis, unrealized P/L, asset-class allocation, FCN notional placeholder limitation, and valuation compliance boundary.
+- Use `docs/V440_RISK_ENGINE_V1.md` as the source of truth for the v4.40 Portfolio Risk Engine v1, valuation-derived risk score, risk levels, concentration signals, market-data quality warnings, crypto exposure warnings, and FCN placeholder awareness.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -76,6 +77,8 @@ Current priority is UX / IA foundation before moving modules:
 - v4.20 introduces the first Market Data Foundation with unified quote types, public Yahoo Finance equity quote adapter, public Binance crypto quote adapter, Market Service quote facade, and Workspace Market Status quote readback. It does not add trading, recommendations, auth changes, Supabase schema changes, migrations, broker integration, or FCN pricing.
 - v4.20 has been merged into main and is complete.
 - v4.30 adds the first Portfolio Valuation Engine by combining Portfolio Truth positions, pending input readback, and v4.20 market quotes into estimated market value, cost basis, unrealized P/L, and asset-class allocation. FCN valuation is notional placeholder only; v4.30 does not add trading, recommendations, auth changes, Supabase schema changes, migrations, API contract changes, broker integration, or a full FCN pricing engine.
+- v4.30 has been merged into main and is complete.
+- v4.40 adds the first Portfolio Risk Engine v1 by converting v4.30 valuation output into deterministic risk score, risk levels, top signals, score breakdown, concentration warnings, crypto exposure warnings, market data quality warnings, and FCN placeholder valuation awareness. v4.40 does not add trading, recommendations, auth changes, Supabase schema changes, migrations, API contract changes, broker integration, or a full FCN pricing engine.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -408,7 +411,19 @@ Suggested v4.00 sprint order:
 - Add Portfolio Valuation Summary to `/my-ixai/portfolio`.
 - Do not add schema, migrations, API contract changes, auth changes, broker sync, trading, recommendations, or full FCN pricing.
 - Recommended next:
-  - `v4.40` FCN Risk Engine v1 or server-side market cache foundation.
+  - `v4.40` Risk Engine v1.
+
+### v4.40 — Risk Engine v1
+
+- Add Portfolio Risk types, engine, and service.
+- Reuse v4.30 Portfolio Valuation output as the input to risk calculations.
+- Calculate deterministic 0-100 risk score and low / medium / high / critical / unavailable risk levels.
+- Detect single-position concentration, asset-class concentration, crypto exposure, market-data quality gaps, and FCN notional placeholder valuation.
+- Add Risk Engine Summary to `/my-ixai/risk`.
+- Keep FCN pricing as placeholder / notional-awareness only.
+- Do not add schema, migrations, API contract changes, auth changes, broker sync, trading, recommendations, or full FCN pricing.
+- Recommended next:
+  - `v4.50` FCN Risk Engine v1 with KI / KO distance monitoring and provider freshness semantics.
 
 ### v3.32 — Settings and Preferences Foundation
 

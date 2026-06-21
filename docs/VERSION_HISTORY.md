@@ -527,8 +527,42 @@ Out of Scope:
 
 Next:
 
-- v4.40 FCN Risk Engine v1 or server-side market cache foundation.
+- v4.40 Risk Engine v1 or server-side market cache foundation.
 - Future portfolio valuation currency conversion and provider freshness policy.
+
+## v4.40 — Risk Engine v1
+
+Why:
+
+- v4.30 created the first Portfolio Valuation output, but Risk Center still needed a risk engine that turns valuation into user-readable monitoring signals.
+- IXAI needed a small, deterministic risk layer before adding deeper FCN KI / KO monitoring or server-side market cache behavior.
+
+What Changed:
+
+- Added `docs/V440_RISK_ENGINE_V1.md`.
+- Added `src/lib/risk/risk-engine-types.ts`.
+- Added `src/lib/risk/risk-engine.ts`.
+- Added `src/lib/risk/risk-service.ts`.
+- Added `components/risk/risk-engine-summary.tsx`.
+- Updated Risk Center to render Risk Engine Summary near existing Global Risk Center readback.
+- Added valuation-derived risk score, risk level, top signals, signal counts, and score breakdown.
+- Added deterministic detection for concentration, asset allocation, crypto exposure, market data quality, and FCN notional placeholder awareness.
+
+Key Decisions:
+
+- v4.40 consumes v4.30 Portfolio Valuation output instead of duplicating valuation logic.
+- Risk scoring is deterministic, capped at 100, and based on explainable signal impacts.
+- FCN valuation remains notional placeholder only; the UI must not present it as precise FCN market value.
+- Risk Engine v1 is monitoring-only and not an investment recommendation layer.
+
+Out of Scope:
+
+- No auth change, Supabase schema change, migration, API contract change, broker integration, trading logic, investment recommendation logic, order execution, full FCN pricing engine, or large Workspace redesign.
+
+Next:
+
+- v4.50 FCN Risk Engine v1 with KI / KO distance monitoring and provider freshness semantics.
+- Future server-side market cache and valuation freshness policy.
 
 ## v2.10a — Global Market Foundation Review
 
