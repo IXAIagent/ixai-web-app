@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.10 / Input → Truth → Workspace Unification`
+`v4.20 / Market Data Foundation`
 
 ## Current Priority
 
@@ -39,6 +39,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V409_WORKSPACE_MARKET_INTEGRATION.md` as the source of truth for read-only market readiness, provider health, and fallback policy awareness across Portfolio, Risk, and Intelligence Centers.
 - Use `docs/V410_WORKSPACE_FULL_SCAN_REPORT.md` as the post-v4.09 workspace scan before the next implementation sprint. It records route status, navigation status, data wiring gaps, stale version copy, placeholder areas, and the recommended v4.10 / v4.11 / v4.12 sequence.
 - Use `docs/V410_INPUT_TRUTH_WORKSPACE_UNIFICATION.md` as the source of truth for the v4.10 browser-local pending input bridge, active Portfolio Market Status wiring, FCN pending readback, Workspace Home / Settings copy cleanup, and mobile Settings navigation cleanup.
+- Use `docs/V420_MARKET_DATA_FOUNDATION.md` as the source of truth for the v4.20 Yahoo Finance / Binance public quote adapters, unified quote result contract, Market Service facade, and Workspace Market Status quote readback.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -70,6 +71,8 @@ Current priority is UX / IA foundation before moving modules:
 - V410 scan finding: Risk Center and Intelligence Center render Workspace Market Status, but the active `/my-ixai/portfolio` route does not render the v4.09 market status because that component is attached to `PortfolioCenterDashboard`, which is not the active portfolio page. Treat Portfolio market status as a pending wiring fix.
 - V410 scan finding: active Stock / Crypto / FCN input routes are still local-only or draft-oriented, while Portfolio Truth reads persisted `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` data. Treat input-to-truth persistence as a product gap.
 - v4.10 resolves the scan findings by wiring Workspace Market Status into the active Portfolio route and adding an Input Truth Bridge so browser-local Stock / Crypto / FCN pending inputs appear in Portfolio Truth, FCN Center, Risk, and Intelligence readback without changing API contracts or schema.
+- v4.10 has been merged into main and is complete.
+- v4.20 introduces the first Market Data Foundation with unified quote types, public Yahoo Finance equity quote adapter, public Binance crypto quote adapter, Market Service quote facade, and Workspace Market Status quote readback. It does not add trading, recommendations, auth changes, Supabase schema changes, migrations, broker integration, or FCN pricing.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -378,8 +381,18 @@ Suggested v4.00 sprint order:
 - Update Workspace Home, Settings, and mobile Settings active-state copy.
 - Do not add schema, migrations, new API routes, broker sync, live market data, AI, recommendations, or trading behavior.
 - Recommended next:
-  - `v4.11` Market Data Provider / FCN Risk Engine.
-  - `v4.12` Unified Dashboard.
+  - `v4.20` Market Data Foundation.
+  - `v4.21` FCN Market Price Readiness.
+  - `v4.22` Portfolio Valuation Readiness.
+
+### v4.20 — Market Data Foundation
+
+- Add unified Workspace quote types for equity and crypto symbols.
+- Add a Yahoo Finance equity provider for supported public equity symbols.
+- Add a Binance crypto provider for supported public crypto pairs.
+- Add Market Service facade methods for single quote, multi-quote, and default Workspace quote sets.
+- Update Workspace Market Status to display quote price, percent change, and source status while keeping failures non-blocking.
+- Keep v4.20 informational only: no broker sync, no trading, no recommendations, no auth change, no schema change, no migration, no API contract change, and no FCN pricing engine.
 
 ### v3.32 — Settings and Preferences Foundation
 
