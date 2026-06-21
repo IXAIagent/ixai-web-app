@@ -16,6 +16,7 @@ import {
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { FcnRiskSummary } from "@/components/fcn/fcn-risk-summary";
+import { FcnScheduleSummary } from "@/components/fcn/fcn-schedule-summary";
 import {
   buildFcnIntelligenceCenterReadback,
   calculateUnderlyingRisk,
@@ -1082,6 +1083,7 @@ export function FCNCenterWorkspace() {
         ) : null}
 
         <FcnRiskSummary />
+        <FcnScheduleSummary />
 
         {status === "loading" ? (
           <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:p-6">

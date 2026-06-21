@@ -599,6 +599,41 @@ Next:
 - v4.60 FCN Coupon and Schedule Engine.
 - Future FCN pricing boundary review and server-side market cache readiness.
 
+## v4.60 — FCN Coupon & Schedule Engine
+
+Why:
+
+- v4.50 added FCN-native barrier monitoring, but FCN Center still needed a schedule layer for coupon dates, observations, KO observations, and maturity awareness.
+- Existing FCN positions already store observation schedules and maturity dates, and local FCN drafts store schedule rows, so v4.60 can organize schedule readback without schema or API changes.
+
+What Changed:
+
+- Added `docs/V460_FCN_COUPON_SCHEDULE_ENGINE.md`.
+- Added `src/lib/fcn/schedule/fcn-schedule-types.ts`.
+- Added `src/lib/fcn/schedule/fcn-schedule-engine.ts`.
+- Added `src/lib/fcn/schedule/fcn-schedule-service.ts`.
+- Added `src/lib/fcn/schedule/index.ts`.
+- Added `components/fcn/fcn-schedule-summary.tsx`.
+- Updated FCN Center to render FCN Coupon & Schedule Engine readback near the v4.50 FCN Risk Summary.
+- Added schedule normalization for `observationSchedule`, common metadata schedule shapes, maturity dates, and local FCN draft schedules.
+- Added next-30-day event readback, urgency classification, and monthly expected coupon cashflow grouping.
+
+Key Decisions:
+
+- Coupon amounts are shown only when explicit source amount data exists.
+- Coupon dates and observation dates remain visible even when expected coupon amount is missing.
+- Local date logic is used to avoid avoidable timezone drift in event urgency.
+- v4.60 is monitoring and schedule organization, not tax reporting or pricing.
+
+Out of Scope:
+
+- No auth change, Supabase schema change, migration, API contract change, broker integration, trading logic, investment recommendation logic, tax reporting, order execution, full FCN pricing engine, Greeks, Monte Carlo, option valuation, scenario simulation, or large Workspace redesign.
+
+Next:
+
+- v4.70 Server-side Market Cache or FCN Scenario Monitoring.
+- Future coupon accrual, settlement reconciliation, and notification delivery should remain separate approved tasks.
+
 ## v2.10a — Global Market Foundation Review
 
 Why:
