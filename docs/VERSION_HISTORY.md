@@ -497,6 +497,39 @@ Next:
 - v4.21 FCN Market Price Readiness.
 - v4.22 Portfolio Valuation Readiness.
 
+## v4.30 — Portfolio Valuation Engine
+
+Why:
+
+- v4.10 made pending inputs visible through Portfolio Truth.
+- v4.20 added the first Market Data Foundation with public equity and crypto quote adapters.
+- Portfolio Center needed a first estimated valuation layer that combines holdings truth and market quotes without adding trading, recommendations, broker sync, schema changes, or a full FCN pricing engine.
+
+What Changed:
+
+- Added `docs/V430_PORTFOLIO_VALUATION_ENGINE.md`.
+- Added `src/lib/portfolio/valuation/portfolio-valuation-types.ts`.
+- Added `src/lib/portfolio/valuation/portfolio-valuation-engine.ts`.
+- Added `src/lib/portfolio/valuation/portfolio-valuation-service.ts`.
+- Added `components/portfolio/portfolio-valuation-summary.tsx`.
+- Updated `/my-ixai/portfolio` to render Portfolio Valuation Summary after Portfolio Truth Summary.
+
+Key Decisions:
+
+- Stock and Crypto valuation uses v4.20 Market Service quote results when available.
+- FCN valuation is notional placeholder only and is marked fallback / partial.
+- Pending local inputs are included as partial valuation when known notional exists.
+- Quote failures keep positions in output and mark them unavailable instead of crashing the UI.
+
+Out of Scope:
+
+- No auth change, Supabase schema change, migration, API contract change, broker integration, trading logic, investment recommendation logic, order execution, full FCN pricing engine, or large Workspace redesign.
+
+Next:
+
+- v4.40 FCN Risk Engine v1 or server-side market cache foundation.
+- Future portfolio valuation currency conversion and provider freshness policy.
+
 ## v2.10a — Global Market Foundation Review
 
 Why:

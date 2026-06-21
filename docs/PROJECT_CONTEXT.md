@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.20 — Market Data Foundation`
+`v4.30 — Portfolio Valuation Engine`
 
 Current production state:
 
@@ -133,6 +133,8 @@ v4.10 implements Input → Truth → Workspace Unification. It adds a browser-lo
 
 v4.20 introduces the Market Data Foundation. It adds unified quote types, public Yahoo Finance equity quote adapters, public Binance crypto quote adapters, and Market Service facade methods for single, multi-symbol, and default Workspace quote readback. Workspace Market Status now displays quote price, percent change, and source status when public providers are available, and falls back to `unavailable` results instead of crashing when providers fail. v4.20 does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, investment recommendations, or the FCN pricing engine.
 
+v4.30 introduces the Portfolio Valuation Engine. It combines Portfolio Truth Layer positions, browser-local pending input readback, and v4.20 Market Data Foundation quotes to estimate market value, cost basis, unrealized P/L, and asset-class allocation inside Portfolio Center. Stock and Crypto positions use market quotes when available. FCN positions use notional placeholder valuation only and remain explicitly outside a full FCN pricing engine. v4.30 does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, or investment recommendation logic.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -175,7 +177,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.20 — Market Data Foundation`
+`v4.30 — Portfolio Valuation Engine`
 
 Current Core Flow:
 
@@ -251,6 +253,7 @@ Product Layers:
 - Workspace Full Scan Report: V410 audits the active routes and finds that Risk and Intelligence render Workspace Market Status, but the active Portfolio route still needs the v4.09 market-status component wired into the page actually rendered at `/my-ixai/portfolio`.
 - Input Truth Bridge: v4.10 makes browser-local Stock / Crypto / FCN pending inputs visible to Portfolio Truth and Workspace readback while clearly labeling them as pending rather than server-persisted records.
 - Market Data Foundation: v4.20 adds public equity / crypto quote adapters behind the Market Service facade and labels quote source status as `live`, `delayed`, `fallback`, or `unavailable`. This is a foundation for future portfolio valuation and FCN risk monitoring, not a broker, trading, recommendation, or FCN pricing release.
+- Portfolio Valuation Engine: v4.30 converts Portfolio Truth positions plus v4.20 market quotes into estimated market value, cost basis, unrealized P/L, priced/unpriced counts, warnings, and asset-class allocation. FCN valuation remains notional placeholder only until a future FCN pricing engine or server-side market cache is approved.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
