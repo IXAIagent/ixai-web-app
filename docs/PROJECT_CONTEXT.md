@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.30 — Portfolio Valuation Engine`
+`v4.40 — Risk Engine v1`
 
 Current production state:
 
@@ -135,6 +135,8 @@ v4.20 introduces the Market Data Foundation. It adds unified quote types, public
 
 v4.30 introduces the Portfolio Valuation Engine. It combines Portfolio Truth Layer positions, browser-local pending input readback, and v4.20 Market Data Foundation quotes to estimate market value, cost basis, unrealized P/L, and asset-class allocation inside Portfolio Center. Stock and Crypto positions use market quotes when available. FCN positions use notional placeholder valuation only and remain explicitly outside a full FCN pricing engine. v4.30 does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, or investment recommendation logic.
 
+v4.40 introduces Risk Engine v1. It converts v4.30 Portfolio Valuation output into deterministic risk score, risk levels, top signals, score breakdown, concentration warnings, crypto exposure warnings, market data quality warnings, and FCN placeholder valuation awareness inside Risk Center. FCN risk remains placeholder / notional-awareness only; full FCN pricing, live underlying KI / KO distance monitoring, trading logic, recommendation logic, auth changes, Supabase schema changes, migrations, API contract changes, and broker integrations remain out of scope.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -177,7 +179,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.30 — Portfolio Valuation Engine`
+`v4.40 — Risk Engine v1`
 
 Current Core Flow:
 
@@ -220,6 +222,8 @@ Landing
 → v4.00 Integration Program connecting Market, Portfolio, FCN, Risk, and Intelligence through truth-layer and market-service planning
 → Portfolio Truth Layer shared by Portfolio Center, Risk Center, and Intelligence Center
 → Portfolio Intelligence UI visualizing allocation, holdings, source health, and top symbol occurrence
+→ Portfolio Valuation Engine estimating market value, cost basis, P/L, and asset allocation
+→ Risk Engine v1 converting valuation output into risk score, levels, signals, and score breakdown
 ```
 
 Public Intelligence Funnel:
@@ -254,6 +258,7 @@ Product Layers:
 - Input Truth Bridge: v4.10 makes browser-local Stock / Crypto / FCN pending inputs visible to Portfolio Truth and Workspace readback while clearly labeling them as pending rather than server-persisted records.
 - Market Data Foundation: v4.20 adds public equity / crypto quote adapters behind the Market Service facade and labels quote source status as `live`, `delayed`, `fallback`, or `unavailable`. This is a foundation for future portfolio valuation and FCN risk monitoring, not a broker, trading, recommendation, or FCN pricing release.
 - Portfolio Valuation Engine: v4.30 converts Portfolio Truth positions plus v4.20 market quotes into estimated market value, cost basis, unrealized P/L, priced/unpriced counts, warnings, and asset-class allocation. FCN valuation remains notional placeholder only until a future FCN pricing engine or server-side market cache is approved.
+- Risk Engine v1: v4.40 converts Portfolio Valuation output into a deterministic 0-100 risk score, risk level, top signals, score breakdown, concentration warnings, crypto exposure warnings, market data quality warnings, and FCN placeholder valuation awareness. It is monitoring-only and does not add trading, recommendations, broker sync, schema changes, migrations, API contract changes, or full FCN pricing.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

@@ -83,6 +83,7 @@ Production data ownership update:
 - v4.10 adds Input → Truth → Workspace Unification. It introduces a browser-local Input Truth Bridge for pending Stock / Crypto / FCN inputs, wires Workspace Market Status into the active Portfolio route, and keeps Recent Inputs plus v3.08 FCN Draft Store as compatibility fallbacks.
 - v4.20 adds the Market Data Foundation under `src/lib/market/`. It introduces unified quote types, Yahoo Finance equity quote adapters, Binance crypto quote adapters, Market Service quote facade methods, and Workspace Market Status quote readback. It does not add schema, migrations, API contract changes, auth changes, broker integration, trading logic, recommendations, or FCN pricing.
 - v4.30 adds the Portfolio Valuation Engine under `src/lib/portfolio/valuation/`. It reuses Portfolio Truth and v4.20 Market Service quotes to estimate market value, cost basis, unrealized P/L, and asset-class allocation in Portfolio Center. FCN values remain notional placeholder only.
+- v4.40 adds Risk Engine v1 under `src/lib/risk/`. It reuses v4.30 Portfolio Valuation output to calculate deterministic risk score, risk levels, top signals, score breakdown, concentration warnings, crypto exposure warnings, market data quality warnings, and FCN placeholder awareness.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -94,6 +95,7 @@ Current architecture:
 - Public Intelligence, Account Intelligence, Social Intelligence, Daily / Weekly engines, and admin workflows.
 - Market Abstraction Layer under `src/lib/market/` for future Workspace market provider contracts. v4.05 contract layer is mock-only, v4.06 surfaces registry readiness, v4.07 adds provider health / fallback policy contracts, v4.08 adds unified market service entrypoints, v4.09 surfaces those entrypoints across Portfolio, Risk, and Intelligence, and v4.20 adds the first public Yahoo Finance / Binance quote adapters behind the Market Service facade.
 - Portfolio Valuation Layer under `src/lib/portfolio/valuation/` now includes v4.30 estimated valuation readback for Portfolio Center. It remains a monitoring layer and does not change database schema, API contracts, trading, broker sync, or recommendation logic.
+- Risk Engine v1 under `src/lib/risk/` now includes v4.40 valuation-derived risk readback for Risk Center. It remains monitoring-only and does not change database schema, API contracts, trading, broker sync, recommendation logic, or FCN pricing.
 - Multi-Asset Portfolio architecture:
 
 ```text
