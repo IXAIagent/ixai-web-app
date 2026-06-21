@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.40 — Risk Engine v1`
+`v4.50 — FCN Risk Engine v1`
 
 Current production state:
 
@@ -137,6 +137,8 @@ v4.30 introduces the Portfolio Valuation Engine. It combines Portfolio Truth Lay
 
 v4.40 introduces Risk Engine v1. It converts v4.30 Portfolio Valuation output into deterministic risk score, risk levels, top signals, score breakdown, concentration warnings, crypto exposure warnings, market data quality warnings, and FCN placeholder valuation awareness inside Risk Center. FCN risk remains placeholder / notional-awareness only; full FCN pricing, live underlying KI / KO distance monitoring, trading logic, recommendation logic, auth changes, Supabase schema changes, migrations, API contract changes, and broker integrations remain out of scope.
 
+v4.50 introduces FCN Risk Engine v1. It converts existing `/api/fcn` / Supabase FCN readback, local FCN draft fallback, manual price overlays, and v4.20 market-service quotes into worst-of underlying, KI distance, strike distance, KO readiness, FCN-native risk level, top risk positions, warnings, and source-status readback inside FCN Center. v4.50 is monitoring-only and does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, recommendation logic, Greeks, Monte Carlo, option valuation, scenario simulation, or a full FCN pricing engine.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -179,7 +181,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.40 — Risk Engine v1`
+`v4.50 — FCN Risk Engine v1`
 
 Current Core Flow:
 
@@ -224,6 +226,7 @@ Landing
 → Portfolio Intelligence UI visualizing allocation, holdings, source health, and top symbol occurrence
 → Portfolio Valuation Engine estimating market value, cost basis, P/L, and asset allocation
 → Risk Engine v1 converting valuation output into risk score, levels, signals, and score breakdown
+→ FCN Risk Engine v1 calculating worst-of, KI distance, strike distance, KO readiness, and FCN-native risk levels
 ```
 
 Public Intelligence Funnel:
@@ -259,6 +262,7 @@ Product Layers:
 - Market Data Foundation: v4.20 adds public equity / crypto quote adapters behind the Market Service facade and labels quote source status as `live`, `delayed`, `fallback`, or `unavailable`. This is a foundation for future portfolio valuation and FCN risk monitoring, not a broker, trading, recommendation, or FCN pricing release.
 - Portfolio Valuation Engine: v4.30 converts Portfolio Truth positions plus v4.20 market quotes into estimated market value, cost basis, unrealized P/L, priced/unpriced counts, warnings, and asset-class allocation. FCN valuation remains notional placeholder only until a future FCN pricing engine or server-side market cache is approved.
 - Risk Engine v1: v4.40 converts Portfolio Valuation output into a deterministic 0-100 risk score, risk level, top signals, score breakdown, concentration warnings, crypto exposure warnings, market data quality warnings, and FCN placeholder valuation awareness. It is monitoring-only and does not add trading, recommendations, broker sync, schema changes, migrations, API contract changes, or full FCN pricing.
+- FCN Risk Engine v1: v4.50 converts FCN positions, local FCN drafts, manual price overlays, and v4.20 market-service quotes into worst-of, KI distance, strike distance, KO readiness, FCN-native risk levels, top risk positions, warnings, and source-status readback. It is monitoring-only and does not add trading, recommendations, broker sync, schema changes, migrations, API contract changes, Greeks, Monte Carlo, option valuation, scenario simulation, or full FCN pricing.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

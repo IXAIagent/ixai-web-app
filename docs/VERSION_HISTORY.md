@@ -564,6 +564,41 @@ Next:
 - v4.50 FCN Risk Engine v1 with KI / KO distance monitoring and provider freshness semantics.
 - Future server-side market cache and valuation freshness policy.
 
+## v4.50 — FCN Risk Engine v1
+
+Why:
+
+- v4.40 added valuation-derived portfolio risk, but FCN still needed native barrier monitoring instead of placeholder valuation awareness.
+- FCN Center already had positions, underlyings, manual price overlays, and market-service quote availability, so v4.50 connects those sources into a focused FCN risk engine.
+
+What Changed:
+
+- Added `docs/V450_FCN_RISK_ENGINE_V1.md`.
+- Moved the legacy `src/lib/fcn/risk.ts` implementation to `src/lib/fcn/risk/legacy-risk.ts`.
+- Added `src/lib/fcn/risk/index.ts` to preserve existing `@/src/lib/fcn/risk` imports.
+- Added `src/lib/fcn/risk/fcn-risk-types.ts`.
+- Added `src/lib/fcn/risk/fcn-risk-engine.ts`.
+- Added `src/lib/fcn/risk/fcn-risk-service.ts`.
+- Added `components/fcn/fcn-risk-summary.tsx`.
+- Updated FCN Center to render FCN Risk Engine v1 readback.
+- Added worst-of, KI distance, strike distance, KO readiness, FCN-native risk levels, top risk positions, warnings, and source-status readback.
+
+Key Decisions:
+
+- v4.50 reuses existing `/api/fcn` / Supabase FCN readback, local FCN draft fallback, manual price overlays, and v4.20 market-service quotes.
+- Unsupported symbols remain visible with `partial` / `unavailable` source status.
+- Legacy FCN risk exports remain compatible through the new `src/lib/fcn/risk/index.ts` bridge.
+- FCN Risk Engine v1 is monitoring-only and not a pricing, recommendation, or trading layer.
+
+Out of Scope:
+
+- No auth change, Supabase schema change, migration, API contract change, broker integration, trading logic, investment recommendation logic, order execution, full FCN pricing engine, Greeks, Monte Carlo, option valuation, scenario simulation, or large Workspace redesign.
+
+Next:
+
+- v4.60 FCN Coupon and Schedule Engine.
+- Future FCN pricing boundary review and server-side market cache readiness.
+
 ## v2.10a — Global Market Foundation Review
 
 Why:
