@@ -461,8 +461,41 @@ Out of Scope:
 
 Next:
 
-- v4.11 Market Data Provider / FCN Risk Engine.
-- v4.12 Unified Dashboard.
+- v4.20 Market Data Foundation.
+- v4.21 FCN Market Price Readiness.
+- v4.22 Portfolio Valuation Readiness.
+
+## v4.20 — Market Data Foundation
+
+Why:
+
+- v4.05 through v4.09 created market contracts, provider health, service entrypoints, and Workspace market status, but quote readback was still metadata-only.
+- v4.10 completed Input → Truth → Workspace readback, making market quote source status the next necessary foundation for future portfolio valuation and FCN risk monitoring.
+
+What Changed:
+
+- Added `docs/V420_MARKET_DATA_FOUNDATION.md`.
+- Added unified quote types in `src/lib/market/types.ts`.
+- Added `src/lib/market/providers/yahoo-finance.ts` for supported public equity quote readback.
+- Added `src/lib/market/providers/binance.ts` for supported public crypto quote readback.
+- Extended `src/lib/market/market-service.ts` with `getMarketQuote()`, `getMarketQuotes()`, and `getDefaultWorkspaceMarketQuotes()`.
+- Updated Workspace Market Status to display quote price, percent change, provider, and `live` / `delayed` / `fallback` / `unavailable` source status.
+
+Key Decisions:
+
+- Provider failures return stable `unavailable` results instead of crashing Workspace surfaces.
+- Yahoo Finance is used only for supported equity symbols and is labeled delayed.
+- Binance is used only for supported public crypto pairs and requires no API key.
+- Existing v4.05-v4.09 market readiness and provider health contracts remain intact.
+
+Out of Scope:
+
+- No auth change, Supabase schema change, migration, API contract change, broker integration, trading logic, investment recommendation logic, external AI, FCN pricing engine, large UI redesign, or legacy fallback removal.
+
+Next:
+
+- v4.21 FCN Market Price Readiness.
+- v4.22 Portfolio Valuation Readiness.
 
 ## v2.10a — Global Market Foundation Review
 
