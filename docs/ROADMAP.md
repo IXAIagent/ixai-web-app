@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.60 / FCN Coupon & Schedule Engine`
+`v4.70 / Server-side Market Cache Layer`
 
 ## Current Priority
 
@@ -44,6 +44,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V440_RISK_ENGINE_V1.md` as the source of truth for the v4.40 Portfolio Risk Engine v1, valuation-derived risk score, risk levels, concentration signals, market-data quality warnings, crypto exposure warnings, and FCN placeholder awareness.
 - Use `docs/V450_FCN_RISK_ENGINE_V1.md` as the source of truth for the v4.50 FCN Risk Engine v1, worst-of underlying, KI distance, strike distance, KO readiness, FCN risk levels, and FCN risk source-status boundaries.
 - Use `docs/V460_FCN_COUPON_SCHEDULE_ENGINE.md` as the source of truth for the v4.60 FCN Coupon & Schedule Engine, coupon events, observation events, KO observation events, maturity awareness, monthly expected coupon cashflow, and schedule urgency rules.
+- Use `docs/V470_SERVER_SIDE_MARKET_CACHE_LAYER.md` as the source of truth for the v4.70 memory-only market cache layer, cache TTL rules, stale fallback behavior, cache diagnostics, and Market Service cache-first routing.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -85,6 +86,8 @@ Current priority is UX / IA foundation before moving modules:
 - v4.50 adds the first FCN-native Risk Engine v1 by converting existing FCN positions, local FCN drafts, manual price overlays, and v4.20 market-service quotes into worst-of, KI distance, strike distance, KO readiness, FCN risk level, top risk positions, and source-status readback. v4.50 does not add trading, recommendations, auth changes, Supabase schema changes, migrations, API contract changes, broker integration, Greeks, Monte Carlo, option valuation, scenario simulation, or a full FCN pricing engine.
 - v4.50 has been merged into main and is complete.
 - v4.60 adds the first FCN Coupon & Schedule Engine by converting existing FCN observation schedules, common metadata schedule shapes, maturity dates, and local FCN draft schedules into coupon, observation, KO observation, maturity, next-30-day event, and monthly expected coupon cashflow readback. v4.60 does not add trading, recommendations, auth changes, Supabase schema changes, migrations, API contract changes, broker integration, tax reporting, or a full FCN pricing engine.
+- v4.60 has been merged into main and is complete.
+- v4.70 adds the Server-side Market Cache Layer by routing Market Service quote readback through a memory-only cache before provider refresh. Equities use a 15-minute TTL, crypto uses a 2-minute TTL, stale cache refresh failures return fallback quotes, and no quote returns unavailable. v4.70 does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, investment recommendations, or an FCN pricing engine.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -452,7 +455,18 @@ Suggested v4.00 sprint order:
 - Keep coupon events visible even when amount is missing; do not invent coupon amount.
 - Do not add schema, migrations, API contract changes, auth changes, broker sync, trading, recommendations, tax reporting, or full FCN pricing.
 - Recommended next:
-  - `v4.70` Server-side Market Cache or FCN Scenario Monitoring.
+  - `v4.70` Server-side Market Cache Layer.
+
+### v4.70 — Server-side Market Cache Layer
+
+- Add memory-only market cache types, store, service, and barrel export under `src/lib/market/cache/`.
+- Route `getMarketQuote()`, `getMarketQuotes()`, and default Workspace quote readback through the cache layer before refreshing Yahoo Finance or Binance providers.
+- Use 15-minute TTL for equities and 2-minute TTL for crypto.
+- Return fresh cached quotes when available, stale fallback quotes when refresh fails, and unavailable results when no usable quote exists.
+- Add compact cache diagnostics to Workspace Market Status.
+- Do not add schema, migrations, API contract changes, auth changes, broker sync, trading, recommendations, durable cache infrastructure, or full FCN pricing.
+- Recommended next:
+  - `v4.80` FCN Scenario Monitoring or durable market-cache review.
 
 ### v3.32 — Settings and Preferences Foundation
 

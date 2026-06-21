@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.60 — FCN Coupon & Schedule Engine`
+`v4.70 — Server-side Market Cache Layer`
 
 Current production state:
 
@@ -141,6 +141,8 @@ v4.50 introduces FCN Risk Engine v1. It converts existing `/api/fcn` / Supabase 
 
 v4.60 introduces the FCN Coupon & Schedule Engine. It converts existing FCN observation schedules, common metadata schedule shapes, maturity dates, and local FCN draft schedules into coupon, observation, KO observation, maturity, next-30-day event, and monthly expected coupon cashflow readback inside FCN Center. Coupon amounts are shown only when explicit source amount data exists. v4.60 is monitoring-only and does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, tax reporting, trading logic, recommendation logic, or a full FCN pricing engine.
 
+v4.70 introduces the Server-side Market Cache Layer. It adds a memory-only cache between Yahoo Finance / Binance public quote adapters and the Market Service facade. Equity quotes use a 15-minute TTL, crypto quotes use a 2-minute TTL, stale refresh failures return fallback quotes, and missing quotes remain unavailable. v4.70 improves reliability for Portfolio Valuation, Risk Engine, FCN Risk, and future schedule-aware market workflows without adding auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, investment recommendation logic, or an FCN pricing engine.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -183,7 +185,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.60 — FCN Coupon & Schedule Engine`
+`v4.70 — Server-side Market Cache Layer`
 
 Current Core Flow:
 
@@ -230,6 +232,7 @@ Landing
 → Risk Engine v1 converting valuation output into risk score, levels, signals, and score breakdown
 → FCN Risk Engine v1 calculating worst-of, KI distance, strike distance, KO readiness, and FCN-native risk levels
 → FCN Coupon & Schedule Engine organizing coupons, observations, KO observations, maturity, and monthly expected coupon cashflow
+→ Server-side Market Cache Layer stabilizing quote readback with memory-only TTL and stale fallback behavior
 ```
 
 Public Intelligence Funnel:
@@ -267,6 +270,7 @@ Product Layers:
 - Risk Engine v1: v4.40 converts Portfolio Valuation output into a deterministic 0-100 risk score, risk level, top signals, score breakdown, concentration warnings, crypto exposure warnings, market data quality warnings, and FCN placeholder valuation awareness. It is monitoring-only and does not add trading, recommendations, broker sync, schema changes, migrations, API contract changes, or full FCN pricing.
 - FCN Risk Engine v1: v4.50 converts FCN positions, local FCN drafts, manual price overlays, and v4.20 market-service quotes into worst-of, KI distance, strike distance, KO readiness, FCN-native risk levels, top risk positions, warnings, and source-status readback. It is monitoring-only and does not add trading, recommendations, broker sync, schema changes, migrations, API contract changes, Greeks, Monte Carlo, option valuation, scenario simulation, or full FCN pricing.
 - FCN Coupon & Schedule Engine: v4.60 converts FCN schedules, maturity dates, and local FCN draft schedules into coupon, observation, KO observation, maturity, next-30-day event, and monthly expected coupon cashflow readback. Coupon amounts are shown only when explicit source amount data exists. It is monitoring-only and does not add tax reporting, trading, recommendations, broker sync, schema changes, migrations, API contract changes, or full FCN pricing.
+- Server-side Market Cache Layer: v4.70 places a memory-only cache between Yahoo Finance / Binance quote adapters and Market Service consumers. It supports fresh, stale fallback, and unavailable source behavior without adding durable cache infrastructure, schema changes, migrations, API contract changes, broker sync, trading, recommendations, or FCN pricing.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
