@@ -4,11 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Activity, Gauge, ShieldCheck } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { MarketCacheStatus } from "@/components/market/market-cache-status";
 import {
   getDefaultWorkspaceMarketQuotes,
+  getMarketCacheSnapshot,
   getMarketReadiness,
 } from "@/src/lib/market/market-service";
 import type { MarketServiceReadiness } from "@/src/lib/market/market-service";
+import type { MarketCacheSnapshot } from "@/src/lib/market/cache";
 import type { MarketQuoteResult } from "@/src/lib/market/types";
 
 const MARKET_STATUS_CLASS = {
@@ -113,6 +116,9 @@ export function WorkspaceMarketStatus({
   readback?: MarketServiceReadiness;
 }) {
   const [quoteResults, setQuoteResults] = useState<MarketQuoteResult[]>([]);
+  const [cacheSnapshot, setCacheSnapshot] = useState<MarketCacheSnapshot>(() =>
+    getMarketCacheSnapshot(),
+  );
   const [quoteStatus, setQuoteStatus] = useState<"idle" | "loading" | "ready">("idle");
 
   useEffect(() => {
@@ -121,9 +127,11 @@ export function WorkspaceMarketStatus({
     async function loadQuotes() {
       setQuoteStatus("loading");
       const results = await getDefaultWorkspaceMarketQuotes();
+      const snapshot = getMarketCacheSnapshot();
 
       if (isMounted) {
         setQuoteResults(results);
+        setCacheSnapshot(snapshot);
         setQuoteStatus("ready");
       }
     }
@@ -244,6 +252,8 @@ export function WorkspaceMarketStatus({
           Market data is informational only. IXAI does not provide buy/sell instructions, order execution, automatic trading, target prices, or return promises.
         </p>
       </article>
+
+      <MarketCacheStatus snapshot={cacheSnapshot} />
 
       <div className="mt-5 grid gap-4 xl:grid-cols-3">
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">

@@ -631,8 +631,44 @@ Out of Scope:
 
 Next:
 
-- v4.70 Server-side Market Cache or FCN Scenario Monitoring.
+- v4.70 Server-side Market Cache Layer.
 - Future coupon accrual, settlement reconciliation, and notification delivery should remain separate approved tasks.
+
+## v4.70 — Server-side Market Cache Layer
+
+Why:
+
+- v4.20 added public Yahoo Finance and Binance quote adapters.
+- v4.30, v4.40, and v4.50 now consume quote readback for valuation and monitoring.
+- IXAI needed a reliability layer between providers and consumers so provider failures can return stale fallback or unavailable results without blocking Workspace readback.
+
+What Changed:
+
+- Added `docs/V470_SERVER_SIDE_MARKET_CACHE_LAYER.md`.
+- Added `src/lib/market/cache/market-cache-types.ts`.
+- Added `src/lib/market/cache/market-cache-store.ts`.
+- Added `src/lib/market/cache/market-cache-service.ts`.
+- Added `src/lib/market/cache/index.ts`.
+- Updated `src/lib/market/market-service.ts` so `getMarketQuote()`, `getMarketQuotes()`, and default Workspace quote readback route through the cache layer.
+- Added `components/market/market-cache-status.tsx`.
+- Updated Workspace Market Status with compact cache diagnostics.
+
+Key Decisions:
+
+- Cache is memory-only; no Supabase, Redis, database, or durable cache is added.
+- Equity quotes use a 15-minute TTL.
+- Crypto quotes use a 2-minute TTL.
+- Fresh cache hits return cached quotes.
+- Stale refresh failures return stale quotes with fallback source status.
+- Missing or failed quotes return unavailable results.
+
+Out of Scope:
+
+- No auth change, Supabase schema change, migration, API contract change, broker integration, trading logic, investment recommendation logic, durable cache infrastructure, order execution, full FCN pricing engine, or Workspace redesign.
+
+Next:
+
+- v4.80 FCN Scenario Monitoring or durable market-cache review.
 
 ## v2.10a — Global Market Foundation Review
 
