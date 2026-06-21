@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.70 / Server-side Market Cache Layer`
+`v4.75 / Workspace Full Integration Review`
 
 ## Current Priority
 
@@ -45,6 +45,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V450_FCN_RISK_ENGINE_V1.md` as the source of truth for the v4.50 FCN Risk Engine v1, worst-of underlying, KI distance, strike distance, KO readiness, FCN risk levels, and FCN risk source-status boundaries.
 - Use `docs/V460_FCN_COUPON_SCHEDULE_ENGINE.md` as the source of truth for the v4.60 FCN Coupon & Schedule Engine, coupon events, observation events, KO observation events, maturity awareness, monthly expected coupon cashflow, and schedule urgency rules.
 - Use `docs/V470_SERVER_SIDE_MARKET_CACHE_LAYER.md` as the source of truth for the v4.70 memory-only market cache layer, cache TTL rules, stale fallback behavior, cache diagnostics, and Market Service cache-first routing.
+- Use `docs/V475_WORKSPACE_FULL_INTEGRATION_REVIEW.md` as the source of truth for the v4.75 static/service-level Workspace integration audit, data lineage diagnostics, Settings diagnostics surface, and no-network audit boundary.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -88,6 +89,8 @@ Current priority is UX / IA foundation before moving modules:
 - v4.60 adds the first FCN Coupon & Schedule Engine by converting existing FCN observation schedules, common metadata schedule shapes, maturity dates, and local FCN draft schedules into coupon, observation, KO observation, maturity, next-30-day event, and monthly expected coupon cashflow readback. v4.60 does not add trading, recommendations, auth changes, Supabase schema changes, migrations, API contract changes, broker integration, tax reporting, or a full FCN pricing engine.
 - v4.60 has been merged into main and is complete.
 - v4.70 adds the Server-side Market Cache Layer by routing Market Service quote readback through a memory-only cache before provider refresh. Equities use a 15-minute TTL, crypto uses a 2-minute TTL, stale cache refresh failures return fallback quotes, and no quote returns unavailable. v4.70 does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, investment recommendations, or an FCN pricing engine.
+- v4.70 has been merged into main and is complete.
+- v4.75 adds the Workspace Full Integration Review by exposing static/service-level data lineage diagnostics in Settings. It audits Truth Layer, Market Cache, Market Service, Valuation, Risk, FCN Risk, and FCN Schedule wiring without runtime network tests. v4.75 does not add auth changes, Supabase schema changes, migrations, broker integrations, trading logic, investment recommendations, or an FCN pricing engine.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -465,6 +468,17 @@ Suggested v4.00 sprint order:
 - Return fresh cached quotes when available, stale fallback quotes when refresh fails, and unavailable results when no usable quote exists.
 - Add compact cache diagnostics to Workspace Market Status.
 - Do not add schema, migrations, API contract changes, auth changes, broker sync, trading, recommendations, durable cache infrastructure, or full FCN pricing.
+- Recommended next:
+  - `v4.75` Workspace Full Integration Review.
+
+### v4.75 — Workspace Full Integration Review
+
+- Add static/service-level Workspace integration audit types, engine, and service under `src/lib/workspace/integration/`.
+- Add Workspace Integration Status diagnostics to Settings.
+- Audit expected exports and fallback presence for Truth Layer, Market Cache, Market Service, Portfolio Valuation, Portfolio Risk, FCN Risk, and FCN Schedule.
+- Show lineage flow, healthy / warning / broken module counts, detected issues, and generated timestamp.
+- Do not run runtime network tests or authenticated API probes.
+- Do not add schema, migrations, auth changes, broker sync, trading, recommendations, redesign, or full FCN pricing.
 - Recommended next:
   - `v4.80` FCN Scenario Monitoring or durable market-cache review.
 

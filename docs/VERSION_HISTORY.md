@@ -668,6 +668,38 @@ Out of Scope:
 
 Next:
 
+- v4.75 Workspace Full Integration Review.
+
+## v4.75 — Workspace Full Integration Review
+
+Why:
+
+- v4.10 through v4.70 created a multi-layer Workspace architecture across Input Truth, Market Cache, Market Service, Portfolio Valuation, Risk, FCN Risk, and FCN Schedule.
+- Before adding more product behavior, IXAI needed a static architecture validation surface that confirms the dependency chain and exposes known diagnostic issues.
+
+What Changed:
+
+- Added `docs/V475_WORKSPACE_FULL_INTEGRATION_REVIEW.md`.
+- Added `src/lib/workspace/integration/integration-types.ts`.
+- Added `src/lib/workspace/integration/integration-audit.ts`.
+- Added `src/lib/workspace/integration/integration-service.ts`.
+- Added `components/workspace/workspace-integration-status.tsx`.
+- Updated `/my-ixai/settings` with Workspace Integration Status diagnostics.
+- Updated roadmap, context, and project map docs for v4.75.
+
+Key Decisions:
+
+- v4.75 is architecture validation, not a feature expansion.
+- The audit is static/service-level only.
+- The audit checks expected exports, fallback presence, module wiring, and lineage flow.
+- It does not call Yahoo Finance, Binance, `/api/*`, Supabase, or authenticated runtime paths.
+
+Out of Scope:
+
+- No auth change, Supabase schema change, migration, broker integration, trading logic, investment recommendation logic, FCN pricing engine, runtime provider test, authenticated API probe, or Workspace redesign.
+
+Next:
+
 - v4.80 FCN Scenario Monitoring or durable market-cache review.
 
 ## v2.10a — Global Market Foundation Review
