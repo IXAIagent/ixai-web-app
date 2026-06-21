@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.20 / Market Data Foundation`
+`v4.30 / Portfolio Valuation Engine`
 
 ## Current Priority
 
@@ -40,6 +40,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V410_WORKSPACE_FULL_SCAN_REPORT.md` as the post-v4.09 workspace scan before the next implementation sprint. It records route status, navigation status, data wiring gaps, stale version copy, placeholder areas, and the recommended v4.10 / v4.11 / v4.12 sequence.
 - Use `docs/V410_INPUT_TRUTH_WORKSPACE_UNIFICATION.md` as the source of truth for the v4.10 browser-local pending input bridge, active Portfolio Market Status wiring, FCN pending readback, Workspace Home / Settings copy cleanup, and mobile Settings navigation cleanup.
 - Use `docs/V420_MARKET_DATA_FOUNDATION.md` as the source of truth for the v4.20 Yahoo Finance / Binance public quote adapters, unified quote result contract, Market Service facade, and Workspace Market Status quote readback.
+- Use `docs/V430_PORTFOLIO_VALUATION_ENGINE.md` as the source of truth for the v4.30 Portfolio Valuation Engine, estimated market value, cost basis, unrealized P/L, asset-class allocation, FCN notional placeholder limitation, and valuation compliance boundary.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -73,6 +74,8 @@ Current priority is UX / IA foundation before moving modules:
 - v4.10 resolves the scan findings by wiring Workspace Market Status into the active Portfolio route and adding an Input Truth Bridge so browser-local Stock / Crypto / FCN pending inputs appear in Portfolio Truth, FCN Center, Risk, and Intelligence readback without changing API contracts or schema.
 - v4.10 has been merged into main and is complete.
 - v4.20 introduces the first Market Data Foundation with unified quote types, public Yahoo Finance equity quote adapter, public Binance crypto quote adapter, Market Service quote facade, and Workspace Market Status quote readback. It does not add trading, recommendations, auth changes, Supabase schema changes, migrations, broker integration, or FCN pricing.
+- v4.20 has been merged into main and is complete.
+- v4.30 adds the first Portfolio Valuation Engine by combining Portfolio Truth positions, pending input readback, and v4.20 market quotes into estimated market value, cost basis, unrealized P/L, and asset-class allocation. FCN valuation is notional placeholder only; v4.30 does not add trading, recommendations, auth changes, Supabase schema changes, migrations, API contract changes, broker integration, or a full FCN pricing engine.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -393,6 +396,19 @@ Suggested v4.00 sprint order:
 - Add Market Service facade methods for single quote, multi-quote, and default Workspace quote sets.
 - Update Workspace Market Status to display quote price, percent change, and source status while keeping failures non-blocking.
 - Keep v4.20 informational only: no broker sync, no trading, no recommendations, no auth change, no schema change, no migration, no API contract change, and no FCN pricing engine.
+
+### v4.30 — Portfolio Valuation Engine
+
+- Add Portfolio Valuation types, engine, and service.
+- Reuse Portfolio Truth Layer readback and v4.20 Market Service quotes.
+- Calculate estimated market value, cost basis, unrealized P/L, and asset-class allocation.
+- Value Stock and Crypto positions with market quotes when available.
+- Keep FCN valuation as notional placeholder only and clearly label the limitation.
+- Keep pending input valuation partial/local only.
+- Add Portfolio Valuation Summary to `/my-ixai/portfolio`.
+- Do not add schema, migrations, API contract changes, auth changes, broker sync, trading, recommendations, or full FCN pricing.
+- Recommended next:
+  - `v4.40` FCN Risk Engine v1 or server-side market cache foundation.
 
 ### v3.32 — Settings and Preferences Foundation
 
