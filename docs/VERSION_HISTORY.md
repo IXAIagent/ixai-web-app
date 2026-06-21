@@ -53,7 +53,7 @@ What Changed:
 - Audited current route / center readiness across Market, Workspace Home, Portfolio Center, Asset Input, FCN Center, Risk Center, Intelligence Center, and Settings.
 - Audited available data sources for FCN, Stock, Crypto, Portfolio Dashboard, Portfolio Repository, public Market, news, Daily / Weekly, manual price overlays, and mock portfolio engines.
 - Proposed Portfolio Truth Layer, Workspace Market Service, FCN real-risk integration semantics, Intelligence Center V2, and integration QA.
-- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Market Readiness UI, v4.07 Provider Health Framework, v4.08 Market Service Layer, v4.09 Workspace Market Integration, v4.10 FCN Real Risk Integration, v4.11 Intelligence Center V2, and v4.12 Integration QA.
+- Recorded a v4.00 sprint plan that now runs through v4.01 Portfolio Truth Layer, v4.02 Portfolio Intelligence UI, v4.03 Risk Intelligence Layer, v4.04 Intelligence Readback Layer, v4.05 Market Abstraction Layer, v4.06 Market Readiness UI, v4.07 Provider Health Framework, v4.08 Market Service Layer, v4.09 Workspace Market Integration, v4.10 Input → Truth → Workspace Unification, v4.11 Market Data Provider / FCN Risk Engine, and v4.12 Unified Dashboard / Release Hardening.
 
 Key Decisions:
 
@@ -76,9 +76,9 @@ Next:
 - v4.07 Provider Health Framework.
 - v4.08 Market Service Layer.
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.01 — Portfolio Truth Layer
 
@@ -116,9 +116,9 @@ Next:
 - v4.07 Provider Health Framework.
 - v4.08 Market Service Layer.
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.02 — Portfolio Intelligence UI
 
@@ -154,9 +154,9 @@ Next:
 - v4.07 Provider Health Framework.
 - v4.08 Market Service Layer.
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.03 — Risk Intelligence Layer
 
@@ -192,9 +192,9 @@ Next:
 - v4.07 Provider Health Framework.
 - v4.08 Market Service Layer.
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.04 — Intelligence Readback Layer
 
@@ -228,9 +228,9 @@ Next:
 - v4.07 Provider Health Framework.
 - v4.08 Market Service Layer.
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.05 — Market Abstraction Layer
 
@@ -264,9 +264,9 @@ Next:
 - v4.07 Provider Health Framework.
 - v4.08 Market Service Layer.
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.06 — Market Readiness UI
 
@@ -297,9 +297,9 @@ Next:
 - v4.07 Provider Health Framework.
 - v4.08 Market Service Layer.
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.07 — Provider Health Framework
 
@@ -329,9 +329,9 @@ Next:
 
 - v4.08 Market Service Layer.
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.08 — Market Service Layer
 
@@ -361,9 +361,9 @@ Out of Scope:
 Next:
 
 - v4.09 Workspace Market Integration.
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
 
 ## v4.09 — Workspace Market Integration
 
@@ -392,9 +392,77 @@ Out of Scope:
 
 Next:
 
-- v4.10 FCN Real Risk Integration.
-- v4.11 Intelligence Center V2.
-- v4.12 Integration QA.
+- v4.10 Input → Truth → Workspace Unification.
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard / Release Hardening.
+
+## V410 — Workspace Full Scan Report
+
+Why:
+
+- After v4.09, IXAI needed a full route, navigation, data wiring, UI consistency, and docs-sync scan before starting the next implementation sprint.
+- The active Workspace had several foundations that looked complete in docs but needed verification against the actual rendered routes.
+
+What Changed:
+
+- Added `docs/V410_WORKSPACE_FULL_SCAN_REPORT.md`.
+- Updated `docs/ROADMAP.md`, `docs/PROJECT_CONTEXT.md`, and `docs/PROJECT_MAP.md` with the scan findings.
+- Recorded current route status for Workspace Home, Portfolio Center, Asset Input, Risk Center, FCN Center, Intelligence Center, Settings, auth pages, account transition, and public landing.
+- Recorded data wiring findings for Portfolio Truth, FCN Draft Store, Recent Inputs, FCN Center readback, and Workspace Market Status.
+
+Key Findings:
+
+- Portfolio Truth is consumed by Portfolio, Risk, and Intelligence.
+- FCN Center reads persisted `/api/fcn` records and local manual price overlays.
+- Risk Center and Intelligence Center render Workspace Market Status.
+- The active `/my-ixai/portfolio` route does not render Workspace Market Status even though v4.09 wired it into `PortfolioCenterDashboard`.
+- The inspected Stock / Crypto / FCN input routes are still local-only or draft-oriented and do not yet feed the persisted Truth Layer APIs.
+
+Out of Scope:
+
+- No product code, auth change, Supabase schema change, migration, API contract change, trading logic, investment recommendation logic, broker sync, AI provider, news provider, or market provider connection.
+
+Next:
+
+- v4.10 Market Data Layer.
+- v4.11 FCN Risk Engine.
+- v4.12 Unified Dashboard.
+
+## v4.10 — Input → Truth → Workspace Unification
+
+Why:
+
+- V410 scan showed that the active Portfolio route lacked Workspace Market Status.
+- Stock / Crypto / FCN input forms created browser-local or draft records that did not appear in Portfolio Truth readback.
+- FCN Center read persisted `/api/fcn` records but did not surface local pending FCN input state.
+- Workspace Home, Settings, and mobile Settings navigation still had stale or ambiguous IA copy.
+
+What Changed:
+
+- Added `docs/V410_INPUT_TRUTH_WORKSPACE_UNIFICATION.md`.
+- Added `src/lib/portfolio/input/input-truth-bridge.ts`.
+- Extended Portfolio Truth readback with local pending input records, pending counts, pending known notional, and an `Input Truth Bridge` source status.
+- Updated Stock, Crypto, and FCN input flows to write browser-local pending records into the bridge while preserving Recent Inputs and the legacy v3.08 FCN Draft Store fallback.
+- Updated FCN Center to show pending FCN inputs without changing the persisted `/api/fcn` readback.
+- Added Workspace Market Status to the active `/my-ixai/portfolio` route.
+- Updated Workspace Home and Settings copy.
+- Fixed mobile bottom navigation so Settings is no longer grouped under Intelligence active state.
+
+Key Decisions:
+
+- v4.10 creates a readback bridge, not server persistence.
+- Pending input is clearly labeled as browser-local and not permanent holdings data.
+- Existing `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` contracts remain unchanged.
+- Legacy localStorage fallbacks are retained for compatibility.
+
+Out of Scope:
+
+- No auth change, Supabase schema change, migration, API contract change, broker sync, external market data provider, AI provider, recommendation logic, trading logic, or investment advice.
+
+Next:
+
+- v4.11 Market Data Provider / FCN Risk Engine.
+- v4.12 Unified Dashboard.
 
 ## v2.10a — Global Market Foundation Review
 

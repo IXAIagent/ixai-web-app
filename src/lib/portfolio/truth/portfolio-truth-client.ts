@@ -2,6 +2,7 @@
 
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
 import { buildPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-center";
+import { loadPendingPortfolioInputs } from "@/src/lib/portfolio/input/input-truth-bridge";
 import type { PortfolioDashboardSummary } from "@/src/lib/portfolio/dashboard";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type { CryptoPosition } from "@/src/types/crypto-position";
@@ -60,12 +61,14 @@ async function readPortfolioDashboard(
 }
 
 export async function loadPortfolioTruthReadback(): Promise<PortfolioTruthReadback> {
+  const pendingInputs = loadPendingPortfolioInputs();
   const authHeaders = await getSupabaseAuthorizationHeaders();
 
   if (!authHeaders) {
     return buildPortfolioTruthReadback({
       cryptoPositions: [],
       fcnPositions: [],
+      pendingInputs,
       portfolioDashboardSummary: null,
       stockPositions: [],
       unauthenticated: true,
@@ -84,6 +87,7 @@ export async function loadPortfolioTruthReadback(): Promise<PortfolioTruthReadba
     cryptoPositions: crypto.positions,
     fcnError: fcn.error,
     fcnPositions: fcn.positions,
+    pendingInputs,
     portfolioDashboardError: dashboard.error,
     portfolioDashboardSummary: dashboard.summary,
     stockError: stock.error,

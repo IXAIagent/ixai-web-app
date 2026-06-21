@@ -32,6 +32,11 @@ import {
   loadFcnManualPriceOverrides,
   saveFcnManualPriceOverrides,
 } from "@/src/lib/fcn/manual-price-overrides";
+import {
+  INPUT_TRUTH_BRIDGE_EVENT,
+  loadPendingPortfolioInputs,
+  type PendingPortfolioInputRecord,
+} from "@/src/lib/portfolio/input/input-truth-bridge";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
 import type { FCNPosition, FCNUnderlying } from "@/src/types/fcn-position";
 
@@ -792,6 +797,7 @@ function ConcentrationPanel({ items }: { items: FCNConcentrationItem[] }) {
 export function FCNCenterWorkspace() {
   const [lifecycleFilter, setLifecycleFilter] = useState<FCNLifecycleFilter>("active");
   const [manualPrices, setManualPrices] = useState<FCNManualPriceOverrides>({});
+  const [pendingFcnInputs, setPendingFcnInputs] = useState<PendingPortfolioInputRecord[]>([]);
   const [priceInputs, setPriceInputs] = useState<Record<string, string>>({});
   const [positions, setPositions] = useState<FCNPosition[]>([]);
   const [status, setStatus] = useState<LoadStatus>("loading");
@@ -857,6 +863,23 @@ export function FCNCenterWorkspace() {
     };
   }, []);
 
+  useEffect(() => {
+    function loadPendingInputs() {
+      setPendingFcnInputs(loadPendingPortfolioInputs().filter((input) => input.category === "FCN"));
+    }
+
+    loadPendingInputs();
+    window.addEventListener(INPUT_TRUTH_BRIDGE_EVENT, loadPendingInputs);
+    window.addEventListener("ixai:portfolio-input:changed", loadPendingInputs);
+    window.addEventListener("storage", loadPendingInputs);
+
+    return () => {
+      window.removeEventListener(INPUT_TRUTH_BRIDGE_EVENT, loadPendingInputs);
+      window.removeEventListener("ixai:portfolio-input:changed", loadPendingInputs);
+      window.removeEventListener("storage", loadPendingInputs);
+    };
+  }, []);
+
   const intelligence = useMemo(
     () => buildFcnIntelligenceCenterReadback(positions, manualPrices),
     [manualPrices, positions],
@@ -874,7 +897,7 @@ export function FCNCenterWorkspace() {
     [intelligence.positionRisks, lifecycleFilter, positions],
   );
 
-  const showEmptyState = status === "ready" && positions.length === 0;
+  const showEmptyState = status === "ready" && positions.length === 0 && pendingFcnInputs.length === 0;
 
   function handleManualPriceChange(symbol: string, value: string) {
     const normalizedSymbol = symbol.trim().toUpperCase();
@@ -955,12 +978,12 @@ export function FCNCenterWorkspace() {
                 Data Path
               </p>
               <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                FCN Wizard → API → Supabase → FCN Intelligence Center
+                FCN Wizard → Input Bridge / API → FCN Intelligence Center
               </h2>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                本頁使用現有 `/api/fcn` 與 authenticated Supabase session，不新增 migration、
-                market data、AI provider、broker sync 或 schema。Manual price overlay 只存於本機，
-                用於本頁即時計算。
+                本頁優先讀取現有 `/api/fcn` 與 authenticated Supabase session；v4.10 也會顯示
+                browser-local pending FCN input，避免 input 與 Workspace readback 斷線。Manual price
+                overlay 只存於本機，用於本頁即時計算。
               </p>
             </div>
             <button
@@ -982,6 +1005,7 @@ export function FCNCenterWorkspace() {
             {[
               ["Readback Status", STATUS_LABEL[status]],
               ["Repository Source", "Supabase /api/fcn"],
+              ["Pending Bridge", `${pendingFcnInputs.length} local FCN input(s)`],
               ["Persistence", "fcn_positions + fcn_underlyings"],
               ["Manual Prices", "localStorage overlay"],
               ["Risk Engine", "FCN Risk v2"],
@@ -1007,6 +1031,54 @@ export function FCNCenterWorkspace() {
             </p>
           ) : null}
         </section>
+
+        {pendingFcnInputs.length > 0 ? (
+          <section className="rounded-2xl border border-[rgba(176,141,87,0.30)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+                  Pending FCN Inputs
+                </p>
+                <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+                  FCN Wizard local pending readback
+                </h2>
+              </div>
+              <span className="w-fit rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(255,250,240,0.82)] px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
+                Local pending only
+              </span>
+            </div>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
+              These FCN inputs are visible through the v4.10 Input Truth Bridge, but they are not persisted Supabase positions yet. Persisted FCN risk readback still comes from `/api/fcn`.
+            </p>
+            <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {pendingFcnInputs.slice(0, 6).map((input) => (
+                <article
+                  className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
+                  key={input.id}
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+                      {input.title}
+                    </h3>
+                    <span className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 font-mono text-[10px] font-semibold text-[var(--ixai-forest-soft)]">
+                      PENDING
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                    {input.symbols.length > 0 ? input.symbols.join(" / ") : "No underlyings recorded"}
+                  </p>
+                  <ul className="mt-3 grid gap-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                    {input.details.slice(0, 3).map((detail) => (
+                      <li className="break-words" key={detail}>
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {status === "loading" ? (
           <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:p-6">

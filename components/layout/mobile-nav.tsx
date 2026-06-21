@@ -7,7 +7,7 @@ import {
   BriefcaseBusiness,
   FileText,
   Home,
-  Newspaper,
+  Settings,
   Sparkles,
   ShieldCheck,
   ShieldAlert,
@@ -105,11 +105,11 @@ const WORKSPACE_NAV_ITEMS: NavItem[] = [
     icon: ShieldCheck,
   },
   {
-    key: "intel",
-    label: "Intel",
-    href: "/my-ixai/intelligence",
-    icon: Newspaper,
-    matchPrefixes: ["/my-ixai/intelligence", "/my-ixai/settings"],
+    key: "settings",
+    label: "Settings",
+    href: "/my-ixai/settings",
+    icon: Settings,
+    matchPrefixes: ["/my-ixai/settings"],
   },
 ];
 

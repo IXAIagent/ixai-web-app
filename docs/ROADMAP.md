@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.09 / Workspace Market Integration`
+`v4.10 / Input → Truth → Workspace Unification`
 
 ## Current Priority
 
@@ -37,6 +37,8 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V407_PROVIDER_HEALTH_FRAMEWORK.md` as the source of truth for market provider status, freshness, priority, health summary, and fallback policy contracts.
 - Use `docs/V408_MARKET_SERVICE_LAYER.md` as the source of truth for unified market service entrypoints and Intelligence Center service-status readback.
 - Use `docs/V409_WORKSPACE_MARKET_INTEGRATION.md` as the source of truth for read-only market readiness, provider health, and fallback policy awareness across Portfolio, Risk, and Intelligence Centers.
+- Use `docs/V410_WORKSPACE_FULL_SCAN_REPORT.md` as the post-v4.09 workspace scan before the next implementation sprint. It records route status, navigation status, data wiring gaps, stale version copy, placeholder areas, and the recommended v4.10 / v4.11 / v4.12 sequence.
+- Use `docs/V410_INPUT_TRUTH_WORKSPACE_UNIFICATION.md` as the source of truth for the v4.10 browser-local pending input bridge, active Portfolio Market Status wiring, FCN pending readback, Workspace Home / Settings copy cleanup, and mobile Settings navigation cleanup.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -65,6 +67,9 @@ Current priority is UX / IA foundation before moving modules:
 - v4.07 adds Provider Health Framework contracts and deterministic mock health data for future market service routing.
 - v4.08 adds the Market Service Layer with unified quote, snapshot, news, provider-health, and readiness entrypoints while keeping all market data mock/provider-metadata only.
 - v4.09 integrates Market Service readiness into Portfolio Center, Risk Center, and Intelligence Center as read-only market readiness, provider health, and fallback policy awareness.
+- V410 scan finding: Risk Center and Intelligence Center render Workspace Market Status, but the active `/my-ixai/portfolio` route does not render the v4.09 market status because that component is attached to `PortfolioCenterDashboard`, which is not the active portfolio page. Treat Portfolio market status as a pending wiring fix.
+- V410 scan finding: active Stock / Crypto / FCN input routes are still local-only or draft-oriented, while Portfolio Truth reads persisted `/api/fcn`, `/api/stocks`, `/api/crypto`, and `/api/portfolio/dashboard` data. Treat input-to-truth persistence as a product gap.
+- v4.10 resolves the scan findings by wiring Workspace Market Status into the active Portfolio route and adding an Input Truth Bridge so browser-local Stock / Crypto / FCN pending inputs appear in Portfolio Truth, FCN Center, Risk, and Intelligence readback without changing API contracts or schema.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
@@ -277,9 +282,9 @@ Suggested v4.00 sprint order:
 8. `v4.07` Provider Health Framework.
 9. `v4.08` Market Service Layer.
 10. `v4.09` Workspace Market Integration.
-11. `v4.10` FCN Real Risk Integration.
-12. `v4.11` Intelligence Center V2.
-13. `v4.12` Integration QA / Release Hardening.
+11. `v4.10` Input → Truth → Workspace Unification.
+12. `v4.11` Market Data Provider / FCN Risk Engine.
+13. `v4.12` Unified Dashboard / Release Hardening.
 
 ### v4.01 — Portfolio Truth Layer
 
@@ -348,6 +353,33 @@ Suggested v4.00 sprint order:
 - Integrate Market Service readiness into `/my-ixai/portfolio`, `/my-ixai/risk`, and `/my-ixai/intelligence`.
 - Display market readiness, provider health, and fallback policy awareness as read-only metadata.
 - Do not fetch live quotes, call external providers, add API routes, database changes, schema changes, or migrations.
+
+### V410 — Workspace Full Scan Report
+
+- Audit-only workspace scan after v4.09.
+- Confirms primary navigation routes are present and valid.
+- Confirms Portfolio Truth is consumed by Portfolio, Risk, and Intelligence.
+- Confirms FCN Center reads persisted `/api/fcn` data and manual price overlays.
+- Flags the active Portfolio route missing the Workspace Market Status section.
+- Flags the local-only Stock / Crypto / FCN input paths as disconnected from the persisted Truth Layer.
+- Recommends the next implementation sequence:
+  - `v4.10` Market Data Layer.
+  - `v4.11` FCN Risk Engine.
+  - `v4.12` Unified Dashboard.
+
+### v4.10 — Input → Truth → Workspace Unification
+
+- Add `src/lib/portfolio/input/input-truth-bridge.ts` as the canonical browser-local pending input bridge.
+- Keep `ixai.portfolio.recent-inputs.v306` and `ixai.fcn.drafts.v308` as compatibility fallbacks.
+- Extend Portfolio Truth with pending input records, pending counts, pending known notional, and an Input Truth Bridge source status.
+- Wire Stock, Crypto, and FCN input forms into the bridge while preserving current local fallback behavior.
+- Display pending FCN inputs in FCN Center without changing `/api/fcn` or Supabase persistence.
+- Render Workspace Market Status on the active `/my-ixai/portfolio` route.
+- Update Workspace Home, Settings, and mobile Settings active-state copy.
+- Do not add schema, migrations, new API routes, broker sync, live market data, AI, recommendations, or trading behavior.
+- Recommended next:
+  - `v4.11` Market Data Provider / FCN Risk Engine.
+  - `v4.12` Unified Dashboard.
 
 ### v3.32 — Settings and Preferences Foundation
 

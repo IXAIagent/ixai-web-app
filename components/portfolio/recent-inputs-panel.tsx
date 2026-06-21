@@ -103,6 +103,7 @@ export function RecentInputsPanel() {
         <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-sm leading-7 text-[var(--ixai-forest-soft)]">
             尚未有本機輸入紀錄。新增股票、Crypto 或 FCN 後，這裡會顯示最近的 local mock state。
+            v4.10 之後，新的輸入也會同步到 Input Truth Bridge，並以 pending 狀態出現在 Workspace readback。
           </p>
         </div>
       )}

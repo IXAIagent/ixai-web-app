@@ -22,31 +22,31 @@ export const metadata = buildPublicMetadata({
 
 const workspaceCards = [
   {
-    description: "查看 Portfolio Center、資產配置、估值、曝險與多資產基礎。",
+    description: "查看 Portfolio Truth、pending inputs、資產配置、曝險與多資產基礎。",
     href: "/my-ixai/portfolio",
     icon: BriefcaseBusiness,
     label: "Portfolio Center",
   },
   {
-    description: "未來集中管理 concentration、correlation、scenario 與 stress-test readback。",
+    description: "查看 concentration、top exposure、FCN worst-of 與 data quality risk readback。",
     href: "/my-ixai/risk",
     icon: ShieldAlert,
     label: "Risk Center",
   },
   {
-    description: "未來集中管理 FCN positions、underlyings、Worst-of、KI / KO 與 coupon workflow。",
+    description: "管理 FCN positions、pending inputs、underlyings、Worst-of、KI / KO 與 timeline。",
     href: "/my-ixai/fcn",
     icon: ShieldCheck,
     label: "FCN Center",
   },
   {
-    description: "未來承接 Daily、Weekly、News、Commentary 與 Recommendation surfaces。",
+    description: "整理 Daily、Weekly、Market、Portfolio、Risk 與 FCN intelligence readback。",
     href: "/my-ixai/intelligence",
     icon: Newspaper,
     label: "Intelligence Center",
   },
   {
-    description: "未來管理帳號、會員、通知、語言、地區與 broker connections。",
+    description: "預覽帳號、通知、語言、地區、資料與未來 broker connection 設定。",
     href: "/my-ixai/settings",
     icon: Settings,
     label: "Settings",
@@ -85,8 +85,8 @@ export default function MyIxaiHomePage() {
           歡迎回到 IXAI Workspace。
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:leading-7">
-          這裡是登入後主入口。v3.02 之後會逐步把 Portfolio、Risk、FCN 與
-          Intelligence 從單一 overloaded dashboard 拆成清楚的工作中心。
+          這裡是登入後主入口。Portfolio、Risk、FCN、Intelligence 與 Settings
+          已整理成分工清楚的 Workspace 中心；新增資產後可回到各中心查看 readback 狀態。
         </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <Link
@@ -158,7 +158,7 @@ export default function MyIxaiHomePage() {
           </div>
           <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-xs font-semibold text-[var(--ixai-forest-soft)]">
             <Home className="h-3.5 w-3.5 text-[var(--ixai-gold)]" aria-hidden="true" />
-            v3.02 前的入口整理
+            Workspace centers
           </div>
         </div>
 

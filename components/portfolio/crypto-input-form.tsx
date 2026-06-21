@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { CheckCircle2, PlusCircle } from "lucide-react";
 
 import { InputReviewSummary } from "@/components/portfolio/input-review-summary";
+import { savePendingPortfolioInput } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { saveRecentPortfolioInput } from "@/src/lib/portfolio/input/recent-inputs";
 
 const FIELD_INPUT_CLASS =
@@ -64,8 +65,8 @@ export function CryptoInputForm() {
         throw new Error("請輸入 Crypto Asset。");
       }
 
-      parsePositiveNumber(draft.quantity, "Quantity");
-      parsePositiveNumber(draft.costBasis, "Cost Basis");
+      const quantity = parsePositiveNumber(draft.quantity, "Quantity");
+      const costBasis = parsePositiveNumber(draft.costBasis, "Cost Basis");
 
       saveRecentPortfolioInput({
         category: "CRYPTO",
@@ -76,7 +77,18 @@ export function CryptoInputForm() {
         ],
         title: assetSymbol,
       });
-      setSuccess(`已建立本機 Crypto 輸入草稿：${assetSymbol}`);
+      savePendingPortfolioInput({
+        category: "CRYPTO",
+        details: [
+          `Quantity ${draft.quantity.trim()}`,
+          `Cost ${draft.costBasis.trim()} USDT`,
+          `Source ${draft.source}`,
+        ],
+        knownNotional: quantity * costBasis,
+        symbols: [assetSymbol],
+        title: assetSymbol,
+      });
+      setSuccess(`已建立 Workspace pending Crypto 輸入：${assetSymbol}`);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "請確認 Crypto 欄位。");
     }
@@ -92,7 +104,7 @@ export function CryptoInputForm() {
           建立 Crypto 部位
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          本版使用 local mock state 記錄 Crypto 輸入草稿，不連接交易所、行情 API 或 Supabase。
+          本版使用 v4.10 Input Truth Bridge 記錄 browser-local pending input，會出現在 Workspace readback；不連接交易所、行情 API 或 Supabase。
         </p>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -196,7 +208,7 @@ export function CryptoInputForm() {
           {
             items: [
               ["Risk Fields", "Crypto / Source"],
-              ["Data Source", "Local mock state"],
+              ["Data Source", "Workspace pending input bridge"],
             ],
             title: "Risk Fields",
           },

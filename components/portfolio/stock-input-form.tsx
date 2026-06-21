@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { CheckCircle2, PlusCircle } from "lucide-react";
 
 import { InputReviewSummary } from "@/components/portfolio/input-review-summary";
+import { savePendingPortfolioInput } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { saveRecentPortfolioInput } from "@/src/lib/portfolio/input/recent-inputs";
 
 const FIELD_INPUT_CLASS =
@@ -73,8 +74,8 @@ export function StockInputForm() {
         throw new Error("請輸入 Ticker。");
       }
 
-      parsePositiveNumber(draft.quantity, "Quantity");
-      parsePositiveNumber(draft.costBasis, "Cost Basis");
+      const quantity = parsePositiveNumber(draft.quantity, "Quantity");
+      const costBasis = parsePositiveNumber(draft.costBasis, "Cost Basis");
 
       saveRecentPortfolioInput({
         category: "STOCK",
@@ -87,7 +88,20 @@ export function StockInputForm() {
           ? `${normalizedTicker} · ${draft.assetName.trim()}`
           : normalizedTicker,
       });
-      setSuccess(`已建立本機股票輸入草稿：${normalizedTicker}`);
+      savePendingPortfolioInput({
+        category: "STOCK",
+        details: [
+          `Quantity ${draft.quantity.trim()}`,
+          `Cost ${draft.costBasis.trim()} ${draft.currency}`,
+          `Market ${draft.market}`,
+        ],
+        knownNotional: quantity * costBasis,
+        symbols: [normalizedTicker],
+        title: draft.assetName.trim()
+          ? `${normalizedTicker} · ${draft.assetName.trim()}`
+          : normalizedTicker,
+      });
+      setSuccess(`已建立 Workspace pending 股票輸入：${normalizedTicker}`);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "請確認股票欄位。");
     }
@@ -103,7 +117,7 @@ export function StockInputForm() {
           建立股票 / ETF 部位
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          本版使用 local mock state 建立輸入草稿，不寫入 API 或 Supabase。後續 CSV 匯入與持久化會依 v3.05a audit 分階段接上。
+          本版使用 v4.10 Input Truth Bridge 建立 browser-local pending input，會出現在 Workspace readback；尚未寫入 API 或 Supabase。
         </p>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -219,7 +233,7 @@ export function StockInputForm() {
           {
             items: [
               ["Risk Fields", "Market / Currency"],
-              ["Data Source", "Local mock state"],
+              ["Data Source", "Workspace pending input bridge"],
             ],
             title: "Risk Fields",
           },

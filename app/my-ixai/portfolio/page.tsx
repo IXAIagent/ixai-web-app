@@ -12,6 +12,7 @@ import {
 
 import { RecentInputsPanel } from "@/components/portfolio/recent-inputs-panel";
 import { PortfolioTruthSummary } from "@/components/portfolio/portfolio-truth-summary";
+import { WorkspaceMarketStatus } from "@/components/market/workspace-market-status";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -187,6 +188,8 @@ export default function MyIxaiPortfolioPage() {
         </section>
 
         <RecentInputsPanel />
+
+        <WorkspaceMarketStatus contextLabel="Portfolio Center" />
 
         <section className="rounded-2xl border border-[rgba(176,141,87,0.32)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.14)] sm:p-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">

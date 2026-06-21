@@ -1,4 +1,5 @@
 import type { PortfolioDashboardSummary } from "@/src/lib/portfolio/dashboard";
+import type { PendingPortfolioInputRecord } from "@/src/lib/portfolio/input/input-truth-bridge";
 import type { CryptoPosition } from "@/src/types/crypto-position";
 import type { FCNPosition } from "@/src/types/fcn-position";
 import type { StockPosition } from "@/src/types/stock-position";
@@ -16,7 +17,8 @@ export type PortfolioTruthSourceKey =
   | "fcn"
   | "stock"
   | "crypto"
-  | "portfolioDashboard";
+  | "portfolioDashboard"
+  | "inputBridge";
 
 export interface PortfolioTruthDataSourceStatus {
   key: PortfolioTruthSourceKey;
@@ -31,12 +33,18 @@ export interface PortfolioTruthCounts {
   totalDualPositions: number;
   totalFcnPositions: number;
   totalGridPositions: number;
+  totalPendingCryptoInputs: number;
+  totalPendingFcnInputs: number;
+  totalPendingInputs: number;
+  totalPendingStockInputs: number;
+  totalPersistedAssets: number;
   totalStockPositions: number;
 }
 
 export interface PortfolioTruthAmounts {
   cryptoNotionalKnown: number;
   fcnNotional: number;
+  pendingKnownNotional: number;
   stockNotionalKnown: number;
   totalKnownNotional: number;
 }
@@ -94,6 +102,7 @@ export interface PortfolioTruthReadback {
   lastRefreshedAt: string;
   missingDataWarnings: string[];
   portfolioDashboard: PortfolioDashboardSummary | null;
+  pendingInputs: PendingPortfolioInputRecord[];
   positions: PortfolioTruthPositions;
   readinessLevel: PortfolioTruthReadinessLevel;
   risk: PortfolioTruthRiskSummary;
@@ -107,6 +116,7 @@ export interface BuildPortfolioTruthInput {
   fcnPositions: FCNPosition[];
   portfolioDashboardError?: boolean;
   portfolioDashboardSummary?: PortfolioDashboardSummary | null;
+  pendingInputs?: PendingPortfolioInputRecord[];
   stockError?: boolean;
   stockPositions: StockPosition[];
   unauthenticated?: boolean;
