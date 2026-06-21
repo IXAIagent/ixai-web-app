@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.50 — FCN Risk Engine v1`
+`v4.60 — FCN Coupon & Schedule Engine`
 
 Current production state:
 
@@ -139,6 +139,8 @@ v4.40 introduces Risk Engine v1. It converts v4.30 Portfolio Valuation output in
 
 v4.50 introduces FCN Risk Engine v1. It converts existing `/api/fcn` / Supabase FCN readback, local FCN draft fallback, manual price overlays, and v4.20 market-service quotes into worst-of underlying, KI distance, strike distance, KO readiness, FCN-native risk level, top risk positions, warnings, and source-status readback inside FCN Center. v4.50 is monitoring-only and does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, recommendation logic, Greeks, Monte Carlo, option valuation, scenario simulation, or a full FCN pricing engine.
 
+v4.60 introduces the FCN Coupon & Schedule Engine. It converts existing FCN observation schedules, common metadata schedule shapes, maturity dates, and local FCN draft schedules into coupon, observation, KO observation, maturity, next-30-day event, and monthly expected coupon cashflow readback inside FCN Center. Coupon amounts are shown only when explicit source amount data exists. v4.60 is monitoring-only and does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, tax reporting, trading logic, recommendation logic, or a full FCN pricing engine.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -181,7 +183,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.50 — FCN Risk Engine v1`
+`v4.60 — FCN Coupon & Schedule Engine`
 
 Current Core Flow:
 
@@ -227,6 +229,7 @@ Landing
 → Portfolio Valuation Engine estimating market value, cost basis, P/L, and asset allocation
 → Risk Engine v1 converting valuation output into risk score, levels, signals, and score breakdown
 → FCN Risk Engine v1 calculating worst-of, KI distance, strike distance, KO readiness, and FCN-native risk levels
+→ FCN Coupon & Schedule Engine organizing coupons, observations, KO observations, maturity, and monthly expected coupon cashflow
 ```
 
 Public Intelligence Funnel:
@@ -263,6 +266,7 @@ Product Layers:
 - Portfolio Valuation Engine: v4.30 converts Portfolio Truth positions plus v4.20 market quotes into estimated market value, cost basis, unrealized P/L, priced/unpriced counts, warnings, and asset-class allocation. FCN valuation remains notional placeholder only until a future FCN pricing engine or server-side market cache is approved.
 - Risk Engine v1: v4.40 converts Portfolio Valuation output into a deterministic 0-100 risk score, risk level, top signals, score breakdown, concentration warnings, crypto exposure warnings, market data quality warnings, and FCN placeholder valuation awareness. It is monitoring-only and does not add trading, recommendations, broker sync, schema changes, migrations, API contract changes, or full FCN pricing.
 - FCN Risk Engine v1: v4.50 converts FCN positions, local FCN drafts, manual price overlays, and v4.20 market-service quotes into worst-of, KI distance, strike distance, KO readiness, FCN-native risk levels, top risk positions, warnings, and source-status readback. It is monitoring-only and does not add trading, recommendations, broker sync, schema changes, migrations, API contract changes, Greeks, Monte Carlo, option valuation, scenario simulation, or full FCN pricing.
+- FCN Coupon & Schedule Engine: v4.60 converts FCN schedules, maturity dates, and local FCN draft schedules into coupon, observation, KO observation, maturity, next-30-day event, and monthly expected coupon cashflow readback. Coupon amounts are shown only when explicit source amount data exists. It is monitoring-only and does not add tax reporting, trading, recommendations, broker sync, schema changes, migrations, API contract changes, or full FCN pricing.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
