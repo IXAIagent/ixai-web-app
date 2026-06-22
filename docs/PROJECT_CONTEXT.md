@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v4.75 — Workspace Full Integration Review`
+`v4.80 — Intelligence Engine v1`
 
 Current production state:
 
@@ -145,6 +145,8 @@ v4.70 introduces the Server-side Market Cache Layer. It adds a memory-only cache
 
 v4.75 introduces the Workspace Full Integration Review. It adds static/service-level diagnostics for the post-v4.70 dependency chain across Truth Layer, Market Cache, Market Service, Portfolio Valuation, Portfolio Risk, FCN Risk, and FCN Schedule. Settings now displays lineage flow, module health counts, detected issues, and generated timestamp. v4.75 does not run runtime network tests, authenticated API probes, or provider fetches, and it does not add auth changes, Supabase schema changes, migrations, broker integrations, trading logic, investment recommendation logic, redesign, or an FCN pricing engine.
 
+v4.80 introduces Intelligence Engine v1. It reuses Portfolio Truth, Market Service, Market Cache, Portfolio Valuation, Risk Engine, FCN Risk, and FCN Schedule readback to generate deterministic structured Intelligence Cards inside Intelligence Center. Cards are categorized as Portfolio, Risk, FCN, or Schedule intelligence, and every card includes severity and source-engine attribution. v4.80 does not call AI models, add recommendations, broker logic, auth changes, Supabase schema changes, migrations, API contract changes, trading logic, or an FCN pricing engine.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -187,7 +189,7 @@ Still not complete:
 
 Current Development Version:
 
-`v4.75 — Workspace Full Integration Review`
+`v4.80 — Intelligence Engine v1`
 
 Current Core Flow:
 
@@ -236,6 +238,7 @@ Landing
 → FCN Coupon & Schedule Engine organizing coupons, observations, KO observations, maturity, and monthly expected coupon cashflow
 → Server-side Market Cache Layer stabilizing quote readback with memory-only TTL and stale fallback behavior
 → Workspace Full Integration Review exposing static data-lineage diagnostics in Settings
+→ Intelligence Engine v1 generating deterministic Workspace Intelligence Cards
 ```
 
 Public Intelligence Funnel:
@@ -275,6 +278,7 @@ Product Layers:
 - FCN Coupon & Schedule Engine: v4.60 converts FCN schedules, maturity dates, and local FCN draft schedules into coupon, observation, KO observation, maturity, next-30-day event, and monthly expected coupon cashflow readback. Coupon amounts are shown only when explicit source amount data exists. It is monitoring-only and does not add tax reporting, trading, recommendations, broker sync, schema changes, migrations, API contract changes, or full FCN pricing.
 - Server-side Market Cache Layer: v4.70 places a memory-only cache between Yahoo Finance / Binance quote adapters and Market Service consumers. It supports fresh, stale fallback, and unavailable source behavior without adding durable cache infrastructure, schema changes, migrations, API contract changes, broker sync, trading, recommendations, or FCN pricing.
 - Workspace Full Integration Review: v4.75 exposes static/service-level lineage diagnostics for Truth Layer, Market Cache, Market Service, Valuation, Risk, FCN Risk, and FCN Schedule inside Settings. It is architecture validation only and does not run provider network tests or authenticated API probes.
+- Intelligence Engine v1: v4.80 turns existing readback systems into deterministic structured Intelligence Cards inside Intelligence Center. It uses existing engines only and does not add AI model calls, recommendations, broker logic, trading logic, schema changes, migrations, API contract changes, or FCN pricing.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
