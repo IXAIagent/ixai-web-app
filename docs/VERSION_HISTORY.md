@@ -6,6 +6,37 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## v5.00 — Portfolio Persistence Layer
+
+Why:
+
+- IXAI needed a canonical readback abstraction before moving from local/draft fallback behavior toward durable portfolio persistence.
+- Portfolio Center, Truth Layer, Valuation, Risk, FCN Risk, Schedule, and Intelligence already consumed related data, but the system still needed one layer that labels persisted, local, fallback, partial, and unavailable sources consistently.
+
+What Changed:
+
+- Added `docs/V500_PORTFOLIO_PERSISTENCE_LAYER.md`.
+- Added `src/lib/portfolio/persistence/` with persistence types, readback helpers, summary utilities, service entrypoints, and public exports.
+- Added `components/portfolio/portfolio-persistence-summary.tsx`.
+- Wired Portfolio Persistence Summary into `/my-ixai/portfolio` near Portfolio Truth and Valuation.
+- Added a minimal Workspace Integration Audit node for Portfolio Persistence.
+
+Key Decisions:
+
+- v5.00 is an abstraction layer, not a Supabase redesign.
+- Existing `/api/fcn`, `/api/stocks`, `/api/crypto`, Portfolio Truth, Input Truth Bridge, FCN Draft Store, and Recent Inputs fallback are preserved.
+- Local pending input and FCN drafts are clearly labeled as local rather than durable server persistence.
+
+Out of Scope:
+
+- No auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, investment recommendations, AI model calls, alert delivery, workspace redesign, or durable draft persistence.
+
+Next:
+
+- Connect the persistence abstraction to durable database storage only after schema and lifecycle boundaries are approved.
+- Define draft-to-position lifecycle rules.
+- Prepare alert delivery in a later release after persistence semantics are stable.
+
 ## v3.40 — Intelligence Center v1
 
 Why:
