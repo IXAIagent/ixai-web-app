@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { RecentInputsPanel } from "@/components/portfolio/recent-inputs-panel";
+import { PortfolioPersistenceSummary } from "@/components/portfolio/portfolio-persistence-summary";
 import { PortfolioTruthSummary } from "@/components/portfolio/portfolio-truth-summary";
 import { PortfolioValuationSummary } from "@/components/portfolio/portfolio-valuation-summary";
 import { WorkspaceMarketStatus } from "@/components/market/workspace-market-status";
@@ -106,6 +107,8 @@ export default function MyIxaiPortfolioPage() {
         </section>
 
         <PortfolioTruthSummary />
+
+        <PortfolioPersistenceSummary />
 
         <PortfolioValuationSummary />
 

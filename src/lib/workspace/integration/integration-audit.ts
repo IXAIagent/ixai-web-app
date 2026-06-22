@@ -8,6 +8,7 @@ import {
 } from "@/src/lib/market/market-service";
 import { buildPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-center";
 import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-engine";
+import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
 import type {
   WorkspaceDataLineageNode,
@@ -95,6 +96,32 @@ export function auditTruthLayer(): ModuleAudit {
       source: "Input Truth Bridge + FCN / Stock / Crypto / Portfolio APIs",
       status,
       target: "Portfolio, Valuation, Risk, Intelligence",
+    }),
+  };
+}
+
+export function auditPersistenceLayer(): ModuleAudit {
+  const moduleName = "Portfolio Persistence";
+  const persistenceAvailable = functionAvailable(buildPortfolioPersistenceSummary);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [persistenceAvailable],
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: persistenceAvailable,
+        exportName: "buildPortfolioPersistenceSummary",
+        module: moduleName,
+      }),
+    ]),
+    node: buildNode({
+      id: "portfolio-persistence-layer",
+      name: moduleName,
+      source: "Persisted APIs + Input Truth Bridge + FCN Draft Store + fallback inputs",
+      status,
+      target: "Portfolio Truth + Valuation + Risk + Intelligence",
     }),
   };
 }
@@ -306,6 +333,7 @@ function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationS
 export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
   const audits = [
     auditTruthLayer(),
+    auditPersistenceLayer(),
     auditMarketCacheLayer(),
     auditMarketLayer(),
     auditValuationLayer(),

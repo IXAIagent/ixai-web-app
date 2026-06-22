@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`v4.80 / Intelligence Engine v1`
+`v5.00 / Portfolio Persistence Layer`
 
 ## Current Priority
 
@@ -47,6 +47,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V470_SERVER_SIDE_MARKET_CACHE_LAYER.md` as the source of truth for the v4.70 memory-only market cache layer, cache TTL rules, stale fallback behavior, cache diagnostics, and Market Service cache-first routing.
 - Use `docs/V475_WORKSPACE_FULL_INTEGRATION_REVIEW.md` as the source of truth for the v4.75 static/service-level Workspace integration audit, data lineage diagnostics, Settings diagnostics surface, and no-network audit boundary.
 - Use `docs/V480_INTELLIGENCE_ENGINE_V1.md` as the source of truth for the v4.80 deterministic Workspace Intelligence Engine, structured Intelligence Cards, source-engine attribution, severity rules, and no-AI/no-recommendation boundary.
+- Use `docs/V500_PORTFOLIO_PERSISTENCE_LAYER.md` as the source of truth for the v5.00 canonical Portfolio Persistence abstraction, persisted/local/fallback source statuses, Portfolio Center persistence summary, and no-schema/no-migration boundary.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -94,6 +95,8 @@ Current priority is UX / IA foundation before moving modules:
 - v4.75 adds the Workspace Full Integration Review by exposing static/service-level data lineage diagnostics in Settings. It audits Truth Layer, Market Cache, Market Service, Valuation, Risk, FCN Risk, and FCN Schedule wiring without runtime network tests. v4.75 does not add auth changes, Supabase schema changes, migrations, broker integrations, trading logic, investment recommendations, or an FCN pricing engine.
 - v4.75 has been merged into main and is complete.
 - v4.80 adds Intelligence Engine v1 by converting existing Portfolio Truth, Market Service, Market Cache, Portfolio Valuation, Risk Engine, FCN Risk, and FCN Schedule outputs into deterministic structured Intelligence Cards inside Intelligence Center. v4.80 does not call AI models, add recommendations, broker logic, auth changes, schema changes, API contract changes, migrations, trading logic, or an FCN pricing engine.
+- v4.80 has been merged into main and is complete.
+- v5.00 adds the Portfolio Persistence Layer as a canonical readback abstraction across persisted API records, browser-local pending input, FCN drafts, and legacy fallback recent inputs. v5.00 does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, investment recommendations, AI model calls, alert delivery, or database redesign.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
