@@ -6,6 +6,40 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V5 — Workspace Expansion Program
+
+Why:
+
+- v5.00 created the Portfolio Persistence Layer, but Workspace Home still needed a clearer daily operating surface.
+- IXAI needed watchlist, alert, daily brief, and dashboard readback that reuses existing engines without adding AI, broker, trading, schema, or delivery complexity.
+
+What Changed:
+
+- Added `docs/V5_WORKSPACE_EXPANSION_PROGRAM.md`.
+- Added Workspace Watchlist Engine under `src/lib/watchlist/` and `/my-ixai/watchlist`.
+- Added Alert Engine under `src/lib/alerts/` with deterministic UI-only alert cards.
+- Added Workspace Daily Brief Engine under `src/lib/daily-brief/`.
+- Added `components/watchlist/watchlist-summary.tsx`, `components/alerts/alert-summary.tsx`, and `components/daily-brief/workspace-daily-brief.tsx`.
+- Updated Workspace Home with Dashboard v2 module cards and readback surfaces.
+
+Key Decisions:
+
+- Watchlist uses local/fallback readback only in this version.
+- Alerts are UI-only; delivery is not implemented.
+- Workspace Daily Brief is rule-based and does not call AI models or fetch new external news.
+- Existing Portfolio Persistence, Portfolio Truth, Market Service, Market Cache, Valuation, Risk, FCN Risk, FCN Schedule, and Intelligence Engine remain the source systems.
+
+Out of Scope:
+
+- No auth changes, Supabase schema changes, migrations, broker integrations, trading logic, investment recommendations, AI model calls, order execution, alert delivery, public landing page redesign, or legacy fallback removal.
+
+Next:
+
+- Durable Watchlist persistence.
+- Alert delivery opt-in design.
+- Daily Brief personalization after durable preferences are approved.
+- Unified dashboard hardening after data contracts stabilize.
+
 ## v5.00 — Portfolio Persistence Layer
 
 Why:

@@ -7,6 +7,7 @@ import {
   BriefcaseBusiness,
   FileText,
   Home,
+  Eye,
   Settings,
   Sparkles,
   ShieldCheck,
@@ -93,6 +94,13 @@ const WORKSPACE_NAV_ITEMS: NavItem[] = [
     matchPrefixes: ["/my-ixai/portfolio", "/my-ixai/input"],
   },
   {
+    key: "watchlist",
+    label: "Watchlist",
+    href: "/my-ixai/watchlist",
+    icon: Eye,
+    matchPrefixes: ["/my-ixai/watchlist"],
+  },
+  {
     key: "risk",
     label: "Risk",
     href: "/my-ixai/risk",
@@ -161,7 +169,11 @@ export function MobileNav() {
       aria-label="IXAI 主要導覽"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-[rgba(176,141,87,0.30)] bg-[rgba(8,34,26,0.97)] px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 shadow-[0_-14px_40px_rgba(9,41,31,0.24)] backdrop-blur md:hidden"
     >
-      <div className="relative mx-auto grid max-w-xl grid-cols-5 items-end gap-1">
+      <div
+        className={`relative mx-auto grid max-w-xl items-end gap-1 ${
+          isWorkspaceRoute ? "grid-cols-6" : "grid-cols-5"
+        }`}
+      >
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = matchActive(pathname, item);
