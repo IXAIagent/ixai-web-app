@@ -4,9 +4,12 @@ import {
   Bell,
   Bitcoin,
   BriefcaseBusiness,
+  CalendarClock,
   CandlestickChart,
   Database,
   Eye,
+  GitBranch,
+  HeartPulse,
   Home,
   Newspaper,
   Settings,
@@ -18,6 +21,9 @@ import {
 import { AlertSummary } from "@/components/alerts/alert-summary";
 import { WorkspaceDailyBrief } from "@/components/daily-brief/workspace-daily-brief";
 import { IntelligenceSummary } from "@/components/intelligence/intelligence-summary";
+import { NotificationCenterSummary } from "@/components/notifications/notification-center-summary";
+import { WorkspaceHealthSummary } from "@/components/workspace/workspace-health-summary";
+import { WorkspaceTimelineSummary } from "@/components/workspace/workspace-timeline-summary";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -121,6 +127,30 @@ const dashboardV2Cards = [
     icon: Newspaper,
     label: "Intelligence",
   },
+  {
+    description: "Unified readback across all Workspace modules.",
+    href: "/my-ixai/home#workspace-graph",
+    icon: GitBranch,
+    label: "Workspace Graph",
+  },
+  {
+    description: "Local notification cards converted from alerts.",
+    href: "/my-ixai/notifications",
+    icon: Bell,
+    label: "Notifications",
+  },
+  {
+    description: "0–100 deterministic infrastructure health score.",
+    href: "/my-ixai/home#workspace-health",
+    icon: HeartPulse,
+    label: "Workspace Health",
+  },
+  {
+    description: "FCN schedule and alert events grouped by timing.",
+    href: "/my-ixai/timeline",
+    icon: CalendarClock,
+    label: "Timeline",
+  },
 ];
 
 const assetShortcutCards = [
@@ -182,7 +212,7 @@ export default function MyIxaiHomePage() {
               Workspace Dashboard v2
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-              九個 Workspace 模組入口
+              Workspace 模組入口
             </h2>
           </div>
           <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-xs font-semibold text-[var(--ixai-forest-soft)]">
@@ -300,6 +330,14 @@ export default function MyIxaiHomePage() {
       <div id="workspace-alerts">
         <AlertSummary />
       </div>
+
+      <div id="workspace-health">
+        <WorkspaceHealthSummary />
+      </div>
+
+      <NotificationCenterSummary />
+
+      <WorkspaceTimelineSummary />
 
       <div id="workspace-daily-brief">
         <WorkspaceDailyBrief />

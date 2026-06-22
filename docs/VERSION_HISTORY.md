@@ -6,6 +6,39 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V5.10–V5.50 — Workspace Foundation Program
+
+Why:
+
+- V5 added Watchlist, Alerts, Daily Brief, and Dashboard v2, but Workspace still needed one graph object, notification readback, health scoring, event timeline, and gateway service metadata.
+
+What Changed:
+
+- Added `docs/V5_WORKSPACE_FOUNDATION_PROGRAM.md`.
+- Added V5.10 Unified Workspace Graph under `src/lib/workspace/graph/`.
+- Added V5.20 Notification Center under `src/lib/notifications/` and `/my-ixai/notifications`.
+- Added V5.30 Workspace Health Engine under `src/lib/workspace/health/`.
+- Added V5.40 Timeline Engine under `src/lib/workspace/timeline/` and `/my-ixai/timeline`.
+- Added V5.50 Workspace API Gateway service layer under `src/lib/workspace/api/`.
+- Updated Workspace Home and Settings diagnostics with the new readback modules.
+
+Key Decisions:
+
+- API Gateway route handlers are deferred because current Workspace services depend on client-only readback and browser-local fallbacks.
+- Notifications are local readback only; delivery is not implemented.
+- Health score is deterministic infrastructure scoring, not advice.
+- Timeline does not invent dates.
+
+Out of Scope:
+
+- No auth changes, Supabase schema changes, migrations, broker integrations, trading logic, investment recommendations, AI model calls, order execution, notification delivery, public landing page redesign, or legacy fallback removal.
+
+Next:
+
+- Durable notification state and delivery opt-in design.
+- Build-safe read-only API route handlers after client/server source boundaries are normalized.
+- Workspace dashboard hardening after graph consumers stabilize.
+
 ## V5 — Workspace Expansion Program
 
 Why:
