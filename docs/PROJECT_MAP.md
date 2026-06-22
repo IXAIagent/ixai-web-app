@@ -91,6 +91,7 @@ Production data ownership update:
 - v4.80 adds Intelligence Engine v1 under `src/lib/intelligence/engine/`. It converts Portfolio Valuation, Risk Engine, FCN Risk, and FCN Schedule readback into deterministic structured Intelligence Cards for Intelligence Center.
 - v5.00 adds Portfolio Persistence Layer under `src/lib/portfolio/persistence/`. It provides a canonical readback abstraction for persisted API records, local pending input, FCN drafts, and legacy fallback recent inputs, then surfaces the summary inside Portfolio Center without changing schema, migrations, API contracts, auth, broker sync, trading, recommendations, AI model calls, or alert delivery.
 - V5 adds Workspace Expansion Program modules under `src/lib/watchlist/`, `src/lib/alerts/`, and `src/lib/daily-brief/`. It adds `/my-ixai/watchlist`, alert readback, Workspace Daily Brief readback, and Dashboard v2 cards without changing schema, migrations, auth, broker sync, trading, recommendations, AI model calls, or alert delivery.
+- V5.10–V5.50 adds Workspace Foundation Program modules under `src/lib/workspace/graph/`, `src/lib/notifications/`, `src/lib/workspace/health/`, `src/lib/workspace/timeline/`, and `src/lib/workspace/api/`. It adds `/my-ixai/notifications`, `/my-ixai/timeline`, health readback, timeline readback, and API Gateway service metadata without changing schema, migrations, auth, broker sync, trading, recommendations, AI model calls, or notification delivery.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -110,6 +111,7 @@ Current architecture:
 - Intelligence Engine v1 under `src/lib/intelligence/engine/` now provides deterministic rule-based card generation for Portfolio, Risk, FCN, and Schedule intelligence. It remains no-AI, no-recommendation, no-broker, no-trading, and no-schema-change.
 - Portfolio Persistence Layer under `src/lib/portfolio/persistence/` now provides v5.00 persisted/local/fallback readback contracts and summary utilities. It remains an abstraction layer and does not redesign database tables or replace the existing Portfolio Truth Layer in this release.
 - Workspace Expansion Program now provides Watchlist, Alerts, Workspace Daily Brief, and Dashboard v2 surfaces. Watchlist remains local/fallback, Alerts remain UI-only, and Daily Brief remains rule-based.
+- Workspace Foundation Program now provides Unified Workspace Graph, Notification Center, Workspace Health Engine, Timeline Engine, and Workspace API Gateway service layer. Notification delivery and route handlers remain deferred.
 - Multi-Asset Portfolio architecture:
 
 ```text

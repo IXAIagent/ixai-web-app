@@ -25,6 +25,8 @@ const workspaceNavGroups: NavGroup[] = [
       { label: "Portfolio Center", href: "/my-ixai/portfolio" },
       { label: "Asset Input", href: "/my-ixai/input" },
       { label: "Watchlist", href: "/my-ixai/watchlist" },
+      { label: "Notifications", href: "/my-ixai/notifications" },
+      { label: "Timeline", href: "/my-ixai/timeline" },
       { label: "Risk Center", href: "/my-ixai/risk" },
       { label: "FCN Center", href: "/my-ixai/fcn" },
       { label: "Intelligence Center", href: "/my-ixai/intelligence" },

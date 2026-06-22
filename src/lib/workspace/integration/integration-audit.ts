@@ -10,6 +10,11 @@ import { buildPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio
 import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-engine";
 import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
+import { buildWorkspaceNotificationSummary } from "@/src/lib/notifications/notification-engine";
+import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
+import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
+import { getWorkspaceApiGatewayStatus } from "@/src/lib/workspace/api/workspace-api-status";
+import { buildWorkspaceTimelineSummary } from "@/src/lib/workspace/timeline/timeline-engine";
 import type {
   WorkspaceDataLineageNode,
   WorkspaceIntegrationAudit,
@@ -318,6 +323,146 @@ export function auditFcnScheduleLayer(): ModuleAudit {
   };
 }
 
+export function auditWorkspaceGraphLayer(): ModuleAudit {
+  const moduleName = "Workspace Graph";
+  const graphAvailable = functionAvailable(buildWorkspaceGraphSummary);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [graphAvailable],
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: graphAvailable,
+        exportName: "buildWorkspaceGraphSummary",
+        module: moduleName,
+      }),
+    ]),
+    node: buildNode({
+      id: "workspace-graph-layer",
+      name: moduleName,
+      source: "Workspace module services",
+      status,
+      target: "Health / Timeline / Notifications / API Gateway",
+    }),
+  };
+}
+
+export function auditWorkspaceNotificationLayer(): ModuleAudit {
+  const moduleName = "Notification Center";
+  const notificationAvailable = functionAvailable(buildWorkspaceNotificationSummary);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [notificationAvailable],
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: notificationAvailable,
+        exportName: "buildWorkspaceNotificationSummary",
+        module: moduleName,
+      }),
+    ]),
+    node: buildNode({
+      id: "workspace-notification-layer",
+      name: moduleName,
+      source: "Alert Engine cards",
+      status,
+      target: "Notification Center",
+    }),
+  };
+}
+
+export function auditWorkspaceHealthLayer(): ModuleAudit {
+  const moduleName = "Workspace Health";
+  const healthAvailable = functionAvailable(buildWorkspaceHealthScore);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [healthAvailable],
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: healthAvailable,
+        exportName: "buildWorkspaceHealthScore",
+        module: moduleName,
+      }),
+    ]),
+    node: buildNode({
+      id: "workspace-health-layer",
+      name: moduleName,
+      source: "Workspace Graph",
+      status,
+      target: "Workspace Home diagnostics",
+    }),
+  };
+}
+
+export function auditWorkspaceTimelineLayer(): ModuleAudit {
+  const moduleName = "Timeline Engine";
+  const timelineAvailable = functionAvailable(buildWorkspaceTimelineSummary);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [timelineAvailable],
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: timelineAvailable,
+        exportName: "buildWorkspaceTimelineSummary",
+        module: moduleName,
+      }),
+    ]),
+    node: buildNode({
+      id: "workspace-timeline-layer",
+      name: moduleName,
+      source: "FCN Schedule + Alert Engine",
+      status,
+      target: "Timeline Center",
+    }),
+  };
+}
+
+export function auditWorkspaceApiGatewayLayer(): ModuleAudit {
+  const moduleName = "Workspace API Gateway";
+  const gatewayStatusAvailable = functionAvailable(getWorkspaceApiGatewayStatus);
+  const gatewayStatus = gatewayStatusAvailable ? getWorkspaceApiGatewayStatus() : null;
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [gatewayStatusAvailable],
+    warnings: gatewayStatus?.routeHandlersEnabled === false,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: gatewayStatusAvailable,
+        exportName: "getWorkspaceApiGatewayStatus",
+        module: moduleName,
+      }),
+      gatewayStatus?.routeHandlersEnabled === false
+        ? {
+            message:
+              "Workspace API Gateway is service-layer only; read-only route handlers are deferred for client-service safety.",
+            module: moduleName,
+            severity: "info",
+          }
+        : null,
+    ]),
+    node: buildNode({
+      id: "workspace-api-gateway-layer",
+      name: moduleName,
+      source: "Workspace Graph / Health / Timeline / Notifications services",
+      status,
+      target: "Future read-only API endpoints",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -340,6 +485,11 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditRiskLayer(),
     auditFcnRiskLayer(),
     auditFcnScheduleLayer(),
+    auditWorkspaceGraphLayer(),
+    auditWorkspaceNotificationLayer(),
+    auditWorkspaceHealthLayer(),
+    auditWorkspaceTimelineLayer(),
+    auditWorkspaceApiGatewayLayer(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);
