@@ -1,16 +1,23 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  Bell,
   Bitcoin,
   BriefcaseBusiness,
   CandlestickChart,
+  Database,
+  Eye,
   Home,
   Newspaper,
   Settings,
   ShieldAlert,
   ShieldCheck,
+  WalletCards,
 } from "lucide-react";
 
+import { AlertSummary } from "@/components/alerts/alert-summary";
+import { WorkspaceDailyBrief } from "@/components/daily-brief/workspace-daily-brief";
+import { IntelligenceSummary } from "@/components/intelligence/intelligence-summary";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -46,10 +53,73 @@ const workspaceCards = [
     label: "Intelligence Center",
   },
   {
+    description: "整理 local/fallback watchlist 與 Market Service quote status。",
+    href: "/my-ixai/watchlist",
+    icon: Eye,
+    label: "Watchlist",
+  },
+  {
     description: "預覽帳號、通知、語言、地區、資料與未來 broker connection 設定。",
     href: "/my-ixai/settings",
     icon: Settings,
     label: "Settings",
+  },
+];
+
+const dashboardV2Cards = [
+  {
+    description: "Persisted / local / fallback position readback source status.",
+    href: "/my-ixai/portfolio",
+    icon: Database,
+    label: "Portfolio Persistence",
+  },
+  {
+    description: "Estimated market value, cost basis, P/L, and allocation.",
+    href: "/my-ixai/portfolio",
+    icon: WalletCards,
+    label: "Valuation",
+  },
+  {
+    description: "Risk score, signals, concentration, and data quality.",
+    href: "/my-ixai/risk",
+    icon: ShieldAlert,
+    label: "Risk",
+  },
+  {
+    description: "Worst-of, KI distance, strike distance, and KO readiness.",
+    href: "/my-ixai/fcn",
+    icon: ShieldCheck,
+    label: "FCN Risk",
+  },
+  {
+    description: "Coupon, observation, KO observation, and maturity events.",
+    href: "/my-ixai/fcn",
+    icon: Newspaper,
+    label: "FCN Schedule",
+  },
+  {
+    description: "Local/fallback symbols and quote availability.",
+    href: "/my-ixai/watchlist",
+    icon: Eye,
+    label: "Watchlist",
+  },
+  {
+    description: "UI-only deterministic monitoring alert cards.",
+    href: "/my-ixai/home#workspace-alerts",
+    icon: Bell,
+    label: "Alerts",
+  },
+  {
+    description: "Rule-based daily workspace summary from existing engines.",
+    href: "/my-ixai/home#workspace-daily-brief",
+    icon: Newspaper,
+    label: "Daily Brief",
+  },
+  {
+    description: "Deterministic Intelligence Cards with source-engine attribution.",
+    href: "/my-ixai/intelligence",
+    icon: Newspaper,
+    label: "Intelligence",
   },
 ];
 
@@ -86,7 +156,7 @@ export default function MyIxaiHomePage() {
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:leading-7">
           這裡是登入後主入口。Portfolio、Risk、FCN、Intelligence 與 Settings
-          已整理成分工清楚的 Workspace 中心；新增資產後可回到各中心查看 readback 狀態。
+          已整理成分工清楚的 Workspace 中心；新增資產後可回到各中心查看 readback 狀態。V5 加入 Watchlist、Alerts、Daily Brief 與 Dashboard v2 readback。
         </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <Link
@@ -102,6 +172,46 @@ export default function MyIxaiHomePage() {
           >
             返回官網
           </Link>
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
+              Workspace Dashboard v2
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              九個 Workspace 模組入口
+            </h2>
+          </div>
+          <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+            Monitoring only
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {dashboardV2Cards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <Link
+                className="group flex min-h-32 flex-col justify-between rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-[var(--ixai-forest)] transition hover:-translate-y-0.5 hover:bg-white/80"
+                href={card.href}
+                key={card.label}
+              >
+                <span className="flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold">
+                    <Icon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+                    {card.label}
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)] transition group-hover:translate-x-0.5" aria-hidden="true" />
+                </span>
+                <span className="mt-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                  {card.description}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -153,7 +263,7 @@ export default function MyIxaiHomePage() {
               Workspace Centers
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-              從一個入口進入五個工作中心
+              從一個入口進入 Workspace 工作中心
             </h2>
           </div>
           <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-xs font-semibold text-[var(--ixai-forest-soft)]">
@@ -186,6 +296,16 @@ export default function MyIxaiHomePage() {
           })}
         </div>
       </section>
+
+      <div id="workspace-alerts">
+        <AlertSummary />
+      </div>
+
+      <div id="workspace-daily-brief">
+        <WorkspaceDailyBrief />
+      </div>
+
+      <IntelligenceSummary />
 
       <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
         本頁僅整理 Workspace 入口與資訊架構，不新增投資功能、不構成投資建議、不提供買賣建議、目標價、報酬承諾或自動交易。

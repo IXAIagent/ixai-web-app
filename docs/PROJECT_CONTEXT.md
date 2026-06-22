@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`v5.00 — Portfolio Persistence Layer`
+`V5 — Workspace Expansion Program`
 
 Current production state:
 
@@ -149,6 +149,8 @@ v4.80 introduces Intelligence Engine v1. It reuses Portfolio Truth, Market Servi
 
 v5.00 introduces the Portfolio Persistence Layer. It creates a canonical readback abstraction for persisted Stock / Crypto / FCN API records, browser-local pending inputs, FCN drafts, and legacy fallback recent inputs. Portfolio Center now shows persistence source status, persisted/local/fallback counts, asset-class breakdown, warnings, and an informational-only disclaimer. v5.00 is not a database redesign and does not add auth changes, Supabase schema changes, migrations, API contract changes, broker integrations, trading logic, investment recommendations, AI model calls, alert delivery, or durable draft persistence.
 
+V5 introduces the Workspace Expansion Program. It adds Watchlist Engine, Alert Engine, Workspace Daily Brief Engine, and Workspace Dashboard v2 using existing Portfolio Persistence, Portfolio Truth, Market Service, Market Cache, Valuation, Risk, FCN Risk, FCN Schedule, and Intelligence Engine outputs. V5 does not add auth changes, Supabase schema changes, migrations, broker integrations, trading logic, investment recommendation logic, AI model calls, order execution, alert delivery, or public landing page redesign.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -191,7 +193,7 @@ Still not complete:
 
 Current Development Version:
 
-`v5.00 — Portfolio Persistence Layer`
+`V5 — Workspace Expansion Program`
 
 Current Core Flow:
 
@@ -242,6 +244,7 @@ Landing
 → Workspace Full Integration Review exposing static data-lineage diagnostics in Settings
 → Intelligence Engine v1 generating deterministic Workspace Intelligence Cards
 → Portfolio Persistence Layer labeling persisted, local, fallback, partial, and unavailable portfolio readback
+→ Workspace Expansion Program adding Watchlist, Alerts, Workspace Daily Brief, and Dashboard v2 readback
 ```
 
 Public Intelligence Funnel:
@@ -283,6 +286,7 @@ Product Layers:
 - Workspace Full Integration Review: v4.75 exposes static/service-level lineage diagnostics for Truth Layer, Market Cache, Market Service, Valuation, Risk, FCN Risk, and FCN Schedule inside Settings. It is architecture validation only and does not run provider network tests or authenticated API probes.
 - Intelligence Engine v1: v4.80 turns existing readback systems into deterministic structured Intelligence Cards inside Intelligence Center. It uses existing engines only and does not add AI model calls, recommendations, broker logic, trading logic, schema changes, migrations, API contract changes, or FCN pricing.
 - Portfolio Persistence Layer: v5.00 creates the canonical readback abstraction for persisted API records, browser-local pending inputs, FCN drafts, and legacy fallback recent inputs. It is an abstraction/foundation layer only and does not add schema migration, database redesign, auth changes, broker sync, trading, recommendations, AI model calls, or alert delivery.
+- Workspace Expansion Program: V5 adds local/fallback Watchlist readback, deterministic UI-only alert cards, rule-based Workspace Daily Brief, and Dashboard v2 cards. It uses existing systems only and does not add delivery, AI model calls, recommendations, broker sync, trading, auth changes, schema changes, or migrations.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
