@@ -700,7 +700,39 @@ Out of Scope:
 
 Next:
 
-- v4.80 FCN Scenario Monitoring or durable market-cache review.
+- v4.80 Intelligence Engine v1.
+
+## v4.80 — Intelligence Engine v1
+
+Why:
+
+- IXAI had Portfolio Truth, Market Service, Market Cache, Portfolio Valuation, Risk Engine, FCN Risk, and FCN Schedule readback, but Intelligence Center still needed a structured deterministic engine to turn those systems into reviewable cards.
+- The product needed an intelligence surface without introducing AI model calls, recommendations, broker logic, trading logic, schema changes, or new API contracts.
+
+What Changed:
+
+- Added `docs/V480_INTELLIGENCE_ENGINE_V1.md`.
+- Added `src/lib/intelligence/engine/intelligence-types.ts`.
+- Added `src/lib/intelligence/engine/intelligence-engine.ts`.
+- Added `src/lib/intelligence/engine/intelligence-service.ts`.
+- Added `components/intelligence/intelligence-summary.tsx`.
+- Updated Intelligence Center to render structured Intelligence Cards.
+- Updated roadmap, context, project map, and version history docs.
+
+Key Decisions:
+
+- v4.80 is deterministic and rule-based.
+- Cards include `id`, `title`, `summary`, `severity`, and `sourceEngine`.
+- Card categories are Portfolio, Risk, FCN, and Schedule Intelligence.
+- Existing readback services are reused rather than duplicated.
+
+Out of Scope:
+
+- No AI model call, investment recommendation logic, buy/sell advice, broker logic, auth change, Supabase schema change, migration, API contract change, trading logic, order execution, target price, return promise, or FCN pricing engine.
+
+Next:
+
+- v4.90 Intelligence Card QA / User Workflow Review or FCN Scenario Monitoring.
 
 ## v2.10a — Global Market Foundation Review
 

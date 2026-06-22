@@ -88,6 +88,7 @@ Production data ownership update:
 - v4.60 adds FCN Coupon & Schedule Engine under `src/lib/fcn/schedule/`. It reuses existing FCN observation schedules, common metadata schedule shapes, maturity dates, and local FCN draft schedules to calculate coupon, observation, KO observation, maturity, next-30-day events, and monthly expected coupon cashflow when explicit amount data exists.
 - v4.70 adds Server-side Market Cache Layer under `src/lib/market/cache/`. It routes Market Service quote readback through memory-only cache entries with 15-minute equity TTL, 2-minute crypto TTL, stale fallback, unavailable fallback, and Workspace cache diagnostics.
 - v4.75 adds Workspace Full Integration Review under `src/lib/workspace/integration/`. It performs static/service-level lineage diagnostics for Truth Layer, Market Cache, Market Service, Portfolio Valuation, Portfolio Risk, FCN Risk, and FCN Schedule, then displays the result inside Settings.
+- v4.80 adds Intelligence Engine v1 under `src/lib/intelligence/engine/`. It converts Portfolio Valuation, Risk Engine, FCN Risk, and FCN Schedule readback into deterministic structured Intelligence Cards for Intelligence Center.
 - Global market principle: `app/ixai-web-app` should be treated as a Global Multi-Asset, Multi-Broker, Multi-Market AI Risk Platform. Future portfolio, FCN, valuation, exposure, concentration, correlation, scenario, stress-test, market data, news, and localization work must not assume US-only, Taiwan-only, or English-only data. See `docs/GLOBAL_MARKET_VISION.md`.
 - Future Pro features should be built inside `app/ixai-web-app` instead of migrating the whole legacy frontend.
 - Legacy Pro is reference-only and should gradually retire as App-native Portfolio, FCN, and Risk workflows mature.
@@ -104,6 +105,7 @@ Current architecture:
 - FCN Coupon & Schedule Engine under `src/lib/fcn/schedule/` now includes v4.60 schedule normalization and coupon / observation / KO / maturity readback for FCN Center. It remains monitoring-only and does not change database schema, API contracts, tax reporting, trading, broker sync, recommendation logic, or full FCN pricing.
 - Server-side Market Cache Layer under `src/lib/market/cache/` now provides memory-only market cache types, store, service, and snapshot diagnostics for Market Service quote consumers. It remains infrastructure-only and does not change database schema, API contracts, auth, broker sync, trading, recommendation logic, or FCN pricing.
 - Workspace Integration diagnostics under `src/lib/workspace/integration/` now validate expected exports, fallback presence, and safe dependency chain across Workspace data layers without network tests, schema changes, auth changes, broker sync, trading, recommendation logic, or FCN pricing.
+- Intelligence Engine v1 under `src/lib/intelligence/engine/` now provides deterministic rule-based card generation for Portfolio, Risk, FCN, and Schedule intelligence. It remains no-AI, no-recommendation, no-broker, no-trading, and no-schema-change.
 - Multi-Asset Portfolio architecture:
 
 ```text
@@ -233,7 +235,7 @@ v2.11 center ownership rule:
   - `/my-ixai/portfolio/assets`: Asset Management Center, mock CRUD foundation, future persistent asset CRUD staging area.
   - `/my-ixai/risk`: Global Risk Center foundation with FCN risk summary, multi-asset readiness, upcoming FCN events, data source status, deterministic Foundation Score, and v4.03 Risk Intelligence Layer readback.
   - `/my-ixai/fcn`: FCN Intelligence Center for persisted FCN positions, lifecycle readback, manual local price overlay, KI-distance risk scoring, timeline events, concentration, observation schedule, and coupon dates.
-  - `/my-ixai/intelligence`: Intelligence Center with Daily / Weekly / Market entries, FCN highlights, Portfolio Truth summary, Risk Intelligence snapshot, exposure summary, Market Readiness UI, readiness warnings, news readiness, commentary readiness, source status, and compliance footer.
+  - `/my-ixai/intelligence`: Intelligence Center with Daily / Weekly / Market entries, FCN highlights, Portfolio Truth summary, Risk Intelligence snapshot, exposure summary, Market Readiness UI, v4.80 deterministic Intelligence Cards, readiness warnings, news readiness, commentary readiness, source status, and compliance footer.
   - v4.10 status: `/my-ixai/portfolio`, `/my-ixai/risk`, and `/my-ixai/intelligence` all consume Portfolio Truth readback. `/my-ixai/portfolio` now renders active-route Workspace Market Status. `/my-ixai/input/stock`, `/my-ixai/input/crypto`, and `/my-ixai/input/fcn` write browser-local pending records into the Input Truth Bridge while server persistence remains future work.
   - `/my-ixai/settings`: Workspace Settings Preview for account, notification, language, region, broker connection, data/privacy IA, and v4.75 Workspace Integration Status diagnostics. Full settings systems remain future work.
 
