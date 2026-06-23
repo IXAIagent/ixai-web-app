@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`V5.10–V5.50 — Workspace Foundation Program`
+`V6 — Platformization Program`
 
 Current production state:
 
@@ -151,7 +151,9 @@ v5.00 introduces the Portfolio Persistence Layer. It creates a canonical readbac
 
 V5 introduces the Workspace Expansion Program. It adds Watchlist Engine, Alert Engine, Workspace Daily Brief Engine, and Workspace Dashboard v2 using existing Portfolio Persistence, Portfolio Truth, Market Service, Market Cache, Valuation, Risk, FCN Risk, FCN Schedule, and Intelligence Engine outputs. V5 does not add auth changes, Supabase schema changes, migrations, broker integrations, trading logic, investment recommendation logic, AI model calls, order execution, alert delivery, or public landing page redesign.
 
-V5.10–V5.50 introduces the Workspace Foundation Program. It adds Unified Workspace Graph, local-only Notification Center, deterministic Workspace Health Engine, Timeline Engine, and read-only Workspace API Gateway service-layer metadata. It uses existing systems only and does not add auth changes, schema migrations, broker integrations, trading logic, investment recommendations, AI model calls, order execution, public landing page redesign, or notification delivery.
+V5.10–V5.50 introduced the Workspace Foundation Program and has been merged into main. It adds Unified Workspace Graph, local-only Notification Center, deterministic Workspace Health Engine, Timeline Engine, and read-only Workspace API Gateway service-layer metadata.
+
+V6 introduces the Platformization Program. It adds read-only Workspace API routes, Watchlist persistence foundation, Alert persistence foundation, Daily Brief history foundation, deterministic Workspace Insights, Notification Delivery readiness, and rule-based explain-only Workspace Copilot. It uses existing systems only and does not add broker integrations, trading execution, order routing, buy/sell/hold recommendations, AI model calls, auth behavior changes, Supabase schema changes, migrations, public landing page redesign, or legacy fallback removal.
 
 Validated production behavior:
 
@@ -195,7 +197,7 @@ Still not complete:
 
 Current Development Version:
 
-`V5.10–V5.50 — Workspace Foundation Program`
+`V6 — Platformization Program`
 
 Current Core Flow:
 
@@ -248,6 +250,7 @@ Landing
 → Portfolio Persistence Layer labeling persisted, local, fallback, partial, and unavailable portfolio readback
 → Workspace Expansion Program adding Watchlist, Alerts, Workspace Daily Brief, and Dashboard v2 readback
 → Workspace Foundation Program adding Graph, Notifications, Health, Timeline, and API Gateway service readback
+→ Platformization Program adding read-only API routes, persistence foundations, Insights, delivery readiness, and explain-only Copilot
 ```
 
 Public Intelligence Funnel:
@@ -291,6 +294,7 @@ Product Layers:
 - Portfolio Persistence Layer: v5.00 creates the canonical readback abstraction for persisted API records, browser-local pending inputs, FCN drafts, and legacy fallback recent inputs. It is an abstraction/foundation layer only and does not add schema migration, database redesign, auth changes, broker sync, trading, recommendations, AI model calls, or alert delivery.
 - Workspace Expansion Program: V5 adds local/fallback Watchlist readback, deterministic UI-only alert cards, rule-based Workspace Daily Brief, and Dashboard v2 cards. It uses existing systems only and does not add delivery, AI model calls, recommendations, broker sync, trading, auth changes, schema changes, or migrations.
 - Workspace Foundation Program: V5.10–V5.50 adds one graph readback object, local notifications, deterministic health scoring, event timeline grouping, and read-only API Gateway service metadata. It remains no-auth-change, no-schema-change, no-migration, no-broker, no-trading, no-recommendation, no-AI, and no-delivery.
+- Platformization Program: V6 adds read-only route handlers, persistence foundations, deterministic insights, delivery readiness, and rule-based explain-only Copilot. It remains no-auth-change, no-schema-change, no-migration, no-broker, no-trading, no-recommendation, no-AI-model-call, and no-external-delivery.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

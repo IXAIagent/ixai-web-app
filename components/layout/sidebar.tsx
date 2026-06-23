@@ -27,6 +27,7 @@ const workspaceNavGroups: NavGroup[] = [
       { label: "Watchlist", href: "/my-ixai/watchlist" },
       { label: "Notifications", href: "/my-ixai/notifications" },
       { label: "Timeline", href: "/my-ixai/timeline" },
+      { label: "Copilot", href: "/my-ixai/copilot" },
       { label: "Risk Center", href: "/my-ixai/risk" },
       { label: "FCN Center", href: "/my-ixai/fcn" },
       { label: "Intelligence Center", href: "/my-ixai/intelligence" },

@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { Eye, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import {
+  getWatchlistPersistenceSummary,
+  type WatchlistPersistenceSummary,
+} from "@/src/lib/watchlist/persistence";
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
 import type { WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
 
@@ -21,11 +25,17 @@ function formatPrice(value: number | null | undefined, currency = "USD") {
 
 export function WatchlistSummary() {
   const [summary, setSummary] = useState<WorkspaceWatchlistSummary | null>(null);
+  const [persistence, setPersistence] = useState<WatchlistPersistenceSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   async function refresh() {
     setIsLoading(true);
-    setSummary(await getWorkspaceWatchlistSummary());
+    const [watchlistSummary, persistenceSummary] = await Promise.all([
+      getWorkspaceWatchlistSummary(),
+      getWatchlistPersistenceSummary(),
+    ]);
+    setSummary(watchlistSummary);
+    setPersistence(persistenceSummary);
     setIsLoading(false);
   }
 
@@ -80,6 +90,17 @@ export function WatchlistSummary() {
           </article>
         ))}
       </div>
+
+      {persistence ? (
+        <article className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+            Persistence readiness
+          </p>
+          <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            Source status: {persistence.sourceStatus}. Persisted items: {persistence.persistedItems}; local items: {persistence.localItems}; fallback items: {persistence.fallbackItems}.
+          </p>
+        </article>
+      ) : null}
 
       <div className="mt-5 grid gap-3 lg:grid-cols-2">
         {summary?.items.map((item) => (
