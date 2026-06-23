@@ -7,10 +7,12 @@ export function getWorkspaceApiGatewayStatus(): WorkspaceApiGatewayStatus {
       { endpoint: "health", mode: "service_only", readOnly: true },
       { endpoint: "timeline", mode: "service_only", readOnly: true },
       { endpoint: "notifications", mode: "service_only", readOnly: true },
+      { endpoint: "intelligence", mode: "service_only", readOnly: true },
+      { endpoint: "daily-brief", mode: "service_only", readOnly: true },
     ],
     generatedAt: new Date().toISOString(),
-    routeHandlersEnabled: false,
+    routeHandlersEnabled: true,
     summary:
-      "Workspace API Gateway is implemented as a read-only service layer in V5.50. Route handlers are deferred because the current Workspace services depend on client-only readback and browser-local fallbacks.",
+      "Workspace API Gateway exposes read-only V6.10 route handlers. Routes use server-safe limited responses when full personalized readback depends on browser-local fallbacks.",
   };
 }

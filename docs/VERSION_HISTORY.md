@@ -6,6 +6,33 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V6 — Platformization Program
+
+Why:
+
+- V5 completed graph, notifications, health, timeline, and API service metadata, but IXAI needed SaaS-ready platform foundations: route handlers, persistence abstractions, insights, delivery readiness, and explain-only Copilot.
+
+What Changed:
+
+- Added `docs/V6_PLATFORMIZATION_PROGRAM.md`.
+- Added read-only Workspace API routes for graph, health, timeline, notifications, intelligence, and daily brief.
+- Added Watchlist, Alert, and Daily Brief persistence/history foundation services plus schema draft docs.
+- Added deterministic Workspace Insights under `src/lib/insights/`.
+- Added Notification Delivery readiness under `src/lib/notifications/delivery/`.
+- Added Workspace Copilot explain-only foundation under `src/lib/copilot/` and `/my-ixai/copilot`.
+- Updated Workspace Home, sidebar, Watchlist Summary, Notification Center, and Workspace Daily Brief with V6 readiness surfaces.
+
+Key Decisions:
+
+- API routes return server-safe limited responses where full personalized readback depends on browser-local fallbacks.
+- Persistence modules are abstractions only; no migrations are applied.
+- Notification delivery is readiness-only; external channels are disabled.
+- Copilot is rule-based and explain-only; no AI model calls are used.
+
+Out of Scope:
+
+- No auth changes, Supabase schema changes, migrations, broker integrations, trading execution, order routing, buy/sell/hold recommendations, AI model calls, public landing page redesign, or legacy fallback removal.
+
 ## V5.10–V5.50 — Workspace Foundation Program
 
 Why:

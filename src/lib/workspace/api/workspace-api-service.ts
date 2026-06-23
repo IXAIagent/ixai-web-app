@@ -2,6 +2,8 @@
 
 import { getWorkspaceGraph, getWorkspaceGraphSummary } from "@/src/lib/workspace/graph";
 import { getWorkspaceHealthScore } from "@/src/lib/workspace/health";
+import { getWorkspaceDailyBrief } from "@/src/lib/daily-brief";
+import { getWorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-service";
 import { getWorkspaceNotificationSummary } from "@/src/lib/notifications";
 import { getWorkspaceTimelineSummary } from "@/src/lib/workspace/timeline";
 import type {
@@ -49,4 +51,12 @@ export async function readWorkspaceTimeline() {
 
 export async function readWorkspaceNotifications() {
   return readEndpoint("notifications", getWorkspaceNotificationSummary);
+}
+
+export async function readWorkspaceIntelligence() {
+  return readEndpoint("intelligence", getWorkspaceIntelligenceReport);
+}
+
+export async function readWorkspaceDailyBrief() {
+  return readEndpoint("daily-brief", getWorkspaceDailyBrief);
 }

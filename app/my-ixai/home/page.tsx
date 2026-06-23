@@ -3,6 +3,7 @@ import {
   ArrowRight,
   Bell,
   Bitcoin,
+  Bot,
   BriefcaseBusiness,
   CalendarClock,
   CandlestickChart,
@@ -11,7 +12,9 @@ import {
   GitBranch,
   HeartPulse,
   Home,
+  Lightbulb,
   Newspaper,
+  Send,
   Settings,
   ShieldAlert,
   ShieldCheck,
@@ -19,7 +22,9 @@ import {
 } from "lucide-react";
 
 import { AlertSummary } from "@/components/alerts/alert-summary";
+import { WorkspaceCopilotSummary } from "@/components/copilot/workspace-copilot-summary";
 import { WorkspaceDailyBrief } from "@/components/daily-brief/workspace-daily-brief";
+import { WorkspaceInsightsSummary } from "@/components/insights/workspace-insights-summary";
 import { IntelligenceSummary } from "@/components/intelligence/intelligence-summary";
 import { NotificationCenterSummary } from "@/components/notifications/notification-center-summary";
 import { WorkspaceHealthSummary } from "@/components/workspace/workspace-health-summary";
@@ -151,6 +156,24 @@ const dashboardV2Cards = [
     icon: CalendarClock,
     label: "Timeline",
   },
+  {
+    description: "Rule-based attention layer built from Workspace Graph.",
+    href: "/my-ixai/home#workspace-insights",
+    icon: Lightbulb,
+    label: "Insights",
+  },
+  {
+    description: "Delivery readiness: in-app active, external channels planned.",
+    href: "/my-ixai/notifications",
+    icon: Send,
+    label: "Delivery Readiness",
+  },
+  {
+    description: "Explain-only templates for Portfolio, Risk, FCN, Schedule, and Alerts.",
+    href: "/my-ixai/copilot",
+    icon: Bot,
+    label: "Copilot",
+  },
 ];
 
 const assetShortcutCards = [
@@ -187,6 +210,7 @@ export default function MyIxaiHomePage() {
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:leading-7">
           這裡是登入後主入口。Portfolio、Risk、FCN、Intelligence 與 Settings
           已整理成分工清楚的 Workspace 中心；新增資產後可回到各中心查看 readback 狀態。V5 加入 Watchlist、Alerts、Daily Brief 與 Dashboard v2 readback。
+          V6 加入 API routes、persistence readiness、insights、delivery readiness 與 explain-only Copilot foundation。
         </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <Link
@@ -338,6 +362,12 @@ export default function MyIxaiHomePage() {
       <NotificationCenterSummary />
 
       <WorkspaceTimelineSummary />
+
+      <div id="workspace-insights">
+        <WorkspaceInsightsSummary />
+      </div>
+
+      <WorkspaceCopilotSummary />
 
       <div id="workspace-daily-brief">
         <WorkspaceDailyBrief />

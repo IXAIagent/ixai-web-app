@@ -5,6 +5,10 @@ import { FileText, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getWorkspaceDailyBrief } from "@/src/lib/daily-brief";
+import {
+  getDailyBriefHistorySummary,
+  type DailyBriefHistorySummary,
+} from "@/src/lib/daily-brief/history";
 import type { WorkspaceDailyBrief, WorkspaceDailyBriefSeverity } from "@/src/lib/daily-brief";
 
 const SEVERITY_CLASS: Record<WorkspaceDailyBriefSeverity, string> = {
@@ -17,11 +21,17 @@ const SEVERITY_CLASS: Record<WorkspaceDailyBriefSeverity, string> = {
 
 export function WorkspaceDailyBrief() {
   const [brief, setBrief] = useState<WorkspaceDailyBrief | null>(null);
+  const [history, setHistory] = useState<DailyBriefHistorySummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   async function refresh() {
     setIsLoading(true);
-    setBrief(await getWorkspaceDailyBrief());
+    const [currentBrief, historySummary] = await Promise.all([
+      getWorkspaceDailyBrief(),
+      getDailyBriefHistorySummary(),
+    ]);
+    setBrief(currentBrief);
+    setHistory(historySummary);
     setIsLoading(false);
   }
 
@@ -85,6 +95,11 @@ export function WorkspaceDailyBrief() {
           <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
             {brief.informationalOnlyDisclaimer}
           </p>
+          {history ? (
+            <p className="mt-3 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+              Daily Brief history foundation: {history.totalEntries} local readback entr{history.totalEntries === 1 ? "y" : "ies"}; source status {history.sourceStatus}. Durable history storage is not required in V6.40.
+            </p>
+          ) : null}
         </>
       ) : null}
     </section>

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, CheckCheck, RefreshCw } from "lucide-react";
+import { Bell, CheckCheck, RefreshCw, Send } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getWorkspaceNotificationSummary } from "@/src/lib/notifications";
+import { getNotificationDeliveryReadiness } from "@/src/lib/notifications/delivery";
 import type {
   WorkspaceNotificationSeverity,
   WorkspaceNotificationSummary,
@@ -43,6 +44,7 @@ function saveReadIds(ids: string[]) {
 
 export function NotificationCenterSummary() {
   const [summary, setSummary] = useState<WorkspaceNotificationSummary | null>(null);
+  const delivery = getNotificationDeliveryReadiness();
   const [isLoading, setIsLoading] = useState(true);
 
   async function refresh() {
@@ -158,6 +160,28 @@ export function NotificationCenterSummary() {
           {summary.informationalOnlyDisclaimer}
         </p>
       ) : null}
+
+      <article className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+        <div className="flex items-center gap-2">
+          <Send className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+            Delivery readiness
+          </p>
+        </div>
+        <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+          {delivery.summary}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {delivery.channels.map((channel) => (
+            <span
+              className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]"
+              key={channel.channel}
+            >
+              {channel.channel}: {channel.status}
+            </span>
+          ))}
+        </div>
+      </article>
     </section>
   );
 }
