@@ -6,6 +6,34 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V7.0 — Data Persistence Program
+
+Why:
+
+- V6 completed platformization foundations, but many Workspace modules still depended on localStorage, draft, fallback, or limited readback. IXAI needed typed persistence repositories and readiness diagnostics before moving toward authenticated multi-user durable workspace data.
+
+What Changed:
+
+- Added `docs/V7_DATA_PERSISTENCE_PROGRAM.md` and `docs/V7_PERSISTENCE_SCHEMA_DRAFT.md`.
+- Added V7.10 Portfolio Persistence Foundation under `src/lib/persistence/portfolio/`.
+- Added V7.20 Workspace Ownership Foundation under `src/lib/persistence/ownership/`.
+- Added V7.30 Workspace Sync Foundation under `src/lib/persistence/sync/`.
+- Added V7.40 FCN Persistence Foundation under `src/lib/persistence/fcn/`.
+- Extended Watchlist and Alert persistence foundations with typed repository readback.
+- Added Settings persistence readiness diagnostics and V7 integration audit nodes.
+- Added optional V7 readiness fields to Workspace Graph.
+
+Key Decisions:
+
+- No migrations are applied automatically.
+- Runtime must continue working without new tables.
+- Existing local/draft/fallback behavior remains preserved.
+- Ownership checks are conservative and do not change auth behavior.
+
+Out of Scope:
+
+- No broker integrations, trading execution, order routing, buy/sell/hold recommendations, AI model calls, payment system, public landing page redesign, auth behavior change, or local fallback removal.
+
 ## V6 — Platformization Program
 
 Why:

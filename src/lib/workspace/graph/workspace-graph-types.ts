@@ -9,6 +9,12 @@ import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio
 import type { PortfolioValuationResult } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
 import type { PortfolioRiskResult } from "@/src/lib/risk/risk-engine-types";
 import type { WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
+import type { AlertPersistenceReadiness } from "@/src/lib/alerts/persistence";
+import type { FcnPersistenceReadiness } from "@/src/lib/persistence/fcn";
+import type { PortfolioPersistenceReadiness } from "@/src/lib/persistence/portfolio";
+import type { WorkspaceOwnershipCheck } from "@/src/lib/persistence/ownership";
+import type { WorkspaceSyncReport } from "@/src/lib/persistence/sync";
+import type { WatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence";
 
 export type WorkspaceGraphSourceStatus =
   | "healthy"
@@ -22,19 +28,25 @@ export interface WorkspaceGraphWarning {
 
 export interface WorkspaceGraph {
   alerts: WorkspaceAlertSummary | null;
+  alertPersistenceReadiness?: AlertPersistenceReadiness | null;
   dailyBrief: WorkspaceDailyBrief | null;
   fcnRisk: FcnPortfolioRiskSummary | null;
   fcnSchedule: FcnPortfolioScheduleSummary | null;
+  fcnPersistenceReadiness?: FcnPersistenceReadiness | null;
   generatedAt: string;
   intelligence: WorkspaceIntelligenceReport | null;
   marketStatus?: MarketServiceReadiness | null;
+  ownershipReadiness?: WorkspaceOwnershipCheck | null;
   portfolioPersistence: PortfolioPersistenceResult | null;
+  persistenceReadiness?: PortfolioPersistenceReadiness | null;
   portfolioTruth: PortfolioTruthReadback | null;
   risk: PortfolioRiskResult | null;
   sourceStatus: WorkspaceGraphSourceStatus;
+  syncReadiness?: WorkspaceSyncReport | null;
   valuation: PortfolioValuationResult | null;
   warnings: WorkspaceGraphWarning[];
   watchlist: WorkspaceWatchlistSummary | null;
+  watchlistPersistenceReadiness?: WatchlistPersistenceReadiness | null;
 }
 
 export interface WorkspaceGraphSummary {

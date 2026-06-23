@@ -12,6 +12,7 @@ import {
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { WorkspaceIntegrationStatus } from "@/components/workspace/workspace-integration-status";
+import { WorkspacePersistenceReadiness } from "@/components/workspace/workspace-persistence-readiness";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getWorkspaceIntegrationAudit } from "@/src/lib/workspace/integration/integration-service";
 
@@ -131,6 +132,8 @@ export default function MyIxaiSettingsPage() {
             );
           })}
         </section>
+
+        <WorkspacePersistenceReadiness />
 
         <WorkspaceIntegrationStatus audit={integrationAudit} />
 
