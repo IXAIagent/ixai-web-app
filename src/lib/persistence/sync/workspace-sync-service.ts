@@ -1,6 +1,7 @@
 "use client";
 
 import { getPortfolioPersistenceReadiness } from "@/src/lib/persistence/portfolio";
+import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync/workspace-sync-activation-service";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { getWorkspaceGraphSummary } from "@/src/lib/workspace/graph";
 import type {
@@ -10,10 +11,11 @@ import type {
 
 export async function getWorkspaceSyncReport(): Promise<WorkspaceSyncReport> {
   try {
-    const [persistence, truth, graph] = await Promise.all([
+    const [persistence, truth, graph, databaseActivation] = await Promise.all([
       getPortfolioPersistenceReadiness(),
       loadPortfolioTruthReadback(),
       getWorkspaceGraphSummary(),
+      getWorkspaceDatabaseActivationReport(),
     ]);
     const sources = [
       {
@@ -34,6 +36,11 @@ export async function getWorkspaceSyncReport(): Promise<WorkspaceSyncReport> {
       {
         source: "workspace_graph" as const,
         status: graph.sourceStatus === "healthy" ? "ready" as const : "partial" as const,
+        target: "workspace" as const,
+      },
+      {
+        source: "persistent_foundation" as const,
+        status: databaseActivation.sourceStatus === "ready" ? "ready" as const : "partial" as const,
         target: "workspace" as const,
       },
     ];
@@ -57,6 +64,10 @@ export async function getWorkspaceSyncReport(): Promise<WorkspaceSyncReport> {
         ...truth.missingDataWarnings.map((message) => ({
           message,
           source: "truth_layer" as const,
+        })),
+        ...databaseActivation.warnings.map((message) => ({
+          message,
+          source: "persistent_foundation" as const,
         })),
       ],
     };

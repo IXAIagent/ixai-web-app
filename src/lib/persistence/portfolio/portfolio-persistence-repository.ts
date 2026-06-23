@@ -6,6 +6,11 @@ import type {
   PortfolioPersistenceReadResult,
   PortfolioPersistenceWriteDraft,
 } from "@/src/lib/persistence/portfolio/portfolio-persistence-types";
+import {
+  readCryptoPositionsFromDatabase,
+  readPortfolioPositionsFromDatabase,
+  readStockPositionsFromDatabase,
+} from "@/src/lib/persistence/portfolio/portfolio-database-adapter";
 
 function unavailableResult<TPosition>(): PortfolioPersistenceReadResult<TPosition> {
   return {
@@ -21,19 +26,58 @@ function unavailableResult<TPosition>(): PortfolioPersistenceReadResult<TPositio
 export async function listPortfolioPositions(): Promise<
   PortfolioPersistenceReadResult<PersistentPortfolioPosition>
 > {
-  return unavailableResult<PersistentPortfolioPosition>();
+  try {
+    const positions = await readPortfolioPositionsFromDatabase();
+    return {
+      generatedAt: new Date().toISOString(),
+      positions,
+      sourceStatus: positions.length > 0 ? "persisted" : "unavailable",
+      warnings:
+        positions.length > 0
+          ? []
+          : ["portfolio_positions has no readable rows or is unavailable; fallback remains active."],
+    };
+  } catch {
+    return unavailableResult<PersistentPortfolioPosition>();
+  }
 }
 
 export async function listStockPositions(): Promise<
   PortfolioPersistenceReadResult<PersistentStockPosition>
 > {
-  return unavailableResult<PersistentStockPosition>();
+  try {
+    const positions = await readStockPositionsFromDatabase();
+    return {
+      generatedAt: new Date().toISOString(),
+      positions,
+      sourceStatus: positions.length > 0 ? "persisted" : "unavailable",
+      warnings:
+        positions.length > 0
+          ? []
+          : ["stock_positions has no readable rows or is unavailable; fallback remains active."],
+    };
+  } catch {
+    return unavailableResult<PersistentStockPosition>();
+  }
 }
 
 export async function listCryptoPositions(): Promise<
   PortfolioPersistenceReadResult<PersistentCryptoPosition>
 > {
-  return unavailableResult<PersistentCryptoPosition>();
+  try {
+    const positions = await readCryptoPositionsFromDatabase();
+    return {
+      generatedAt: new Date().toISOString(),
+      positions,
+      sourceStatus: positions.length > 0 ? "persisted" : "unavailable",
+      warnings:
+        positions.length > 0
+          ? []
+          : ["crypto_positions has no readable rows or is unavailable; fallback remains active."],
+    };
+  } catch {
+    return unavailableResult<PersistentCryptoPosition>();
+  }
 }
 
 export async function listFcnPositions(): Promise<

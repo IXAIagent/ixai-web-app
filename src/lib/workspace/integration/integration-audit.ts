@@ -11,11 +11,12 @@ import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio
 import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
 import { buildWorkspaceNotificationSummary } from "@/src/lib/notifications/notification-engine";
-import { listPersistentAlertEvents } from "@/src/lib/alerts/persistence";
-import { listPersistentFcnPositions } from "@/src/lib/persistence/fcn";
-import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
-import { listPortfolioPositions } from "@/src/lib/persistence/portfolio";
-import { listPersistentWatchlistItems } from "@/src/lib/watchlist/persistence";
+import { checkAlertTablesReadiness, listPersistentAlertEvents } from "@/src/lib/alerts/persistence";
+import { checkFcnTablesReadiness, listPersistentFcnPositions } from "@/src/lib/persistence/fcn";
+import { checkOwnershipActivationReadiness, getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
+import { checkPortfolioTablesReadiness, listPortfolioPositions } from "@/src/lib/persistence/portfolio";
+import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync";
+import { checkWatchlistTablesReadiness, listPersistentWatchlistItems } from "@/src/lib/watchlist/persistence";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
 import { getWorkspaceApiGatewayStatus } from "@/src/lib/workspace/api/workspace-api-status";
@@ -654,6 +655,41 @@ export function auditV7AlertPersistenceFoundation(): ModuleAudit {
   };
 }
 
+export function auditV8DatabaseActivationDiagnostics(): ModuleAudit {
+  const moduleName = "V8 Database Activation";
+  const required = [
+    functionAvailable(checkPortfolioTablesReadiness),
+    functionAvailable(checkFcnTablesReadiness),
+    functionAvailable(checkWatchlistTablesReadiness),
+    functionAvailable(checkAlertTablesReadiness),
+    functionAvailable(checkOwnershipActivationReadiness),
+    functionAvailable(getWorkspaceDatabaseActivationReport),
+  ];
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: required,
+    warnings: true,
+  });
+
+  return {
+    issues: [
+      {
+        message:
+          "Database activation is diagnostics/readiness only. Migrations are draft-only and runtime fallback remains active.",
+        module: moduleName,
+        severity: "info",
+      },
+    ],
+    node: buildNode({
+      id: "v8-database-activation-diagnostics",
+      name: moduleName,
+      source: "Database activation adapters + schema drafts",
+      status,
+      target: "Settings diagnostics + future activation workflow",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -687,6 +723,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV7FcnPersistenceFoundation(),
     auditV7WatchlistPersistenceFoundation(),
     auditV7AlertPersistenceFoundation(),
+    auditV8DatabaseActivationDiagnostics(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

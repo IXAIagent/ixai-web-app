@@ -2,6 +2,7 @@
 
 import { getWorkspaceGraph, getWorkspaceGraphSummary } from "@/src/lib/workspace/graph";
 import { getWorkspaceHealthScore } from "@/src/lib/workspace/health";
+import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync";
 import { getWorkspaceDailyBrief } from "@/src/lib/daily-brief";
 import { getWorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-service";
 import { getWorkspaceNotificationSummary } from "@/src/lib/notifications";
@@ -59,4 +60,8 @@ export async function readWorkspaceIntelligence() {
 
 export async function readWorkspaceDailyBrief() {
   return readEndpoint("daily-brief", getWorkspaceDailyBrief);
+}
+
+export async function readWorkspaceDatabaseActivation() {
+  return readEndpoint("graph", getWorkspaceDatabaseActivationReport);
 }
