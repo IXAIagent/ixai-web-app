@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V7.0 / Data Persistence Program`
+`V8 / Database Activation Program`
 
 ## Current Priority
 
@@ -57,6 +57,9 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V7_DATA_PERSISTENCE_PROGRAM.md` as the source of truth for the V7 persistence foundation bundle across Portfolio, Ownership, Sync, FCN, Watchlist, and Alerts.
 - Use `docs/V7_PERSISTENCE_SCHEMA_DRAFT.md` as a draft-only schema note. No migrations are applied automatically.
 - Use `docs/V710_PORTFOLIO_PERSISTENCE_FOUNDATION.md`, `docs/V720_WORKSPACE_OWNERSHIP_FOUNDATION.md`, `docs/V730_WORKSPACE_SYNC_FOUNDATION.md`, `docs/V740_FCN_PERSISTENCE_FOUNDATION.md`, `docs/V750_WATCHLIST_PERSISTENCE_FOUNDATION.md`, and `docs/V760_ALERT_PERSISTENCE_FOUNDATION.md` as the V7 module-level source of truth.
+- Use `docs/V8_DATABASE_ACTIVATION_PROGRAM.md` as the source of truth for V8 database activation readiness.
+- Use `docs/V8_DATABASE_SCHEMA_ACTIVATION_DRAFT.md` as the V8 schema activation draft. It is not applied automatically.
+- Use `docs/V810_PORTFOLIO_PERSISTENCE_ACTIVATION.md`, `docs/V820_FCN_PERSISTENCE_ACTIVATION.md`, `docs/V830_WATCHLIST_PERSISTENCE_ACTIVATION.md`, `docs/V840_ALERT_HISTORY_ACTIVATION.md`, `docs/V850_WORKSPACE_OWNERSHIP_ACTIVATION.md`, `docs/V860_WORKSPACE_SYNC_ACTIVATION.md`, and `docs/V870_DATABASE_ACTIVATION_DIAGNOSTICS.md` as the V8 module-level source of truth.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -114,6 +117,8 @@ Current priority is UX / IA foundation before moving modules:
 - V6 Platformization Program adds read-only Workspace API routes, persistence foundations, Workspace Insights, Notification Delivery readiness, and rule-based explain-only Workspace Copilot. It does not add broker integrations, trading execution, order routing, buy/sell/hold recommendations, AI model calls, auth behavior changes, Supabase schema changes, migrations, public landing page redesign, or legacy fallback removal.
 - V6 Platformization Program has been merged into main and is complete.
 - V7 Data Persistence Program is active. It creates persistence repositories, ownership abstraction, sync readiness, FCN persistence readiness, Watchlist repository readiness, and Alert history repository readiness without applying migrations, changing auth behavior, removing local fallback, adding broker integration, trading execution, buy/sell/hold recommendation logic, or AI model calls.
+- V7 Data Persistence Program has been merged into main and is complete.
+- V8 Database Activation Program is active. It prepares database adapters, table readiness checks, disabled-by-default write draft methods, schema activation draft docs, and Settings diagnostics without applying migrations, requiring new tables at runtime, changing auth behavior, removing fallback behavior, adding broker integration, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, or payment.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.

@@ -10,6 +10,7 @@ export type WorkspaceWatchlistSourceStatus =
   | "fallback"
   | "local"
   | "partial"
+  | "persisted"
   | "unavailable";
 
 export interface WorkspaceWatchlistItem {

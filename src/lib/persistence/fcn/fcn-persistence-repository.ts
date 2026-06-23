@@ -1,4 +1,5 @@
 import type { FcnPersistenceReadback } from "@/src/lib/persistence/fcn/fcn-persistence-types";
+import { readFcnPositionsFromDatabase } from "@/src/lib/persistence/fcn/fcn-database-adapter";
 import type { FCNPosition } from "@/src/types/fcn-position";
 
 export async function listPersistentFcnPositions(): Promise<{
@@ -6,6 +7,15 @@ export async function listPersistentFcnPositions(): Promise<{
   warnings: string[];
 }> {
   try {
+    const databasePositions = await readFcnPositionsFromDatabase();
+
+    if (databasePositions.length > 0) {
+      return {
+        positions: databasePositions,
+        warnings: [],
+      };
+    }
+
     const response = await fetch("/api/fcn", { cache: "no-store" });
 
     if (!response.ok) {

@@ -6,6 +6,33 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V8 — Database Activation Program
+
+Why:
+
+- V7 created persistence foundations, but IXAI still needed database activation readiness before any future table migration or durable write path.
+
+What Changed:
+
+- Added `docs/V8_DATABASE_ACTIVATION_PROGRAM.md` and `docs/V8_DATABASE_SCHEMA_ACTIVATION_DRAFT.md`.
+- Added Portfolio database activation adapters for `portfolio_positions`, `stock_positions`, and `crypto_positions`.
+- Added FCN database activation adapters for `fcn_positions`, `fcn_underlyings`, and `fcn_coupon_schedules`.
+- Added Watchlist and Alert database activation adapters.
+- Added Ownership activation readiness for `profiles` and optional `workspace_memberships`.
+- Added Workspace Sync activation report.
+- Added Settings database activation diagnostics.
+
+Key Decisions:
+
+- No migrations are applied automatically.
+- Runtime does not require new tables to exist.
+- Write draft methods are disabled by default.
+- Existing local/draft/fallback behavior remains preserved.
+
+Out of Scope:
+
+- No broker integration, trading execution, order routing, buy/sell/hold recommendations, AI model calls, payment system, public landing page redesign, auth behavior changes, or fallback removal.
+
 ## V7.0 — Data Persistence Program
 
 Why:
