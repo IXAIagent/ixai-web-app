@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V6 / Platformization Program`
+`V7.0 / Data Persistence Program`
 
 ## Current Priority
 
@@ -54,6 +54,9 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V610_WORKSPACE_API_ROUTES.md` as the source of truth for read-only server-safe Workspace API routes.
 - Use `docs/V620_WATCHLIST_PERSISTENCE_FOUNDATION.md`, `docs/V630_ALERT_PERSISTENCE_FOUNDATION.md`, and `docs/V640_DAILY_BRIEF_HISTORY_FOUNDATION.md` as the source of truth for V6 persistence foundations without runtime schema dependency.
 - Use `docs/V650_WORKSPACE_INSIGHTS_FOUNDATION.md`, `docs/V660_NOTIFICATION_DELIVERY_FOUNDATION.md`, and `docs/V670_WORKSPACE_COPILOT_FOUNDATION.md` as the source of truth for rule-based insights, delivery readiness, and no-AI explain-only Copilot.
+- Use `docs/V7_DATA_PERSISTENCE_PROGRAM.md` as the source of truth for the V7 persistence foundation bundle across Portfolio, Ownership, Sync, FCN, Watchlist, and Alerts.
+- Use `docs/V7_PERSISTENCE_SCHEMA_DRAFT.md` as a draft-only schema note. No migrations are applied automatically.
+- Use `docs/V710_PORTFOLIO_PERSISTENCE_FOUNDATION.md`, `docs/V720_WORKSPACE_OWNERSHIP_FOUNDATION.md`, `docs/V730_WORKSPACE_SYNC_FOUNDATION.md`, `docs/V740_FCN_PERSISTENCE_FOUNDATION.md`, `docs/V750_WATCHLIST_PERSISTENCE_FOUNDATION.md`, and `docs/V760_ALERT_PERSISTENCE_FOUNDATION.md` as the V7 module-level source of truth.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -109,6 +112,8 @@ Current priority is UX / IA foundation before moving modules:
 - V5.10–V5.50 Workspace Foundation Program adds Unified Workspace Graph, local-only Notification Center, deterministic Workspace Health Engine, Timeline Engine, and read-only Workspace API Gateway service layer. It does not add auth changes, schema migrations, broker integrations, trading logic, investment recommendations, AI model calls, order execution, public landing page redesign, or notification delivery.
 - V5.10–V5.50 Workspace Foundation Program has been merged into main and is complete.
 - V6 Platformization Program adds read-only Workspace API routes, persistence foundations, Workspace Insights, Notification Delivery readiness, and rule-based explain-only Workspace Copilot. It does not add broker integrations, trading execution, order routing, buy/sell/hold recommendations, AI model calls, auth behavior changes, Supabase schema changes, migrations, public landing page redesign, or legacy fallback removal.
+- V6 Platformization Program has been merged into main and is complete.
+- V7 Data Persistence Program is active. It creates persistence repositories, ownership abstraction, sync readiness, FCN persistence readiness, Watchlist repository readiness, and Alert history repository readiness without applying migrations, changing auth behavior, removing local fallback, adding broker integration, trading execution, buy/sell/hold recommendation logic, or AI model calls.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.

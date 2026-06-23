@@ -17,19 +17,3 @@ export interface AlertPersistenceSummary {
   totalEvents: number;
   warnings: string[];
 }
-
-export interface PersistentAlertHistoryReadback {
-  alertEvents: WorkspaceAlertCard[];
-  generatedAt: string;
-  sourceStatus: AlertPersistenceSourceStatus;
-  warnings: string[];
-}
-
-export interface AlertPersistenceReadiness {
-  generatedAt: string;
-  hasLocalFallback: boolean;
-  persistedEventCount: number;
-  sourceStatus: AlertPersistenceSourceStatus;
-  summary: string;
-  warnings: string[];
-}

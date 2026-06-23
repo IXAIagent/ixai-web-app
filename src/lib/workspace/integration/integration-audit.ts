@@ -11,6 +11,11 @@ import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio
 import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
 import { buildWorkspaceNotificationSummary } from "@/src/lib/notifications/notification-engine";
+import { listPersistentAlertEvents } from "@/src/lib/alerts/persistence";
+import { listPersistentFcnPositions } from "@/src/lib/persistence/fcn";
+import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
+import { listPortfolioPositions } from "@/src/lib/persistence/portfolio";
+import { listPersistentWatchlistItems } from "@/src/lib/watchlist/persistence";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
 import { getWorkspaceApiGatewayStatus } from "@/src/lib/workspace/api/workspace-api-status";
@@ -463,6 +468,192 @@ export function auditWorkspaceApiGatewayLayer(): ModuleAudit {
   };
 }
 
+export function auditV7PortfolioPersistenceFoundation(): ModuleAudit {
+  const moduleName = "V7 Portfolio Persistence Foundation";
+  const available = functionAvailable(listPortfolioPositions);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "listPortfolioPositions",
+        module: moduleName,
+      }),
+      {
+        message:
+          "Persistent portfolio tables are draft-only; runtime continues to preserve local/fallback readback.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v7-portfolio-persistence-foundation",
+      name: moduleName,
+      source: "Future persisted portfolio tables",
+      status,
+      target: "Portfolio Truth + Workspace Graph",
+    }),
+  };
+}
+
+export function auditV7OwnershipFoundation(): ModuleAudit {
+  const moduleName = "V7 Workspace Ownership Foundation";
+  const available = functionAvailable(getWorkspaceOwnershipStatus);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getWorkspaceOwnershipStatus",
+        module: moduleName,
+      }),
+      {
+        message:
+          "Ownership is conservative and limited unless authenticated owner context is explicitly provided.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v7-workspace-ownership-foundation",
+      name: moduleName,
+      source: "Existing session context when available",
+      status,
+      target: "Future multi-user workspace persistence",
+    }),
+  };
+}
+
+export function auditV7SyncFoundation(): ModuleAudit {
+  const moduleName = "V7 Workspace Sync Foundation";
+  return {
+    issues: [
+      {
+        message:
+          "Workspace Sync is readiness/reporting only; no background job or write operation is implemented.",
+        module: moduleName,
+        severity: "info",
+      },
+    ],
+    node: buildNode({
+      id: "v7-workspace-sync-foundation",
+      name: moduleName,
+      source: "Persistent readiness + local fallback + Truth Layer + Workspace Graph",
+      status: "warning",
+      target: "Future sync orchestration",
+    }),
+  };
+}
+
+export function auditV7FcnPersistenceFoundation(): ModuleAudit {
+  const moduleName = "V7 FCN Persistence Foundation";
+  const available = functionAvailable(listPersistentFcnPositions);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "listPersistentFcnPositions",
+        module: moduleName,
+      }),
+      {
+        message:
+          "FCN persistence preserves /api/fcn and local draft fallback; coupon schedule tables remain draft-only.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v7-fcn-persistence-foundation",
+      name: moduleName,
+      source: "/api/fcn + FCN Draft Store",
+      status,
+      target: "FCN Center + FCN Risk + FCN Schedule",
+    }),
+  };
+}
+
+export function auditV7WatchlistPersistenceFoundation(): ModuleAudit {
+  const moduleName = "V7 Watchlist Persistence Foundation";
+  const available = functionAvailable(listPersistentWatchlistItems);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "listPersistentWatchlistItems",
+        module: moduleName,
+      }),
+      {
+        message:
+          "Watchlist persistence keeps local/fallback behavior until durable tables are explicitly migrated.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v7-watchlist-persistence-foundation",
+      name: moduleName,
+      source: "Future watchlists + watchlist_items tables",
+      status,
+      target: "Watchlist + Alerts + Notifications",
+    }),
+  };
+}
+
+export function auditV7AlertPersistenceFoundation(): ModuleAudit {
+  const moduleName = "V7 Alert Persistence Foundation";
+  const available = functionAvailable(listPersistentAlertEvents);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "listPersistentAlertEvents",
+        module: moduleName,
+      }),
+      {
+        message:
+          "Alert persistence is history foundation only; delivery and background jobs remain out of scope.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v7-alert-persistence-foundation",
+      name: moduleName,
+      source: "Future alert_events table",
+      status,
+      target: "Alerts + Notifications",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -490,6 +681,12 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditWorkspaceHealthLayer(),
     auditWorkspaceTimelineLayer(),
     auditWorkspaceApiGatewayLayer(),
+    auditV7PortfolioPersistenceFoundation(),
+    auditV7OwnershipFoundation(),
+    auditV7SyncFoundation(),
+    auditV7FcnPersistenceFoundation(),
+    auditV7WatchlistPersistenceFoundation(),
+    auditV7AlertPersistenceFoundation(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

@@ -23,19 +23,3 @@ export interface WatchlistPersistenceSummary {
   unavailableItems: number;
   warnings: WatchlistPersistenceWarning[];
 }
-
-export interface PersistentWatchlistReadback {
-  generatedAt: string;
-  items: WorkspaceWatchlistItem[];
-  sourceStatus: WatchlistPersistenceSourceStatus;
-  warnings: string[];
-}
-
-export interface WatchlistPersistenceReadiness {
-  generatedAt: string;
-  hasLocalFallback: boolean;
-  persistedItemCount: number;
-  sourceStatus: WatchlistPersistenceSourceStatus;
-  summary: string;
-  warnings: string[];
-}

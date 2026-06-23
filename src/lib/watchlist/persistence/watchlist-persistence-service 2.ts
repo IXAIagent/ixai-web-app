@@ -1,26 +1,10 @@
 "use client";
 
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
-import { listPersistentWatchlistItems } from "@/src/lib/watchlist/persistence/watchlist-persistence-repository";
 import type {
-  PersistentWatchlistReadback,
-  WatchlistPersistenceReadiness,
   WatchlistPersistenceSummary,
   WatchlistPersistenceWarning,
 } from "@/src/lib/watchlist/persistence/watchlist-persistence-types";
-
-export async function getPersistentWatchlistReadback(): Promise<PersistentWatchlistReadback> {
-  try {
-    return listPersistentWatchlistItems();
-  } catch {
-    return {
-      generatedAt: new Date().toISOString(),
-      items: [],
-      sourceStatus: "unavailable",
-      warnings: ["Persistent watchlist repository failed safely."],
-    };
-  }
-}
 
 export async function getWatchlistPersistenceSummary(): Promise<WatchlistPersistenceSummary> {
   try {
@@ -80,26 +64,4 @@ export async function getWatchlistPersistenceSummary(): Promise<WatchlistPersist
       ],
     };
   }
-}
-
-export async function getWatchlistPersistenceReadiness(): Promise<WatchlistPersistenceReadiness> {
-  const [persistent, summary] = await Promise.all([
-    getPersistentWatchlistReadback(),
-    getWatchlistPersistenceSummary(),
-  ]);
-
-  return {
-    generatedAt: new Date().toISOString(),
-    hasLocalFallback: summary.localItems > 0 || summary.fallbackItems > 0,
-    persistedItemCount: persistent.items.length,
-    sourceStatus:
-      persistent.items.length > 0
-        ? "persisted"
-        : summary.totalItems > 0
-          ? summary.sourceStatus
-          : persistent.sourceStatus,
-    summary:
-      "Watchlist persistence foundation preserves existing local/fallback watchlist readback. Durable tables are not required at runtime.",
-    warnings: [...persistent.warnings, ...summary.warnings.map((warning) => warning.message)],
-  };
 }

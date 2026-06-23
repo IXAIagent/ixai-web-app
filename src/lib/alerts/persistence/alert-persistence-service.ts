@@ -1,7 +1,25 @@
 "use client";
 
 import { getWorkspaceAlertSummary } from "@/src/lib/alerts";
-import type { AlertPersistenceSummary } from "@/src/lib/alerts/persistence/alert-persistence-types";
+import { listPersistentAlertEvents } from "@/src/lib/alerts/persistence/alert-persistence-repository";
+import type {
+  AlertPersistenceReadiness,
+  AlertPersistenceSummary,
+  PersistentAlertHistoryReadback,
+} from "@/src/lib/alerts/persistence/alert-persistence-types";
+
+export async function getPersistentAlertHistoryReadback(): Promise<PersistentAlertHistoryReadback> {
+  try {
+    return listPersistentAlertEvents();
+  } catch {
+    return {
+      alertEvents: [],
+      generatedAt: new Date().toISOString(),
+      sourceStatus: "unavailable",
+      warnings: ["Persistent alert history repository failed safely."],
+    };
+  }
+}
 
 export async function getAlertPersistenceSummary(): Promise<AlertPersistenceSummary> {
   try {
@@ -35,4 +53,26 @@ export async function getAlertPersistenceSummary(): Promise<AlertPersistenceSumm
       warnings: ["Alert persistence readback is unavailable."],
     };
   }
+}
+
+export async function getAlertPersistenceReadiness(): Promise<AlertPersistenceReadiness> {
+  const [persistent, summary] = await Promise.all([
+    getPersistentAlertHistoryReadback(),
+    getAlertPersistenceSummary(),
+  ]);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    hasLocalFallback: summary.totalEvents > 0,
+    persistedEventCount: persistent.alertEvents.length,
+    sourceStatus:
+      persistent.alertEvents.length > 0
+        ? "persisted"
+        : summary.totalEvents > 0
+          ? summary.sourceStatus
+          : persistent.sourceStatus,
+    summary:
+      "Alert persistence foundation preserves deterministic Alert Engine output. Alert delivery and background jobs are not implemented.",
+    warnings: [...persistent.warnings, ...summary.warnings],
+  };
 }

@@ -11,6 +11,11 @@ import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
 import { getWorkspacePortfolioRiskSummary } from "@/src/lib/risk/risk-service";
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
+import { getAlertPersistenceReadiness } from "@/src/lib/alerts/persistence";
+import { getFcnPersistenceReadiness } from "@/src/lib/persistence/fcn";
+import { getPortfolioPersistenceReadiness } from "@/src/lib/persistence/portfolio";
+import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
+import { getWatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence";
 import {
   buildWorkspaceGraphSummary,
   inferWorkspaceGraphStatus,
@@ -54,6 +59,11 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     intelligence,
     dailyBrief,
     marketStatus,
+    portfolioPersistenceReadiness,
+    fcnPersistenceReadiness,
+    watchlistPersistenceReadiness,
+    alertPersistenceReadiness,
+    ownershipReadiness,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -66,6 +76,11 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("Intelligence", getWorkspaceIntelligenceReport),
     safeRead("Daily Brief", getWorkspaceDailyBrief),
     safeRead("Market Status", () => getMarketReadiness()),
+    safeRead("Portfolio Persistence Readiness", getPortfolioPersistenceReadiness),
+    safeRead("FCN Persistence Readiness", getFcnPersistenceReadiness),
+    safeRead("Watchlist Persistence Readiness", getWatchlistPersistenceReadiness),
+    safeRead("Alert Persistence Readiness", getAlertPersistenceReadiness),
+    safeRead("Workspace Ownership", () => getWorkspaceOwnershipStatus()),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -79,6 +94,11 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     intelligence.warning,
     dailyBrief.warning,
     marketStatus.warning,
+    portfolioPersistenceReadiness.warning,
+    fcnPersistenceReadiness.warning,
+    watchlistPersistenceReadiness.warning,
+    alertPersistenceReadiness.warning,
+    ownershipReadiness.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -92,6 +112,11 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     intelligence.value,
     dailyBrief.value,
     marketStatus.value,
+    portfolioPersistenceReadiness.value,
+    fcnPersistenceReadiness.value,
+    watchlistPersistenceReadiness.value,
+    alertPersistenceReadiness.value,
+    ownershipReadiness.value,
   ].filter(Boolean).length;
 
   return {
@@ -102,7 +127,9 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     generatedAt: new Date().toISOString(),
     intelligence: intelligence.value,
     marketStatus: marketStatus.value,
+    ownershipReadiness: ownershipReadiness.value,
     portfolioPersistence: portfolioPersistence.value,
+    persistenceReadiness: portfolioPersistenceReadiness.value,
     portfolioTruth: portfolioTruth.value,
     risk: risk.value,
     sourceStatus: inferWorkspaceGraphStatus({
@@ -112,6 +139,17 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     valuation: valuation.value,
     warnings,
     watchlist: watchlist.value,
+    watchlistPersistenceReadiness: watchlistPersistenceReadiness.value,
+    alertPersistenceReadiness: alertPersistenceReadiness.value,
+    fcnPersistenceReadiness: fcnPersistenceReadiness.value,
+    syncReadiness: {
+      generatedAt: new Date().toISOString(),
+      sourceStatus: "partial",
+      sources: [],
+      summary:
+        "Workspace Sync readiness is exposed as a V7 foundation. Full sync reporting is available from the sync service and Settings diagnostics.",
+      warnings: [],
+    },
   };
 }
 

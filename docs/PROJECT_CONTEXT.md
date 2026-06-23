@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`V6 — Platformization Program`
+`V7.0 — Data Persistence Program`
 
 Current production state:
 
@@ -155,6 +155,10 @@ V5.10–V5.50 introduced the Workspace Foundation Program and has been merged in
 
 V6 introduces the Platformization Program. It adds read-only Workspace API routes, Watchlist persistence foundation, Alert persistence foundation, Daily Brief history foundation, deterministic Workspace Insights, Notification Delivery readiness, and rule-based explain-only Workspace Copilot. It uses existing systems only and does not add broker integrations, trading execution, order routing, buy/sell/hold recommendations, AI model calls, auth behavior changes, Supabase schema changes, migrations, public landing page redesign, or legacy fallback removal.
 
+V6 Platformization Program has been merged into main and is complete.
+
+V7.0 introduces the Data Persistence Program. It creates typed repository and service foundations for Portfolio, Ownership, Workspace Sync, FCN, Watchlist, and Alerts while preserving existing localStorage, fallback, draft, `/api/fcn`, Workspace Graph, FCN Center, Watchlist, and Alert behavior. V7.0 does not apply migrations, change auth behavior, add broker integrations, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, payment, public landing page redesign, or local fallback removal.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -197,7 +201,7 @@ Still not complete:
 
 Current Development Version:
 
-`V6 — Platformization Program`
+`V7.0 — Data Persistence Program`
 
 Current Core Flow:
 
@@ -251,6 +255,7 @@ Landing
 → Workspace Expansion Program adding Watchlist, Alerts, Workspace Daily Brief, and Dashboard v2 readback
 → Workspace Foundation Program adding Graph, Notifications, Health, Timeline, and API Gateway service readback
 → Platformization Program adding read-only API routes, persistence foundations, Insights, delivery readiness, and explain-only Copilot
+→ Data Persistence Program adding repository foundations, ownership readiness, sync readiness, and schema draft docs
 ```
 
 Public Intelligence Funnel:
@@ -295,6 +300,7 @@ Product Layers:
 - Workspace Expansion Program: V5 adds local/fallback Watchlist readback, deterministic UI-only alert cards, rule-based Workspace Daily Brief, and Dashboard v2 cards. It uses existing systems only and does not add delivery, AI model calls, recommendations, broker sync, trading, auth changes, schema changes, or migrations.
 - Workspace Foundation Program: V5.10–V5.50 adds one graph readback object, local notifications, deterministic health scoring, event timeline grouping, and read-only API Gateway service metadata. It remains no-auth-change, no-schema-change, no-migration, no-broker, no-trading, no-recommendation, no-AI, and no-delivery.
 - Platformization Program: V6 adds read-only route handlers, persistence foundations, deterministic insights, delivery readiness, and rule-based explain-only Copilot. It remains no-auth-change, no-schema-change, no-migration, no-broker, no-trading, no-recommendation, no-AI-model-call, and no-external-delivery.
+- Data Persistence Program: V7.0 adds typed repository foundations and readiness diagnostics for Portfolio, Ownership, Workspace Sync, FCN, Watchlist, and Alerts. It remains no-auth-change, no-applied-migration, no-broker, no-trading, no-recommendation, no-AI-model-call, and no-local-fallback-removal.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
