@@ -26,6 +26,7 @@ import {
 } from "@/src/lib/persistence/portfolio";
 import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
 import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
+import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
   getWatchlistPersistenceReadiness,
@@ -84,6 +85,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     liveAlertPersistence,
     migrationHealth,
     databaseReadPriority,
+    platformCutover,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -107,6 +109,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("Live Alert History", getLiveAlertHistoryReadiness),
     safeRead("Migration Health", getDatabaseMigrationHealthReport),
     safeRead("Database Read Priority", getWorkspaceDatabaseReadPriorityStatus),
+    safeRead("Platform Cutover", getWorkspacePlatformCutoverStatus),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -131,6 +134,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     liveAlertPersistence.warning,
     migrationHealth.warning,
     databaseReadPriority.warning,
+    platformCutover.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -155,6 +159,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     liveAlertPersistence.value,
     migrationHealth.value,
     databaseReadPriority.value,
+    platformCutover.value,
   ].filter(Boolean).length;
 
   return {
@@ -174,6 +179,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     },
     migrationHealth: migrationHealth.value,
     ownershipReadiness: ownershipReadiness.value,
+    platformCutover: platformCutover.value,
     portfolioPersistence: portfolioPersistence.value,
     persistenceReadiness: portfolioPersistenceReadiness.value,
     portfolioTruth: portfolioTruth.value,

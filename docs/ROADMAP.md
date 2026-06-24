@@ -64,6 +64,8 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V910_PORTFOLIO_LIVE_PERSISTENCE.md`, `docs/V920_FCN_LIVE_PERSISTENCE.md`, `docs/V930_WATCHLIST_LIVE_PERSISTENCE.md`, `docs/V940_ALERT_HISTORY_LIVE_PERSISTENCE.md`, `docs/V950_WORKSPACE_OWNERSHIP_ENFORCEMENT.md`, `docs/V960_WORKSPACE_SYNC_ENGINE.md`, and `docs/V970_MIGRATION_HEALTH_CHECK.md` as the V9 module-level source of truth.
 - Use `docs/V9_DATABASE_MIGRATION_HEALTH_CHECK.md` as the V9 migration health companion note.
 - Use `docs/V1010_DATABASE_READ_PRIORITY.md` as the source of truth for V10.10 database-first read priority across Portfolio, FCN, Watchlist, and Alert History.
+- Use `docs/V10_PLATFORM_CUTOVER_PROGRAM.md` as the source of truth for the V10.20-V10.70 Platform Cutover Program.
+- Use `docs/V1020_OWNERSHIP_ENFORCEMENT.md`, `docs/V1030_DATABASE_WRITE_CUTOVER.md`, `docs/V1040_WORKSPACE_MEMBERSHIP.md`, `docs/V1050_SYNC_RECONCILIATION.md`, `docs/V1060_MIGRATION_EXECUTION_PREP.md`, and `docs/V1070_PRODUCTION_READINESS.md` as V10 module-level source docs.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -123,7 +125,8 @@ Current priority is UX / IA foundation before moving modules:
 - V7 Data Persistence Program has been merged into main and is complete.
 - V8 Database Activation Program has been merged into main and is complete.
 - V9 Real Persistence Program has been merged into main and is complete.
-- V10 Database Cutover Program is active. V10.10 starts database-first read priority while preserving Truth Layer and local/draft fallbacks. It does not apply migrations, change auth behavior, change RLS, change schema, cut over write paths, remove fallbacks, add broker integration, add trading logic, or add AI recommendation logic.
+- V10 Database Cutover Program is active. V10.10 starts database-first read priority while preserving Truth Layer and local/draft fallbacks.
+- V10.20-V10.70 add platform cutover readiness for ownership enforcement, guarded database write cutover, workspace membership, sync reconciliation, migration execution preparation, and production readiness diagnostics. V10 does not apply remote migrations, change auth behavior, change RLS, change schema, remove fallbacks, add broker integration, add trading logic, or add AI recommendation logic.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.
