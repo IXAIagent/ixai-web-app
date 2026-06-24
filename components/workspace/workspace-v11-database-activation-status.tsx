@@ -7,6 +7,8 @@ import { Database, RefreshCw } from "lucide-react";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import type { V11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
+import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
+import type { V11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 
 function Pill({ children }: { children: ReactNode }) {
   return (
@@ -18,11 +20,17 @@ function Pill({ children }: { children: ReactNode }) {
 
 export function WorkspaceV11DatabaseActivationStatus() {
   const [report, setReport] = useState<V11DatabaseActivationReport | null>(null);
+  const [cutover, setCutover] = useState<V11DatabaseCutoverStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   async function refresh() {
     setIsLoading(true);
-    setReport(await getV11DatabaseActivationReport());
+    const [activation, cutoverStatus] = await Promise.all([
+      getV11DatabaseActivationReport(),
+      getV11DatabaseCutoverStatus(),
+    ]);
+    setReport(activation);
+    setCutover(cutoverStatus);
     setIsLoading(false);
   }
 
@@ -37,13 +45,13 @@ export function WorkspaceV11DatabaseActivationStatus() {
           <FeatureIcon icon={Database} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              V11.10 Database Activation
+              V11 Database Activation
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Database activation foundation
+              Database activation and cutover readiness
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Migration files are prepared, database readback is validated, and write activation remains readiness-only. Truth Layer and local fallback stay active.
+              Migration files are prepared, database readback is validated, controlled writes stay guard-first, and remote migration execution remains manual. Truth Layer and local fallback stay active.
             </p>
           </div>
         </div>
@@ -63,6 +71,8 @@ export function WorkspaceV11DatabaseActivationStatus() {
         <Pill>migration: {report?.migrationReadiness ?? "loading"}</Pill>
         <Pill>missing tables: {report?.missingTables.length ?? 0}</Pill>
         <Pill>blocking issues: {report?.blockingIssues.length ?? 0}</Pill>
+        <Pill>writes: {cutover?.controlledWrite.guard.enabled ? "enabled" : "disabled"}</Pill>
+        <Pill>remote migration: {cutover?.migrationReadiness.remoteMigrationExecuted ? "executed" : "not executed"}</Pill>
       </div>
 
       <div className="mt-5 grid gap-3 lg:grid-cols-2">
@@ -112,6 +122,49 @@ export function WorkspaceV11DatabaseActivationStatus() {
                 </p>
               </div>
             ))}
+          </div>
+        </article>
+
+        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            Controlled write activation
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            {cutover?.controlledWrite.summary ?? "Loading V11.20 guarded write readiness..."}
+          </p>
+          <div className="mt-3 grid gap-2">
+            {(cutover?.controlledWrite.modules ?? []).map((item) => (
+              <div
+                className="rounded-lg border border-[var(--ixai-border)] bg-white/60 p-3"
+                key={item.module}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-sm font-semibold text-[var(--ixai-forest)]">
+                    {item.module}
+                  </span>
+                  <Pill>{item.guardEnabled ? "guard enabled" : "guard disabled"}</Pill>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                  readiness={item.readiness}; attempted={item.databaseAttempted ? "yes" : "no"}; fallback={item.fallbackActive ? "active" : "inactive"}
+                  {item.blockingReason ? `; ${item.blockingReason}` : ""}
+                </p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            Remote migration readiness
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            {cutover?.migrationReadiness.safeNextAction ?? "Loading V11.30 migration readiness..."}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Pill>{cutover?.migrationReadiness.status ?? "loading"}</Pill>
+            <Pill>manual migration: required</Pill>
+            <Pill>remote executed: {cutover?.migrationReadiness.remoteMigrationExecuted ? "yes" : "no"}</Pill>
+            <Pill>checks: {cutover?.migrationReadiness.checks.length ?? 0}</Pill>
           </div>
         </article>
       </div>

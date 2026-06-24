@@ -2446,3 +2446,26 @@ Not focus:
 - Stripe checkout.
 - Portfolio execution.
 - Buy/sell signal products.
+
+## V11 Database Cutover Program
+
+Status:
+
+- V11.10 Database Activation Foundation: merged.
+- V11.20 Controlled Write Activation: active in `feature/v11-database-cutover`.
+- V11.30 Remote Migration Readiness: active in `feature/v11-database-cutover`.
+
+Direction:
+
+- Move from database diagnostics toward guarded database cutover.
+- Keep database writes disabled by default unless global and module-level guards are explicitly enabled.
+- Keep Truth Layer, localStorage, FCN Draft Store, and deterministic fallback behavior active.
+- Require manual migration review before any remote Supabase execution.
+
+Out of scope:
+
+- Remote migration execution from the app.
+- Auth redirect or onboarding changes.
+- RLS policy changes outside reviewed migration work.
+- Binance / Yahoo Finance integration.
+- Broker sync, trading logic, order execution, or AI recommendations.

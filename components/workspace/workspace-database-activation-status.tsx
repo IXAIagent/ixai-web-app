@@ -24,6 +24,7 @@ import {
 } from "@/src/lib/persistence/sync";
 import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
+import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -61,6 +62,7 @@ export function WorkspaceDatabaseActivationStatus() {
       readPriority,
       platformCutover,
       v11Activation,
+      v11Cutover,
     ] = await Promise.all([
       getPortfolioDatabaseActivationReadiness(),
       getFcnDatabaseActivationReadiness(),
@@ -77,6 +79,7 @@ export function WorkspaceDatabaseActivationStatus() {
       getWorkspaceDatabaseReadPriorityStatus(),
       getWorkspacePlatformCutoverStatus(),
       getV11DatabaseActivationReport(),
+      getV11DatabaseCutoverStatus(),
     ]);
 
     setItems([
@@ -245,6 +248,32 @@ export function WorkspaceDatabaseActivationStatus() {
         summary: item.recommendedNextStep,
         warnings: item.missingRequirements,
       })),
+      {
+        label: "V11.20 Controlled Write Guard",
+        migrationStatus: "manual_required",
+        runtimeRequired: false,
+        sourceStatus: v11Cutover.controlledWrite.guard.enabled ? "ready" : "guarded",
+        summary: v11Cutover.controlledWrite.summary,
+        warnings: [v11Cutover.controlledWrite.guard.reason],
+      },
+      ...v11Cutover.controlledWrite.modules.map((item) => ({
+        label: `V11.20 ${item.module} Controlled Write`,
+        migrationStatus: "manual_required",
+        runtimeRequired: false,
+        sourceStatus: item.readiness,
+        summary: item.recommendedNextAction,
+        warnings: item.blockingReason ? [item.blockingReason] : [],
+      })),
+      {
+        label: "V11.30 Remote Migration Readiness",
+        migrationStatus: v11Cutover.migrationReadiness.status,
+        runtimeRequired: false,
+        sourceStatus: v11Cutover.migrationReadiness.remoteMigrationExecuted ? "ready" : "guarded",
+        summary: v11Cutover.migrationReadiness.safeNextAction,
+        warnings: v11Cutover.migrationReadiness.checks
+          .filter((check) => !check.passed)
+          .map((check) => check.detail),
+      },
     ]);
     setIsLoading(false);
   }

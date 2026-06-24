@@ -791,3 +791,19 @@ For Social Pack / Weekly Export work, the agent must also read `docs/SOCIAL_PACK
 - `docs/SOCIAL_PACK_INCIDENT_REVIEW_20260609.md`: v1.82-v1.83.8d Social Pack / Weekly Export incident review and prevention rules.
 - `docs/TAIWAN_USER_UX_CLEANUP_V163.md`: v1.63.0 Traditional Chinese UX cleanup source-of-truth for normal user pages, engineering-info separation, wording table, pages changed, and rollback plan.
 - `docs/UX_PRODUCT_ROLE_CORRECTION_V1631.md`: v1.63.1 App / Pro role correction source-of-truth, FCN education-page positioning, Daily / Weekly reading-page cleanup, Pro icon/CTA rules, and account information architecture.
+
+## I. V11 Database Cutover Context
+
+V11 now separates database activation into three safe layers:
+
+- V11.10 prepares reviewed migration files, local/dev seed notes, table readiness, readback validation, and write readiness diagnostics.
+- V11.20 adds controlled write activation guards for Portfolio, FCN, Watchlist, and Alert History.
+- V11.30 adds remote migration readiness review and a dry-run helper for the local migration draft.
+
+Critical boundaries:
+
+- No remote Supabase migration is executed by the app.
+- No product write path is enabled by default.
+- Diagnostics do not write during render.
+- Truth Layer, localStorage, FCN Draft Store, and deterministic alert fallback remain active.
+- Broker integrations, Yahoo/Binance connections, trading logic, and AI recommendations remain out of scope.

@@ -7,6 +7,8 @@ import { RefreshCw, ShieldCheck } from "lucide-react";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import type { V11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
+import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
+import type { V11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import type { WorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 
@@ -21,16 +23,19 @@ function Pill({ children }: { children: ReactNode }) {
 export function WorkspacePlatformCutoverStatus() {
   const [status, setStatus] = useState<WorkspacePlatformCutoverStatus | null>(null);
   const [v11Status, setV11Status] = useState<V11DatabaseActivationReport | null>(null);
+  const [v11Cutover, setV11Cutover] = useState<V11DatabaseCutoverStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   async function refresh() {
     setIsLoading(true);
-    const [platform, v11] = await Promise.all([
+    const [platform, v11, cutover] = await Promise.all([
       getWorkspacePlatformCutoverStatus(),
       getV11DatabaseActivationReport(),
+      getV11DatabaseCutoverStatus(),
     ]);
     setStatus(platform);
     setV11Status(v11);
+    setV11Cutover(cutover);
     setIsLoading(false);
   }
 
@@ -167,6 +172,21 @@ export function WorkspacePlatformCutoverStatus() {
             <Pill>migration: {v11Status?.migrationReadiness ?? "loading"}</Pill>
             <Pill>missing: {v11Status?.missingTables.length ?? 0}</Pill>
             <Pill>writes: guarded</Pill>
+          </div>
+        </article>
+
+        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            V11 controlled cutover
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            {v11Cutover?.summary ?? "Loading V11.20/V11.30 cutover readiness..."}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Pill>writes: {v11Cutover?.controlledWrite.guard.enabled ? "enabled" : "disabled"}</Pill>
+            <Pill>migration: {v11Cutover?.migrationReadiness.status ?? "loading"}</Pill>
+            <Pill>manual required: {v11Cutover?.migrationReadiness.manualMigrationRequired ? "yes" : "no"}</Pill>
+            <Pill>remote executed: {v11Cutover?.migrationReadiness.remoteMigrationExecuted ? "yes" : "no"}</Pill>
           </div>
         </article>
       </div>
