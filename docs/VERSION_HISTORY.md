@@ -6,6 +6,34 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V9 — Real Persistence Program
+
+Why:
+
+- V8 made the database layer activation-ready, but IXAI needed guarded live readback, live status diagnostics, ownership scope helpers, and non-destructive sync planning before any future durable write rollout.
+
+What Changed:
+
+- Added `docs/V9_REAL_PERSISTENCE_PROGRAM.md` and module docs for V9.10 through V9.70.
+- Added guarded live Portfolio, FCN, Watchlist, and Alert History persistence services.
+- Added conservative ownership helpers for owner context, read access assertion, and user-scoped query construction.
+- Added Workspace Sync plan generation without automatic reconciliation or writes.
+- Added migration health diagnostics and Settings visibility for live persistence, sync plan, and migration health.
+- Added optional Workspace Graph and API service metadata for V9 diagnostics.
+
+Key Decisions:
+
+- Runtime still works when tables are missing.
+- Missing tables return partial, unavailable, or fallback status instead of crashing.
+- Writes remain readiness-gated and fallback-safe.
+- Sync is plan-only and non-destructive.
+- Local/draft/fallback behavior remains preserved.
+
+Out of Scope:
+
+- No migrations are applied automatically.
+- No auth behavior changes, broker integration, trading execution, order routing, buy/sell/hold recommendations, AI model calls, payment system, public landing redesign, or fallback removal.
+
 ## V8 — Database Activation Program
 
 Why:

@@ -4,12 +4,28 @@ import { useEffect, useState } from "react";
 import { DatabaseZap, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
-import { getAlertDatabaseActivationReadiness } from "@/src/lib/alerts/persistence";
-import { getFcnDatabaseActivationReadiness } from "@/src/lib/persistence/fcn";
+import {
+  getAlertDatabaseActivationReadiness,
+  getLiveAlertHistoryReadiness,
+} from "@/src/lib/alerts/persistence";
+import {
+  getFcnDatabaseActivationReadiness,
+  getLiveFcnPersistenceReadiness,
+} from "@/src/lib/persistence/fcn";
+import { getDatabaseMigrationHealthReport } from "@/src/lib/persistence/migrations";
 import { checkOwnershipActivationReadiness } from "@/src/lib/persistence/ownership";
-import { getPortfolioDatabaseActivationReadiness } from "@/src/lib/persistence/portfolio";
-import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync";
-import { getWatchlistDatabaseActivationReadiness } from "@/src/lib/watchlist/persistence";
+import {
+  getLivePortfolioPersistenceReadiness,
+  getPortfolioDatabaseActivationReadiness,
+} from "@/src/lib/persistence/portfolio";
+import {
+  getWorkspaceDatabaseActivationReport,
+  getWorkspaceSyncPlan,
+} from "@/src/lib/persistence/sync";
+import {
+  getLiveWatchlistPersistenceReadiness,
+  getWatchlistDatabaseActivationReadiness,
+} from "@/src/lib/watchlist/persistence";
 
 type ActivationItem = {
   label: string;
@@ -26,13 +42,32 @@ export function WorkspaceDatabaseActivationStatus() {
 
   async function refresh() {
     setIsLoading(true);
-    const [portfolio, fcn, watchlist, alerts, ownership, sync] = await Promise.all([
+    const [
+      portfolio,
+      fcn,
+      watchlist,
+      alerts,
+      ownership,
+      sync,
+      livePortfolio,
+      liveFcn,
+      liveWatchlist,
+      liveAlerts,
+      syncPlan,
+      migrationHealth,
+    ] = await Promise.all([
       getPortfolioDatabaseActivationReadiness(),
       getFcnDatabaseActivationReadiness(),
       getWatchlistDatabaseActivationReadiness(),
       getAlertDatabaseActivationReadiness(),
       checkOwnershipActivationReadiness(),
       getWorkspaceDatabaseActivationReport(),
+      getLivePortfolioPersistenceReadiness(),
+      getLiveFcnPersistenceReadiness(),
+      getLiveWatchlistPersistenceReadiness(),
+      getLiveAlertHistoryReadiness(),
+      getWorkspaceSyncPlan(),
+      getDatabaseMigrationHealthReport(),
     ]);
 
     setItems([
@@ -84,6 +119,54 @@ export function WorkspaceDatabaseActivationStatus() {
         summary: sync.summary,
         warnings: sync.warnings,
       },
+      {
+        label: "Live Portfolio Persistence",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: livePortfolio.sourceStatus,
+        summary: livePortfolio.summary,
+        warnings: livePortfolio.warnings,
+      },
+      {
+        label: "Live FCN Persistence",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: liveFcn.sourceStatus,
+        summary: liveFcn.summary,
+        warnings: liveFcn.warnings,
+      },
+      {
+        label: "Live Watchlist Persistence",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: liveWatchlist.sourceStatus,
+        summary: liveWatchlist.summary,
+        warnings: liveWatchlist.warnings,
+      },
+      {
+        label: "Live Alert History",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: liveAlerts.sourceStatus,
+        summary: liveAlerts.summary,
+        warnings: liveAlerts.warnings,
+      },
+      {
+        label: "Workspace Sync Plan",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: syncPlan.sourceStatus,
+        summary: syncPlan.summary,
+        warnings: syncPlan.warnings,
+      },
+      {
+        label: "Migration Health",
+        migrationStatus: migrationHealth.migrationStatus,
+        runtimeRequired: false,
+        sourceStatus: migrationHealth.sourceStatus,
+        summary: migrationHealth.informationalOnlyDisclaimer,
+        warnings: migrationHealth.warnings,
+      },
     ]);
     setIsLoading(false);
   }
@@ -99,13 +182,13 @@ export function WorkspaceDatabaseActivationStatus() {
           <FeatureIcon icon={DatabaseZap} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              V8 Database Activation
+              V9 Real Persistence
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Database activation diagnostics
+              Database live persistence diagnostics
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Internal readiness for optional database tables. Migration status remains draft only and runtime fallback remains active.
+              Internal readiness for live database readback, guarded writes, ownership scope, sync planning, and migration health. Runtime fallback remains active.
             </p>
           </div>
         </div>
@@ -155,7 +238,7 @@ export function WorkspaceDatabaseActivationStatus() {
       </div>
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Database activation diagnostics are internal only. No migrations are applied automatically, no writes are enabled by default, and local fallback behavior remains preserved.
+        Real persistence diagnostics are internal only. No migrations are applied automatically, guarded writes remain fallback-safe, sync is non-destructive, and no trading or recommendation logic is introduced.
       </p>
     </section>
   );

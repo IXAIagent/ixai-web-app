@@ -15,6 +15,11 @@ import { checkAlertTablesReadiness, listPersistentAlertEvents } from "@/src/lib/
 import { checkFcnTablesReadiness, listPersistentFcnPositions } from "@/src/lib/persistence/fcn";
 import { checkOwnershipActivationReadiness, getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
 import { checkPortfolioTablesReadiness, listPortfolioPositions } from "@/src/lib/persistence/portfolio";
+import { getLivePortfolioPersistenceReadiness } from "@/src/lib/persistence/portfolio/portfolio-live-service";
+import { getLiveFcnPersistenceReadiness } from "@/src/lib/persistence/fcn/fcn-live-service";
+import { getLiveAlertHistoryReadiness } from "@/src/lib/alerts/persistence/alert-live-service";
+import { getLiveWatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence/watchlist-live-service";
+import { getDatabaseMigrationHealthReport } from "@/src/lib/persistence/migrations";
 import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync";
 import { checkWatchlistTablesReadiness, listPersistentWatchlistItems } from "@/src/lib/watchlist/persistence";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
@@ -690,6 +695,40 @@ export function auditV8DatabaseActivationDiagnostics(): ModuleAudit {
   };
 }
 
+export function auditV9RealPersistenceProgram(): ModuleAudit {
+  const moduleName = "V9 Real Persistence";
+  const required = [
+    functionAvailable(getLivePortfolioPersistenceReadiness),
+    functionAvailable(getLiveFcnPersistenceReadiness),
+    functionAvailable(getLiveWatchlistPersistenceReadiness),
+    functionAvailable(getLiveAlertHistoryReadiness),
+    functionAvailable(getDatabaseMigrationHealthReport),
+  ];
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: required,
+    warnings: true,
+  });
+
+  return {
+    issues: [
+      {
+        message:
+          "Real persistence is guarded and fallback-safe. Writes are readiness-gated and sync remains plan-only.",
+        module: moduleName,
+        severity: "info",
+      },
+    ],
+    node: buildNode({
+      id: "v9-real-persistence-program",
+      name: moduleName,
+      source: "V8 database adapters + local/draft fallback",
+      status,
+      target: "Settings diagnostics + future live persistence workflow",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -724,6 +763,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV7WatchlistPersistenceFoundation(),
     auditV7AlertPersistenceFoundation(),
     auditV8DatabaseActivationDiagnostics(),
+    auditV9RealPersistenceProgram(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

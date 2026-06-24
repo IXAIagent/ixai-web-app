@@ -2,6 +2,7 @@ export type PersistenceSourceStatus =
   | "error"
   | "fallback"
   | "local"
+  | "partial"
   | "persisted"
   | "unavailable";
 

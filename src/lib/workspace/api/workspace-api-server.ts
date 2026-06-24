@@ -13,6 +13,8 @@ const SERVER_SAFE_WARNINGS: Partial<Record<WorkspaceApiEndpoint, string>> = {
     "Workspace Health server route is limited because full health scoring depends on the client workspace graph.",
   intelligence:
     "Intelligence server route is limited because full readback depends on client-local workspace sources.",
+  "migration-health":
+    "Migration health is a diagnostics-only server-safe readback. No migration is executed.",
   notifications:
     "Notifications server route is limited because read/unread state is browser-local.",
   timeline:

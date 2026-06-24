@@ -3,6 +3,7 @@
 import { getWorkspaceGraph, getWorkspaceGraphSummary } from "@/src/lib/workspace/graph";
 import { getWorkspaceHealthScore } from "@/src/lib/workspace/health";
 import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync";
+import { getDatabaseMigrationHealthReport } from "@/src/lib/persistence/migrations";
 import { getWorkspaceDailyBrief } from "@/src/lib/daily-brief";
 import { getWorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-service";
 import { getWorkspaceNotificationSummary } from "@/src/lib/notifications";
@@ -64,4 +65,8 @@ export async function readWorkspaceDailyBrief() {
 
 export async function readWorkspaceDatabaseActivation() {
   return readEndpoint("graph", getWorkspaceDatabaseActivationReport);
+}
+
+export async function readWorkspaceMigrationHealth() {
+  return readEndpoint("migration-health", getDatabaseMigrationHealthReport);
 }

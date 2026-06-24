@@ -2,6 +2,7 @@
 
 import { getAlertDatabaseActivationReadiness } from "@/src/lib/alerts/persistence";
 import { getFcnDatabaseActivationReadiness } from "@/src/lib/persistence/fcn";
+import { getDatabaseMigrationHealthReport } from "@/src/lib/persistence/migrations";
 import { checkOwnershipActivationReadiness } from "@/src/lib/persistence/ownership";
 import { getPortfolioDatabaseActivationReadiness } from "@/src/lib/persistence/portfolio";
 import type {
@@ -24,13 +25,14 @@ function summarize(modules: WorkspaceDatabaseActivationModule[]): WorkspaceDatab
 }
 
 export async function getWorkspaceDatabaseActivationReport(): Promise<WorkspaceDatabaseActivationReport> {
-  const [portfolio, fcn, watchlist, alerts, ownership, graph] = await Promise.all([
+  const [portfolio, fcn, watchlist, alerts, ownership, graph, migrationHealth] = await Promise.all([
     getPortfolioDatabaseActivationReadiness(),
     getFcnDatabaseActivationReadiness(),
     getWatchlistDatabaseActivationReadiness(),
     getAlertDatabaseActivationReadiness(),
     checkOwnershipActivationReadiness(),
     getWorkspaceGraphSummary(),
+    getDatabaseMigrationHealthReport(),
   ]);
   const api = getWorkspaceApiGatewayStatus();
   const modules: WorkspaceDatabaseActivationModule[] = [
@@ -48,6 +50,16 @@ export async function getWorkspaceDatabaseActivationReport(): Promise<WorkspaceD
       name: "Workspace API",
       status: api.routeHandlersEnabled ? "ready" : "partial",
       warnings: api.routeHandlersEnabled ? [] : ["Workspace API route handlers are not enabled."],
+    },
+    {
+      name: "Migration Health",
+      status:
+        migrationHealth.sourceStatus === "ready"
+          ? "ready"
+          : migrationHealth.sourceStatus === "partial"
+            ? "partial"
+            : "unavailable",
+      warnings: migrationHealth.warnings,
     },
   ];
 
