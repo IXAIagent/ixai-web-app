@@ -6,6 +6,31 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V10.20-V10.70 — Platform Cutover Program
+
+Why:
+
+- V10.10 established database-first read priority, but IXAI still needed platform readiness for ownership enforcement, guarded writes, membership, reconciliation, migration execution preparation, and production diagnostics before any future production cutover.
+
+What Changed:
+
+- Added `docs/V10_PLATFORM_CUTOVER_PROGRAM.md` and V10.20-V10.70 module docs.
+- Added `src/lib/workspace/platform/` for ownership evaluation, workspace membership readiness, guarded write cutover previews, sync reconciliation dry-run plans, migration execution preparation, and production readiness diagnostics.
+- Added `components/workspace/workspace-platform-cutover-status.tsx`.
+- Surfaced V10 platform cutover status in Workspace Home, Settings, Database Activation Status, Workspace Graph, and Integration Audit.
+
+Key Decisions:
+
+- Current single-user behavior remains unchanged.
+- Database writes are guarded and disabled by default.
+- Sync reconciliation is dry-run only and `safeToApply` remains false.
+- Migration execution is prepared but no remote migration is run.
+- Fallback behavior remains preserved.
+
+Out of Scope:
+
+- No remote migration execution, auth behavior changes, RLS changes, schema changes, fallback removal, broker integration, trading logic, AI recommendation logic, payment system, or public landing page redesign.
+
 ## V10.10 — Database Read Priority
 
 Why:

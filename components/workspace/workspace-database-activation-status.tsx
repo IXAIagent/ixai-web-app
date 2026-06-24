@@ -23,6 +23,7 @@ import {
   getWorkspaceSyncPlan,
 } from "@/src/lib/persistence/sync";
 import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
+import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
   getWatchlistDatabaseActivationReadiness,
@@ -57,6 +58,7 @@ export function WorkspaceDatabaseActivationStatus() {
       syncPlan,
       migrationHealth,
       readPriority,
+      platformCutover,
     ] = await Promise.all([
       getPortfolioDatabaseActivationReadiness(),
       getFcnDatabaseActivationReadiness(),
@@ -71,6 +73,7 @@ export function WorkspaceDatabaseActivationStatus() {
       getWorkspaceSyncPlan(),
       getDatabaseMigrationHealthReport(),
       getWorkspaceDatabaseReadPriorityStatus(),
+      getWorkspacePlatformCutoverStatus(),
     ]);
 
     setItems([
@@ -178,6 +181,43 @@ export function WorkspaceDatabaseActivationStatus() {
         summary: item.statusText,
         warnings: item.warning ? [item.warning] : [],
       })),
+      {
+        label: "V10 Ownership Enforcement",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: platformCutover.access.source,
+        summary: platformCutover.access.reason,
+        warnings: platformCutover.access.fallbackUsed
+          ? ["Ownership enforcement is conservative and fallback-safe."]
+          : [],
+      },
+      {
+        label: "V10 Guarded Write Cutover",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: platformCutover.sourceStatus,
+        summary:
+          "Database write cutover is feature-guarded and disabled by default; local/draft fallback remains active.",
+        warnings: Object.values(platformCutover.writeCutover)
+          .map((result) => result.errorMessage)
+          .filter((warning): warning is string => Boolean(warning)),
+      },
+      {
+        label: "V10 Sync Reconciliation",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: platformCutover.reconciliation.safeToApply ? "ready" : "guarded",
+        summary: platformCutover.reconciliation.summary,
+        warnings: platformCutover.reconciliation.warnings,
+      },
+      {
+        label: "V10 Production Readiness",
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: platformCutover.productionReadiness.overallStatus,
+        summary: platformCutover.productionReadiness.summary,
+        warnings: platformCutover.productionReadiness.warnings,
+      },
     ]);
     setIsLoading(false);
   }

@@ -23,6 +23,7 @@ import { getDatabaseMigrationHealthReport } from "@/src/lib/persistence/migratio
 import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync";
 import { checkWatchlistTablesReadiness, listPersistentWatchlistItems } from "@/src/lib/watchlist/persistence";
 import { resolveDatabaseReadPriority } from "@/src/lib/workspace/database-read-priority";
+import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
 import { getWorkspaceApiGatewayStatus } from "@/src/lib/workspace/api/workspace-api-status";
@@ -758,6 +759,39 @@ export function auditV10DatabaseReadPriority(): ModuleAudit {
   };
 }
 
+export function auditV10PlatformCutover(): ModuleAudit {
+  const moduleName = "V10 Platform Cutover";
+  const available = functionAvailable(getWorkspacePlatformCutoverStatus);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getWorkspacePlatformCutoverStatus",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V10.20-V10.70 platform cutover is readiness-only: guarded writes, dry-run sync, migration prep, and production diagnostics do not execute remote migrations or destructive reconciliation.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v10-platform-cutover",
+      name: moduleName,
+      source: "Ownership + membership + guarded writes + sync reconciliation + migration prep",
+      status,
+      target: "Settings diagnostics + Workspace Graph",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -794,6 +828,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV8DatabaseActivationDiagnostics(),
     auditV9RealPersistenceProgram(),
     auditV10DatabaseReadPriority(),
+    auditV10PlatformCutover(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);
