@@ -2455,6 +2455,7 @@ Status:
 - V11.20 Controlled Write Activation: active in `feature/v11-database-cutover`.
 - V11.30 Remote Migration Readiness: active in `feature/v11-database-cutover`.
 - V11.40 Production-Safe Manual Migration Split: active in `feature/v11-database-cutover`.
+- V11.51 Index Compatibility Fix: active in `feature/v11-index-compatibility-fix`.
 
 Direction:
 
@@ -2463,11 +2464,13 @@ Direction:
 - Keep Truth Layer, localStorage, FCN Draft Store, and deterministic fallback behavior active.
 - Require manual migration review before any remote Supabase execution.
 - Use the V11.40 manual split for production review: create tables, add nullable columns, create indexes concurrently, enable RLS, then validate.
+- Use V11.51 `03b_create_indexes_sql_editor_compatible.sql` only when Supabase SQL Editor transaction wrapping blocks concurrent index creation.
 
 Out of scope:
 
 - Remote migration execution from the app.
 - Blind execution of the original monolithic V11.10 migration against production.
+- Running non-concurrent index creation during a high-traffic window.
 - Auth redirect or onboarding changes.
 - RLS policy changes outside reviewed migration work.
 - Binance / Yahoo Finance integration.

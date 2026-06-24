@@ -69,3 +69,27 @@ Safety adjustments:
 - Production indexes use `CREATE INDEX CONCURRENTLY IF NOT EXISTS`.
 - RLS/policies are applied only to new V11 tables.
 - The manual runbook requires staging first, backup first, and keeping write guards disabled until validation passes.
+
+## V11.51 Index Compatibility Fix
+
+V11.50 manual Supabase execution partially completed:
+
+- Phase 01 create workspace tables: succeeded.
+- Phase 02 add nullable workspace columns: succeeded.
+- Phase 04 enable RLS and policies: succeeded.
+- Phase 05 validation: succeeded.
+
+Phase 03 failed in Supabase SQL Editor with:
+
+```text
+ERROR: 25001: CREATE INDEX CONCURRENTLY cannot run inside a transaction block
+```
+
+This is expected because Supabase SQL Editor wraps execution in a transaction. No data was damaged.
+
+V11.51 adds:
+
+- `supabase/manual/v11/03b_create_indexes_sql_editor_compatible.sql`
+- `supabase/manual/v11/06_index_validation.sql`
+
+`03b` uses `CREATE INDEX IF NOT EXISTS` without `CONCURRENTLY` and is compatible with Supabase SQL Editor. It can briefly lock tables, so it should be run during a quiet window. `03_create_indexes_concurrently.sql` remains preferred for CLI / non-transaction execution and for high-traffic production tables.
