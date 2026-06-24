@@ -26,6 +26,7 @@ import {
 } from "@/src/lib/persistence/portfolio";
 import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
 import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
+import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -86,6 +87,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     migrationHealth,
     databaseReadPriority,
     platformCutover,
+    v11DatabaseActivation,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -110,6 +112,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("Migration Health", getDatabaseMigrationHealthReport),
     safeRead("Database Read Priority", getWorkspaceDatabaseReadPriorityStatus),
     safeRead("Platform Cutover", getWorkspacePlatformCutoverStatus),
+    safeRead("V11 Database Activation", getV11DatabaseActivationReport),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -135,6 +138,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     migrationHealth.warning,
     databaseReadPriority.warning,
     platformCutover.warning,
+    v11DatabaseActivation.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -160,11 +164,13 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     migrationHealth.value,
     databaseReadPriority.value,
     platformCutover.value,
+    v11DatabaseActivation.value,
   ].filter(Boolean).length;
 
   return {
     alerts: alerts.value,
     databaseReadPriority: databaseReadPriority.value,
+    v11DatabaseActivation: v11DatabaseActivation.value,
     dailyBrief: dailyBrief.value,
     fcnRisk: fcnRisk.value,
     fcnSchedule: fcnSchedule.value,

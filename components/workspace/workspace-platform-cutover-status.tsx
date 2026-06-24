@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 import { RefreshCw, ShieldCheck } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
+import type { V11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import type { WorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 
@@ -18,11 +20,17 @@ function Pill({ children }: { children: ReactNode }) {
 
 export function WorkspacePlatformCutoverStatus() {
   const [status, setStatus] = useState<WorkspacePlatformCutoverStatus | null>(null);
+  const [v11Status, setV11Status] = useState<V11DatabaseActivationReport | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   async function refresh() {
     setIsLoading(true);
-    setStatus(await getWorkspacePlatformCutoverStatus());
+    const [platform, v11] = await Promise.all([
+      getWorkspacePlatformCutoverStatus(),
+      getV11DatabaseActivationReport(),
+    ]);
+    setStatus(platform);
+    setV11Status(v11);
     setIsLoading(false);
   }
 
@@ -144,6 +152,21 @@ export function WorkspacePlatformCutoverStatus() {
             <Pill>backup: {status?.productionReadiness.backupReadiness ?? "loading"}</Pill>
             <Pill>audit: {status?.productionReadiness.auditLogReadiness ?? "loading"}</Pill>
             <Pill>fallback: {status?.productionReadiness.fallbackStatus ?? "loading"}</Pill>
+          </div>
+        </article>
+
+        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            Database activation
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            {v11Status?.safeNextAction ?? "Loading V11 database activation readiness..."}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Pill>{v11Status?.activationPhase ?? "loading"}</Pill>
+            <Pill>migration: {v11Status?.migrationReadiness ?? "loading"}</Pill>
+            <Pill>missing: {v11Status?.missingTables.length ?? 0}</Pill>
+            <Pill>writes: guarded</Pill>
           </div>
         </article>
       </div>
