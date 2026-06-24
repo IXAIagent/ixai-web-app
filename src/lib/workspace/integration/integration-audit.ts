@@ -23,6 +23,7 @@ import { getDatabaseMigrationHealthReport } from "@/src/lib/persistence/migratio
 import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync";
 import { checkWatchlistTablesReadiness, listPersistentWatchlistItems } from "@/src/lib/watchlist/persistence";
 import { resolveDatabaseReadPriority } from "@/src/lib/workspace/database-read-priority";
+import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
@@ -792,6 +793,39 @@ export function auditV10PlatformCutover(): ModuleAudit {
   };
 }
 
+export function auditV11DatabaseActivationFoundation(): ModuleAudit {
+  const moduleName = "V11 Database Activation Foundation";
+  const available = functionAvailable(getV11DatabaseActivationReport);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getV11DatabaseActivationReport",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V11.10 prepares migration files and database activation diagnostics. Remote migration execution and write-path cutover remain out of scope.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v11-database-activation-foundation",
+      name: moduleName,
+      source: "V11 migration draft + client-safe database readiness checks",
+      status,
+      target: "Settings diagnostics + Workspace Graph + V11.20 write activation planning",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -829,6 +863,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV9RealPersistenceProgram(),
     auditV10DatabaseReadPriority(),
     auditV10PlatformCutover(),
+    auditV11DatabaseActivationFoundation(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

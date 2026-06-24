@@ -23,6 +23,7 @@ import {
   getWorkspaceSyncPlan,
 } from "@/src/lib/persistence/sync";
 import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
+import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -59,6 +60,7 @@ export function WorkspaceDatabaseActivationStatus() {
       migrationHealth,
       readPriority,
       platformCutover,
+      v11Activation,
     ] = await Promise.all([
       getPortfolioDatabaseActivationReadiness(),
       getFcnDatabaseActivationReadiness(),
@@ -74,6 +76,7 @@ export function WorkspaceDatabaseActivationStatus() {
       getDatabaseMigrationHealthReport(),
       getWorkspaceDatabaseReadPriorityStatus(),
       getWorkspacePlatformCutoverStatus(),
+      getV11DatabaseActivationReport(),
     ]);
 
     setItems([
@@ -218,6 +221,30 @@ export function WorkspaceDatabaseActivationStatus() {
         summary: platformCutover.productionReadiness.summary,
         warnings: platformCutover.productionReadiness.warnings,
       },
+      {
+        label: "V11 Database Activation Foundation",
+        migrationStatus: v11Activation.migrationReadiness,
+        runtimeRequired: false,
+        sourceStatus: v11Activation.missingTables.length > 0 ? "partial" : "ready",
+        summary: v11Activation.safeNextAction,
+        warnings: v11Activation.blockingIssues,
+      },
+      ...v11Activation.readbackValidation.map((item) => ({
+        label: `V11 ${item.module} Readback`,
+        migrationStatus: v11Activation.migrationReadiness,
+        runtimeRequired: false,
+        sourceStatus: item.source,
+        summary: `canRead=${item.canRead}; rows=${item.rowCount}; fallback=${item.fallbackUsed ? "active" : "inactive"}`,
+        warnings: item.blockingReason ? [item.blockingReason] : [],
+      })),
+      ...v11Activation.writeReadiness.map((item) => ({
+        label: `V11 ${item.module} Write Readiness`,
+        migrationStatus: v11Activation.migrationReadiness,
+        runtimeRequired: false,
+        sourceStatus: item.canWrite ? "ready" : "guarded",
+        summary: item.recommendedNextStep,
+        warnings: item.missingRequirements,
+      })),
     ]);
     setIsLoading(false);
   }

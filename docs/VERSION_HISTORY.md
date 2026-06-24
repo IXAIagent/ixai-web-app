@@ -6,6 +6,31 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V11.10 — Database Activation Foundation
+
+Why:
+
+- V10 made database-first read priority and platform cutover diagnostics available, but IXAI still needed reviewed migration artifacts, database readback validation, and write activation readiness before any controlled write activation.
+
+What Changed:
+
+- Added `docs/V1110_DATABASE_ACTIVATION.md`.
+- Added reviewed migration draft `supabase/migrations/013_v11_database_activation_foundation.sql`.
+- Added local/dev seed notes `supabase/seed_v11_database_activation_demo.sql`.
+- Added `src/lib/workspace/database-activation/` for expected table readiness, readback validation, and write activation readiness.
+- Added compact V11 diagnostics to Workspace Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+
+Key Decisions:
+
+- Migration files are prepared but not remotely executed.
+- Database readback validation is diagnostic and fallback-safe.
+- Write activation remains readiness-only and guarded.
+- Truth Layer and local fallback remain intact.
+
+Out of Scope:
+
+- No remote migration execution, auth redirect/onboarding changes, database-only forcing, fallback removal, Binance/Yahoo connection, broker sync, trading logic, or AI recommendation logic.
+
 ## V10.20-V10.70 — Platform Cutover Program
 
 Why:

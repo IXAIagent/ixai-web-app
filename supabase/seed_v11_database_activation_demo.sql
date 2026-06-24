@@ -1,0 +1,38 @@
+-- V11.10 local/dev seed notes only.
+-- DO NOT RUN AGAINST PRODUCTION.
+-- This file intentionally contains placeholder UUID values and comments. It is
+-- for local Supabase review after migration staging only.
+--
+-- Suggested local steps:
+-- 1. Create or identify a local auth user.
+-- 2. Replace all 00000000-0000-0000-0000-000000000001 values with that local user id.
+-- 3. Run only against a disposable local/staging database.
+-- 4. Validate Workspace diagnostics, then discard/reset local data if needed.
+
+-- Example placeholders:
+-- insert into public.workspaces (id, owner_id, name)
+-- values (
+--   '00000000-0000-0000-0000-000000000101',
+--   '00000000-0000-0000-0000-000000000001',
+--   'IXAI Demo Workspace'
+-- );
+--
+-- insert into public.workspace_members (workspace_id, user_id, role)
+-- values (
+--   '00000000-0000-0000-0000-000000000101',
+--   '00000000-0000-0000-0000-000000000001',
+--   'owner'
+-- );
+--
+-- insert into public.portfolios (id, user_id, owner_id, workspace_id, name, base_currency)
+-- values (
+--   '00000000-0000-0000-0000-000000000201',
+--   '00000000-0000-0000-0000-000000000001',
+--   '00000000-0000-0000-0000-000000000001',
+--   '00000000-0000-0000-0000-000000000101',
+--   'Demo Portfolio',
+--   'USD'
+-- );
+--
+-- Add demo FCN, watchlist, and alert rows only after confirming local table
+-- readiness. Do not seed real private user data.

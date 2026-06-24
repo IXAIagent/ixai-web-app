@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`V10 — Database Cutover Program`
+`V11 — Database Activation Program`
 
 Current production state:
 
@@ -167,6 +167,8 @@ V9 introduces the Real Persistence Program. It adds guarded live database readba
 
 V10 introduces the Database Cutover Program. V10.10 starts with database-first read priority for Portfolio, FCN, Watchlist, and Alert History, then falls back to the Truth Layer and local/draft stores. V10.20-V10.70 add conservative ownership enforcement, workspace membership readiness, guarded database write cutover scaffolding, deterministic sync reconciliation dry-runs, migration execution preparation, and production readiness diagnostics. V10 does not apply remote migrations, change auth behavior, change RLS, change schema, remove fallbacks, add broker integrations, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, payment, or public landing page redesign.
 
+V11 introduces the Database Activation Program. V11.10 prepares reviewed migration files, local/dev seed notes, expected table diagnostics, database readback validation, write activation readiness, Workspace Graph metadata, and compact diagnostics while preserving Truth Layer and local fallback behavior. V11.10 does not execute remote Supabase migrations, force database-only behavior, change auth redirects, change onboarding, connect Binance, connect Yahoo Finance, add broker sync, add trading logic, or add AI recommendations.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -209,7 +211,7 @@ Still not complete:
 
 Current Development Version:
 
-`V10 — Database Cutover Program`
+`V11 — Database Activation Program`
 
 Current Core Flow:
 
@@ -267,6 +269,7 @@ Landing
 → Database Activation Program adding safe table readiness checks, activation diagnostics, and draft-only schema activation docs
 → Real Persistence Program adding guarded live readback, sync planning, ownership scope helpers, and migration health diagnostics
 → Database Cutover Program adding database-first read priority, guarded platform cutover readiness, and preserved Truth Layer / local fallback
+→ Database Activation Program preparing reviewed migrations, database readback validation, and guarded write readiness
 ```
 
 Public Intelligence Funnel:
