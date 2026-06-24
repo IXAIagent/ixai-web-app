@@ -8,6 +8,7 @@ This program includes:
 
 - V11.20 Controlled Write Activation
 - V11.30 Remote Migration Readiness
+- V11.40 Production-Safe Manual Migration Split
 
 ## Scope
 
@@ -54,6 +55,12 @@ Guarded write validation
 - `scripts/v11-migration-readiness.mjs`
 - `docs/V1120_CONTROLLED_WRITE_ACTIVATION.md`
 - `docs/V1130_REMOTE_MIGRATION_READINESS.md`
+- `supabase/manual/v11/01_create_new_workspace_tables.sql`
+- `supabase/manual/v11/02_add_nullable_workspace_columns.sql`
+- `supabase/manual/v11/03_create_indexes_concurrently.sql`
+- `supabase/manual/v11/04_enable_rls_and_policies.sql`
+- `supabase/manual/v11/05_post_migration_validation.sql`
+- `supabase/manual/v11/README.md`
 
 ## Boundaries
 
@@ -74,4 +81,16 @@ Guarded write validation
 
 ## Next Step
 
-After V11.20/V11.30, the next phase should be staging-only controlled write trials after manual migration review and explicit feature guard enablement.
+After V11.40, the next phase should be staging-only manual migration execution, post-migration validation, and then controlled write trials with explicit feature guard enablement.
+
+## V11.40 Manual Split
+
+V11.40 converts the monolithic V11.10 migration draft into a manual production runbook:
+
+1. Create only missing/new Workspace tables.
+2. Add nullable Workspace linkage columns to existing Portfolio / FCN / Stock / Crypto tables.
+3. Create production indexes concurrently outside a transaction.
+4. Enable RLS and policies only for new V11 tables.
+5. Run read-only post-migration validation queries.
+
+No SQL is executed by this program. The manual split is an operator artifact only.

@@ -2454,6 +2454,7 @@ Status:
 - V11.10 Database Activation Foundation: merged.
 - V11.20 Controlled Write Activation: active in `feature/v11-database-cutover`.
 - V11.30 Remote Migration Readiness: active in `feature/v11-database-cutover`.
+- V11.40 Production-Safe Manual Migration Split: active in `feature/v11-database-cutover`.
 
 Direction:
 
@@ -2461,10 +2462,12 @@ Direction:
 - Keep database writes disabled by default unless global and module-level guards are explicitly enabled.
 - Keep Truth Layer, localStorage, FCN Draft Store, and deterministic fallback behavior active.
 - Require manual migration review before any remote Supabase execution.
+- Use the V11.40 manual split for production review: create tables, add nullable columns, create indexes concurrently, enable RLS, then validate.
 
 Out of scope:
 
 - Remote migration execution from the app.
+- Blind execution of the original monolithic V11.10 migration against production.
 - Auth redirect or onboarding changes.
 - RLS policy changes outside reviewed migration work.
 - Binance / Yahoo Finance integration.
