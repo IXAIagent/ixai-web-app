@@ -15,6 +15,8 @@ import type { PortfolioPersistenceReadiness } from "@/src/lib/persistence/portfo
 import type { WorkspaceOwnershipCheck } from "@/src/lib/persistence/ownership";
 import type { WorkspaceSyncReport } from "@/src/lib/persistence/sync";
 import type { WorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync/workspace-sync-activation-types";
+import type { WorkspaceSyncPlan } from "@/src/lib/persistence/sync/workspace-sync-plan-types";
+import type { MigrationHealthReport } from "@/src/lib/persistence/migrations";
 import type { WatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence";
 
 export type WorkspaceGraphSourceStatus =
@@ -31,6 +33,13 @@ export interface WorkspaceGraph {
   alerts: WorkspaceAlertSummary | null;
   alertPersistenceReadiness?: AlertPersistenceReadiness | null;
   databaseActivation?: WorkspaceDatabaseActivationReport | null;
+  livePersistence?: {
+    alerts?: string;
+    fcn?: string;
+    portfolio?: string;
+    watchlist?: string;
+  } | null;
+  migrationHealth?: MigrationHealthReport | null;
   dailyBrief: WorkspaceDailyBrief | null;
   fcnRisk: FcnPortfolioRiskSummary | null;
   fcnSchedule: FcnPortfolioScheduleSummary | null;
@@ -45,6 +54,7 @@ export interface WorkspaceGraph {
   risk: PortfolioRiskResult | null;
   sourceStatus: WorkspaceGraphSourceStatus;
   syncReadiness?: WorkspaceSyncReport | null;
+  syncPlan?: WorkspaceSyncPlan | null;
   tableReadiness?: WorkspaceDatabaseActivationReport | null;
   valuation: PortfolioValuationResult | null;
   warnings: WorkspaceGraphWarning[];

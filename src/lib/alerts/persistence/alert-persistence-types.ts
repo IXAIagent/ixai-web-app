@@ -1,8 +1,10 @@
 import type { WorkspaceAlertCard } from "@/src/lib/alerts";
 
 export type AlertPersistenceSourceStatus =
+  | "error"
   | "fallback"
   | "local"
+  | "partial"
   | "persisted"
   | "unavailable";
 

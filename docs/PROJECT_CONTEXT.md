@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`V8 — Database Activation Program`
+`V9 — Real Persistence Program`
 
 Current production state:
 
@@ -163,6 +163,8 @@ V7.0 Data Persistence Program has been merged into main and is complete.
 
 V8 introduces the Database Activation Program. It adds database adapter contracts, safe Supabase REST readiness checks, disabled-by-default write draft methods, activation diagnostics, and schema activation draft docs for Portfolio, FCN, Watchlist, Alerts, Ownership, and Workspace Sync. V8 does not apply migrations automatically, require new tables at runtime, change auth behavior, remove local fallback, add broker integrations, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, payment, or public landing page redesign.
 
+V9 introduces the Real Persistence Program. It adds guarded live database readback for Portfolio, FCN, Watchlist, and Alert History, conservative ownership helpers, non-destructive sync planning, migration health diagnostics, optional Workspace Graph / API metadata, and Settings diagnostics. V9 does not apply migrations automatically, require new tables at runtime, change auth behavior, remove local fallback, add broker integrations, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, payment, or public landing page redesign.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -205,7 +207,7 @@ Still not complete:
 
 Current Development Version:
 
-`V8 — Database Activation Program`
+`V9 — Real Persistence Program`
 
 Current Core Flow:
 
@@ -261,6 +263,7 @@ Landing
 → Platformization Program adding read-only API routes, persistence foundations, Insights, delivery readiness, and explain-only Copilot
 → Data Persistence Program adding repository foundations, ownership readiness, sync readiness, and schema draft docs
 → Database Activation Program adding safe table readiness checks, activation diagnostics, and draft-only schema activation docs
+→ Real Persistence Program adding guarded live readback, sync planning, ownership scope helpers, and migration health diagnostics
 ```
 
 Public Intelligence Funnel:
@@ -307,6 +310,7 @@ Product Layers:
 - Platformization Program: V6 adds read-only route handlers, persistence foundations, deterministic insights, delivery readiness, and rule-based explain-only Copilot. It remains no-auth-change, no-schema-change, no-migration, no-broker, no-trading, no-recommendation, no-AI-model-call, and no-external-delivery.
 - Data Persistence Program: V7.0 adds typed repository foundations and readiness diagnostics for Portfolio, Ownership, Workspace Sync, FCN, Watchlist, and Alerts. It remains no-auth-change, no-applied-migration, no-broker, no-trading, no-recommendation, no-AI-model-call, and no-local-fallback-removal.
 - Database Activation Program: V8 adds database activation adapters and diagnostics while keeping migrations draft-only and runtime optional. It remains no-auth-change, no-applied-migration, no-runtime-table-requirement, no-broker, no-trading, no-recommendation, no-AI-model-call, and no-local-fallback-removal.
+- Real Persistence Program: V9 adds live persistence readback and diagnostics while keeping writes guarded, sync non-destructive, migrations unapplied, runtime table requirements optional, and local/draft/fallback behavior preserved.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.

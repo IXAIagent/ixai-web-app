@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V8 / Database Activation Program`
+`V9 / Real Persistence Program`
 
 ## Current Priority
 
@@ -60,6 +60,9 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V8_DATABASE_ACTIVATION_PROGRAM.md` as the source of truth for V8 database activation readiness.
 - Use `docs/V8_DATABASE_SCHEMA_ACTIVATION_DRAFT.md` as the V8 schema activation draft. It is not applied automatically.
 - Use `docs/V810_PORTFOLIO_PERSISTENCE_ACTIVATION.md`, `docs/V820_FCN_PERSISTENCE_ACTIVATION.md`, `docs/V830_WATCHLIST_PERSISTENCE_ACTIVATION.md`, `docs/V840_ALERT_HISTORY_ACTIVATION.md`, `docs/V850_WORKSPACE_OWNERSHIP_ACTIVATION.md`, `docs/V860_WORKSPACE_SYNC_ACTIVATION.md`, and `docs/V870_DATABASE_ACTIVATION_DIAGNOSTICS.md` as the V8 module-level source of truth.
+- Use `docs/V9_REAL_PERSISTENCE_PROGRAM.md` as the source of truth for V9 guarded live persistence.
+- Use `docs/V910_PORTFOLIO_LIVE_PERSISTENCE.md`, `docs/V920_FCN_LIVE_PERSISTENCE.md`, `docs/V930_WATCHLIST_LIVE_PERSISTENCE.md`, `docs/V940_ALERT_HISTORY_LIVE_PERSISTENCE.md`, `docs/V950_WORKSPACE_OWNERSHIP_ENFORCEMENT.md`, `docs/V960_WORKSPACE_SYNC_ENGINE.md`, and `docs/V970_MIGRATION_HEALTH_CHECK.md` as the V9 module-level source of truth.
+- Use `docs/V9_DATABASE_MIGRATION_HEALTH_CHECK.md` as the V9 migration health companion note.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -116,9 +119,9 @@ Current priority is UX / IA foundation before moving modules:
 - V5.10–V5.50 Workspace Foundation Program has been merged into main and is complete.
 - V6 Platformization Program adds read-only Workspace API routes, persistence foundations, Workspace Insights, Notification Delivery readiness, and rule-based explain-only Workspace Copilot. It does not add broker integrations, trading execution, order routing, buy/sell/hold recommendations, AI model calls, auth behavior changes, Supabase schema changes, migrations, public landing page redesign, or legacy fallback removal.
 - V6 Platformization Program has been merged into main and is complete.
-- V7 Data Persistence Program is active. It creates persistence repositories, ownership abstraction, sync readiness, FCN persistence readiness, Watchlist repository readiness, and Alert history repository readiness without applying migrations, changing auth behavior, removing local fallback, adding broker integration, trading execution, buy/sell/hold recommendation logic, or AI model calls.
 - V7 Data Persistence Program has been merged into main and is complete.
-- V8 Database Activation Program is active. It prepares database adapters, table readiness checks, disabled-by-default write draft methods, schema activation draft docs, and Settings diagnostics without applying migrations, requiring new tables at runtime, changing auth behavior, removing fallback behavior, adding broker integration, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, or payment.
+- V8 Database Activation Program has been merged into main and is complete.
+- V9 Real Persistence Program is active. It adds guarded live readback services, readiness-gated write scaffolds, conservative ownership helpers, non-destructive sync planning, migration health diagnostics, and Settings visibility without applying migrations, requiring new tables at runtime, changing auth behavior, removing fallback behavior, adding broker integration, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, or payment.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.

@@ -21,3 +21,14 @@ export interface WorkspaceOwnershipCheck {
   summary: string;
   warnings: string[];
 }
+
+export interface WorkspaceReadAccessAssertion extends WorkspaceOwnershipCheck {
+  canRead: boolean;
+}
+
+export interface UserScopedQuery {
+  canScope: boolean;
+  owner: WorkspaceOwner | null;
+  query: Record<string, string>;
+  warnings: string[];
+}

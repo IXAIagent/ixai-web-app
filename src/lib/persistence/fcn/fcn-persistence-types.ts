@@ -5,6 +5,7 @@ export type FcnPersistenceSourceStatus =
   | "error"
   | "fallback"
   | "local"
+  | "partial"
   | "persisted"
   | "unavailable";
 

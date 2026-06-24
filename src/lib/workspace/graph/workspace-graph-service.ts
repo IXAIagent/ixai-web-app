@@ -11,11 +11,24 @@ import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
 import { getWorkspacePortfolioRiskSummary } from "@/src/lib/risk/risk-service";
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
-import { getAlertPersistenceReadiness } from "@/src/lib/alerts/persistence";
-import { getFcnPersistenceReadiness } from "@/src/lib/persistence/fcn";
-import { getPortfolioPersistenceReadiness } from "@/src/lib/persistence/portfolio";
+import {
+  getAlertPersistenceReadiness,
+  getLiveAlertHistoryReadiness,
+} from "@/src/lib/alerts/persistence";
+import {
+  getFcnPersistenceReadiness,
+  getLiveFcnPersistenceReadiness,
+} from "@/src/lib/persistence/fcn";
+import { getDatabaseMigrationHealthReport } from "@/src/lib/persistence/migrations";
+import {
+  getLivePortfolioPersistenceReadiness,
+  getPortfolioPersistenceReadiness,
+} from "@/src/lib/persistence/portfolio";
 import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
-import { getWatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence";
+import {
+  getLiveWatchlistPersistenceReadiness,
+  getWatchlistPersistenceReadiness,
+} from "@/src/lib/watchlist/persistence";
 import {
   buildWorkspaceGraphSummary,
   inferWorkspaceGraphStatus,
@@ -64,6 +77,11 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     watchlistPersistenceReadiness,
     alertPersistenceReadiness,
     ownershipReadiness,
+    livePortfolioPersistence,
+    liveFcnPersistence,
+    liveWatchlistPersistence,
+    liveAlertPersistence,
+    migrationHealth,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -81,6 +99,11 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("Watchlist Persistence Readiness", getWatchlistPersistenceReadiness),
     safeRead("Alert Persistence Readiness", getAlertPersistenceReadiness),
     safeRead("Workspace Ownership", () => getWorkspaceOwnershipStatus()),
+    safeRead("Live Portfolio Persistence", getLivePortfolioPersistenceReadiness),
+    safeRead("Live FCN Persistence", getLiveFcnPersistenceReadiness),
+    safeRead("Live Watchlist Persistence", getLiveWatchlistPersistenceReadiness),
+    safeRead("Live Alert History", getLiveAlertHistoryReadiness),
+    safeRead("Migration Health", getDatabaseMigrationHealthReport),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -99,6 +122,11 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     watchlistPersistenceReadiness.warning,
     alertPersistenceReadiness.warning,
     ownershipReadiness.warning,
+    livePortfolioPersistence.warning,
+    liveFcnPersistence.warning,
+    liveWatchlistPersistence.warning,
+    liveAlertPersistence.warning,
+    migrationHealth.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -117,6 +145,11 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     watchlistPersistenceReadiness.value,
     alertPersistenceReadiness.value,
     ownershipReadiness.value,
+    livePortfolioPersistence.value,
+    liveFcnPersistence.value,
+    liveWatchlistPersistence.value,
+    liveAlertPersistence.value,
+    migrationHealth.value,
   ].filter(Boolean).length;
 
   return {
@@ -127,6 +160,13 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     generatedAt: new Date().toISOString(),
     intelligence: intelligence.value,
     marketStatus: marketStatus.value,
+    livePersistence: {
+      alerts: liveAlertPersistence.value?.sourceStatus,
+      fcn: liveFcnPersistence.value?.sourceStatus,
+      portfolio: livePortfolioPersistence.value?.sourceStatus,
+      watchlist: liveWatchlistPersistence.value?.sourceStatus,
+    },
+    migrationHealth: migrationHealth.value,
     ownershipReadiness: ownershipReadiness.value,
     portfolioPersistence: portfolioPersistence.value,
     persistenceReadiness: portfolioPersistenceReadiness.value,

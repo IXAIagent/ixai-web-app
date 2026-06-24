@@ -9,6 +9,7 @@ export function getWorkspaceApiGatewayStatus(): WorkspaceApiGatewayStatus {
       { endpoint: "notifications", mode: "service_only", readOnly: true },
       { endpoint: "intelligence", mode: "service_only", readOnly: true },
       { endpoint: "daily-brief", mode: "service_only", readOnly: true },
+      { endpoint: "migration-health", mode: "service_only", readOnly: true },
     ],
     generatedAt: new Date().toISOString(),
     routeHandlersEnabled: true,

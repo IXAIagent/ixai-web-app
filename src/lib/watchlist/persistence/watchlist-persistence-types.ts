@@ -1,8 +1,10 @@
 import type { WorkspaceWatchlistItem } from "@/src/lib/watchlist/watchlist-types";
 
 export type WatchlistPersistenceSourceStatus =
+  | "error"
   | "fallback"
   | "local"
+  | "partial"
   | "persisted"
   | "unavailable";
 

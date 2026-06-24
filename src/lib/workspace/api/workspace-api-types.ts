@@ -3,6 +3,7 @@ export type WorkspaceApiEndpoint =
   | "graph"
   | "health"
   | "intelligence"
+  | "migration-health"
   | "notifications"
   | "timeline";
 
