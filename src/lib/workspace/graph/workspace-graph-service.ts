@@ -27,6 +27,7 @@ import {
 import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
 import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
+import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -88,6 +89,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     databaseReadPriority,
     platformCutover,
     v11DatabaseActivation,
+    v11DatabaseCutover,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -113,6 +115,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("Database Read Priority", getWorkspaceDatabaseReadPriorityStatus),
     safeRead("Platform Cutover", getWorkspacePlatformCutoverStatus),
     safeRead("V11 Database Activation", getV11DatabaseActivationReport),
+    safeRead("V11 Database Cutover", getV11DatabaseCutoverStatus),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -139,6 +142,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     databaseReadPriority.warning,
     platformCutover.warning,
     v11DatabaseActivation.warning,
+    v11DatabaseCutover.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -165,12 +169,14 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     databaseReadPriority.value,
     platformCutover.value,
     v11DatabaseActivation.value,
+    v11DatabaseCutover.value,
   ].filter(Boolean).length;
 
   return {
     alerts: alerts.value,
     databaseReadPriority: databaseReadPriority.value,
     v11DatabaseActivation: v11DatabaseActivation.value,
+    v11DatabaseCutover: v11DatabaseCutover.value,
     dailyBrief: dailyBrief.value,
     fcnRisk: fcnRisk.value,
     fcnSchedule: fcnSchedule.value,

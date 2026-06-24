@@ -103,4 +103,6 @@ V11.10 does not:
 
 ## Next Phase
 
-V11.20 Controlled Write Activation should enable explicit, guarded, staging-validated writes only after migration readiness, RLS, ownership isolation, and fallback behavior are confirmed.
+V11.20 Controlled Write Activation adds explicit write guards and readiness metadata. Writes remain disabled by default unless global and module-level guards are explicitly enabled, and diagnostics must not execute writes during render.
+
+V11.30 Remote Migration Readiness adds a dry-run migration review helper and manual operator checklist. Remote migration execution remains manual and outside the app.

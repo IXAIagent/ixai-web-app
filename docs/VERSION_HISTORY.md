@@ -4783,6 +4783,24 @@ Out of Scope:
 - Real portfolio / FCN data.
 - Trading features or investment advice.
 
+## V11.20/V11.30 — Database Cutover Program
+
+What Changed:
+
+- Added controlled database write activation guards for Portfolio, FCN, Watchlist, and Alert History.
+- Added V11 cutover status service combining guarded write readiness with remote migration readiness.
+- Added dry-run migration review helper: `scripts/v11-migration-readiness.mjs`.
+- Surfaced V11.20/V11.30 metadata in Workspace diagnostics, Platform Cutover diagnostics, Workspace Graph, and Integration Audit.
+- Added V11 cutover documentation.
+
+Key Boundaries:
+
+- No remote Supabase migration executed.
+- No `supabase db push`.
+- No product write cutover enabled by default.
+- No auth redirect, onboarding, RLS, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- Truth Layer, localStorage, FCN Draft Store, and deterministic alert fallback remain active.
+
 ## v1.65.0 — Pro Module Product Pages Redesign
 
 Why:

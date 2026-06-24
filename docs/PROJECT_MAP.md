@@ -358,3 +358,31 @@ Role:
 ## Naming Guidance
 
 Future agents should treat `frontend/ixai-website-clean` as a legacy reference project. If the folder is renamed later, `legacy-pro-dashboard` would be a clearer name, but no folder should be moved or deleted without explicit approval.
+
+## V11 Database Cutover Map
+
+New cutover layer:
+
+- `src/lib/workspace/database-cutover/`
+  - Controlled write guard.
+  - Controlled write readiness service.
+  - Remote migration readiness service.
+  - Consolidated V11 cutover status.
+- `scripts/v11-migration-readiness.mjs`
+  - Dry-run local migration/seed review helper.
+
+Diagnostics surfaces:
+
+- `components/workspace/workspace-v11-database-activation-status.tsx`
+- `components/workspace/workspace-database-activation-status.tsx`
+- `components/workspace/workspace-platform-cutover-status.tsx`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V11_DATABASE_CUTOVER_PROGRAM.md`
+- `docs/V1120_CONTROLLED_WRITE_ACTIVATION.md`
+- `docs/V1130_REMOTE_MIGRATION_READINESS.md`
+
+The V11 cutover layer must remain fallback-preserving and must not execute remote migrations or product writes from diagnostics.
