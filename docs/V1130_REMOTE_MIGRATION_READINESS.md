@@ -49,3 +49,23 @@ Validate table existence, basic select readback, RLS policy presence when applic
 - Migration execution remains manual.
 - Runtime still works when tables are absent.
 - Write activation remains guarded and disabled by default.
+
+## V11.40 Manual Migration Split
+
+V11.40 adds a production-safe manual SQL split under `supabase/manual/v11/`:
+
+- `01_create_new_workspace_tables.sql`
+- `02_add_nullable_workspace_columns.sql`
+- `03_create_indexes_concurrently.sql`
+- `04_enable_rls_and_policies.sql`
+- `05_post_migration_validation.sql`
+- `README.md`
+
+Safety adjustments:
+
+- New/missing tables are separated from existing table alterations.
+- Existing production tables receive nullable/additive columns only.
+- `portfolio_positions.source_status` and `portfolio_positions.metadata` are added nullable first to reduce lock/rewrite risk.
+- Production indexes use `CREATE INDEX CONCURRENTLY IF NOT EXISTS`.
+- RLS/policies are applied only to new V11 tables.
+- The manual runbook requires staging first, backup first, and keeping write guards disabled until validation passes.

@@ -4801,6 +4801,25 @@ Key Boundaries:
 - No auth redirect, onboarding, RLS, broker, trading, Binance/Yahoo, or AI recommendation changes.
 - Truth Layer, localStorage, FCN Draft Store, and deterministic alert fallback remain active.
 
+## V11.40 — Production-Safe Manual Migration Split
+
+What Changed:
+
+- Added `supabase/manual/v11/` with a five-phase manual SQL split and operator README.
+- Split new Workspace table creation from existing-table alterations.
+- Added nullable/additive Workspace columns to existing Portfolio / FCN / Stock / Crypto tables without `NOT NULL DEFAULT` on existing large tables.
+- Added concurrent index creation file with a clear no-transaction warning.
+- Added RLS/policy file scoped only to new V11 tables.
+- Added post-migration validation SQL for tables, columns, indexes, RLS, policies, foreign keys, row counts, and smoke selects.
+- Updated V11 docs to direct production operators toward the manual split instead of blind monolithic migration execution.
+
+Key Boundaries:
+
+- No SQL executed.
+- No remote Supabase migration executed.
+- No `supabase db push`.
+- No auth, broker, trading, Binance/Yahoo, AI recommendation, or write-guard activation changes.
+
 ## v1.65.0 — Pro Module Product Pages Redesign
 
 Why:
