@@ -2,6 +2,7 @@
 
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import {
+  normalizePersistedPosition,
   readFallbackRecentInputs,
   readLocalDraftPositions,
   readPersistedCryptoPositions,
@@ -14,6 +15,16 @@ import type {
   PortfolioPersistenceResult,
   PortfolioPersistenceWarning,
 } from "@/src/lib/portfolio/persistence/persistence-types";
+import {
+  readLiveCryptoPositions,
+  readLivePortfolioPositions,
+  readLiveStockPositions,
+} from "@/src/lib/persistence/portfolio";
+import {
+  getDatabaseReadPriorityMetadata,
+  hasArrayData,
+  resolveDatabaseReadPriority,
+} from "@/src/lib/workspace/database-read-priority";
 
 const DISCLAIMER =
   "Portfolio Persistence Layer is a canonical readback abstraction for monitoring and data organization only. It is not investment advice, broker sync, or trade execution.";
@@ -56,36 +67,89 @@ function warningFromPosition(
 
 export async function getPortfolioPersistenceSummary(): Promise<PortfolioPersistenceResult> {
   try {
-    const truth = await loadPortfolioTruthReadback();
-    const [stockPositions, cryptoPositions, fcnPositions] = await Promise.all([
-      readPersistedStockPositions(truth),
-      readPersistedCryptoPositions(truth),
-      readPersistedFcnPositions(truth),
-    ]);
-    const positions = dedupePositions([
-      ...stockPositions,
-      ...cryptoPositions,
-      ...fcnPositions,
-      ...readLocalDraftPositions(),
-      ...readFallbackRecentInputs(),
-    ]);
+    const priority = await resolveDatabaseReadPriority<PortfolioPersistedPosition[]>({
+      database: {
+        emptyData: [],
+        hasData: hasArrayData,
+        isDatabaseReady: (positions) => positions.length > 0,
+        read: async () => {
+          const [portfolio, stock, crypto] = await Promise.all([
+            readLivePortfolioPositions(),
+            readLiveStockPositions(),
+            readLiveCryptoPositions(),
+          ]);
+
+          return [
+            ...portfolio.positions,
+            ...stock.positions,
+            ...crypto.positions,
+          ].map((position) =>
+            normalizePersistedPosition({
+              assetClass: position.assetClass,
+              currency: position.currency,
+              id: position.id,
+              name: position.name,
+              notionalAmount: position.notionalAmount,
+              quantity: position.quantity,
+              sourceName: "database-live-readback",
+              sourceStatus: "persisted",
+              symbol: position.symbol,
+              updatedAt: position.updatedAt,
+            }),
+          );
+        },
+      },
+      local: {
+        emptyData: [],
+        hasData: hasArrayData,
+        read: () => [...readLocalDraftPositions(), ...readFallbackRecentInputs()],
+      },
+      truth: {
+        emptyData: [],
+        hasData: hasArrayData,
+        read: async () => {
+          const truth = await loadPortfolioTruthReadback();
+          const [stockPositions, cryptoPositions, fcnPositions] = await Promise.all([
+            readPersistedStockPositions(truth),
+            readPersistedCryptoPositions(truth),
+            readPersistedFcnPositions(truth),
+          ]);
+
+          return [...stockPositions, ...cryptoPositions, ...fcnPositions];
+        },
+      },
+    });
+    const positions = dedupePositions(priority.data);
     const positionWarnings = positions
       .map(warningFromPosition)
       .filter((warning): warning is PortfolioPersistenceWarning => Boolean(warning));
-    const truthWarnings = truth.missingDataWarnings.map((message, index) => ({
-      id: `truth-warning-${index}`,
-      message,
-      sourceName: "portfolio-truth-layer",
-      sourceStatus: "partial" as const,
-    }));
+    const priorityWarnings: PortfolioPersistenceWarning[] = [
+      {
+        id: "v10-read-priority",
+        message: `V10 read priority source: ${priority.source}; fallback active: ${priority.fallbackUsed ? "yes" : "no"}; database ready: ${priority.isDatabaseReady ? "yes" : "no"}.`,
+        sourceName: "database-read-priority",
+        sourceStatus: priority.fallbackUsed ? "partial" : positions.length > 0 ? "persisted" : "unavailable",
+      },
+      ...(priority.errorMessage
+        ? [
+            {
+              id: "v10-read-priority-error",
+              message: priority.errorMessage,
+              sourceName: "database-read-priority",
+              sourceStatus: "partial" as const,
+            },
+          ]
+        : []),
+    ];
     const summary = buildPortfolioPersistenceSummary({
       positions,
-      warnings: [...positionWarnings, ...truthWarnings],
+      warnings: [...positionWarnings, ...priorityWarnings],
     });
 
     return {
       generatedAt: new Date().toISOString(),
       informationalOnlyDisclaimer: DISCLAIMER,
+      readPriority: getDatabaseReadPriorityMetadata(priority),
       sourceStatus: summary.sourceStatus,
       summary,
     };

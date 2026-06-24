@@ -37,6 +37,7 @@ export interface WorkspaceWatchlistSummary {
   itemCount: number;
   items: WorkspaceWatchlistItemReadback[];
   quotedItemCount: number;
+  readPriority?: import("@/src/lib/workspace/database-read-priority").WorkspaceDatabaseReadPriorityMetadata;
   sourceStatus: WorkspaceWatchlistSourceStatus;
   unquotedItemCount: number;
 }

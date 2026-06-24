@@ -22,6 +22,7 @@ import {
   getWorkspaceDatabaseActivationReport,
   getWorkspaceSyncPlan,
 } from "@/src/lib/persistence/sync";
+import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import {
   getLiveWatchlistPersistenceReadiness,
   getWatchlistDatabaseActivationReadiness,
@@ -55,6 +56,7 @@ export function WorkspaceDatabaseActivationStatus() {
       liveAlerts,
       syncPlan,
       migrationHealth,
+      readPriority,
     ] = await Promise.all([
       getPortfolioDatabaseActivationReadiness(),
       getFcnDatabaseActivationReadiness(),
@@ -68,6 +70,7 @@ export function WorkspaceDatabaseActivationStatus() {
       getLiveAlertHistoryReadiness(),
       getWorkspaceSyncPlan(),
       getDatabaseMigrationHealthReport(),
+      getWorkspaceDatabaseReadPriorityStatus(),
     ]);
 
     setItems([
@@ -167,6 +170,14 @@ export function WorkspaceDatabaseActivationStatus() {
         summary: migrationHealth.informationalOnlyDisclaimer,
         warnings: migrationHealth.warnings,
       },
+      ...readPriority.items.map((item) => ({
+        label: `V10 ${item.label} Read Priority`,
+        migrationStatus: "not_applied",
+        runtimeRequired: false,
+        sourceStatus: item.source,
+        summary: item.statusText,
+        warnings: item.warning ? [item.warning] : [],
+      })),
     ]);
     setIsLoading(false);
   }
@@ -182,13 +193,13 @@ export function WorkspaceDatabaseActivationStatus() {
           <FeatureIcon icon={DatabaseZap} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              V9 Real Persistence
+              V10 Database Cutover
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Database live persistence diagnostics
+              Database read priority diagnostics
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Internal readiness for live database readback, guarded writes, ownership scope, sync planning, and migration health. Runtime fallback remains active.
+              Internal readiness for database-first readback, guarded writes, ownership scope, sync planning, migration health, and fallback preservation.
             </p>
           </div>
         </div>

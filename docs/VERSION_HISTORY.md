@@ -6,6 +6,31 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V10.10 — Database Read Priority
+
+Why:
+
+- V9 made live database readback guarded and visible, but Workspace modules still needed a canonical database-first priority order before any write-path cutover.
+
+What Changed:
+
+- Added `docs/V1010_DATABASE_READ_PRIORITY.md`.
+- Added the canonical read priority resolver under `src/lib/workspace/database-read-priority.ts`.
+- Added Workspace read-priority status metadata and a diagnostics component.
+- Updated Portfolio, FCN, Watchlist, and Alert History services to attempt database readback first, then fall back to Truth Layer or local/draft stores.
+- Surfaced source metadata in Workspace Home, Settings, Database Activation Status, Workspace Graph, and Integration Audit.
+
+Key Decisions:
+
+- Database remains optional.
+- Fallbacks remain intact.
+- V10.10 is read-priority only.
+- Write paths remain V9 guarded scaffolds.
+
+Out of Scope:
+
+- No migration execution, auth behavior changes, RLS changes, schema changes, write-path cutover, broker integration, trading logic, AI recommendation logic, or fallback removal.
+
 ## V9 — Real Persistence Program
 
 Why:

@@ -8,11 +8,17 @@ import {
 import {
   buildWorkspaceWatchlistSummary,
 } from "@/src/lib/watchlist/watchlist-engine";
+import { readLiveWatchlistItems } from "@/src/lib/watchlist/persistence";
 import type {
   WorkspaceWatchlistAssetType,
   WorkspaceWatchlistItem,
   WorkspaceWatchlistSummary,
 } from "@/src/lib/watchlist/watchlist-types";
+import {
+  getDatabaseReadPriorityMetadata,
+  hasArrayData,
+  resolveDatabaseReadPriority,
+} from "@/src/lib/workspace/database-read-priority";
 
 function normalizeSymbol(symbol: string) {
   return symbol.trim().toUpperCase();
@@ -80,13 +86,31 @@ function fallbackWatchlistItems(): WorkspaceWatchlistItem[] {
 }
 
 export async function getWorkspaceWatchlistSummary(): Promise<WorkspaceWatchlistSummary> {
-  const localItems = readLocalWatchlistItems();
-  const items = localItems.length > 0 ? localItems : fallbackWatchlistItems();
+  const priority = await resolveDatabaseReadPriority<WorkspaceWatchlistItem[]>({
+    database: {
+      emptyData: [],
+      hasData: hasArrayData,
+      isDatabaseReady: (items) => items.length > 0,
+      read: readLiveWatchlistItems,
+    },
+    local: {
+      emptyData: [],
+      hasData: hasArrayData,
+      read: () => {
+        const localItems = readLocalWatchlistItems();
+        return localItems.length > 0 ? localItems : fallbackWatchlistItems();
+      },
+    },
+  });
+  const items = priority.data;
   const quoteSymbols = Array.from(new Set(items.map(toQuoteSymbol).filter(Boolean)));
   const quotes = quoteSymbols.length > 0 ? await getMarketQuotes(quoteSymbols) : [];
 
-  return buildWorkspaceWatchlistSummary({
+  return {
+    ...buildWorkspaceWatchlistSummary({
     items,
     quotes,
-  });
+    }),
+    readPriority: getDatabaseReadPriorityMetadata(priority),
+  };
 }

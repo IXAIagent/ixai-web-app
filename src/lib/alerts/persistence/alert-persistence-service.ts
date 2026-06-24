@@ -1,16 +1,68 @@
 "use client";
 
 import { getWorkspaceAlertSummary } from "@/src/lib/alerts";
+import { getLiveAlertHistoryReadback } from "@/src/lib/alerts/persistence/alert-live-service";
 import { listPersistentAlertEvents } from "@/src/lib/alerts/persistence/alert-persistence-repository";
 import type {
   AlertPersistenceReadiness,
   AlertPersistenceSummary,
   PersistentAlertHistoryReadback,
 } from "@/src/lib/alerts/persistence/alert-persistence-types";
+import {
+  getDatabaseReadPriorityMetadata,
+  hasArrayData,
+  resolveDatabaseReadPriority,
+} from "@/src/lib/workspace/database-read-priority";
 
 export async function getPersistentAlertHistoryReadback(): Promise<PersistentAlertHistoryReadback> {
   try {
-    return listPersistentAlertEvents();
+    const priority = await resolveDatabaseReadPriority({
+      database: {
+        emptyData: [],
+        hasData: hasArrayData,
+        isDatabaseReady: (events) => events.length > 0,
+        read: async () => {
+          const readback = await getLiveAlertHistoryReadback();
+          return readback.alertEvents;
+        },
+      },
+      local: {
+        emptyData: [],
+        hasData: hasArrayData,
+        read: async () => {
+          const summary = await getWorkspaceAlertSummary();
+          return summary.alerts;
+        },
+      },
+      truth: {
+        emptyData: [],
+        hasData: hasArrayData,
+        read: async () => {
+          const readback = await listPersistentAlertEvents();
+          return readback.alertEvents;
+        },
+      },
+    });
+
+    return {
+      alertEvents: priority.data,
+      generatedAt: new Date().toISOString(),
+      readPriority: getDatabaseReadPriorityMetadata(priority),
+      sourceStatus:
+        priority.source === "database"
+          ? "persisted"
+          : priority.source === "truth"
+            ? "fallback"
+            : priority.source === "local"
+              ? "local"
+              : priority.source === "error"
+                ? "error"
+                : "unavailable",
+      warnings: [
+        `V10 read priority source: ${priority.source}; fallback active: ${priority.fallbackUsed ? "yes" : "no"}; database ready: ${priority.isDatabaseReady ? "yes" : "no"}.`,
+        ...(priority.errorMessage ? [priority.errorMessage] : []),
+      ],
+    };
   } catch {
     return {
       alertEvents: [],
@@ -23,21 +75,23 @@ export async function getPersistentAlertHistoryReadback(): Promise<PersistentAle
 
 export async function getAlertPersistenceSummary(): Promise<AlertPersistenceSummary> {
   try {
-    const alerts = await getWorkspaceAlertSummary();
+    const persistent = await getPersistentAlertHistoryReadback();
+    const persistedEvents = persistent.sourceStatus === "persisted" ? persistent.alertEvents.length : 0;
+    const localEvents = persistent.sourceStatus === "local" ? persistent.alertEvents.length : 0;
+    const fallbackEvents = persistent.sourceStatus === "fallback" ? persistent.alertEvents.length : 0;
 
     return {
-      alertEvents: alerts.alerts,
-      fallbackEvents: 0,
+      alertEvents: persistent.alertEvents,
+      fallbackEvents,
       generatedAt: new Date().toISOString(),
       informationalOnlyDisclaimer:
         "Alert persistence is a history foundation only. Delivery and recommendations are not implemented.",
-      localEvents: alerts.alertCount,
-      persistedEvents: 0,
-      sourceStatus: alerts.alertCount > 0 ? "local" : "unavailable",
-      totalEvents: alerts.alertCount,
-      warnings: [
-        "Future alert_events storage is planned, but no schema is required in V6.30.",
-      ],
+      localEvents,
+      persistedEvents,
+      readPriority: persistent.readPriority,
+      sourceStatus: persistent.sourceStatus,
+      totalEvents: persistent.alertEvents.length,
+      warnings: persistent.warnings,
     };
   } catch {
     return {
@@ -65,6 +119,7 @@ export async function getAlertPersistenceReadiness(): Promise<AlertPersistenceRe
     generatedAt: new Date().toISOString(),
     hasLocalFallback: summary.totalEvents > 0,
     persistedEventCount: persistent.alertEvents.length,
+    readPriority: persistent.readPriority,
     sourceStatus:
       persistent.alertEvents.length > 0
         ? "persisted"

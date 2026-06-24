@@ -17,6 +17,7 @@ import type { WorkspaceSyncReport } from "@/src/lib/persistence/sync";
 import type { WorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync/workspace-sync-activation-types";
 import type { WorkspaceSyncPlan } from "@/src/lib/persistence/sync/workspace-sync-plan-types";
 import type { MigrationHealthReport } from "@/src/lib/persistence/migrations";
+import type { WorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import type { WatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence";
 
 export type WorkspaceGraphSourceStatus =
@@ -33,6 +34,7 @@ export interface WorkspaceGraph {
   alerts: WorkspaceAlertSummary | null;
   alertPersistenceReadiness?: AlertPersistenceReadiness | null;
   databaseActivation?: WorkspaceDatabaseActivationReport | null;
+  databaseReadPriority?: WorkspaceDatabaseReadPriorityStatus | null;
   livePersistence?: {
     alerts?: string;
     fcn?: string;

@@ -22,6 +22,7 @@ import { getLiveWatchlistPersistenceReadiness } from "@/src/lib/watchlist/persis
 import { getDatabaseMigrationHealthReport } from "@/src/lib/persistence/migrations";
 import { getWorkspaceDatabaseActivationReport } from "@/src/lib/persistence/sync";
 import { checkWatchlistTablesReadiness, listPersistentWatchlistItems } from "@/src/lib/watchlist/persistence";
+import { resolveDatabaseReadPriority } from "@/src/lib/workspace/database-read-priority";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
 import { getWorkspaceApiGatewayStatus } from "@/src/lib/workspace/api/workspace-api-status";
@@ -729,6 +730,34 @@ export function auditV9RealPersistenceProgram(): ModuleAudit {
   };
 }
 
+export function auditV10DatabaseReadPriority(): ModuleAudit {
+  const moduleName = "V10 Database Read Priority";
+  const required = [functionAvailable(resolveDatabaseReadPriority)];
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: required,
+    warnings: true,
+  });
+
+  return {
+    issues: [
+      {
+        message:
+          "Database read priority is database-first and fallback-preserving. V10.10 does not execute migrations or cut over write paths.",
+        module: moduleName,
+        severity: "info",
+      },
+    ],
+    node: buildNode({
+      id: "v10-database-read-priority",
+      name: moduleName,
+      source: "Database live readback",
+      status,
+      target: "Truth Layer + local fallback consumers",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -764,6 +793,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV7AlertPersistenceFoundation(),
     auditV8DatabaseActivationDiagnostics(),
     auditV9RealPersistenceProgram(),
+    auditV10DatabaseReadPriority(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);
