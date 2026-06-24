@@ -25,6 +25,7 @@ import {
   getPortfolioPersistenceReadiness,
 } from "@/src/lib/persistence/portfolio";
 import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
+import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import {
   getLiveWatchlistPersistenceReadiness,
   getWatchlistPersistenceReadiness,
@@ -82,6 +83,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     liveWatchlistPersistence,
     liveAlertPersistence,
     migrationHealth,
+    databaseReadPriority,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -104,6 +106,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("Live Watchlist Persistence", getLiveWatchlistPersistenceReadiness),
     safeRead("Live Alert History", getLiveAlertHistoryReadiness),
     safeRead("Migration Health", getDatabaseMigrationHealthReport),
+    safeRead("Database Read Priority", getWorkspaceDatabaseReadPriorityStatus),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -127,6 +130,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     liveWatchlistPersistence.warning,
     liveAlertPersistence.warning,
     migrationHealth.warning,
+    databaseReadPriority.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -150,10 +154,12 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     liveWatchlistPersistence.value,
     liveAlertPersistence.value,
     migrationHealth.value,
+    databaseReadPriority.value,
   ].filter(Boolean).length;
 
   return {
     alerts: alerts.value,
+    databaseReadPriority: databaseReadPriority.value,
     dailyBrief: dailyBrief.value,
     fcnRisk: fcnRisk.value,
     fcnSchedule: fcnSchedule.value,

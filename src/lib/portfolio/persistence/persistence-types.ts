@@ -55,4 +55,5 @@ export interface PortfolioPersistenceResult {
   sourceStatus: PortfolioPersistenceSourceStatus;
   generatedAt: string;
   informationalOnlyDisclaimer: string;
+  readPriority?: import("@/src/lib/workspace/database-read-priority").WorkspaceDatabaseReadPriorityMetadata;
 }

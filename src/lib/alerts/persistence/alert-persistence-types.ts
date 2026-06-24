@@ -15,6 +15,7 @@ export interface AlertPersistenceSummary {
   informationalOnlyDisclaimer: string;
   localEvents: number;
   persistedEvents: number;
+  readPriority?: import("@/src/lib/workspace/database-read-priority").WorkspaceDatabaseReadPriorityMetadata;
   sourceStatus: AlertPersistenceSourceStatus;
   totalEvents: number;
   warnings: string[];
@@ -23,6 +24,7 @@ export interface AlertPersistenceSummary {
 export interface PersistentAlertHistoryReadback {
   alertEvents: WorkspaceAlertCard[];
   generatedAt: string;
+  readPriority?: import("@/src/lib/workspace/database-read-priority").WorkspaceDatabaseReadPriorityMetadata;
   sourceStatus: AlertPersistenceSourceStatus;
   warnings: string[];
 }
@@ -31,6 +33,7 @@ export interface AlertPersistenceReadiness {
   generatedAt: string;
   hasLocalFallback: boolean;
   persistedEventCount: number;
+  readPriority?: import("@/src/lib/workspace/database-read-priority").WorkspaceDatabaseReadPriorityMetadata;
   sourceStatus: AlertPersistenceSourceStatus;
   summary: string;
   warnings: string[];

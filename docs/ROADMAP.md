@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V9 / Real Persistence Program`
+`V10 / Database Cutover Program`
 
 ## Current Priority
 
@@ -63,6 +63,7 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V9_REAL_PERSISTENCE_PROGRAM.md` as the source of truth for V9 guarded live persistence.
 - Use `docs/V910_PORTFOLIO_LIVE_PERSISTENCE.md`, `docs/V920_FCN_LIVE_PERSISTENCE.md`, `docs/V930_WATCHLIST_LIVE_PERSISTENCE.md`, `docs/V940_ALERT_HISTORY_LIVE_PERSISTENCE.md`, `docs/V950_WORKSPACE_OWNERSHIP_ENFORCEMENT.md`, `docs/V960_WORKSPACE_SYNC_ENGINE.md`, and `docs/V970_MIGRATION_HEALTH_CHECK.md` as the V9 module-level source of truth.
 - Use `docs/V9_DATABASE_MIGRATION_HEALTH_CHECK.md` as the V9 migration health companion note.
+- Use `docs/V1010_DATABASE_READ_PRIORITY.md` as the source of truth for V10.10 database-first read priority across Portfolio, FCN, Watchlist, and Alert History.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -121,7 +122,8 @@ Current priority is UX / IA foundation before moving modules:
 - V6 Platformization Program has been merged into main and is complete.
 - V7 Data Persistence Program has been merged into main and is complete.
 - V8 Database Activation Program has been merged into main and is complete.
-- V9 Real Persistence Program is active. It adds guarded live readback services, readiness-gated write scaffolds, conservative ownership helpers, non-destructive sync planning, migration health diagnostics, and Settings visibility without applying migrations, requiring new tables at runtime, changing auth behavior, removing fallback behavior, adding broker integration, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, or payment.
+- V9 Real Persistence Program has been merged into main and is complete.
+- V10 Database Cutover Program is active. V10.10 starts database-first read priority while preserving Truth Layer and local/draft fallbacks. It does not apply migrations, change auth behavior, change RLS, change schema, cut over write paths, remove fallbacks, add broker integration, add trading logic, or add AI recommendation logic.
 - Establish Home, Portfolio Center, Risk Center, FCN Center, Intelligence Center, and Settings as the user-facing workspace architecture.
 - Preserve the rule that Legacy Pro is reference-only. Migrate selected concepts, not the whole legacy frontend or legacy auth shell.
 - Keep Social Pack as a distribution asset, not the core product engine.

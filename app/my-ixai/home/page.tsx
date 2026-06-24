@@ -28,6 +28,7 @@ import { WorkspaceInsightsSummary } from "@/components/insights/workspace-insigh
 import { IntelligenceSummary } from "@/components/intelligence/intelligence-summary";
 import { NotificationCenterSummary } from "@/components/notifications/notification-center-summary";
 import { WorkspaceHealthSummary } from "@/components/workspace/workspace-health-summary";
+import { WorkspaceDatabaseReadPriorityStatus } from "@/components/workspace/workspace-database-read-priority-status";
 import { WorkspaceTimelineSummary } from "@/components/workspace/workspace-timeline-summary";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -228,6 +229,8 @@ export default function MyIxaiHomePage() {
           </Link>
         </div>
       </section>
+
+      <WorkspaceDatabaseReadPriorityStatus />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

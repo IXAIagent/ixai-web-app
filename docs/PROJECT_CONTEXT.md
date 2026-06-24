@@ -64,7 +64,7 @@ Production foundation:
 
 Current development version:
 
-`V9 — Real Persistence Program`
+`V10 — Database Cutover Program`
 
 Current production state:
 
@@ -165,6 +165,8 @@ V8 introduces the Database Activation Program. It adds database adapter contract
 
 V9 introduces the Real Persistence Program. It adds guarded live database readback for Portfolio, FCN, Watchlist, and Alert History, conservative ownership helpers, non-destructive sync planning, migration health diagnostics, optional Workspace Graph / API metadata, and Settings diagnostics. V9 does not apply migrations automatically, require new tables at runtime, change auth behavior, remove local fallback, add broker integrations, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, payment, or public landing page redesign.
 
+V10 introduces the Database Cutover Program. V10.10 starts with database-first read priority for Portfolio, FCN, Watchlist, and Alert History, then falls back to the Truth Layer and local/draft stores. V10.10 does not apply migrations, change auth behavior, change RLS, change schema, cut over write paths, remove fallbacks, add broker integrations, trading execution, order routing, buy/sell/hold recommendation logic, AI model calls, payment, or public landing page redesign.
+
 Validated production behavior:
 
 - Portfolio creation succeeds in app.ixuan.ai.
@@ -207,7 +209,7 @@ Still not complete:
 
 Current Development Version:
 
-`V9 — Real Persistence Program`
+`V10 — Database Cutover Program`
 
 Current Core Flow:
 
@@ -264,6 +266,7 @@ Landing
 → Data Persistence Program adding repository foundations, ownership readiness, sync readiness, and schema draft docs
 → Database Activation Program adding safe table readiness checks, activation diagnostics, and draft-only schema activation docs
 → Real Persistence Program adding guarded live readback, sync planning, ownership scope helpers, and migration health diagnostics
+→ Database Cutover Program adding database-first read priority while preserving Truth Layer and local fallback
 ```
 
 Public Intelligence Funnel:
@@ -311,6 +314,7 @@ Product Layers:
 - Data Persistence Program: V7.0 adds typed repository foundations and readiness diagnostics for Portfolio, Ownership, Workspace Sync, FCN, Watchlist, and Alerts. It remains no-auth-change, no-applied-migration, no-broker, no-trading, no-recommendation, no-AI-model-call, and no-local-fallback-removal.
 - Database Activation Program: V8 adds database activation adapters and diagnostics while keeping migrations draft-only and runtime optional. It remains no-auth-change, no-applied-migration, no-runtime-table-requirement, no-broker, no-trading, no-recommendation, no-AI-model-call, and no-local-fallback-removal.
 - Real Persistence Program: V9 adds live persistence readback and diagnostics while keeping writes guarded, sync non-destructive, migrations unapplied, runtime table requirements optional, and local/draft/fallback behavior preserved.
+- Database Cutover Program: V10.10 adds database-first read priority while keeping migrations unapplied, auth/RLS/schema unchanged, write paths guarded, and fallbacks preserved.
 - Portfolio Intelligence Dashboard: v1.85 combines the existing FCN Risk and Intelligence layers into health score, status, risk distribution, and monitoring highlights on `/risk` and `/pro`.
 - Membership / Entitlement Foundation: v1.86 defines Free / Basic / Pro tiers, App entitlement fields, visible `/pro` guard, and Membership Status display on `/account` and `/pro`. Payment, pricing, and upgrade flow remain future work.
 - Multi-Asset Foundation: v1.87 introduces asset categories FCN / STOCK / CRYPTO / GRID / DUAL / CASH and additive dashboard fields for asset allocation summary, category counts, and portfolio asset categories.
