@@ -9,6 +9,7 @@ This program includes:
 - V11.20 Controlled Write Activation
 - V11.30 Remote Migration Readiness
 - V11.40 Production-Safe Manual Migration Split
+- V11.51 Index Compatibility Fix
 
 ## Scope
 
@@ -58,8 +59,10 @@ Guarded write validation
 - `supabase/manual/v11/01_create_new_workspace_tables.sql`
 - `supabase/manual/v11/02_add_nullable_workspace_columns.sql`
 - `supabase/manual/v11/03_create_indexes_concurrently.sql`
+- `supabase/manual/v11/03b_create_indexes_sql_editor_compatible.sql`
 - `supabase/manual/v11/04_enable_rls_and_policies.sql`
 - `supabase/manual/v11/05_post_migration_validation.sql`
+- `supabase/manual/v11/06_index_validation.sql`
 - `supabase/manual/v11/README.md`
 
 ## Boundaries
@@ -94,3 +97,22 @@ V11.40 converts the monolithic V11.10 migration draft into a manual production r
 5. Run read-only post-migration validation queries.
 
 No SQL is executed by this program. The manual split is an operator artifact only.
+
+## V11.51 Index Compatibility Fix
+
+During manual Supabase execution, Phase 03 failed in Supabase SQL Editor because `CREATE INDEX CONCURRENTLY` cannot run inside a transaction block. This was expected for SQL Editor execution and did not damage data.
+
+Confirmed production state after V11.50:
+
+- Phase 01 create workspace tables: succeeded.
+- Phase 02 add nullable workspace columns: succeeded.
+- Phase 04 enable RLS and policies: succeeded.
+- Phase 05 validation: succeeded.
+- New V11 workspace tables exist and currently contain 0 rows.
+
+V11.51 adds:
+
+- `03b_create_indexes_sql_editor_compatible.sql` using `CREATE INDEX IF NOT EXISTS` without `CONCURRENTLY`.
+- `06_index_validation.sql` for read-only index verification.
+
+For production/high-traffic tables, concurrent index creation remains preferred via `03_create_indexes_concurrently.sql` and a non-transaction runner. For the current IXAI state, the new Workspace tables are empty and existing tables are small/low-traffic enough for manual SQL Editor execution, but operators should still run during a quiet window.

@@ -800,12 +800,14 @@ V11 now separates database activation into three safe layers:
 - V11.20 adds controlled write activation guards for Portfolio, FCN, Watchlist, and Alert History.
 - V11.30 adds remote migration readiness review and a dry-run helper for the local migration draft.
 - V11.40 adds a production-safe manual SQL split under `supabase/manual/v11/` so operators can review and run create-table, nullable-column, concurrent-index, RLS, and validation phases separately.
+- V11.51 adds a Supabase SQL Editor-compatible index file because SQL Editor wraps execution in a transaction and cannot run `CREATE INDEX CONCURRENTLY`.
 
 Critical boundaries:
 
 - No remote Supabase migration is executed by the app.
 - No product write path is enabled by default.
 - The original monolithic V11.10 migration should not be run blindly against production; use the V11.40 manual split after staging validation.
+- `03_create_indexes_concurrently.sql` remains preferred for CLI / non-transaction execution, while `03b_create_indexes_sql_editor_compatible.sql` is the SQL Editor fallback and should run only during a quiet window.
 - Diagnostics do not write during render.
 - Truth Layer, localStorage, FCN Draft Store, and deterministic alert fallback remain active.
 - Broker integrations, Yahoo/Binance connections, trading logic, and AI recommendations remain out of scope.

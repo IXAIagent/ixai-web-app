@@ -4820,6 +4820,29 @@ Key Boundaries:
 - No `supabase db push`.
 - No auth, broker, trading, Binance/Yahoo, AI recommendation, or write-guard activation changes.
 
+## V11.51 — Index Compatibility Fix
+
+What Changed:
+
+- Added `supabase/manual/v11/03b_create_indexes_sql_editor_compatible.sql` for Supabase SQL Editor execution.
+- Added `supabase/manual/v11/06_index_validation.sql` for read-only index verification.
+- Updated V11 runbook and docs to explain why `CREATE INDEX CONCURRENTLY` failed in SQL Editor.
+
+Production Context:
+
+- V11.50 Phase 01, 02, 04, and 05 succeeded in production Supabase.
+- Phase 03 failed because Supabase SQL Editor wraps execution in a transaction.
+- No data was damaged.
+- New V11 Workspace tables currently contain 0 rows.
+
+Key Boundaries:
+
+- No SQL executed by Codex.
+- No remote migration executed by Codex.
+- No app runtime behavior changed.
+- No database writes enabled.
+- Concurrent index creation remains preferred for CLI / non-transaction execution and high-traffic production tables.
+
 ## v1.65.0 — Pro Module Product Pages Redesign
 
 Why:
