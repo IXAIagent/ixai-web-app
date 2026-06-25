@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Program B V21-V24 — Live Platform Readiness
+
+Why:
+
+- Program A established product-layer foundations. IXAI now needs explicit readiness contracts for live providers, future quote snapshots, broker integration, and risk automation before any live/external integration is considered.
+
+What Changed:
+
+- Added `docs/PROGRAM_B_LIVE_PLATFORM_READINESS.md`.
+- Added V21 live provider readiness contracts under `src/lib/market-data/live-provider-readiness/`.
+- Added V22 valuation readiness contracts under `src/lib/valuation/`.
+- Added V23 broker integration foundation under `src/lib/broker/`.
+- Added V24 risk automation readiness under `src/lib/risk/automation-readiness/`.
+- Added Program B diagnostics to Home, Settings, Workspace Graph, and Integration Audit.
+
+Key Decisions:
+
+- Program B is readiness-only and read-only.
+- Yahoo, Binance, Futu, IBKR, broker live API, external fetch, scheduler, sender, AI, trading, and DB write paths remain disabled.
+
+Out of Scope:
+
+- No DB writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes, external fetch, broker live API, Telegram, scheduler/cron, notification sender, OpenAI/LLM calls, AI recommendations, trading/order execution, buy/sell/rebalance/action instructions, Stripe/billing, or entitlement enforcement.
+
 ## Program A V17-V20 — Product Layer Acceleration
 
 Why:

@@ -927,3 +927,20 @@ Critical boundaries:
 
 - Program A performs no database writes and does not mutate Supabase.
 - No SQL, migrations, schema/RLS/auth/membership changes, Yahoo, Binance, broker, Telegram, scheduler, OpenAI, AI recommendation, trading, order execution, billing provider, or subscription enforcement are introduced.
+
+## P. Program B V21-V24 Live Platform Context
+
+Program B prepares IXAI for future live platform integrations while keeping every live/external action disabled.
+
+Implemented scope:
+
+- V21 adds live market provider readiness under `src/lib/market-data/live-provider-readiness/`.
+- V22 adds future valuation snapshot readiness under `src/lib/valuation/`.
+- V23 adds broker interface readiness under `src/lib/broker/`.
+- V24 adds risk automation readiness under `src/lib/risk/automation-readiness/`.
+- Workspace Home, Settings, Workspace Graph, and Integration Audit expose Program B metadata.
+
+Critical boundaries:
+
+- Program B performs no database writes and does not mutate Supabase.
+- No external fetch, Yahoo/Binance/Futu/IBKR live API, broker live API, position sync, scheduler, notification sender, Telegram, OpenAI/LLM, AI recommendation, trading, order execution, SQL, migration, schema/RLS/auth/membership change, billing provider, or entitlement enforcement is introduced.

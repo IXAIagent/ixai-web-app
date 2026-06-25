@@ -591,3 +591,38 @@ Documentation:
 - `docs/V2000_SAAS_FOUNDATION_READINESS.md`
 
 Program A is read-only. It does not add DB writes, SQL, migrations, schema/RLS/auth/membership changes, Yahoo, Binance, broker, Telegram, scheduler, OpenAI/AI calls, trading, recommendations, billing provider, or subscription enforcement.
+
+## Program B V21-V24 Live Platform Map
+
+New read-only readiness layers:
+
+- `src/lib/market-data/live-provider-readiness/`
+  - V21 provider config, health, quote request/response, cache policy, and disabled provider status.
+- `src/lib/valuation/`
+  - V22 valuation input, future portfolio valuation snapshot, FCN underlying valuation readiness, and missing/stale/manual quote states.
+- `src/lib/broker/`
+  - V23 broker provider interface, manual broker placeholder, account snapshot, sync readiness, and trading-disabled diagnostics.
+- `src/lib/risk/automation-readiness/`
+  - V24 risk rule, trigger, alert-evaluation, snapshot-comparison, and automation diagnostics.
+
+New / updated UI surfaces:
+
+- `components/workspace/program-b-live-platform-status.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+
+Workspace metadata:
+
+- `src/lib/workspace/graph/workspace-graph-types.ts`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/PROGRAM_B_LIVE_PLATFORM_READINESS.md`
+- `docs/V2100_MARKET_DATA_LIVE_PROVIDER_READINESS.md`
+- `docs/V2200_PORTFOLIO_LIVE_VALUATION_READINESS.md`
+- `docs/V2300_BROKER_INTEGRATION_FOUNDATION.md`
+- `docs/V2400_RISK_AUTOMATION_READINESS.md`
+
+Program B is readiness-only. It does not add DB writes, SQL, migrations, schema/RLS/auth/membership changes, external fetch, Yahoo/Binance/Futu/IBKR live APIs, broker live API, Telegram, scheduler, notification sender, OpenAI/LLM calls, trading, recommendations, billing provider, or entitlement enforcement.
