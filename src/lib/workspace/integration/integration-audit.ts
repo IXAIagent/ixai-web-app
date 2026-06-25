@@ -11,6 +11,10 @@ import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio
 import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
 import { buildMorningBrief } from "@/src/lib/morning-brief/brief-engine";
 import { buildMorningNewsPlaceholder } from "@/src/lib/morning-brief/brief-news-placeholder";
+import { buildMarketDataSnapshot } from "@/src/lib/market-data";
+import { buildMorningMarketDataSummary } from "@/src/lib/morning-brief/brief-market-data-adapter";
+import { buildIntelligenceV2Report } from "@/src/lib/intelligence/v2";
+import { getSaasFoundationReadiness } from "@/src/lib/saas-foundation";
 import { buildLegacyFcnRiskSummary } from "@/src/lib/risk/legacy-risk-engine/fcn-risk-engine";
 import { buildLegacyPortfolioRiskSummary } from "@/src/lib/risk/legacy-risk-engine/portfolio-risk-engine";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
@@ -1044,6 +1048,138 @@ export function auditV16MorningBriefEngine(): ModuleAudit {
   };
 }
 
+export function auditV17MarketDataProviderFoundation(): ModuleAudit {
+  const moduleName = "V17 Market Data Provider Foundation";
+  const marketDataAvailable = functionAvailable(buildMarketDataSnapshot);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [marketDataAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: marketDataAvailable,
+        exportName: "buildMarketDataSnapshot",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V17.00 creates provider contracts and a manual placeholder provider only. Yahoo, Binance, broker, and external market APIs remain disabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v17-market-data-provider-foundation",
+      name: moduleName,
+      source: "Manual placeholder provider + provider interface",
+      status,
+      target: "Morning Brief / Intelligence v2 / future provider integration",
+    }),
+  };
+}
+
+export function auditV18MorningBriefLiveDataReadiness(): ModuleAudit {
+  const moduleName = "V18 Morning Brief Live Data Readiness";
+  const adapterAvailable = functionAvailable(buildMorningMarketDataSummary);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [adapterAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: adapterAvailable,
+        exportName: "buildMorningMarketDataSummary",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V18.00 allows Morning Brief to accept V17 market snapshot metadata while live external feeds remain disabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v18-morning-brief-live-data-readiness",
+      name: moduleName,
+      source: "V16 Morning Brief + V17 Market Data Snapshot",
+      status,
+      target: "Home Morning Brief preview + future delivery surfaces",
+    }),
+  };
+}
+
+export function auditV19IntelligenceCenterV2Foundation(): ModuleAudit {
+  const moduleName = "V19 Intelligence Center v2 Foundation";
+  const intelligenceAvailable = functionAvailable(buildIntelligenceV2Report);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [intelligenceAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: intelligenceAvailable,
+        exportName: "buildIntelligenceV2Report",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V19.00 is deterministic and read-only. It does not add external LLM calls, AI recommendations, broker actions, or trading instructions.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v19-intelligence-center-v2-foundation",
+      name: moduleName,
+      source: "V15 Risk + V16 Morning Brief + V17 Market Data placeholder",
+      status,
+      target: "Intelligence Center",
+    }),
+  };
+}
+
+export function auditV20SaasFoundationReadiness(): ModuleAudit {
+  const moduleName = "V20 SaaS Foundation Readiness";
+  const saasAvailable = functionAvailable(getSaasFoundationReadiness);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [saasAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: saasAvailable,
+        exportName: "getSaasFoundationReadiness",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V20.00 adds SaaS readiness metadata only. Billing provider, subscription enforcement, auth changes, and schema changes remain disabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v20-saas-foundation-readiness",
+      name: moduleName,
+      source: "Plan / usage / subscription / team readiness metadata",
+      status,
+      target: "Settings diagnostics + future SaaS platform work",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -1088,6 +1224,10 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV14FcnDatabaseActivation(),
     auditV15LegacyRiskEngineMigration(),
     auditV16MorningBriefEngine(),
+    auditV17MarketDataProviderFoundation(),
+    auditV18MorningBriefLiveDataReadiness(),
+    auditV19IntelligenceCenterV2Foundation(),
+    auditV20SaasFoundationReadiness(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

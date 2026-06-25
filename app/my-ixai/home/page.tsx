@@ -32,6 +32,7 @@ import { LegacyRiskEngineStatus } from "@/components/risk/legacy-risk-engine-sta
 import { WorkspaceHealthSummary } from "@/components/workspace/workspace-health-summary";
 import { WorkspaceDatabaseReadPriorityStatus } from "@/components/workspace/workspace-database-read-priority-status";
 import { WorkspacePlatformCutoverStatus } from "@/components/workspace/workspace-platform-cutover-status";
+import { ProgramAProductLayerStatus } from "@/components/workspace/program-a-product-layer-status";
 import { WorkspaceTimelineSummary } from "@/components/workspace/workspace-timeline-summary";
 import { WorkspaceV11DatabaseActivationStatus } from "@/components/workspace/workspace-v11-database-activation-status";
 import { WorkspaceV12DatabaseWriteActivationStatus } from "@/components/workspace/workspace-v12-database-write-activation-status";
@@ -252,6 +253,8 @@ export default function MyIxaiHomePage() {
       <LegacyRiskEngineStatus compact />
 
       <MorningBriefStatus compact />
+
+      <ProgramAProductLayerStatus compact />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

@@ -27,6 +27,11 @@ export function buildMorningSnapshot(brief: MorningBrief): MorningSnapshot {
         summary: `${brief.fcnSummary.criticalCount} critical, ${brief.fcnSummary.highRiskCount} high, ${brief.fcnSummary.insufficientDataCount} insufficient-data.`,
       },
       {
+        label: "Market Data",
+        sourceStatus: brief.marketDataSummary.sourceStatus,
+        summary: `${brief.marketDataSummary.quoteCount} placeholder quote(s), provider ${brief.marketDataSummary.providerStatus}.`,
+      },
+      {
         label: "News",
         sourceStatus: brief.newsSummary.sourceStatus,
         summary: "News provider not configured in V16.",

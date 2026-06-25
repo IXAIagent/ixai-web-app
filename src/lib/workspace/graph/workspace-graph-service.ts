@@ -7,6 +7,9 @@ import { getWorkspaceFcnScheduleSummary } from "@/src/lib/fcn/schedule";
 import { getWorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-service";
 import { getMarketReadiness } from "@/src/lib/market/market-service";
 import { getWorkspaceMorningSnapshot } from "@/src/lib/morning-brief";
+import { buildMarketDataSnapshot } from "@/src/lib/market-data";
+import { getWorkspaceIntelligenceV2Report } from "@/src/lib/intelligence/v2";
+import { getSaasFoundationReadiness } from "@/src/lib/saas-foundation";
 import { getWorkspacePortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
@@ -100,6 +103,9 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v14FcnDatabaseActivation,
     legacyRiskEngine,
     morningBriefEngine,
+    marketDataFoundation,
+    intelligenceV2Foundation,
+    saasFoundation,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -131,6 +137,9 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("V14 FCN Database Activation", getV14FcnWriteDiagnostics),
     safeRead("V15 Legacy Risk Engine Migration", getWorkspaceLegacyRiskEngineSnapshot),
     safeRead("V16 Morning Brief Engine", getWorkspaceMorningSnapshot),
+    safeRead("V17 Market Data Provider Foundation", () => buildMarketDataSnapshot()),
+    safeRead("V19 Intelligence Center v2 Foundation", getWorkspaceIntelligenceV2Report),
+    safeRead("V20 SaaS Foundation Readiness", getSaasFoundationReadiness),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -163,6 +172,9 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v14FcnDatabaseActivation.warning,
     legacyRiskEngine.warning,
     morningBriefEngine.warning,
+    marketDataFoundation.warning,
+    intelligenceV2Foundation.warning,
+    saasFoundation.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -195,6 +207,9 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v14FcnDatabaseActivation.value,
     legacyRiskEngine.value,
     morningBriefEngine.value,
+    marketDataFoundation.value,
+    intelligenceV2Foundation.value,
+    saasFoundation.value,
   ].filter(Boolean).length;
 
   return {
@@ -212,7 +227,10 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     generatedAt: new Date().toISOString(),
     intelligence: intelligence.value,
     marketStatus: marketStatus.value,
+    marketDataFoundation: marketDataFoundation.value,
     morningBriefEngine: morningBriefEngine.value,
+    intelligenceV2Foundation: intelligenceV2Foundation.value,
+    saasFoundation: saasFoundation.value,
     livePersistence: {
       alerts: liveAlertPersistence.value?.sourceStatus,
       fcn: liveFcnPersistence.value?.sourceStatus,

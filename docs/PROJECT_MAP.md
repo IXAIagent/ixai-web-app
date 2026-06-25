@@ -554,3 +554,40 @@ Documentation:
 - `docs/V1600_MORNING_BRIEF_ENGINE.md`
 
 V16 uses V15 Legacy Risk Engine output rather than recalculating another risk engine. It does not add DB writes, SQL, migrations, scheduler, Telegram, Yahoo, Binance, broker, trading, or AI recommendation logic.
+
+## Program A V17-V20 Product Layer Map
+
+New read-only product-layer foundations:
+
+- `src/lib/market-data/`
+  - V17 provider interface, manual placeholder provider, provider registry, market data snapshot, and diagnostics.
+- `src/lib/morning-brief/brief-market-data-adapter.ts`
+  - V18 Morning Brief market-data snapshot adapter.
+- `src/lib/intelligence/v2/`
+  - V19 deterministic Intelligence Center v2 context, adapters, diagnostics, and safety flags.
+- `src/lib/saas-foundation/`
+  - V20 plan, subscription, usage, team, and SaaS readiness metadata.
+
+New / updated UI surfaces:
+
+- `components/workspace/program-a-product-layer-status.tsx`
+- `components/intelligence/intelligence-v2-summary.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+- `components/intelligence/intelligence-center-workspace.tsx`
+
+Workspace metadata:
+
+- `src/lib/workspace/graph/workspace-graph-types.ts`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/PROGRAM_A_V17_V20_PRODUCT_LAYER.md`
+- `docs/V1700_MARKET_DATA_PROVIDER_FOUNDATION.md`
+- `docs/V1800_MORNING_BRIEF_LIVE_DATA_READINESS.md`
+- `docs/V1900_INTELLIGENCE_CENTER_V2_FOUNDATION.md`
+- `docs/V2000_SAAS_FOUNDATION_READINESS.md`
+
+Program A is read-only. It does not add DB writes, SQL, migrations, schema/RLS/auth/membership changes, Yahoo, Binance, broker, Telegram, scheduler, OpenAI/AI calls, trading, recommendations, billing provider, or subscription enforcement.

@@ -910,3 +910,20 @@ Critical boundaries:
 - V16 does not add SQL, migrations, scheduler, Telegram bot, Yahoo, Binance, OpenAI/AI calls, broker sync, trading, order execution, or recommendations.
 - News remains placeholder-only until a future approved provider sprint.
 - Missing Portfolio / Risk / FCN data returns warning, partial, placeholder, or insufficient-data states instead of crashing.
+
+## O. Program A V17-V20 Product Layer Context
+
+Program A accelerates the product layer without opening external side effects.
+
+Implemented scope:
+
+- V17 adds `src/lib/market-data/` provider contracts, manual placeholder provider, registry metadata, and market data diagnostics.
+- V18 extends Morning Brief with market-data snapshot readiness while keeping News placeholder-only.
+- V19 adds deterministic Intelligence Center v2 context and safety flags with no LLM or recommendation logic.
+- V20 adds SaaS readiness metadata for future plans, usage, subscription, and team workspace work.
+- Workspace Home, Settings, Intelligence Center, Workspace Graph, and Integration Audit expose Program A metadata.
+
+Critical boundaries:
+
+- Program A performs no database writes and does not mutate Supabase.
+- No SQL, migrations, schema/RLS/auth/membership changes, Yahoo, Binance, broker, Telegram, scheduler, OpenAI, AI recommendation, trading, order execution, billing provider, or subscription enforcement are introduced.

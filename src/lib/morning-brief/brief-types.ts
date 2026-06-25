@@ -1,4 +1,5 @@
 import type { LegacyRiskEngineSnapshot, LegacyRiskLevel, LegacyRiskSourceStatus } from "@/src/lib/risk/legacy-risk-engine";
+import type { MarketDataSnapshot } from "@/src/lib/market-data";
 
 export type MorningBriefSourceStatus =
   | "ready"
@@ -68,6 +69,17 @@ export type MorningBriefNewsSummary = {
   status: "not_configured";
 };
 
+export type MorningBriefMarketDataSummary = {
+  dataQuality: string;
+  liveExternalFeedEnabled: false;
+  manualProviderSnapshotSupported: true;
+  providerStatus: string;
+  quoteCount: number;
+  source: string;
+  sourceStatus: MorningBriefSourceStatus;
+  warnings: string[];
+};
+
 export type MorningBriefDataQuality = {
   sourceStatus: MorningBriefSourceStatus;
   warnings: MorningBriefWarning[];
@@ -80,6 +92,10 @@ export type MorningBriefDiagnostics = {
   externalApiCallsEnabled: false;
   fcnSource: string;
   generatedAt: string;
+  liveExternalFeedEnabled: false;
+  marketDataInputSupported: true;
+  marketDataSource: string;
+  manualProviderSnapshotSupported: true;
   newsPlaceholderOnly: true;
   newsSource: string;
   phase: "V16_MORNING_BRIEF_ENGINE";
@@ -97,6 +113,7 @@ export type MorningBrief = {
   diagnostics: MorningBriefDiagnostics;
   fcnSummary: MorningBriefFcnSummary;
   limitations: string[];
+  marketDataSummary: MorningBriefMarketDataSummary;
   newsSummary: MorningBriefNewsSummary;
   portfolioSummary: MorningBriefPortfolioSummary;
   riskSummary: MorningBriefRiskSummary;
@@ -118,6 +135,7 @@ export type MorningSnapshot = {
 
 export type BuildMorningBriefInput = {
   legacyRiskSnapshot: LegacyRiskEngineSnapshot | null;
+  marketDataSnapshot?: MarketDataSnapshot | null;
 };
 
 export function mapLegacyStatus(status: LegacyRiskSourceStatus): MorningBriefSourceStatus {

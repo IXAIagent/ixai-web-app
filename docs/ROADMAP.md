@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V13.00 / Portfolio Database Write Activation`
+`Program A / V17-V20 Product Layer Acceleration`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is guarded Portfolio / Stock / Crypto database write activation while preserving Truth Layer and local fallback:
+Current priority is Program A product-layer acceleration while preserving read-only safety boundaries:
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
@@ -70,6 +70,13 @@ Current priority is guarded Portfolio / Stock / Crypto database write activation
 - Use `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md` as the source of truth for V12 guarded Watchlist / Alert History writes, read-only diagnostics, and disabled Portfolio / FCN write paths.
 - Use `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md` as the source of truth for V13 guarded Portfolio / Stock / Crypto writes, local-first input submit, database-first readback priority, and FCN write deferral to V14.
 - Use `docs/V1400_FCN_DATABASE_ACTIVATION.md` as the source of truth for V14 guarded FCN writes, Draft Store / Truth Layer fallback preservation, and disabled-by-default FCN database activation.
+- Use `docs/V1500_LEGACY_RISK_ENGINE_MIGRATION.md` as the source of truth for V15 read-only legacy risk concepts, Portfolio risk, FCN worst-of / KI / KO / strike distance, concentration, and exposure diagnostics.
+- Use `docs/V1600_MORNING_BRIEF_ENGINE.md` as the source of truth for V16 read-only Morning Brief Engine, Portfolio/Risk/FCN adapters, News Placeholder, and Morning Snapshot.
+- Use `docs/PROGRAM_A_V17_V20_PRODUCT_LAYER.md` as the source of truth for Program A.
+- Use `docs/V1700_MARKET_DATA_PROVIDER_FOUNDATION.md` as the source of truth for V17 market data provider contracts and manual placeholder snapshots.
+- Use `docs/V1800_MORNING_BRIEF_LIVE_DATA_READINESS.md` as the source of truth for V18 Morning Brief market-data snapshot readiness.
+- Use `docs/V1900_INTELLIGENCE_CENTER_V2_FOUNDATION.md` as the source of truth for V19 deterministic Intelligence Center v2 context.
+- Use `docs/V2000_SAAS_FOUNDATION_READINESS.md` as the source of truth for V20 SaaS readiness metadata.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -2592,4 +2599,26 @@ Out of scope:
 
 Next:
 
-- V17 Market Data Provider.
+- Program A: V17 Market Data Provider Foundation, V18 Morning Brief Live Data Readiness, V19 Intelligence Center v2 Foundation, and V20 SaaS Foundation Readiness.
+
+## Program A: V17-V20 Product Layer Acceleration
+
+Status:
+
+- V16 Morning Brief Engine Migration: completed / merged into main.
+- Program A V17-V20 Product Layer Acceleration: active in `feature/program-a-v17-v20-product-layer`.
+
+Direction:
+
+- Add read-only product-layer foundations for market data contracts, Morning Brief live-data readiness, Intelligence v2, and SaaS readiness.
+- Keep all external providers disabled.
+- Surface Program A diagnostics in Workspace Home, Settings, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- Database writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes.
+- Yahoo, Binance, broker, Telegram, scheduler, external news, OpenAI, AI recommendations, trading, order execution, buy/sell/rebalance instructions, billing provider, or subscription enforcement.
+
+Next:
+
+- Program B: provider/broker readiness decisions, controlled live integrations, portfolio sync, and advanced risk automation after separate review.

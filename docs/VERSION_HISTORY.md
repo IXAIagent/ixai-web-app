@@ -6,6 +6,31 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Program A V17-V20 — Product Layer Acceleration
+
+Why:
+
+- V16 created the Morning Brief Engine, but IXAI needs product-layer contracts for market data, Morning Brief live-data readiness, Intelligence v2, and SaaS readiness before any external provider or platform cutover work.
+
+What Changed:
+
+- Added `docs/PROGRAM_A_V17_V20_PRODUCT_LAYER.md`.
+- Added V17 `src/lib/market-data/` provider contracts, manual placeholder provider, snapshots, and diagnostics.
+- Extended V16 Morning Brief with V18 market-data summary input while keeping News placeholder-only.
+- Added V19 deterministic Intelligence Center v2 foundation and preview UI.
+- Added V20 SaaS readiness metadata for plans, usage, subscriptions, and teams.
+- Added Program A diagnostics to Home, Settings, Workspace Graph, and Integration Audit.
+
+Key Decisions:
+
+- Program A is foundation/readiness only.
+- External provider, AI, broker, billing, scheduler, Telegram, trading, and DB write paths remain disabled.
+- Existing legacy market-data provider modules are not imported or re-exported by Program A's V17 manual provider path.
+
+Out of Scope:
+
+- No DB writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes, Yahoo, Binance, broker, Telegram, scheduler, OpenAI/AI calls, trading/order execution, buy/sell/rebalance instructions, investment recommendations, billing provider, or subscription enforcement.
+
 ## V16.00 — Morning Brief Engine
 
 Why:

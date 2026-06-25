@@ -1,5 +1,6 @@
 import { buildMorningBriefDiagnostics } from "@/src/lib/morning-brief/brief-diagnostics";
 import { buildMorningFcnSummary } from "@/src/lib/morning-brief/brief-fcn-adapter";
+import { buildMorningMarketDataSummary } from "@/src/lib/morning-brief/brief-market-data-adapter";
 import { buildMorningNewsPlaceholder } from "@/src/lib/morning-brief/brief-news-placeholder";
 import { buildMorningPortfolioSummary } from "@/src/lib/morning-brief/brief-portfolio-adapter";
 import { buildMorningRiskSummary } from "@/src/lib/morning-brief/brief-risk-adapter";
@@ -14,6 +15,7 @@ const LIMITATIONS = [
   "News is a placeholder; no external news provider is connected.",
   "No Telegram bot, scheduler, broker, trading, or AI recommendation logic is included.",
   "Risk, Portfolio, and FCN sections reuse V15 Legacy Risk Engine readback.",
+  "Market data input is supported through V17 manual placeholder snapshots only.",
 ];
 
 function buildDateKey() {
@@ -25,7 +27,12 @@ function buildDateKey() {
   }).format(new Date());
 }
 
-function collectWarnings(input: Pick<MorningBrief, "fcnSummary" | "newsSummary" | "portfolioSummary" | "riskSummary">) {
+type MorningBriefWarningInput = Pick<
+  MorningBrief,
+  "fcnSummary" | "marketDataSummary" | "newsSummary" | "portfolioSummary" | "riskSummary"
+>;
+
+function collectWarnings(input: MorningBriefWarningInput) {
   const warnings: MorningBriefWarning[] = [...input.riskSummary.warnings];
 
   if (input.portfolioSummary.sourceStatus !== "ready") {
@@ -52,6 +59,14 @@ function collectWarnings(input: Pick<MorningBrief, "fcnSummary" | "newsSummary" 
     });
   }
 
+  if (input.marketDataSummary.sourceStatus !== "ready") {
+    warnings.push({
+      message: `Market data source status is ${input.marketDataSummary.sourceStatus}.`,
+      severity: "info",
+      source: "Market Data Adapter",
+    });
+  }
+
   return warnings;
 }
 
@@ -60,8 +75,10 @@ export function buildMorningBrief(input: BuildMorningBriefInput): MorningBrief {
   const riskSummary = buildMorningRiskSummary(input.legacyRiskSnapshot);
   const fcnSummary = buildMorningFcnSummary(input.legacyRiskSnapshot);
   const newsSummary = buildMorningNewsPlaceholder();
+  const marketDataSummary = buildMorningMarketDataSummary(input.marketDataSnapshot);
   const warnings = collectWarnings({
     fcnSummary,
+    marketDataSummary,
     newsSummary,
     portfolioSummary,
     riskSummary,
@@ -81,6 +98,7 @@ export function buildMorningBrief(input: BuildMorningBriefInput): MorningBrief {
     diagnostics: buildMorningBriefDiagnostics(),
     fcnSummary,
     limitations: LIMITATIONS,
+    marketDataSummary,
     newsSummary,
     portfolioSummary,
     riskSummary,
