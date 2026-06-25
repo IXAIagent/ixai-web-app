@@ -21,8 +21,6 @@ export async function listPersistentAlertEvents(): Promise<PersistentAlertHistor
     alertEvents: [],
     generatedAt: new Date().toISOString(),
     sourceStatus: "unavailable",
-    warnings: [
-      "Persistent alert_events table is a schema draft only in V7.60.",
-    ],
+    warnings: ["Persistent alert_history table is optional; deterministic fallback remains active."],
   };
 }

@@ -386,3 +386,34 @@ Documentation:
 - `docs/V1130_REMOTE_MIGRATION_READINESS.md`
 
 The V11 cutover layer must remain fallback-preserving and must not execute remote migrations or product writes from diagnostics.
+
+## V12 Workspace Database Write Activation Map
+
+New activation layer:
+
+- `src/lib/workspace/database-write-activation/`
+  - V12 write guard metadata.
+  - Workspace bootstrap helper.
+  - Guarded Watchlist write service.
+  - Guarded Alert History write service.
+  - Consolidated V12 diagnostics service.
+
+Diagnostics surfaces:
+
+- `components/workspace/workspace-v12-database-write-activation-status.tsx`
+- `components/workspace/workspace-database-activation-status.tsx`
+- `components/workspace/workspace-platform-cutover-status.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Persistence table alignment:
+
+- Watchlist writes target `watchlists` and `watchlist_items`.
+- Alert History reads and guarded writes target `alert_history`.
+- Portfolio and FCN write paths are still disabled/readiness-only.
+
+Documentation:
+
+- `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md`

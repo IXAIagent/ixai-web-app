@@ -28,6 +28,7 @@ import { getWorkspaceOwnershipStatus } from "@/src/lib/persistence/ownership";
 import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
+import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -90,6 +91,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     platformCutover,
     v11DatabaseActivation,
     v11DatabaseCutover,
+    v12DatabaseWriteActivation,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -116,6 +118,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("Platform Cutover", getWorkspacePlatformCutoverStatus),
     safeRead("V11 Database Activation", getV11DatabaseActivationReport),
     safeRead("V11 Database Cutover", getV11DatabaseCutoverStatus),
+    safeRead("V12 Database Write Activation", getV12DatabaseWriteActivationStatus),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -143,6 +146,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     platformCutover.warning,
     v11DatabaseActivation.warning,
     v11DatabaseCutover.warning,
+    v12DatabaseWriteActivation.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -170,6 +174,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     platformCutover.value,
     v11DatabaseActivation.value,
     v11DatabaseCutover.value,
+    v12DatabaseWriteActivation.value,
   ].filter(Boolean).length;
 
   return {
@@ -177,6 +182,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     databaseReadPriority: databaseReadPriority.value,
     v11DatabaseActivation: v11DatabaseActivation.value,
     v11DatabaseCutover: v11DatabaseCutover.value,
+    v12DatabaseWriteActivation: v12DatabaseWriteActivation.value,
     dailyBrief: dailyBrief.value,
     fcnRisk: fcnRisk.value,
     fcnSchedule: fcnSchedule.value,

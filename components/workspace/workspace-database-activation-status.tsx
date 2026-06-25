@@ -25,6 +25,7 @@ import {
 import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
+import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -63,6 +64,7 @@ export function WorkspaceDatabaseActivationStatus() {
       platformCutover,
       v11Activation,
       v11Cutover,
+      v12WriteActivation,
     ] = await Promise.all([
       getPortfolioDatabaseActivationReadiness(),
       getFcnDatabaseActivationReadiness(),
@@ -80,6 +82,7 @@ export function WorkspaceDatabaseActivationStatus() {
       getWorkspacePlatformCutoverStatus(),
       getV11DatabaseActivationReport(),
       getV11DatabaseCutoverStatus(),
+      getV12DatabaseWriteActivationStatus(),
     ]);
 
     setItems([
@@ -273,6 +276,40 @@ export function WorkspaceDatabaseActivationStatus() {
         warnings: v11Cutover.migrationReadiness.checks
           .filter((check) => !check.passed)
           .map((check) => check.detail),
+      },
+      {
+        label: "V12.00 Database Write Activation",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus: "guarded",
+        summary: v12WriteActivation.summary,
+        warnings: [v12WriteActivation.safeNextAction],
+      },
+      {
+        label: "V12 Watchlist Write Path",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus: v12WriteActivation.watchlist.status,
+        summary: v12WriteActivation.watchlist.nextStep,
+        warnings: [v12WriteActivation.watchlist.guard.reason],
+      },
+      {
+        label: "V12 Alert History Write Path",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus: v12WriteActivation.alertHistory.status,
+        summary: v12WriteActivation.alertHistory.nextStep,
+        warnings: [v12WriteActivation.alertHistory.guard.reason],
+      },
+      {
+        label: "V12 Workspace Bootstrap",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus: v12WriteActivation.bootstrap.source,
+        summary: `workspace=${v12WriteActivation.bootstrap.workspaceId ?? "none"}; created=${v12WriteActivation.bootstrap.created ? "yes" : "no"}; fallback=${v12WriteActivation.bootstrap.fallbackUsed ? "active" : "inactive"}`,
+        warnings: v12WriteActivation.bootstrap.blockingReason
+          ? [v12WriteActivation.bootstrap.blockingReason]
+          : [],
       },
     ]);
     setIsLoading(false);

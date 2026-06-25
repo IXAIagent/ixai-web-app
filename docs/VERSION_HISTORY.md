@@ -4843,6 +4843,41 @@ Key Boundaries:
 - No database writes enabled.
 - Concurrent index creation remains preferred for CLI / non-transaction execution and high-traffic production tables.
 
+## V12.00 — Workspace Database Write Activation
+
+What Changed:
+
+- Added V12 write guard metadata for Watchlist, Alert History, Portfolio, and FCN modules.
+- Added a guarded Workspace bootstrap helper that can create a workspace and owner membership only during explicit guarded write actions.
+- Added guarded database write services for Watchlist and Alert History.
+- Retargeted Alert History database readback from the older `alert_events` name to the production `alert_history` table.
+- Added V12 diagnostics to Workspace Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+- Added `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md`.
+
+Key Boundaries:
+
+- No migration executed.
+- No remote Supabase migration executed.
+- No schema, RLS, auth redirect, onboarding, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- Portfolio and FCN writes remain disabled/readiness-only.
+- Truth Layer, localStorage fallback, FCN Draft Store fallback, and deterministic alert fallback remain active.
+
+## V12.01 — Workspace Database Write Guard Review
+
+What Changed:
+
+- Reviewed V12.00 database write activation safety boundaries.
+- Confirmed diagnostics use read-only bootstrap status with `allowCreate: false`.
+- Tightened Platform Cutover write preview so page render / QA diagnostics do not call write services.
+- Preserved V12 explicit write services for Watchlist and Alert History behind guards.
+
+Key Boundaries:
+
+- No migration executed.
+- No schema, RLS, auth, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- Portfolio and FCN writes remain disabled/readiness-only.
+- Local fallback and Truth Layer behavior remain intact.
+
 ## v1.65.0 — Pro Module Product Pages Redesign
 
 Why:

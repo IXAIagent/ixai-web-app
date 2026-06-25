@@ -17,6 +17,7 @@ import { WorkspaceDatabaseReadPriorityStatus } from "@/components/workspace/work
 import { WorkspacePlatformCutoverStatus } from "@/components/workspace/workspace-platform-cutover-status";
 import { WorkspacePersistenceReadiness } from "@/components/workspace/workspace-persistence-readiness";
 import { WorkspaceV11DatabaseActivationStatus } from "@/components/workspace/workspace-v11-database-activation-status";
+import { WorkspaceV12DatabaseWriteActivationStatus } from "@/components/workspace/workspace-v12-database-write-activation-status";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getWorkspaceIntegrationAudit } from "@/src/lib/workspace/integration/integration-service";
 
@@ -144,6 +145,8 @@ export default function MyIxaiSettingsPage() {
         <WorkspacePlatformCutoverStatus />
 
         <WorkspaceV11DatabaseActivationStatus />
+
+        <WorkspaceV12DatabaseWriteActivationStatus />
 
         <WorkspaceDatabaseActivationStatus />
 

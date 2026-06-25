@@ -20,6 +20,7 @@ import type { MigrationHealthReport } from "@/src/lib/persistence/migrations";
 import type { WorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import type { V11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import type { V11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
+import type { V12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
 import type { WorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import type { WatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence";
 
@@ -39,6 +40,7 @@ export interface WorkspaceGraph {
   databaseActivation?: WorkspaceDatabaseActivationReport | null;
   v11DatabaseActivation?: V11DatabaseActivationReport | null;
   v11DatabaseCutover?: V11DatabaseCutoverStatus | null;
+  v12DatabaseWriteActivation?: V12DatabaseWriteActivationStatus | null;
   databaseReadPriority?: WorkspaceDatabaseReadPriorityStatus | null;
   platformCutover?: WorkspacePlatformCutoverStatus | null;
   livePersistence?: {

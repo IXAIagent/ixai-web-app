@@ -32,6 +32,7 @@ import { WorkspaceDatabaseReadPriorityStatus } from "@/components/workspace/work
 import { WorkspacePlatformCutoverStatus } from "@/components/workspace/workspace-platform-cutover-status";
 import { WorkspaceTimelineSummary } from "@/components/workspace/workspace-timeline-summary";
 import { WorkspaceV11DatabaseActivationStatus } from "@/components/workspace/workspace-v11-database-activation-status";
+import { WorkspaceV12DatabaseWriteActivationStatus } from "@/components/workspace/workspace-v12-database-write-activation-status";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -237,6 +238,8 @@ export default function MyIxaiHomePage() {
       <WorkspacePlatformCutoverStatus />
 
       <WorkspaceV11DatabaseActivationStatus />
+
+      <WorkspaceV12DatabaseWriteActivationStatus />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

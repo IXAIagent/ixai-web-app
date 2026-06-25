@@ -1,9 +1,9 @@
 import {
   checkAlertTablesReadiness,
-  insertAlertEventDraft,
   readAlertEventsFromDatabase,
 } from "@/src/lib/alerts/persistence/alert-database-adapter";
 import type { WorkspaceAlertCard } from "@/src/lib/alerts";
+import { saveAlertHistoryWithV12DatabaseWrite } from "@/src/lib/workspace/database-write-activation";
 
 export interface AlertLivePersistenceReadback {
   alertEvents: WorkspaceAlertCard[];
@@ -52,7 +52,7 @@ export async function getLiveAlertHistoryReadback(): Promise<AlertLivePersistenc
         alertEvents.length > 0
           ? readiness.warnings
           : [
-              "alert_events is empty or unavailable; deterministic Alert Engine remains active.",
+              "alert_history is empty or unavailable; deterministic Alert Engine remains active.",
               ...readiness.warnings,
             ],
     };
@@ -81,18 +81,21 @@ export async function saveAlertEventToDatabase(
         ok: false,
         sourceStatus: readiness.sourceStatus === "partial" ? "partial" : "unavailable",
         warning:
-          "Alert event was not written to database because alert_events is not fully ready; UI-only alert fallback remains active.",
+          "Alert event was not written to database because alert_history is not fully ready; UI-only alert fallback remains active.",
       };
     }
 
-    const result = await insertAlertEventDraft();
+    const result = await saveAlertHistoryWithV12DatabaseWrite(alert);
 
     return {
       dedupeKey,
       generatedAt: new Date().toISOString(),
-      ok: result.ok,
-      sourceStatus: result.ok ? "persisted" : "partial",
-      warning: result.warning,
+      ok: result.success,
+      sourceStatus: result.success ? "persisted" : "partial",
+      warning:
+        result.errorMessage ??
+        result.blockingReason ??
+        "Alert history database write was skipped by the V12 guard.",
     };
   } catch {
     return {
@@ -113,7 +116,7 @@ export async function getLiveAlertHistoryReadiness() {
     liveAlertEvents: readback.alertEvents.length,
     sourceStatus: readback.sourceStatus,
     summary:
-      "V9.40 Alert History live persistence reads alert_events when available. It does not auto-insert generated alerts on render.",
+      "V12 Alert History live persistence reads alert_history when available. It does not auto-insert generated alerts on render.",
     warnings: readback.warnings,
   };
 }

@@ -811,3 +811,22 @@ Critical boundaries:
 - Diagnostics do not write during render.
 - Truth Layer, localStorage, FCN Draft Store, and deterministic alert fallback remain active.
 - Broker integrations, Yahoo/Binance connections, trading logic, and AI recommendations remain out of scope.
+
+## J. V12 Workspace Database Write Activation Context
+
+V12.00 is the first real Workspace database write activation layer.
+
+Implemented scope:
+
+- V12 write guard metadata for Watchlist, Alert History, Portfolio, and FCN.
+- Guarded Watchlist database write service for `watchlists` and `watchlist_items`.
+- Guarded Alert History database write service for `alert_history`.
+- Workspace bootstrap helper that can create a workspace and owner membership only during an explicit guarded write action.
+- Diagnostics for Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+
+Critical boundaries:
+
+- Diagnostics do not write during render.
+- Portfolio and FCN writes remain disabled/readiness-only.
+- The Truth Layer, localStorage fallback, FCN Draft Store fallback, `/api/fcn`, and deterministic alert fallback remain active.
+- No migrations, Supabase CLI push, auth redirect changes, RLS changes, broker integration, trading logic, Binance/Yahoo integration, or AI recommendations are introduced.

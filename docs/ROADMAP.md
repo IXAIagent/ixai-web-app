@@ -2475,3 +2475,27 @@ Out of scope:
 - RLS policy changes outside reviewed migration work.
 - Binance / Yahoo Finance integration.
 - Broker sync, trading logic, order execution, or AI recommendations.
+
+## V12 Workspace Database Write Activation
+
+Status:
+
+- V11.51 Index Compatibility Fix: completed / merged into main.
+- V12.00 Workspace Database Write Activation: active in `feature/v12-workspace-database-write-activation`.
+
+Direction:
+
+- Start the first guarded database-backed write flow.
+- Keep Watchlist and Alert History as the only V12 write candidates.
+- Keep Portfolio and FCN writes disabled/readiness-only.
+- Preserve database-first reads, Truth Layer fallback, localStorage fallback, and FCN Draft Store fallback.
+- Surface V12 write guard, workspace bootstrap, and fallback metadata in Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- Remote migration execution.
+- Schema or RLS changes.
+- Auth redirect / onboarding changes.
+- Portfolio / FCN write cutover.
+- Binance / Yahoo Finance integration.
+- Broker sync, trading logic, order execution, or AI recommendations.

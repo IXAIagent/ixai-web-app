@@ -25,6 +25,7 @@ import { checkWatchlistTablesReadiness, listPersistentWatchlistItems } from "@/s
 import { resolveDatabaseReadPriority } from "@/src/lib/workspace/database-read-priority";
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
+import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
@@ -657,7 +658,7 @@ export function auditV7AlertPersistenceFoundation(): ModuleAudit {
     node: buildNode({
       id: "v7-alert-persistence-foundation",
       name: moduleName,
-      source: "Future alert_events table",
+      source: "Future alert_history table",
       status,
       target: "Alerts + Notifications",
     }),
@@ -860,6 +861,39 @@ export function auditV11DatabaseCutoverProgram(): ModuleAudit {
   };
 }
 
+export function auditV12DatabaseWriteActivation(): ModuleAudit {
+  const moduleName = "V12 Database Write Activation";
+  const available = functionAvailable(getV12DatabaseWriteActivationStatus);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getV12DatabaseWriteActivationStatus",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V12.00 enables guarded Watchlist and Alert History database write paths only when explicit guards are enabled. Portfolio and FCN writes remain disabled/readiness-only.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v12-database-write-activation",
+      name: moduleName,
+      source: "V11 tables + explicit V12 write guards + local fallback",
+      status,
+      target: "Settings diagnostics + Workspace Graph + future controlled writes",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -899,6 +933,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV10PlatformCutover(),
     auditV11DatabaseActivationFoundation(),
     auditV11DatabaseCutoverProgram(),
+    auditV12DatabaseWriteActivation(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);
