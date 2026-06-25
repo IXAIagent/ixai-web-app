@@ -486,3 +486,35 @@ Documentation:
 - `docs/V1400_FCN_DATABASE_ACTIVATION.md`
 
 V14 keeps database writes disabled by default and preserves FCN Draft Store, Truth Layer, `/api/fcn`, and local fallback behavior.
+
+## V15 Legacy Risk Engine Migration Map
+
+New read-only calculation layer:
+
+- `src/lib/risk/legacy-risk-engine/`
+  - Portfolio risk calculation.
+  - FCN worst-of / KI / strike / KO risk calculation.
+  - Concentration and repeated-underlying calculation.
+  - Exposure aggregation and diagnostics.
+
+New / updated UI surfaces:
+
+- `components/risk/legacy-risk-engine-status.tsx`
+- `components/risk/portfolio-risk-summary-card.tsx`
+- `components/risk/fcn-risk-summary-card.tsx`
+- `components/risk/concentration-risk-summary-card.tsx`
+- `components/risk/global-risk-center-workspace.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+
+Workspace metadata:
+
+- `src/lib/workspace/graph/workspace-graph-types.ts`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V1500_LEGACY_RISK_ENGINE_MIGRATION.md`
+
+V15 is read-only. It does not add database writes, migrations, auth changes, broker sync, trading logic, Binance/Yahoo provider work, Morning Brief migration, or AI recommendations.

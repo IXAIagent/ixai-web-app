@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { LegacyRiskEngineStatus } from "@/components/risk/legacy-risk-engine-status";
 import { WorkspaceIntegrationStatus } from "@/components/workspace/workspace-integration-status";
 import { WorkspaceDatabaseActivationStatus } from "@/components/workspace/workspace-database-activation-status";
 import { WorkspaceDatabaseReadPriorityStatus } from "@/components/workspace/workspace-database-read-priority-status";
@@ -153,6 +154,8 @@ export default function MyIxaiSettingsPage() {
         <WorkspaceV13PortfolioDatabaseWriteActivationStatus />
 
         <WorkspaceV14FcnDatabaseActivationStatus />
+
+        <LegacyRiskEngineStatus compact />
 
         <WorkspaceDatabaseActivationStatus />
 

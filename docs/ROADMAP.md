@@ -2530,7 +2530,8 @@ Out of scope:
 Status:
 
 - V13 Portfolio Database Write Activation: completed / merged into main.
-- V14.00 FCN Database Activation: active in `feature/v14-fcn-database-activation`.
+- V14.00 FCN Database Activation: completed / merged into main.
+- V15.00 Legacy Risk Engine Migration: active in `feature/v15-legacy-risk-engine-migration`.
 
 Direction:
 
@@ -2547,6 +2548,24 @@ Out of scope:
 - Broker sync, Binance/Yahoo provider work, trading logic, order execution, or AI recommendations.
 - Removing FCN Draft Store, Truth Layer, `/api/fcn`, or local fallback behavior.
 
+## V15 Legacy Risk Engine Migration
+
+Status:
+
+- V14 FCN Database Activation: completed / merged into main.
+- V15.00 Legacy Risk Engine Migration: active in `feature/v15-legacy-risk-engine-migration`.
+
+Direction:
+
+- Migrate legacy risk concepts as pure, read-only calculations.
+- Add Portfolio risk, FCN worst-of / KI / strike / KO readback, concentration, and exposure summaries.
+- Surface V15 diagnostics in Risk Center, Home, Settings, Workspace Graph, and Integration Audit.
+- Preserve Portfolio Truth, FCN Draft Store, `/api/fcn`, and local fallback behavior.
+
+Out of scope:
+
+- Database writes, migration execution, schema/RLS/auth changes, broker sync, Binance/Yahoo integration, trading logic, order execution, AI recommendations, Morning Brief migration, or FCN pricing engine.
+
 Next:
 
-- V15 Legacy Risk Engine Migration.
+- V16 Morning Brief Engine Migration.

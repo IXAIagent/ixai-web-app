@@ -868,3 +868,23 @@ Critical boundaries:
 - Drafts with observation/coupon schedule rows skip DB write unless the V14 schedule guard is enabled; independent coupon schedule table writes remain readiness-only until staging confirms a safe route.
 - Truth Layer, localStorage fallback, FCN Draft Store, `/api/fcn`, and deterministic alert fallback remain active.
 - No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, or AI recommendations are introduced.
+
+## M. V15 Legacy Risk Engine Migration Context
+
+V15.00 migrates reusable legacy risk-engine concepts into the active Workspace as a read-only calculation layer.
+
+Implemented scope:
+
+- New `src/lib/risk/legacy-risk-engine/` pure calculation layer.
+- Portfolio risk summary from Portfolio Truth Layer.
+- FCN worst-of, KI distance, strike distance, KO status, and missing-data warnings from existing FCN readback.
+- Concentration and repeated-underlying analysis.
+- Asset-class, currency, and top-symbol exposure readback.
+- Compact V15 diagnostics in Risk Center, Workspace Home, Settings, Workspace Graph, and Integration Audit.
+
+Critical boundaries:
+
+- V15 performs no database writes and does not enable any write guard.
+- Diagnostics and page render only read existing data and recalculate derived risk metadata.
+- Truth Layer, local pending input fallback, FCN Draft Store, `/api/fcn`, and legacy recent input fallback remain active.
+- No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, Morning Brief migration, or AI recommendations are introduced.

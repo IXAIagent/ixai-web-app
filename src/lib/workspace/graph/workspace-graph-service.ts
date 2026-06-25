@@ -10,6 +10,7 @@ import { getWorkspacePortfolioPersistenceSummary } from "@/src/lib/portfolio/per
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
 import { getWorkspacePortfolioRiskSummary } from "@/src/lib/risk/risk-service";
+import { getWorkspaceLegacyRiskEngineSnapshot } from "@/src/lib/risk/legacy-risk-engine";
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
 import {
   getAlertPersistenceReadiness,
@@ -96,6 +97,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v12DatabaseWriteActivation,
     v13PortfolioDatabaseWriteActivation,
     v14FcnDatabaseActivation,
+    legacyRiskEngine,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -125,6 +127,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("V12 Database Write Activation", getV12DatabaseWriteActivationStatus),
     safeRead("V13 Portfolio Database Write Activation", getV13PortfolioWriteDiagnostics),
     safeRead("V14 FCN Database Activation", getV14FcnWriteDiagnostics),
+    safeRead("V15 Legacy Risk Engine Migration", getWorkspaceLegacyRiskEngineSnapshot),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -155,6 +158,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v12DatabaseWriteActivation.warning,
     v13PortfolioDatabaseWriteActivation.warning,
     v14FcnDatabaseActivation.warning,
+    legacyRiskEngine.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -185,6 +189,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v12DatabaseWriteActivation.value,
     v13PortfolioDatabaseWriteActivation.value,
     v14FcnDatabaseActivation.value,
+    legacyRiskEngine.value,
   ].filter(Boolean).length;
 
   return {
@@ -195,6 +200,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v12DatabaseWriteActivation: v12DatabaseWriteActivation.value,
     v13PortfolioDatabaseWriteActivation: v13PortfolioDatabaseWriteActivation.value,
     v14FcnDatabaseActivation: v14FcnDatabaseActivation.value,
+    legacyRiskEngine: legacyRiskEngine.value,
     dailyBrief: dailyBrief.value,
     fcnRisk: fcnRisk.value,
     fcnSchedule: fcnSchedule.value,

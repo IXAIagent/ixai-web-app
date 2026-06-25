@@ -7,6 +7,7 @@ import type { MarketServiceReadiness } from "@/src/lib/market/market-service";
 import type { PortfolioPersistenceResult } from "@/src/lib/portfolio/persistence";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type { PortfolioValuationResult } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
+import type { LegacyRiskEngineSnapshot } from "@/src/lib/risk/legacy-risk-engine";
 import type { PortfolioRiskResult } from "@/src/lib/risk/risk-engine-types";
 import type { WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
 import type { AlertPersistenceReadiness } from "@/src/lib/alerts/persistence";
@@ -66,6 +67,7 @@ export interface WorkspaceGraph {
   persistenceReadiness?: PortfolioPersistenceReadiness | null;
   portfolioTruth: PortfolioTruthReadback | null;
   risk: PortfolioRiskResult | null;
+  legacyRiskEngine?: LegacyRiskEngineSnapshot | null;
   sourceStatus: WorkspaceGraphSourceStatus;
   syncReadiness?: WorkspaceSyncReport | null;
   syncPlan?: WorkspaceSyncPlan | null;

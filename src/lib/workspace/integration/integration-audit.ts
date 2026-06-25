@@ -9,6 +9,8 @@ import {
 import { buildPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-center";
 import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-engine";
 import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
+import { buildLegacyFcnRiskSummary } from "@/src/lib/risk/legacy-risk-engine/fcn-risk-engine";
+import { buildLegacyPortfolioRiskSummary } from "@/src/lib/risk/legacy-risk-engine/portfolio-risk-engine";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
 import { buildWorkspaceNotificationSummary } from "@/src/lib/notifications/notification-engine";
 import { checkAlertTablesReadiness, listPersistentAlertEvents } from "@/src/lib/alerts/persistence";
@@ -962,6 +964,45 @@ export function auditV14FcnDatabaseActivation(): ModuleAudit {
   };
 }
 
+export function auditV15LegacyRiskEngineMigration(): ModuleAudit {
+  const moduleName = "V15 Legacy Risk Engine Migration";
+  const portfolioAvailable = functionAvailable(buildLegacyPortfolioRiskSummary);
+  const fcnAvailable = functionAvailable(buildLegacyFcnRiskSummary);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [portfolioAvailable, fcnAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: portfolioAvailable,
+        exportName: "buildLegacyPortfolioRiskSummary",
+        module: moduleName,
+      }),
+      missingExportIssue({
+        available: fcnAvailable,
+        exportName: "buildLegacyFcnRiskSummary",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V15.00 is a read-only pure calculation migration for portfolio risk, FCN worst-of, KI/strike/KO distance, concentration, and exposure. It performs no database writes and does not add trading or recommendation logic.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v15-legacy-risk-engine-migration",
+      name: moduleName,
+      source: "Portfolio Truth Layer + FCN readback + local fallback data",
+      status,
+      target: "Risk Center + Home diagnostics + Settings diagnostics + Workspace Graph",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -1004,6 +1045,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV12DatabaseWriteActivation(),
     auditV13PortfolioDatabaseWriteActivation(),
     auditV14FcnDatabaseActivation(),
+    auditV15LegacyRiskEngineMigration(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

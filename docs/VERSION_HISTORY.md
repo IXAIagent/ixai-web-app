@@ -6,6 +6,29 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15.00 — Legacy Risk Engine Migration
+
+Why:
+
+- V14 activated guarded FCN write readiness, but the Workspace still needed the legacy backend's reusable risk concepts migrated into the active app as safe, deterministic readback.
+
+What Changed:
+
+- Added `docs/V1500_LEGACY_RISK_ENGINE_MIGRATION.md`.
+- Added `src/lib/risk/legacy-risk-engine/` for pure read-only Portfolio risk, FCN worst-of, KI/strike/KO distance, concentration, exposure, and diagnostics.
+- Added V15 risk summary cards to Risk Center plus compact diagnostics to Home and Settings.
+- Added V15 metadata to Workspace Graph and Integration Audit.
+
+Key Decisions:
+
+- V15 is calculation-only and performs no database writes.
+- Portfolio Truth Layer, local pending input fallback, FCN Draft Store, `/api/fcn`, and legacy recent input fallback remain intact.
+- FCN monitoring uses existing stored/manual prices only and is not a full FCN pricing engine.
+
+Out of Scope:
+
+- No migration execution, schema/RLS/auth changes, broker integration, Binance/Yahoo provider work, trading/order execution, buy/sell recommendations, AI recommendation logic, or Morning Brief migration.
+
 ## V11.10 — Database Activation Foundation
 
 Why:
