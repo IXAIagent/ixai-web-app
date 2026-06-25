@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V11 / Database Activation Program`
+`V13.00 / Portfolio Database Write Activation`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is UX / IA foundation before moving modules:
+Current priority is guarded Portfolio / Stock / Crypto database write activation while preserving Truth Layer and local fallback:
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
@@ -67,6 +67,8 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V10_PLATFORM_CUTOVER_PROGRAM.md` as the source of truth for the V10.20-V10.70 Platform Cutover Program.
 - Use `docs/V1020_OWNERSHIP_ENFORCEMENT.md`, `docs/V1030_DATABASE_WRITE_CUTOVER.md`, `docs/V1040_WORKSPACE_MEMBERSHIP.md`, `docs/V1050_SYNC_RECONCILIATION.md`, `docs/V1060_MIGRATION_EXECUTION_PREP.md`, and `docs/V1070_PRODUCTION_READINESS.md` as V10 module-level source docs.
 - Use `docs/V1110_DATABASE_ACTIVATION.md` as the source of truth for V11.10 Database Activation Foundation, reviewed migration files, readback validation, write readiness, and fallback preservation.
+- Use `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md` as the source of truth for V12 guarded Watchlist / Alert History writes, read-only diagnostics, and disabled Portfolio / FCN write paths.
+- Use `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md` as the source of truth for V13 guarded Portfolio / Stock / Crypto writes, local-first input submit, database-first readback priority, and FCN write deferral to V14.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -2499,3 +2501,24 @@ Out of scope:
 - Portfolio / FCN write cutover.
 - Binance / Yahoo Finance integration.
 - Broker sync, trading logic, order execution, or AI recommendations.
+
+## V13 Portfolio Database Write Activation
+
+Status:
+
+- V12 Workspace Database Write Activation: completed / merged into main.
+- V13.00 Portfolio Database Write Activation: active in `feature/v13-portfolio-database-write-activation`.
+
+Direction:
+
+- Start guarded Portfolio / Stock / Crypto database write activation.
+- Keep Stock and Crypto input submit local-first: Input Truth Bridge and recent input fallback are written before any database attempt.
+- Require V12 global write cutover guard plus V13 module guard before database writes are attempted.
+- Keep FCN writes explicitly disabled and defer FCN Wizard database write activation to V14.
+- Preserve database-first readback, Truth Layer fallback, and localStorage fallback.
+
+Out of scope:
+
+- FCN database write activation.
+- Migration execution, schema changes, RLS changes, or auth behavior changes.
+- Broker sync, Binance/Yahoo provider work, trading logic, order execution, or AI recommendations.

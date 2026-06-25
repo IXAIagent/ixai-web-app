@@ -21,6 +21,7 @@ import type { WorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/da
 import type { V11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import type { V11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import type { V12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
+import type { V13PortfolioWriteDiagnostics } from "@/src/lib/workspace/portfolio-database-write-activation";
 import type { WorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import type { WatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence";
 
@@ -41,6 +42,7 @@ export interface WorkspaceGraph {
   v11DatabaseActivation?: V11DatabaseActivationReport | null;
   v11DatabaseCutover?: V11DatabaseCutoverStatus | null;
   v12DatabaseWriteActivation?: V12DatabaseWriteActivationStatus | null;
+  v13PortfolioDatabaseWriteActivation?: V13PortfolioWriteDiagnostics | null;
   databaseReadPriority?: WorkspaceDatabaseReadPriorityStatus | null;
   platformCutover?: WorkspacePlatformCutoverStatus | null;
   livePersistence?: {

@@ -26,6 +26,7 @@ import { getWorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/data
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
+import { getV13PortfolioWriteDiagnostics } from "@/src/lib/workspace/portfolio-database-write-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -65,6 +66,7 @@ export function WorkspaceDatabaseActivationStatus() {
       v11Activation,
       v11Cutover,
       v12WriteActivation,
+      v13PortfolioWriteActivation,
     ] = await Promise.all([
       getPortfolioDatabaseActivationReadiness(),
       getFcnDatabaseActivationReadiness(),
@@ -83,6 +85,7 @@ export function WorkspaceDatabaseActivationStatus() {
       getV11DatabaseActivationReport(),
       getV11DatabaseCutoverStatus(),
       getV12DatabaseWriteActivationStatus(),
+      getV13PortfolioWriteDiagnostics(),
     ]);
 
     setItems([
@@ -310,6 +313,43 @@ export function WorkspaceDatabaseActivationStatus() {
         warnings: v12WriteActivation.bootstrap.blockingReason
           ? [v12WriteActivation.bootstrap.blockingReason]
           : [],
+      },
+      {
+        label: "V13 Portfolio Database Write Activation",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus: v13PortfolioWriteActivation.readiness.databaseReady ? "ready" : "guarded",
+        summary: v13PortfolioWriteActivation.summary,
+        warnings: [v13PortfolioWriteActivation.readiness.safeNextAction],
+      },
+      {
+        label: "V13 Portfolio Write Guard",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus: v13PortfolioWriteActivation.readiness.guardSet.portfolioDatabaseWriteEnabled.enabled
+          ? "ready"
+          : "guarded",
+        summary:
+          v13PortfolioWriteActivation.readiness.guardSet.portfolioDatabaseWriteEnabled.reason,
+        warnings: v13PortfolioWriteActivation.lastWriteResult?.errorMessage
+          ? [v13PortfolioWriteActivation.lastWriteResult.errorMessage]
+          : [],
+      },
+      {
+        label: "V13 Stock / Crypto Write Guards",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus:
+          v13PortfolioWriteActivation.readiness.guardSet.stockPositionDatabaseWriteEnabled.enabled ||
+          v13PortfolioWriteActivation.readiness.guardSet.cryptoPositionDatabaseWriteEnabled.enabled
+            ? "ready"
+            : "guarded",
+        summary:
+          "Stock and Crypto database writes are explicit-submit only and fall back to Input Truth Bridge/local storage when guards or database readiness are unavailable.",
+        warnings: [
+          v13PortfolioWriteActivation.readiness.guardSet.stockPositionDatabaseWriteEnabled.reason,
+          v13PortfolioWriteActivation.readiness.guardSet.cryptoPositionDatabaseWriteEnabled.reason,
+        ],
       },
     ]);
     setIsLoading(false);

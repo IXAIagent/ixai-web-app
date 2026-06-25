@@ -26,6 +26,7 @@ import { resolveDatabaseReadPriority } from "@/src/lib/workspace/database-read-p
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
+import { getV13PortfolioWriteDiagnostics } from "@/src/lib/workspace/portfolio-database-write-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
@@ -894,6 +895,39 @@ export function auditV12DatabaseWriteActivation(): ModuleAudit {
   };
 }
 
+export function auditV13PortfolioDatabaseWriteActivation(): ModuleAudit {
+  const moduleName = "V13 Portfolio Database Write Activation";
+  const available = functionAvailable(getV13PortfolioWriteDiagnostics);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getV13PortfolioWriteDiagnostics",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V13.00 enables Portfolio / Stock / Crypto guarded write diagnostics and explicit-submit write attempts only when guards are enabled. FCN writes remain disabled for V14.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v13-portfolio-database-write-activation",
+      name: moduleName,
+      source: "Asset Input submit + V12 global guard + V13 module guards + local fallback",
+      status,
+      target: "Portfolio Center + Settings diagnostics + Workspace Graph",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -934,6 +968,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV11DatabaseActivationFoundation(),
     auditV11DatabaseCutoverProgram(),
     auditV12DatabaseWriteActivation(),
+    auditV13PortfolioDatabaseWriteActivation(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

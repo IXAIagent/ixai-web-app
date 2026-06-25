@@ -417,3 +417,35 @@ Persistence table alignment:
 Documentation:
 
 - `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md`
+
+## V13 Portfolio Database Write Activation Map
+
+New activation layer:
+
+- `src/lib/workspace/portfolio-database-write-activation/`
+  - V13 Portfolio / Stock / Crypto write guard metadata.
+  - Guarded Portfolio bootstrap through existing `/api/portfolio`.
+  - Guarded Stock database write service through existing `/api/stocks`.
+  - Guarded Crypto database write service through existing `/api/crypto`.
+  - Readiness and diagnostics service.
+
+Updated input surfaces:
+
+- `components/portfolio/stock-input-form.tsx`
+- `components/portfolio/crypto-input-form.tsx`
+
+Diagnostics surfaces:
+
+- `components/workspace/workspace-v13-portfolio-database-write-activation-status.tsx`
+- `components/workspace/workspace-database-activation-status.tsx`
+- `components/workspace/workspace-platform-cutover-status.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md`
+
+V13 keeps FCN writes disabled and preserves Truth Layer / local fallback behavior.

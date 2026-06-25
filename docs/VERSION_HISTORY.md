@@ -4878,6 +4878,23 @@ Key Boundaries:
 - Portfolio and FCN writes remain disabled/readiness-only.
 - Local fallback and Truth Layer behavior remain intact.
 
+## V13.00 — Portfolio Database Write Activation
+
+What Changed:
+
+- Added V13 Portfolio / Stock / Crypto database write activation guards and diagnostics.
+- Updated Stock Input and Crypto Input to write local pending fallback first, then attempt guarded Supabase writes only after explicit submit.
+- Added V13 diagnostics to Workspace Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+- Kept FCN database writes explicitly disabled for V13.
+- Added `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md`.
+
+Key Boundaries:
+
+- No migration executed.
+- No Supabase schema, RLS, auth, membership, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- FCN Wizard database writes remain out of scope.
+- Truth Layer, recent input fallback, localStorage fallback, and FCN Draft Store fallback remain active.
+
 ## v1.65.0 — Pro Module Product Pages Redesign
 
 Why:

@@ -830,3 +830,22 @@ Critical boundaries:
 - Portfolio and FCN writes remain disabled/readiness-only.
 - The Truth Layer, localStorage fallback, FCN Draft Store fallback, `/api/fcn`, and deterministic alert fallback remain active.
 - No migrations, Supabase CLI push, auth redirect changes, RLS changes, broker integration, trading logic, Binance/Yahoo integration, or AI recommendations are introduced.
+
+## K. V13 Portfolio Database Write Activation Context
+
+V13.00 starts guarded database writes for Portfolio, Stock, and Crypto input flows.
+
+Implemented scope:
+
+- New `src/lib/workspace/portfolio-database-write-activation/` guard, readiness, write, and diagnostics layer.
+- Stock Input and Crypto Input still write Input Truth Bridge / local fallback first, then attempt guarded Supabase writes only after explicit submit.
+- Portfolio database bootstrap uses the existing `/api/portfolio` path when guards allow it.
+- Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit expose V13 guard and fallback metadata.
+
+Critical boundaries:
+
+- Diagnostics remain read-only and must not create workspace, portfolio, stock, or crypto rows.
+- Database writes are disabled by default and require V12 global guard plus V13 module guard.
+- FCN database writes are explicitly disabled in V13 and deferred to V14.
+- Truth Layer, localStorage fallback, FCN Draft Store, `/api/fcn`, and deterministic alert fallback remain active.
+- No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, or AI recommendations are introduced.

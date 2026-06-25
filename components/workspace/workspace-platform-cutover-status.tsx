@@ -11,6 +11,10 @@ import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutove
 import type { V11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
 import type { V12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
+import {
+  getV13PortfolioWriteDiagnostics,
+  type V13PortfolioWriteDiagnostics,
+} from "@/src/lib/workspace/portfolio-database-write-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import type { WorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 
@@ -27,20 +31,23 @@ export function WorkspacePlatformCutoverStatus() {
   const [v11Status, setV11Status] = useState<V11DatabaseActivationReport | null>(null);
   const [v11Cutover, setV11Cutover] = useState<V11DatabaseCutoverStatus | null>(null);
   const [v12Status, setV12Status] = useState<V12DatabaseWriteActivationStatus | null>(null);
+  const [v13Status, setV13Status] = useState<V13PortfolioWriteDiagnostics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   async function refresh() {
     setIsLoading(true);
-    const [platform, v11, cutover, v12] = await Promise.all([
+    const [platform, v11, cutover, v12, v13] = await Promise.all([
       getWorkspacePlatformCutoverStatus(),
       getV11DatabaseActivationReport(),
       getV11DatabaseCutoverStatus(),
       getV12DatabaseWriteActivationStatus(),
+      getV13PortfolioWriteDiagnostics(),
     ]);
     setStatus(platform);
     setV11Status(v11);
     setV11Cutover(cutover);
     setV12Status(v12);
+    setV13Status(v13);
     setIsLoading(false);
   }
 
@@ -206,6 +213,36 @@ export function WorkspacePlatformCutoverStatus() {
             <Pill>watchlist: {v12Status?.watchlist.status ?? "loading"}</Pill>
             <Pill>alerts: {v12Status?.alertHistory.status ?? "loading"}</Pill>
             <Pill>portfolio: disabled</Pill>
+            <Pill>fcn: disabled</Pill>
+          </div>
+        </article>
+
+        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            V13 portfolio writes
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            {v13Status?.summary ?? "Loading V13 Portfolio / Stock / Crypto write activation status..."}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Pill>
+              portfolio:{" "}
+              {v13Status?.readiness.guardSet.portfolioDatabaseWriteEnabled.enabled
+                ? "enabled"
+                : "guarded"}
+            </Pill>
+            <Pill>
+              stock:{" "}
+              {v13Status?.readiness.guardSet.stockPositionDatabaseWriteEnabled.enabled
+                ? "enabled"
+                : "guarded"}
+            </Pill>
+            <Pill>
+              crypto:{" "}
+              {v13Status?.readiness.guardSet.cryptoPositionDatabaseWriteEnabled.enabled
+                ? "enabled"
+                : "guarded"}
+            </Pill>
             <Pill>fcn: disabled</Pill>
           </div>
         </article>

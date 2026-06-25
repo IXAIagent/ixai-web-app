@@ -6,6 +6,7 @@ import { CheckCircle2, PlusCircle } from "lucide-react";
 import { InputReviewSummary } from "@/components/portfolio/input-review-summary";
 import { savePendingPortfolioInput } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { saveRecentPortfolioInput } from "@/src/lib/portfolio/input/recent-inputs";
+import { saveStockPositionWithV13DatabaseWrite } from "@/src/lib/workspace/portfolio-database-write-activation";
 
 const FIELD_INPUT_CLASS =
   "min-h-11 rounded-lg border border-[var(--ixai-border)] bg-white px-3 py-2.5 text-sm text-[var(--ixai-forest)] outline-none transition placeholder:text-[rgba(9,41,31,0.42)] focus:border-[var(--ixai-gold)]";
@@ -64,7 +65,7 @@ export function StockInputForm() {
     setDraft((current) => ({ ...current, ...patch }));
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setSuccess("");
@@ -101,7 +102,21 @@ export function StockInputForm() {
           ? `${normalizedTicker} · ${draft.assetName.trim()}`
           : normalizedTicker,
       });
-      setSuccess(`已建立 Workspace pending 股票輸入：${normalizedTicker}`);
+      const writeResult = await saveStockPositionWithV13DatabaseWrite({
+        assetName: draft.assetName.trim(),
+        costBasis,
+        currency: draft.currency,
+        market: draft.market,
+        quantity,
+        ticker: normalizedTicker,
+      });
+      const writeLabel =
+        writeResult.target === "database"
+          ? "資料庫已同步"
+          : writeResult.status === "failed"
+            ? "資料庫寫入未完成，已保留 local fallback"
+            : "資料庫 guard 未啟用，已保留 local fallback";
+      setSuccess(`已建立 Workspace pending 股票輸入：${normalizedTicker}（${writeLabel}）`);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "請確認股票欄位。");
     }
@@ -117,7 +132,7 @@ export function StockInputForm() {
           建立股票 / ETF 部位
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          本版使用 v4.10 Input Truth Bridge 建立 browser-local pending input，會出現在 Workspace readback；尚未寫入 API 或 Supabase。
+          本版先寫入 v4.10 Input Truth Bridge；V13 guard 開啟且資料庫可用時，才會在明確提交後嘗試 Supabase 寫入。fallback 會保留。
         </p>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -233,7 +248,7 @@ export function StockInputForm() {
           {
             items: [
               ["Risk Fields", "Market / Currency"],
-              ["Data Source", "Workspace pending input bridge"],
+              ["Data Source", "Database first when V13 guard allows; pending bridge fallback"],
             ],
             title: "Risk Fields",
           },
