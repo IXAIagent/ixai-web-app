@@ -518,3 +518,39 @@ Documentation:
 - `docs/V1500_LEGACY_RISK_ENGINE_MIGRATION.md`
 
 V15 is read-only. It does not add database writes, migrations, auth changes, broker sync, trading logic, Binance/Yahoo provider work, Morning Brief migration, or AI recommendations.
+
+## V16 Morning Brief Engine Map
+
+New read-only Morning Brief layer:
+
+- `src/lib/morning-brief/`
+  - `brief-types.ts`
+  - `brief-engine.ts`
+  - `brief-risk-adapter.ts`
+  - `brief-fcn-adapter.ts`
+  - `brief-portfolio-adapter.ts`
+  - `brief-news-placeholder.ts`
+  - `brief-snapshot.ts`
+  - `brief-diagnostics.ts`
+  - `index.ts`
+
+New UI surfaces:
+
+- `components/morning-brief/morning-brief-status.tsx`
+- `components/morning-brief/morning-brief-summary-card.tsx`
+- `components/morning-brief/morning-risk-card.tsx`
+- `components/morning-brief/morning-fcn-card.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+
+Workspace metadata:
+
+- `src/lib/workspace/graph/workspace-graph-types.ts`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V1600_MORNING_BRIEF_ENGINE.md`
+
+V16 uses V15 Legacy Risk Engine output rather than recalculating another risk engine. It does not add DB writes, SQL, migrations, scheduler, Telegram, Yahoo, Binance, broker, trading, or AI recommendation logic.

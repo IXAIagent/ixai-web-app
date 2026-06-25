@@ -6,6 +6,29 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V16.00 — Morning Brief Engine
+
+Why:
+
+- V15 migrated risk calculations into the active Workspace. IXAI now needs a reusable Morning Brief core that can summarize Portfolio, Risk, FCN, and future News sources without starting Telegram, scheduler, AI, or trading work.
+
+What Changed:
+
+- Added `docs/V1600_MORNING_BRIEF_ENGINE.md`.
+- Added `src/lib/morning-brief/` for Morning Brief types, engine, Portfolio/Risk/FCN adapters, News Placeholder, Morning Snapshot, and diagnostics.
+- Added Morning Brief preview cards to Workspace Home and compact diagnostics to Settings.
+- Added V16 Morning Brief metadata to Workspace Graph and Integration Audit.
+
+Key Decisions:
+
+- V16 directly reuses V15 Legacy Risk Engine output instead of recalculating another risk engine.
+- News is placeholder-only; no external provider is connected.
+- Morning Snapshot is reusable for future Web, Telegram, and API surfaces, but this sprint does not activate those channels.
+
+Out of Scope:
+
+- No DB writes, SQL, migrations, scheduler, Telegram bot, Yahoo, Binance, OpenAI/AI calls, broker integration, trading/order execution, buy/sell/rebalance instructions, or investment recommendations.
+
 ## V15.00 — Legacy Risk Engine Migration
 
 Why:

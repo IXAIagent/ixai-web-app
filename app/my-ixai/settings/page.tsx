@@ -12,6 +12,7 @@ import {
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { LegacyRiskEngineStatus } from "@/components/risk/legacy-risk-engine-status";
+import { MorningBriefStatus } from "@/components/morning-brief/morning-brief-status";
 import { WorkspaceIntegrationStatus } from "@/components/workspace/workspace-integration-status";
 import { WorkspaceDatabaseActivationStatus } from "@/components/workspace/workspace-database-activation-status";
 import { WorkspaceDatabaseReadPriorityStatus } from "@/components/workspace/workspace-database-read-priority-status";
@@ -156,6 +157,8 @@ export default function MyIxaiSettingsPage() {
         <WorkspaceV14FcnDatabaseActivationStatus />
 
         <LegacyRiskEngineStatus compact />
+
+        <MorningBriefStatus compact />
 
         <WorkspaceDatabaseActivationStatus />
 

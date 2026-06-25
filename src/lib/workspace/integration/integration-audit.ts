@@ -9,6 +9,8 @@ import {
 import { buildPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-center";
 import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-engine";
 import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
+import { buildMorningBrief } from "@/src/lib/morning-brief/brief-engine";
+import { buildMorningNewsPlaceholder } from "@/src/lib/morning-brief/brief-news-placeholder";
 import { buildLegacyFcnRiskSummary } from "@/src/lib/risk/legacy-risk-engine/fcn-risk-engine";
 import { buildLegacyPortfolioRiskSummary } from "@/src/lib/risk/legacy-risk-engine/portfolio-risk-engine";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
@@ -1003,6 +1005,45 @@ export function auditV15LegacyRiskEngineMigration(): ModuleAudit {
   };
 }
 
+export function auditV16MorningBriefEngine(): ModuleAudit {
+  const moduleName = "V16 Morning Brief Engine";
+  const briefAvailable = functionAvailable(buildMorningBrief);
+  const newsPlaceholderAvailable = functionAvailable(buildMorningNewsPlaceholder);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [briefAvailable, newsPlaceholderAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: briefAvailable,
+        exportName: "buildMorningBrief",
+        module: moduleName,
+      }),
+      missingExportIssue({
+        available: newsPlaceholderAvailable,
+        exportName: "buildMorningNewsPlaceholder",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V16.00 is a read-only Morning Brief Engine using Portfolio, V15 Risk, FCN, and News Placeholder adapters. It does not add Telegram, scheduler, broker, trading, AI recommendation, SQL, or database writes.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v16-morning-brief-engine",
+      name: moduleName,
+      source: "V15 Legacy Risk Engine + Portfolio / FCN adapters + News Placeholder",
+      status,
+      target: "Workspace Home + future Web / Telegram / API surfaces",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -1046,6 +1087,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV13PortfolioDatabaseWriteActivation(),
     auditV14FcnDatabaseActivation(),
     auditV15LegacyRiskEngineMigration(),
+    auditV16MorningBriefEngine(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

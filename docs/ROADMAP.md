@@ -2553,7 +2553,8 @@ Out of scope:
 Status:
 
 - V14 FCN Database Activation: completed / merged into main.
-- V15.00 Legacy Risk Engine Migration: active in `feature/v15-legacy-risk-engine-migration`.
+- V15.00 Legacy Risk Engine Migration: completed / merged into main.
+- V16.00 Morning Brief Engine Migration: active in `feature/v16-morning-brief-engine`.
 
 Direction:
 
@@ -2569,3 +2570,26 @@ Out of scope:
 Next:
 
 - V16 Morning Brief Engine Migration.
+
+## V16 Morning Brief Engine Migration
+
+Status:
+
+- V15 Legacy Risk Engine Migration: completed / merged into main.
+- V16.00 Morning Brief Engine Migration: active in `feature/v16-morning-brief-engine`.
+
+Direction:
+
+- Build the Morning Brief Engine core as a read-only adapter layer.
+- Reuse V15 Legacy Risk Engine for risk and FCN summaries.
+- Add Portfolio, Risk, FCN, and News Placeholder sections.
+- Add reusable Morning Snapshot for Workspace Home and future Web / Telegram / API surfaces.
+- Surface V16 diagnostics in Home, Settings, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- Database writes, SQL, migrations, scheduler, Telegram bot, Yahoo, Binance, OpenAI/AI calls, broker sync, trading, order execution, or recommendation logic.
+
+Next:
+
+- V17 Market Data Provider.

@@ -26,6 +26,7 @@ import { WorkspaceCopilotSummary } from "@/components/copilot/workspace-copilot-
 import { WorkspaceDailyBrief } from "@/components/daily-brief/workspace-daily-brief";
 import { WorkspaceInsightsSummary } from "@/components/insights/workspace-insights-summary";
 import { IntelligenceSummary } from "@/components/intelligence/intelligence-summary";
+import { MorningBriefStatus } from "@/components/morning-brief/morning-brief-status";
 import { NotificationCenterSummary } from "@/components/notifications/notification-center-summary";
 import { LegacyRiskEngineStatus } from "@/components/risk/legacy-risk-engine-status";
 import { WorkspaceHealthSummary } from "@/components/workspace/workspace-health-summary";
@@ -250,6 +251,8 @@ export default function MyIxaiHomePage() {
 
       <LegacyRiskEngineStatus compact />
 
+      <MorningBriefStatus compact />
+
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -393,6 +396,8 @@ export default function MyIxaiHomePage() {
       <div id="workspace-daily-brief">
         <WorkspaceDailyBrief />
       </div>
+
+      <MorningBriefStatus />
 
       <IntelligenceSummary />
 

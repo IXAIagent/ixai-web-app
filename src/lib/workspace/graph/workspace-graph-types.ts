@@ -4,6 +4,7 @@ import type { FcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-types"
 import type { FcnPortfolioScheduleSummary } from "@/src/lib/fcn/schedule";
 import type { WorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-types";
 import type { MarketServiceReadiness } from "@/src/lib/market/market-service";
+import type { MorningSnapshot } from "@/src/lib/morning-brief";
 import type { PortfolioPersistenceResult } from "@/src/lib/portfolio/persistence";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type { PortfolioValuationResult } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
@@ -62,6 +63,7 @@ export interface WorkspaceGraph {
   generatedAt: string;
   intelligence: WorkspaceIntelligenceReport | null;
   marketStatus?: MarketServiceReadiness | null;
+  morningBriefEngine?: MorningSnapshot | null;
   ownershipReadiness?: WorkspaceOwnershipCheck | null;
   portfolioPersistence: PortfolioPersistenceResult | null;
   persistenceReadiness?: PortfolioPersistenceReadiness | null;

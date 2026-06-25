@@ -6,6 +6,7 @@ import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service"
 import { getWorkspaceFcnScheduleSummary } from "@/src/lib/fcn/schedule";
 import { getWorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-service";
 import { getMarketReadiness } from "@/src/lib/market/market-service";
+import { getWorkspaceMorningSnapshot } from "@/src/lib/morning-brief";
 import { getWorkspacePortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
@@ -98,6 +99,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v13PortfolioDatabaseWriteActivation,
     v14FcnDatabaseActivation,
     legacyRiskEngine,
+    morningBriefEngine,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -128,6 +130,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("V13 Portfolio Database Write Activation", getV13PortfolioWriteDiagnostics),
     safeRead("V14 FCN Database Activation", getV14FcnWriteDiagnostics),
     safeRead("V15 Legacy Risk Engine Migration", getWorkspaceLegacyRiskEngineSnapshot),
+    safeRead("V16 Morning Brief Engine", getWorkspaceMorningSnapshot),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -159,6 +162,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v13PortfolioDatabaseWriteActivation.warning,
     v14FcnDatabaseActivation.warning,
     legacyRiskEngine.warning,
+    morningBriefEngine.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -190,6 +194,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v13PortfolioDatabaseWriteActivation.value,
     v14FcnDatabaseActivation.value,
     legacyRiskEngine.value,
+    morningBriefEngine.value,
   ].filter(Boolean).length;
 
   return {
@@ -207,6 +212,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     generatedAt: new Date().toISOString(),
     intelligence: intelligence.value,
     marketStatus: marketStatus.value,
+    morningBriefEngine: morningBriefEngine.value,
     livePersistence: {
       alerts: liveAlertPersistence.value?.sourceStatus,
       fcn: liveFcnPersistence.value?.sourceStatus,

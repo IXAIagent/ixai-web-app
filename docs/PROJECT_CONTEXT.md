@@ -888,3 +888,25 @@ Critical boundaries:
 - Diagnostics and page render only read existing data and recalculate derived risk metadata.
 - Truth Layer, local pending input fallback, FCN Draft Store, `/api/fcn`, and legacy recent input fallback remain active.
 - No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, Morning Brief migration, or AI recommendations are introduced.
+
+## N. V16 Morning Brief Engine Context
+
+V16.00 creates the read-only Morning Brief Engine core for Workspace.
+
+Implemented scope:
+
+- New `src/lib/morning-brief/` engine and adapter layer.
+- Portfolio adapter from V15 portfolio-risk / Portfolio Truth readback.
+- Risk adapter that directly uses V15 Legacy Risk Engine output.
+- FCN adapter from V15 FCN risk output.
+- News Placeholder with no API connection.
+- Reusable `MorningSnapshot` for Home Dashboard and future Web / Telegram / API surfaces.
+- Morning Brief preview cards on Workspace Home and compact diagnostics in Settings.
+- Workspace Graph and Integration Audit metadata for V16.
+
+Critical boundaries:
+
+- V16 is read-only and performs no database writes.
+- V16 does not add SQL, migrations, scheduler, Telegram bot, Yahoo, Binance, OpenAI/AI calls, broker sync, trading, order execution, or recommendations.
+- News remains placeholder-only until a future approved provider sprint.
+- Missing Portfolio / Risk / FCN data returns warning, partial, placeholder, or insufficient-data states instead of crashing.
