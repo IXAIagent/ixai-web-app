@@ -27,6 +27,7 @@ import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-act
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
 import { getV13PortfolioWriteDiagnostics } from "@/src/lib/workspace/portfolio-database-write-activation";
+import { getV14FcnWriteDiagnostics } from "@/src/lib/workspace/fcn-database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -67,6 +68,7 @@ export function WorkspaceDatabaseActivationStatus() {
       v11Cutover,
       v12WriteActivation,
       v13PortfolioWriteActivation,
+      v14FcnWriteActivation,
     ] = await Promise.all([
       getPortfolioDatabaseActivationReadiness(),
       getFcnDatabaseActivationReadiness(),
@@ -86,6 +88,7 @@ export function WorkspaceDatabaseActivationStatus() {
       getV11DatabaseCutoverStatus(),
       getV12DatabaseWriteActivationStatus(),
       getV13PortfolioWriteDiagnostics(),
+      getV14FcnWriteDiagnostics(),
     ]);
 
     setItems([
@@ -349,6 +352,30 @@ export function WorkspaceDatabaseActivationStatus() {
         warnings: [
           v13PortfolioWriteActivation.readiness.guardSet.stockPositionDatabaseWriteEnabled.reason,
           v13PortfolioWriteActivation.readiness.guardSet.cryptoPositionDatabaseWriteEnabled.reason,
+        ],
+      },
+      {
+        label: "V14 FCN Database Activation",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus: v14FcnWriteActivation.readiness.databaseReady ? "ready" : "guarded",
+        summary: v14FcnWriteActivation.summary,
+        warnings: [v14FcnWriteActivation.readiness.safeNextAction],
+      },
+      {
+        label: "V14 FCN Write Guards",
+        migrationStatus: "manual_ready",
+        runtimeRequired: false,
+        sourceStatus: v14FcnWriteActivation.readiness.guardSet.fcnDatabaseWriteEnabled.enabled
+          ? "ready"
+          : "guarded",
+        summary:
+          "FCN position, underlying, and schedule writes are explicit-submit only and preserve Draft Store / Input Truth fallback when guards or database readiness are unavailable.",
+        warnings: [
+          v14FcnWriteActivation.readiness.guardSet.fcnDatabaseWriteEnabled.reason,
+          v14FcnWriteActivation.readiness.guardSet.fcnPositionDatabaseWriteEnabled.reason,
+          v14FcnWriteActivation.readiness.guardSet.fcnUnderlyingDatabaseWriteEnabled.reason,
+          v14FcnWriteActivation.readiness.guardSet.fcnScheduleDatabaseWriteEnabled.reason,
         ],
       },
     ]);

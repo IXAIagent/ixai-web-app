@@ -30,6 +30,7 @@ import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-act
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
 import { getV13PortfolioWriteDiagnostics } from "@/src/lib/workspace/portfolio-database-write-activation";
+import { getV14FcnWriteDiagnostics } from "@/src/lib/workspace/fcn-database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import {
   getLiveWatchlistPersistenceReadiness,
@@ -94,6 +95,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v11DatabaseCutover,
     v12DatabaseWriteActivation,
     v13PortfolioDatabaseWriteActivation,
+    v14FcnDatabaseActivation,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -122,6 +124,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("V11 Database Cutover", getV11DatabaseCutoverStatus),
     safeRead("V12 Database Write Activation", getV12DatabaseWriteActivationStatus),
     safeRead("V13 Portfolio Database Write Activation", getV13PortfolioWriteDiagnostics),
+    safeRead("V14 FCN Database Activation", getV14FcnWriteDiagnostics),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -151,6 +154,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v11DatabaseCutover.warning,
     v12DatabaseWriteActivation.warning,
     v13PortfolioDatabaseWriteActivation.warning,
+    v14FcnDatabaseActivation.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -180,6 +184,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v11DatabaseCutover.value,
     v12DatabaseWriteActivation.value,
     v13PortfolioDatabaseWriteActivation.value,
+    v14FcnDatabaseActivation.value,
   ].filter(Boolean).length;
 
   return {
@@ -189,6 +194,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     v11DatabaseCutover: v11DatabaseCutover.value,
     v12DatabaseWriteActivation: v12DatabaseWriteActivation.value,
     v13PortfolioDatabaseWriteActivation: v13PortfolioDatabaseWriteActivation.value,
+    v14FcnDatabaseActivation: v14FcnDatabaseActivation.value,
     dailyBrief: dailyBrief.value,
     fcnRisk: fcnRisk.value,
     fcnSchedule: fcnSchedule.value,

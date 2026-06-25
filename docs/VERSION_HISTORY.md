@@ -4895,6 +4895,25 @@ Key Boundaries:
 - FCN Wizard database writes remain out of scope.
 - Truth Layer, recent input fallback, localStorage fallback, and FCN Draft Store fallback remain active.
 
+## V14.00 — FCN Database Activation
+
+What Changed:
+
+- Added V14 FCN database activation guards, readiness, write services, and diagnostics.
+- Updated FCN Wizard so explicit submit writes FCN Draft Store / Input Truth Bridge / recent input fallback first, then attempts a guarded database write only when V12 global and V14 FCN guards are enabled.
+- Updated FCN Center to preserve `/api/fcn` readback first, keep pending FCN fallback visible, and refresh after V14 guarded write status events.
+- Added V14 diagnostics to Workspace Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+- Added `docs/V1400_FCN_DATABASE_ACTIVATION.md`.
+
+Key Boundaries:
+
+- No migration executed.
+- No SQL, Supabase schema, RLS, auth, membership, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- V14 database writes are disabled by default.
+- Diagnostics remain read-only.
+- FCN Draft Store, Truth Layer, `/api/fcn`, recent input fallback, and localStorage fallback remain active.
+- Drafts with schedule rows skip DB write unless the V14 schedule guard is enabled; independent coupon schedule table writes remain readiness-only until staging confirms a safe route.
+
 ## v1.65.0 — Pro Module Product Pages Redesign
 
 Why:

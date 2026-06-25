@@ -69,6 +69,7 @@ Current priority is guarded Portfolio / Stock / Crypto database write activation
 - Use `docs/V1110_DATABASE_ACTIVATION.md` as the source of truth for V11.10 Database Activation Foundation, reviewed migration files, readback validation, write readiness, and fallback preservation.
 - Use `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md` as the source of truth for V12 guarded Watchlist / Alert History writes, read-only diagnostics, and disabled Portfolio / FCN write paths.
 - Use `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md` as the source of truth for V13 guarded Portfolio / Stock / Crypto writes, local-first input submit, database-first readback priority, and FCN write deferral to V14.
+- Use `docs/V1400_FCN_DATABASE_ACTIVATION.md` as the source of truth for V14 guarded FCN writes, Draft Store / Truth Layer fallback preservation, and disabled-by-default FCN database activation.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -2507,7 +2508,8 @@ Out of scope:
 Status:
 
 - V12 Workspace Database Write Activation: completed / merged into main.
-- V13.00 Portfolio Database Write Activation: active in `feature/v13-portfolio-database-write-activation`.
+- V13.00 Portfolio Database Write Activation: completed / merged into main.
+- V14.00 FCN Database Activation: active in `feature/v14-fcn-database-activation`.
 
 Direction:
 
@@ -2522,3 +2524,29 @@ Out of scope:
 - FCN database write activation.
 - Migration execution, schema changes, RLS changes, or auth behavior changes.
 - Broker sync, Binance/Yahoo provider work, trading logic, order execution, or AI recommendations.
+
+## V14 FCN Database Activation
+
+Status:
+
+- V13 Portfolio Database Write Activation: completed / merged into main.
+- V14.00 FCN Database Activation: active in `feature/v14-fcn-database-activation`.
+
+Direction:
+
+- Start guarded FCN database write activation after explicit FCN Wizard submit.
+- Keep FCN Wizard local-first: FCN Draft Store, Input Truth Bridge, and recent input fallback are written before any database attempt.
+- Require V12 global write guard plus V14 FCN, position, underlying, and schedule module guards before database writes are attempted.
+- Preserve database-first `/api/fcn` readback, Truth Layer fallback, FCN Draft Store fallback, and legacy recent input fallback.
+- Surface V14 guard metadata in Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- Migration execution, schema changes, RLS changes, or auth behavior changes.
+- FCN pricing engine, edit/delete, destructive sync, or automatic reconciliation writes.
+- Broker sync, Binance/Yahoo provider work, trading logic, order execution, or AI recommendations.
+- Removing FCN Draft Store, Truth Layer, `/api/fcn`, or local fallback behavior.
+
+Next:
+
+- V15 Legacy Risk Engine Migration.

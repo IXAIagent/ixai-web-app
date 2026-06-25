@@ -27,6 +27,7 @@ import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-act
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
 import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
 import { getV13PortfolioWriteDiagnostics } from "@/src/lib/workspace/portfolio-database-write-activation";
+import { getV14FcnWriteDiagnostics } from "@/src/lib/workspace/fcn-database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
@@ -928,6 +929,39 @@ export function auditV13PortfolioDatabaseWriteActivation(): ModuleAudit {
   };
 }
 
+export function auditV14FcnDatabaseActivation(): ModuleAudit {
+  const moduleName = "V14 FCN Database Activation";
+  const available = functionAvailable(getV14FcnWriteDiagnostics);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getV14FcnWriteDiagnostics",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V14.00 enables FCN guarded write diagnostics and explicit-submit write attempts only when V12 global and V14 FCN guards are enabled. Draft Store, Truth Layer, /api/fcn readback, and local fallback remain intact.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v14-fcn-database-activation",
+      name: moduleName,
+      source: "FCN Wizard submit + V12 global guard + V14 FCN module guards + Draft Store fallback",
+      status,
+      target: "FCN Center + Settings diagnostics + Workspace Graph",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -969,6 +1003,7 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV11DatabaseCutoverProgram(),
     auditV12DatabaseWriteActivation(),
     auditV13PortfolioDatabaseWriteActivation(),
+    auditV14FcnDatabaseActivation(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

@@ -19,6 +19,7 @@ import { WorkspacePersistenceReadiness } from "@/components/workspace/workspace-
 import { WorkspaceV11DatabaseActivationStatus } from "@/components/workspace/workspace-v11-database-activation-status";
 import { WorkspaceV12DatabaseWriteActivationStatus } from "@/components/workspace/workspace-v12-database-write-activation-status";
 import { WorkspaceV13PortfolioDatabaseWriteActivationStatus } from "@/components/workspace/workspace-v13-portfolio-database-write-activation-status";
+import { WorkspaceV14FcnDatabaseActivationStatus } from "@/components/workspace/workspace-v14-fcn-database-activation-status";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getWorkspaceIntegrationAudit } from "@/src/lib/workspace/integration/integration-service";
 
@@ -150,6 +151,8 @@ export default function MyIxaiSettingsPage() {
         <WorkspaceV12DatabaseWriteActivationStatus />
 
         <WorkspaceV13PortfolioDatabaseWriteActivationStatus />
+
+        <WorkspaceV14FcnDatabaseActivationStatus />
 
         <WorkspaceDatabaseActivationStatus />
 

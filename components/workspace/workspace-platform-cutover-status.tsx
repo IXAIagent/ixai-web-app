@@ -15,6 +15,10 @@ import {
   getV13PortfolioWriteDiagnostics,
   type V13PortfolioWriteDiagnostics,
 } from "@/src/lib/workspace/portfolio-database-write-activation";
+import {
+  getV14FcnWriteDiagnostics,
+  type V14FcnWriteDiagnostics,
+} from "@/src/lib/workspace/fcn-database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import type { WorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 
@@ -32,22 +36,25 @@ export function WorkspacePlatformCutoverStatus() {
   const [v11Cutover, setV11Cutover] = useState<V11DatabaseCutoverStatus | null>(null);
   const [v12Status, setV12Status] = useState<V12DatabaseWriteActivationStatus | null>(null);
   const [v13Status, setV13Status] = useState<V13PortfolioWriteDiagnostics | null>(null);
+  const [v14Status, setV14Status] = useState<V14FcnWriteDiagnostics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   async function refresh() {
     setIsLoading(true);
-    const [platform, v11, cutover, v12, v13] = await Promise.all([
+    const [platform, v11, cutover, v12, v13, v14] = await Promise.all([
       getWorkspacePlatformCutoverStatus(),
       getV11DatabaseActivationReport(),
       getV11DatabaseCutoverStatus(),
       getV12DatabaseWriteActivationStatus(),
       getV13PortfolioWriteDiagnostics(),
+      getV14FcnWriteDiagnostics(),
     ]);
     setStatus(platform);
     setV11Status(v11);
     setV11Cutover(cutover);
     setV12Status(v12);
     setV13Status(v13);
+    setV14Status(v14);
     setIsLoading(false);
   }
 
@@ -243,7 +250,37 @@ export function WorkspacePlatformCutoverStatus() {
                 ? "enabled"
                 : "guarded"}
             </Pill>
-            <Pill>fcn: disabled</Pill>
+            <Pill>fcn: V14 guarded</Pill>
+          </div>
+        </article>
+
+        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
+          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+            V14 FCN writes
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            {v14Status?.summary ?? "Loading V14 FCN database activation status..."}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Pill>
+              fcn:{" "}
+              {v14Status?.readiness.guardSet.fcnDatabaseWriteEnabled.enabled
+                ? "enabled"
+                : "guarded"}
+            </Pill>
+            <Pill>
+              positions:{" "}
+              {v14Status?.readiness.guardSet.fcnPositionDatabaseWriteEnabled.enabled
+                ? "enabled"
+                : "guarded"}
+            </Pill>
+            <Pill>
+              underlyings:{" "}
+              {v14Status?.readiness.guardSet.fcnUnderlyingDatabaseWriteEnabled.enabled
+                ? "enabled"
+                : "guarded"}
+            </Pill>
+            <Pill>fallback: {v14Status?.readiness.fallbackEnabled ? "active" : "inactive"}</Pill>
           </div>
         </article>
       </div>

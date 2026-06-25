@@ -849,3 +849,22 @@ Critical boundaries:
 - FCN database writes are explicitly disabled in V13 and deferred to V14.
 - Truth Layer, localStorage fallback, FCN Draft Store, `/api/fcn`, and deterministic alert fallback remain active.
 - No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, or AI recommendations are introduced.
+
+## L. V14 FCN Database Activation Context
+
+V14.00 starts guarded FCN database writes while preserving the existing FCN fallback stack.
+
+Implemented scope:
+
+- New `src/lib/workspace/fcn-database-activation/` guard, readiness, write, and diagnostics layer.
+- FCN Wizard still writes FCN Draft Store, Input Truth Bridge, and recent input fallback first, then attempts a guarded database write only after explicit submit.
+- FCN Center keeps `/api/fcn` database readback first and still shows pending FCN inputs from local fallback when the database is empty or unavailable.
+- Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit expose V14 guard and fallback metadata.
+
+Critical boundaries:
+
+- Diagnostics remain read-only and must not create FCN, workspace, portfolio, underlying, or schedule rows.
+- Database writes are disabled by default and require V12 global guard plus V14 FCN module guards.
+- Drafts with observation/coupon schedule rows skip DB write unless the V14 schedule guard is enabled; independent coupon schedule table writes remain readiness-only until staging confirms a safe route.
+- Truth Layer, localStorage fallback, FCN Draft Store, `/api/fcn`, and deterministic alert fallback remain active.
+- No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, or AI recommendations are introduced.

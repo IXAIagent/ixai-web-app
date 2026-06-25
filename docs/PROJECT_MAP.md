@@ -449,3 +449,40 @@ Documentation:
 - `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md`
 
 V13 keeps FCN writes disabled and preserves Truth Layer / local fallback behavior.
+
+## V14 FCN Database Activation Map
+
+New activation layer:
+
+- `src/lib/workspace/fcn-database-activation/`
+  - V14 FCN write guard metadata.
+  - Guarded FCN position write service through existing `/api/fcn`.
+  - FCN underlying normalization for guarded `/api/fcn` writes.
+  - FCN observation schedule normalization for guarded position payloads.
+  - Readiness and diagnostics service.
+
+Updated FCN surface:
+
+- `components/fcn/fcn-wizard.tsx`
+  - Writes Draft Store / Input Truth Bridge / recent input fallback first.
+  - Attempts guarded V14 database write only after explicit submit.
+- `components/fcn/fcn-center-workspace.tsx`
+  - Keeps `/api/fcn` readback first.
+  - Preserves pending FCN fallback display.
+  - Refreshes after V14 guarded write status events.
+
+Diagnostics surfaces:
+
+- `components/workspace/workspace-v14-fcn-database-activation-status.tsx`
+- `components/workspace/workspace-database-activation-status.tsx`
+- `components/workspace/workspace-platform-cutover-status.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V1400_FCN_DATABASE_ACTIVATION.md`
+
+V14 keeps database writes disabled by default and preserves FCN Draft Store, Truth Layer, `/api/fcn`, and local fallback behavior.

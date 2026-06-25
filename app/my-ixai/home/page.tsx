@@ -34,6 +34,7 @@ import { WorkspaceTimelineSummary } from "@/components/workspace/workspace-timel
 import { WorkspaceV11DatabaseActivationStatus } from "@/components/workspace/workspace-v11-database-activation-status";
 import { WorkspaceV12DatabaseWriteActivationStatus } from "@/components/workspace/workspace-v12-database-write-activation-status";
 import { WorkspaceV13PortfolioDatabaseWriteActivationStatus } from "@/components/workspace/workspace-v13-portfolio-database-write-activation-status";
+import { WorkspaceV14FcnDatabaseActivationStatus } from "@/components/workspace/workspace-v14-fcn-database-activation-status";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -215,7 +216,7 @@ export default function MyIxaiHomePage() {
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:leading-7">
           這裡是登入後主入口。Portfolio、Risk、FCN、Intelligence 與 Settings
           已整理成分工清楚的 Workspace 中心；新增資產後可回到各中心查看 readback 狀態。V5 加入 Watchlist、Alerts、Daily Brief 與 Dashboard v2 readback。
-          V6 加入 API routes、persistence readiness、insights、delivery readiness 與 explain-only Copilot foundation。V13 開始 Portfolio / Stock / Crypto guarded database writes，並保留 local fallback。
+          V6 加入 API routes、persistence readiness、insights、delivery readiness 與 explain-only Copilot foundation。V13 開始 Portfolio / Stock / Crypto guarded database writes；V14 加入 FCN guarded database write activation，並保留 local fallback。
         </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <Link
@@ -243,6 +244,8 @@ export default function MyIxaiHomePage() {
       <WorkspaceV12DatabaseWriteActivationStatus />
 
       <WorkspaceV13PortfolioDatabaseWriteActivationStatus />
+
+      <WorkspaceV14FcnDatabaseActivationStatus />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
