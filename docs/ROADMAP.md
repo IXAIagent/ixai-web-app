@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`Program A / V17-V20 Product Layer Acceleration`
+`Program B / V21-V24 Live Platform Readiness`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is Program A product-layer acceleration while preserving read-only safety boundaries:
+Current priority is Program B live-platform readiness while preserving read-only safety boundaries:
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
@@ -77,6 +77,11 @@ Current priority is Program A product-layer acceleration while preserving read-o
 - Use `docs/V1800_MORNING_BRIEF_LIVE_DATA_READINESS.md` as the source of truth for V18 Morning Brief market-data snapshot readiness.
 - Use `docs/V1900_INTELLIGENCE_CENTER_V2_FOUNDATION.md` as the source of truth for V19 deterministic Intelligence Center v2 context.
 - Use `docs/V2000_SAAS_FOUNDATION_READINESS.md` as the source of truth for V20 SaaS readiness metadata.
+- Use `docs/PROGRAM_B_LIVE_PLATFORM_READINESS.md` as the source of truth for Program B.
+- Use `docs/V2100_MARKET_DATA_LIVE_PROVIDER_READINESS.md` as the source of truth for V21 live market provider readiness contracts.
+- Use `docs/V2200_PORTFOLIO_LIVE_VALUATION_READINESS.md` as the source of truth for V22 future quote snapshot and valuation readiness.
+- Use `docs/V2300_BROKER_INTEGRATION_FOUNDATION.md` as the source of truth for V23 broker interface and disabled trading/sync flags.
+- Use `docs/V2400_RISK_AUTOMATION_READINESS.md` as the source of truth for V24 risk rule, trigger, alert-evaluation, and automation readiness.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -2622,3 +2627,25 @@ Out of scope:
 Next:
 
 - Program B: provider/broker readiness decisions, controlled live integrations, portfolio sync, and advanced risk automation after separate review.
+
+## Program B: V21-V24 Live Platform Readiness
+
+Status:
+
+- Program A V17-V20 Product Layer Acceleration: completed / merged into main.
+- Program B V21-V24 Live Platform Readiness: active in `feature/program-b-live-platform`.
+
+Direction:
+
+- Add live provider readiness contracts, future quote/valuation snapshot contracts, broker interface readiness, and risk automation readiness.
+- Keep Yahoo, Binance, Futu, IBKR, broker live API, external fetch, scheduler, notification sender, AI provider, and trading disabled.
+- Surface Program B diagnostics in Workspace Home, Settings, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- DB writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes.
+- External fetch, Yahoo/Binance/Futu/IBKR live APIs, broker sync, Telegram, scheduler/cron, notification sender, OpenAI/LLM, AI recommendations, trading, order execution, buy/sell/rebalance/action instructions, billing provider, or entitlement enforcement.
+
+Next:
+
+- Program C: Live Data Integration, Intelligence Automation, and Notification Delivery after explicit safety review.

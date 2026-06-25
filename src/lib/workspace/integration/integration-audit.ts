@@ -15,6 +15,10 @@ import { buildMarketDataSnapshot } from "@/src/lib/market-data";
 import { buildMorningMarketDataSummary } from "@/src/lib/morning-brief/brief-market-data-adapter";
 import { buildIntelligenceV2Report } from "@/src/lib/intelligence/v2";
 import { getSaasFoundationReadiness } from "@/src/lib/saas-foundation";
+import { buildLiveProviderReadinessReport } from "@/src/lib/market-data/live-provider-readiness";
+import { buildPortfolioLiveValuationReadiness } from "@/src/lib/valuation";
+import { buildBrokerHealthDiagnostics } from "@/src/lib/broker";
+import { buildRiskAutomationReadinessReport } from "@/src/lib/risk/automation-readiness";
 import { buildLegacyFcnRiskSummary } from "@/src/lib/risk/legacy-risk-engine/fcn-risk-engine";
 import { buildLegacyPortfolioRiskSummary } from "@/src/lib/risk/legacy-risk-engine/portfolio-risk-engine";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
@@ -1180,6 +1184,138 @@ export function auditV20SaasFoundationReadiness(): ModuleAudit {
   };
 }
 
+export function auditV21MarketDataLiveProviderReadiness(): ModuleAudit {
+  const moduleName = "V21 Market Data Live Provider Readiness";
+  const available = functionAvailable(buildLiveProviderReadinessReport);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "buildLiveProviderReadinessReport",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V21.00 models Yahoo, Binance, Futu, and IBKR provider readiness as disabled placeholders only. No external fetch or live API is enabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v21-market-data-live-provider-readiness",
+      name: moduleName,
+      source: "Provider config / health / quote model / cache policy readiness",
+      status,
+      target: "Future live market data integration",
+    }),
+  };
+}
+
+export function auditV22PortfolioLiveValuationReadiness(): ModuleAudit {
+  const moduleName = "V22 Portfolio Live Valuation Readiness";
+  const available = functionAvailable(buildPortfolioLiveValuationReadiness);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "buildPortfolioLiveValuationReadiness",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V22.00 prepares valuation input and quote-status models only. It does not fetch quotes, run a new valuation engine, or price FCNs.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v22-portfolio-live-valuation-readiness",
+      name: moduleName,
+      source: "Future quote snapshots + manual fallback status",
+      status,
+      target: "Portfolio / FCN / Risk / Morning Brief future valuation inputs",
+    }),
+  };
+}
+
+export function auditV23BrokerIntegrationFoundation(): ModuleAudit {
+  const moduleName = "V23 Broker Integration Foundation";
+  const available = functionAvailable(buildBrokerHealthDiagnostics);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "buildBrokerHealthDiagnostics",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V23.00 adds broker interface and diagnostics only. Broker live APIs, position sync, trading, and order execution remain disabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v23-broker-integration-foundation",
+      name: moduleName,
+      source: "Manual broker placeholder + disabled Futu / IBKR provider metadata",
+      status,
+      target: "Future broker sync readiness",
+    }),
+  };
+}
+
+export function auditV24RiskAutomationReadiness(): ModuleAudit {
+  const moduleName = "V24 Risk Automation Readiness";
+  const available = functionAvailable(buildRiskAutomationReadinessReport);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "buildRiskAutomationReadinessReport",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V24.00 models risk rules and triggers only. Scheduler, notification sender, trading actions, and recommendations remain disabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v24-risk-automation-readiness",
+      name: moduleName,
+      source: "Risk rule / trigger / alert evaluation readiness",
+      status,
+      target: "Future risk automation and notification delivery",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -1228,6 +1364,10 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV18MorningBriefLiveDataReadiness(),
     auditV19IntelligenceCenterV2Foundation(),
     auditV20SaasFoundationReadiness(),
+    auditV21MarketDataLiveProviderReadiness(),
+    auditV22PortfolioLiveValuationReadiness(),
+    auditV23BrokerIntegrationFoundation(),
+    auditV24RiskAutomationReadiness(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

@@ -10,6 +10,10 @@ import { getWorkspaceMorningSnapshot } from "@/src/lib/morning-brief";
 import { buildMarketDataSnapshot } from "@/src/lib/market-data";
 import { getWorkspaceIntelligenceV2Report } from "@/src/lib/intelligence/v2";
 import { getSaasFoundationReadiness } from "@/src/lib/saas-foundation";
+import { buildLiveProviderReadinessReport } from "@/src/lib/market-data/live-provider-readiness";
+import { buildPortfolioLiveValuationReadiness } from "@/src/lib/valuation";
+import { buildBrokerHealthDiagnostics } from "@/src/lib/broker";
+import { buildRiskAutomationReadinessReport } from "@/src/lib/risk/automation-readiness";
 import { getWorkspacePortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
@@ -106,6 +110,10 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     marketDataFoundation,
     intelligenceV2Foundation,
     saasFoundation,
+    liveProviderReadiness,
+    liveValuationReadiness,
+    brokerIntegrationReadiness,
+    riskAutomationReadiness,
   ] = await Promise.all([
     safeRead("Portfolio Persistence", getWorkspacePortfolioPersistenceSummary),
     safeRead("Portfolio Truth", loadPortfolioTruthReadback),
@@ -140,6 +148,10 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("V17 Market Data Provider Foundation", () => buildMarketDataSnapshot()),
     safeRead("V19 Intelligence Center v2 Foundation", getWorkspaceIntelligenceV2Report),
     safeRead("V20 SaaS Foundation Readiness", getSaasFoundationReadiness),
+    safeRead("V21 Market Data Live Provider Readiness", buildLiveProviderReadinessReport),
+    safeRead("V22 Portfolio Live Valuation Readiness", buildPortfolioLiveValuationReadiness),
+    safeRead("V23 Broker Integration Foundation", buildBrokerHealthDiagnostics),
+    safeRead("V24 Risk Automation Readiness", buildRiskAutomationReadinessReport),
   ]);
   const warnings = [
     portfolioPersistence.warning,
@@ -175,6 +187,10 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     marketDataFoundation.warning,
     intelligenceV2Foundation.warning,
     saasFoundation.warning,
+    liveProviderReadiness.warning,
+    liveValuationReadiness.warning,
+    brokerIntegrationReadiness.warning,
+    riskAutomationReadiness.warning,
   ].filter((warning): warning is WorkspaceGraphWarning => Boolean(warning));
   const availableModuleCount = [
     portfolioPersistence.value,
@@ -210,6 +226,10 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     marketDataFoundation.value,
     intelligenceV2Foundation.value,
     saasFoundation.value,
+    liveProviderReadiness.value,
+    liveValuationReadiness.value,
+    brokerIntegrationReadiness.value,
+    riskAutomationReadiness.value,
   ].filter(Boolean).length;
 
   return {
@@ -228,6 +248,10 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     intelligence: intelligence.value,
     marketStatus: marketStatus.value,
     marketDataFoundation: marketDataFoundation.value,
+    liveProviderReadiness: liveProviderReadiness.value,
+    liveValuationReadiness: liveValuationReadiness.value,
+    brokerIntegrationReadiness: brokerIntegrationReadiness.value,
+    riskAutomationReadiness: riskAutomationReadiness.value,
     morningBriefEngine: morningBriefEngine.value,
     intelligenceV2Foundation: intelligenceV2Foundation.value,
     saasFoundation: saasFoundation.value,
