@@ -8,6 +8,6 @@ export async function getAlertDatabaseActivationReadiness() {
     migrationStatus: "draft_only" as const,
     runtimeRequired: false,
     summary:
-      "Alert history database activation is optional. Deterministic Alert Engine output remains active when alert_events is missing.",
+      "Alert history database activation is optional. Deterministic Alert Engine output remains active when alert_history is missing.",
   };
 }

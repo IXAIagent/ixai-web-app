@@ -9,7 +9,7 @@ import type {
 } from "@/src/lib/alerts/persistence/alert-database-types";
 
 export async function readAlertEventsFromDatabase(): Promise<WorkspaceAlertCard[]> {
-  const result = await readDatabaseTable<AlertEventDatabaseRow>("alert_events");
+  const result = await readDatabaseTable<AlertEventDatabaseRow>("alert_history");
   return result.rows.map((row) => ({
     category:
       row.category === "coupon_due" ||
@@ -30,7 +30,7 @@ export async function readAlertEventsFromDatabase(): Promise<WorkspaceAlertCard[
       row.severity === "warning"
         ? row.severity
         : "info",
-    sourceEngine: row.source_engine ?? "alert_events",
+    sourceEngine: row.source_engine ?? "alert_history",
     title: row.title ?? "Alert Event",
   }));
 }
@@ -40,14 +40,14 @@ export async function insertAlertEventDraft() {
 }
 
 export async function checkAlertTablesReadiness(): Promise<AlertDatabaseTableReadiness> {
-  const tables = [await readDatabaseTable<unknown>("alert_events", "id")];
+  const tables = [await readDatabaseTable<unknown>("alert_history", "id")];
   const summary = summarizeTableStatuses(tables);
 
   return {
     generatedAt: new Date().toISOString(),
     sourceStatus: summary.sourceStatus,
     tables: tables.map((table) => ({
-      name: "alert_events",
+      name: "alert_history",
       status: table.status,
       warnings: table.warnings,
     })),

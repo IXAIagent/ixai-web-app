@@ -40,6 +40,7 @@ import {
   type PendingPortfolioInputRecord,
 } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { getSupabaseAuthorizationHeaders } from "@/src/lib/supabase/client";
+import { V14_FCN_WRITE_STATUS_EVENT } from "@/src/lib/workspace/fcn-database-activation";
 import type { FCNPosition, FCNUnderlying } from "@/src/types/fcn-position";
 
 type FCNListResponse = {
@@ -841,9 +842,19 @@ export function FCNCenterWorkspace() {
   }, []);
 
   useEffect(() => {
+    const refreshAfterV14Write = () => {
+      void loadPositions();
+    };
+
     queueMicrotask(() => {
       void loadPositions();
     });
+
+    window.addEventListener(V14_FCN_WRITE_STATUS_EVENT, refreshAfterV14Write);
+
+    return () => {
+      window.removeEventListener(V14_FCN_WRITE_STATUS_EVENT, refreshAfterV14Write);
+    };
   }, [loadPositions]);
 
   useEffect(() => {
@@ -983,9 +994,10 @@ export function FCNCenterWorkspace() {
                 FCN Wizard → Input Bridge / API → FCN Intelligence Center
               </h2>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                本頁優先讀取現有 `/api/fcn` 與 authenticated Supabase session；v4.10 也會顯示
-                browser-local pending FCN input，避免 input 與 Workspace readback 斷線。Manual price
-                overlay 只存於本機，用於本頁即時計算。
+                本頁優先讀取現有 `/api/fcn` 與 authenticated Supabase session；若 database readback
+                為空或不可用，仍會顯示 Input Truth Bridge、FCN Draft Store 與 legacy recent fallback
+                的 browser-local pending FCN input。V14 guarded writes 只會在 FCN Wizard 明確 submit
+                且 guards 啟用後嘗試，不會由頁面 render 或 diagnostics 觸發。
               </p>
             </div>
             <button
@@ -1006,7 +1018,8 @@ export function FCNCenterWorkspace() {
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {[
               ["Readback Status", STATUS_LABEL[status]],
-              ["Repository Source", "Supabase /api/fcn"],
+              ["Read Priority", "database -> truth -> draft_store -> legacy_recent -> empty"],
+              ["Repository Source", "Supabase /api/fcn + V14 guarded write metadata"],
               ["Pending Bridge", `${pendingFcnInputs.length} local FCN input(s)`],
               ["Persistence", "fcn_positions + fcn_underlyings"],
               ["Manual Prices", "localStorage overlay"],

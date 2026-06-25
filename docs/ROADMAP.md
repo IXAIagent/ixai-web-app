@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V11 / Database Activation Program`
+`Program A / V17-V20 Product Layer Acceleration`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is UX / IA foundation before moving modules:
+Current priority is Program A product-layer acceleration while preserving read-only safety boundaries:
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
@@ -67,6 +67,16 @@ Current priority is UX / IA foundation before moving modules:
 - Use `docs/V10_PLATFORM_CUTOVER_PROGRAM.md` as the source of truth for the V10.20-V10.70 Platform Cutover Program.
 - Use `docs/V1020_OWNERSHIP_ENFORCEMENT.md`, `docs/V1030_DATABASE_WRITE_CUTOVER.md`, `docs/V1040_WORKSPACE_MEMBERSHIP.md`, `docs/V1050_SYNC_RECONCILIATION.md`, `docs/V1060_MIGRATION_EXECUTION_PREP.md`, and `docs/V1070_PRODUCTION_READINESS.md` as V10 module-level source docs.
 - Use `docs/V1110_DATABASE_ACTIVATION.md` as the source of truth for V11.10 Database Activation Foundation, reviewed migration files, readback validation, write readiness, and fallback preservation.
+- Use `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md` as the source of truth for V12 guarded Watchlist / Alert History writes, read-only diagnostics, and disabled Portfolio / FCN write paths.
+- Use `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md` as the source of truth for V13 guarded Portfolio / Stock / Crypto writes, local-first input submit, database-first readback priority, and FCN write deferral to V14.
+- Use `docs/V1400_FCN_DATABASE_ACTIVATION.md` as the source of truth for V14 guarded FCN writes, Draft Store / Truth Layer fallback preservation, and disabled-by-default FCN database activation.
+- Use `docs/V1500_LEGACY_RISK_ENGINE_MIGRATION.md` as the source of truth for V15 read-only legacy risk concepts, Portfolio risk, FCN worst-of / KI / KO / strike distance, concentration, and exposure diagnostics.
+- Use `docs/V1600_MORNING_BRIEF_ENGINE.md` as the source of truth for V16 read-only Morning Brief Engine, Portfolio/Risk/FCN adapters, News Placeholder, and Morning Snapshot.
+- Use `docs/PROGRAM_A_V17_V20_PRODUCT_LAYER.md` as the source of truth for Program A.
+- Use `docs/V1700_MARKET_DATA_PROVIDER_FOUNDATION.md` as the source of truth for V17 market data provider contracts and manual placeholder snapshots.
+- Use `docs/V1800_MORNING_BRIEF_LIVE_DATA_READINESS.md` as the source of truth for V18 Morning Brief market-data snapshot readiness.
+- Use `docs/V1900_INTELLIGENCE_CENTER_V2_FOUNDATION.md` as the source of truth for V19 deterministic Intelligence Center v2 context.
+- Use `docs/V2000_SAAS_FOUNDATION_READINESS.md` as the source of truth for V20 SaaS readiness metadata.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
@@ -2475,3 +2485,140 @@ Out of scope:
 - RLS policy changes outside reviewed migration work.
 - Binance / Yahoo Finance integration.
 - Broker sync, trading logic, order execution, or AI recommendations.
+
+## V12 Workspace Database Write Activation
+
+Status:
+
+- V11.51 Index Compatibility Fix: completed / merged into main.
+- V12.00 Workspace Database Write Activation: active in `feature/v12-workspace-database-write-activation`.
+
+Direction:
+
+- Start the first guarded database-backed write flow.
+- Keep Watchlist and Alert History as the only V12 write candidates.
+- Keep Portfolio and FCN writes disabled/readiness-only.
+- Preserve database-first reads, Truth Layer fallback, localStorage fallback, and FCN Draft Store fallback.
+- Surface V12 write guard, workspace bootstrap, and fallback metadata in Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- Remote migration execution.
+- Schema or RLS changes.
+- Auth redirect / onboarding changes.
+- Portfolio / FCN write cutover.
+- Binance / Yahoo Finance integration.
+- Broker sync, trading logic, order execution, or AI recommendations.
+
+## V13 Portfolio Database Write Activation
+
+Status:
+
+- V12 Workspace Database Write Activation: completed / merged into main.
+- V13.00 Portfolio Database Write Activation: completed / merged into main.
+- V14.00 FCN Database Activation: active in `feature/v14-fcn-database-activation`.
+
+Direction:
+
+- Start guarded Portfolio / Stock / Crypto database write activation.
+- Keep Stock and Crypto input submit local-first: Input Truth Bridge and recent input fallback are written before any database attempt.
+- Require V12 global write cutover guard plus V13 module guard before database writes are attempted.
+- Keep FCN writes explicitly disabled and defer FCN Wizard database write activation to V14.
+- Preserve database-first readback, Truth Layer fallback, and localStorage fallback.
+
+Out of scope:
+
+- FCN database write activation.
+- Migration execution, schema changes, RLS changes, or auth behavior changes.
+- Broker sync, Binance/Yahoo provider work, trading logic, order execution, or AI recommendations.
+
+## V14 FCN Database Activation
+
+Status:
+
+- V13 Portfolio Database Write Activation: completed / merged into main.
+- V14.00 FCN Database Activation: completed / merged into main.
+- V15.00 Legacy Risk Engine Migration: active in `feature/v15-legacy-risk-engine-migration`.
+
+Direction:
+
+- Start guarded FCN database write activation after explicit FCN Wizard submit.
+- Keep FCN Wizard local-first: FCN Draft Store, Input Truth Bridge, and recent input fallback are written before any database attempt.
+- Require V12 global write guard plus V14 FCN, position, underlying, and schedule module guards before database writes are attempted.
+- Preserve database-first `/api/fcn` readback, Truth Layer fallback, FCN Draft Store fallback, and legacy recent input fallback.
+- Surface V14 guard metadata in Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- Migration execution, schema changes, RLS changes, or auth behavior changes.
+- FCN pricing engine, edit/delete, destructive sync, or automatic reconciliation writes.
+- Broker sync, Binance/Yahoo provider work, trading logic, order execution, or AI recommendations.
+- Removing FCN Draft Store, Truth Layer, `/api/fcn`, or local fallback behavior.
+
+## V15 Legacy Risk Engine Migration
+
+Status:
+
+- V14 FCN Database Activation: completed / merged into main.
+- V15.00 Legacy Risk Engine Migration: completed / merged into main.
+- V16.00 Morning Brief Engine Migration: active in `feature/v16-morning-brief-engine`.
+
+Direction:
+
+- Migrate legacy risk concepts as pure, read-only calculations.
+- Add Portfolio risk, FCN worst-of / KI / strike / KO readback, concentration, and exposure summaries.
+- Surface V15 diagnostics in Risk Center, Home, Settings, Workspace Graph, and Integration Audit.
+- Preserve Portfolio Truth, FCN Draft Store, `/api/fcn`, and local fallback behavior.
+
+Out of scope:
+
+- Database writes, migration execution, schema/RLS/auth changes, broker sync, Binance/Yahoo integration, trading logic, order execution, AI recommendations, Morning Brief migration, or FCN pricing engine.
+
+Next:
+
+- V16 Morning Brief Engine Migration.
+
+## V16 Morning Brief Engine Migration
+
+Status:
+
+- V15 Legacy Risk Engine Migration: completed / merged into main.
+- V16.00 Morning Brief Engine Migration: active in `feature/v16-morning-brief-engine`.
+
+Direction:
+
+- Build the Morning Brief Engine core as a read-only adapter layer.
+- Reuse V15 Legacy Risk Engine for risk and FCN summaries.
+- Add Portfolio, Risk, FCN, and News Placeholder sections.
+- Add reusable Morning Snapshot for Workspace Home and future Web / Telegram / API surfaces.
+- Surface V16 diagnostics in Home, Settings, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- Database writes, SQL, migrations, scheduler, Telegram bot, Yahoo, Binance, OpenAI/AI calls, broker sync, trading, order execution, or recommendation logic.
+
+Next:
+
+- Program A: V17 Market Data Provider Foundation, V18 Morning Brief Live Data Readiness, V19 Intelligence Center v2 Foundation, and V20 SaaS Foundation Readiness.
+
+## Program A: V17-V20 Product Layer Acceleration
+
+Status:
+
+- V16 Morning Brief Engine Migration: completed / merged into main.
+- Program A V17-V20 Product Layer Acceleration: active in `feature/program-a-v17-v20-product-layer`.
+
+Direction:
+
+- Add read-only product-layer foundations for market data contracts, Morning Brief live-data readiness, Intelligence v2, and SaaS readiness.
+- Keep all external providers disabled.
+- Surface Program A diagnostics in Workspace Home, Settings, Workspace Graph, and Integration Audit.
+
+Out of scope:
+
+- Database writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes.
+- Yahoo, Binance, broker, Telegram, scheduler, external news, OpenAI, AI recommendations, trading, order execution, buy/sell/rebalance instructions, billing provider, or subscription enforcement.
+
+Next:
+
+- Program B: provider/broker readiness decisions, controlled live integrations, portfolio sync, and advanced risk automation after separate review.

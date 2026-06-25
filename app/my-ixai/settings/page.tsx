@@ -11,12 +11,18 @@ import {
 } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { LegacyRiskEngineStatus } from "@/components/risk/legacy-risk-engine-status";
+import { MorningBriefStatus } from "@/components/morning-brief/morning-brief-status";
 import { WorkspaceIntegrationStatus } from "@/components/workspace/workspace-integration-status";
 import { WorkspaceDatabaseActivationStatus } from "@/components/workspace/workspace-database-activation-status";
 import { WorkspaceDatabaseReadPriorityStatus } from "@/components/workspace/workspace-database-read-priority-status";
 import { WorkspacePlatformCutoverStatus } from "@/components/workspace/workspace-platform-cutover-status";
+import { ProgramAProductLayerStatus } from "@/components/workspace/program-a-product-layer-status";
 import { WorkspacePersistenceReadiness } from "@/components/workspace/workspace-persistence-readiness";
 import { WorkspaceV11DatabaseActivationStatus } from "@/components/workspace/workspace-v11-database-activation-status";
+import { WorkspaceV12DatabaseWriteActivationStatus } from "@/components/workspace/workspace-v12-database-write-activation-status";
+import { WorkspaceV13PortfolioDatabaseWriteActivationStatus } from "@/components/workspace/workspace-v13-portfolio-database-write-activation-status";
+import { WorkspaceV14FcnDatabaseActivationStatus } from "@/components/workspace/workspace-v14-fcn-database-activation-status";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getWorkspaceIntegrationAudit } from "@/src/lib/workspace/integration/integration-service";
 
@@ -144,6 +150,18 @@ export default function MyIxaiSettingsPage() {
         <WorkspacePlatformCutoverStatus />
 
         <WorkspaceV11DatabaseActivationStatus />
+
+        <WorkspaceV12DatabaseWriteActivationStatus />
+
+        <WorkspaceV13PortfolioDatabaseWriteActivationStatus />
+
+        <WorkspaceV14FcnDatabaseActivationStatus />
+
+        <LegacyRiskEngineStatus compact />
+
+        <MorningBriefStatus compact />
+
+        <ProgramAProductLayerStatus compact />
 
         <WorkspaceDatabaseActivationStatus />
 

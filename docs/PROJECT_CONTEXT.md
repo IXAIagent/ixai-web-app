@@ -811,3 +811,119 @@ Critical boundaries:
 - Diagnostics do not write during render.
 - Truth Layer, localStorage, FCN Draft Store, and deterministic alert fallback remain active.
 - Broker integrations, Yahoo/Binance connections, trading logic, and AI recommendations remain out of scope.
+
+## J. V12 Workspace Database Write Activation Context
+
+V12.00 is the first real Workspace database write activation layer.
+
+Implemented scope:
+
+- V12 write guard metadata for Watchlist, Alert History, Portfolio, and FCN.
+- Guarded Watchlist database write service for `watchlists` and `watchlist_items`.
+- Guarded Alert History database write service for `alert_history`.
+- Workspace bootstrap helper that can create a workspace and owner membership only during an explicit guarded write action.
+- Diagnostics for Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+
+Critical boundaries:
+
+- Diagnostics do not write during render.
+- Portfolio and FCN writes remain disabled/readiness-only.
+- The Truth Layer, localStorage fallback, FCN Draft Store fallback, `/api/fcn`, and deterministic alert fallback remain active.
+- No migrations, Supabase CLI push, auth redirect changes, RLS changes, broker integration, trading logic, Binance/Yahoo integration, or AI recommendations are introduced.
+
+## K. V13 Portfolio Database Write Activation Context
+
+V13.00 starts guarded database writes for Portfolio, Stock, and Crypto input flows.
+
+Implemented scope:
+
+- New `src/lib/workspace/portfolio-database-write-activation/` guard, readiness, write, and diagnostics layer.
+- Stock Input and Crypto Input still write Input Truth Bridge / local fallback first, then attempt guarded Supabase writes only after explicit submit.
+- Portfolio database bootstrap uses the existing `/api/portfolio` path when guards allow it.
+- Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit expose V13 guard and fallback metadata.
+
+Critical boundaries:
+
+- Diagnostics remain read-only and must not create workspace, portfolio, stock, or crypto rows.
+- Database writes are disabled by default and require V12 global guard plus V13 module guard.
+- FCN database writes are explicitly disabled in V13 and deferred to V14.
+- Truth Layer, localStorage fallback, FCN Draft Store, `/api/fcn`, and deterministic alert fallback remain active.
+- No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, or AI recommendations are introduced.
+
+## L. V14 FCN Database Activation Context
+
+V14.00 starts guarded FCN database writes while preserving the existing FCN fallback stack.
+
+Implemented scope:
+
+- New `src/lib/workspace/fcn-database-activation/` guard, readiness, write, and diagnostics layer.
+- FCN Wizard still writes FCN Draft Store, Input Truth Bridge, and recent input fallback first, then attempts a guarded database write only after explicit submit.
+- FCN Center keeps `/api/fcn` database readback first and still shows pending FCN inputs from local fallback when the database is empty or unavailable.
+- Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit expose V14 guard and fallback metadata.
+
+Critical boundaries:
+
+- Diagnostics remain read-only and must not create FCN, workspace, portfolio, underlying, or schedule rows.
+- Database writes are disabled by default and require V12 global guard plus V14 FCN module guards.
+- Drafts with observation/coupon schedule rows skip DB write unless the V14 schedule guard is enabled; independent coupon schedule table writes remain readiness-only until staging confirms a safe route.
+- Truth Layer, localStorage fallback, FCN Draft Store, `/api/fcn`, and deterministic alert fallback remain active.
+- No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, or AI recommendations are introduced.
+
+## M. V15 Legacy Risk Engine Migration Context
+
+V15.00 migrates reusable legacy risk-engine concepts into the active Workspace as a read-only calculation layer.
+
+Implemented scope:
+
+- New `src/lib/risk/legacy-risk-engine/` pure calculation layer.
+- Portfolio risk summary from Portfolio Truth Layer.
+- FCN worst-of, KI distance, strike distance, KO status, and missing-data warnings from existing FCN readback.
+- Concentration and repeated-underlying analysis.
+- Asset-class, currency, and top-symbol exposure readback.
+- Compact V15 diagnostics in Risk Center, Workspace Home, Settings, Workspace Graph, and Integration Audit.
+
+Critical boundaries:
+
+- V15 performs no database writes and does not enable any write guard.
+- Diagnostics and page render only read existing data and recalculate derived risk metadata.
+- Truth Layer, local pending input fallback, FCN Draft Store, `/api/fcn`, and legacy recent input fallback remain active.
+- No migrations, schema/RLS/auth changes, broker sync, trading, Binance/Yahoo integration, Morning Brief migration, or AI recommendations are introduced.
+
+## N. V16 Morning Brief Engine Context
+
+V16.00 creates the read-only Morning Brief Engine core for Workspace.
+
+Implemented scope:
+
+- New `src/lib/morning-brief/` engine and adapter layer.
+- Portfolio adapter from V15 portfolio-risk / Portfolio Truth readback.
+- Risk adapter that directly uses V15 Legacy Risk Engine output.
+- FCN adapter from V15 FCN risk output.
+- News Placeholder with no API connection.
+- Reusable `MorningSnapshot` for Home Dashboard and future Web / Telegram / API surfaces.
+- Morning Brief preview cards on Workspace Home and compact diagnostics in Settings.
+- Workspace Graph and Integration Audit metadata for V16.
+
+Critical boundaries:
+
+- V16 is read-only and performs no database writes.
+- V16 does not add SQL, migrations, scheduler, Telegram bot, Yahoo, Binance, OpenAI/AI calls, broker sync, trading, order execution, or recommendations.
+- News remains placeholder-only until a future approved provider sprint.
+- Missing Portfolio / Risk / FCN data returns warning, partial, placeholder, or insufficient-data states instead of crashing.
+
+## O. Program A V17-V20 Product Layer Context
+
+Program A accelerates the product layer without opening external side effects.
+
+Implemented scope:
+
+- V17 adds `src/lib/market-data/` provider contracts, manual placeholder provider, registry metadata, and market data diagnostics.
+- V18 extends Morning Brief with market-data snapshot readiness while keeping News placeholder-only.
+- V19 adds deterministic Intelligence Center v2 context and safety flags with no LLM or recommendation logic.
+- V20 adds SaaS readiness metadata for future plans, usage, subscription, and team workspace work.
+- Workspace Home, Settings, Intelligence Center, Workspace Graph, and Integration Audit expose Program A metadata.
+
+Critical boundaries:
+
+- Program A performs no database writes and does not mutate Supabase.
+- No SQL, migrations, schema/RLS/auth/membership changes, Yahoo, Binance, broker, Telegram, scheduler, OpenAI, AI recommendation, trading, order execution, billing provider, or subscription enforcement are introduced.

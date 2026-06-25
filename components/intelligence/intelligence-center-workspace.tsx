@@ -18,6 +18,7 @@ import {
 
 import { WorkspaceMarketStatus } from "@/components/market/workspace-market-status";
 import { IntelligenceSummary } from "@/components/intelligence/intelligence-summary";
+import { IntelligenceV2Summary } from "@/components/intelligence/intelligence-v2-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { loadFcnManualPriceOverrides } from "@/src/lib/fcn/manual-price-overrides";
 import { buildIntelligenceCenterReadback } from "@/src/lib/intelligence/intelligence-center";
@@ -259,6 +260,8 @@ export function IntelligenceCenterWorkspace() {
         </section>
 
         <IntelligenceSummary />
+
+        <IntelligenceV2Summary />
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">

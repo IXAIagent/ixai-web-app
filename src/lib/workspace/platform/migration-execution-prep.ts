@@ -18,7 +18,7 @@ export async function getWorkspaceMigrationExecutionPrep(): Promise<WorkspaceMig
             "fcn_coupon_schedules",
             "watchlists",
             "watchlist_items",
-            "alert_events",
+            "alert_history",
           ];
 
     return {
@@ -30,7 +30,7 @@ export async function getWorkspaceMigrationExecutionPrep(): Promise<WorkspaceMig
         "portfolio_positions / stock_positions / crypto_positions",
         "fcn_positions / fcn_underlyings / fcn_coupon_schedules",
         "watchlists / watchlist_items",
-        "alert_events",
+        "alert_history",
         "indexes and RLS policies after table validation",
       ],
       postMigrationValidation: [

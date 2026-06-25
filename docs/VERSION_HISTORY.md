@@ -6,6 +6,77 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Program A V17-V20 — Product Layer Acceleration
+
+Why:
+
+- V16 created the Morning Brief Engine, but IXAI needs product-layer contracts for market data, Morning Brief live-data readiness, Intelligence v2, and SaaS readiness before any external provider or platform cutover work.
+
+What Changed:
+
+- Added `docs/PROGRAM_A_V17_V20_PRODUCT_LAYER.md`.
+- Added V17 `src/lib/market-data/` provider contracts, manual placeholder provider, snapshots, and diagnostics.
+- Extended V16 Morning Brief with V18 market-data summary input while keeping News placeholder-only.
+- Added V19 deterministic Intelligence Center v2 foundation and preview UI.
+- Added V20 SaaS readiness metadata for plans, usage, subscriptions, and teams.
+- Added Program A diagnostics to Home, Settings, Workspace Graph, and Integration Audit.
+
+Key Decisions:
+
+- Program A is foundation/readiness only.
+- External provider, AI, broker, billing, scheduler, Telegram, trading, and DB write paths remain disabled.
+- Existing legacy market-data provider modules are not imported or re-exported by Program A's V17 manual provider path.
+
+Out of Scope:
+
+- No DB writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes, Yahoo, Binance, broker, Telegram, scheduler, OpenAI/AI calls, trading/order execution, buy/sell/rebalance instructions, investment recommendations, billing provider, or subscription enforcement.
+
+## V16.00 — Morning Brief Engine
+
+Why:
+
+- V15 migrated risk calculations into the active Workspace. IXAI now needs a reusable Morning Brief core that can summarize Portfolio, Risk, FCN, and future News sources without starting Telegram, scheduler, AI, or trading work.
+
+What Changed:
+
+- Added `docs/V1600_MORNING_BRIEF_ENGINE.md`.
+- Added `src/lib/morning-brief/` for Morning Brief types, engine, Portfolio/Risk/FCN adapters, News Placeholder, Morning Snapshot, and diagnostics.
+- Added Morning Brief preview cards to Workspace Home and compact diagnostics to Settings.
+- Added V16 Morning Brief metadata to Workspace Graph and Integration Audit.
+
+Key Decisions:
+
+- V16 directly reuses V15 Legacy Risk Engine output instead of recalculating another risk engine.
+- News is placeholder-only; no external provider is connected.
+- Morning Snapshot is reusable for future Web, Telegram, and API surfaces, but this sprint does not activate those channels.
+
+Out of Scope:
+
+- No DB writes, SQL, migrations, scheduler, Telegram bot, Yahoo, Binance, OpenAI/AI calls, broker integration, trading/order execution, buy/sell/rebalance instructions, or investment recommendations.
+
+## V15.00 — Legacy Risk Engine Migration
+
+Why:
+
+- V14 activated guarded FCN write readiness, but the Workspace still needed the legacy backend's reusable risk concepts migrated into the active app as safe, deterministic readback.
+
+What Changed:
+
+- Added `docs/V1500_LEGACY_RISK_ENGINE_MIGRATION.md`.
+- Added `src/lib/risk/legacy-risk-engine/` for pure read-only Portfolio risk, FCN worst-of, KI/strike/KO distance, concentration, exposure, and diagnostics.
+- Added V15 risk summary cards to Risk Center plus compact diagnostics to Home and Settings.
+- Added V15 metadata to Workspace Graph and Integration Audit.
+
+Key Decisions:
+
+- V15 is calculation-only and performs no database writes.
+- Portfolio Truth Layer, local pending input fallback, FCN Draft Store, `/api/fcn`, and legacy recent input fallback remain intact.
+- FCN monitoring uses existing stored/manual prices only and is not a full FCN pricing engine.
+
+Out of Scope:
+
+- No migration execution, schema/RLS/auth changes, broker integration, Binance/Yahoo provider work, trading/order execution, buy/sell recommendations, AI recommendation logic, or Morning Brief migration.
+
 ## V11.10 — Database Activation Foundation
 
 Why:
@@ -4842,6 +4913,77 @@ Key Boundaries:
 - No app runtime behavior changed.
 - No database writes enabled.
 - Concurrent index creation remains preferred for CLI / non-transaction execution and high-traffic production tables.
+
+## V12.00 — Workspace Database Write Activation
+
+What Changed:
+
+- Added V12 write guard metadata for Watchlist, Alert History, Portfolio, and FCN modules.
+- Added a guarded Workspace bootstrap helper that can create a workspace and owner membership only during explicit guarded write actions.
+- Added guarded database write services for Watchlist and Alert History.
+- Retargeted Alert History database readback from the older `alert_events` name to the production `alert_history` table.
+- Added V12 diagnostics to Workspace Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+- Added `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md`.
+
+Key Boundaries:
+
+- No migration executed.
+- No remote Supabase migration executed.
+- No schema, RLS, auth redirect, onboarding, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- Portfolio and FCN writes remain disabled/readiness-only.
+- Truth Layer, localStorage fallback, FCN Draft Store fallback, and deterministic alert fallback remain active.
+
+## V12.01 — Workspace Database Write Guard Review
+
+What Changed:
+
+- Reviewed V12.00 database write activation safety boundaries.
+- Confirmed diagnostics use read-only bootstrap status with `allowCreate: false`.
+- Tightened Platform Cutover write preview so page render / QA diagnostics do not call write services.
+- Preserved V12 explicit write services for Watchlist and Alert History behind guards.
+
+Key Boundaries:
+
+- No migration executed.
+- No schema, RLS, auth, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- Portfolio and FCN writes remain disabled/readiness-only.
+- Local fallback and Truth Layer behavior remain intact.
+
+## V13.00 — Portfolio Database Write Activation
+
+What Changed:
+
+- Added V13 Portfolio / Stock / Crypto database write activation guards and diagnostics.
+- Updated Stock Input and Crypto Input to write local pending fallback first, then attempt guarded Supabase writes only after explicit submit.
+- Added V13 diagnostics to Workspace Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+- Kept FCN database writes explicitly disabled for V13.
+- Added `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md`.
+
+Key Boundaries:
+
+- No migration executed.
+- No Supabase schema, RLS, auth, membership, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- FCN Wizard database writes remain out of scope.
+- Truth Layer, recent input fallback, localStorage fallback, and FCN Draft Store fallback remain active.
+
+## V14.00 — FCN Database Activation
+
+What Changed:
+
+- Added V14 FCN database activation guards, readiness, write services, and diagnostics.
+- Updated FCN Wizard so explicit submit writes FCN Draft Store / Input Truth Bridge / recent input fallback first, then attempts a guarded database write only when V12 global and V14 FCN guards are enabled.
+- Updated FCN Center to preserve `/api/fcn` readback first, keep pending FCN fallback visible, and refresh after V14 guarded write status events.
+- Added V14 diagnostics to Workspace Home, Settings, Database Activation Status, Platform Cutover Status, Workspace Graph, and Integration Audit.
+- Added `docs/V1400_FCN_DATABASE_ACTIVATION.md`.
+
+Key Boundaries:
+
+- No migration executed.
+- No SQL, Supabase schema, RLS, auth, membership, broker, trading, Binance/Yahoo, or AI recommendation changes.
+- V14 database writes are disabled by default.
+- Diagnostics remain read-only.
+- FCN Draft Store, Truth Layer, `/api/fcn`, recent input fallback, and localStorage fallback remain active.
+- Drafts with schedule rows skip DB write unless the V14 schedule guard is enabled; independent coupon schedule table writes remain readiness-only until staging confirms a safe route.
 
 ## v1.65.0 — Pro Module Product Pages Redesign
 

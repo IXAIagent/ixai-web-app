@@ -386,3 +386,208 @@ Documentation:
 - `docs/V1130_REMOTE_MIGRATION_READINESS.md`
 
 The V11 cutover layer must remain fallback-preserving and must not execute remote migrations or product writes from diagnostics.
+
+## V12 Workspace Database Write Activation Map
+
+New activation layer:
+
+- `src/lib/workspace/database-write-activation/`
+  - V12 write guard metadata.
+  - Workspace bootstrap helper.
+  - Guarded Watchlist write service.
+  - Guarded Alert History write service.
+  - Consolidated V12 diagnostics service.
+
+Diagnostics surfaces:
+
+- `components/workspace/workspace-v12-database-write-activation-status.tsx`
+- `components/workspace/workspace-database-activation-status.tsx`
+- `components/workspace/workspace-platform-cutover-status.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Persistence table alignment:
+
+- Watchlist writes target `watchlists` and `watchlist_items`.
+- Alert History reads and guarded writes target `alert_history`.
+- Portfolio and FCN write paths are still disabled/readiness-only.
+
+Documentation:
+
+- `docs/V1200_WORKSPACE_DATABASE_WRITE_ACTIVATION.md`
+
+## V13 Portfolio Database Write Activation Map
+
+New activation layer:
+
+- `src/lib/workspace/portfolio-database-write-activation/`
+  - V13 Portfolio / Stock / Crypto write guard metadata.
+  - Guarded Portfolio bootstrap through existing `/api/portfolio`.
+  - Guarded Stock database write service through existing `/api/stocks`.
+  - Guarded Crypto database write service through existing `/api/crypto`.
+  - Readiness and diagnostics service.
+
+Updated input surfaces:
+
+- `components/portfolio/stock-input-form.tsx`
+- `components/portfolio/crypto-input-form.tsx`
+
+Diagnostics surfaces:
+
+- `components/workspace/workspace-v13-portfolio-database-write-activation-status.tsx`
+- `components/workspace/workspace-database-activation-status.tsx`
+- `components/workspace/workspace-platform-cutover-status.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V1300_PORTFOLIO_DATABASE_WRITE_ACTIVATION.md`
+
+V13 keeps FCN writes disabled and preserves Truth Layer / local fallback behavior.
+
+## V14 FCN Database Activation Map
+
+New activation layer:
+
+- `src/lib/workspace/fcn-database-activation/`
+  - V14 FCN write guard metadata.
+  - Guarded FCN position write service through existing `/api/fcn`.
+  - FCN underlying normalization for guarded `/api/fcn` writes.
+  - FCN observation schedule normalization for guarded position payloads.
+  - Readiness and diagnostics service.
+
+Updated FCN surface:
+
+- `components/fcn/fcn-wizard.tsx`
+  - Writes Draft Store / Input Truth Bridge / recent input fallback first.
+  - Attempts guarded V14 database write only after explicit submit.
+- `components/fcn/fcn-center-workspace.tsx`
+  - Keeps `/api/fcn` readback first.
+  - Preserves pending FCN fallback display.
+  - Refreshes after V14 guarded write status events.
+
+Diagnostics surfaces:
+
+- `components/workspace/workspace-v14-fcn-database-activation-status.tsx`
+- `components/workspace/workspace-database-activation-status.tsx`
+- `components/workspace/workspace-platform-cutover-status.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V1400_FCN_DATABASE_ACTIVATION.md`
+
+V14 keeps database writes disabled by default and preserves FCN Draft Store, Truth Layer, `/api/fcn`, and local fallback behavior.
+
+## V15 Legacy Risk Engine Migration Map
+
+New read-only calculation layer:
+
+- `src/lib/risk/legacy-risk-engine/`
+  - Portfolio risk calculation.
+  - FCN worst-of / KI / strike / KO risk calculation.
+  - Concentration and repeated-underlying calculation.
+  - Exposure aggregation and diagnostics.
+
+New / updated UI surfaces:
+
+- `components/risk/legacy-risk-engine-status.tsx`
+- `components/risk/portfolio-risk-summary-card.tsx`
+- `components/risk/fcn-risk-summary-card.tsx`
+- `components/risk/concentration-risk-summary-card.tsx`
+- `components/risk/global-risk-center-workspace.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+
+Workspace metadata:
+
+- `src/lib/workspace/graph/workspace-graph-types.ts`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V1500_LEGACY_RISK_ENGINE_MIGRATION.md`
+
+V15 is read-only. It does not add database writes, migrations, auth changes, broker sync, trading logic, Binance/Yahoo provider work, Morning Brief migration, or AI recommendations.
+
+## V16 Morning Brief Engine Map
+
+New read-only Morning Brief layer:
+
+- `src/lib/morning-brief/`
+  - `brief-types.ts`
+  - `brief-engine.ts`
+  - `brief-risk-adapter.ts`
+  - `brief-fcn-adapter.ts`
+  - `brief-portfolio-adapter.ts`
+  - `brief-news-placeholder.ts`
+  - `brief-snapshot.ts`
+  - `brief-diagnostics.ts`
+  - `index.ts`
+
+New UI surfaces:
+
+- `components/morning-brief/morning-brief-status.tsx`
+- `components/morning-brief/morning-brief-summary-card.tsx`
+- `components/morning-brief/morning-risk-card.tsx`
+- `components/morning-brief/morning-fcn-card.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+
+Workspace metadata:
+
+- `src/lib/workspace/graph/workspace-graph-types.ts`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/V1600_MORNING_BRIEF_ENGINE.md`
+
+V16 uses V15 Legacy Risk Engine output rather than recalculating another risk engine. It does not add DB writes, SQL, migrations, scheduler, Telegram, Yahoo, Binance, broker, trading, or AI recommendation logic.
+
+## Program A V17-V20 Product Layer Map
+
+New read-only product-layer foundations:
+
+- `src/lib/market-data/`
+  - V17 provider interface, manual placeholder provider, provider registry, market data snapshot, and diagnostics.
+- `src/lib/morning-brief/brief-market-data-adapter.ts`
+  - V18 Morning Brief market-data snapshot adapter.
+- `src/lib/intelligence/v2/`
+  - V19 deterministic Intelligence Center v2 context, adapters, diagnostics, and safety flags.
+- `src/lib/saas-foundation/`
+  - V20 plan, subscription, usage, team, and SaaS readiness metadata.
+
+New / updated UI surfaces:
+
+- `components/workspace/program-a-product-layer-status.tsx`
+- `components/intelligence/intelligence-v2-summary.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/settings/page.tsx`
+- `components/intelligence/intelligence-center-workspace.tsx`
+
+Workspace metadata:
+
+- `src/lib/workspace/graph/workspace-graph-types.ts`
+- `src/lib/workspace/graph/workspace-graph-service.ts`
+- `src/lib/workspace/integration/integration-audit.ts`
+
+Documentation:
+
+- `docs/PROGRAM_A_V17_V20_PRODUCT_LAYER.md`
+- `docs/V1700_MARKET_DATA_PROVIDER_FOUNDATION.md`
+- `docs/V1800_MORNING_BRIEF_LIVE_DATA_READINESS.md`
+- `docs/V1900_INTELLIGENCE_CENTER_V2_FOUNDATION.md`
+- `docs/V2000_SAAS_FOUNDATION_READINESS.md`
+
+Program A is read-only. It does not add DB writes, SQL, migrations, schema/RLS/auth/membership changes, Yahoo, Binance, broker, Telegram, scheduler, OpenAI/AI calls, trading, recommendations, billing provider, or subscription enforcement.

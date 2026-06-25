@@ -9,6 +9,14 @@ import {
 import { buildPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-center";
 import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-engine";
 import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
+import { buildMorningBrief } from "@/src/lib/morning-brief/brief-engine";
+import { buildMorningNewsPlaceholder } from "@/src/lib/morning-brief/brief-news-placeholder";
+import { buildMarketDataSnapshot } from "@/src/lib/market-data";
+import { buildMorningMarketDataSummary } from "@/src/lib/morning-brief/brief-market-data-adapter";
+import { buildIntelligenceV2Report } from "@/src/lib/intelligence/v2";
+import { getSaasFoundationReadiness } from "@/src/lib/saas-foundation";
+import { buildLegacyFcnRiskSummary } from "@/src/lib/risk/legacy-risk-engine/fcn-risk-engine";
+import { buildLegacyPortfolioRiskSummary } from "@/src/lib/risk/legacy-risk-engine/portfolio-risk-engine";
 import { buildPortfolioRiskSummary } from "@/src/lib/risk/risk-engine";
 import { buildWorkspaceNotificationSummary } from "@/src/lib/notifications/notification-engine";
 import { checkAlertTablesReadiness, listPersistentAlertEvents } from "@/src/lib/alerts/persistence";
@@ -25,6 +33,9 @@ import { checkWatchlistTablesReadiness, listPersistentWatchlistItems } from "@/s
 import { resolveDatabaseReadPriority } from "@/src/lib/workspace/database-read-priority";
 import { getV11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import { getV11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
+import { getV12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
+import { getV13PortfolioWriteDiagnostics } from "@/src/lib/workspace/portfolio-database-write-activation";
+import { getV14FcnWriteDiagnostics } from "@/src/lib/workspace/fcn-database-activation";
 import { getWorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import { buildWorkspaceGraphSummary } from "@/src/lib/workspace/graph/workspace-graph-engine";
 import { buildWorkspaceHealthScore } from "@/src/lib/workspace/health/workspace-health-engine";
@@ -657,7 +668,7 @@ export function auditV7AlertPersistenceFoundation(): ModuleAudit {
     node: buildNode({
       id: "v7-alert-persistence-foundation",
       name: moduleName,
-      source: "Future alert_events table",
+      source: "Future alert_history table",
       status,
       target: "Alerts + Notifications",
     }),
@@ -860,6 +871,315 @@ export function auditV11DatabaseCutoverProgram(): ModuleAudit {
   };
 }
 
+export function auditV12DatabaseWriteActivation(): ModuleAudit {
+  const moduleName = "V12 Database Write Activation";
+  const available = functionAvailable(getV12DatabaseWriteActivationStatus);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getV12DatabaseWriteActivationStatus",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V12.00 enables guarded Watchlist and Alert History database write paths only when explicit guards are enabled. Portfolio and FCN writes remain disabled/readiness-only.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v12-database-write-activation",
+      name: moduleName,
+      source: "V11 tables + explicit V12 write guards + local fallback",
+      status,
+      target: "Settings diagnostics + Workspace Graph + future controlled writes",
+    }),
+  };
+}
+
+export function auditV13PortfolioDatabaseWriteActivation(): ModuleAudit {
+  const moduleName = "V13 Portfolio Database Write Activation";
+  const available = functionAvailable(getV13PortfolioWriteDiagnostics);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getV13PortfolioWriteDiagnostics",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V13.00 enables Portfolio / Stock / Crypto guarded write diagnostics and explicit-submit write attempts only when guards are enabled. FCN writes remain disabled for V14.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v13-portfolio-database-write-activation",
+      name: moduleName,
+      source: "Asset Input submit + V12 global guard + V13 module guards + local fallback",
+      status,
+      target: "Portfolio Center + Settings diagnostics + Workspace Graph",
+    }),
+  };
+}
+
+export function auditV14FcnDatabaseActivation(): ModuleAudit {
+  const moduleName = "V14 FCN Database Activation";
+  const available = functionAvailable(getV14FcnWriteDiagnostics);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [available],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available,
+        exportName: "getV14FcnWriteDiagnostics",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V14.00 enables FCN guarded write diagnostics and explicit-submit write attempts only when V12 global and V14 FCN guards are enabled. Draft Store, Truth Layer, /api/fcn readback, and local fallback remain intact.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v14-fcn-database-activation",
+      name: moduleName,
+      source: "FCN Wizard submit + V12 global guard + V14 FCN module guards + Draft Store fallback",
+      status,
+      target: "FCN Center + Settings diagnostics + Workspace Graph",
+    }),
+  };
+}
+
+export function auditV15LegacyRiskEngineMigration(): ModuleAudit {
+  const moduleName = "V15 Legacy Risk Engine Migration";
+  const portfolioAvailable = functionAvailable(buildLegacyPortfolioRiskSummary);
+  const fcnAvailable = functionAvailable(buildLegacyFcnRiskSummary);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [portfolioAvailable, fcnAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: portfolioAvailable,
+        exportName: "buildLegacyPortfolioRiskSummary",
+        module: moduleName,
+      }),
+      missingExportIssue({
+        available: fcnAvailable,
+        exportName: "buildLegacyFcnRiskSummary",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V15.00 is a read-only pure calculation migration for portfolio risk, FCN worst-of, KI/strike/KO distance, concentration, and exposure. It performs no database writes and does not add trading or recommendation logic.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v15-legacy-risk-engine-migration",
+      name: moduleName,
+      source: "Portfolio Truth Layer + FCN readback + local fallback data",
+      status,
+      target: "Risk Center + Home diagnostics + Settings diagnostics + Workspace Graph",
+    }),
+  };
+}
+
+export function auditV16MorningBriefEngine(): ModuleAudit {
+  const moduleName = "V16 Morning Brief Engine";
+  const briefAvailable = functionAvailable(buildMorningBrief);
+  const newsPlaceholderAvailable = functionAvailable(buildMorningNewsPlaceholder);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [briefAvailable, newsPlaceholderAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: briefAvailable,
+        exportName: "buildMorningBrief",
+        module: moduleName,
+      }),
+      missingExportIssue({
+        available: newsPlaceholderAvailable,
+        exportName: "buildMorningNewsPlaceholder",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V16.00 is a read-only Morning Brief Engine using Portfolio, V15 Risk, FCN, and News Placeholder adapters. It does not add Telegram, scheduler, broker, trading, AI recommendation, SQL, or database writes.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v16-morning-brief-engine",
+      name: moduleName,
+      source: "V15 Legacy Risk Engine + Portfolio / FCN adapters + News Placeholder",
+      status,
+      target: "Workspace Home + future Web / Telegram / API surfaces",
+    }),
+  };
+}
+
+export function auditV17MarketDataProviderFoundation(): ModuleAudit {
+  const moduleName = "V17 Market Data Provider Foundation";
+  const marketDataAvailable = functionAvailable(buildMarketDataSnapshot);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [marketDataAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: marketDataAvailable,
+        exportName: "buildMarketDataSnapshot",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V17.00 creates provider contracts and a manual placeholder provider only. Yahoo, Binance, broker, and external market APIs remain disabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v17-market-data-provider-foundation",
+      name: moduleName,
+      source: "Manual placeholder provider + provider interface",
+      status,
+      target: "Morning Brief / Intelligence v2 / future provider integration",
+    }),
+  };
+}
+
+export function auditV18MorningBriefLiveDataReadiness(): ModuleAudit {
+  const moduleName = "V18 Morning Brief Live Data Readiness";
+  const adapterAvailable = functionAvailable(buildMorningMarketDataSummary);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [adapterAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: adapterAvailable,
+        exportName: "buildMorningMarketDataSummary",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V18.00 allows Morning Brief to accept V17 market snapshot metadata while live external feeds remain disabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v18-morning-brief-live-data-readiness",
+      name: moduleName,
+      source: "V16 Morning Brief + V17 Market Data Snapshot",
+      status,
+      target: "Home Morning Brief preview + future delivery surfaces",
+    }),
+  };
+}
+
+export function auditV19IntelligenceCenterV2Foundation(): ModuleAudit {
+  const moduleName = "V19 Intelligence Center v2 Foundation";
+  const intelligenceAvailable = functionAvailable(buildIntelligenceV2Report);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [intelligenceAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: intelligenceAvailable,
+        exportName: "buildIntelligenceV2Report",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V19.00 is deterministic and read-only. It does not add external LLM calls, AI recommendations, broker actions, or trading instructions.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v19-intelligence-center-v2-foundation",
+      name: moduleName,
+      source: "V15 Risk + V16 Morning Brief + V17 Market Data placeholder",
+      status,
+      target: "Intelligence Center",
+    }),
+  };
+}
+
+export function auditV20SaasFoundationReadiness(): ModuleAudit {
+  const moduleName = "V20 SaaS Foundation Readiness";
+  const saasAvailable = functionAvailable(getSaasFoundationReadiness);
+  const status = getStatus({
+    hasFallback: true,
+    requiredExports: [saasAvailable],
+    warnings: true,
+  });
+
+  return {
+    issues: compactIssues([
+      missingExportIssue({
+        available: saasAvailable,
+        exportName: "getSaasFoundationReadiness",
+        module: moduleName,
+      }),
+      {
+        message:
+          "V20.00 adds SaaS readiness metadata only. Billing provider, subscription enforcement, auth changes, and schema changes remain disabled.",
+        module: moduleName,
+        severity: "info",
+      },
+    ]),
+    node: buildNode({
+      id: "v20-saas-foundation-readiness",
+      name: moduleName,
+      source: "Plan / usage / subscription / team readiness metadata",
+      status,
+      target: "Settings diagnostics + future SaaS platform work",
+    }),
+  };
+}
+
 function overallStatus(nodes: WorkspaceDataLineageNode[]): WorkspaceIntegrationStatus {
   if (nodes.some((node) => node.status === "broken")) {
     return "broken";
@@ -899,6 +1219,15 @@ export function buildWorkspaceIntegrationAudit(): WorkspaceIntegrationAudit {
     auditV10PlatformCutover(),
     auditV11DatabaseActivationFoundation(),
     auditV11DatabaseCutoverProgram(),
+    auditV12DatabaseWriteActivation(),
+    auditV13PortfolioDatabaseWriteActivation(),
+    auditV14FcnDatabaseActivation(),
+    auditV15LegacyRiskEngineMigration(),
+    auditV16MorningBriefEngine(),
+    auditV17MarketDataProviderFoundation(),
+    auditV18MorningBriefLiveDataReadiness(),
+    auditV19IntelligenceCenterV2Foundation(),
+    auditV20SaasFoundationReadiness(),
   ];
   const lineageNodes = audits.map((audit) => audit.node);
   const issues = audits.flatMap((audit) => audit.issues);

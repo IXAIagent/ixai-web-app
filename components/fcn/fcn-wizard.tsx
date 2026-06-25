@@ -19,6 +19,7 @@ import { saveFcnDraft } from "@/src/lib/portfolio/input/fcn-draft-store";
 import { savePendingPortfolioInput } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { saveRecentPortfolioInput } from "@/src/lib/portfolio/input/recent-inputs";
 import { FCN_CURRENCIES, type FCNCurrency } from "@/src/types/fcn-position";
+import { saveFcnDraftWithV14DatabaseWrite } from "@/src/lib/workspace/fcn-database-activation";
 
 type UnderlyingDraft = {
   currentPrice: string;
@@ -348,7 +349,17 @@ export function FCNWizard() {
         symbols: underlyings.map((underlying) => underlying.symbol.trim().toUpperCase()),
         title: savedDraft.name,
       });
-      setSuccess(`已建立 FCN pending input「${savedDraft.name}」，可在 Portfolio Truth 與 FCN Center 看到 pending 狀態。`);
+      const dbWriteResult = await saveFcnDraftWithV14DatabaseWrite({
+        draft: savedDraft,
+        sourceAction: "fcn_wizard_submit",
+      });
+      const writeStatus =
+        dbWriteResult.status === "succeeded"
+          ? "V14 guarded database write succeeded."
+          : "V14 database write skipped/guarded; local fallback remains active.";
+      setSuccess(
+        `已建立 FCN pending input「${savedDraft.name}」，可在 Portfolio Truth 與 FCN Center 看到 pending 狀態。${writeStatus}`,
+      );
       resetWizard();
       window.dispatchEvent(new CustomEvent("ixai:portfolio:changed"));
     } catch (submitError) {
@@ -413,7 +424,7 @@ export function FCNWizard() {
         {activeStep === 0 ? (
           <div className="grid gap-4">
             <p className="rounded-lg border border-[var(--ixai-border)] bg-white/65 p-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-              v4.10 會先建立 browser-local pending input，並保留舊 FCN Draft Store 相容層。資料會出現在 Workspace readback；正式 Supabase persistence、Portfolio attachment、edit/delete 與 cross-device sync 留待後續版本。
+              V14 會先建立 browser-local pending input，並保留舊 FCN Draft Store 相容層；若 V12 global guard 與 V14 FCN guards 明確啟用，才會在 submit 後嘗試 guarded Supabase write。DB write skipped/failed 不會阻斷 local fallback。
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">

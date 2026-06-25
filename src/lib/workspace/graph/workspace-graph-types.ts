@@ -4,9 +4,14 @@ import type { FcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-types"
 import type { FcnPortfolioScheduleSummary } from "@/src/lib/fcn/schedule";
 import type { WorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-types";
 import type { MarketServiceReadiness } from "@/src/lib/market/market-service";
+import type { MorningSnapshot } from "@/src/lib/morning-brief";
+import type { MarketDataSnapshot } from "@/src/lib/market-data";
+import type { IntelligenceV2Report } from "@/src/lib/intelligence/v2";
+import type { SaasFoundationReadiness } from "@/src/lib/saas-foundation";
 import type { PortfolioPersistenceResult } from "@/src/lib/portfolio/persistence";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type { PortfolioValuationResult } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
+import type { LegacyRiskEngineSnapshot } from "@/src/lib/risk/legacy-risk-engine";
 import type { PortfolioRiskResult } from "@/src/lib/risk/risk-engine-types";
 import type { WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
 import type { AlertPersistenceReadiness } from "@/src/lib/alerts/persistence";
@@ -20,6 +25,9 @@ import type { MigrationHealthReport } from "@/src/lib/persistence/migrations";
 import type { WorkspaceDatabaseReadPriorityStatus } from "@/src/lib/workspace/database-read-priority-status";
 import type { V11DatabaseActivationReport } from "@/src/lib/workspace/database-activation";
 import type { V11DatabaseCutoverStatus } from "@/src/lib/workspace/database-cutover";
+import type { V12DatabaseWriteActivationStatus } from "@/src/lib/workspace/database-write-activation";
+import type { V13PortfolioWriteDiagnostics } from "@/src/lib/workspace/portfolio-database-write-activation";
+import type { V14FcnWriteDiagnostics } from "@/src/lib/workspace/fcn-database-activation";
 import type { WorkspacePlatformCutoverStatus } from "@/src/lib/workspace/platform";
 import type { WatchlistPersistenceReadiness } from "@/src/lib/watchlist/persistence";
 
@@ -39,6 +47,9 @@ export interface WorkspaceGraph {
   databaseActivation?: WorkspaceDatabaseActivationReport | null;
   v11DatabaseActivation?: V11DatabaseActivationReport | null;
   v11DatabaseCutover?: V11DatabaseCutoverStatus | null;
+  v12DatabaseWriteActivation?: V12DatabaseWriteActivationStatus | null;
+  v13PortfolioDatabaseWriteActivation?: V13PortfolioWriteDiagnostics | null;
+  v14FcnDatabaseActivation?: V14FcnWriteDiagnostics | null;
   databaseReadPriority?: WorkspaceDatabaseReadPriorityStatus | null;
   platformCutover?: WorkspacePlatformCutoverStatus | null;
   livePersistence?: {
@@ -55,11 +66,16 @@ export interface WorkspaceGraph {
   generatedAt: string;
   intelligence: WorkspaceIntelligenceReport | null;
   marketStatus?: MarketServiceReadiness | null;
+  marketDataFoundation?: MarketDataSnapshot | null;
+  morningBriefEngine?: MorningSnapshot | null;
+  intelligenceV2Foundation?: IntelligenceV2Report | null;
+  saasFoundation?: SaasFoundationReadiness | null;
   ownershipReadiness?: WorkspaceOwnershipCheck | null;
   portfolioPersistence: PortfolioPersistenceResult | null;
   persistenceReadiness?: PortfolioPersistenceReadiness | null;
   portfolioTruth: PortfolioTruthReadback | null;
   risk: PortfolioRiskResult | null;
+  legacyRiskEngine?: LegacyRiskEngineSnapshot | null;
   sourceStatus: WorkspaceGraphSourceStatus;
   syncReadiness?: WorkspaceSyncReport | null;
   syncPlan?: WorkspaceSyncPlan | null;
