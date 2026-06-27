@@ -1,4 +1,4 @@
-import type { YahooQuote, YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo";
+import type { YahooQuote, YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 import type {
   FcnLivePositionStatus,
   FcnLiveUnderlyingSnapshot,

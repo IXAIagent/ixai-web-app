@@ -5,7 +5,7 @@ import type {
   WorkspaceLiveMarketInput,
   WorkspaceLiveMarketSnapshot,
 } from "@/src/lib/market-data/live-market-types";
-import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo";
+import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 

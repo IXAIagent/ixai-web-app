@@ -5,7 +5,7 @@ import { getWorkspaceDailyBrief } from "@/src/lib/daily-brief";
 import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service";
 import { getWorkspaceFcnScheduleSummary } from "@/src/lib/fcn/schedule";
 import { getWorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-service";
-import { getMarketReadiness } from "@/src/lib/market/market-service";
+import { getClientSafeMarketReadiness } from "@/src/lib/market/client-safe-market-readiness";
 import { getWorkspaceMorningSnapshot } from "@/src/lib/morning-brief";
 import { buildMarketDataSnapshot } from "@/src/lib/market-data";
 import { getWorkspaceIntelligenceV2Report } from "@/src/lib/intelligence/v2";
@@ -125,7 +125,7 @@ export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
     safeRead("Alerts", getWorkspaceAlertSummary),
     safeRead("Intelligence", getWorkspaceIntelligenceReport),
     safeRead("Daily Brief", getWorkspaceDailyBrief),
-    safeRead("Market Status", () => getMarketReadiness()),
+    safeRead("Market Status", () => getClientSafeMarketReadiness()),
     safeRead("Portfolio Persistence Readiness", getPortfolioPersistenceReadiness),
     safeRead("FCN Persistence Readiness", getFcnPersistenceReadiness),
     safeRead("Watchlist Persistence Readiness", getWatchlistPersistenceReadiness),

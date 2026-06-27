@@ -9,7 +9,7 @@ import {
 import { buildFcnLiveUnderlyingSnapshot } from "@/src/lib/valuation/fcn-live-valuation";
 import type { LiveProductValuationPreview } from "@/src/lib/valuation/live-valuation-types";
 import { buildPortfolioLiveValuationSnapshot } from "@/src/lib/valuation/portfolio-live-valuation";
-import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo";
+import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 
 export function collectWorkspaceLiveQuoteSymbols(input: Awaited<ReturnType<typeof loadPortfolioTruthReadback>>) {
   return collectWorkspaceLiveMarketSymbols({ truth: input });

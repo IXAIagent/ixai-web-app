@@ -1,4 +1,4 @@
-import type { YahooQuote, YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo";
+import type { YahooQuote, YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type {
   LivePositionValuation,

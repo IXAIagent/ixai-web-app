@@ -1,4 +1,4 @@
-import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo";
+import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 import type { LegacyRiskEngineSnapshot, LegacyRiskLevel } from "@/src/lib/risk/legacy-risk-engine";
 import type {
   FcnLiveUnderlyingSnapshot,
