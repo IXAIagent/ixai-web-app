@@ -70,6 +70,21 @@ const localPersistenceStatus: PersistenceStatus = {
   message: "尚未登入 IXAI Account。",
 };
 
+function warnAuthProvider(context: string, error: unknown) {
+  console.warn("[IXAI AUTH PROVIDER] runtime fallback", {
+    context,
+    message: error instanceof Error ? error.message : "unknown_error",
+  });
+}
+
+function pendingAuthStatus(message: string): PersistenceStatus {
+  return {
+    mode: "pending",
+    label: "Sync pending",
+    message,
+  };
+}
+
 export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [mounted, setMounted] = useState(false);
   const [session, setSession] = useState<IXAISession>(getGuestSession);
@@ -82,36 +97,53 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     let ignore = false;
 
     async function activateAuthenticatedSession(nextSession: IXAISession) {
-      const memoryResult = await loadProfileMemory(nextSession);
-      const preferenceResult = await loadUserPreferences(nextSession);
-      const nextMemory = {
-        ...memoryResult.memory,
-        preferredCategories: preferenceResult.preferences,
-        onboardingCompleted: true,
-      };
+      try {
+        const memoryResult = await loadProfileMemory(nextSession);
+        const preferenceResult = await loadUserPreferences(nextSession);
+        const nextMemory = {
+          ...memoryResult.memory,
+          preferredCategories: preferenceResult.preferences,
+          onboardingCompleted: true,
+        };
 
-      if (ignore) {
-        return;
+        if (ignore) {
+          return;
+        }
+
+        setSession(nextSession);
+        setMemory(nextMemory);
+        setPersistenceStatus(
+          memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
+            ? {
+                mode: "synced",
+                label: "已連接 IXAI Account",
+                message: "偏好與市場記憶已準備連接 IXAI 帳戶。",
+                lastSyncedAt: new Date().toISOString(),
+              }
+            : memoryResult.status,
+        );
+        writeIdentityPayload(nextSession, nextMemory);
+        void bootstrapUserProfile(nextSession).catch((error) => {
+          warnAuthProvider("bootstrapUserProfile", error);
+        });
+      } catch (error) {
+        warnAuthProvider("activateAuthenticatedSession", error);
+        if (!ignore) {
+          setSession(nextSession);
+          setMemory(readPersonalMemory(nextSession.user?.id));
+          setPersistenceStatus(
+            pendingAuthStatus("Session restored. Profile sync fell back to local memory."),
+          );
+        }
       }
-
-      setSession(nextSession);
-      setMemory(nextMemory);
-      setPersistenceStatus(
-        memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
-          ? {
-              mode: "synced",
-              label: "已連接 IXAI Account",
-              message: "偏好與市場記憶已準備連接 IXAI 帳戶。",
-              lastSyncedAt: new Date().toISOString(),
-            }
-          : memoryResult.status,
-      );
-      writeIdentityPayload(nextSession, nextMemory);
-      void bootstrapUserProfile(nextSession);
     }
 
     function clearAuthState({ redirectToLogin = false }: { redirectToLogin?: boolean } = {}) {
-      clearIdentityPayload();
+      try {
+        clearIdentityPayload();
+      } catch (error) {
+        warnAuthProvider("clearIdentityPayload", error);
+      }
       setSession(getGuestSession());
       setMemory(readPersonalMemory());
       setPersistenceStatus(localPersistenceStatus);
@@ -139,47 +171,65 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     }
 
     async function hydrateIdentity() {
-      const currentSession = await getCurrentSupabaseIXAISession();
+      try {
+        const currentSession = await getCurrentSupabaseIXAISession();
 
-      if (currentSession) {
-        await activateAuthenticatedSession(currentSession);
-      } else {
-        const payload = readIdentityPayload();
-        if (!ignore) {
-          setSession(payload.session);
-          setMemory(payload.memory);
-          setPersistenceStatus(
-            payload.session.mode === "authenticated"
-              ? {
-                  mode: "pending",
-                  label: "Sync pending",
-                  message: "Session restored locally. Supabase hydration will resume when available.",
-                }
-              : localPersistenceStatus,
-          );
+        if (currentSession) {
+          await activateAuthenticatedSession(currentSession);
+        } else {
+          const payload = readIdentityPayload();
+          if (!ignore) {
+            setSession(payload.session);
+            setMemory(payload.memory);
+            setPersistenceStatus(
+              payload.session.mode === "authenticated"
+                ? pendingAuthStatus(
+                    "Session restored locally. Supabase hydration will resume when available.",
+                  )
+                : localPersistenceStatus,
+            );
+          }
         }
-      }
-
-      if (!ignore) {
-        setMounted(true);
+      } catch (error) {
+        warnAuthProvider("hydrateIdentity", error);
+        if (!ignore) {
+          setSession(getGuestSession());
+          setMemory(readPersonalMemory());
+          setPersistenceStatus(localPersistenceStatus);
+        }
+      } finally {
+        if (!ignore) {
+          setMounted(true);
+        }
       }
     }
 
-    void hydrateIdentity();
+    void hydrateIdentity().catch((error) => {
+      warnAuthProvider("hydrateIdentity.unhandled", error);
+      if (!ignore) {
+        setMounted(true);
+      }
+    });
     const supabase = createSupabaseBrowserClient();
     const authListener = supabase?.auth.onAuthStateChange((event, supabaseSession) => {
-      const nextSession = buildIXAISessionFromSupabaseSession(supabaseSession);
+      try {
+        const nextSession = buildIXAISessionFromSupabaseSession(supabaseSession);
 
-      if (
-        nextSession &&
-        (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED")
-      ) {
-        void activateAuthenticatedSession(nextSession);
-        return;
-      }
+        if (
+          nextSession &&
+          (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED")
+        ) {
+          void activateAuthenticatedSession(nextSession).catch((error) => {
+            warnAuthProvider(`authStateChange.${event}`, error);
+          });
+          return;
+        }
 
-      if (event === "SIGNED_OUT") {
-        clearAuthState({ redirectToLogin: true });
+        if (event === "SIGNED_OUT") {
+          clearAuthState({ redirectToLogin: true });
+        }
+      } catch (error) {
+        warnAuthProvider(`authStateChange.${event}`, error);
       }
     });
     const subscription = authListener?.data.subscription;
@@ -200,38 +250,62 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       lastVisitAt: new Date().toISOString(),
     };
 
-    void saveProfileMemory(session, nextMemory).then((status) => {
-      setPersistenceStatus(status);
-    });
+    void saveProfileMemory(session, nextMemory)
+      .then((status) => {
+        setPersistenceStatus(status);
+      })
+      .catch((error) => {
+        warnAuthProvider("saveProfileMemory.visit", error);
+        setPersistenceStatus(
+          pendingAuthStatus("Profile memory sync failed safely; local memory remains available."),
+        );
+      });
   }, [memory, mounted, session]);
 
   const value = useMemo<IdentityContextValue>(() => {
     function persist(nextSession: IXAISession, nextMemory: PersonalMemory) {
       setSession(nextSession);
       setMemory(nextMemory);
-      writeIdentityPayload(nextSession, nextMemory);
+      try {
+        writeIdentityPayload(nextSession, nextMemory);
+      } catch (error) {
+        warnAuthProvider("writeIdentityPayload", error);
+        setPersistenceStatus(
+          pendingAuthStatus("Identity payload could not be stored locally; session remains active."),
+        );
+      }
     }
 
     async function activateAuthenticatedSession(nextSession: IXAISession) {
-      const memoryResult = await loadProfileMemory(nextSession);
-      const preferenceResult = await loadUserPreferences(nextSession);
-      const nextMemory = {
-        ...memoryResult.memory,
-        preferredCategories: preferenceResult.preferences,
-        onboardingCompleted: true,
-      };
-      persist(nextSession, nextMemory);
-      void bootstrapUserProfile(nextSession);
-      setPersistenceStatus(
-        memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
-          ? {
-              mode: "synced",
-              label: "已連接 IXAI Account",
-              message: "偏好與市場記憶已準備連接 IXAI 帳戶。",
-              lastSyncedAt: new Date().toISOString(),
-            }
-          : memoryResult.status,
-      );
+      try {
+        const memoryResult = await loadProfileMemory(nextSession);
+        const preferenceResult = await loadUserPreferences(nextSession);
+        const nextMemory = {
+          ...memoryResult.memory,
+          preferredCategories: preferenceResult.preferences,
+          onboardingCompleted: true,
+        };
+        persist(nextSession, nextMemory);
+        void bootstrapUserProfile(nextSession).catch((error) => {
+          warnAuthProvider("bootstrapUserProfile.action", error);
+        });
+        setPersistenceStatus(
+          memoryResult.status.mode === "synced" || preferenceResult.status.mode === "synced"
+            ? {
+                mode: "synced",
+                label: "已連接 IXAI Account",
+                message: "偏好與市場記憶已準備連接 IXAI 帳戶。",
+                lastSyncedAt: new Date().toISOString(),
+              }
+            : memoryResult.status,
+        );
+      } catch (error) {
+        warnAuthProvider("activateAuthenticatedSession.action", error);
+        persist(nextSession, readPersonalMemory(nextSession.user?.id));
+        setPersistenceStatus(
+          pendingAuthStatus("Account session is active; profile sync fell back safely."),
+        );
+      }
     }
 
     return {
@@ -241,48 +315,89 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       persistenceStatus,
       authConfigured,
       signInWithGoogle() {
-        return signInWithGoogleOAuth();
+        return signInWithGoogleOAuth().catch((error) => {
+          warnAuthProvider("signInWithGoogle", error);
+          return {
+            ok: false,
+            message: "目前無法前往 Google 登入。",
+          };
+        });
       },
       sendMagicLink(email: string) {
-        return sendMagicLink(email);
+        return sendMagicLink(email).catch((error) => {
+          warnAuthProvider("sendMagicLink", error);
+          return {
+            ok: false,
+            message: "登入連結暫時無法送出，請稍後再試。",
+          };
+        });
       },
       async signInWithPassword(email: string, password: string) {
-        const result = await signInWithSupabasePassword(email, password);
+        try {
+          const result = await signInWithSupabasePassword(email, password);
 
-        if (result.ok && result.session) {
-          await activateAuthenticatedSession(result.session);
+          if (result.ok && result.session) {
+            await activateAuthenticatedSession(result.session);
+          }
+
+          return {
+            ok: result.ok,
+            message: result.message,
+            debugMessage: result.debugMessage,
+            authenticated: Boolean(result.session),
+          };
+        } catch (error) {
+          warnAuthProvider("signInWithPassword", error);
+          return {
+            ok: false,
+            message: "目前無法登入 IXAI。",
+            authenticated: false,
+          };
         }
-
-        return {
-          ok: result.ok,
-          message: result.message,
-          debugMessage: result.debugMessage,
-          authenticated: Boolean(result.session),
-        };
       },
       async registerWithPassword(email: string, password: string) {
-        const result = await registerWithSupabasePassword(email, password);
+        try {
+          const result = await registerWithSupabasePassword(email, password);
 
-        if (result.ok && result.session) {
-          await activateAuthenticatedSession(result.session);
+          if (result.ok && result.session) {
+            await activateAuthenticatedSession(result.session);
+          }
+
+          return {
+            ok: result.ok,
+            message: result.message,
+            debugMessage: result.debugMessage,
+            authenticated: Boolean(result.session),
+          };
+        } catch (error) {
+          warnAuthProvider("registerWithPassword", error);
+          return {
+            ok: false,
+            message: "IXAI Account 暫時無法建立。",
+            authenticated: false,
+          };
         }
-
-        return {
-          ok: result.ok,
-          message: result.message,
-          debugMessage: result.debugMessage,
-          authenticated: Boolean(result.session),
-        };
       },
       signOut() {
         void (async () => {
-          await signOutSupabase();
-          clearIdentityPayload();
-          setSession(getGuestSession());
-          setMemory(readPersonalMemory());
-          setPersistenceStatus(localPersistenceStatus);
-          window.location.assign("/login");
-        })();
+          try {
+            await signOutSupabase();
+          } catch (error) {
+            warnAuthProvider("signOutSupabase", error);
+          } finally {
+            try {
+              clearIdentityPayload();
+            } catch (error) {
+              warnAuthProvider("clearIdentityPayload.signOut", error);
+            }
+            setSession(getGuestSession());
+            setMemory(readPersonalMemory());
+            setPersistenceStatus(localPersistenceStatus);
+            window.location.assign("/login");
+          }
+        })().catch((error) => {
+          warnAuthProvider("signOut", error);
+        });
       },
       completeOnboarding(interests: IntelligenceInterest[]) {
         const nextMemory = {
@@ -292,12 +407,26 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
           lastVisitAt: new Date().toISOString(),
         };
         persist(session, nextMemory);
-        void saveUserPreferences(session, interests).then((status) => {
-          setPersistenceStatus(status);
-        });
-        void saveProfileMemory(session, nextMemory).then((status) => {
-          setPersistenceStatus(status);
-        });
+        void saveUserPreferences(session, interests)
+          .then((status) => {
+            setPersistenceStatus(status);
+          })
+          .catch((error) => {
+            warnAuthProvider("saveUserPreferences.completeOnboarding", error);
+            setPersistenceStatus(
+              pendingAuthStatus("Preference sync failed safely; local preferences remain available."),
+            );
+          });
+        void saveProfileMemory(session, nextMemory)
+          .then((status) => {
+            setPersistenceStatus(status);
+          })
+          .catch((error) => {
+            warnAuthProvider("saveProfileMemory.completeOnboarding", error);
+            setPersistenceStatus(
+              pendingAuthStatus("Profile memory sync failed safely; local memory remains available."),
+            );
+          });
       },
       updateMemory(updates: Partial<PersonalMemory>) {
         const nextMemory = {
@@ -306,9 +435,16 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
           lastVisitAt: new Date().toISOString(),
         };
         persist(session, nextMemory);
-        void saveProfileMemory(session, nextMemory).then((status) => {
-          setPersistenceStatus(status);
-        });
+        void saveProfileMemory(session, nextMemory)
+          .then((status) => {
+            setPersistenceStatus(status);
+          })
+          .catch((error) => {
+            warnAuthProvider("saveProfileMemory.updateMemory", error);
+            setPersistenceStatus(
+              pendingAuthStatus("Profile memory sync failed safely; local memory remains available."),
+            );
+          });
       },
     };
   }, [authConfigured, memory, mounted, persistenceStatus, session]);

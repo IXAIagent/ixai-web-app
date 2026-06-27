@@ -6,6 +6,37 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12.1 Runtime Stabilization Program / Program A
+
+Why:
+
+- Production still showed cross-page Workspace runtime crashes, Chrome Error code 5, and large `Uncaught (in promise)` storms.
+- `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md` identified root provider async paths as the highest-confidence root cause.
+
+What Changed:
+
+- Added `docs/V121_RUNTIME_STABILIZATION_PROGRAM.md`.
+- Hardened `components/auth/auth-provider.tsx` so hydration, auth-state activation, authenticated session activation, profile bootstrap, profile memory persistence, preference persistence, identity storage, and sign-out paths catch failures and fall back safely.
+- Hardened `components/auth/identity-provider.tsx` so `/api/auth/me` refresh, mount-triggered refresh, logout request, and logout tracking cannot throw to the component boundary.
+- Reviewed `components/auth/auth-entry-gate.tsx` and `app/layout.tsx`; provider order and routing behavior remain unchanged.
+
+Key Decisions:
+
+- Program A only addresses root provider stabilization.
+- Errors are logged locally with `console.warn` and safe fallback state; no external monitoring service is introduced.
+- Auth business logic remains unchanged.
+
+Deferred:
+
+- Program B safe async helper.
+- Program C diagnostics `Promise.allSettled(...)` migration.
+- Program D runtime monitor.
+- Program E service worker safety.
+
+Out of Scope:
+
+- No DB migration, SQL, RLS/auth policy/membership change, billing/Stripe, scheduler, broker API, trading/order/rebalance flow, investment recommendation, or external monitoring service.
+
 ## V12 Live Product Upgrade Program
 
 Why:

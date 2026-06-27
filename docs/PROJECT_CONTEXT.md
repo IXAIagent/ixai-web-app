@@ -64,7 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V11 — Database Activation Program`
+`V12.1 — Runtime Stabilization Program / Program A`
+
+V12.1 Program A is the current runtime stability slice. It addresses the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. This slice does not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler, broker, trading, or recommendation behavior. Program B safe async helper, Program C diagnostics stabilization, Program D runtime monitor, and Program E service worker safety remain pending.
 
 Current production state:
 
