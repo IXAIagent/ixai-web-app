@@ -5,7 +5,7 @@ import {
   collectWorkspaceLiveMarketSymbols,
   getWorkspaceLiveMarketSnapshotForTruth,
   requestWorkspaceLiveMarketQuotes,
-} from "@/src/lib/market-data";
+} from "@/src/lib/market-data/live-market-service";
 import { buildFcnLiveUnderlyingSnapshot } from "@/src/lib/valuation/fcn-live-valuation";
 import type { LiveProductValuationPreview } from "@/src/lib/valuation/live-valuation-types";
 import { buildPortfolioLiveValuationSnapshot } from "@/src/lib/valuation/portfolio-live-valuation";

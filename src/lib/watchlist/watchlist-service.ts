@@ -5,8 +5,8 @@ import type {
   MarketQuoteResult,
   MarketQuoteState,
 } from "@/src/lib/market/types";
-import { getWorkspaceLiveMarketSnapshot } from "@/src/lib/market-data";
-import type { WorkspaceLiveMarketQuote } from "@/src/lib/market-data";
+import { getWorkspaceLiveMarketSnapshot } from "@/src/lib/market-data/live-market-service";
+import type { WorkspaceLiveMarketQuote } from "@/src/lib/market-data/live-market-types";
 import {
   getWatchlist,
   type WatchlistItem,
