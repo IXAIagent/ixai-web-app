@@ -17,19 +17,31 @@ const SEVERITY_CLASS: Record<WorkspaceAlertSeverity, string> = {
     "border-[color-mix(in_srgb,var(--ixai-gold)_44%,transparent)] bg-[rgba(255,250,240,0.82)]",
 };
 
-export function AlertSummary() {
+export function AlertSummary({ autoLoad = true }: { autoLoad?: boolean }) {
   const [summary, setSummary] = useState<WorkspaceAlertSummary | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(autoLoad);
+  const [hasError, setHasError] = useState(false);
 
   async function refresh() {
     setIsLoading(true);
-    setSummary(await getWorkspaceAlertSummary());
-    setIsLoading(false);
+    setHasError(false);
+    try {
+      setSummary(await getWorkspaceAlertSummary());
+    } catch {
+      setSummary(null);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
+    if (!autoLoad) {
+      return;
+    }
+
     queueMicrotask(() => void refresh());
-  }, []);
+  }, [autoLoad]);
 
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
@@ -110,7 +122,13 @@ export function AlertSummary() {
         <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           {summary.informationalOnlyDisclaimer}
         </p>
-      ) : null}
+      ) : (
+        <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          {hasError
+            ? "Alert readback could not be loaded. Existing Workspace cards remain available."
+            : "Alert readback is available on demand. Use Refresh to load this UI-only monitoring card."}
+        </p>
+      )}
     </section>
   );
 }

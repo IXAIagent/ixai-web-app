@@ -261,7 +261,7 @@ export default function MyIxaiHomePage() {
 
       <ProgramBLivePlatformStatus compact />
 
-      <LiveMarketDataStatus compact />
+      <LiveMarketDataStatus autoLoad={false} compact />
 
       <MorningBriefLiveCard autoLoad={false} />
 
@@ -388,30 +388,30 @@ export default function MyIxaiHomePage() {
       </section>
 
       <div id="workspace-alerts">
-        <AlertSummary />
+        <AlertSummary autoLoad={false} />
       </div>
 
       <div id="workspace-health">
         <WorkspaceHealthSummary />
       </div>
 
-      <NotificationCenterSummary />
+      <NotificationCenterSummary autoLoad={false} />
 
       <WorkspaceTimelineSummary />
 
       <div id="workspace-insights">
-        <WorkspaceInsightsSummary />
+        <WorkspaceInsightsSummary autoLoad={false} />
       </div>
 
       <WorkspaceCopilotSummary />
 
       <div id="workspace-daily-brief">
-        <WorkspaceDailyBrief />
+        <WorkspaceDailyBrief autoLoad={false} />
       </div>
 
       <MorningBriefStatus />
 
-      <IntelligenceSummary />
+      <IntelligenceSummary autoLoad={false} />
 
       <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
         本頁僅整理 Workspace 入口與資訊架構，不新增投資功能、不構成投資建議、不提供買賣建議、目標價、報酬承諾或自動交易。

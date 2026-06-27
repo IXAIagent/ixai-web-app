@@ -21,9 +21,15 @@ function formatDateTime(value: string | null | undefined) {
   }).format(date);
 }
 
-export function LiveMarketDataStatus({ compact = false }: { compact?: boolean }) {
+export function LiveMarketDataStatus({
+  autoLoad = true,
+  compact = false,
+}: {
+  autoLoad?: boolean;
+  compact?: boolean;
+}) {
   const [preview, setPreview] = useState<LiveProductValuationPreview | null>(null);
-  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [loadState, setLoadState] = useState<LoadState>(autoLoad ? "loading" : "ready");
 
   const loadPreview = useCallback(async () => {
     setLoadState("loading");
@@ -37,10 +43,14 @@ export function LiveMarketDataStatus({ compact = false }: { compact?: boolean })
   }, []);
 
   useEffect(() => {
+    if (!autoLoad) {
+      return;
+    }
+
     queueMicrotask(() => {
       void loadPreview();
     });
-  }, [loadPreview]);
+  }, [autoLoad, loadPreview]);
 
   const liveMarketSnapshot = preview?.liveMarketSnapshot ?? null;
 
@@ -105,6 +115,10 @@ export function LiveMarketDataStatus({ compact = false }: { compact?: boolean })
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
           Yahoo quote preview could not be loaded. Existing Workspace fallback readbacks remain available.
+        </p>
+      ) : !preview ? (
+        <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          Live quote preview is available on demand. Use Refresh to load this read-only card.
         </p>
       ) : null}
     </section>

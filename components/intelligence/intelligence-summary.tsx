@@ -56,24 +56,33 @@ function SeverityBadge({ severity }: { severity: WorkspaceIntelligenceSeverity }
   );
 }
 
-export function IntelligenceSummary() {
+export function IntelligenceSummary({ autoLoad = true }: { autoLoad?: boolean }) {
   const [report, setReport] = useState<WorkspaceIntelligenceReport>(() =>
     buildEmptyWorkspaceIntelligenceReport(),
   );
-  const [state, setState] = useState<LoadState>("loading");
+  const [state, setState] = useState<LoadState>(autoLoad ? "loading" : "ready");
 
   const loadReport = useCallback(async () => {
     setState("loading");
-    const nextReport = await getWorkspaceIntelligenceReport();
-    setReport(nextReport);
-    setState("ready");
+    try {
+      const nextReport = await getWorkspaceIntelligenceReport();
+      setReport(nextReport);
+      setState("ready");
+    } catch {
+      setReport(buildEmptyWorkspaceIntelligenceReport());
+      setState("error");
+    }
   }, []);
 
   useEffect(() => {
+    if (!autoLoad) {
+      return;
+    }
+
     queueMicrotask(() => {
       void loadReport();
     });
-  }, [loadReport]);
+  }, [autoLoad, loadReport]);
 
   const cardsByCategory = useMemo(() => {
     const grouped = new Map<WorkspaceIntelligenceCategory, typeof report.cards>();
@@ -176,8 +185,9 @@ export function IntelligenceSummary() {
         </div>
       ) : (
         <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          No structured intelligence cards are available yet. Add holdings, FCN records,
-          prices, or schedules to activate deterministic Workspace Intelligence readback.
+          {state === "error"
+            ? "Workspace Intelligence could not be loaded. Existing Workspace cards remain available."
+            : "Workspace Intelligence is available on demand. Use Refresh to load deterministic cards."}
         </p>
       )}
 
