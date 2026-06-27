@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V12 Live Product Upgrade Program`
+`V12.1 Runtime Stabilization Program - Program A`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V12 Live Product Upgrade Program: turn Live Product 1 into a shared Workspace Live Market Service, formal Morning Brief v1, polished dashboard surfaces, and Watchlist / Alert live readback integration while preserving the no-write/no-trading safety boundaries:
+Current priority is V12.1 Runtime Stabilization Program: first stabilize the root provider async paths that were identified by `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md` as the strongest source of cross-page `Uncaught (in promise)` storms. Program A hardens `AuthProvider` and `IdentityProvider` without changing auth business logic, RLS, schema, membership, billing, broker, trading, scheduler, or recommendation behavior.
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
@@ -84,6 +84,7 @@ Current priority is V12 Live Product Upgrade Program: turn Live Product 1 into a
 - Use `docs/V2400_RISK_AUTOMATION_READINESS.md` as the source of truth for V24 risk rule, trigger, alert-evaluation, and automation readiness.
 - Use `docs/LIVE_PRODUCT_1_YAHOO_VALUATION_BRIEF.md` as the source of truth for the first read-only Yahoo quote provider, live quote cache, Portfolio live valuation preview, FCN live underlying status, V15 Risk live adapter, and Morning Brief live preview.
 - Use `docs/V12_LIVE_PRODUCT_UPGRADE_PROGRAM.md` as the source of truth for Live Product 2 Workspace Live Market Service, Live Product 3 Morning Brief v1, dashboard polish, Watchlist / Alert live-market integration, and V12 safety boundaries.
+- Use `docs/V121_RUNTIME_STABILIZATION_PROGRAM.md` as the source of truth for V12.1 Program A root provider stabilization. Program B safe async helper, Program C diagnostics `Promise.allSettled`, Program D runtime monitor, and Program E service worker safety remain deferred.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.

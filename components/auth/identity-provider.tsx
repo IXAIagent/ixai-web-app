@@ -69,6 +69,13 @@ type IdentityContextValue = {
 
 const IdentityContext = createContext<IdentityContextValue | null>(null);
 
+function warnIdentityProvider(context: string, error: unknown) {
+  console.warn("[IXAI IDENTITY PROVIDER] runtime fallback", {
+    context,
+    message: error instanceof Error ? error.message : "unknown_error",
+  });
+}
+
 function deriveState(response: IdentityResponse | null): LightweightIdentityState {
   if (!response?.authenticated || !response.membership) {
     return "anonymous";
@@ -106,10 +113,16 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
 
   const refresh = useCallback(async () => {
     try {
+      setState("loading");
       const response = await fetch("/api/auth/me", {
         cache: "no-store",
       });
-      const nextPayload = (await response.json()) as IdentityResponse;
+      const nextPayload = (await response.json().catch(() => null)) as IdentityResponse | null;
+
+      if (!response.ok || !nextPayload) {
+        applyPayload(null);
+        return;
+      }
 
       applyPayload(nextPayload);
 
@@ -144,18 +157,24 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
           });
         }
       }
-    } catch {
+    } catch (error) {
+      warnIdentityProvider("refresh", error);
       applyPayload(null);
+    } finally {
+      setState((current) => (current === "loading" ? "anonymous" : current));
     }
   }, [applyPayload]);
 
   useEffect(() => {
     const id = window.setTimeout(() => {
-      void refresh();
+      void refresh().catch((error) => {
+        warnIdentityProvider("refresh.effect", error);
+        applyPayload(null);
+      });
     }, 0);
 
     return () => window.clearTimeout(id);
-  }, [refresh]);
+  }, [applyPayload, refresh]);
 
   const identify = useCallback(
     async (email: string, source = "identity_surface") => {
@@ -185,7 +204,8 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
         });
 
         return true;
-      } catch {
+      } catch (error) {
+        warnIdentityProvider("identify", error);
         return false;
       }
     },
@@ -197,12 +217,18 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
       await fetch("/api/auth/logout", {
         method: "POST",
       });
+    } catch (error) {
+      warnIdentityProvider("logout.request", error);
     } finally {
-      trackEvent("identity_session_cleared", {
-        membership: toEventMembership(payload?.membership ?? null),
-        path: window.location.pathname,
-        source: "identity_status",
-      });
+      try {
+        trackEvent("identity_session_cleared", {
+          membership: toEventMembership(payload?.membership ?? null),
+          path: window.location.pathname,
+          source: "identity_status",
+        });
+      } catch (error) {
+        warnIdentityProvider("logout.track", error);
+      }
       restoredTrackedRef.current = false;
       lineLoginTrackedRef.current = false;
       applyPayload(null);
