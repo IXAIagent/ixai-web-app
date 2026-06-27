@@ -21,6 +21,19 @@ function formatPrice(value: number | null | undefined) {
   }).format(value);
 }
 
+function formatDateTime(value: string | null | undefined) {
+  if (!value) return "--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("zh-TW", {
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
+
 export function LiveFcnUnderlyingStatusCard() {
   const [snapshot, setSnapshot] = useState<FcnLiveUnderlyingSnapshot | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("loading");
@@ -107,6 +120,13 @@ export function LiveFcnUnderlyingStatusCard() {
           No analyzable FCN underlyings are available yet, or Yahoo quotes / stored prices are missing.
         </p>
       )}
+
+      <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+        Source: {snapshot?.source ?? "yahoo_live_preview"} · As of:{" "}
+        {formatDateTime(snapshot?.quoteSnapshot?.generatedAt)} · Missing quotes:{" "}
+        {snapshot?.missingQuoteSymbols.length ?? 0} · Stale quotes:{" "}
+        {snapshot?.staleQuoteSymbols.length ?? 0}
+      </p>
 
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">

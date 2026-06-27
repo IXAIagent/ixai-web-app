@@ -36,8 +36,12 @@ export interface WorkspaceWatchlistSummary {
   informationalOnlyDisclaimer: string;
   itemCount: number;
   items: WorkspaceWatchlistItemReadback[];
+  liveMarketAsOf?: string | null;
+  liveMarketSource?: string;
+  missingQuoteCount?: number;
   quotedItemCount: number;
   readPriority?: import("@/src/lib/workspace/database-read-priority").WorkspaceDatabaseReadPriorityMetadata;
   sourceStatus: WorkspaceWatchlistSourceStatus;
+  staleQuoteCount?: number;
   unquotedItemCount: number;
 }

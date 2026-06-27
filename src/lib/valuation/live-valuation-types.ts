@@ -1,4 +1,5 @@
 import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo";
+import type { WorkspaceLiveMarketSnapshot } from "@/src/lib/market-data/live-market-types";
 
 export type LiveValuationSourceStatus =
   | "live"
@@ -93,6 +94,7 @@ export type FcnLiveUnderlyingSnapshot = {
 export type LiveProductValuationPreview = {
   fcn: FcnLiveUnderlyingSnapshot;
   generatedAt: string;
+  liveMarketSnapshot: WorkspaceLiveMarketSnapshot;
   portfolio: PortfolioLiveValuationSnapshot;
   quoteSnapshot: YahooQuoteSnapshot | null;
   readOnly: true;

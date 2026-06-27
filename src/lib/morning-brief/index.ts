@@ -15,6 +15,9 @@ export * from "@/src/lib/morning-brief/brief-portfolio-adapter";
 export * from "@/src/lib/morning-brief/brief-risk-adapter";
 export * from "@/src/lib/morning-brief/brief-snapshot";
 export * from "@/src/lib/morning-brief/brief-types";
+export * from "@/src/lib/morning-brief/morning-brief-live-service";
+export * from "@/src/lib/morning-brief/morning-brief-sections";
+export * from "@/src/lib/morning-brief/morning-brief-share";
 
 export async function getWorkspaceMorningBrief() {
   try {

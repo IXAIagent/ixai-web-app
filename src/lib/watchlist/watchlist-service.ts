@@ -1,6 +1,12 @@
 "use client";
 
-import { getMarketQuotes } from "@/src/lib/market/market-service";
+import type {
+  MarketQuote,
+  MarketQuoteResult,
+  MarketQuoteState,
+} from "@/src/lib/market/types";
+import { getWorkspaceLiveMarketSnapshot } from "@/src/lib/market-data";
+import type { WorkspaceLiveMarketQuote } from "@/src/lib/market-data";
 import {
   getWatchlist,
   type WatchlistItem,
@@ -32,6 +38,58 @@ function toQuoteSymbol(item: WorkspaceWatchlistItem) {
   }
 
   return symbol;
+}
+
+function mapMarketState(state: WorkspaceLiveMarketQuote["marketState"]): MarketQuoteState {
+  if (state === "regular") return "open";
+  if (state === "premarket") return "pre_market";
+  if (state === "postmarket") return "post_market";
+  if (state === "closed") return "closed";
+  return "unknown";
+}
+
+function liveQuoteToMarketQuoteResult(
+  item: WorkspaceWatchlistItem,
+  quote: WorkspaceLiveMarketQuote | null,
+): MarketQuoteResult<MarketQuote> {
+  const requestedSymbol = toQuoteSymbol(item);
+  const normalizedSymbol = normalizeSymbol(item.symbol);
+
+  if (!quote) {
+    return {
+      error: {
+        assetType: item.assetType === "crypto" ? "crypto" : item.assetType === "stock" ? "equity" : "unknown",
+        message: "Live Market Service quote unavailable.",
+        provider: "yahoo_finance",
+        sourceStatus: "unavailable",
+        symbol: normalizedSymbol,
+        updatedAt: new Date().toISOString(),
+      },
+      quote: null,
+      requestedSymbol,
+      sourceStatus: "unavailable",
+      symbol: normalizedSymbol,
+    };
+  }
+
+  return {
+    error: null,
+    quote: {
+      assetType: item.assetType === "crypto" ? "crypto" : "equity",
+      change: quote.change,
+      changePercent: quote.changePercent,
+      currency: quote.currency ?? "USD",
+      marketState: mapMarketState(quote.marketState),
+      price: quote.price,
+      provider: "yahoo_finance",
+      sourceStatus: quote.sourceStatus === "stale" ? "fallback" : quote.sourceStatus,
+      symbol: normalizedSymbol,
+      updatedAt: quote.asOf ?? new Date().toISOString(),
+    },
+    requestedSymbol,
+    sourceStatus: quote.sourceStatus === "stale" ? "fallback" : quote.sourceStatus,
+    symbol: normalizedSymbol,
+  };
 }
 
 function mapLegacyAssetType(item: WatchlistItem): WorkspaceWatchlistAssetType {
@@ -104,13 +162,26 @@ export async function getWorkspaceWatchlistSummary(): Promise<WorkspaceWatchlist
   });
   const items = priority.data;
   const quoteSymbols = Array.from(new Set(items.map(toQuoteSymbol).filter(Boolean)));
-  const quotes = quoteSymbols.length > 0 ? await getMarketQuotes(quoteSymbols) : [];
+  const liveMarketSnapshot = await getWorkspaceLiveMarketSnapshot({
+    extraSymbols: quoteSymbols,
+    truth: null,
+  });
+  const liveQuotesBySymbol = new Map(
+    liveMarketSnapshot.availableQuotes.map((quote) => [normalizeSymbol(quote.symbol), quote]),
+  );
+  const quotes = items.map((item) =>
+    liveQuoteToMarketQuoteResult(item, liveQuotesBySymbol.get(toQuoteSymbol(item)) ?? null),
+  );
 
   return {
     ...buildWorkspaceWatchlistSummary({
     items,
     quotes,
     }),
+    liveMarketAsOf: liveMarketSnapshot.asOf,
+    liveMarketSource: liveMarketSnapshot.provider,
+    missingQuoteCount: liveMarketSnapshot.missingSymbols.length,
     readPriority: getDatabaseReadPriorityMetadata(priority),
+    staleQuoteCount: liveMarketSnapshot.staleSymbols.length,
   };
 }

@@ -42,7 +42,7 @@ export function LiveMarketDataStatus({ compact = false }: { compact?: boolean })
     });
   }, [loadPreview]);
 
-  const quoteSnapshot = preview?.quoteSnapshot ?? null;
+  const liveMarketSnapshot = preview?.liveMarketSnapshot ?? null;
 
   return (
     <section className={`rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] ${compact ? "sm:p-5" : "sm:p-6"}`}>
@@ -76,10 +76,10 @@ export function LiveMarketDataStatus({ compact = false }: { compact?: boolean })
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Source", quoteSnapshot?.source.toUpperCase() ?? "--"],
-          ["Status", quoteSnapshot?.dataQuality ?? (loadState === "error" ? "unavailable" : "loading")],
-          ["Quotes", String(quoteSnapshot?.quotes.length ?? 0)],
-          ["Cache", quoteSnapshot?.cacheStatus ?? "--"],
+          ["Source", liveMarketSnapshot?.provider.toUpperCase() ?? "--"],
+          ["Status", liveMarketSnapshot?.dataQuality ?? (loadState === "error" ? "unavailable" : "loading")],
+          ["Quotes", String(liveMarketSnapshot?.availableQuotes.length ?? 0)],
+          ["Cache", liveMarketSnapshot?.cacheStatus ?? "--"],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -96,9 +96,10 @@ export function LiveMarketDataStatus({ compact = false }: { compact?: boolean })
       </div>
 
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Updated: {formatDateTime(quoteSnapshot?.generatedAt)} · Missing quotes:{" "}
-        {quoteSnapshot?.missingQuoteSymbols.length ?? 0} · Stale quotes:{" "}
-        {quoteSnapshot?.staleQuoteSymbols.length ?? 0}
+        Updated: {formatDateTime(liveMarketSnapshot?.asOf)} · Market state:{" "}
+        {liveMarketSnapshot?.marketState ?? "--"} · Missing quotes:{" "}
+        {liveMarketSnapshot?.missingSymbols.length ?? 0} · Stale quotes:{" "}
+        {liveMarketSnapshot?.staleSymbols.length ?? 0}
       </p>
 
       {loadState === "error" ? (

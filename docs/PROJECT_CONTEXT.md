@@ -964,3 +964,20 @@ Critical boundaries:
 
 - Live Product Program 1 is read-only and informational only.
 - No database write, Supabase mutation, SQL, migration, schema/RLS/auth/membership change, broker API, Binance trading, order execution, buy/sell/rebalance instruction, AI recommendation, Telegram, scheduler, Stripe, or billing is introduced.
+
+## R. V12 Live Product Upgrade Program Context
+
+V12 upgrades Live Product 1 into a connected read-only workspace program.
+
+Implemented scope:
+
+- Live Product 2 adds `WorkspaceLiveMarketSnapshot` and shared live market service contracts under `src/lib/market-data/`.
+- Live Product 3 formalizes Morning Brief v1 with portfolio, live valuation, FCN, risk, quote diagnostics, alerts, watchlist, and placeholder news sections.
+- Dashboard polish adds source/as-of/status metadata to Home, Portfolio, FCN, and Risk live cards.
+- Watchlist now consumes the shared Live Market Service.
+- Alert summary exposes open / warning / high / critical counts and deterministic missing/stale quote preview alerts.
+
+Critical boundaries:
+
+- V12 remains read-only and informational.
+- No broker API, order execution, auto trading, buy/sell/rebalance instruction, investment recommendation, Supabase migration, SQL, RLS/auth/membership change, billing, Telegram scheduler, external news provider, or AI recommendation is introduced.

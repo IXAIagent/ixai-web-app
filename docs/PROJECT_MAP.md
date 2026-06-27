@@ -659,3 +659,39 @@ Documentation:
 - `docs/LIVE_PRODUCT_1_YAHOO_VALUATION_BRIEF.md`
 
 Live Product Program 1 is read-only. It adds Yahoo quote fetch through a server-side route and in-memory cache, but does not add DB writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes, broker API, Binance trading, order execution, buy/sell/rebalance instructions, OpenAI/AI recommendations, Telegram, scheduler, Stripe, or billing.
+
+## V12 Live Product Upgrade Program Map
+
+New shared live market service:
+
+- `src/lib/market-data/live-market-types.ts`
+- `src/lib/market-data/live-market-snapshot.ts`
+- `src/lib/market-data/live-market-service.ts`
+- `src/lib/market-data/index.ts`
+
+Morning Brief v1:
+
+- `src/lib/morning-brief/morning-brief-live-service.ts`
+- `src/lib/morning-brief/morning-brief-sections.ts`
+- `src/lib/morning-brief/morning-brief-share.ts`
+- `components/morning-brief/morning-brief-live-card.tsx`
+
+Updated integrations:
+
+- `src/lib/valuation/live-valuation-client.ts`
+- `src/lib/watchlist/watchlist-service.ts`
+- `src/lib/watchlist/watchlist-types.ts`
+- `src/lib/alerts/alert-engine.ts`
+- `components/alerts/alert-summary.tsx`
+- `components/watchlist/watchlist-summary.tsx`
+- `components/market/live-market-data-status.tsx`
+- `components/portfolio/live-portfolio-valuation-card.tsx`
+- `components/fcn/live-fcn-underlying-status-card.tsx`
+- `components/risk/live-risk-adapter-card.tsx`
+- `app/my-ixai/home/page.tsx`
+
+Documentation:
+
+- `docs/V12_LIVE_PRODUCT_UPGRADE_PROGRAM.md`
+
+V12 is read-only. It does not add DB writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes, broker APIs, order execution, auto trading, buy/sell/rebalance instructions, AI recommendations, billing, Telegram scheduler, or external news providers.
