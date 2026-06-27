@@ -1,12 +1,11 @@
 "use client";
 
-import { getWorkspaceAlertSummary, type WorkspaceAlertSummary } from "@/src/lib/alerts";
-import { getWorkspaceLiveMarketSnapshotForTruth } from "@/src/lib/market-data";
-import {
-  buildMorningBrief,
-  buildMorningSnapshot,
-  type MorningSnapshot,
-} from "@/src/lib/morning-brief";
+import { getWorkspaceAlertSummary } from "@/src/lib/alerts/alert-service";
+import type { WorkspaceAlertSummary } from "@/src/lib/alerts/alert-types";
+import { getWorkspaceLiveMarketSnapshotForTruth } from "@/src/lib/market-data/live-market-service";
+import { buildMorningBrief } from "@/src/lib/morning-brief/brief-engine";
+import { buildMorningSnapshot } from "@/src/lib/morning-brief/brief-snapshot";
+import type { MorningSnapshot } from "@/src/lib/morning-brief/brief-types";
 import {
   buildMorningBriefV1Sections,
   type MorningBriefV1Section,
@@ -18,15 +17,15 @@ import {
   buildLegacyLiveRiskAdapterSnapshot,
   type LegacyLiveRiskAdapterSnapshot,
 } from "@/src/lib/risk/legacy-risk-engine/live-risk-adapter";
-import {
-  buildFcnLiveUnderlyingSnapshot,
-  buildPortfolioLiveValuationSnapshot,
-  type FcnLiveUnderlyingSnapshot,
-  type PortfolioLiveValuationSnapshot,
-} from "@/src/lib/valuation";
+import { buildFcnLiveUnderlyingSnapshot } from "@/src/lib/valuation/fcn-live-valuation";
+import type {
+  FcnLiveUnderlyingSnapshot,
+  PortfolioLiveValuationSnapshot,
+} from "@/src/lib/valuation/live-valuation-types";
+import { buildPortfolioLiveValuationSnapshot } from "@/src/lib/valuation/portfolio-live-valuation";
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
 import type { WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
-import type { WorkspaceLiveMarketSnapshot } from "@/src/lib/market-data";
+import type { WorkspaceLiveMarketSnapshot } from "@/src/lib/market-data/live-market-types";
 
 export type MorningBriefV1 = {
   alerts: WorkspaceAlertSummary | null;

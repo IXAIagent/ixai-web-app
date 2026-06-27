@@ -23,9 +23,9 @@ function formatDateTime(value: string | null | undefined) {
   }).format(date);
 }
 
-export function MorningBriefLiveCard() {
+export function MorningBriefLiveCard({ autoLoad = true }: { autoLoad?: boolean }) {
   const [brief, setBrief] = useState<MorningBriefV1 | null>(null);
-  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [loadState, setLoadState] = useState<LoadState>(autoLoad ? "loading" : "ready");
   const [copyState, setCopyState] = useState<"idle" | "copied" | "unavailable">("idle");
 
   const loadBrief = useCallback(async () => {
@@ -40,10 +40,14 @@ export function MorningBriefLiveCard() {
   }, []);
 
   useEffect(() => {
+    if (!autoLoad) {
+      return;
+    }
+
     queueMicrotask(() => {
       void loadBrief();
     });
-  }, [loadBrief]);
+  }, [autoLoad, loadBrief]);
 
   const topSections = useMemo(() => brief?.sections.slice(0, 8) ?? [], [brief]);
 
@@ -151,6 +155,10 @@ export function MorningBriefLiveCard() {
       {brief ? (
         <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           {brief.informationalOnlyDisclaimer}
+        </p>
+      ) : loadState === "ready" ? (
+        <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+          Morning Brief v1 live readback is available on demand. Use Refresh to load the full read-only brief. This fallback prevents one live-card failure from taking down Workspace Home.
         </p>
       ) : null}
 

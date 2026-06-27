@@ -263,7 +263,7 @@ export default function MyIxaiHomePage() {
 
       <LiveMarketDataStatus compact />
 
-      <MorningBriefLiveCard />
+      <MorningBriefLiveCard autoLoad={false} />
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
