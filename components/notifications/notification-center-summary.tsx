@@ -42,15 +42,23 @@ function saveReadIds(ids: string[]) {
   }
 }
 
-export function NotificationCenterSummary() {
+export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: boolean }) {
   const [summary, setSummary] = useState<WorkspaceNotificationSummary | null>(null);
   const delivery = getNotificationDeliveryReadiness();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(autoLoad);
+  const [hasError, setHasError] = useState(false);
 
   async function refresh() {
     setIsLoading(true);
-    setSummary(await getWorkspaceNotificationSummary({ readIds: loadReadIds() }));
-    setIsLoading(false);
+    setHasError(false);
+    try {
+      setSummary(await getWorkspaceNotificationSummary({ readIds: loadReadIds() }));
+    } catch {
+      setSummary(null);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function markAllRead() {
@@ -60,8 +68,12 @@ export function NotificationCenterSummary() {
   }
 
   useEffect(() => {
+    if (!autoLoad) {
+      return;
+    }
+
     queueMicrotask(() => void refresh());
-  }, []);
+  }, [autoLoad]);
 
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
@@ -152,6 +164,12 @@ export function NotificationCenterSummary() {
       {summary?.notificationCount === 0 ? (
         <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
           No notification cards are available yet.
+        </div>
+      ) : !summary ? (
+        <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          {hasError
+            ? "Notification readback could not be loaded. Existing Workspace cards remain available."
+            : "Notification readback is available on demand. Use Refresh to load local notification cards."}
         </div>
       ) : null}
 
