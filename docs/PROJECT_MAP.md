@@ -626,3 +626,36 @@ Documentation:
 - `docs/V2400_RISK_AUTOMATION_READINESS.md`
 
 Program B is readiness-only. It does not add DB writes, SQL, migrations, schema/RLS/auth/membership changes, external fetch, Yahoo/Binance/Futu/IBKR live APIs, broker live API, Telegram, scheduler, notification sender, OpenAI/LLM calls, trading, recommendations, billing provider, or entitlement enforcement.
+
+## Live Product Program 1 Map
+
+New read-only live data layers:
+
+- `src/lib/market-data/yahoo/`
+  - Yahoo quote types, normalizer, server-side provider, in-memory cache, and diagnostics.
+- `app/api/market/yahoo-quotes/route.ts`
+  - Read-only API route for validated symbol quote snapshots.
+- `src/lib/valuation/`
+  - Portfolio live valuation preview, FCN live underlying status, and client preview loader.
+- `src/lib/risk/legacy-risk-engine/live-risk-adapter.ts`
+  - V15 Risk Engine output with Yahoo quote freshness metadata.
+- `src/lib/morning-brief/`
+  - Optional live preview summary for Morning Brief snapshots.
+
+New / updated UI surfaces:
+
+- `components/market/live-market-data-status.tsx`
+- `components/portfolio/live-portfolio-valuation-card.tsx`
+- `components/fcn/live-fcn-underlying-status-card.tsx`
+- `components/risk/live-risk-adapter-card.tsx`
+- `components/morning-brief/live-morning-brief-preview.tsx`
+- `app/my-ixai/home/page.tsx`
+- `app/my-ixai/portfolio/page.tsx`
+- `components/fcn/fcn-center-workspace.tsx`
+- `components/risk/global-risk-center-workspace.tsx`
+
+Documentation:
+
+- `docs/LIVE_PRODUCT_1_YAHOO_VALUATION_BRIEF.md`
+
+Live Product Program 1 is read-only. It adds Yahoo quote fetch through a server-side route and in-memory cache, but does not add DB writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes, broker API, Binance trading, order execution, buy/sell/rebalance instructions, OpenAI/AI recommendations, Telegram, scheduler, Stripe, or billing.

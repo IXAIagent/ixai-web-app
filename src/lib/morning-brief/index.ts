@@ -8,6 +8,7 @@ import { getWorkspaceLegacyRiskEngineSnapshot } from "@/src/lib/risk/legacy-risk
 export * from "@/src/lib/morning-brief/brief-diagnostics";
 export * from "@/src/lib/morning-brief/brief-engine";
 export * from "@/src/lib/morning-brief/brief-fcn-adapter";
+export * from "@/src/lib/morning-brief/brief-live-preview-adapter";
 export * from "@/src/lib/morning-brief/brief-news-placeholder";
 export * from "@/src/lib/morning-brief/brief-market-data-adapter";
 export * from "@/src/lib/morning-brief/brief-portfolio-adapter";

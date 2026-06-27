@@ -1,6 +1,7 @@
 import { buildMorningBriefDiagnostics } from "@/src/lib/morning-brief/brief-diagnostics";
 import { buildMorningFcnSummary } from "@/src/lib/morning-brief/brief-fcn-adapter";
 import { buildMorningMarketDataSummary } from "@/src/lib/morning-brief/brief-market-data-adapter";
+import { buildMorningLivePreviewSummary } from "@/src/lib/morning-brief/brief-live-preview-adapter";
 import { buildMorningNewsPlaceholder } from "@/src/lib/morning-brief/brief-news-placeholder";
 import { buildMorningPortfolioSummary } from "@/src/lib/morning-brief/brief-portfolio-adapter";
 import { buildMorningRiskSummary } from "@/src/lib/morning-brief/brief-risk-adapter";
@@ -15,7 +16,7 @@ const LIMITATIONS = [
   "News is a placeholder; no external news provider is connected.",
   "No Telegram bot, scheduler, broker, trading, or AI recommendation logic is included.",
   "Risk, Portfolio, and FCN sections reuse V15 Legacy Risk Engine readback.",
-  "Market data input is supported through V17 manual placeholder snapshots only.",
+  "Market data input supports V17 manual placeholder snapshots and Live Product 1 Yahoo quote preview metadata.",
 ];
 
 function buildDateKey() {
@@ -76,6 +77,11 @@ export function buildMorningBrief(input: BuildMorningBriefInput): MorningBrief {
   const fcnSummary = buildMorningFcnSummary(input.legacyRiskSnapshot);
   const newsSummary = buildMorningNewsPlaceholder();
   const marketDataSummary = buildMorningMarketDataSummary(input.marketDataSnapshot);
+  const livePreview = buildMorningLivePreviewSummary({
+    fcnSnapshot: input.liveFcnSnapshot,
+    portfolioValuation: input.livePortfolioValuation,
+    riskAdapterSnapshot: input.liveRiskAdapterSnapshot,
+  });
   const warnings = collectWarnings({
     fcnSummary,
     marketDataSummary,
@@ -98,6 +104,7 @@ export function buildMorningBrief(input: BuildMorningBriefInput): MorningBrief {
     diagnostics: buildMorningBriefDiagnostics(),
     fcnSummary,
     limitations: LIMITATIONS,
+    livePreview,
     marketDataSummary,
     newsSummary,
     portfolioSummary,

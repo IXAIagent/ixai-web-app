@@ -944,3 +944,23 @@ Critical boundaries:
 
 - Program B performs no database writes and does not mutate Supabase.
 - No external fetch, Yahoo/Binance/Futu/IBKR live API, broker live API, position sync, scheduler, notification sender, Telegram, OpenAI/LLM, AI recommendation, trading, order execution, SQL, migration, schema/RLS/auth/membership change, billing provider, or entitlement enforcement is introduced.
+
+## Q. Live Product Program 1 Context
+
+Live Product Program 1 activates the first read-only live market data workflow after Program B readiness.
+
+Implemented scope:
+
+- Server-side Yahoo Quote Provider v1 under `src/lib/market-data/yahoo/`.
+- Read-only `GET /api/market/yahoo-quotes` route with symbol validation and stable JSON fallback.
+- 60-second in-memory live quote cache.
+- Portfolio live valuation preview using Portfolio Truth positions, Yahoo quotes, and stored/manual price fallback.
+- FCN live underlying status preview with worst-of, KI, KO, and strike distance where source inputs exist.
+- V15 Legacy Risk Engine live quote snapshot adapter.
+- Morning Brief live valuation / risk preview while keeping News placeholder-only.
+- Home, Portfolio, FCN, and Risk diagnostics show source status, missing quotes, stale quotes, and update time.
+
+Critical boundaries:
+
+- Live Product Program 1 is read-only and informational only.
+- No database write, Supabase mutation, SQL, migration, schema/RLS/auth/membership change, broker API, Binance trading, order execution, buy/sell/rebalance instruction, AI recommendation, Telegram, scheduler, Stripe, or billing is introduced.

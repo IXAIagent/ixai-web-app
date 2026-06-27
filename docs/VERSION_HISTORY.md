@@ -6,6 +6,34 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Live Product Program 1 — Yahoo Quote + Live Valuation + Live Morning Brief Preview
+
+Why:
+
+- Program B established live-platform readiness contracts, but Workspace still needed the first safe read-only live data path that can support valuation and Morning Brief preview without opening trading, broker, DB-write, or AI surfaces.
+
+What Changed:
+
+- Added `docs/LIVE_PRODUCT_1_YAHOO_VALUATION_BRIEF.md`.
+- Added server-side Yahoo Quote Provider v1 under `src/lib/market-data/yahoo/`.
+- Added read-only `GET /api/market/yahoo-quotes` route.
+- Added a 60-second in-memory Yahoo quote cache with stale fallback.
+- Added Portfolio live valuation preview using Portfolio Truth, Yahoo quotes, and stored/manual price fallback.
+- Added FCN live underlying status preview for worst-of, KI, KO, and strike distance where source data exists.
+- Added V15 Risk Engine live quote snapshot adapter.
+- Added Morning Brief live valuation / risk preview while preserving News placeholder-only behavior.
+- Added live diagnostics to Home, Portfolio, FCN, and Risk workspace surfaces.
+
+Key Decisions:
+
+- Yahoo fetches are server-side and read-only.
+- Workspace UI consumes the new route and never writes data during render.
+- FCN output remains underlying monitoring only, not a pricing engine.
+
+Out of Scope:
+
+- No database writes, Supabase mutations, SQL, migrations, schema/RLS/auth/membership changes, broker APIs, Binance trading, order execution, buy/sell/rebalance instructions, OpenAI/AI recommendations, Telegram, scheduler, Stripe, or billing.
+
 ## Program B V21-V24 — Live Platform Readiness
 
 Why:

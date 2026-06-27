@@ -14,6 +14,7 @@ import { RecentInputsPanel } from "@/components/portfolio/recent-inputs-panel";
 import { PortfolioPersistenceSummary } from "@/components/portfolio/portfolio-persistence-summary";
 import { PortfolioTruthSummary } from "@/components/portfolio/portfolio-truth-summary";
 import { PortfolioValuationSummary } from "@/components/portfolio/portfolio-valuation-summary";
+import { LivePortfolioValuationCard } from "@/components/portfolio/live-portfolio-valuation-card";
 import { WorkspaceMarketStatus } from "@/components/market/workspace-market-status";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -111,6 +112,8 @@ export default function MyIxaiPortfolioPage() {
         <PortfolioPersistenceSummary />
 
         <PortfolioValuationSummary />
+
+        <LivePortfolioValuationCard />
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
