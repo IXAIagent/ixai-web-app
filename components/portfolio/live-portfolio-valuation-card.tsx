@@ -26,6 +26,19 @@ function formatSignedMoney(value: number | null | undefined) {
   return `${value >= 0 ? "+" : ""}${formatMoney(value)}`;
 }
 
+function formatDateTime(value: string | null | undefined) {
+  if (!value) return "--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("zh-TW", {
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
+
 export function LivePortfolioValuationCard() {
   const [valuation, setValuation] = useState<PortfolioLiveValuationSnapshot | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("loading");
@@ -109,6 +122,12 @@ export function LivePortfolioValuationCard() {
           Manual fallback: <span className="font-semibold text-[var(--ixai-forest)]">{valuation?.manualFallbackSymbols.length ?? 0}</span>
         </p>
       </div>
+
+      <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+        Source: {valuation?.source ?? "yahoo_live_preview"} · As of:{" "}
+        {formatDateTime(valuation?.quoteSnapshot?.generatedAt)} · Stale quotes:{" "}
+        {valuation?.staleQuoteSymbols.length ?? 0}
+      </p>
 
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">

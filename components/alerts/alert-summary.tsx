@@ -61,7 +61,7 @@ export function AlertSummary() {
 
       <div className="mt-5 grid gap-3 sm:grid-cols-4">
         {[
-          ["Alerts", summary?.alertCount ?? "--"],
+          ["Open Alerts", summary?.alertCount ?? "--"],
           ["Critical", summary?.criticalCount ?? "--"],
           ["High", summary?.highCount ?? "--"],
           ["Warning", summary?.warningCount ?? "--"],

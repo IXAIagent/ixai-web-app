@@ -4,3 +4,6 @@ export * from "@/src/lib/market-data/market-data-snapshot";
 export * from "@/src/lib/market-data/market-data-types";
 export * from "@/src/lib/market-data/manual-market-data-provider";
 export * from "@/src/lib/market-data/provider-registry";
+export * from "@/src/lib/market-data/live-market-service";
+export * from "@/src/lib/market-data/live-market-snapshot";
+export * from "@/src/lib/market-data/live-market-types";

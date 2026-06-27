@@ -20,6 +20,19 @@ function formatMoney(value: number | null | undefined) {
   }).format(value);
 }
 
+function formatDateTime(value: string | null | undefined) {
+  if (!value) return "--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("zh-TW", {
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
+
 export function LiveRiskAdapterCard() {
   const [snapshot, setSnapshot] = useState<LegacyLiveRiskAdapterSnapshot | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("loading");
@@ -104,7 +117,10 @@ export function LiveRiskAdapterCard() {
       </div>
 
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Read-only: {String(snapshot?.readOnly ?? true)} · Trading actions: off · Recommendation logic: off · Missing quotes: {snapshot?.missingQuoteSymbols.length ?? 0}
+        Source: {snapshot?.source ?? "yahoo_live_preview"} · As of:{" "}
+        {formatDateTime(snapshot?.marketAsOf)} · Read-only: {String(snapshot?.readOnly ?? true)} ·
+        Trading actions: off · Recommendation logic: off · Missing quotes:{" "}
+        {snapshot?.missingQuoteSymbols.length ?? 0}
       </p>
 
       {loadState === "error" ? (

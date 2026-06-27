@@ -48,6 +48,19 @@ export function buildWorkspaceAlertSummary(input: {
       return;
     }
 
+    if (item.quote?.sourceStatus === "fallback") {
+      alerts.push(
+        alert({
+          category: "data_quality",
+          id: `watchlist-stale-price-${item.id}`,
+          message: `${item.symbol} is using stale or fallback quote data from the current live market snapshot.`,
+          severity: "info",
+          sourceEngine: "live_market_service",
+          title: "Watchlist quote freshness",
+        }),
+      );
+    }
+
     if (typeof item.alertAbove === "number" && price >= item.alertAbove) {
       alerts.push(
         alert({

@@ -6,6 +6,34 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12 Live Product Upgrade Program
+
+Why:
+
+- Live Product 1 proved the first read-only Yahoo quote, valuation, risk, and Morning Brief preview path. V12 consolidates those pieces into a shared service and formalizes the Workspace Morning Brief without opening trading, broker, DB-write, AI, or notification-delivery surfaces.
+
+What Changed:
+
+- Added `docs/V12_LIVE_PRODUCT_UPGRADE_PROGRAM.md`.
+- Added Workspace Live Market Service contracts and snapshot normalization under `src/lib/market-data/`.
+- Updated live valuation preview to use the shared Workspace Live Market Service.
+- Formalized Morning Brief v1 with portfolio, live valuation, FCN, risk, quote diagnostics, alerts, watchlist, placeholder news, and share-friendly text.
+- Added `components/morning-brief/morning-brief-live-card.tsx`.
+- Updated Home to show Live Market Snapshot and Morning Brief v1.
+- Added source/as-of/freshness metadata to Portfolio, FCN, Risk, Watchlist, and Alert readback surfaces.
+- Updated Watchlist to consume the shared Live Market Service.
+- Added deterministic stale/fallback quote alert preview.
+
+Key Decisions:
+
+- V12 remains read-only and informational.
+- News remains placeholder-only.
+- Alerts remain UI/readback-only with no delivery.
+
+Out of Scope:
+
+- No broker API, order execution, auto trading, buy/sell/rebalance instruction, investment recommendation logic, Supabase migration, SQL, RLS/auth/membership change, billing/Stripe, Telegram scheduler, external news provider, or AI recommendation.
+
 ## Live Product Program 1 — Yahoo Quote + Live Valuation + Live Morning Brief Preview
 
 Why:

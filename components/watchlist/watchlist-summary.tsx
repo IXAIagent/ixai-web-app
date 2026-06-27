@@ -23,6 +23,19 @@ function formatPrice(value: number | null | undefined, currency = "USD") {
   }).format(value);
 }
 
+function formatDateTime(value: string | null | undefined) {
+  if (!value) return "--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("zh-TW", {
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
+
 export function WatchlistSummary() {
   const [summary, setSummary] = useState<WorkspaceWatchlistSummary | null>(null);
   const [persistence, setPersistence] = useState<WatchlistPersistenceSummary | null>(null);
@@ -138,7 +151,10 @@ export function WatchlistSummary() {
 
       {summary ? (
         <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-          {summary.informationalOnlyDisclaimer}
+          Live source: {summary.liveMarketSource ?? "yahoo"} · As of:{" "}
+          {formatDateTime(summary.liveMarketAsOf)} · Missing quotes:{" "}
+          {summary.missingQuoteCount ?? summary.unquotedItemCount} · Stale quotes:{" "}
+          {summary.staleQuoteCount ?? 0}. {summary.informationalOnlyDisclaimer}
         </p>
       ) : null}
     </section>

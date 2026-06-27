@@ -9,6 +9,7 @@ export type LegacyLiveRiskAdapterSnapshot = {
   dataQuality: "live" | "partial" | "stale" | "unavailable";
   fcnWorstOfSymbol: string | null;
   generatedAt: string;
+  marketAsOf: string | null;
   liveWarningCount: number;
   missingQuoteSymbols: string[];
   portfolioCurrentValue: number | null;
@@ -87,6 +88,7 @@ export function buildLegacyLiveRiskAdapterSnapshot(input: {
     dataQuality: inferDataQuality(input),
     fcnWorstOfSymbol: input.fcn?.topWorstOf?.worstOfSymbol ?? null,
     generatedAt: new Date().toISOString(),
+    marketAsOf: input.quoteSnapshot?.generatedAt ?? null,
     liveWarningCount: warnings.length,
     missingQuoteSymbols,
     portfolioCurrentValue: input.portfolio?.currentValue ?? null,
