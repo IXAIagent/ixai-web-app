@@ -1,5 +1,5 @@
 import type { FCNIntelligenceCenterReadback } from "@/src/lib/fcn/intelligence-center";
-import type { MarketServiceReadiness } from "@/src/lib/market/market-service";
+import type { ClientSafeMarketReadiness } from "@/src/lib/market/client-safe-market-readiness";
 import type { MarketProviderStatusSnapshot } from "@/src/lib/market/market-types";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 import type { GlobalRiskCenterReadback } from "@/src/lib/risk/global-risk-types";
@@ -56,7 +56,7 @@ export type IntelligenceCenterReadback = {
   generatedAt: string;
   highlights: string[];
   marketReadiness: MarketProviderStatusSnapshot;
-  marketServiceReadiness: MarketServiceReadiness;
+  marketServiceReadiness: ClientSafeMarketReadiness;
   marketSnapshot: IntelligenceCenterSourceStatus[];
   newsReadiness: IntelligenceCenterSourceStatus[];
   portfolioIntelligenceSummary: IntelligenceReadbackSummary[];

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getYahooQuoteSnapshot } from "@/src/lib/market-data/yahoo";
+import { getYahooQuoteSnapshot } from "@/src/lib/market-data/yahoo/yahoo-quote-provider";
 
 export const runtime = "nodejs";
 

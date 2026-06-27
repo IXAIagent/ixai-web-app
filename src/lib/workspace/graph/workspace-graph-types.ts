@@ -3,7 +3,7 @@ import type { WorkspaceDailyBrief } from "@/src/lib/daily-brief";
 import type { FcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-types";
 import type { FcnPortfolioScheduleSummary } from "@/src/lib/fcn/schedule";
 import type { WorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-types";
-import type { MarketServiceReadiness } from "@/src/lib/market/market-service";
+import type { ClientSafeMarketReadiness } from "@/src/lib/market/client-safe-market-readiness";
 import type { MorningSnapshot } from "@/src/lib/morning-brief";
 import type { MarketDataSnapshot } from "@/src/lib/market-data";
 import type { IntelligenceV2Report } from "@/src/lib/intelligence/v2";
@@ -69,7 +69,7 @@ export interface WorkspaceGraph {
   fcnPersistenceReadiness?: FcnPersistenceReadiness | null;
   generatedAt: string;
   intelligence: WorkspaceIntelligenceReport | null;
-  marketStatus?: MarketServiceReadiness | null;
+  marketStatus?: ClientSafeMarketReadiness | null;
   marketDataFoundation?: MarketDataSnapshot | null;
   liveProviderReadiness?: LiveProviderReadinessReport | null;
   liveValuationReadiness?: PortfolioValuationSnapshotModel | null;

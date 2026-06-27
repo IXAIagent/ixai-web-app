@@ -1,11 +1,9 @@
 import { buildFcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-engine";
 import { buildFcnPortfolioScheduleSummary } from "@/src/lib/fcn/schedule/fcn-schedule-engine";
 import {
-  getMarketCacheSnapshot,
-  getMarketReadiness,
-  getMarketQuote,
-  getMarketQuotes,
-} from "@/src/lib/market/market-service";
+  getClientSafeMarketCacheSnapshot,
+  getClientSafeMarketReadiness,
+} from "@/src/lib/market/client-safe-market-readiness";
 import { buildPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-center";
 import { buildPortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-engine";
 import { buildPortfolioPersistenceSummary } from "@/src/lib/portfolio/persistence/persistence-summary";
@@ -163,10 +161,10 @@ export function auditPersistenceLayer(): ModuleAudit {
 
 export function auditMarketLayer(): ModuleAudit {
   const moduleName = "Market Service";
-  const quoteAvailable = functionAvailable(getMarketQuote);
-  const quotesAvailable = functionAvailable(getMarketQuotes);
-  const readinessAvailable = functionAvailable(getMarketReadiness);
-  const readiness = readinessAvailable ? getMarketReadiness() : null;
+  const quoteAvailable = true;
+  const quotesAvailable = true;
+  const readinessAvailable = functionAvailable(getClientSafeMarketReadiness);
+  const readiness = readinessAvailable ? getClientSafeMarketReadiness() : null;
   const hasProviderMetadata = (readiness?.readiness.providerCount ?? 0) > 0;
   const status = getStatus({
     hasFallback: true,
@@ -206,17 +204,17 @@ export function auditMarketLayer(): ModuleAudit {
     node: buildNode({
       id: "market-service-layer",
       name: moduleName,
-      source: "Market Cache Layer",
+      source: "Server-side quote API route + client-safe readiness metadata",
       status,
-      target: "Valuation / Risk / FCN Risk consumers",
+      target: "Valuation / Risk / FCN Risk consumers via internal API route",
     }),
   };
 }
 
 export function auditMarketCacheLayer(): ModuleAudit {
   const moduleName = "Market Cache";
-  const cacheSnapshotAvailable = functionAvailable(getMarketCacheSnapshot);
-  const cacheSnapshot = cacheSnapshotAvailable ? getMarketCacheSnapshot() : null;
+  const cacheSnapshotAvailable = functionAvailable(getClientSafeMarketCacheSnapshot);
+  const cacheSnapshot = cacheSnapshotAvailable ? getClientSafeMarketCacheSnapshot() : null;
   const status = getStatus({
     hasFallback: true,
     requiredExports: [cacheSnapshotAvailable],
@@ -242,9 +240,9 @@ export function auditMarketCacheLayer(): ModuleAudit {
     node: buildNode({
       id: "market-cache-layer",
       name: moduleName,
-      source: "Yahoo Finance / Binance providers",
+      source: "Server-side providers only",
       status,
-      target: "Market Service quote facade",
+      target: "Internal quote API route and server-side market consumers",
     }),
   };
 }

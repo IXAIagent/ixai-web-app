@@ -11,8 +11,8 @@ import type {
   IntelligenceReadbackSummary,
   IntelligenceReadinessWarningSummary,
 } from "@/src/lib/intelligence/intelligence-center-types";
+import { getClientSafeMarketReadiness } from "@/src/lib/market/client-safe-market-readiness";
 import { getMarketProviderStatus } from "@/src/lib/market/market-center";
-import { getMarketReadiness } from "@/src/lib/market/market-service";
 import type {
   PortfolioTruthReadback,
   PortfolioTruthSourceStatus,
@@ -345,11 +345,11 @@ export function buildIntelligenceCenterReadback(input: {
       source(
         "Workspace Market Integration",
         "ready",
-        "Market Service readiness, provider health, and fallback policy metadata are visible across Workspace centers; live market data remains disabled.",
+        "Market readiness metadata is client-safe; browser code must use the internal quote API route instead of direct Yahoo Finance fetches.",
       ),
     ],
     marketReadiness: getMarketProviderStatus(),
-    marketServiceReadiness: getMarketReadiness(),
+    marketServiceReadiness: getClientSafeMarketReadiness(),
     newsReadiness: [
       source("Daily / Weekly Public Intelligence", "ready", "Public Daily and Weekly routes remain available."),
       source(

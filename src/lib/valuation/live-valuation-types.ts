@@ -1,4 +1,4 @@
-import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo";
+import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 import type { WorkspaceLiveMarketSnapshot } from "@/src/lib/market-data/live-market-types";
 
 export type LiveValuationSourceStatus =

@@ -3,7 +3,7 @@ import type {
   YahooQuote,
   YahooQuoteCacheStatus,
   YahooQuoteSnapshot,
-} from "@/src/lib/market-data/yahoo";
+} from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 
 export type WorkspaceLiveMarketProvider = "yahoo";

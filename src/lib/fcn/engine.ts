@@ -1,4 +1,3 @@
-import { getMarketQuotes } from "@/src/lib/market/providers";
 import { getDemoFcnPositions } from "@/src/lib/fcn/positions";
 import type { MarketQuote } from "@/src/lib/market-data/types";
 import type {
@@ -194,6 +193,7 @@ export async function getFcnPortfolioSnapshot(
   positions: FcnPosition[] = getDemoFcnPositions(),
   now = new Date(),
 ): Promise<FcnPortfolioSnapshot> {
+  const { getMarketQuotes } = await import("@/src/lib/market/providers");
   const quotes = await getMarketQuotes(uniqueSymbols(positions));
   const quotesBySymbol = new Map(quotes.map((quote) => [quote.symbol, quote]));
   const snapshots = positions.map((position) =>
