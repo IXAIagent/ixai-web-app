@@ -1,5 +1,10 @@
 import type { LegacyRiskEngineSnapshot, LegacyRiskLevel, LegacyRiskSourceStatus } from "@/src/lib/risk/legacy-risk-engine";
 import type { MarketDataSnapshot } from "@/src/lib/market-data";
+import type { LegacyLiveRiskAdapterSnapshot } from "@/src/lib/risk/legacy-risk-engine/live-risk-adapter";
+import type {
+  FcnLiveUnderlyingSnapshot,
+  PortfolioLiveValuationSnapshot,
+} from "@/src/lib/valuation";
 
 export type MorningBriefSourceStatus =
   | "ready"
@@ -85,6 +90,19 @@ export type MorningBriefDataQuality = {
   warnings: MorningBriefWarning[];
 };
 
+export type MorningBriefLivePreviewSummary = {
+  dataQuality: MorningBriefSourceStatus;
+  fcnWorstOfSymbol: string | null;
+  generatedAt: string;
+  missingQuoteSymbols: string[];
+  portfolioCurrentValue: number | null;
+  quoteSource: "yahoo";
+  readOnly: true;
+  riskLevel: LegacyRiskLevel;
+  sourceStatus: MorningBriefSourceStatus;
+  staleQuoteSymbols: string[];
+};
+
 export type MorningBriefDiagnostics = {
   aiRecommendationEnabled: false;
   brokerEnabled: false;
@@ -113,6 +131,7 @@ export type MorningBrief = {
   diagnostics: MorningBriefDiagnostics;
   fcnSummary: MorningBriefFcnSummary;
   limitations: string[];
+  livePreview: MorningBriefLivePreviewSummary | null;
   marketDataSummary: MorningBriefMarketDataSummary;
   newsSummary: MorningBriefNewsSummary;
   portfolioSummary: MorningBriefPortfolioSummary;
@@ -135,6 +154,9 @@ export type MorningSnapshot = {
 
 export type BuildMorningBriefInput = {
   legacyRiskSnapshot: LegacyRiskEngineSnapshot | null;
+  liveFcnSnapshot?: FcnLiveUnderlyingSnapshot | null;
+  livePortfolioValuation?: PortfolioLiveValuationSnapshot | null;
+  liveRiskAdapterSnapshot?: LegacyLiveRiskAdapterSnapshot | null;
   marketDataSnapshot?: MarketDataSnapshot | null;
 };
 

@@ -32,6 +32,13 @@ export function buildMorningSnapshot(brief: MorningBrief): MorningSnapshot {
         summary: `${brief.marketDataSummary.quoteCount} placeholder quote(s), provider ${brief.marketDataSummary.providerStatus}.`,
       },
       {
+        label: "Live Preview",
+        sourceStatus: brief.livePreview?.sourceStatus ?? "unavailable",
+        summary: brief.livePreview
+          ? `Yahoo preview value ${brief.livePreview.portfolioCurrentValue ?? "unknown"}, risk ${formatStatus(brief.livePreview.riskLevel)}.`
+          : "Yahoo live preview not loaded.",
+      },
+      {
         label: "News",
         sourceStatus: brief.newsSummary.sourceStatus,
         summary: "News provider not configured in V16.",

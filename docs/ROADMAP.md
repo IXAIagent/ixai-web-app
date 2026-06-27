@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`Program B / V21-V24 Live Platform Readiness`
+`Live Product Program 1 / Yahoo Quote + Live Valuation + Live Morning Brief Preview`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is Program B live-platform readiness while preserving read-only safety boundaries:
+Current priority is Live Product Program 1: the first read-only Yahoo quote workflow for live valuation and Morning Brief preview while preserving the no-write/no-trading safety boundaries:
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
@@ -82,6 +82,7 @@ Current priority is Program B live-platform readiness while preserving read-only
 - Use `docs/V2200_PORTFOLIO_LIVE_VALUATION_READINESS.md` as the source of truth for V22 future quote snapshot and valuation readiness.
 - Use `docs/V2300_BROKER_INTEGRATION_FOUNDATION.md` as the source of truth for V23 broker interface and disabled trading/sync flags.
 - Use `docs/V2400_RISK_AUTOMATION_READINESS.md` as the source of truth for V24 risk rule, trigger, alert-evaluation, and automation readiness.
+- Use `docs/LIVE_PRODUCT_1_YAHOO_VALUATION_BRIEF.md` as the source of truth for the first read-only Yahoo quote provider, live quote cache, Portfolio live valuation preview, FCN live underlying status, V15 Risk live adapter, and Morning Brief live preview.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.
