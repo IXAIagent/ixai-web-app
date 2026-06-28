@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
@@ -194,6 +194,7 @@ function getWorstOfStatusCopy(status: PortfolioDashboardSummary["fcnWorstOfSumma
 }
 
 export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: ReadbackVariant }) {
+  const mountedRef = useRef(false);
   const [summary, setSummary] = useState<PortfolioDashboardSummary>(EMPTY_SUMMARY);
   const [status, setStatus] = useState<"error" | "loading" | "ready" | "unauthenticated">(
     "loading",
@@ -209,6 +210,10 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
 
       const headers = await getSupabaseAuthorizationHeaders();
 
+      if (!mountedRef.current) {
+        return;
+      }
+
       if (!headers) {
         setSummary(EMPTY_SUMMARY);
         setStatus("unauthenticated");
@@ -222,6 +227,10 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
         });
         const payload = (await response.json().catch(() => ({}))) as DashboardResponse;
 
+        if (!mountedRef.current) {
+          return;
+        }
+
         if (!response.ok || !payload.summary) {
           setSummary(payload.summary ?? EMPTY_SUMMARY);
           setStatus(response.status === 401 ? "unauthenticated" : "error");
@@ -231,6 +240,10 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
         setSummary(payload.summary);
         setStatus("ready");
       } catch {
+        if (!mountedRef.current) {
+          return;
+        }
+
         setSummary(EMPTY_SUMMARY);
         setStatus("error");
       }
@@ -239,14 +252,26 @@ export function PortfolioReadbackSummary({ variant = "portfolio" }: { variant?: 
   );
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void loadSummary();
+      if (!cancelled) {
+        void loadSummary();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, [loadSummary]);
 
   useEffect(() => {
     function handlePortfolioChanged() {
-      void loadSummary({ showLoading: false });
+      if (mountedRef.current) {
+        void loadSummary({ showLoading: false });
+      }
     }
 
     window.addEventListener("ixai:portfolio:changed", handlePortfolioChanged);

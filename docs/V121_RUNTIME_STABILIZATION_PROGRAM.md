@@ -4,7 +4,7 @@
 
 V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, and large `Uncaught (in promise)` storms.
 
-Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. This completion branch covers Program C, Program D, and the production gray-screen regression. The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged.
+Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. The full V12.1 Runtime Stabilization Program is implementation-complete pending production authenticated verification, and must not be marked production-complete until `app.ixuan.ai` manual verification passes after the read-storm fix.
 
 ## Runtime Stabilization Program Status
 
@@ -32,8 +32,9 @@ Completed:
 
 Important:
 
-- Program A, Program B, Program C, Program D, and Program E are complete in this branch after validation.
-- The full V12.1 Runtime Stabilization Program is complete only after this PR is merged.
+- Program A, Program B, Program C, Program D, and Program E implementation work has merged.
+- PR #79 did not fully resolve production authenticated read storms.
+- V12.1 Runtime Stabilization requires production verification after the authenticated read-storm fix before it can be marked production-complete.
 
 ## Audit Basis
 
@@ -48,6 +49,7 @@ Audit root-cause summary:
 - Supabase session, auth refresh, storage, and network failures should fall back gracefully.
 - Market / Morning Brief runtime paths and Admin / Scheduler runtime paths remain high-priority follow-up work, but they are not changed in Program A, Program B, or Program E.
 - Production gray-screen regression risk was linked to optional Supabase persistence tables (`ixai_profile_memory`, `ixai_user_preferences`) returning REST 404 when absent.
+- Production after PR #79 still showed private Supabase authenticated read storms for tables such as `stock_positions`, `crypto_positions`, and `watchlist_items` returning repeated `401 Unauthorized`.
 - Browser bundles no longer contain direct Yahoo endpoints; Yahoo CORS is not treated as the primary crash cause.
 
 ## Program A Completed

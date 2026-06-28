@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12.1 Production Authenticated Read Storm Fix
+
+Why:
+
+- PR #79 merged V12.1 completion implementation, but production verification on `app.ixuan.ai` still showed route-switch instability.
+- Console / Network showed repeated private Supabase `401 Unauthorized` reads for tables such as `stock_positions`, `crypto_positions`, and `watchlist_items`.
+- Optional `ixai_profile_memory` and `ixai_user_preferences` `404` fallbacks became warnings but could still repeat.
+- `/my-ixai/copilot`, `/my-ixai/settings`, and `/my-ixai/intelligence` could still gray-screen after route switching.
+
+What Changed:
+
+- Added authenticated private Supabase read safety under `src/lib/workspace/runtime-safety/authenticated-supabase.ts`.
+- Routed database readiness/readback probes through authenticated session gating and table-level cooldowns.
+- Added browser-session optional-table disable so missing profile/preferences tables skip subsequent read/upsert attempts during the session.
+- Coalesced Portfolio Truth readback briefly to reduce route-switch fan-out.
+- Added mounted guards to Portfolio dashboard/readback async state updates.
+- Added `docs/V121_PRODUCTION_AUTHENTICATED_READ_STORM_FIX.md`.
+
+Key Decisions:
+
+- V12.1 Runtime Stabilization implementation is complete pending production authenticated verification.
+- V12.1 is not production-complete until `app.ixuan.ai` manual verification passes after this fix.
+- The fix does not change auth business logic, RLS, schema, migrations, membership, billing, scheduler, broker, trading, recommendations, OpenAI, or AI behavior.
+
 ## V12.1 Runtime Stabilization Program Completion
 
 Why:
@@ -25,7 +49,7 @@ What Changed:
 
 Key Decisions:
 
-- V12.1 is complete only after the completion PR is merged.
+- PR #79 merged completion implementation, but production completion now requires authenticated `app.ixuan.ai` verification after the read-storm fix.
 - Runtime completion does not add product features or investment functionality.
 - IXAI remains intelligence / workflow / risk-awareness software, not a broker, trading bot, signal seller, or robo-advisor.
 
@@ -55,8 +79,9 @@ Completed:
 
 Important:
 
-- Program A, Program B, Program C, Program D, and Program E are complete in the V12.1 completion branch.
-- The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged.
+- Program A, Program B, Program C, Program D, and Program E implementation work has merged.
+- PR #79 did not fully resolve production authenticated read storms.
+- The full V12.1 Runtime Stabilization Program requires production authenticated verification after the read-storm fix before it can be marked production-complete.
 
 ## V12.1 Runtime Stabilization Program / Program B Complete
 

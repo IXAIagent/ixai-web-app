@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.1 — Runtime Stabilization Program / Completion Branch / A+B+C+D+E Complete After Merge`
+`V12.1 — Runtime Stabilization Program / Authenticated Read Storm Fix / Pending Production Verification`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). It addressed the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. V12.1 Program B completes Workspace Runtime Hydration Safety after validation by containing Workspace client refresh effects, mounted-state updates, Settings diagnostics refreshes, and browser-storage JSON parse paths so Workspace pages degrade to fallback UI instead of throwing unhandled promises or white screens. V12.1 Program E completes Service Worker Fetch Safety after validation by containing `public/sw.js` navigation, static asset/chunk, excluded GET, pass-through fetch, cache write, install precache, and activate cleanup failures so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. This completion branch finishes Program C Market / Morning Brief Runtime Stabilization, Program D Admin / Scheduler Runtime Stabilization, and the production gray-screen regression linked to optional Supabase `ixai_profile_memory` / `ixai_user_preferences` 404s. The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79. Production verification after PR #79 still found an authenticated read storm: private Supabase reads for tables such as `stock_positions`, `crypto_positions`, and `watchlist_items` could fire before or without stable authenticated session state, producing repeated `401 Unauthorized` responses, while optional `ixai_profile_memory` / `ixai_user_preferences` missing-table fallbacks could still repeat. The current emergency fix adds authenticated private-table read gating, browser-session cooldowns, optional-table session disable, Portfolio Truth read coalescing, and mounted guards for route-switch safety. V12.1 Runtime Stabilization implementation is complete pending production authenticated verification; it is not production-complete until `app.ixuan.ai` manual verification passes after this fix. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
 
 Runtime Stabilization Program Status:
 
@@ -90,8 +90,9 @@ Completed:
 
 Important:
 
-- Program A, Program B, Program C, Program D, and Program E are complete in this branch after validation.
-- The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged.
+- Program A, Program B, Program C, Program D, and Program E implementation work has merged.
+- PR #79 did not fully resolve production runtime instability.
+- V12.1 Runtime Stabilization requires production authenticated verification after the read-storm fix before it can be marked production-complete.
 
 Program E production verification note:
 

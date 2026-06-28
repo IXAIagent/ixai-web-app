@@ -1,6 +1,7 @@
 import { logWorkspaceRuntimeWarning } from "@/src/lib/workspace/runtime-safety/runtime-logger";
 
 const OPTIONAL_TABLE_COOLDOWN_MS = 15 * 60 * 1000;
+const OPTIONAL_TABLE_DISABLE_KEY = "ixai.runtime.optional-table-disabled.v1";
 
 type DisabledOptionalTable = {
   disabledAt: number;
@@ -45,19 +46,60 @@ function normalizeOptionalTableName(tableName: string) {
   return tableName.trim().toLowerCase();
 }
 
+function canUseSessionStorage() {
+  return typeof window !== "undefined" && typeof window.sessionStorage !== "undefined";
+}
+
+function optionalStorageKey(tableName: string) {
+  return `${OPTIONAL_TABLE_DISABLE_KEY}:${normalizeOptionalTableName(tableName)}`;
+}
+
+function readStoredDisable(tableName: string): DisabledOptionalTable | null {
+  if (!canUseSessionStorage()) {
+    return null;
+  }
+
+  try {
+    const raw = window.sessionStorage.getItem(optionalStorageKey(tableName));
+    const parsed = raw ? (JSON.parse(raw) as DisabledOptionalTable) : null;
+
+    return parsed &&
+      typeof parsed.disabledAt === "number" &&
+      typeof parsed.reason === "string"
+      ? parsed
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredDisable(tableName: string, disabled: DisabledOptionalTable) {
+  if (!canUseSessionStorage()) {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(optionalStorageKey(tableName), JSON.stringify(disabled));
+  } catch {
+    // Runtime safety storage is best-effort only.
+  }
+}
+
 function isCooldownActive(disabled: DisabledOptionalTable) {
   return Date.now() - disabled.disabledAt < OPTIONAL_TABLE_COOLDOWN_MS;
 }
 
 export function isOptionalTableDisabled(tableName: string) {
   const key = normalizeOptionalTableName(tableName);
-  const disabled = disabledOptionalTables.get(key);
+  const stored = readStoredDisable(key);
+  const disabled = disabledOptionalTables.get(key) ?? stored;
 
   if (!disabled) {
     return false;
   }
 
   if (isCooldownActive(disabled)) {
+    disabledOptionalTables.set(key, disabled);
     return true;
   }
 
@@ -73,6 +115,10 @@ export function markOptionalTableUnavailable(tableName: string, reason: string) 
   }
 
   disabledOptionalTables.set(key, {
+    disabledAt: Date.now(),
+    reason,
+  });
+  writeStoredDisable(key, {
     disabledAt: Date.now(),
     reason,
   });
