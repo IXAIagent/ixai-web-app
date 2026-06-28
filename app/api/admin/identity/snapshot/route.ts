@@ -8,6 +8,19 @@ import { getLineIdentitySnapshot } from "@/src/lib/subscribers/line-identity";
 
 export const dynamic = "force-dynamic";
 
+async function settledAdminValue<TData>(
+  label: string,
+  task: () => Promise<TData>,
+  fallback: TData,
+) {
+  try {
+    return await task();
+  } catch (error) {
+    log.warn(`[ixai.identity.admin] ${label} fallback`, error);
+    return fallback;
+  }
+}
+
 export async function GET(request: NextRequest) {
   if (!isAdminRequestAuthorized(request)) {
     return Response.json(
@@ -19,13 +32,25 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  try {
-    const [subscriberStats, membership, audience, line] = await Promise.all([
-      listSubscriberStats(),
-      getMembershipSnapshot(),
-      getAudienceSnapshot(),
-      getLineIdentitySnapshot(),
-    ]);
+  const [subscriberStats, membership, audience, line] = await Promise.all([
+    settledAdminValue("subscriberStats", listSubscriberStats, {
+      activeSubscribers: 0,
+      persistence: "fallback",
+      totalSubscribers: 0,
+    } as unknown as Awaited<ReturnType<typeof listSubscriberStats>>),
+    settledAdminValue("membership", getMembershipSnapshot, {
+      activePro: 0,
+      totalMembers: 0,
+    } as unknown as Awaited<ReturnType<typeof getMembershipSnapshot>>),
+    settledAdminValue("audience", getAudienceSnapshot, {
+      lineConnectedCount: 0,
+      returningReaderCount: 0,
+      totalProfiles: 0,
+    } as unknown as Awaited<ReturnType<typeof getAudienceSnapshot>>),
+    settledAdminValue("lineIdentity", getLineIdentitySnapshot, {
+      linkedCount: 0,
+    } as unknown as Awaited<ReturnType<typeof getLineIdentitySnapshot>>),
+  ]);
     const identifiedUsers = Math.max(subscriberStats.activeSubscribers, membership.totalMembers);
     const anonymousVisitors = Math.max(audience.totalProfiles - identifiedUsers, 0);
     const denominator = identifiedUsers + anonymousVisitors;
@@ -47,15 +72,4 @@ export async function GET(request: NextRequest) {
       note:
         "Identity sessions are signed httpOnly cookies. Active session count is estimated from active subscribers until server-side session storage is added.",
     });
-  } catch (error) {
-    log.warn("[ixai.identity.admin] snapshot failed", error);
-
-    return Response.json(
-      {
-        message: "Unable to load identity snapshot.",
-        ok: false,
-      },
-      { status: 502 },
-    );
-  }
 }

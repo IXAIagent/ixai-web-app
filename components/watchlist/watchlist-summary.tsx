@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Eye, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
@@ -10,6 +10,7 @@ import {
 } from "@/src/lib/watchlist/persistence";
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
 import type { WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 function formatPrice(value: number | null | undefined, currency = "USD") {
   if (typeof value !== "number" || !Number.isFinite(value)) {
@@ -40,20 +41,37 @@ export function WatchlistSummary() {
   const [summary, setSummary] = useState<WorkspaceWatchlistSummary | null>(null);
   const [persistence, setPersistence] = useState<WatchlistPersistenceSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
-    const [watchlistSummary, persistenceSummary] = await Promise.all([
-      getWorkspaceWatchlistSummary(),
-      getWatchlistPersistenceSummary(),
-    ]);
-    setSummary(watchlistSummary);
-    setPersistence(persistenceSummary);
+    const result = await runWorkspaceSafe(
+      "watchlist-summary-refresh",
+      async () => Promise.all([
+        getWorkspaceWatchlistSummary(),
+        getWatchlistPersistenceSummary(),
+      ]),
+      [null, null] as [WorkspaceWatchlistSummary | null, WatchlistPersistenceSummary | null],
+    );
+
+    if (!mountedRef.current) return;
+    setSummary(result.data[0]);
+    setPersistence(result.data[1]);
     setIsLoading(false);
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

@@ -2,6 +2,7 @@ import type {
   IntelligenceInterest,
   PersonalMemory,
 } from "@/src/types/identity";
+import { logWorkspaceRuntimeWarning } from "@/src/lib/workspace/runtime-safety";
 
 const MEMORY_KEY = "ixai.personal.memory.v1";
 
@@ -103,14 +104,18 @@ export function writePersonalMemory(memory: PersonalMemory, userId?: string) {
     return;
   }
 
-  window.localStorage.setItem(
-    memoryKey(userId),
-    JSON.stringify({
-      ...memory,
-      lastVisitAt: new Date().toISOString(),
-    }),
-  );
-  window.dispatchEvent(new Event("ixai-personal-memory-change"));
+  try {
+    window.localStorage.setItem(
+      memoryKey(userId),
+      JSON.stringify({
+        ...memory,
+        lastVisitAt: new Date().toISOString(),
+      }),
+    );
+    window.dispatchEvent(new Event("ixai-personal-memory-change"));
+  } catch (error) {
+    logWorkspaceRuntimeWarning("personal-memory-local-write-fallback", error);
+  }
 }
 
 export function inferInterestsFromSymbols(symbols: string[]): IntelligenceInterest[] {

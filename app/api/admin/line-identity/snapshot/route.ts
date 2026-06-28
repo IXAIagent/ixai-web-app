@@ -9,6 +9,19 @@ import { getAudienceSnapshot } from "@/src/lib/subscribers/profiles";
 
 export const dynamic = "force-dynamic";
 
+async function settledAdminValue<TData>(
+  label: string,
+  task: () => Promise<TData>,
+  fallback: TData,
+) {
+  try {
+    return await task();
+  } catch (error) {
+    log.warn(`[ixai.line.admin] ${label} fallback`, error);
+    return fallback;
+  }
+}
+
 export async function GET(request: NextRequest) {
   if (!isAdminRequestAuthorized(request)) {
     return Response.json(
@@ -20,12 +33,20 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  try {
-    const [line, audience, membership] = await Promise.all([
-      getLineIdentitySnapshot(),
-      getAudienceSnapshot(),
-      getMembershipSnapshot(),
-    ]);
+  const [line, audience, membership] = await Promise.all([
+    settledAdminValue("lineIdentity", getLineIdentitySnapshot, {
+      linkedCount: 0,
+      mode: "memory",
+      uniqueEmailsLinked: 0,
+    } as unknown as Awaited<ReturnType<typeof getLineIdentitySnapshot>>),
+    settledAdminValue("audience", getAudienceSnapshot, {
+      lineConnectedCount: 0,
+      returningReaderCount: 0,
+    } as unknown as Awaited<ReturnType<typeof getAudienceSnapshot>>),
+    settledAdminValue("membership", getMembershipSnapshot, {
+      proCandidates: 0,
+    } as unknown as Awaited<ReturnType<typeof getMembershipSnapshot>>),
+  ]);
     const lineConnectedUsers = Math.max(line.linkedCount, audience.lineConnectedCount);
     const unifiedIdentities = Math.max(line.uniqueEmailsLinked, audience.lineConnectedCount);
 
@@ -41,15 +62,4 @@ export async function GET(request: NextRequest) {
         unifiedIdentities,
       },
     });
-  } catch (error) {
-    log.warn("[ixai.line.admin] snapshot failed", error);
-
-    return Response.json(
-      {
-        message: "Unable to load LINE identity snapshot.",
-        ok: false,
-      },
-      { status: 502 },
-    );
-  }
 }

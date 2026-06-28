@@ -8,6 +8,19 @@ import { getAudienceSnapshot } from "@/src/lib/subscribers/profiles";
 
 export const dynamic = "force-dynamic";
 
+async function settledAdminValue<TData>(
+  label: string,
+  task: () => Promise<TData>,
+  fallback: TData,
+) {
+  try {
+    return await task();
+  } catch (error) {
+    log.warn(`[ixai.lineLogin.admin] ${label} fallback`, error);
+    return fallback;
+  }
+}
+
 export async function GET(request: NextRequest) {
   if (!isAdminRequestAuthorized(request)) {
     return Response.json(
@@ -19,11 +32,15 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  try {
-    const [line, audience] = await Promise.all([
-      getLineIdentitySnapshot(),
-      getAudienceSnapshot(),
-    ]);
+  const [line, audience] = await Promise.all([
+    settledAdminValue("lineIdentity", getLineIdentitySnapshot, {
+      linkedCount: 0,
+      uniqueEmailsLinked: 0,
+    } as unknown as Awaited<ReturnType<typeof getLineIdentitySnapshot>>),
+    settledAdminValue("audience", getAudienceSnapshot, {
+      lineConnectedCount: 0,
+    } as unknown as Awaited<ReturnType<typeof getAudienceSnapshot>>),
+  ]);
     const config = getLineConfigState();
 
     return Response.json({
@@ -37,15 +54,4 @@ export async function GET(request: NextRequest) {
         unifiedIdentities: Math.max(line.uniqueEmailsLinked, audience.lineConnectedCount),
       },
     });
-  } catch (error) {
-    log.warn("[ixai.lineLogin.admin] snapshot failed", error);
-
-    return Response.json(
-      {
-        message: "Unable to load LINE Login snapshot.",
-        ok: false,
-      },
-      { status: 502 },
-    );
-  }
 }

@@ -26,6 +26,8 @@ import { buildPortfolioLiveValuationSnapshot } from "@/src/lib/valuation/portfol
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
 import type { WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
 import type { WorkspaceLiveMarketSnapshot } from "@/src/lib/market-data/live-market-types";
+import { buildUnavailableLiveMarketSnapshot } from "@/src/lib/market-data/live-market-snapshot";
+import { logWorkspaceRuntimeWarning } from "@/src/lib/workspace/runtime-safety";
 
 export type MorningBriefV1 = {
   alerts: WorkspaceAlertSummary | null;
@@ -80,20 +82,42 @@ function inferStatus(input: {
   return "ready";
 }
 
+function settledValue<TData>(
+  label: string,
+  result: PromiseSettledResult<TData>,
+  fallback: TData,
+) {
+  if (result.status === "fulfilled") {
+    return result.value;
+  }
+
+  logWorkspaceRuntimeWarning("morning-brief-source-fallback", result.reason, { label });
+  return fallback;
+}
+
 export async function getWorkspaceMorningBriefV1(): Promise<MorningBriefV1> {
-  const [truth, legacyRiskSnapshot, alerts, watchlist] = await Promise.all([
+  const [truthResult, legacyRiskResult, alertsResult, watchlistResult] = await Promise.allSettled([
     loadPortfolioTruthReadback(),
     getWorkspaceLegacyRiskEngineSnapshot(),
-    getWorkspaceAlertSummary().catch(() => null),
-    getWorkspaceWatchlistSummary().catch(() => null),
+    getWorkspaceAlertSummary(),
+    getWorkspaceWatchlistSummary(),
   ]);
-  const liveMarket = await getWorkspaceLiveMarketSnapshotForTruth(truth);
+  const truth = settledValue("portfolio-truth", truthResult, null);
+  const legacyRiskSnapshot = settledValue("legacy-risk", legacyRiskResult, null);
+  const alerts = settledValue("alerts", alertsResult, null);
+  const watchlist = settledValue("watchlist", watchlistResult, null);
+  const liveMarket = truth
+    ? await getWorkspaceLiveMarketSnapshotForTruth(truth).catch((error) => {
+        logWorkspaceRuntimeWarning("morning-brief-live-market-fallback", error);
+        return buildUnavailableLiveMarketSnapshot([]);
+      })
+    : buildUnavailableLiveMarketSnapshot([]);
   const portfolio = buildPortfolioLiveValuationSnapshot({
     quoteSnapshot: liveMarket.sourceSnapshot,
     truth,
   });
   const fcn = buildFcnLiveUnderlyingSnapshot({
-    fcnPositions: truth.positions.fcn,
+    fcnPositions: truth?.positions.fcn ?? [],
     quoteSnapshot: liveMarket.sourceSnapshot,
   });
   const risk = buildLegacyLiveRiskAdapterSnapshot({

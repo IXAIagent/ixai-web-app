@@ -4,7 +4,7 @@
 
 V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, and large `Uncaught (in promise)` storms.
 
-Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. The full V12.1 Runtime Stabilization Program is partial complete, not complete.
+Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. This completion branch covers Program C, Program D, and the production gray-screen regression. The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged.
 
 ## Runtime Stabilization Program Status
 
@@ -23,16 +23,17 @@ Completed:
   - Navigation, static asset, chunk, excluded GET, and pass-through fetch failures no longer reject the service worker `respondWith` promise.
   - Install and activate lifecycle failures fail open so a transient precache/cache-cleanup error does not keep an older unsafe service worker active.
   - This is runtime flood control only; no product feature, cache strategy expansion, or API mutation behavior is upgraded.
-
-Pending:
-
 - Program C — Market / Morning Brief Runtime Stabilization.
+  - Market quote, live valuation, and Morning Brief source failures degrade to unavailable/fallback readback.
+  - Morning Brief builder uses safe source fallbacks and remains news-placeholder-only.
 - Program D — Admin / Scheduler Runtime Stabilization.
+  - Admin diagnostics use source-level fallback payloads.
+  - Scheduler and delivery readiness remain disabled/foundation-only.
 
 Important:
 
-- Program A, Program B, and Program E are complete after validation.
-- The full V12.1 Runtime Stabilization Program is not complete yet.
+- Program A, Program B, Program C, Program D, and Program E are complete in this branch after validation.
+- The full V12.1 Runtime Stabilization Program is complete only after this PR is merged.
 
 ## Audit Basis
 
@@ -46,6 +47,7 @@ Audit root-cause summary:
 - `public/sw.js` routed several fetch paths through promises that could reject from `fetch(request)` or async cache writes, surfacing as `sw.js` `Uncaught (in promise) TypeError: Failed to fetch`.
 - Supabase session, auth refresh, storage, and network failures should fall back gracefully.
 - Market / Morning Brief runtime paths and Admin / Scheduler runtime paths remain high-priority follow-up work, but they are not changed in Program A, Program B, or Program E.
+- Production gray-screen regression risk was linked to optional Supabase persistence tables (`ixai_profile_memory`, `ixai_user_preferences`) returning REST 404 when absent.
 - Browser bundles no longer contain direct Yahoo endpoints; Yahoo CORS is not treated as the primary crash cause.
 
 ## Program A Completed
@@ -124,6 +126,35 @@ Settings diagnostics safety includes:
 Copilot, Intelligence, Risk, FCN, and Portfolio summary refreshes now degrade safely when a readback builder, fetch, storage read, or diagnostic helper fails.
 
 Program B does not change product behavior, routing, database writes, auth, membership, broker, trading, recommendation, scheduler, billing, OpenAI, or AI behavior.
+
+## Program C Completed
+
+Program C stabilizes Market / Morning Brief runtime paths:
+
+- Live market quote API JSON/network failures return unavailable snapshots.
+- Live valuation falls back to empty/unavailable quote state when Portfolio Truth or quote providers fail.
+- Morning Brief v1 uses settled source reads so one failed source does not crash the brief.
+- News remains placeholder-only.
+- No Telegram scheduler, OpenAI / LLM, broker, trading, or recommendation behavior is introduced.
+
+## Program D Completed
+
+Program D stabilizes Admin / Scheduler runtime paths:
+
+- Admin identity, audience, LINE Login, and LINE identity snapshots use source-level fallback payloads.
+- Scheduler and delivery readiness remain foundation-only.
+- No automatic publishing, notification delivery activation, auth behavior, membership, RLS, schema, or migration behavior changed.
+
+## Production Gray Screen Regression Fixed
+
+Optional Supabase persistence tables now degrade safely:
+
+- `ixai_profile_memory`
+- `ixai_user_preferences`
+
+Missing optional table / REST `404` / `PGRST205` / relation-not-found conditions use local fallback state, mark the table unavailable with cooldown, and log one controlled warning instead of repeatedly spamming requests or throwing into Workspace runtime.
+
+Route-level error boundaries were not shipped in this completion branch. A production-like Next 16.2.6 smoke test showed segment-level Workspace/Admin error boundaries can trigger a `client reference manifest for route ... does not exist` invariant for static Workspace routes, so V12.1 uses source-level fail-safe reads and component refresh guards instead.
 
 ## Program E Completed
 
