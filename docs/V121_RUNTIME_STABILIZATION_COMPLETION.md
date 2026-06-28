@@ -4,7 +4,7 @@
 
 This completion branch finished the remaining V12.1 runtime stabilization implementation work after Program A, Program B, and Program E.
 
-PR #79 merged this implementation, but production verification later found an authenticated Supabase read storm. V12.1 Runtime Stabilization must now be treated as implementation-complete pending production authenticated verification after `docs/V121_PRODUCTION_AUTHENTICATED_READ_STORM_FIX.md`.
+PR #79 merged this implementation, but production verification later found an authenticated Supabase read storm. PR #80 reduced that read storm, but production still reports Chrome Renderer HUNG / `RESULT_CODE_HUNG` on Settings, Copilot, and Intelligence route-switch stress. V12.1 Runtime Stabilization must now be treated as production-incomplete pending V12.2 production root-cause evidence capture in `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`.
 
 Completed before this branch:
 
@@ -17,6 +17,13 @@ Completed in this branch:
 - Production Gray Screen Regression fix.
 - Program C — Market / Morning Brief Runtime Stabilization.
 - Program D — Admin / Scheduler Runtime Stabilization.
+
+Current blocker:
+
+- Production-only Renderer HUNG remains unresolved.
+- Local QA is insufficient as completion evidence.
+- Next decision requires production evidence capture, then a targeted fix.
+- Do not mark V12.1 complete until production route-switch stress passes on `app.ixuan.ai`.
 
 ## Production Gray Screen Regression Root Cause
 
