@@ -46,9 +46,15 @@ export function WorkspaceV13PortfolioDatabaseWriteActivationStatus() {
 
   async function refresh() {
     setIsLoading(true);
-    const next = await getV13PortfolioWriteDiagnostics();
-    setStatus(next);
-    setIsLoading(false);
+    try {
+      const next = await getV13PortfolioWriteDiagnostics();
+      setStatus(next);
+    } catch (error) {
+      console.warn("[IXAI SETTINGS] V13 portfolio write diagnostics unavailable", error);
+      setStatus(null);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {

@@ -41,21 +41,32 @@ export function WorkspacePlatformCutoverStatus() {
 
   async function refresh() {
     setIsLoading(true);
-    const [platform, v11, cutover, v12, v13, v14] = await Promise.all([
-      getWorkspacePlatformCutoverStatus(),
-      getV11DatabaseActivationReport(),
-      getV11DatabaseCutoverStatus(),
-      getV12DatabaseWriteActivationStatus(),
-      getV13PortfolioWriteDiagnostics(),
-      getV14FcnWriteDiagnostics(),
-    ]);
-    setStatus(platform);
-    setV11Status(v11);
-    setV11Cutover(cutover);
-    setV12Status(v12);
-    setV13Status(v13);
-    setV14Status(v14);
-    setIsLoading(false);
+    try {
+      const [platform, v11, cutover, v12, v13, v14] = await Promise.all([
+        getWorkspacePlatformCutoverStatus(),
+        getV11DatabaseActivationReport(),
+        getV11DatabaseCutoverStatus(),
+        getV12DatabaseWriteActivationStatus(),
+        getV13PortfolioWriteDiagnostics(),
+        getV14FcnWriteDiagnostics(),
+      ]);
+      setStatus(platform);
+      setV11Status(v11);
+      setV11Cutover(cutover);
+      setV12Status(v12);
+      setV13Status(v13);
+      setV14Status(v14);
+    } catch (error) {
+      console.warn("[IXAI SETTINGS] platform cutover diagnostics unavailable", error);
+      setStatus(null);
+      setV11Status(null);
+      setV11Cutover(null);
+      setV12Status(null);
+      setV13Status(null);
+      setV14Status(null);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {

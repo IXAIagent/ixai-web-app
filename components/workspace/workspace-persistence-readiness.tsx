@@ -24,61 +24,67 @@ export function WorkspacePersistenceReadiness() {
 
   async function refresh() {
     setIsLoading(true);
-    const [
-      portfolio,
-      ownership,
-      sync,
-      fcn,
-      watchlist,
-      alerts,
-    ] = await Promise.all([
-      getPortfolioPersistenceReadiness(),
-      Promise.resolve(getWorkspaceOwnershipStatus()),
-      getWorkspaceSyncReadiness(),
-      getFcnPersistenceReadiness(),
-      getWatchlistPersistenceReadiness(),
-      getAlertPersistenceReadiness(),
-    ]);
+    try {
+      const [
+        portfolio,
+        ownership,
+        sync,
+        fcn,
+        watchlist,
+        alerts,
+      ] = await Promise.all([
+        getPortfolioPersistenceReadiness(),
+        Promise.resolve(getWorkspaceOwnershipStatus()),
+        getWorkspaceSyncReadiness(),
+        getFcnPersistenceReadiness(),
+        getWatchlistPersistenceReadiness(),
+        getAlertPersistenceReadiness(),
+      ]);
 
-    setItems([
-      {
-        label: "Portfolio Persistence",
-        status: portfolio.sourceStatus,
-        summary: portfolio.summary,
-        warnings: portfolio.warnings,
-      },
-      {
-        label: "Ownership",
-        status: ownership.status,
-        summary: ownership.summary,
-        warnings: ownership.warnings,
-      },
-      {
-        label: "Workspace Sync",
-        status: sync.sourceStatus,
-        summary: sync.summary,
-        warnings: sync.warnings.map((warning) => warning.message),
-      },
-      {
-        label: "FCN Persistence",
-        status: fcn.sourceStatus,
-        summary: fcn.summary,
-        warnings: fcn.warnings,
-      },
-      {
-        label: "Watchlist Persistence",
-        status: watchlist.sourceStatus,
-        summary: watchlist.summary,
-        warnings: watchlist.warnings,
-      },
-      {
-        label: "Alert Persistence",
-        status: alerts.sourceStatus,
-        summary: alerts.summary,
-        warnings: alerts.warnings,
-      },
-    ]);
-    setIsLoading(false);
+      setItems([
+        {
+          label: "Portfolio Persistence",
+          status: portfolio.sourceStatus,
+          summary: portfolio.summary,
+          warnings: portfolio.warnings,
+        },
+        {
+          label: "Ownership",
+          status: ownership.status,
+          summary: ownership.summary,
+          warnings: ownership.warnings,
+        },
+        {
+          label: "Workspace Sync",
+          status: sync.sourceStatus,
+          summary: sync.summary,
+          warnings: sync.warnings.map((warning) => warning.message),
+        },
+        {
+          label: "FCN Persistence",
+          status: fcn.sourceStatus,
+          summary: fcn.summary,
+          warnings: fcn.warnings,
+        },
+        {
+          label: "Watchlist Persistence",
+          status: watchlist.sourceStatus,
+          summary: watchlist.summary,
+          warnings: watchlist.warnings,
+        },
+        {
+          label: "Alert Persistence",
+          status: alerts.sourceStatus,
+          summary: alerts.summary,
+          warnings: alerts.warnings,
+        },
+      ]);
+    } catch (error) {
+      console.warn("[IXAI SETTINGS] persistence readiness diagnostics unavailable", error);
+      setItems([]);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {

@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.1 — Runtime Stabilization Program / Partial Complete / Program A Complete`
+`V12.1 — Runtime Stabilization Program / Partial Complete / Program A + E Complete`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). It addressed the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. This slice did not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler, broker, trading, or recommendation behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). It addressed the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. V12.1 Program E completes Service Worker Fetch Safety after validation by containing `public/sw.js` navigation, static asset/chunk, excluded GET, pass-through fetch, cache write, install precache, and activate cleanup failures so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler, broker, trading, or recommendation behavior.
 
 Runtime Stabilization Program Status:
 
@@ -76,6 +76,10 @@ Completed:
   - Root auth runtime promises stabilized.
   - PR #75 merged.
   - Commit: `9c73915`.
+- Program E — Service Worker Fetch Safety.
+  - Service worker fetch and cache failures are contained behind safe fallbacks.
+  - Install/activate failures fail open so older unsafe service workers are less likely to remain active after deploy.
+  - No product feature, API mutation, cache expansion, auth, database, or membership behavior is upgraded.
 
 Pending:
 
@@ -85,9 +89,15 @@ Pending:
 
 Important:
 
-- Only Program A is complete.
+- Only Program A and Program E are complete.
 - The full V12.1 Runtime Stabilization Program is partial complete, not complete.
-- Program B safe async helper, Program C diagnostics stabilization, Program D runtime monitor, and Program E service worker safety remain pending/deferred follow-up work.
+- Program B safe async helper, Program C diagnostics stabilization, and Program D runtime monitor remain pending/deferred follow-up work.
+
+Program E production verification note:
+
+- If production still shows `sw.js:107` after deploy, verify whether the browser is running an older active service worker. In this branch, `public/sw.js:107` maps to `return cached;`, not a raw `fetch(request)`.
+- If Chrome keeps an old worker, unregister the IXAI service worker from DevTools → Application → Service Workers, clear site data for `https://app.ixuan.ai`, hard reload, and repeat `/my-ixai/copilot`, `/my-ixai/intelligence`, `/my-ixai/settings` route-switch verification.
+- Settings white-screen investigation found no browser-only API in the server page render path. The risk was uncaught async diagnostics refresh work in Settings client components; those refresh paths now catch locally and degrade to fallback UI.
 
 Current production state:
 
