@@ -4,7 +4,7 @@
 
 V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, large `Uncaught (in promise)` storms, and production Chrome Renderer HUNG.
 
-Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. PR #80 reduced authenticated read-storm pressure, but production still reports Renderer HUNG on Settings, Copilot, and Intelligence route-switch stress. The full V12.1 Runtime Stabilization Program remains production-incomplete until the V12.2 production root-cause evidence program confirms and fixes the HUNG cause.
+Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. PR #80 reduced authenticated read-storm pressure, but production evidence later showed Service Worker/site-data clearing did not remove the blocker, Intelligence remained normal, and the remaining HUNG narrowed to Settings / Copilot route-entry diagnostics and Workspace Graph fan-out. V12.1 / V12.2 must not be marked production-complete until `app.ixuan.ai` Settings / Copilot manual verification passes after the targeted fix.
 
 ## Runtime Stabilization Program Status
 
@@ -33,9 +33,10 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 and PR #80 did not resolve production Renderer HUNG.
+- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG.
 - Local production-like QA is insufficient as completion evidence.
-- V12.1 Runtime Stabilization requires production root-cause evidence, a targeted fix, and production route-switch verification before it can be marked production-complete.
+- V12.2 targets Settings / Copilot route-entry fan-out specifically.
+- V12.1 / V12.2 requires production Settings / Copilot manual verification before it can be marked complete.
 - V12.2 evidence playbook: `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`.
 - Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work until the production HUNG root cause is confirmed and fixed.
 

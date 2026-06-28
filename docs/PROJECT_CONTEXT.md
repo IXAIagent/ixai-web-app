@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.2 — Production Runtime Root Cause Investigation`
+`V12.2 — Settings / Copilot Runtime Hang Fix`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79, and PR #80 reduced authenticated Supabase read storms. Production `app.ixuan.ai` still reports Chrome Renderer HUNG / `RESULT_CODE_HUNG` on Settings, Copilot, and Intelligence route-switch stress. V12.1 remains production-incomplete. V12.2 is a production root-cause evidence program: local QA is insufficient as completion evidence, and the next decision requires production evidence capture from `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79, and PR #80 reduced authenticated Supabase read storms. Production evidence now shows Service Worker/site-data clearing does not remove the blocker, Intelligence is normal, and the remaining HUNG path is concentrated on Settings / Copilot shared diagnostics and Workspace Graph runtime fan-out. V12.2 targets Settings / Copilot by making initial route render lightweight and moving heavy diagnostics/summary builders behind manual runtime-budgeted actions. The production evidence playbook remains `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`, and the targeted fix note is `docs/V122_SETTINGS_COPILOT_RUNTIME_HANG_FIX.md`. V12.1 / V12.2 remains production-incomplete until `app.ixuan.ai` manual verification passes after this targeted fix. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
 
 Runtime Stabilization Program Status:
 
@@ -91,9 +91,10 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 and PR #80 did not resolve production Renderer HUNG.
+- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG.
 - Local production-like QA is insufficient as completion evidence.
-- V12.1 Runtime Stabilization requires production root-cause evidence, a targeted fix, and production route-switch verification before it can be marked production-complete.
+- V12.2 targets Settings / Copilot route-entry fan-out specifically.
+- V12.1 / V12.2 must not be marked complete until production Settings / Copilot manual verification passes.
 - Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work until the production HUNG root cause is confirmed and fixed.
 
 Program E production verification note:

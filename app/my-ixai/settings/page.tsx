@@ -11,21 +11,8 @@ import {
 } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
-import { LegacyRiskEngineStatus } from "@/components/risk/legacy-risk-engine-status";
-import { MorningBriefStatus } from "@/components/morning-brief/morning-brief-status";
-import { WorkspaceIntegrationStatus } from "@/components/workspace/workspace-integration-status";
-import { WorkspaceDatabaseActivationStatus } from "@/components/workspace/workspace-database-activation-status";
-import { WorkspaceDatabaseReadPriorityStatus } from "@/components/workspace/workspace-database-read-priority-status";
-import { WorkspacePlatformCutoverStatus } from "@/components/workspace/workspace-platform-cutover-status";
-import { ProgramAProductLayerStatus } from "@/components/workspace/program-a-product-layer-status";
-import { ProgramBLivePlatformStatus } from "@/components/workspace/program-b-live-platform-status";
-import { WorkspacePersistenceReadiness } from "@/components/workspace/workspace-persistence-readiness";
-import { WorkspaceV11DatabaseActivationStatus } from "@/components/workspace/workspace-v11-database-activation-status";
-import { WorkspaceV12DatabaseWriteActivationStatus } from "@/components/workspace/workspace-v12-database-write-activation-status";
-import { WorkspaceV13PortfolioDatabaseWriteActivationStatus } from "@/components/workspace/workspace-v13-portfolio-database-write-activation-status";
-import { WorkspaceV14FcnDatabaseActivationStatus } from "@/components/workspace/workspace-v14-fcn-database-activation-status";
+import { SettingsRuntimeDiagnosticsControl } from "@/components/workspace/settings-runtime-diagnostics-control";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
-import { getWorkspaceIntegrationAudit } from "@/src/lib/workspace/integration/integration-service";
 
 export const metadata = buildPublicMetadata({
   canonical: "/my-ixai/settings",
@@ -80,8 +67,6 @@ const settingsAreas = [
 ];
 
 export default function MyIxaiSettingsPage() {
-  const integrationAudit = getWorkspaceIntegrationAudit();
-
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
@@ -144,31 +129,7 @@ export default function MyIxaiSettingsPage() {
           })}
         </section>
 
-        <WorkspacePersistenceReadiness />
-
-        <WorkspaceDatabaseReadPriorityStatus />
-
-        <WorkspacePlatformCutoverStatus />
-
-        <WorkspaceV11DatabaseActivationStatus />
-
-        <WorkspaceV12DatabaseWriteActivationStatus />
-
-        <WorkspaceV13PortfolioDatabaseWriteActivationStatus />
-
-        <WorkspaceV14FcnDatabaseActivationStatus />
-
-        <LegacyRiskEngineStatus compact />
-
-        <MorningBriefStatus compact />
-
-        <ProgramAProductLayerStatus compact />
-
-        <ProgramBLivePlatformStatus compact />
-
-        <WorkspaceDatabaseActivationStatus />
-
-        <WorkspaceIntegrationStatus audit={integrationAudit} />
+        <SettingsRuntimeDiagnosticsControl />
 
         <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
           Settings Preview 僅整理 Workspace preference architecture。本頁不啟用付款、會員升級、broker sync、通知投遞、自動交易或投資建議。

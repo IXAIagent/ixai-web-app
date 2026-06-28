@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12.2 Settings / Copilot Runtime Hang Fix
+
+Why:
+
+- Production testing confirmed Service Worker/site-data clearing did not remove the hang.
+- Settings and Copilot remained affected; Intelligence was normal.
+- The root-cause direction narrowed to Settings / Copilot shared diagnostics and Workspace Graph runtime fan-out.
+
+What Changed:
+
+- Settings initial render now shows a lightweight safe shell and basic settings cards only.
+- Heavy Settings diagnostics no longer mount automatically.
+- Settings diagnostics are represented by fallback cards and run only through a manual runtime-budgeted action.
+- Copilot initial render now shows an explain-only safe shell.
+- Copilot no longer reads Workspace Graph on mount; summary aggregation is manual and runtime-budgeted.
+- Added `src/lib/workspace/runtime-safety/runtime-budget.ts`.
+- Added `docs/V122_SETTINGS_COPILOT_RUNTIME_HANG_FIX.md`.
+
+Key Decisions:
+
+- This is a targeted runtime fix, not a product feature.
+- V12.1 / V12.2 remains production-incomplete until Settings / Copilot manual verification passes on `app.ixuan.ai`.
+- No auth behavior, RLS, schema, migration, membership, billing, scheduler, broker, trading, AI recommendation, or notification delivery behavior changed.
+
 ## V12.2 Production Runtime Root Cause Investigation
 
 Why:
@@ -50,8 +74,8 @@ What Changed:
 
 Key Decisions:
 
-- V12.1 Runtime Stabilization remains production-incomplete because production Renderer HUNG continued after the read-storm fix.
-- V12.1 is not production-complete until `app.ixuan.ai` route-switch stress passes after the confirmed root-cause fix.
+- The read-storm fix reduced one failure mode but did not complete V12 runtime stabilization.
+- V12.1 / V12.2 is not production-complete until `app.ixuan.ai` Settings / Copilot manual verification passes after the targeted runtime hang fix.
 - The fix does not change auth business logic, RLS, schema, migrations, membership, billing, scheduler, broker, trading, recommendations, OpenAI, or AI behavior.
 
 ## V12.1 Runtime Stabilization Program Completion
