@@ -49,49 +49,50 @@ export function WorkspaceDatabaseActivationStatus() {
 
   async function refresh() {
     setIsLoading(true);
-    const [
-      portfolio,
-      fcn,
-      watchlist,
-      alerts,
-      ownership,
-      sync,
-      livePortfolio,
-      liveFcn,
-      liveWatchlist,
-      liveAlerts,
-      syncPlan,
-      migrationHealth,
-      readPriority,
-      platformCutover,
-      v11Activation,
-      v11Cutover,
-      v12WriteActivation,
-      v13PortfolioWriteActivation,
-      v14FcnWriteActivation,
-    ] = await Promise.all([
-      getPortfolioDatabaseActivationReadiness(),
-      getFcnDatabaseActivationReadiness(),
-      getWatchlistDatabaseActivationReadiness(),
-      getAlertDatabaseActivationReadiness(),
-      checkOwnershipActivationReadiness(),
-      getWorkspaceDatabaseActivationReport(),
-      getLivePortfolioPersistenceReadiness(),
-      getLiveFcnPersistenceReadiness(),
-      getLiveWatchlistPersistenceReadiness(),
-      getLiveAlertHistoryReadiness(),
-      getWorkspaceSyncPlan(),
-      getDatabaseMigrationHealthReport(),
-      getWorkspaceDatabaseReadPriorityStatus(),
-      getWorkspacePlatformCutoverStatus(),
-      getV11DatabaseActivationReport(),
-      getV11DatabaseCutoverStatus(),
-      getV12DatabaseWriteActivationStatus(),
-      getV13PortfolioWriteDiagnostics(),
-      getV14FcnWriteDiagnostics(),
-    ]);
+    try {
+      const [
+        portfolio,
+        fcn,
+        watchlist,
+        alerts,
+        ownership,
+        sync,
+        livePortfolio,
+        liveFcn,
+        liveWatchlist,
+        liveAlerts,
+        syncPlan,
+        migrationHealth,
+        readPriority,
+        platformCutover,
+        v11Activation,
+        v11Cutover,
+        v12WriteActivation,
+        v13PortfolioWriteActivation,
+        v14FcnWriteActivation,
+      ] = await Promise.all([
+        getPortfolioDatabaseActivationReadiness(),
+        getFcnDatabaseActivationReadiness(),
+        getWatchlistDatabaseActivationReadiness(),
+        getAlertDatabaseActivationReadiness(),
+        checkOwnershipActivationReadiness(),
+        getWorkspaceDatabaseActivationReport(),
+        getLivePortfolioPersistenceReadiness(),
+        getLiveFcnPersistenceReadiness(),
+        getLiveWatchlistPersistenceReadiness(),
+        getLiveAlertHistoryReadiness(),
+        getWorkspaceSyncPlan(),
+        getDatabaseMigrationHealthReport(),
+        getWorkspaceDatabaseReadPriorityStatus(),
+        getWorkspacePlatformCutoverStatus(),
+        getV11DatabaseActivationReport(),
+        getV11DatabaseCutoverStatus(),
+        getV12DatabaseWriteActivationStatus(),
+        getV13PortfolioWriteDiagnostics(),
+        getV14FcnWriteDiagnostics(),
+      ]);
 
-    setItems([
+      setItems([
       {
         label: "Portfolio Database",
         migrationStatus: portfolio.migrationStatus,
@@ -378,8 +379,22 @@ export function WorkspaceDatabaseActivationStatus() {
           v14FcnWriteActivation.readiness.guardSet.fcnScheduleDatabaseWriteEnabled.reason,
         ],
       },
-    ]);
-    setIsLoading(false);
+      ]);
+    } catch (error) {
+      console.warn("[IXAI SETTINGS] database activation diagnostics unavailable", error);
+      setItems([
+        {
+          label: "Settings Diagnostics",
+          migrationStatus: "unavailable",
+          runtimeRequired: false,
+          sourceStatus: "unavailable",
+          summary: "Settings diagnostics failed safely and kept the page renderable.",
+          warnings: [error instanceof Error ? error.message : "unknown_error"],
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {

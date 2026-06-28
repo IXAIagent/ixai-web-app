@@ -47,9 +47,15 @@ export function WorkspaceV12DatabaseWriteActivationStatus() {
 
   async function refresh() {
     setIsLoading(true);
-    const next = await getV12DatabaseWriteActivationStatus();
-    setStatus(next);
-    setIsLoading(false);
+    try {
+      const next = await getV12DatabaseWriteActivationStatus();
+      setStatus(next);
+    } catch (error) {
+      console.warn("[IXAI SETTINGS] V12 write activation diagnostics unavailable", error);
+      setStatus(null);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {

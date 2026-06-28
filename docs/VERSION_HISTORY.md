@@ -14,6 +14,10 @@ Completed:
   - Root auth runtime promises stabilized.
   - PR #75 merged.
   - Commit: `9c73915`.
+- Program E — Service Worker Fetch Safety.
+  - `public/sw.js` fetch and cache failure paths are contained behind safe fallback responses.
+  - Install/activate lifecycle failures fail open so a transient precache/cache-cleanup failure does not keep an older unsafe service worker active.
+  - Workspace navigation should no longer flood the console with service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms.
 
 Pending:
 
@@ -23,9 +27,38 @@ Pending:
 
 Important:
 
-- Only Program A is complete.
+- Only Program A and Program E are complete.
 - The full V12.1 Runtime Stabilization Program is partial complete, not complete.
 - Do not mark Program B, Program C, Program D, or the overall V12.1 Runtime Stabilization Program as complete until their dedicated implementation and validation work is merged.
+
+## V12.1 Runtime Stabilization Program / Program E Complete
+
+Why:
+
+- Production still showed repeated `sw.js` console errors: `Uncaught (in promise) TypeError: Failed to fetch`.
+- The remaining runtime flood was concentrated in service worker fetch handling for navigation, route transitions, cached static assets, chunks, and failed fallback requests.
+
+What Changed:
+
+- Reworked `public/sw.js` fetch handling through `event.respondWith(handleFetch(event))`.
+- Added safe response fallbacks for navigation, static asset/chunk, excluded GET, non-GET pass-through, and generic GET failures.
+- Wrapped cache write failures so failed `cache.put(...)` work cannot reject the fetch event.
+- Bumped the IXAI static cache to `ixai-static-v1.30`.
+- Made install precache and activate cache cleanup best-effort so the safer service worker can activate even if one asset/cache operation fails.
+- Hardened Settings diagnostics client refresh paths with local `try/catch/finally` so diagnostics builder failures cannot become unhandled promise rejections or stuck loading UI.
+- Preserved the existing conservative cache behavior and did not add aggressive route pre-cache.
+
+Key Decisions:
+
+- Program E only addresses service worker fetch promise containment.
+- Navigation remains network-first with a safe offline response.
+- Static assets and chunks keep cache-first behavior, but network/cache failures degrade to an empty `204` response instead of throwing through `respondWith`.
+- In this branch, `public/sw.js:107` maps to `return cached;`; production screenshots that still show `sw.js:107` as `Failed to fetch` likely indicate an older active service worker.
+- If production keeps the old worker, unregister the service worker, clear site data for `https://app.ixuan.ai`, hard reload, and repeat Workspace route-switch verification.
+
+Out of Scope:
+
+- No app feature change, auth change, membership change, database migration, SQL, RLS change, billing/Stripe, scheduler, broker, trading, recommendation, AI, or external monitoring service.
 
 ## V12.1 Runtime Stabilization Program / Program A Complete
 
@@ -52,7 +85,6 @@ Deferred:
 - Program B safe async helper.
 - Program C diagnostics `Promise.allSettled(...)` migration.
 - Program D runtime monitor.
-- Program E service worker safety.
 
 Out of Scope:
 

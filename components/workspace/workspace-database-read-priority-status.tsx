@@ -15,8 +15,14 @@ export function WorkspaceDatabaseReadPriorityStatus() {
 
   async function refresh() {
     setIsLoading(true);
-    setStatus(await getWorkspaceDatabaseReadPriorityStatus());
-    setIsLoading(false);
+    try {
+      setStatus(await getWorkspaceDatabaseReadPriorityStatus());
+    } catch (error) {
+      console.warn("[IXAI SETTINGS] database read priority diagnostics unavailable", error);
+      setStatus(null);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {

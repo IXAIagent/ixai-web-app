@@ -46,9 +46,15 @@ export function WorkspaceV14FcnDatabaseActivationStatus() {
 
   async function refresh() {
     setIsLoading(true);
-    const next = await getV14FcnWriteDiagnostics();
-    setStatus(next);
-    setIsLoading(false);
+    try {
+      const next = await getV14FcnWriteDiagnostics();
+      setStatus(next);
+    } catch (error) {
+      console.warn("[IXAI SETTINGS] V14 FCN write diagnostics unavailable", error);
+      setStatus(null);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {

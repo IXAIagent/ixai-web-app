@@ -25,13 +25,20 @@ export function WorkspaceV11DatabaseActivationStatus() {
 
   async function refresh() {
     setIsLoading(true);
-    const [activation, cutoverStatus] = await Promise.all([
-      getV11DatabaseActivationReport(),
-      getV11DatabaseCutoverStatus(),
-    ]);
-    setReport(activation);
-    setCutover(cutoverStatus);
-    setIsLoading(false);
+    try {
+      const [activation, cutoverStatus] = await Promise.all([
+        getV11DatabaseActivationReport(),
+        getV11DatabaseCutoverStatus(),
+      ]);
+      setReport(activation);
+      setCutover(cutoverStatus);
+    } catch (error) {
+      console.warn("[IXAI SETTINGS] V11 database activation diagnostics unavailable", error);
+      setReport(null);
+      setCutover(null);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
