@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   Gauge,
@@ -11,6 +11,7 @@ import {
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getWorkspacePortfolioRiskSummary } from "@/src/lib/risk/risk-service";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 import type {
   PortfolioRiskResult,
   RiskLevel,
@@ -61,18 +62,38 @@ function SeverityBadge({ severity }: { severity: RiskSignalSeverity }) {
 export function RiskEngineSummary() {
   const [risk, setRisk] = useState<PortfolioRiskResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refreshRisk() {
     setIsLoading(true);
-    const nextRisk = await getWorkspacePortfolioRiskSummary();
-    setRisk(nextRisk);
+    const result = await runWorkspaceSafe(
+      "workspace-risk-engine-summary",
+      getWorkspacePortfolioRiskSummary,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    setRisk(result.data);
     setIsLoading(false);
   }
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void refreshRisk();
+      if (!cancelled) {
+        void refreshRisk();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   const summaryCards = useMemo(() => {

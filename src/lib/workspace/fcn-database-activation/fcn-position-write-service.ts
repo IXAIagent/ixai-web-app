@@ -13,6 +13,11 @@ import type {
 import { getV14FcnWriteGuard } from "@/src/lib/workspace/fcn-database-activation/fcn-database-activation-guards";
 import { normalizeFcnDraftScheduleForPositionWrite } from "@/src/lib/workspace/fcn-database-activation/fcn-schedule-write-service";
 import { normalizeFcnDraftUnderlyingsForWrite } from "@/src/lib/workspace/fcn-database-activation/fcn-underlying-write-service";
+import {
+  parseWorkspaceJsonSafe,
+  readWorkspaceStorageSafe,
+  writeWorkspaceStorageSafe,
+} from "@/src/lib/workspace/runtime-safety";
 
 type ApiPortfolio = {
   id?: string;
@@ -54,7 +59,11 @@ export function saveLastV14FcnWriteResult(result: V14FcnWriteResult) {
   }
 
   try {
-    window.localStorage.setItem(V14_FCN_WRITE_STATUS_STORAGE_KEY, JSON.stringify(result));
+    writeWorkspaceStorageSafe(
+      "v14-fcn-write-result-save",
+      V14_FCN_WRITE_STATUS_STORAGE_KEY,
+      JSON.stringify(result),
+    );
     window.dispatchEvent(new CustomEvent(V14_FCN_WRITE_STATUS_EVENT, { detail: result }));
   } catch {
     // Diagnostics metadata must never block FCN local fallback.
@@ -66,12 +75,17 @@ export function loadLastV14FcnWriteResult(): V14FcnWriteResult | null {
     return null;
   }
 
-  try {
-    const raw = window.localStorage.getItem(V14_FCN_WRITE_STATUS_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as V14FcnWriteResult) : null;
-  } catch {
-    return null;
-  }
+  const rawResult = readWorkspaceStorageSafe(
+    "v14-fcn-write-result-read",
+    V14_FCN_WRITE_STATUS_STORAGE_KEY,
+  );
+  const parsedResult = parseWorkspaceJsonSafe<V14FcnWriteResult | null>(
+    "v14-fcn-write-result-parse",
+    rawResult.data,
+    null,
+  );
+
+  return parsedResult.data;
 }
 
 async function safeJson(response: Response) {

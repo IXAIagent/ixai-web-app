@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { RefreshCw } from "lucide-react";
 
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { INPUT_TRUTH_BRIDGE_EVENT } from "@/src/lib/portfolio/input/input-truth-bridge";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 const STATUS_LABEL: Record<string, string> = {
   partial: "Partial",
@@ -74,21 +75,38 @@ function getStatusClass(status: string) {
 export function PortfolioTruthSummary() {
   const [truth, setTruth] = useState<PortfolioTruthReadback | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refreshTruth() {
     setIsLoading(true);
-    const nextTruth = await loadPortfolioTruthReadback();
-    setTruth(nextTruth);
+    const result = await runWorkspaceSafe(
+      "workspace-portfolio-truth-summary",
+      loadPortfolioTruthReadback,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    setTruth(result.data);
     setIsLoading(false);
   }
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void refreshTruth();
+      if (!cancelled) {
+        void refreshTruth();
+      }
     });
 
     function syncTruth() {
-      void refreshTruth();
+      if (!cancelled) {
+        void refreshTruth();
+      }
     }
 
     window.addEventListener(INPUT_TRUTH_BRIDGE_EVENT, syncTruth);
@@ -96,6 +114,8 @@ export function PortfolioTruthSummary() {
     window.addEventListener("storage", syncTruth);
 
     return () => {
+      cancelled = true;
+      mountedRef.current = false;
       window.removeEventListener(INPUT_TRUTH_BRIDGE_EVENT, syncTruth);
       window.removeEventListener("ixai:portfolio-input:changed", syncTruth);
       window.removeEventListener("storage", syncTruth);

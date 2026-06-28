@@ -6,6 +6,11 @@ import type {
   V13PortfolioWriteResult,
 } from "@/src/lib/workspace/portfolio-database-write-activation/portfolio-write-activation-types";
 import { getV13PortfolioWriteGuard } from "@/src/lib/workspace/portfolio-database-write-activation/portfolio-write-activation-guards";
+import {
+  parseWorkspaceJsonSafe,
+  readWorkspaceStorageSafe,
+  writeWorkspaceStorageSafe,
+} from "@/src/lib/workspace/runtime-safety";
 
 type ApiPortfolio = {
   id?: string;
@@ -42,7 +47,11 @@ export function saveLastV13PortfolioWriteResult(result: V13PortfolioWriteResult)
   }
 
   try {
-    window.localStorage.setItem(V13_PORTFOLIO_WRITE_STATUS_STORAGE_KEY, JSON.stringify(result));
+    writeWorkspaceStorageSafe(
+      "v13-portfolio-write-result-save",
+      V13_PORTFOLIO_WRITE_STATUS_STORAGE_KEY,
+      JSON.stringify(result),
+    );
     window.dispatchEvent(new CustomEvent(V13_PORTFOLIO_WRITE_STATUS_EVENT, { detail: result }));
   } catch {
     // Diagnostics metadata must never break input fallback.
@@ -54,12 +63,17 @@ export function loadLastV13PortfolioWriteResult(): V13PortfolioWriteResult | nul
     return null;
   }
 
-  try {
-    const raw = window.localStorage.getItem(V13_PORTFOLIO_WRITE_STATUS_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as V13PortfolioWriteResult) : null;
-  } catch {
-    return null;
-  }
+  const rawResult = readWorkspaceStorageSafe(
+    "v13-portfolio-write-result-read",
+    V13_PORTFOLIO_WRITE_STATUS_STORAGE_KEY,
+  );
+  const parsedResult = parseWorkspaceJsonSafe<V13PortfolioWriteResult | null>(
+    "v13-portfolio-write-result-parse",
+    rawResult.data,
+    null,
+  );
+
+  return parsedResult.data;
 }
 
 async function safeJson(response: Response) {

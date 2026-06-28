@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -23,6 +23,7 @@ import { FeatureIcon } from "@/components/ui/feature-icon";
 import { loadFcnManualPriceOverrides } from "@/src/lib/fcn/manual-price-overrides";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { buildGlobalRiskCenterReadback } from "@/src/lib/risk/global-risk-center";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 import type {
   GlobalRiskAssetReadiness,
   GlobalRiskCenterReadback,
@@ -204,12 +205,30 @@ export function GlobalRiskCenterWorkspace() {
   const [readback, setReadback] = useState<GlobalRiskCenterReadback>(() => buildInitialReadback());
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [message, setMessage] = useState<string | null>(null);
+  const mountedRef = useRef(false);
 
   const loadRiskCenter = useCallback(async () => {
     setStatus("loading");
     setMessage(null);
 
-    const truth = await loadPortfolioTruthReadback();
+    const truthResult = await runWorkspaceSafe(
+      "workspace-risk-center-truth",
+      loadPortfolioTruthReadback,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    const truth = truthResult.data;
+
+    if (!truth) {
+      setReadback(buildInitialReadback());
+      setStatus("error");
+      setMessage("Risk sources are temporarily unavailable. Safe fallback mode is active.");
+      return;
+    }
 
     if (truth.readinessLevel === "unauthenticated") {
       setReadback(
@@ -253,9 +272,19 @@ export function GlobalRiskCenterWorkspace() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void loadRiskCenter();
+      if (!cancelled) {
+        void loadRiskCenter();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, [loadRiskCenter]);
 
   const scoreLabel = readback.riskScore.score === null ? "UNKNOWN" : String(readback.riskScore.score);

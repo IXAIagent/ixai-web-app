@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V12.1 Runtime Stabilization Program - Partial Complete / Program A + E Complete`
+`V12.1 Runtime Stabilization Program - Partial Complete / Program A + B + E Complete`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V12.1 Runtime Stabilization Program follow-up sequencing. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program E, Service Worker Fetch Safety, contains `public/sw.js` fetch and cache failure paths so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. The overall V12.1 Runtime Stabilization Program is partial complete, not complete: Program B, Program C, and Program D remain pending and must not be marked done.
+Current priority is V12.1 Runtime Stabilization Program follow-up sequencing. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Workspace Runtime Hydration Safety, contains Workspace client refresh, mounted-effect, diagnostics, and browser-storage parse failure paths so Workspace pages degrade to fallback UI instead of creating unhandled promise storms or white screens. Program E, Service Worker Fetch Safety, contains `public/sw.js` fetch and cache failure paths so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. The overall V12.1 Runtime Stabilization Program is partial complete, not complete: Program C and Program D remain pending and must not be marked done.
 
 Runtime Stabilization Program Status:
 
@@ -20,19 +20,21 @@ Completed:
   - Root auth runtime promises stabilized.
   - PR #75 merged.
   - Commit: `9c73915`.
+- Program B — Workspace Runtime Hydration Safety.
+  - Workspace client refresh promises and mounted effects are contained.
+  - Settings diagnostics and Workspace browser-storage parse failures degrade safely.
 - Program E — Service Worker Fetch Safety.
   - Service worker fetch failures now degrade through safe responses.
   - Navigation, static asset/chunk, excluded GET, and cache write failures no longer reject `respondWith`.
 
 Pending:
 
-- Program B — Workspace Runtime Stabilization.
 - Program C — Market / Morning Brief Runtime Stabilization.
 - Program D — Admin / Scheduler Runtime Stabilization.
 
 Important:
 
-- Only Program A and Program E are complete.
+- Only Program A, Program B, and Program E are complete.
 - The full V12.1 Runtime Stabilization Program is not complete yet.
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
@@ -107,7 +109,7 @@ Important:
 - Use `docs/V2400_RISK_AUTOMATION_READINESS.md` as the source of truth for V24 risk rule, trigger, alert-evaluation, and automation readiness.
 - Use `docs/LIVE_PRODUCT_1_YAHOO_VALUATION_BRIEF.md` as the source of truth for the first read-only Yahoo quote provider, live quote cache, Portfolio live valuation preview, FCN live underlying status, V15 Risk live adapter, and Morning Brief live preview.
 - Use `docs/V12_LIVE_PRODUCT_UPGRADE_PROGRAM.md` as the source of truth for Live Product 2 Workspace Live Market Service, Live Product 3 Morning Brief v1, dashboard polish, Watchlist / Alert live-market integration, and V12 safety boundaries.
-- Use `docs/V121_RUNTIME_STABILIZATION_PROGRAM.md` as the source of truth for V12.1 Program A root provider stabilization and Program E service worker fetch safety. Program B safe async helper, Program C diagnostics `Promise.allSettled`, and Program D runtime monitor remain pending.
+- Use `docs/V121_RUNTIME_STABILIZATION_PROGRAM.md` as the source of truth for V12.1 Program A root provider stabilization, Program B Workspace Runtime Hydration Safety, and Program E service worker fetch safety. Program C Market / Morning Brief runtime stabilization and Program D Admin / Scheduler runtime stabilization remain pending.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.

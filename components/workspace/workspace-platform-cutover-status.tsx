@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { RefreshCw, ShieldCheck } from "lucide-react";
 
@@ -38,6 +38,7 @@ export function WorkspacePlatformCutoverStatus() {
   const [v13Status, setV13Status] = useState<V13PortfolioWriteDiagnostics | null>(null);
   const [v14Status, setV14Status] = useState<V14FcnWriteDiagnostics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
@@ -50,6 +51,7 @@ export function WorkspacePlatformCutoverStatus() {
         getV13PortfolioWriteDiagnostics(),
         getV14FcnWriteDiagnostics(),
       ]);
+      if (!mountedRef.current) return;
       setStatus(platform);
       setV11Status(v11);
       setV11Cutover(cutover);
@@ -57,6 +59,7 @@ export function WorkspacePlatformCutoverStatus() {
       setV13Status(v13);
       setV14Status(v14);
     } catch (error) {
+      if (!mountedRef.current) return;
       console.warn("[IXAI SETTINGS] platform cutover diagnostics unavailable", error);
       setStatus(null);
       setV11Status(null);
@@ -65,12 +68,22 @@ export function WorkspacePlatformCutoverStatus() {
       setV13Status(null);
       setV14Status(null);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Database, RefreshCw } from "lucide-react";
 
@@ -22,6 +22,7 @@ export function WorkspaceV11DatabaseActivationStatus() {
   const [report, setReport] = useState<V11DatabaseActivationReport | null>(null);
   const [cutover, setCutover] = useState<V11DatabaseCutoverStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
@@ -30,19 +31,31 @@ export function WorkspaceV11DatabaseActivationStatus() {
         getV11DatabaseActivationReport(),
         getV11DatabaseCutoverStatus(),
       ]);
+      if (!mountedRef.current) return;
       setReport(activation);
       setCutover(cutoverStatus);
     } catch (error) {
+      if (!mountedRef.current) return;
       console.warn("[IXAI SETTINGS] V11 database activation diagnostics unavailable", error);
       setReport(null);
       setCutover(null);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

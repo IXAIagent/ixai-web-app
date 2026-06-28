@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Database, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
@@ -12,21 +12,35 @@ import {
 export function WorkspaceDatabaseReadPriorityStatus() {
   const [status, setStatus] = useState<WorkspaceDatabaseReadPriorityStatusValue | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
     try {
-      setStatus(await getWorkspaceDatabaseReadPriorityStatus());
+      const nextStatus = await getWorkspaceDatabaseReadPriorityStatus();
+      if (!mountedRef.current) return;
+      setStatus(nextStatus);
     } catch (error) {
+      if (!mountedRef.current) return;
       console.warn("[IXAI SETTINGS] database read priority diagnostics unavailable", error);
       setStatus(null);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

@@ -14,6 +14,9 @@ Completed:
   - Root auth runtime promises stabilized.
   - PR #75 merged.
   - Commit: `9c73915`.
+- Program B — Workspace Runtime Hydration Safety.
+  - Workspace client refresh promises and mounted effects are contained.
+  - Settings diagnostics and Workspace browser-storage JSON parse failures degrade safely.
 - Program E — Service Worker Fetch Safety.
   - `public/sw.js` fetch and cache failure paths are contained behind safe fallback responses.
   - Install/activate lifecycle failures fail open so a transient precache/cache-cleanup failure does not keep an older unsafe service worker active.
@@ -21,15 +24,41 @@ Completed:
 
 Pending:
 
-- Program B — Workspace Runtime Stabilization.
 - Program C — Market / Morning Brief Runtime Stabilization.
 - Program D — Admin / Scheduler Runtime Stabilization.
 
 Important:
 
-- Only Program A and Program E are complete.
+- Only Program A, Program B, and Program E are complete.
 - The full V12.1 Runtime Stabilization Program is partial complete, not complete.
-- Do not mark Program B, Program C, Program D, or the overall V12.1 Runtime Stabilization Program as complete until their dedicated implementation and validation work is merged.
+- Do not mark Program C, Program D, or the overall V12.1 Runtime Stabilization Program as complete until their dedicated implementation and validation work is merged.
+
+## V12.1 Runtime Stabilization Program / Program B Complete
+
+Why:
+
+- Workspace pages still had client refresh effects and diagnostics paths that could throw through `void refresh()` calls, `queueMicrotask(...)` startup work, `Promise.all(...)` diagnostics fan-out, or browser-storage JSON parse paths.
+- These failures could surface as unhandled promise rejections, stuck loading UI, hydration-adjacent runtime faults, or Settings white-screen risk even after root providers and service worker fetch handling were stabilized.
+
+What Changed:
+
+- Added a shared Workspace runtime safety layer under `src/lib/workspace/runtime-safety/`.
+- Wrapped Workspace client refresh tasks with `runWorkspaceSafe(...)` and mounted/cancelled guards before state updates.
+- Added safe sync helpers for browser runtime access, localStorage reads/writes, and JSON parse fallbacks.
+- Hardened Settings diagnostics status cards, Workspace health/timeline summaries, Copilot summary, Intelligence Center/Summary, Risk Center/Summary, FCN summaries, and Portfolio summaries.
+- Converted V13/V14 diagnostics localStorage result reads from direct `JSON.parse(...)` to safe parse fallback helpers.
+
+Key Decisions:
+
+- Program B is runtime safety only.
+- Failed diagnostics and readback builders degrade to existing null/fallback UI rather than throwing into the component boundary or global promise queue.
+- Product behavior, routing, API contracts, database writes, auth, membership, broker, trading, recommendation, scheduler, billing, OpenAI, and AI behavior remain unchanged.
+
+Out of Scope:
+
+- Program C Market / Morning Brief runtime stabilization.
+- Program D Admin / Scheduler runtime stabilization.
+- No DB write, Supabase mutation, SQL, migration, RLS/auth/membership change, billing/Stripe, scheduler/Telegram, broker/trading/recommendation, OpenAI, or AI change.
 
 ## V12.1 Runtime Stabilization Program / Program E Complete
 
@@ -82,7 +111,6 @@ Key Decisions:
 
 Deferred:
 
-- Program B safe async helper.
 - Program C diagnostics `Promise.allSettled(...)` migration.
 - Program D runtime monitor.
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Calculator, RefreshCw, WalletCards } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
@@ -9,6 +9,7 @@ import type {
   PortfolioValuationResult,
   ValuationSourceStatus,
 } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 const STATUS_CLASS: Record<ValuationSourceStatus, string> = {
   delayed: "border-[color-mix(in_srgb,var(--ixai-gold)_44%,transparent)] bg-[rgba(255,250,240,0.82)] text-[var(--ixai-forest)]",
@@ -69,18 +70,38 @@ function StatusBadge({ status }: { status: ValuationSourceStatus }) {
 export function PortfolioValuationSummary() {
   const [valuation, setValuation] = useState<PortfolioValuationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refreshValuation() {
     setIsLoading(true);
-    const nextValuation = await getWorkspacePortfolioValuation();
-    setValuation(nextValuation);
+    const result = await runWorkspaceSafe(
+      "workspace-portfolio-valuation-summary",
+      getWorkspacePortfolioValuation,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    setValuation(result.data);
     setIsLoading(false);
   }
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void refreshValuation();
+      if (!cancelled) {
+        void refreshValuation();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   const summaryCards = useMemo(() => {

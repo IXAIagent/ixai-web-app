@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Database, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
@@ -10,6 +10,7 @@ import type {
   PortfolioPersistenceResult,
   PortfolioPersistenceSourceStatus,
 } from "@/src/lib/portfolio/persistence";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 const STATUS_CLASS: Record<PortfolioPersistenceSourceStatus, string> = {
   fallback:
@@ -54,21 +55,38 @@ function StatusBadge({ status }: { status: PortfolioPersistenceSourceStatus }) {
 export function PortfolioPersistenceSummary() {
   const [result, setResult] = useState<PortfolioPersistenceResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refreshPersistence() {
     setIsLoading(true);
-    const nextResult = await getWorkspacePortfolioPersistenceSummary();
-    setResult(nextResult);
+    const safeResult = await runWorkspaceSafe(
+      "workspace-portfolio-persistence-summary",
+      getWorkspacePortfolioPersistenceSummary,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    setResult(safeResult.data);
     setIsLoading(false);
   }
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void refreshPersistence();
+      if (!cancelled) {
+        void refreshPersistence();
+      }
     });
 
     function syncPersistence() {
-      void refreshPersistence();
+      if (!cancelled) {
+        void refreshPersistence();
+      }
     }
 
     window.addEventListener(INPUT_TRUTH_BRIDGE_EVENT, syncPersistence);
@@ -76,6 +94,8 @@ export function PortfolioPersistenceSummary() {
     window.addEventListener("storage", syncPersistence);
 
     return () => {
+      cancelled = true;
+      mountedRef.current = false;
       window.removeEventListener(INPUT_TRUTH_BRIDGE_EVENT, syncPersistence);
       window.removeEventListener("ixai:portfolio-input:changed", syncPersistence);
       window.removeEventListener("storage", syncPersistence);

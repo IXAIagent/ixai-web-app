@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Gauge, RefreshCw, ShieldAlert } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
@@ -8,6 +8,7 @@ import { FCN_MANUAL_PRICE_EVENT } from "@/src/lib/fcn/manual-price-overrides";
 import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service";
 import { INPUT_TRUTH_BRIDGE_EVENT } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { FCN_DRAFT_STORE_EVENT } from "@/src/lib/portfolio/input/fcn-draft-store";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 import type {
   FcnPortfolioRiskSummary,
   FcnRiskLevel,
@@ -118,18 +119,38 @@ function UnderlyingRiskRow({ underlying }: { underlying: FcnUnderlyingRisk }) {
 export function FcnRiskSummary() {
   const [isLoading, setIsLoading] = useState(true);
   const [summary, setSummary] = useState<FcnPortfolioRiskSummary | null>(null);
+  const mountedRef = useRef(false);
 
   const refreshRiskSummary = useCallback(async () => {
     setIsLoading(true);
-    const nextSummary = await getWorkspaceFcnRiskSummary();
-    setSummary(nextSummary);
+    const result = await runWorkspaceSafe(
+      "workspace-fcn-risk-summary",
+      getWorkspaceFcnRiskSummary,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    setSummary(result.data);
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void refreshRiskSummary();
+      if (!cancelled) {
+        void refreshRiskSummary();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, [refreshRiskSummary]);
 
   useEffect(() => {

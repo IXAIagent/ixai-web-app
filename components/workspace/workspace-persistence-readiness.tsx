@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Database, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
@@ -21,6 +21,7 @@ type ReadinessItem = {
 export function WorkspacePersistenceReadiness() {
   const [items, setItems] = useState<ReadinessItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
@@ -40,6 +41,8 @@ export function WorkspacePersistenceReadiness() {
         getWatchlistPersistenceReadiness(),
         getAlertPersistenceReadiness(),
       ]);
+
+      if (!mountedRef.current) return;
 
       setItems([
         {
@@ -80,15 +83,26 @@ export function WorkspacePersistenceReadiness() {
         },
       ]);
     } catch (error) {
+      if (!mountedRef.current) return;
       console.warn("[IXAI SETTINGS] persistence readiness diagnostics unavailable", error);
       setItems([]);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

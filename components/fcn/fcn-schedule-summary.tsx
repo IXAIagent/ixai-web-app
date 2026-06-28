@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CalendarDays, RefreshCw, WalletCards } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { FCN_DRAFT_STORE_EVENT } from "@/src/lib/portfolio/input/fcn-draft-store";
 import { INPUT_TRUTH_BRIDGE_EVENT } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { getWorkspaceFcnScheduleSummary } from "@/src/lib/fcn/schedule/fcn-schedule-service";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 import type {
   FcnCouponScheduleEvent,
   FcnPortfolioScheduleSummary,
@@ -140,18 +141,38 @@ function EventCard({ event }: { event: FcnCouponScheduleEvent }) {
 export function FcnScheduleSummary() {
   const [isLoading, setIsLoading] = useState(true);
   const [summary, setSummary] = useState<FcnPortfolioScheduleSummary | null>(null);
+  const mountedRef = useRef(false);
 
   const refreshScheduleSummary = useCallback(async () => {
     setIsLoading(true);
-    const nextSummary = await getWorkspaceFcnScheduleSummary();
-    setSummary(nextSummary);
+    const result = await runWorkspaceSafe(
+      "workspace-fcn-schedule-summary",
+      getWorkspaceFcnScheduleSummary,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    setSummary(result.data);
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void refreshScheduleSummary();
+      if (!cancelled) {
+        void refreshScheduleSummary();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, [refreshScheduleSummary]);
 
   useEffect(() => {
