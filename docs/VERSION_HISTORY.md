@@ -6,6 +6,33 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12.1 Workspace Runtime Deadlock Investigation
+
+Why:
+
+- After Program A/B/C/D/E implementation and the authenticated read-storm fix, production still reports Chrome renderer HUNG / gray-screen failures on Copilot, Settings, and Intelligence route-switch stress.
+- Previous fixes contained thrown promises, service worker failed-fetch floods, optional table 404 spam, and private Supabase 401 storms, but did not add backpressure for Workspace diagnostics fan-out.
+
+What Changed:
+
+- Added `docs/V121_WORKSPACE_RUNTIME_DEADLOCK_INVESTIGATION.md`.
+- Added gated diagnostics-only runtime loop detector under `src/lib/workspace/runtime-safety/runtime-loop-detector.ts`.
+- Instrumented central Workspace safe refreshes, sync safe reads, database table reads, and Workspace Graph entry counts.
+- Diagnostics are off by default and only activate with `NEXT_PUBLIC_IXAI_RUNTIME_DIAGNOSTICS=1` or `localStorage.setItem("ixai.runtime.diagnostics", "1")`.
+
+Key Findings:
+
+- Highest-risk root cause candidate is Workspace diagnostics/graph fan-out saturating the renderer during route switching.
+- Current `public/sw.js:107` maps to `if (cached)`, so production `sw.js:107` failed-fetch evidence may indicate an old service worker or stale source map.
+- No direct React infinite render loop was confirmed in the inspected Copilot, Settings, Intelligence, auth gate, or PWA registration paths.
+
+Key Decision:
+
+- V12.1 remains production-incomplete.
+- Current blocker is Workspace Renderer HUNG / runtime deadlock.
+- Next step is a targeted Workspace runtime fan-out/deadlock fix after root cause confirmation.
+- Do not continue Live Market, Beta, broker/trading/recommendation, scheduler, billing, or product feature work until this blocker is resolved.
+
 ## V12.1 Production Authenticated Read Storm Fix
 
 Why:

@@ -3,6 +3,7 @@ import {
   createAuthenticatedReadGate,
   safeAuthenticatedSupabaseRead,
 } from "@/src/lib/workspace/runtime-safety/authenticated-supabase";
+import { recordWorkspaceRuntimeLoop } from "@/src/lib/workspace/runtime-safety/runtime-loop-detector";
 
 export type DatabaseActivationTableStatus =
   | "configured"
@@ -26,6 +27,8 @@ export async function readDatabaseTable<TRow>(
   table: string,
   select = "*",
 ): Promise<DatabaseActivationTableReadback<TRow>> {
+  recordWorkspaceRuntimeLoop(`database-read:${table}`, { select, table });
+
   const config = getSupabaseClientConfig();
 
   if (!config) {

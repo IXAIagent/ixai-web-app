@@ -12,11 +12,18 @@ Observed production symptoms:
 - Optional Supabase table `404` conditions became warnings, but could still repeat across route sessions.
 - Private tables such as `stock_positions`, `crypto_positions`, and `watchlist_items` could be read before a stable authenticated session was available, producing repeated `401 Unauthorized` results.
 
-V12.1 must not be marked production-complete until authenticated production verification passes after this fix.
+V12.1 must not be marked production-complete until authenticated production verification and the later Workspace Renderer HUNG / runtime deadlock blocker both pass. See `docs/V121_WORKSPACE_RUNTIME_DEADLOCK_INVESTIGATION.md`.
 
 ## Root Cause
 
 Production authenticated Supabase reads were still firing before, without, or after loss of stable auth state.
+
+Status correction:
+
+- This document records the authenticated read-storm fix.
+- It does not close the full V12.1 Runtime Stabilization Program.
+- Current production blocker is Workspace Renderer HUNG / runtime deadlock during Copilot, Settings, and Intelligence route switching.
+- Next step is a targeted Workspace runtime fan-out/deadlock fix after root cause confirmation.
 
 The highest-risk path was the client-side database readiness/readback layer:
 

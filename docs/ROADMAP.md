@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V12.1 Runtime Stabilization Program - Authenticated Read Storm Fix / Pending Production Verification`
+`V12.1 Runtime Stabilization Program - Workspace Runtime Deadlock Investigation`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V12.1 Runtime Stabilization authenticated production verification. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has merged, including PR #79. Production testing after PR #79 still showed authenticated read storms and route-switch gray-screen risk: private Supabase reads such as `stock_positions`, `crypto_positions`, and `watchlist_items` could repeat `401 Unauthorized`, and optional profile/preferences table `404` fallbacks could still repeat. The current fix adds authenticated private-table read gating, session cooldowns, optional-table session disable, Portfolio Truth read coalescing, and mounted guards. V12.1 Runtime Stabilization implementation is complete pending production verification; it is not production-complete until `app.ixuan.ai` authenticated manual QA passes after this fix.
+Current priority is V12.1 Workspace Runtime Deadlock resolution. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has merged, including PR #79, and the authenticated read-storm fix reduced private Supabase retry pressure. Production still reports Workspace Renderer HUNG / runtime deadlock on Copilot, Settings, and Intelligence route-switch stress. V12.1 Runtime Stabilization is production-incomplete; the next step is a targeted Workspace runtime fan-out/deadlock fix after root cause confirmation in `docs/V121_WORKSPACE_RUNTIME_DEADLOCK_INVESTIGATION.md`.
 
 Runtime Stabilization Program Status:
 
@@ -35,7 +35,9 @@ Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
 - PR #79 did not fully resolve production authenticated read storms.
-- The full V12.1 Runtime Stabilization Program requires production authenticated verification after this fix before it can be marked production-complete.
+- The read-storm fix did not close V12.1 because production still reports Workspace Renderer HUNG / runtime deadlock.
+- The full V12.1 Runtime Stabilization Program requires a targeted Workspace runtime deadlock fix and production route-switch verification before it can be marked production-complete.
+- Do not continue Live Market, Beta, broker/trading/recommendation, scheduler, billing, or product feature work until this blocker is resolved.
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.

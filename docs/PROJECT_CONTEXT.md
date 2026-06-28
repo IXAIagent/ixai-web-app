@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.1 — Runtime Stabilization Program / Authenticated Read Storm Fix / Pending Production Verification`
+`V12.1 — Runtime Stabilization Program / Workspace Runtime Deadlock Investigation`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79. Production verification after PR #79 still found an authenticated read storm: private Supabase reads for tables such as `stock_positions`, `crypto_positions`, and `watchlist_items` could fire before or without stable authenticated session state, producing repeated `401 Unauthorized` responses, while optional `ixai_profile_memory` / `ixai_user_preferences` missing-table fallbacks could still repeat. The current emergency fix adds authenticated private-table read gating, browser-session cooldowns, optional-table session disable, Portfolio Truth read coalescing, and mounted guards for route-switch safety. V12.1 Runtime Stabilization implementation is complete pending production authenticated verification; it is not production-complete until `app.ixuan.ai` manual verification passes after this fix. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79. Production verification after PR #79 still found an authenticated read storm, and the follow-up authenticated read-storm fix reduced private Supabase retry pressure. Production still shows a Workspace Renderer HUNG / runtime deadlock blocker on Copilot, Settings, and Intelligence route-switch stress. V12.1 Runtime Stabilization is production-incomplete; the next step is a targeted Workspace runtime fan-out/deadlock fix after root cause confirmation in `docs/V121_WORKSPACE_RUNTIME_DEADLOCK_INVESTIGATION.md`. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
 
 Runtime Stabilization Program Status:
 
@@ -92,7 +92,9 @@ Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
 - PR #79 did not fully resolve production runtime instability.
-- V12.1 Runtime Stabilization requires production authenticated verification after the read-storm fix before it can be marked production-complete.
+- The read-storm fix did not close V12.1 because production still reports Workspace Renderer HUNG / runtime deadlock.
+- V12.1 Runtime Stabilization requires a targeted Workspace runtime deadlock fix and production route-switch verification before it can be marked production-complete.
+- Do not continue Live Market, Beta, broker/trading/recommendation, scheduler, billing, or product feature work until this blocker is resolved.
 
 Program E production verification note:
 

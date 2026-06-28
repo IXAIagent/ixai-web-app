@@ -1,4 +1,5 @@
 import type { WorkspaceSafeError, WorkspaceSafeResult } from "@/src/lib/workspace/runtime-safety/runtime-safe-types";
+import { recordWorkspaceRuntimeLoop } from "@/src/lib/workspace/runtime-safety/runtime-loop-detector";
 
 export function toWorkspaceSafeError(error: unknown): WorkspaceSafeError {
   if (error instanceof Error) {
@@ -19,6 +20,8 @@ export async function runWorkspaceSafe<TData>(
   task: () => Promise<TData>,
   fallback: TData,
 ): Promise<WorkspaceSafeResult<TData>> {
+  recordWorkspaceRuntimeLoop(`safe-refresh:${label}`, { label });
+
   try {
     return {
       data: await task(),
@@ -42,6 +45,8 @@ export function runWorkspaceSafeSync<TData>(
   task: () => TData,
   fallback: TData,
 ): WorkspaceSafeResult<TData> {
+  recordWorkspaceRuntimeLoop(`safe-sync:${label}`, { label });
+
   try {
     return {
       data: task(),

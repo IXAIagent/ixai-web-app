@@ -2,9 +2,9 @@
 
 ## Scope
 
-V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, and large `Uncaught (in promise)` storms.
+V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, large `Uncaught (in promise)` storms, and Chrome renderer HUNG failures.
 
-Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. The full V12.1 Runtime Stabilization Program is implementation-complete pending production authenticated verification, and must not be marked production-complete until `app.ixuan.ai` manual verification passes after the read-storm fix.
+Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. After the authenticated read-storm fix, production still shows a Workspace Renderer HUNG / runtime deadlock blocker. The full V12.1 Runtime Stabilization Program is production-incomplete and must not be marked complete until `app.ixuan.ai` route-switch stress no longer reproduces renderer HUNG.
 
 ## Runtime Stabilization Program Status
 
@@ -34,7 +34,10 @@ Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
 - PR #79 did not fully resolve production authenticated read storms.
-- V12.1 Runtime Stabilization requires production verification after the authenticated read-storm fix before it can be marked production-complete.
+- The authenticated read-storm fix did not close V12.1 because production still reports Workspace Renderer HUNG / runtime deadlock.
+- V12.1 Runtime Stabilization requires a targeted Workspace runtime fan-out/deadlock fix and production verification before it can be marked production-complete.
+- Do not continue Live Market, Beta, broker/trading/recommendation, scheduler, billing, or product feature work until this blocker is resolved.
+- Investigation source: `docs/V121_WORKSPACE_RUNTIME_DEADLOCK_INVESTIGATION.md`.
 
 ## Audit Basis
 

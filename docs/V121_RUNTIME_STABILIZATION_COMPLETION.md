@@ -4,7 +4,7 @@
 
 This completion branch finished the remaining V12.1 runtime stabilization implementation work after Program A, Program B, and Program E.
 
-PR #79 merged this implementation, but production verification later found an authenticated Supabase read storm. V12.1 Runtime Stabilization must now be treated as implementation-complete pending production authenticated verification after `docs/V121_PRODUCTION_AUTHENTICATED_READ_STORM_FIX.md`.
+PR #79 merged this implementation, but production verification later found an authenticated Supabase read storm. After that fix, production still shows a Workspace Renderer HUNG / runtime deadlock blocker. V12.1 Runtime Stabilization must now be treated as production-incomplete pending the Workspace runtime deadlock investigation and targeted fix in `docs/V121_WORKSPACE_RUNTIME_DEADLOCK_INVESTIGATION.md`.
 
 Completed before this branch:
 
@@ -17,6 +17,12 @@ Completed in this branch:
 - Production Gray Screen Regression fix.
 - Program C — Market / Morning Brief Runtime Stabilization.
 - Program D — Admin / Scheduler Runtime Stabilization.
+
+Current blocker:
+
+- Workspace Renderer HUNG / runtime deadlock under Copilot, Settings, and Intelligence route-switch stress.
+- The leading suspected cause is Workspace diagnostics/graph fan-out saturating the renderer, not a confirmed direct React infinite render loop.
+- Do not mark V12.1 complete until production route-switch stress passes on `app.ixuan.ai`.
 
 ## Production Gray Screen Regression Root Cause
 

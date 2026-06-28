@@ -49,6 +49,7 @@ import {
   buildWorkspaceGraphSummary,
   inferWorkspaceGraphStatus,
 } from "@/src/lib/workspace/graph/workspace-graph-engine";
+import { recordWorkspaceRuntimeLoop } from "@/src/lib/workspace/runtime-safety/runtime-loop-detector";
 import type {
   WorkspaceGraph,
   WorkspaceGraphSummary,
@@ -76,6 +77,10 @@ async function safeRead<T>(
 }
 
 export async function getWorkspaceGraph(): Promise<WorkspaceGraph> {
+  recordWorkspaceRuntimeLoop("workspace-graph:read", {
+    moduleCount: 37,
+  });
+
   const [
     portfolioPersistence,
     portfolioTruth,
