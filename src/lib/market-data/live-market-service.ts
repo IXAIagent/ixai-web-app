@@ -1,6 +1,7 @@
 "use client";
 
 import { buildWorkspaceLiveMarketSnapshot } from "@/src/lib/market-data/live-market-snapshot";
+import { logWorkspaceRuntimeWarning } from "@/src/lib/workspace/runtime-safety";
 import type {
   WorkspaceLiveMarketInput,
   WorkspaceLiveMarketSnapshot,
@@ -45,23 +46,38 @@ export async function requestWorkspaceLiveMarketQuotes(
     return null;
   }
 
-  const response = await fetch(
-    `/api/market/yahoo-quotes?symbols=${encodeURIComponent(requestedSymbols.join(","))}`,
-    {
-      cache: "no-store",
-    },
-  );
-  const payload = (await response.json()) as YahooQuotesApiResponse;
+  try {
+    const response = await fetch(
+      `/api/market/yahoo-quotes?symbols=${encodeURIComponent(requestedSymbols.join(","))}`,
+      {
+        cache: "no-store",
+      },
+    );
+    const payload = (await response.json().catch(() => null)) as YahooQuotesApiResponse | null;
 
-  if (!payload.ok || !payload.data) {
+    if (!response.ok || !payload?.ok || !payload.data) {
+      logWorkspaceRuntimeWarning("live-market-quotes-fallback", payload?.error ?? response.status, {
+        requestedSymbols: requestedSymbols.length,
+      });
+      return null;
+    }
+
+    return payload.data;
+  } catch (error) {
+    logWorkspaceRuntimeWarning("live-market-quotes-network-fallback", error, {
+      requestedSymbols: requestedSymbols.length,
+    });
     return null;
   }
-
-  return payload.data;
 }
 
 export async function getWorkspaceLiveMarketSnapshot(input: WorkspaceLiveMarketInput = {}) {
-  const truth = input.truth === undefined ? await loadPortfolioTruthReadback() : input.truth;
+  const truth = input.truth === undefined
+    ? await loadPortfolioTruthReadback().catch((error) => {
+        logWorkspaceRuntimeWarning("live-market-truth-fallback", error);
+        return null;
+      })
+    : input.truth;
   const requestedSymbols = collectWorkspaceLiveMarketSymbols({
     extraSymbols: input.extraSymbols,
     truth,

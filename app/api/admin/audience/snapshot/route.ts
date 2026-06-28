@@ -11,6 +11,19 @@ import {
 
 export const dynamic = "force-dynamic";
 
+async function settledAdminValue<TData>(
+  label: string,
+  task: () => Promise<TData>,
+  fallback: TData,
+) {
+  try {
+    return await task();
+  } catch (error) {
+    log.warn(`[ixai.audience.admin] ${label} fallback`, error);
+    return fallback;
+  }
+}
+
 // v1.36.2 — Aggregated audience snapshot endpoint. Admin-only. Returns
 // engagement / segment / surface aggregates derived from the subscriber
 // profile graph. Never returns email addresses or per-user rows.
@@ -26,11 +39,20 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  try {
-    const [snapshot, lineSnapshot] = await Promise.all([
-      getAudienceSnapshot(),
-      getLineIdentitySnapshot(),
-    ]);
+  const [snapshot, lineSnapshot] = await Promise.all([
+    settledAdminValue("audience", getAudienceSnapshot, {
+      lineConnectedCount: 0,
+      returningReaderCount: 0,
+      totalProfiles: 0,
+    } as unknown as Awaited<ReturnType<typeof getAudienceSnapshot>>),
+    settledAdminValue("lineIdentity", getLineIdentitySnapshot, {
+      configured: false,
+      linkedCount: 0,
+      mode: "memory",
+      recentlyActiveCount: 0,
+      uniqueEmailsLinked: 0,
+    } as unknown as Awaited<ReturnType<typeof getLineIdentitySnapshot>>),
+  ]);
 
     // v1.36.4 — fold the LINE identity bridge totals into the audience
     // snapshot response so the admin UI can render LINE connection rate
@@ -59,14 +81,4 @@ export async function GET(request: NextRequest) {
         ? "Audience profiles are aggregated server-side; emails never leave the database."
         : "Supabase service-role env is unavailable; running in memory-mode (counts will be zero on cold start).",
     });
-  } catch (error) {
-    log.warn("[ixai.audience.admin] snapshot failed", error);
-    return Response.json(
-      {
-        ok: false,
-        message: "Unable to load audience snapshot.",
-      },
-      { status: 502 },
-    );
-  }
 }

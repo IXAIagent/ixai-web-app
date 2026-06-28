@@ -4,6 +4,10 @@ import {
   getSupabaseClientConfig,
 } from "@/src/lib/supabase/client";
 import {
+  safeOptionalSupabaseRead,
+  safeOptionalSupabaseWrite,
+} from "@/src/lib/workspace/runtime-safety";
+import {
   getWatchlist,
   type WatchlistItem,
 } from "@/src/lib/watchlist";
@@ -15,6 +19,8 @@ import type {
 } from "@/src/types/identity";
 
 const PREFERENCES_KEY = "ixai.user.preferences.v1";
+const PROFILE_MEMORY_TABLE = "ixai_profile_memory";
+const USER_PREFERENCES_TABLE = "ixai_user_preferences";
 
 function canUseStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -77,7 +83,11 @@ export function saveLocalPreferences(
     return;
   }
 
-  window.localStorage.setItem(preferenceKey(userId), JSON.stringify(preferences));
+  try {
+    window.localStorage.setItem(preferenceKey(userId), JSON.stringify(preferences));
+  } catch {
+    // Preference persistence is best-effort; Workspace must remain renderable.
+  }
 }
 
 export async function loadUserWatchlist(session: IXAISession): Promise<{
@@ -225,19 +235,20 @@ export async function loadUserPreferences(session: IXAISession): Promise<{
     };
   }
 
-  try {
-    const response = await fetch(
-      `${config.url}/rest/v1/ixai_user_preferences?user_id=eq.${session.user.id}&select=preferred_categories&limit=1`,
-      { headers },
-    );
+  const userId = session.user.id;
+  const result = await safeOptionalSupabaseRead<Array<{ preferred_categories?: IntelligenceInterest[] }>>(
+    USER_PREFERENCES_TABLE,
+    () =>
+      fetch(
+        `${config.url}/rest/v1/ixai_user_preferences?user_id=eq.${userId}&select=preferred_categories&limit=1`,
+        { headers },
+      ),
+  );
 
-    if (!response.ok) {
-      throw new Error("Unable to load preferences.");
-    }
-
-    const rows = await response.json() as Array<{ preferred_categories?: IntelligenceInterest[] }>;
-    const preferences = rows[0]?.preferred_categories ?? getLocalPreferences(session.user.id);
-    saveLocalPreferences(preferences, session.user.id);
+  if (result.ok) {
+    const rows = result.data;
+    const preferences = rows[0]?.preferred_categories ?? getLocalPreferences(userId);
+    saveLocalPreferences(preferences, userId);
 
     return {
       preferences,
@@ -248,12 +259,16 @@ export async function loadUserPreferences(session: IXAISession): Promise<{
         lastSyncedAt: new Date().toISOString(),
       },
     };
-  } catch {
-    return {
-      preferences: getLocalPreferences(session.user?.id),
-      status: pendingStatus("無法讀取雲端偏好，已改用本機內容。"),
-    };
   }
+
+  return {
+    preferences: getLocalPreferences(session.user?.id),
+    status: pendingStatus(
+      result.reason === "missing_table" || result.reason === "disabled"
+        ? "偏好同步表尚未啟用，已改用本機內容。"
+        : "無法讀取雲端偏好，已改用本機內容。",
+    ),
+  };
 }
 
 export async function saveUserPreferences(
@@ -274,8 +289,9 @@ export async function saveUserPreferences(
         };
   }
 
-  try {
-    const response = await fetch(`${config.url}/rest/v1/ixai_user_preferences?on_conflict=user_id`, {
+  const userId = session.user.id;
+  const result = await safeOptionalSupabaseWrite(USER_PREFERENCES_TABLE, () =>
+    fetch(`${config.url}/rest/v1/ixai_user_preferences?on_conflict=user_id`, {
       method: "POST",
       headers: {
         ...headers,
@@ -283,25 +299,27 @@ export async function saveUserPreferences(
         prefer: "resolution=merge-duplicates,return=minimal",
       },
       body: JSON.stringify({
-        user_id: session.user.id,
+        user_id: userId,
         preferred_categories: preferences,
         updated_at: new Date().toISOString(),
       }),
-    });
+    }),
+  );
 
-    if (!response.ok) {
-      throw new Error("Unable to save preferences.");
-    }
-
+  if (result.ok) {
     return {
       mode: "synced",
       label: "已同步",
       message: "偏好已保存到你的 IXAI 帳戶。",
       lastSyncedAt: new Date().toISOString(),
     };
-  } catch {
-    return pendingStatus("暫時無法同步偏好，已保存在本機。");
   }
+
+  return pendingStatus(
+    result.reason === "missing_table" || result.reason === "disabled"
+      ? "偏好同步表尚未啟用，已保存在本機。"
+      : "暫時無法同步偏好，已保存在本機。",
+  );
 }
 
 export async function loadProfileMemory(session: IXAISession): Promise<{
@@ -324,23 +342,24 @@ export async function loadProfileMemory(session: IXAISession): Promise<{
     };
   }
 
-  try {
-    const response = await fetch(
-      `${config.url}/rest/v1/ixai_profile_memory?user_id=eq.${session.user.id}&select=watched_symbols,recently_viewed_sections,last_visit_at,onboarding_completed&limit=1`,
-      { headers },
-    );
-
-    if (!response.ok) {
-      throw new Error("Unable to load profile memory.");
-    }
-
-    const rows = await response.json() as Array<{
+  const userId = session.user.id;
+  const result = await safeOptionalSupabaseRead<Array<{
       watched_symbols?: string[];
       recently_viewed_sections?: string[];
       last_visit_at?: string;
       onboarding_completed?: boolean;
-    }>;
-    const localMemory = readPersonalMemory(session.user.id);
+    }>>(
+    PROFILE_MEMORY_TABLE,
+    () =>
+      fetch(
+        `${config.url}/rest/v1/ixai_profile_memory?user_id=eq.${userId}&select=watched_symbols,recently_viewed_sections,last_visit_at,onboarding_completed&limit=1`,
+        { headers },
+      ),
+  );
+
+  if (result.ok) {
+    const rows = result.data;
+    const localMemory = readPersonalMemory(userId);
     const row = rows[0];
     const memory = row
       ? {
@@ -352,7 +371,7 @@ export async function loadProfileMemory(session: IXAISession): Promise<{
         }
       : localMemory;
 
-    writePersonalMemory(memory, session.user.id);
+    writePersonalMemory(memory, userId);
 
     return {
       memory,
@@ -363,12 +382,16 @@ export async function loadProfileMemory(session: IXAISession): Promise<{
         lastSyncedAt: new Date().toISOString(),
       },
     };
-  } catch {
-    return {
-      memory: readPersonalMemory(session.user?.id),
-      status: pendingStatus("無法讀取雲端市場記憶，已改用本機內容。"),
-    };
   }
+
+  return {
+    memory: readPersonalMemory(session.user?.id),
+    status: pendingStatus(
+      result.reason === "missing_table" || result.reason === "disabled"
+        ? "市場記憶同步表尚未啟用，已改用本機內容。"
+        : "無法讀取雲端市場記憶，已改用本機內容。",
+    ),
+  };
 }
 
 export async function saveProfileMemory(
@@ -389,8 +412,9 @@ export async function saveProfileMemory(
         };
   }
 
-  try {
-    const response = await fetch(`${config.url}/rest/v1/ixai_profile_memory?on_conflict=user_id`, {
+  const userId = session.user.id;
+  const result = await safeOptionalSupabaseWrite(PROFILE_MEMORY_TABLE, () =>
+    fetch(`${config.url}/rest/v1/ixai_profile_memory?on_conflict=user_id`, {
       method: "POST",
       headers: {
         ...headers,
@@ -398,26 +422,28 @@ export async function saveProfileMemory(
         prefer: "resolution=merge-duplicates,return=minimal",
       },
       body: JSON.stringify({
-        user_id: session.user.id,
+        user_id: userId,
         watched_symbols: memory.watchedSymbols,
         recently_viewed_sections: memory.recentlyViewedSections,
         last_visit_at: memory.lastVisitAt,
         onboarding_completed: memory.onboardingCompleted,
         updated_at: new Date().toISOString(),
       }),
-    });
+    }),
+  );
 
-    if (!response.ok) {
-      throw new Error("Unable to save profile memory.");
-    }
-
+  if (result.ok) {
     return {
       mode: "synced",
       label: "已同步",
       message: "市場記憶已保存到你的 IXAI 帳戶。",
       lastSyncedAt: new Date().toISOString(),
     };
-  } catch {
-    return pendingStatus("暫時無法同步市場記憶，已保存在本機。");
   }
+
+  return pendingStatus(
+    result.reason === "missing_table" || result.reason === "disabled"
+      ? "市場記憶同步表尚未啟用，已保存在本機。"
+      : "暫時無法同步市場記憶，已保存在本機。",
+  );
 }

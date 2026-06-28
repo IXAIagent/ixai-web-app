@@ -57,8 +57,12 @@ export function MorningBriefLiveCard({ autoLoad = true }: { autoLoad?: boolean }
       return;
     }
 
-    await navigator.clipboard.writeText(brief.shareText);
-    setCopyState("copied");
+    try {
+      await navigator.clipboard.writeText(brief.shareText);
+      setCopyState("copied");
+    } catch {
+      setCopyState("unavailable");
+    }
   }
 
   return (

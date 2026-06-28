@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.1 — Runtime Stabilization Program / Partial Complete / Program A + B + E Complete`
+`V12.1 — Runtime Stabilization Program / Completion Branch / A+B+C+D+E Complete After Merge`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). It addressed the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. V12.1 Program B completes Workspace Runtime Hydration Safety after validation by containing Workspace client refresh effects, mounted-state updates, Settings diagnostics refreshes, and browser-storage JSON parse paths so Workspace pages degrade to fallback UI instead of throwing unhandled promises or white screens. V12.1 Program E completes Service Worker Fetch Safety after validation by containing `public/sw.js` navigation, static asset/chunk, excluded GET, pass-through fetch, cache write, install precache, and activate cleanup failures so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler, broker, trading, recommendation, OpenAI, or AI behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). It addressed the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. V12.1 Program B completes Workspace Runtime Hydration Safety after validation by containing Workspace client refresh effects, mounted-state updates, Settings diagnostics refreshes, and browser-storage JSON parse paths so Workspace pages degrade to fallback UI instead of throwing unhandled promises or white screens. V12.1 Program E completes Service Worker Fetch Safety after validation by containing `public/sw.js` navigation, static asset/chunk, excluded GET, pass-through fetch, cache write, install precache, and activate cleanup failures so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. This completion branch finishes Program C Market / Morning Brief Runtime Stabilization, Program D Admin / Scheduler Runtime Stabilization, and the production gray-screen regression linked to optional Supabase `ixai_profile_memory` / `ixai_user_preferences` 404s. The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
 
 Runtime Stabilization Program Status:
 
@@ -83,17 +83,15 @@ Completed:
   - Service worker fetch and cache failures are contained behind safe fallbacks.
   - Install/activate failures fail open so older unsafe service workers are less likely to remain active after deploy.
   - No product feature, API mutation, cache expansion, auth, database, or membership behavior is upgraded.
-
-Pending:
-
 - Program C — Market / Morning Brief Runtime Stabilization.
+  - Market quote, live valuation, and Morning Brief failures degrade safely.
 - Program D — Admin / Scheduler Runtime Stabilization.
+  - Admin diagnostics and scheduler readiness failures degrade safely.
 
 Important:
 
-- Only Program A, Program B, and Program E are complete.
-- The full V12.1 Runtime Stabilization Program is partial complete, not complete.
-- Program C Market / Morning Brief runtime stabilization and Program D Admin / Scheduler runtime stabilization remain pending/deferred follow-up work.
+- Program A, Program B, Program C, Program D, and Program E are complete in this branch after validation.
+- The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged.
 
 Program E production verification note:
 

@@ -6,6 +6,33 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12.1 Runtime Stabilization Program Completion
+
+Why:
+
+- Production still showed gray-screen risk on `/my-ixai/copilot` and `/my-ixai/settings`.
+- Chrome DevTools reported render process loss, while Network showed Supabase REST 404s for optional `ixai_profile_memory` and `ixai_user_preferences` requests.
+- Program C and Program D were still pending after Program A, Program B, and Program E.
+
+What Changed:
+
+- Added optional Supabase table fallback helpers with one-shot cooldown and controlled warnings.
+- Converted optional profile memory and user preference persistence to local fallback when optional tables are missing.
+- Stabilized live market quote, live valuation, and Morning Brief source failures.
+- Stabilized admin identity/audience/LINE diagnostic fan-out with source-level fallback payloads.
+- Kept route-level error boundaries out of the shipped branch after production-like Next 16.2.6 smoke testing exposed a `client reference manifest` invariant on static Workspace routes.
+- Added `docs/V121_RUNTIME_STABILIZATION_COMPLETION.md`.
+
+Key Decisions:
+
+- V12.1 is complete only after the completion PR is merged.
+- Runtime completion does not add product features or investment functionality.
+- IXAI remains intelligence / workflow / risk-awareness software, not a broker, trading bot, signal seller, or robo-advisor.
+
+Out of Scope:
+
+- No broker, trading, order execution, buy/sell/rebalance advice, AI recommendation, OpenAI / LLM call, Telegram scheduler, notification delivery activation, auth behavior change, RLS, schema, migration, billing, or local fallback removal.
+
 ## V12.1 Runtime Stabilization Program Status
 
 Completed:
@@ -21,17 +48,15 @@ Completed:
   - `public/sw.js` fetch and cache failure paths are contained behind safe fallback responses.
   - Install/activate lifecycle failures fail open so a transient precache/cache-cleanup failure does not keep an older unsafe service worker active.
   - Workspace navigation should no longer flood the console with service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms.
-
-Pending:
-
 - Program C — Market / Morning Brief Runtime Stabilization.
+  - Completed in the V12.1 completion branch.
 - Program D — Admin / Scheduler Runtime Stabilization.
+  - Completed in the V12.1 completion branch.
 
 Important:
 
-- Only Program A, Program B, and Program E are complete.
-- The full V12.1 Runtime Stabilization Program is partial complete, not complete.
-- Do not mark Program C, Program D, or the overall V12.1 Runtime Stabilization Program as complete until their dedicated implementation and validation work is merged.
+- Program A, Program B, Program C, Program D, and Program E are complete in the V12.1 completion branch.
+- The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged.
 
 ## V12.1 Runtime Stabilization Program / Program B Complete
 
