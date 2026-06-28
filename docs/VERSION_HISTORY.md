@@ -6,7 +6,28 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
-## V12.1 Runtime Stabilization Program / Program A
+## V12.1 Runtime Stabilization Program Status
+
+Completed:
+
+- Program A — Root Provider Stabilization.
+  - Root auth runtime promises stabilized.
+  - PR #75 merged.
+  - Commit: `9c73915`.
+
+Pending:
+
+- Program B — Workspace Runtime Stabilization.
+- Program C — Market / Morning Brief Runtime Stabilization.
+- Program D — Admin / Scheduler Runtime Stabilization.
+
+Important:
+
+- Only Program A is complete.
+- The full V12.1 Runtime Stabilization Program is partial complete, not complete.
+- Do not mark Program B, Program C, Program D, or the overall V12.1 Runtime Stabilization Program as complete until their dedicated implementation and validation work is merged.
+
+## V12.1 Runtime Stabilization Program / Program A Complete
 
 Why:
 
@@ -22,7 +43,7 @@ What Changed:
 
 Key Decisions:
 
-- Program A only addresses root provider stabilization.
+- Program A only addresses root provider stabilization and is the only completed V12.1 stabilization slice.
 - Errors are logged locally with `console.warn` and safe fallback state; no external monitoring service is introduced.
 - Auth business logic remains unchanged.
 

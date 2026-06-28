@@ -4,7 +4,27 @@
 
 V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, and large `Uncaught (in promise)` storms.
 
-This first implementation phase completes Program A only: Root Provider Stabilization.
+This first implementation phase completes Program A only: Root Provider Stabilization. The full V12.1 Runtime Stabilization Program is partial complete, not complete.
+
+## Runtime Stabilization Program Status
+
+Completed:
+
+- Program A — Root Provider Stabilization.
+  - Root auth runtime promises stabilized.
+  - PR #75 merged.
+  - Commit: `9c73915`.
+
+Pending:
+
+- Program B — Workspace Runtime Stabilization.
+- Program C — Market / Morning Brief Runtime Stabilization.
+- Program D — Admin / Scheduler Runtime Stabilization.
+
+Important:
+
+- Only Program A is complete.
+- The full V12.1 Runtime Stabilization Program is not complete yet.
 
 ## Audit Basis
 

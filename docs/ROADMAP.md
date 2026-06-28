@@ -4,13 +4,33 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V12.1 Runtime Stabilization Program - Program A`
+`V12.1 Runtime Stabilization Program - Partial Complete / Program A Complete`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V12.1 Runtime Stabilization Program: first stabilize the root provider async paths that were identified by `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md` as the strongest source of cross-page `Uncaught (in promise)` storms. Program A hardens `AuthProvider` and `IdentityProvider` without changing auth business logic, RLS, schema, membership, billing, broker, trading, scheduler, or recommendation behavior.
+Current priority is V12.1 Runtime Stabilization Program status correction and follow-up sequencing. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). The overall V12.1 Runtime Stabilization Program is partial complete, not complete: Program B, Program C, and Program D remain pending and must not be marked done.
+
+Runtime Stabilization Program Status:
+
+Completed:
+
+- Program A — Root Provider Stabilization.
+  - Root auth runtime promises stabilized.
+  - PR #75 merged.
+  - Commit: `9c73915`.
+
+Pending:
+
+- Program B — Workspace Runtime Stabilization.
+- Program C — Market / Morning Brief Runtime Stabilization.
+- Program D — Admin / Scheduler Runtime Stabilization.
+
+Important:
+
+- Only Program A is complete.
+- The full V12.1 Runtime Stabilization Program is not complete yet.
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
