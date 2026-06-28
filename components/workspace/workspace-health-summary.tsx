@@ -1,24 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HeartPulse, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getWorkspaceHealthScore } from "@/src/lib/workspace/health";
 import type { WorkspaceHealthScore } from "@/src/lib/workspace/health";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 export function WorkspaceHealthSummary() {
   const [health, setHealth] = useState<WorkspaceHealthScore | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
-    setHealth(await getWorkspaceHealthScore());
+    const result = await runWorkspaceSafe(
+      "workspace-health-summary",
+      getWorkspaceHealthScore,
+      null,
+    );
+    if (!mountedRef.current) return;
+    setHealth(result.data);
     setIsLoading(false);
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

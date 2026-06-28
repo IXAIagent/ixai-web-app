@@ -1,24 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bot, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getWorkspaceCopilotSummary } from "@/src/lib/copilot";
 import type { WorkspaceCopilotSummary } from "@/src/lib/copilot";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 export function WorkspaceCopilotSummary() {
   const [summary, setSummary] = useState<WorkspaceCopilotSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
-    setSummary(await getWorkspaceCopilotSummary());
+    const result = await runWorkspaceSafe(
+      "workspace-copilot-summary",
+      getWorkspaceCopilotSummary,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    setSummary(result.data);
     setIsLoading(false);
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) {
+        void refresh();
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

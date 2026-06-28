@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DatabaseZap, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
@@ -46,6 +46,7 @@ type ActivationItem = {
 export function WorkspaceDatabaseActivationStatus() {
   const [items, setItems] = useState<ActivationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
@@ -91,6 +92,8 @@ export function WorkspaceDatabaseActivationStatus() {
         getV13PortfolioWriteDiagnostics(),
         getV14FcnWriteDiagnostics(),
       ]);
+
+      if (!mountedRef.current) return;
 
       setItems([
       {
@@ -381,6 +384,7 @@ export function WorkspaceDatabaseActivationStatus() {
       },
       ]);
     } catch (error) {
+      if (!mountedRef.current) return;
       console.warn("[IXAI SETTINGS] database activation diagnostics unavailable", error);
       setItems([
         {
@@ -393,12 +397,22 @@ export function WorkspaceDatabaseActivationStatus() {
         },
       ]);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

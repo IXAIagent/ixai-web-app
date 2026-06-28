@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.1 — Runtime Stabilization Program / Partial Complete / Program A + E Complete`
+`V12.1 — Runtime Stabilization Program / Partial Complete / Program A + B + E Complete`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). It addressed the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. V12.1 Program E completes Service Worker Fetch Safety after validation by containing `public/sw.js` navigation, static asset/chunk, excluded GET, pass-through fetch, cache write, install precache, and activate cleanup failures so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler, broker, trading, or recommendation behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). It addressed the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. V12.1 Program B completes Workspace Runtime Hydration Safety after validation by containing Workspace client refresh effects, mounted-state updates, Settings diagnostics refreshes, and browser-storage JSON parse paths so Workspace pages degrade to fallback UI instead of throwing unhandled promises or white screens. V12.1 Program E completes Service Worker Fetch Safety after validation by containing `public/sw.js` navigation, static asset/chunk, excluded GET, pass-through fetch, cache write, install precache, and activate cleanup failures so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler, broker, trading, recommendation, OpenAI, or AI behavior.
 
 Runtime Stabilization Program Status:
 
@@ -76,6 +76,9 @@ Completed:
   - Root auth runtime promises stabilized.
   - PR #75 merged.
   - Commit: `9c73915`.
+- Program B — Workspace Runtime Hydration Safety.
+  - Workspace client refresh promises and mounted effects are contained.
+  - Settings diagnostics and Workspace browser-storage parse failures degrade safely.
 - Program E — Service Worker Fetch Safety.
   - Service worker fetch and cache failures are contained behind safe fallbacks.
   - Install/activate failures fail open so older unsafe service workers are less likely to remain active after deploy.
@@ -83,21 +86,25 @@ Completed:
 
 Pending:
 
-- Program B — Workspace Runtime Stabilization.
 - Program C — Market / Morning Brief Runtime Stabilization.
 - Program D — Admin / Scheduler Runtime Stabilization.
 
 Important:
 
-- Only Program A and Program E are complete.
+- Only Program A, Program B, and Program E are complete.
 - The full V12.1 Runtime Stabilization Program is partial complete, not complete.
-- Program B safe async helper, Program C diagnostics stabilization, and Program D runtime monitor remain pending/deferred follow-up work.
+- Program C Market / Morning Brief runtime stabilization and Program D Admin / Scheduler runtime stabilization remain pending/deferred follow-up work.
 
 Program E production verification note:
 
 - If production still shows `sw.js:107` after deploy, verify whether the browser is running an older active service worker. In this branch, `public/sw.js:107` maps to `return cached;`, not a raw `fetch(request)`.
 - If Chrome keeps an old worker, unregister the IXAI service worker from DevTools → Application → Service Workers, clear site data for `https://app.ixuan.ai`, hard reload, and repeat `/my-ixai/copilot`, `/my-ixai/intelligence`, `/my-ixai/settings` route-switch verification.
 - Settings white-screen investigation found no browser-only API in the server page render path. The risk was uncaught async diagnostics refresh work in Settings client components; those refresh paths now catch locally and degrade to fallback UI.
+
+Program B runtime hydration note:
+
+- Workspace pages now use a shared runtime safety layer for async refreshes, synchronous browser/runtime guards, localStorage reads/writes, and JSON parse fallbacks.
+- Controlled verification should open `/my-ixai/home`, `/my-ixai/settings`, `/my-ixai/copilot`, `/my-ixai/intelligence`, `/my-ixai/risk`, `/my-ixai/fcn`, and `/my-ixai/portfolio`, reload each route, switch Workspace routes at least 10 times, and confirm no unhandled promise rejection flood, no React fatal error, no hydration mismatch crash, and no white screen.
 
 Current production state:
 

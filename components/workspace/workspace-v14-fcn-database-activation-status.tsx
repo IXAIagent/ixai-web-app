@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { DatabaseZap, RefreshCw } from "lucide-react";
 
@@ -43,25 +43,42 @@ function GuardCard({ guard, label }: { guard: V14FcnWriteGuard; label: string })
 export function WorkspaceV14FcnDatabaseActivationStatus() {
   const [status, setStatus] = useState<V14FcnWriteDiagnostics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
     try {
       const next = await getV14FcnWriteDiagnostics();
+      if (!mountedRef.current) return;
       setStatus(next);
     } catch (error) {
+      if (!mountedRef.current) return;
       console.warn("[IXAI SETTINGS] V14 FCN write diagnostics unavailable", error);
       setStatus(null);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
-    window.addEventListener(V14_FCN_WRITE_STATUS_EVENT, refresh);
+    let cancelled = false;
+    mountedRef.current = true;
 
-    return () => window.removeEventListener(V14_FCN_WRITE_STATUS_EVENT, refresh);
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    const refreshIfMounted = () => {
+      if (!cancelled) void refresh();
+    };
+
+    window.addEventListener(V14_FCN_WRITE_STATUS_EVENT, refreshIfMounted);
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+      window.removeEventListener(V14_FCN_WRITE_STATUS_EVENT, refreshIfMounted);
+    };
   }, []);
 
   const guardSet = status?.readiness.guardSet;

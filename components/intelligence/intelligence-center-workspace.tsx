@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -28,6 +28,7 @@ import type {
   IntelligenceCenterStatus,
 } from "@/src/lib/intelligence/intelligence-center-types";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 type LoadStatus = "error" | "loading" | "ready" | "unauthenticated";
 
@@ -148,12 +149,30 @@ export function IntelligenceCenterWorkspace() {
   const [readback, setReadback] = useState<IntelligenceCenterReadback>(() => buildInitialReadback());
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [message, setMessage] = useState<string | null>(null);
+  const mountedRef = useRef(false);
 
   const loadIntelligenceCenter = useCallback(async () => {
     setStatus("loading");
     setMessage(null);
 
-    const truth = await loadPortfolioTruthReadback();
+    const truthResult = await runWorkspaceSafe(
+      "workspace-intelligence-center-truth",
+      loadPortfolioTruthReadback,
+      null,
+    );
+
+    if (!mountedRef.current) {
+      return;
+    }
+
+    const truth = truthResult.data;
+
+    if (!truth) {
+      setReadback(buildInitialReadback());
+      setStatus("error");
+      setMessage("Intelligence sources are temporarily unavailable. Safe fallback mode is active.");
+      return;
+    }
 
     if (truth.readinessLevel === "unauthenticated") {
       setReadback(
@@ -202,9 +221,19 @@ export function IntelligenceCenterWorkspace() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void loadIntelligenceCenter();
+      if (!cancelled) {
+        void loadIntelligenceCenter();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, [loadIntelligenceCenter]);
 
   const upcomingEvents = useMemo(

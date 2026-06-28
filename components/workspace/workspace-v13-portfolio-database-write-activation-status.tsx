@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { DatabaseZap, RefreshCw } from "lucide-react";
 
@@ -43,25 +43,42 @@ function GuardCard({ guard, label }: { guard: V13PortfolioWriteGuard; label: str
 export function WorkspaceV13PortfolioDatabaseWriteActivationStatus() {
   const [status, setStatus] = useState<V13PortfolioWriteDiagnostics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
     try {
       const next = await getV13PortfolioWriteDiagnostics();
+      if (!mountedRef.current) return;
       setStatus(next);
     } catch (error) {
+      if (!mountedRef.current) return;
       console.warn("[IXAI SETTINGS] V13 portfolio write diagnostics unavailable", error);
       setStatus(null);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
-    window.addEventListener(V13_PORTFOLIO_WRITE_STATUS_EVENT, refresh);
+    let cancelled = false;
+    mountedRef.current = true;
 
-    return () => window.removeEventListener(V13_PORTFOLIO_WRITE_STATUS_EVENT, refresh);
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    const refreshIfMounted = () => {
+      if (!cancelled) void refresh();
+    };
+
+    window.addEventListener(V13_PORTFOLIO_WRITE_STATUS_EVENT, refreshIfMounted);
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+      window.removeEventListener(V13_PORTFOLIO_WRITE_STATUS_EVENT, refreshIfMounted);
+    };
   }, []);
 
   const guardSet = status?.readiness.guardSet;

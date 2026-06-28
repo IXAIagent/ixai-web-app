@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CalendarClock, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getWorkspaceTimelineSummary } from "@/src/lib/workspace/timeline";
 import type { WorkspaceTimelineSummary } from "@/src/lib/workspace/timeline";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 const GROUP_LABEL: Record<string, string> = {
   future: "Future",
@@ -25,15 +26,32 @@ function formatDate(value: string) {
 export function WorkspaceTimelineSummary() {
   const [timeline, setTimeline] = useState<WorkspaceTimelineSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
-    setTimeline(await getWorkspaceTimelineSummary());
+    const result = await runWorkspaceSafe(
+      "workspace-timeline-summary",
+      getWorkspaceTimelineSummary,
+      null,
+    );
+    if (!mountedRef.current) return;
+    setTimeline(result.data);
     setIsLoading(false);
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

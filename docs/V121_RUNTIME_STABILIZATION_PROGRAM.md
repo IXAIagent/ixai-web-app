@@ -4,7 +4,7 @@
 
 V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, and large `Uncaught (in promise)` storms.
 
-Program A completed Root Provider Stabilization. Program E now covers Service Worker Fetch Safety. The full V12.1 Runtime Stabilization Program is partial complete, not complete.
+Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. The full V12.1 Runtime Stabilization Program is partial complete, not complete.
 
 ## Runtime Stabilization Program Status
 
@@ -14,6 +14,10 @@ Completed:
   - Root auth runtime promises stabilized.
   - PR #75 merged.
   - Commit: `9c73915`.
+- Program B — Workspace Runtime Hydration Safety.
+  - Workspace client refresh effects now use contained async boundaries.
+  - Settings diagnostics refresh paths degrade to fallback UI instead of throwing into the global promise queue.
+  - Workspace localStorage/JSON parse diagnostics reads use safe fallback helpers.
 - Program E — Service Worker Fetch Safety.
   - `public/sw.js` fetch events are contained behind safe fallbacks.
   - Navigation, static asset, chunk, excluded GET, and pass-through fetch failures no longer reject the service worker `respondWith` promise.
@@ -22,13 +26,12 @@ Completed:
 
 Pending:
 
-- Program B — Workspace Runtime Stabilization.
 - Program C — Market / Morning Brief Runtime Stabilization.
 - Program D — Admin / Scheduler Runtime Stabilization.
 
 Important:
 
-- Program A and Program E are complete after validation.
+- Program A, Program B, and Program E are complete after validation.
 - The full V12.1 Runtime Stabilization Program is not complete yet.
 
 ## Audit Basis
@@ -42,7 +45,7 @@ Audit root-cause summary:
 - Root `AuthProvider` had multiple async paths that could reject without a catch.
 - `public/sw.js` routed several fetch paths through promises that could reject from `fetch(request)` or async cache writes, surfacing as `sw.js` `Uncaught (in promise) TypeError: Failed to fetch`.
 - Supabase session, auth refresh, storage, and network failures should fall back gracefully.
-- Settings diagnostics and client async helpers remain high-priority follow-up work, but they are not changed in Program A or Program E.
+- Market / Morning Brief runtime paths and Admin / Scheduler runtime paths remain high-priority follow-up work, but they are not changed in Program A, Program B, or Program E.
 - Browser bundles no longer contain direct Yahoo endpoints; Yahoo CORS is not treated as the primary crash cause.
 
 ## Program A Completed
@@ -87,6 +90,40 @@ Program A hardens the lightweight identity provider by:
 - Catching the mount-triggered refresh promise.
 - Catching logout request failures while still clearing local provider state.
 - Wrapping logout analytics tracking so analytics errors cannot affect auth state.
+
+## Program B Completed
+
+Workspace Runtime Hydration Safety is implemented for:
+
+- `/my-ixai/home`
+- `/my-ixai/settings`
+- `/my-ixai/copilot`
+- `/my-ixai/intelligence`
+- `/my-ixai/risk`
+- `/my-ixai/fcn`
+- `/my-ixai/portfolio`
+
+Program B adds a shared Workspace runtime safety layer under `src/lib/workspace/runtime-safety/`:
+
+- `runWorkspaceSafe(...)` for async client refresh tasks.
+- `runWorkspaceSafeSync(...)` for synchronous browser/runtime tasks.
+- `parseWorkspaceJsonSafe(...)` for localStorage JSON parse fallbacks.
+- `readWorkspaceStorageSafe(...)` and `writeWorkspaceStorageSafe(...)` for browser storage access.
+- Diagnostics fallback helpers that return safe unavailable/degraded results instead of throwing.
+
+Workspace client components now protect mount-triggered refresh work with mounted/cancelled guards before setting state. Failed refreshes are converted to null/fallback state instead of unhandled promise rejections.
+
+Settings diagnostics safety includes:
+
+- Database read priority status.
+- Platform cutover status.
+- Persistence readiness.
+- V11/V12/V13/V14 database activation status cards.
+- Workspace health and timeline summaries.
+
+Copilot, Intelligence, Risk, FCN, and Portfolio summary refreshes now degrade safely when a readback builder, fetch, storage read, or diagnostic helper fails.
+
+Program B does not change product behavior, routing, database writes, auth, membership, broker, trading, recommendation, scheduler, billing, OpenAI, or AI behavior.
 
 ## Program E Completed
 
@@ -141,15 +178,14 @@ Settings render path review:
 
 ## Deferred Work
 
-The following audit recommendations remain intentionally out of scope after Program A and Program E:
+The following audit recommendations remain intentionally out of scope after Program A, Program B, and Program E:
 
-- Program B: shared safe client async helper for `queueMicrotask`, `void promise.then(...)`, and mounted refresh patterns.
 - Program C: diagnostics stabilization and `Promise.allSettled(...)` migration for Settings / Workspace cards.
 - Program D: global runtime monitor for `unhandledrejection` and `error`.
 
 ## Safety Boundaries
 
-Program A and Program E do not include:
+Program A, Program B, and Program E do not include:
 
 - DB migration.
 - SQL.
@@ -162,7 +198,7 @@ Program A and Program E do not include:
 
 ## Validation Plan
 
-Required validation for Program A / Program E:
+Required validation for Program A / Program B / Program E:
 
 - `git diff --check`
 - `npm run lint`
@@ -170,7 +206,8 @@ Required validation for Program A / Program E:
 - `QA_PORT=3001 npm run qa:mobile`
 - Browser smoke on `/my-ixai/settings`, `/my-ixai/copilot`, and `/my-ixai/home`, with focus on absence of repeated auth-provider `Uncaught (in promise)` storms.
 - Browser smoke on `/my-ixai/copilot`, `/my-ixai/intelligence`, and `/my-ixai/settings`, with refreshes and route switching focused on absence of repeated `sw.js` `Uncaught (in promise) TypeError: Failed to fetch` storms.
+- Browser smoke on `/my-ixai/home`, `/my-ixai/settings`, `/my-ixai/copilot`, `/my-ixai/intelligence`, `/my-ixai/risk`, `/my-ixai/fcn`, and `/my-ixai/portfolio`, with reloads and at least 10 Workspace route switches focused on absence of unhandled promise rejections, fatal React errors, hydration mismatch crashes, repeated runtime error floods, and white screens.
 
 ## Known Limitations
 
-Program A reduces the highest-confidence root provider unhandled rejection risk. Program E reduces service worker fetch/cache unhandled rejection risk. The broader Runtime Stabilization Program still does not yet address Settings diagnostics fan-out, shared client async wrappers, or global runtime monitoring. Those remain future stabilization slices.
+Program A reduces the highest-confidence root provider unhandled rejection risk. Program B reduces Workspace client hydration, diagnostics refresh, mounted-state update, and browser-storage parse risks. Program E reduces service worker fetch/cache unhandled rejection risk. The broader Runtime Stabilization Program still does not yet address Market / Morning Brief runtime paths or Admin / Scheduler runtime paths. Those remain future stabilization slices.

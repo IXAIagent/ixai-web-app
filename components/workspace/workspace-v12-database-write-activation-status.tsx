@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { DatabaseZap, RefreshCw } from "lucide-react";
 
@@ -44,22 +44,35 @@ function ModuleCard({ item }: { item: V12ModuleWriteStatus }) {
 export function WorkspaceV12DatabaseWriteActivationStatus() {
   const [status, setStatus] = useState<V12DatabaseWriteActivationStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const mountedRef = useRef(false);
 
   async function refresh() {
     setIsLoading(true);
     try {
       const next = await getV12DatabaseWriteActivationStatus();
+      if (!mountedRef.current) return;
       setStatus(next);
     } catch (error) {
+      if (!mountedRef.current) return;
       console.warn("[IXAI SETTINGS] V12 write activation diagnostics unavailable", error);
       setStatus(null);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    queueMicrotask(() => void refresh());
+    let cancelled = false;
+    mountedRef.current = true;
+
+    queueMicrotask(() => {
+      if (!cancelled) void refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, []);
 
   return (

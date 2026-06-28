@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Brain, Loader2, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
@@ -13,6 +13,7 @@ import type {
   WorkspaceIntelligenceReport,
   WorkspaceIntelligenceSeverity,
 } from "@/src/lib/intelligence/engine/intelligence-types";
+import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 const SEVERITY_CLASS: Record<WorkspaceIntelligenceSeverity, string> = {
   critical:
@@ -61,27 +62,46 @@ export function IntelligenceSummary({ autoLoad = true }: { autoLoad?: boolean })
     buildEmptyWorkspaceIntelligenceReport(),
   );
   const [state, setState] = useState<LoadState>(autoLoad ? "loading" : "ready");
+  const mountedRef = useRef(false);
 
   const loadReport = useCallback(async () => {
     setState("loading");
-    try {
-      const nextReport = await getWorkspaceIntelligenceReport();
-      setReport(nextReport);
-      setState("ready");
-    } catch {
-      setReport(buildEmptyWorkspaceIntelligenceReport());
-      setState("error");
-    }
-  }, []);
+    const fallback = buildEmptyWorkspaceIntelligenceReport();
+    const result = await runWorkspaceSafe(
+      "workspace-intelligence-summary",
+      getWorkspaceIntelligenceReport,
+      fallback,
+    );
 
-  useEffect(() => {
-    if (!autoLoad) {
+    if (!mountedRef.current) {
       return;
     }
 
+    setReport(result.data);
+    setState(result.ok ? "ready" : "error");
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
+    if (!autoLoad) {
+      return () => {
+        cancelled = true;
+        mountedRef.current = false;
+      };
+    }
+
     queueMicrotask(() => {
-      void loadReport();
+      if (!cancelled) {
+        void loadReport();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, [autoLoad, loadReport]);
 
   const cardsByCategory = useMemo(() => {
