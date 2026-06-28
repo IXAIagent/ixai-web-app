@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.1 — Runtime Stabilization Program / Authenticated Read Storm Fix / Pending Production Verification`
+`V12.2 — Settings / Copilot Runtime Hang Fix`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79. Production verification after PR #79 still found an authenticated read storm: private Supabase reads for tables such as `stock_positions`, `crypto_positions`, and `watchlist_items` could fire before or without stable authenticated session state, producing repeated `401 Unauthorized` responses, while optional `ixai_profile_memory` / `ixai_user_preferences` missing-table fallbacks could still repeat. The current emergency fix adds authenticated private-table read gating, browser-session cooldowns, optional-table session disable, Portfolio Truth read coalescing, and mounted guards for route-switch safety. V12.1 Runtime Stabilization implementation is complete pending production authenticated verification; it is not production-complete until `app.ixuan.ai` manual verification passes after this fix. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79, and the authenticated read-storm fix reduced repeated private-table pressure. Production evidence now shows Service Worker/site-data clearing does not remove the blocker, Intelligence is normal, and the remaining HUNG path is concentrated on Settings / Copilot shared diagnostics and Workspace Graph runtime fan-out. V12.2 targets Settings / Copilot by making initial route render lightweight and moving heavy diagnostics/summary builders behind manual runtime-budgeted actions. V12.1 / V12.2 remains production-incomplete until `app.ixuan.ai` manual verification passes after this targeted fix. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
 
 Runtime Stabilization Program Status:
 
@@ -91,8 +91,9 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 did not fully resolve production runtime instability.
-- V12.1 Runtime Stabilization requires production authenticated verification after the read-storm fix before it can be marked production-complete.
+- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG.
+- V12.2 targets Settings / Copilot route-entry fan-out specifically.
+- V12.1 / V12.2 must not be marked complete until production Settings / Copilot manual verification passes.
 
 Program E production verification note:
 

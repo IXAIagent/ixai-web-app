@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V12.1 Runtime Stabilization Program - Authenticated Read Storm Fix / Pending Production Verification`
+`V12.2 Settings / Copilot Runtime Hang Fix`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V12.1 Runtime Stabilization authenticated production verification. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has merged, including PR #79. Production testing after PR #79 still showed authenticated read storms and route-switch gray-screen risk: private Supabase reads such as `stock_positions`, `crypto_positions`, and `watchlist_items` could repeat `401 Unauthorized`, and optional profile/preferences table `404` fallbacks could still repeat. The current fix adds authenticated private-table read gating, session cooldowns, optional-table session disable, Portfolio Truth read coalescing, and mounted guards. V12.1 Runtime Stabilization implementation is complete pending production verification; it is not production-complete until `app.ixuan.ai` authenticated manual QA passes after this fix.
+Current priority is V12.2 Settings / Copilot Runtime Hang Fix. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has merged, including PR #79, and the authenticated read-storm fix reduced private-table pressure. Production evidence now shows Service Worker/site-data clearing does not remove the blocker, Intelligence is normal, and the remaining HUNG path is concentrated on Settings / Copilot shared diagnostics and Workspace Graph runtime fan-out. V12.2 makes Settings and Copilot route entry lightweight and moves heavy diagnostics/summary builders behind manual runtime-budgeted actions. V12.1 / V12.2 remains production-incomplete until `app.ixuan.ai` manual QA passes after this targeted fix.
 
 Runtime Stabilization Program Status:
 
@@ -34,8 +34,9 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 did not fully resolve production authenticated read storms.
-- The full V12.1 Runtime Stabilization Program requires production authenticated verification after this fix before it can be marked production-complete.
+- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG.
+- V12.2 targets Settings / Copilot route-entry fan-out specifically.
+- The full V12.1 / V12.2 Runtime Stabilization work requires production Settings / Copilot manual verification before it can be marked complete.
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.

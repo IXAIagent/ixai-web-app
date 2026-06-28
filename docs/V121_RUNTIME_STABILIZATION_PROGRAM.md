@@ -4,7 +4,7 @@
 
 V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, and large `Uncaught (in promise)` storms.
 
-Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. The full V12.1 Runtime Stabilization Program is implementation-complete pending production authenticated verification, and must not be marked production-complete until `app.ixuan.ai` manual verification passes after the read-storm fix.
+Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. Later production evidence narrowed the remaining HUNG to Settings / Copilot route-entry diagnostics and Workspace Graph fan-out. V12.1 / V12.2 must not be marked production-complete until `app.ixuan.ai` Settings / Copilot manual verification passes after the targeted fix.
 
 ## Runtime Stabilization Program Status
 
@@ -33,8 +33,9 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 did not fully resolve production authenticated read storms.
-- V12.1 Runtime Stabilization requires production verification after the authenticated read-storm fix before it can be marked production-complete.
+- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG.
+- V12.2 targets Settings / Copilot route-entry fan-out specifically.
+- V12.1 / V12.2 requires production Settings / Copilot manual verification before it can be marked complete.
 
 ## Audit Basis
 

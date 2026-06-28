@@ -6,44 +6,68 @@ import { Bot, RefreshCw } from "lucide-react";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { getWorkspaceCopilotSummary } from "@/src/lib/copilot";
 import type { WorkspaceCopilotSummary } from "@/src/lib/copilot";
-import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
+import { runWorkspaceRuntimeBudget, runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
+
+function buildSafeCopilotShell(): WorkspaceCopilotSummary {
+  return {
+    capabilityCount: 1,
+    explanations: [
+      {
+        capability: "explain_data_quality",
+        id: "copilot-safe-shell",
+        sourceEngine: "safe_shell",
+        summary:
+          "Copilot diagnostics are paused until you request a refresh. This keeps route entry lightweight while preserving explain-only behavior.",
+        title: "Runtime-safe Copilot shell",
+      },
+    ],
+    generatedAt: new Date().toISOString(),
+    informationalOnlyDisclaimer:
+      "Workspace Copilot is rule-based and explain-only. It does not call AI models and does not provide buy, sell, hold, target price, or order instructions.",
+    mode: "rule_based_explain_only",
+  };
+}
 
 export function WorkspaceCopilotSummary() {
-  const [summary, setSummary] = useState<WorkspaceCopilotSummary | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [summary, setSummary] = useState<WorkspaceCopilotSummary>(() => buildSafeCopilotShell());
+  const [isLoading, setIsLoading] = useState(false);
   const mountedRef = useRef(false);
+
+  useEffect(() => {
+    mountedRef.current = true;
+
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   async function refresh() {
     setIsLoading(true);
-    const result = await runWorkspaceSafe(
-      "workspace-copilot-summary",
-      getWorkspaceCopilotSummary,
-      null,
+    const fallback = buildSafeCopilotShell();
+    const result = await runWorkspaceRuntimeBudget(
+      "copilot-summary-manual-refresh",
+      () =>
+        runWorkspaceSafe(
+          "workspace-copilot-summary",
+          getWorkspaceCopilotSummary,
+          fallback,
+        ),
+      {
+        data: fallback,
+        error: null,
+        label: "workspace-copilot-summary",
+        ok: true,
+      },
+      { threshold: 3, timeoutMs: 3000 },
     );
 
     if (!mountedRef.current) {
       return;
     }
 
-    setSummary(result.data);
+    setSummary(result.data ?? fallback);
     setIsLoading(false);
   }
-
-  useEffect(() => {
-    let cancelled = false;
-    mountedRef.current = true;
-
-    queueMicrotask(() => {
-      if (!cancelled) {
-        void refresh();
-      }
-    });
-
-    return () => {
-      cancelled = true;
-      mountedRef.current = false;
-    };
-  }, []);
 
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
@@ -69,7 +93,7 @@ export function WorkspaceCopilotSummary() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "讀取中" : "重新整理"}
+          {isLoading ? "讀取中" : "Run summary"}
         </button>
       </div>
 
