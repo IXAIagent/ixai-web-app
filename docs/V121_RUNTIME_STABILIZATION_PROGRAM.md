@@ -2,9 +2,9 @@
 
 ## Scope
 
-V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, and large `Uncaught (in promise)` storms.
+V12.1 is a runtime stability program for production Workspace pages that were still vulnerable to cross-page crashes, Chrome Error code 5, large `Uncaught (in promise)` storms, and production Chrome Renderer HUNG.
 
-Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. The full V12.1 Runtime Stabilization Program is implementation-complete pending production authenticated verification, and must not be marked production-complete until `app.ixuan.ai` manual verification passes after the read-storm fix.
+Program A completed Root Provider Stabilization. Program B covers Workspace Runtime Hydration Safety. Program E covers Service Worker Fetch Safety. PR #79 merged the Program C, Program D, and production gray-screen regression implementation, but production verification still found authenticated read storms. PR #80 reduced authenticated read-storm pressure, but production still reports Renderer HUNG on Settings, Copilot, and Intelligence route-switch stress. The full V12.1 Runtime Stabilization Program remains production-incomplete until the V12.2 production root-cause evidence program confirms and fixes the HUNG cause.
 
 ## Runtime Stabilization Program Status
 
@@ -33,8 +33,11 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 did not fully resolve production authenticated read storms.
-- V12.1 Runtime Stabilization requires production verification after the authenticated read-storm fix before it can be marked production-complete.
+- PR #79 and PR #80 did not resolve production Renderer HUNG.
+- Local production-like QA is insufficient as completion evidence.
+- V12.1 Runtime Stabilization requires production root-cause evidence, a targeted fix, and production route-switch verification before it can be marked production-complete.
+- V12.2 evidence playbook: `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`.
+- Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work until the production HUNG root cause is confirmed and fixed.
 
 ## Audit Basis
 

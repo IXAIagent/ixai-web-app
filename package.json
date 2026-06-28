@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "qa:mobile": "node scripts/qa-mobile.mjs",
+    "qa:production-runtime-evidence": "node scripts/collect-production-runtime-evidence.mjs",
     "qa:visual": "node scripts/qa-visual.mjs"
   },
   "dependencies": {

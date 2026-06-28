@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.1 — Runtime Stabilization Program / Authenticated Read Storm Fix / Pending Production Verification`
+`V12.2 — Production Runtime Root Cause Investigation`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79. Production verification after PR #79 still found an authenticated read storm: private Supabase reads for tables such as `stock_positions`, `crypto_positions`, and `watchlist_items` could fire before or without stable authenticated session state, producing repeated `401 Unauthorized` responses, while optional `ixai_profile_memory` / `ixai_user_preferences` missing-table fallbacks could still repeat. The current emergency fix adds authenticated private-table read gating, browser-session cooldowns, optional-table session disable, Portfolio Truth read coalescing, and mounted guards for route-switch safety. V12.1 Runtime Stabilization implementation is complete pending production authenticated verification; it is not production-complete until `app.ixuan.ai` manual verification passes after this fix. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79, and PR #80 reduced authenticated Supabase read storms. Production `app.ixuan.ai` still reports Chrome Renderer HUNG / `RESULT_CODE_HUNG` on Settings, Copilot, and Intelligence route-switch stress. V12.1 remains production-incomplete. V12.2 is a production root-cause evidence program: local QA is insufficient as completion evidence, and the next decision requires production evidence capture from `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
 
 Runtime Stabilization Program Status:
 
@@ -91,8 +91,10 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 did not fully resolve production runtime instability.
-- V12.1 Runtime Stabilization requires production authenticated verification after the read-storm fix before it can be marked production-complete.
+- PR #79 and PR #80 did not resolve production Renderer HUNG.
+- Local production-like QA is insufficient as completion evidence.
+- V12.1 Runtime Stabilization requires production root-cause evidence, a targeted fix, and production route-switch verification before it can be marked production-complete.
+- Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work until the production HUNG root cause is confirmed and fixed.
 
 Program E production verification note:
 
