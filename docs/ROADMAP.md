@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V12.1 Runtime Stabilization Program - Completion Branch / A+B+C+D+E Complete After Merge`
+`V12.1 Runtime Stabilization Program - Authenticated Read Storm Fix / Pending Production Verification`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V12.1 Runtime Stabilization Program completion validation. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Workspace Runtime Hydration Safety, contains Workspace client refresh, mounted-effect, diagnostics, and browser-storage parse failure paths so Workspace pages degrade to fallback UI instead of creating unhandled promise storms or white screens. Program E, Service Worker Fetch Safety, contains `public/sw.js` fetch and cache failure paths so service-worker-originated `Uncaught (in promise) TypeError: Failed to fetch` storms do not flood the console during Workspace navigation. This completion branch finishes Program C, Program D, and the optional Supabase table gray-screen regression. The overall V12.1 Runtime Stabilization Program is complete only after the completion PR is merged.
+Current priority is V12.1 Runtime Stabilization authenticated production verification. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has merged, including PR #79. Production testing after PR #79 still showed authenticated read storms and route-switch gray-screen risk: private Supabase reads such as `stock_positions`, `crypto_positions`, and `watchlist_items` could repeat `401 Unauthorized`, and optional profile/preferences table `404` fallbacks could still repeat. The current fix adds authenticated private-table read gating, session cooldowns, optional-table session disable, Portfolio Truth read coalescing, and mounted guards. V12.1 Runtime Stabilization implementation is complete pending production verification; it is not production-complete until `app.ixuan.ai` authenticated manual QA passes after this fix.
 
 Runtime Stabilization Program Status:
 
@@ -33,8 +33,9 @@ Completed:
 
 Important:
 
-- Program A, Program B, Program C, Program D, and Program E are complete in this branch after validation.
-- The full V12.1 Runtime Stabilization Program is complete only after the completion PR is merged.
+- Program A, Program B, Program C, Program D, and Program E implementation work has merged.
+- PR #79 did not fully resolve production authenticated read storms.
+- The full V12.1 Runtime Stabilization Program requires production authenticated verification after this fix before it can be marked production-complete.
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.

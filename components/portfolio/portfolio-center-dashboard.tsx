@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   BadgeCheck,
   BrainCircuit,
@@ -448,6 +448,7 @@ function StressTestResultCard({ result }: { result: PortfolioStressTestResult })
 }
 
 export function PortfolioCenterDashboard() {
+  const mountedRef = useRef(false);
   const [summary, setSummary] = useState<PortfolioDashboardSummary | null>(null);
   const [ownershipStatus, setOwnershipStatus] =
     useState<PortfolioOwnershipValidationStatus | null>(null);
@@ -484,9 +485,17 @@ export function PortfolioCenterDashboard() {
   );
 
   const loadSummary = useCallback(async () => {
+    if (!mountedRef.current) {
+      return;
+    }
+
     setStatus("loading");
 
     const headers = await getSupabaseAuthorizationHeaders();
+
+    if (!mountedRef.current) {
+      return;
+    }
 
     if (!headers) {
       setSummary(null);
@@ -584,6 +593,10 @@ export function PortfolioCenterDashboard() {
       });
       const payload = (await response.json().catch(() => ({}))) as DashboardResponse;
 
+      if (!mountedRef.current) {
+        return;
+      }
+
       if (!response.ok || !payload.summary) {
         setSummary(payload.summary ?? null);
         setOwnershipStatus(repositoryOwnershipStatus);
@@ -627,6 +640,10 @@ export function PortfolioCenterDashboard() {
       setPortfolioRecommendationReport(recommendationReport);
       setStatus("ready");
     } catch {
+      if (!mountedRef.current) {
+        return;
+      }
+
       setSummary(null);
       setOwnershipStatus(null);
       setRepositoryAccounts([]);
@@ -650,9 +667,19 @@ export function PortfolioCenterDashboard() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    mountedRef.current = true;
+
     queueMicrotask(() => {
-      void loadSummary();
+      if (!cancelled) {
+        void loadSummary();
+      }
     });
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+    };
   }, [loadSummary]);
 
   const assetCategories = summary?.portfolioAssetCategories ?? [];

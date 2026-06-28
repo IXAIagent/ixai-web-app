@@ -1,4 +1,8 @@
 import { getSupabaseClientConfig } from "@/src/lib/supabase/client";
+import {
+  createAuthenticatedReadGate,
+  safeAuthenticatedSupabaseRead,
+} from "@/src/lib/workspace/runtime-safety/authenticated-supabase";
 
 export type DatabaseActivationTableStatus =
   | "configured"
@@ -34,46 +38,58 @@ export async function readDatabaseTable<TRow>(
     };
   }
 
-  try {
-    const response = await fetch(
+  const authState = await createAuthenticatedReadGate();
+  const result = await safeAuthenticatedSupabaseRead<TRow[]>(table, authState, (state) =>
+    fetch(
       `${config.url.replace(/\/$/, "")}/rest/v1/${table}?select=${encodeURIComponent(select)}&limit=50`,
       {
         cache: "no-store",
         headers: {
           apikey: config.anonKey,
-          authorization: `Bearer ${config.anonKey}`,
+          authorization: `Bearer ${state.accessToken}`,
         },
       },
-    );
+    ),
+  );
 
-    if (!response.ok) {
+  if (!result.ok) {
+    if (result.reason === "missing_table") {
       return {
         generatedAt: new Date().toISOString(),
         rows: [],
-        status: isMissingTableStatus(response.status) ? "missing" : "error",
+        status: "missing",
         table,
-        warnings: [`${table} readback returned HTTP ${response.status}; fallback remains active.`],
+        warnings: [`${table} is missing or unreadable; fallback remains active.`],
       };
     }
 
-    const payload = await response.json();
-
-    return {
-      generatedAt: new Date().toISOString(),
-      rows: Array.isArray(payload) ? (payload as TRow[]) : [],
-      status: "configured",
-      table,
-      warnings: [],
-    };
-  } catch {
     return {
       generatedAt: new Date().toISOString(),
       rows: [],
-      status: "error",
+      status:
+        result.status && isMissingTableStatus(result.status)
+          ? "missing"
+          : result.reason === "missing_auth" || result.reason === "disabled"
+            ? "unavailable"
+            : "error",
       table,
-      warnings: [`${table} database readback failed safely; fallback remains active.`],
+      warnings: [
+        result.reason === "missing_auth"
+          ? `${table} readback skipped until an authenticated Supabase session is available.`
+          : result.reason === "disabled"
+            ? `${table} readback is temporarily disabled after an authenticated fallback.`
+            : `${table} readback returned ${result.status ? `HTTP ${result.status}` : result.reason}; fallback remains active.`,
+      ],
     };
   }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    rows: Array.isArray(result.data) ? result.data : [],
+    status: "configured",
+    table,
+    warnings: [],
+  };
 }
 
 export function summarizeTableStatuses(

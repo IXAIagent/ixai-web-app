@@ -6,6 +6,14 @@ import type { PortfolioPosition } from "@/src/lib/portfolio/data-model/portfolio
 import { createSupabaseBrowserClient } from "@/src/lib/supabase/client";
 import type { PortfolioRepository } from "@/src/lib/portfolio/repository/portfolio-repository";
 import type { PortfolioAssetCreateInput } from "@/src/lib/portfolio/repository/portfolio-asset-repository";
+import {
+  createAuthenticatedReadGate,
+  isPrivateTableTemporarilyDisabled,
+  isSupabaseUnauthorizedError,
+  markPrivateTableUnauthorized,
+  type AuthenticatedSupabaseReadState,
+} from "@/src/lib/workspace/runtime-safety/authenticated-supabase";
+import { logWorkspaceRuntimeWarning } from "@/src/lib/workspace/runtime-safety/runtime-logger";
 
 type PortfolioAccountRow = {
   account_type: PortfolioAccount["accountType"];
@@ -67,6 +75,38 @@ async function getSupabaseOrThrow(): Promise<{
     supabase,
     userId: data.user.id,
   };
+}
+
+async function getSupabaseReadContext(): Promise<{
+  authState: AuthenticatedSupabaseReadState;
+  supabase: SupabaseClient;
+  userId: string;
+}> {
+  const supabase = createSupabaseBrowserClient();
+  const authState = await createAuthenticatedReadGate();
+
+  if (!supabase || !authState.accessToken || !authState.userId) {
+    throw new Error("Authentication required");
+  }
+
+  return {
+    authState,
+    supabase,
+    userId: authState.userId,
+  };
+}
+
+function handleRepositoryReadError(
+  tableName: string,
+  error: unknown,
+  authState: AuthenticatedSupabaseReadState,
+) {
+  if (isSupabaseUnauthorizedError(error)) {
+    markPrivateTableUnauthorized(tableName, "supabase_repository_unauthorized", authState);
+    return;
+  }
+
+  logWorkspaceRuntimeWarning("portfolio-repository-read-fallback", error, { tableName });
 }
 
 function mapAccount(row: PortfolioAccountRow): PortfolioAccount {
@@ -213,7 +253,12 @@ export const supabasePortfolioRepository: PortfolioRepository = {
   },
 
   async getAccounts() {
-    const { supabase, userId } = await getSupabaseOrThrow();
+    const { authState, supabase, userId } = await getSupabaseReadContext();
+
+    if (isPrivateTableTemporarilyDisabled("portfolio_accounts", authState)) {
+      return [];
+    }
+
     const { data, error } = await supabase
       .from("portfolio_accounts")
       .select(
@@ -223,14 +268,20 @@ export const supabasePortfolioRepository: PortfolioRepository = {
       .order("created_at", { ascending: true });
 
     if (error) {
-      throw new Error("Unable to read portfolio accounts");
+      handleRepositoryReadError("portfolio_accounts", error, authState);
+      return [];
     }
 
     return ((data ?? []) as PortfolioAccountRow[]).map(mapAccount);
   },
 
   async getAssets() {
-    const { supabase, userId } = await getSupabaseOrThrow();
+    const { authState, supabase, userId } = await getSupabaseReadContext();
+
+    if (isPrivateTableTemporarilyDisabled("portfolio_assets", authState)) {
+      return [];
+    }
+
     const { data, error } = await supabase
       .from("portfolio_assets")
       .select(
@@ -240,14 +291,31 @@ export const supabasePortfolioRepository: PortfolioRepository = {
       .order("created_at", { ascending: false });
 
     if (error) {
-      throw new Error("Unable to read portfolio assets");
+      handleRepositoryReadError("portfolio_assets", error, authState);
+      return [];
     }
 
     return ((data ?? []) as PortfolioAssetRow[]).map(mapAsset);
   },
 
   async getOwnershipValidationStatus() {
-    const { supabase, userId } = await getSupabaseOrThrow();
+    const { authState, supabase, userId } = await getSupabaseReadContext();
+
+    if (
+      isPrivateTableTemporarilyDisabled("portfolio_accounts", authState) ||
+      isPrivateTableTemporarilyDisabled("portfolio_assets", authState) ||
+      isPrivateTableTemporarilyDisabled("portfolio_positions", authState)
+    ) {
+      return {
+        accountCount: 0,
+        assetCount: 0,
+        currentAccountId: null,
+        currentUserId: userId,
+        positionCount: 0,
+        repositorySource: "supabase_repository",
+        rlsStatus: "unauthenticated",
+      };
+    }
 
     const [accountsResult, assetsResult, positionsResult] = await Promise.all([
       supabase
@@ -267,7 +335,25 @@ export const supabasePortfolioRepository: PortfolioRepository = {
     ]);
 
     if (accountsResult.error || assetsResult.error || positionsResult.error) {
-      throw new Error("Unable to validate portfolio ownership");
+      if (accountsResult.error) {
+        handleRepositoryReadError("portfolio_accounts", accountsResult.error, authState);
+      }
+      if (assetsResult.error) {
+        handleRepositoryReadError("portfolio_assets", assetsResult.error, authState);
+      }
+      if (positionsResult.error) {
+        handleRepositoryReadError("portfolio_positions", positionsResult.error, authState);
+      }
+
+      return {
+        accountCount: 0,
+        assetCount: 0,
+        currentAccountId: null,
+        currentUserId: userId,
+        positionCount: 0,
+        repositorySource: "supabase_repository",
+        rlsStatus: "unauthenticated",
+      };
     }
 
     return {
@@ -282,7 +368,12 @@ export const supabasePortfolioRepository: PortfolioRepository = {
   },
 
   async getPositions() {
-    const { supabase, userId } = await getSupabaseOrThrow();
+    const { authState, supabase, userId } = await getSupabaseReadContext();
+
+    if (isPrivateTableTemporarilyDisabled("portfolio_positions", authState)) {
+      return [];
+    }
+
     const { data, error } = await supabase
       .from("portfolio_positions")
       .select(
@@ -292,7 +383,8 @@ export const supabasePortfolioRepository: PortfolioRepository = {
       .order("created_at", { ascending: false });
 
     if (error) {
-      throw new Error("Unable to read portfolio positions");
+      handleRepositoryReadError("portfolio_positions", error, authState);
+      return [];
     }
 
     return ((data ?? []) as PortfolioPositionRow[]).map(mapPosition);

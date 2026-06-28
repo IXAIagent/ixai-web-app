@@ -19,6 +19,15 @@ type DashboardResponse = {
   summary?: PortfolioDashboardSummary;
 };
 
+const TRUTH_READBACK_CACHE_MS = 1500;
+
+let cachedTruthReadback:
+  | {
+      expiresAt: number;
+      promise: Promise<PortfolioTruthReadback>;
+    }
+  | null = null;
+
 async function readPositions<T>(
   path: string,
   headers: HeadersInit,
@@ -61,6 +70,20 @@ async function readPortfolioDashboard(
 }
 
 export async function loadPortfolioTruthReadback(): Promise<PortfolioTruthReadback> {
+  if (cachedTruthReadback && Date.now() < cachedTruthReadback.expiresAt) {
+    return cachedTruthReadback.promise;
+  }
+
+  const promise = loadPortfolioTruthReadbackUncached();
+  cachedTruthReadback = {
+    expiresAt: Date.now() + TRUTH_READBACK_CACHE_MS,
+    promise,
+  };
+
+  return promise;
+}
+
+async function loadPortfolioTruthReadbackUncached(): Promise<PortfolioTruthReadback> {
   const pendingInputs = loadPendingPortfolioInputs();
   const authHeaders = await getSupabaseAuthorizationHeaders();
 

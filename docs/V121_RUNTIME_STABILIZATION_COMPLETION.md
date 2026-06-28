@@ -2,9 +2,9 @@
 
 ## Scope
 
-This completion branch finishes the remaining V12.1 runtime stabilization work after Program A, Program B, and Program E.
+This completion branch finished the remaining V12.1 runtime stabilization implementation work after Program A, Program B, and Program E.
 
-V12.1 is complete only after this PR is merged.
+PR #79 merged this implementation, but production verification later found an authenticated Supabase read storm. V12.1 Runtime Stabilization must now be treated as implementation-complete pending production authenticated verification after `docs/V121_PRODUCTION_AUTHENTICATED_READ_STORM_FIX.md`.
 
 Completed before this branch:
 
@@ -148,3 +148,5 @@ Future work should focus on monitored production validation after deploy:
 - Confirm optional Supabase table warnings do not spam.
 - Confirm production browsers are running the newest service worker.
 - Confirm no gray-screen regression after extended Workspace sessions.
+- Confirm authenticated private reads no longer create repeated `stock_positions`, `crypto_positions`, or `watchlist_items` `401` storms.
+- Confirm V12.1 is not marked production-complete until `app.ixuan.ai` manual verification passes.
