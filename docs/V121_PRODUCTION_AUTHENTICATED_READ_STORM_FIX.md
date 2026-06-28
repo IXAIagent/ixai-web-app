@@ -12,11 +12,19 @@ Observed production symptoms:
 - Optional Supabase table `404` conditions became warnings, but could still repeat across route sessions.
 - Private tables such as `stock_positions`, `crypto_positions`, and `watchlist_items` could be read before a stable authenticated session was available, producing repeated `401 Unauthorized` results.
 
-V12.1 must not be marked production-complete until authenticated production verification and the later Settings / Copilot runtime hang verification both pass. The read-storm fix reduced one failure mode but did not complete runtime stabilization.
+V12.1 must not be marked production-complete until authenticated production verification and the later Settings / Copilot runtime hang verification both pass. PR #80 reduced read-storm pressure but did not prove production renderer stability. See `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md` and `docs/V122_SETTINGS_COPILOT_RUNTIME_HANG_FIX.md`.
 
 ## Root Cause
 
 Production authenticated Supabase reads were still firing before, without, or after loss of stable auth state.
+
+Status correction:
+
+- This document records the authenticated read-storm fix.
+- It does not close V12.1 Runtime Stabilization.
+- Production still reports Chrome Renderer HUNG / `RESULT_CODE_HUNG` after PR #79 and PR #80.
+- Local QA is insufficient as completion evidence.
+- Next decision requires production evidence capture before another fix is attempted.
 
 The highest-risk path was the client-side database readiness/readback layer:
 
@@ -133,3 +141,4 @@ Status wording:
 
 - This authenticated read-storm fix is only one V12 runtime stabilization slice.
 - V12.1 / V12.2 remains production-incomplete until `app.ixuan.ai` Settings / Copilot manual verification passes after the targeted runtime hang fix.
+- V12.1 / V12.2 remains production-incomplete because production HUNG continued after this fix.

@@ -30,6 +30,30 @@ Key Decisions:
 - V12.1 / V12.2 remains production-incomplete until Settings / Copilot manual verification passes on `app.ixuan.ai`.
 - No auth behavior, RLS, schema, migration, membership, billing, scheduler, broker, trading, AI recommendation, or notification delivery behavior changed.
 
+## V12.2 Production Runtime Root Cause Investigation
+
+Why:
+
+- PR #79 and PR #80 did not resolve production Chrome Renderer HUNG / `RESULT_CODE_HUNG`.
+- Local production-like QA can pass while `https://app.ixuan.ai` still hangs on Settings, Copilot, and Intelligence route-switch stress.
+- 401/404 storms were reduced but are not sufficient root-cause evidence.
+- The next decision must be based on production evidence, not another guessed fallback.
+
+What Changed:
+
+- Added `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`.
+- Added `scripts/collect-production-runtime-evidence.mjs`.
+- Added `npm run qa:production-runtime-evidence`.
+- Added a V12.1 deadlock carry-forward note at `docs/V121_WORKSPACE_RUNTIME_DEADLOCK_INVESTIGATION.md`.
+
+Key Decisions:
+
+- V12.1 remains production-incomplete.
+- Current blocker is production-only Renderer HUNG.
+- Local QA is insufficient as completion evidence.
+- Required evidence includes at least one of: Chrome Performance trace, runtime diagnostics top key, Network waterfall loop, Service Worker disabled test, Incognito clean-profile result, different browser result, preview deployment result, or production deployment build/commit verification.
+- Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work until the production HUNG root cause is confirmed and fixed.
+
 ## V12.1 Production Authenticated Read Storm Fix
 
 Why:
@@ -104,8 +128,9 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 did not fully resolve production authenticated read storms.
-- The full V12.1 Runtime Stabilization Program requires production authenticated verification after the read-storm fix before it can be marked production-complete.
+- PR #79 and PR #80 did not resolve production Renderer HUNG.
+- Local production-like QA is insufficient as completion evidence.
+- The full V12.1 Runtime Stabilization Program requires production root-cause evidence, a targeted fix, and production route-switch verification before it can be marked production-complete.
 
 ## V12.1 Runtime Stabilization Program / Program B Complete
 
