@@ -64,9 +64,30 @@ Production foundation:
 
 Current development version:
 
-`V12.1 — Runtime Stabilization Program / Program A`
+`V12.1 — Runtime Stabilization Program / Partial Complete / Program A Complete`
 
-V12.1 Program A is the current runtime stability slice. It addresses the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. This slice does not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler, broker, trading, or recommendation behavior. Program B safe async helper, Program C diagnostics stabilization, Program D runtime monitor, and Program E service worker safety remain pending.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). It addressed the highest-confidence finding from `docs/WORKSPACE_RUNTIME_AUDIT_20260627.md`: root provider async paths in `AuthProvider` and `IdentityProvider` must never create global `Uncaught (in promise)` storms when Supabase auth/session, storage, or network paths fail. This slice did not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler, broker, trading, or recommendation behavior.
+
+Runtime Stabilization Program Status:
+
+Completed:
+
+- Program A — Root Provider Stabilization.
+  - Root auth runtime promises stabilized.
+  - PR #75 merged.
+  - Commit: `9c73915`.
+
+Pending:
+
+- Program B — Workspace Runtime Stabilization.
+- Program C — Market / Morning Brief Runtime Stabilization.
+- Program D — Admin / Scheduler Runtime Stabilization.
+
+Important:
+
+- Only Program A is complete.
+- The full V12.1 Runtime Stabilization Program is partial complete, not complete.
+- Program B safe async helper, Program C diagnostics stabilization, Program D runtime monitor, and Program E service worker safety remain pending/deferred follow-up work.
 
 Current production state:
 
