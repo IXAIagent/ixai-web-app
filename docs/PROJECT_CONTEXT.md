@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V12.2 — Settings / Copilot Runtime Hang Fix`
+`V12.3 — Production API 404 Cleanup Audit`
 
-V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79, and PR #80 reduced authenticated Supabase read storms. Production evidence now shows Service Worker/site-data clearing does not remove the blocker, Intelligence is normal, and the remaining HUNG path is concentrated on Settings / Copilot shared diagnostics and Workspace Graph runtime fan-out. V12.2 targets Settings / Copilot by making initial route render lightweight and moving heavy diagnostics/summary builders behind manual runtime-budgeted actions. The production evidence playbook remains `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`, and the targeted fix note is `docs/V122_SETTINGS_COPILOT_RUNTIME_HANG_FIX.md`. V12.1 / V12.2 remains production-incomplete until `app.ixuan.ai` manual verification passes after this targeted fix. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
+V12.1 Program A is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has also merged, including PR #79, and PR #80 reduced authenticated Supabase read storms. PR #82 targeted Settings / Copilot by making initial route render lightweight and moving heavy diagnostics/summary builders behind manual runtime-budgeted actions. Production manual verification after PR #82 shows `/my-ixai/home`, `/my-ixai/settings`, and `/my-ixai/copilot` normal, with no observed `RESULT_CODE_HUNG`, gray screen, white screen, or `401` storm. Remaining observed production issue is API cleanup for 404 requests whose URL fragments include `completed&limit=1` and `categories&limit=1`. V12.3 starts as audit-only in `docs/V123_PRODUCTION_API_404_CLEANUP_AUDIT.md`. V12 remains under continued production observation and must not be marked complete from this audit alone. These slices do not change auth business logic, RLS, schema, Supabase policy, membership, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior.
 
 Runtime Stabilization Program Status:
 
@@ -91,10 +91,10 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG.
+- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG; PR #82 appears to have resolved it in manual production verification.
 - Local production-like QA is insufficient as completion evidence.
-- V12.2 targets Settings / Copilot route-entry fan-out specifically.
-- V12.1 / V12.2 must not be marked complete until production Settings / Copilot manual verification passes.
+- V12.3 is audit-only for remaining production 404 cleanup around optional personalization requests.
+- V12 must not be marked complete from this audit alone.
 - Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work until the production HUNG root cause is confirmed and fixed.
 
 Program E production verification note:

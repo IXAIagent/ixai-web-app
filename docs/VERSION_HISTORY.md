@@ -6,6 +6,29 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12.3 Production API 404 Cleanup Audit
+
+Why:
+
+- PR #82 production manual verification showed `/my-ixai/home`, `/my-ixai/settings`, and `/my-ixai/copilot` normal.
+- No `RESULT_CODE_HUNG`, gray screen, white screen, or authenticated `401` storm was observed in that manual check.
+- Production Console still showed 404 URL fragments containing `completed&limit=1` and `categories&limit=1`.
+- The next step is source mapping and classification before any cleanup fix.
+
+What Changed:
+
+- Added `docs/V123_PRODUCTION_API_404_CLEANUP_AUDIT.md`.
+- Updated status docs to record V12.3 as audit-only.
+- No runtime code, routing, auth, Supabase schema, migration, RLS, membership, billing, scheduler, broker, trading, recommendation, OpenAI, or AI behavior changed.
+
+Key Decisions:
+
+- `completed&limit=1` maps to optional `ixai_profile_memory` readback selecting `onboarding_completed`.
+- `categories&limit=1` maps to optional `ixai_user_preferences` readback selecting `preferred_categories`.
+- Both requests are optional personalization sync resources with local fallback.
+- The likely production condition is missing/deferred optional identity/account persistence tables, but this audit does not apply migrations.
+- V12 remains under continued production observation and must not be marked complete from this audit alone.
+
 ## V12.2 Settings / Copilot Runtime Hang Fix
 
 Why:
