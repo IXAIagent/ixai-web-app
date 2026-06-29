@@ -64,9 +64,11 @@ Production foundation:
 
 Current development version:
 
-`V13.0 — Internationalization Foundation`
+`V14.0 — Live Workspace Program Planning`
 
-V13.0 adds the Internationalization Foundation for the IXAI Public App and Workspace. It introduces a shared type-safe locale layer under `src/lib/i18n`, a shared `LanguageSwitcher`, and a common `ixai.locale` localStorage + cookie preference for unauthenticated public users and authenticated Workspace users. Supported locales are `zh-TW` default, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`. V13.0 only connects foundation-level labels such as public navigation, Workspace navigation, the language switcher, and the Workspace Settings Language card. It does not translate Daily / Weekly content, Portfolio / FCN / Risk data, symbols, tickers, admin editorial content, or full pages. It does not read or write Supabase, does not enable `ixai_user_preferences` sync, and does not change auth, RLS, schema, migrations, billing, scheduler activation, broker, trading, recommendation, OpenAI, or AI behavior. See `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`.
+V14.0 opens the Live Workspace mainline as a docs-only program plan. The goal is to move IXAI from a stable Workspace and i18n foundation into a daily usable live risk-awareness workspace through live market data, live portfolio valuation, FCN live risk, Workspace Intelligence, Workspace Morning Brief, and Beta readiness. V14.0 does not implement live market features and does not change product code, auth, RLS, schema, migrations, billing, broker, trading, recommendation, scheduler, notification delivery, OpenAI, or AI behavior. See `docs/V1400_LIVE_WORKSPACE_PROGRAM.md`.
+
+V13.0 Internationalization Foundation is complete. It introduced the shared Public App + Workspace locale foundation for `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`. V13 remains a side track after V14 Beta: return to V13.1 Dictionary Migration, V13.2 Translation Packs, V13.3 Region, V13.4 Currency, and V13.5 Localization after the V14 Beta milestone.
 
 Runtime Stabilization Program Status:
 
@@ -93,10 +95,12 @@ Important:
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
 - PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG; PR #82 appears to have resolved it in manual production verification.
 - Local production-like QA is insufficient as completion evidence.
+- V12 production runtime stabilization has passed production manual verification.
 - V13.0 is i18n foundation only, not full-site translation.
 - Public users can change language without registration; Workspace Settings manages the same locale state.
 - Locale state uses localStorage + cookie only; no Supabase preference sync is enabled.
-- Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work until the production HUNG root cause is confirmed and fixed.
+- V14 is now the active product mainline, starting with docs-only Live Workspace Program planning.
+- Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or new AI model behavior without the explicit V14 phase plan and approval.
 
 Program E production verification note:
 

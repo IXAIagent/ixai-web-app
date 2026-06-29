@@ -62,6 +62,14 @@ V13.0 implementation note:
 - This is foundation-only and does not translate full market content, Daily / Weekly articles, Portfolio / FCN / Risk data, symbols, tickers, or admin editorial content.
 - No Supabase preference sync, auth/RLS/schema/migration, billing, broker, trading, recommendation, scheduler, OpenAI, or AI behavior is enabled by this foundation.
 
+V14.0 Live Workspace planning note:
+
+- V14 becomes the active product mainline after V13.0 foundation.
+- Live market data, portfolio valuation, FCN live risk, Workspace Intelligence, and Morning Brief work must remain global-market-ready.
+- V14 live data work must not assume US-only equities, English-only content, or single-provider availability.
+- Provider health, fallback, currency, market, region, and source-quality labels should be designed so future Taiwan, Hong Kong, China, Japan, Korea, Europe, Singapore, crypto, and FCN structured-product coverage can fit without rewrites.
+- V14.0 is docs-only planning and does not implement live providers, broker integration, trading, recommendation, AI model calls, scheduler delivery, auth/RLS/schema/migration, or billing changes.
+
 ## Architecture Principle
 
 All engines must be market-agnostic, including:

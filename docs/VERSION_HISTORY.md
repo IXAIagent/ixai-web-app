@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V14.0 Live Workspace Program Planning
+
+Why:
+
+- V12 production runtime stabilization has passed production manual verification.
+- V12.3.1 optional personalization fallback has removed optional personalization 404 noise as a product blocker.
+- V13.0 Internationalization Foundation is complete.
+- IXAI now needs a clear V14 mainline to move from stable Workspace + i18n foundation toward a daily usable Live Workspace.
+
+What Changed:
+
+- Added `docs/V1400_LIVE_WORKSPACE_PROGRAM.md`.
+- Updated roadmap, project context, project map, version history, and global market vision status.
+- Recorded the V14 sequence: V14.1 Live Market Data, V14.2 Live Portfolio Valuation, V14.3 FCN Live Risk, V14.4 Workspace Intelligence, V14.5 Workspace Morning Brief, and V14.6 Beta Readiness.
+- Recorded that V13 remains an internationalization side track after V13.0.
+
+Key Decisions:
+
+- V14 becomes the active product mainline.
+- V14.0 is docs-only planning and does not implement live market features.
+- After V14 Beta, return to V13.1 Dictionary Migration, V13.2 Translation Packs, V13.3 Region, V13.4 Currency, and V13.5 Localization.
+- V14 must remain monitoring, intelligence, workflow, and risk-awareness oriented.
+- No auth, RLS, schema, migration, billing, broker, trading, recommendation, scheduler, notification delivery, OpenAI, or AI behavior changed.
+
 ## V13.0 Internationalization Foundation
 
 Why:
