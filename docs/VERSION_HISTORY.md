@@ -6,6 +6,32 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V14 Sprint 2 Workspace Intelligence + Morning Brief
+
+Why:
+
+- V14 Sprint 1 completed live market data, live portfolio valuation, and FCN live risk.
+- IXAI needs those source layers to become daily-readable Workspace Intelligence and Morning Brief surfaces.
+- V14.4 and V14.5 are tightly connected and should ship as one Sprint.
+
+What Changed:
+
+- Added `docs/V14_SPRINT_2_WORKSPACE_INTELLIGENCE_BRIEF.md`.
+- Added `src/lib/workspace/intelligence/` for deterministic V14 Workspace Intelligence cards.
+- Added `src/lib/workspace/morning-brief/` for on-demand Workspace Morning Brief sections.
+- Updated Timeline grouping to overdue, today, next 7 days, and later.
+- Updated Copilot manual Run summary to include Workspace Intelligence and Morning Brief status when available.
+- Added Home Morning Brief snapshot and Intelligence Center detailed V14 cards / brief sections.
+
+Key Decisions:
+
+- Sprint 2 is rule-based and explain-only.
+- No AI model calls are added.
+- No buy / sell / hold recommendations, target prices, trading signals, broker integration, or order instructions are added.
+- Morning Brief is Workspace-readable only in this Sprint.
+- No scheduled delivery, notification activation, Telegram, LINE, or email send is added.
+- V14.6 Beta Readiness remains pending.
+
 ## V14 Sprint 1 Live Market Workspace
 
 Why:

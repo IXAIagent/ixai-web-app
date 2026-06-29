@@ -56,16 +56,16 @@ function groupEvents(events: WorkspaceTimelineEvent[]): WorkspaceTimelineGroup[]
       key: "overdue",
     },
     {
-      events: events.filter((event) => event.daysUntil >= 0 && event.daysUntil <= 7),
+      events: events.filter((event) => event.daysUntil === 0),
+      key: "today",
+    },
+    {
+      events: events.filter((event) => event.daysUntil > 0 && event.daysUntil <= 7),
       key: "next7Days",
     },
     {
-      events: events.filter((event) => event.daysUntil > 7 && event.daysUntil <= 30),
-      key: "next30Days",
-    },
-    {
-      events: events.filter((event) => event.daysUntil > 30),
-      key: "future",
+      events: events.filter((event) => event.daysUntil > 7),
+      key: "later",
     },
   ];
 }
@@ -112,7 +112,23 @@ export function buildWorkspaceTimelineSummary(input: {
       };
     })
     .filter((event): event is WorkspaceTimelineEvent => Boolean(event));
-  const events = [...scheduleEvents, ...alertEvents].sort(
+  const dataQualityEvents: WorkspaceTimelineEvent[] =
+    input.fcnSchedule.sourceStatus === "unavailable"
+      ? [
+          {
+            date: new Date().toISOString(),
+            daysUntil: 0,
+            description:
+              "FCN schedule source is unavailable, so Timeline is showing a source-quality event instead of inventing FCN dates.",
+            eventType: "system",
+            id: "timeline-data-quality-fcn-schedule-unavailable",
+            severity: "warning",
+            sourceEngine: "workspace_timeline",
+            title: "Data quality review",
+          },
+        ]
+      : [];
+  const events = [...scheduleEvents, ...alertEvents, ...dataQualityEvents].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 

@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V14 Sprint 1 — Live Market Workspace`
+`V14 Sprint 2 — Workspace Intelligence + Morning Brief`
 
-V14 Sprint 1 implements the first Live Workspace bundle across V14.1 Live Market Data, V14.2 Live Portfolio Valuation, and V14.3 FCN Live Risk. It adds server-side Yahoo Finance equity quotes, Binance crypto quotes, short-lived memory cache with stale fallback, portfolio live valuation readback, and FCN live underlying risk readback. Live data is monitoring and risk-awareness only. This Sprint does not change auth, RLS, schema, migrations, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, or AI model behavior. See `docs/V14_SPRINT_1_LIVE_MARKET_WORKSPACE.md`.
+V14 Sprint 2 implements Workspace Intelligence and Workspace Morning Brief across V14.4 and V14.5. It aggregates V14 Sprint 1 live market / valuation / FCN risk context with portfolio risk, watchlist, alerts, timeline, and data quality into deterministic explain-only cards and an on-demand Workspace-readable Morning Brief. This Sprint does not change auth, RLS, schema, migrations, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, or AI model behavior. See `docs/V14_SPRINT_2_WORKSPACE_INTELLIGENCE_BRIEF.md`.
 
 V13.0 Internationalization Foundation is complete. It introduced the shared Public App + Workspace locale foundation for `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`. V13 remains a side track after V14 Beta: return to V13.1 Dictionary Migration, V13.2 Translation Packs, V13.3 Region, V13.4 Currency, and V13.5 Localization after the V14 Beta milestone.
 
@@ -100,7 +100,9 @@ Important:
 - Public users can change language without registration; Workspace Settings manages the same locale state.
 - Locale state uses localStorage + cookie only; no Supabase preference sync is enabled.
 - V14 is now the active product mainline, starting with docs-only Live Workspace Program planning.
-- V14 Sprint 1 implements V14.1-V14.3; V14.4 Workspace Intelligence, V14.5 Workspace Morning Brief, and V14.6 Beta Readiness remain pending.
+- V14 Sprint 1 implements V14.1-V14.3.
+- V14 Sprint 2 implements V14.4 Workspace Intelligence and V14.5 Workspace Morning Brief as rule-based, explain-only Workspace-readable summaries.
+- V14.6 Beta Readiness remains pending.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or new AI model behavior without the explicit V14 phase plan and approval.
 
 Program E production verification note:
