@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useIdentity } from "@/components/auth/auth-provider";
+import { useLocale } from "@/src/lib/i18n";
 
 // v1.32.1 — Mobile Intelligence Navigation.
 //
@@ -148,21 +149,49 @@ function matchActive(pathname: string, item: NavItem): boolean {
 export function MobileNav() {
   const pathname = usePathname();
   const { mounted, session } = useIdentity();
+  const { dictionary } = useLocale();
   const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
   const isAuthenticated = mounted && session.mode === "authenticated";
+  const localizedPublicNavItems: NavItem[] = [
+    {
+      ...PUBLIC_NAV_ITEMS[0],
+      label: dictionary.publicNav.dailyBrief,
+    },
+    {
+      ...PUBLIC_NAV_ITEMS[1],
+      label: dictionary.publicNav.market,
+    },
+    PUBLIC_NAV_ITEMS[2],
+    {
+      ...PUBLIC_NAV_ITEMS[3],
+      label: dictionary.publicNav.fcn,
+    },
+    {
+      ...PUBLIC_NAV_ITEMS[4],
+      label: dictionary.publicNav.login,
+    },
+  ];
+  const localizedWorkspaceNavItems: NavItem[] = [
+    { ...WORKSPACE_NAV_ITEMS[0], label: dictionary.workspaceNav.home },
+    { ...WORKSPACE_NAV_ITEMS[1], label: dictionary.workspaceNav.portfolio },
+    { ...WORKSPACE_NAV_ITEMS[2], label: dictionary.workspaceNav.watchlist },
+    { ...WORKSPACE_NAV_ITEMS[3], label: dictionary.workspaceNav.risk },
+    { ...WORKSPACE_NAV_ITEMS[4], label: dictionary.workspaceNav.fcn },
+    { ...WORKSPACE_NAV_ITEMS[5], label: dictionary.workspaceNav.settings },
+  ];
   const publicNavItems = isAuthenticated
-    ? PUBLIC_NAV_ITEMS.map((item) =>
+    ? localizedPublicNavItems.map((item) =>
         item.key === "me"
           ? {
               ...item,
               href: "/my-ixai/home",
-              label: "Workspace",
+              label: dictionary.publicNav.workspace,
               matchPrefixes: ["/my-ixai"],
             }
           : item,
       )
-    : PUBLIC_NAV_ITEMS;
-  const navItems = isWorkspaceRoute ? WORKSPACE_NAV_ITEMS : publicNavItems;
+    : localizedPublicNavItems;
+  const navItems = isWorkspaceRoute ? localizedWorkspaceNavItems : publicNavItems;
 
   return (
     <nav

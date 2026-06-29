@@ -3,8 +3,10 @@
 import { usePathname } from "next/navigation";
 import { useIdentity } from "@/components/auth/auth-provider";
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { ShellNavButton, ShellSidebarSection, shellTokens } from "@/components/shell/shell-primitives";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { useLocale } from "@/src/lib/i18n";
 
 type NavGroup = {
   heading: string;
@@ -17,65 +19,65 @@ type NavGroup = {
   }>;
 };
 
-const workspaceNavGroups: NavGroup[] = [
-  {
-    heading: "Workspace",
-    items: [
-      { label: "Workspace Home", href: "/my-ixai/home" },
-      { label: "Portfolio Center", href: "/my-ixai/portfolio" },
-      { label: "Asset Input", href: "/my-ixai/input" },
-      { label: "Watchlist", href: "/my-ixai/watchlist" },
-      { label: "Notifications", href: "/my-ixai/notifications" },
-      { label: "Timeline", href: "/my-ixai/timeline" },
-      { label: "Copilot", href: "/my-ixai/copilot" },
-      { label: "Risk Center", href: "/my-ixai/risk" },
-      { label: "FCN Center", href: "/my-ixai/fcn" },
-      { label: "Intelligence Center", href: "/my-ixai/intelligence" },
-      { label: "Settings", href: "/my-ixai/settings" },
-    ],
-  },
-  {
-    heading: "Exit",
-    items: [
-      { label: "返回官網", href: "/" },
-      { action: "signOut", label: "登出", href: "/login" },
-    ],
-  },
-];
-
 export function Sidebar() {
   const pathname = usePathname();
   const { mounted, session, signOut } = useIdentity();
+  const { dictionary } = useLocale();
   const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
   const isAuthenticated = mounted && session.mode === "authenticated";
-  const publicNavGroups: NavGroup[] = [
+  const workspaceNavGroups: NavGroup[] = [
     {
-      heading: "官網",
+      heading: dictionary.workspaceNav.workspaceHeading,
       items: [
-        { label: "市場首頁", href: "/", primary: true },
-        { label: "每日晨報", href: "/daily-brief" },
-        { label: "市場總覽", href: "/market" },
-        { label: "每週情報", href: "/weekly-brief" },
+        { label: dictionary.workspaceNav.home, href: "/my-ixai/home" },
+        { label: dictionary.workspaceNav.portfolio, href: "/my-ixai/portfolio" },
+        { label: dictionary.workspaceNav.assetInput, href: "/my-ixai/input" },
+        { label: dictionary.workspaceNav.watchlist, href: "/my-ixai/watchlist" },
+        { label: dictionary.workspaceNav.notifications, href: "/my-ixai/notifications" },
+        { label: dictionary.workspaceNav.timeline, href: "/my-ixai/timeline" },
+        { label: dictionary.workspaceNav.copilot, href: "/my-ixai/copilot" },
+        { label: dictionary.workspaceNav.risk, href: "/my-ixai/risk" },
+        { label: dictionary.workspaceNav.fcn, href: "/my-ixai/fcn" },
+        { label: dictionary.workspaceNav.intelligence, href: "/my-ixai/intelligence" },
+        { label: dictionary.workspaceNav.settings, href: "/my-ixai/settings" },
       ],
     },
     {
-      heading: "產品",
+      heading: dictionary.workspaceNav.exitHeading,
       items: [
-        { label: "FCN", href: "/fcn" },
-        { label: "IXAI Platform", href: "/pro" },
-        { label: "About 一玄", href: "/about" },
+        { label: dictionary.workspaceNav.exitPublic, href: "/" },
+        { action: "signOut", label: dictionary.workspaceNav.signOut, href: "/login" },
+      ],
+    },
+  ];
+  const publicNavGroups: NavGroup[] = [
+    {
+      heading: dictionary.publicNav.headingOfficial,
+      items: [
+        { label: dictionary.publicNav.home, href: "/", primary: true },
+        { label: dictionary.publicNav.dailyBrief, href: "/daily-brief" },
+        { label: dictionary.publicNav.market, href: "/market" },
+        { label: dictionary.publicNav.weeklyBrief, href: "/weekly-brief" },
+      ],
+    },
+    {
+      heading: dictionary.publicNav.headingProduct,
+      items: [
+        { label: dictionary.publicNav.fcn, href: "/fcn" },
+        { label: dictionary.publicNav.platform, href: "/pro" },
+        { label: dictionary.publicNav.about, href: "/about" },
         ...(isAuthenticated
           ? [
-              { label: "我的 IXAI Workspace", href: "/my-ixai/home" },
-              { action: "signOut" as const, label: "登出", href: "/login" },
+              { label: dictionary.publicNav.workspace, href: "/my-ixai/home" },
+              { action: "signOut" as const, label: dictionary.publicNav.signOut, href: "/login" },
             ]
-          : [{ label: "登入", href: "/login" }]),
+          : [{ label: dictionary.publicNav.login, href: "/login" }]),
       ],
     },
   ];
   const navGroups = isWorkspaceRoute ? workspaceNavGroups : publicNavGroups;
-  const title = isWorkspaceRoute ? "IXAI Workspace" : "市場情報";
-  const subtitle = isWorkspaceRoute ? "登入後的產品工作區。" : "每日市場情報入口。";
+  const title = isWorkspaceRoute ? dictionary.workspaceNav.title : dictionary.publicNav.title;
+  const subtitle = isWorkspaceRoute ? dictionary.workspaceNav.subtitle : dictionary.publicNav.subtitle;
   const footerLabel = isWorkspaceRoute ? "Workspace Mode" : "Public Website";
   const footerText = isWorkspaceRoute
     ? "Portfolio、Risk、FCN、Intelligence 與 Settings 已分離成工作區導覽。"
@@ -118,6 +120,7 @@ export function Sidebar() {
       </nav>
 
       <div className="m-2.5 grid gap-2">
+        <LanguageSwitcher mode="compact" />
         <div className="rounded-lg border border-white/10 bg-white/[0.045] p-3">
           <Eyebrow mono className="text-[10px]">
             {footerLabel}

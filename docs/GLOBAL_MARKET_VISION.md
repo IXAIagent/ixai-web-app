@@ -52,6 +52,16 @@ Future-ready:
 
 Language support should be treated as a product architecture requirement, not a late visual translation layer.
 
+V13.0 implementation note:
+
+- The first i18n foundation is now shared by the Public App and Workspace.
+- Supported runtime locales are `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`.
+- The shared locale state uses `ixai.locale` in localStorage and cookie.
+- Public users can change language without registration.
+- Workspace Settings manages the same locale state.
+- This is foundation-only and does not translate full market content, Daily / Weekly articles, Portfolio / FCN / Risk data, symbols, tickers, or admin editorial content.
+- No Supabase preference sync, auth/RLS/schema/migration, billing, broker, trading, recommendation, scheduler, OpenAI, or AI behavior is enabled by this foundation.
+
 ## Architecture Principle
 
 All engines must be market-agnostic, including:

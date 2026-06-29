@@ -20,6 +20,8 @@ import {
   X,
 } from "lucide-react";
 import { useIdentity } from "@/components/auth/auth-provider";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
+import { useLocale } from "@/src/lib/i18n";
 
 // v1.32.1 — IXAI Intelligence OS mobile drawer.
 //
@@ -47,28 +49,6 @@ type DrawerSection = {
   entries: DrawerEntry[];
 };
 
-const WORKSPACE_DRAWER_SECTIONS: DrawerSection[] = [
-  {
-    title: "Workspace",
-    entries: [
-      { label: "Workspace Home", href: "/my-ixai/home", icon: Home },
-      { label: "Portfolio Center", href: "/my-ixai/portfolio", icon: BriefcaseBusiness },
-      { label: "Asset Input", href: "/my-ixai/input", icon: FileText },
-      { label: "Risk Center", href: "/my-ixai/risk", icon: ShieldAlert },
-      { label: "FCN Center", href: "/my-ixai/fcn", icon: ShieldCheck },
-      { label: "Intelligence Center", href: "/my-ixai/intelligence", icon: Newspaper },
-      { label: "Settings", href: "/my-ixai/settings", icon: Settings },
-    ],
-  },
-  {
-    title: "Exit",
-    entries: [
-      { label: "返回官網", href: "/", icon: Globe2 },
-      { action: "signOut", label: "登出", href: "/login", icon: BookOpen },
-    ],
-  },
-];
-
 function isEntryActive(pathname: string, entry: DrawerEntry): boolean {
   const target = entry.matchPrefix ?? entry.href?.split("#")[0];
   if (!target) {
@@ -89,36 +69,58 @@ export function MobileDrawer({
 }) {
   const pathname = usePathname();
   const { mounted, session, signOut } = useIdentity();
+  const { dictionary } = useLocale();
   const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
   const isAuthenticated = mounted && session.mode === "authenticated";
-  const publicDrawerSections: DrawerSection[] = [
+  const workspaceDrawerSections: DrawerSection[] = [
     {
-      title: "官網",
+      title: dictionary.workspaceNav.workspaceHeading,
       entries: [
-        { label: "市場首頁", href: "/", icon: Home },
-        { label: "每日晨報", href: "/daily-brief", icon: FileText },
-        { label: "市場總覽", href: "/market", icon: BarChart3 },
-        { label: "每週情報", href: "/weekly-brief", icon: Newspaper },
+        { label: dictionary.workspaceNav.home, href: "/my-ixai/home", icon: Home },
+        { label: dictionary.workspaceNav.portfolio, href: "/my-ixai/portfolio", icon: BriefcaseBusiness },
+        { label: dictionary.workspaceNav.assetInput, href: "/my-ixai/input", icon: FileText },
+        { label: dictionary.workspaceNav.risk, href: "/my-ixai/risk", icon: ShieldAlert },
+        { label: dictionary.workspaceNav.fcn, href: "/my-ixai/fcn", icon: ShieldCheck },
+        { label: dictionary.workspaceNav.intelligence, href: "/my-ixai/intelligence", icon: Newspaper },
+        { label: dictionary.workspaceNav.settings, href: "/my-ixai/settings", icon: Settings },
       ],
     },
     {
-      title: "產品",
+      title: dictionary.workspaceNav.exitHeading,
       entries: [
-        { label: "FCN", href: "/fcn", icon: ShieldCheck },
-        { label: "IXAI Platform", href: "/pro", icon: Sparkles },
-        { label: "About 一玄", href: "/about", icon: Info },
-        ...(isAuthenticated
-          ? [
-              { label: "我的 IXAI Workspace", href: "/my-ixai/home", icon: Home },
-              { action: "signOut" as const, label: "登出", href: "/login", icon: BookOpen },
-            ]
-          : [{ label: "登入", href: "/login", icon: BookOpen }]),
+        { label: dictionary.workspaceNav.exitPublic, href: "/", icon: Globe2 },
+        { action: "signOut", label: dictionary.workspaceNav.signOut, href: "/login", icon: BookOpen },
       ],
     },
   ];
-  const drawerSections = isWorkspaceRoute ? WORKSPACE_DRAWER_SECTIONS : publicDrawerSections;
-  const eyebrow = isWorkspaceRoute ? "IXAI WORKSPACE" : "IXAI 官網導覽";
-  const subtitle = isWorkspaceRoute ? "Portfolio · Risk · FCN · Intelligence" : "市場情報 · 教育 · About";
+  const publicDrawerSections: DrawerSection[] = [
+    {
+      title: dictionary.publicNav.headingOfficial,
+      entries: [
+        { label: dictionary.publicNav.home, href: "/", icon: Home },
+        { label: dictionary.publicNav.dailyBrief, href: "/daily-brief", icon: FileText },
+        { label: dictionary.publicNav.market, href: "/market", icon: BarChart3 },
+        { label: dictionary.publicNav.weeklyBrief, href: "/weekly-brief", icon: Newspaper },
+      ],
+    },
+    {
+      title: dictionary.publicNav.headingProduct,
+      entries: [
+        { label: dictionary.publicNav.fcn, href: "/fcn", icon: ShieldCheck },
+        { label: dictionary.publicNav.platform, href: "/pro", icon: Sparkles },
+        { label: dictionary.publicNav.about, href: "/about", icon: Info },
+        ...(isAuthenticated
+          ? [
+              { label: dictionary.publicNav.workspace, href: "/my-ixai/home", icon: Home },
+              { action: "signOut" as const, label: dictionary.publicNav.signOut, href: "/login", icon: BookOpen },
+            ]
+          : [{ label: dictionary.publicNav.login, href: "/login", icon: BookOpen }]),
+      ],
+    },
+  ];
+  const drawerSections = isWorkspaceRoute ? workspaceDrawerSections : publicDrawerSections;
+  const eyebrow = isWorkspaceRoute ? "IXAI WORKSPACE" : "IXAI";
+  const subtitle = isWorkspaceRoute ? dictionary.workspaceNav.subtitle : dictionary.publicNav.subtitle;
 
   // Body scroll lock + ESC close while open.
   useEffect(() => {
@@ -261,6 +263,9 @@ export function MobileDrawer({
         </nav>
 
         <footer className="border-t border-white/10 px-5 pb-[calc(env(safe-area-inset-bottom)+0.85rem)] pt-3 text-xs leading-6 text-[rgba(245,240,230,0.42)]">
+          <div className="mb-3">
+            <LanguageSwitcher mode="compact" />
+          </div>
           {isWorkspaceRoute
             ? "IXAI Workspace · 監控與風險意識用途，不構成投資建議。"
             : "IXAI Public Intelligence · 不構成投資建議或績效保證。"}
