@@ -26,7 +26,7 @@ export interface WorkspaceTimelineEvent {
 
 export interface WorkspaceTimelineGroup {
   events: WorkspaceTimelineEvent[];
-  key: "future" | "next30Days" | "next7Days" | "overdue";
+  key: "later" | "next7Days" | "overdue" | "today";
 }
 
 export interface WorkspaceTimelineSummary {

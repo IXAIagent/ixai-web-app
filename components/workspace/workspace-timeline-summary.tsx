@@ -9,10 +9,10 @@ import type { WorkspaceTimelineSummary } from "@/src/lib/workspace/timeline";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 const GROUP_LABEL: Record<string, string> = {
-  future: "Future",
-  next30Days: "Next 30 Days",
+  later: "Later",
   next7Days: "Next 7 Days",
   overdue: "Overdue",
+  today: "Today",
 };
 
 function formatDate(value: string) {

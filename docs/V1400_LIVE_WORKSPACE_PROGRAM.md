@@ -120,6 +120,12 @@ Done direction:
 - Copilot and Intelligence summaries must remain explain-only and non-advisory.
 - Runtime safety standards from V12 must remain in force for every refresh path.
 
+Sprint 2 status:
+
+- Implemented as deterministic Workspace Intelligence cards under `src/lib/workspace/intelligence/`.
+- Aggregates live valuation, FCN live risk, portfolio risk, watchlist, alerts, timeline, and data quality.
+- No AI model call, recommendation, target price, broker, trading, scheduler, notification delivery, auth, RLS, schema, migration, or billing behavior changed.
+
 ### V14.5 Workspace Morning Brief
 
 Scope:
@@ -137,6 +143,12 @@ Done direction:
 - Morning Brief content should be source-labeled and risk-aware.
 - Share-ready output must preserve compliance language.
 - Notification delivery and scheduler activation require separate approval.
+
+Sprint 2 status:
+
+- Implemented as on-demand Workspace-readable Morning Brief under `src/lib/workspace/morning-brief/`.
+- Home shows a manual Morning Brief snapshot; Intelligence Center shows detailed brief sections.
+- Morning Brief remains rule-based and explain-only, with no scheduled delivery, push notification, Telegram, LINE, email, AI model call, recommendation, or trading signal.
 
 ### V14.6 Beta Readiness
 

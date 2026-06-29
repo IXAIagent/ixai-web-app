@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { LiveMarketDataStatus } from "@/components/market/live-market-data-status";
+import { WorkspaceMorningBriefV14Card } from "@/components/workspace/workspace-morning-brief-v14-card";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -93,7 +94,7 @@ export default function MyIxaiHomePage() {
           歡迎回到 IXAI Workspace。
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:leading-7">
-          V14 Sprint 1 開始提供 Live Market、Portfolio Valuation 與 FCN Live Risk 入口。Home 仍維持 runtime-safe：不在背景自動展開重型 readback，live 狀態採手動刷新。
+          V14 Sprint 2 將 Live Market、Portfolio Valuation、FCN Live Risk 串成 Workspace Intelligence 與 Morning Brief。Home 仍維持 runtime-safe：重型 readback 採手動刷新。
         </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <Link
@@ -115,14 +116,16 @@ export default function MyIxaiHomePage() {
 
       <LiveMarketDataStatus autoLoad={false} compact />
 
+      <WorkspaceMorningBriefV14Card autoLoad={false} compact />
+
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.84)] p-4 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              V14 Sprint 1
+              V14 Sprint 2
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-              Live Workspace snapshot
+              Live Intelligence snapshot
             </h2>
           </div>
           <span className="inline-flex w-fit rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-xs font-semibold text-[var(--ixai-forest-soft)]">
@@ -132,6 +135,11 @@ export default function MyIxaiHomePage() {
 
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           {[
+            {
+              href: "/my-ixai/intelligence",
+              label: "Workspace intelligence",
+              note: "Intelligence Center now aggregates portfolio, risk, FCN, watchlist, alerts, timeline, and data quality into rule-based explain-only cards.",
+            },
             {
               href: "/my-ixai/portfolio",
               label: "Live valuation",
@@ -143,9 +151,9 @@ export default function MyIxaiHomePage() {
               note: "FCN Center reads live underlying quotes where available for worst-of, KI, KO, strike distance, and schedule awareness.",
             },
             {
-              href: "/my-ixai/risk",
-              label: "Risk context",
-              note: "Risk Center keeps valuation and FCN live risk as monitoring-only context, never trading or recommendation logic.",
+              href: "/my-ixai/timeline",
+              label: "Timeline context",
+              note: "Timeline groups FCN coupon, observation, maturity, alert, and data-quality events without inventing dates or activating a scheduler.",
             },
           ].map((item) => (
             <Link
@@ -254,7 +262,7 @@ export default function MyIxaiHomePage() {
       </section>
 
       <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Home shell 保持 runtime-safe：沒有自動重型 fan-out、diagnostics loader、投資建議、交易指令或自動交易。Live quote 狀態需手動刷新。
+        Home shell 保持 runtime-safe：沒有自動 diagnostics loader、投資建議、交易指令或自動交易。Morning Brief 與 live quote 狀態可手動刷新，且所有外部來源都必須 fallback。
       </p>
     </div>
   );

@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V14 Sprint 1 Live Market Workspace`
+`V14 Sprint 2 Workspace Intelligence + Morning Brief`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V14 Sprint 1 Live Market Workspace. IXAI has completed V12 production runtime stabilization, V12.3.1 optional personalization fallback, V13.0 Internationalization Foundation, and V14.0 program planning. Sprint 1 implements V14.1 Live Market Data, V14.2 Live Portfolio Valuation, and V14.3 FCN Live Risk in one bundle. It adds server-side Yahoo Finance equity quotes, Binance crypto quotes, short-lived memory cache with stale fallback, live portfolio valuation readback, and FCN live risk readback. V14.4 Workspace Intelligence, V14.5 Workspace Morning Brief, and V14.6 Beta Readiness remain pending. See `docs/V14_SPRINT_1_LIVE_MARKET_WORKSPACE.md` and `docs/V1400_LIVE_WORKSPACE_PROGRAM.md`.
+Current priority is V14 Sprint 2 Workspace Intelligence + Morning Brief. IXAI has completed V12 production runtime stabilization, V12.3.1 optional personalization fallback, V13.0 Internationalization Foundation, V14.0 program planning, and V14 Sprint 1 Live Market Workspace. Sprint 2 implements V14.4 Workspace Intelligence and V14.5 Workspace Morning Brief as rule-based, explain-only Workspace readback. V14.6 Beta Readiness remains pending. See `docs/V14_SPRINT_1_LIVE_MARKET_WORKSPACE.md`, `docs/V14_SPRINT_2_WORKSPACE_INTELLIGENCE_BRIEF.md`, and `docs/V1400_LIVE_WORKSPACE_PROGRAM.md`.
 
 V13 remains an internationalization side track after V13.0. After V14 Beta is complete, return to V13.1 Dictionary Migration, V13.2 Translation Packs, V13.3 Region, V13.4 Currency, and V13.5 Localization. See `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`.
 
@@ -44,7 +44,8 @@ Important:
 - Locale state uses localStorage + cookie only; no Supabase preference sync is enabled.
 - V14 is the active main track, beginning with docs-only Live Workspace Program planning.
 - V14 Sprint 1 implements V14.1-V14.3 as monitoring/risk-awareness functionality only.
-- V14.4 Workspace Intelligence, V14.5 Workspace Morning Brief, and V14.6 Beta Readiness remain pending.
+- V14 Sprint 2 implements V14.4 Workspace Intelligence and V14.5 Workspace Morning Brief as rule-based and explain-only Workspace-readable summaries.
+- V14.6 Beta Readiness remains pending.
 - After V14 Beta, return to V13.1-V13.5 for dictionary migration, translation packs, region, currency, and localization.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or AI model behavior outside an approved V14 phase.
 
@@ -124,6 +125,7 @@ Important:
 - Use `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md` as the source of truth for shared Public App + Workspace locale state, supported locales, Language Switcher placement, and V13.0 translation scope.
 - Use `docs/V1400_LIVE_WORKSPACE_PROGRAM.md` as the source of truth for the new V14 Live Workspace mainline, phase sequence, V13 reminder, compliance boundaries, technical boundaries, and done criteria.
 - Use `docs/V14_SPRINT_1_LIVE_MARKET_WORKSPACE.md` as the source of truth for the V14.1-V14.3 Sprint 1 implementation across live market data, live portfolio valuation, FCN live risk, Workspace integration, runtime safety, and compliance boundaries.
+- Use `docs/V14_SPRINT_2_WORKSPACE_INTELLIGENCE_BRIEF.md` as the source of truth for the V14.4-V14.5 Sprint 2 implementation across Workspace Intelligence, Workspace Morning Brief, Timeline enhancement, Copilot explain-only summary, Home / Intelligence integration, runtime safety, and compliance boundaries.
 - v4.00 is not another page. It is the integration layer that should connect existing centers into a coherent operating workflow.
 - Do not add new investment features in v3.00 through v3.05.
 - Login and Register should land authenticated users in `/my-ixai/home`, not `/account` or `/pro`.

@@ -20,6 +20,8 @@ import { WorkspaceMarketStatus } from "@/components/market/workspace-market-stat
 import { IntelligenceSummary } from "@/components/intelligence/intelligence-summary";
 import { IntelligenceV2Summary } from "@/components/intelligence/intelligence-v2-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { WorkspaceIntelligenceV14Summary } from "@/components/workspace/workspace-intelligence-v14-summary";
+import { WorkspaceMorningBriefV14Card } from "@/components/workspace/workspace-morning-brief-v14-card";
 import { loadFcnManualPriceOverrides } from "@/src/lib/fcn/manual-price-overrides";
 import { buildIntelligenceCenterReadback } from "@/src/lib/intelligence/intelligence-center";
 import type {
@@ -251,14 +253,13 @@ export function IntelligenceCenterWorkspace() {
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start">
             <div className="min-w-0">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
-                v4.04 Intelligence Readback Layer
+                V14 Sprint 2 Workspace Intelligence
               </p>
               <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-5xl">
                 Intelligence Center
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/74 sm:text-base sm:leading-8">
-                Workspace intelligence now reads Portfolio Truth and Risk Intelligence summaries,
-                while keeping Daily / Weekly, Market context, FCN highlights, and readiness boundaries in one working area.
+                Workspace intelligence now aggregates live valuation, FCN live risk, watchlist, alerts, timeline, and data quality into rule-based explain-only briefings.
               </p>
             </div>
             <FeatureIcon icon={Brain} shadow={false} tone="cream" />
@@ -291,6 +292,10 @@ export function IntelligenceCenterWorkspace() {
         <IntelligenceSummary />
 
         <IntelligenceV2Summary />
+
+        <WorkspaceIntelligenceV14Summary autoLoad />
+
+        <WorkspaceMorningBriefV14Card autoLoad />
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">

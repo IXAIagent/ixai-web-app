@@ -2,6 +2,7 @@ export type WorkspaceCopilotCapability =
   | "explain_alerts"
   | "explain_data_quality"
   | "explain_fcn"
+  | "explain_morning_brief"
   | "explain_portfolio"
   | "explain_risk"
   | "explain_schedule";
