@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Newspaper, RefreshCw } from "lucide-react";
 
+import { BriefShareActions } from "@/components/workspace/brief-share-actions";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import {
   buildEmptyWorkspaceMorningBrief,
@@ -140,6 +141,8 @@ export function WorkspaceMorningBriefV14Card({
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
         {brief.informationalOnlyDisclaimer}
       </p>
+
+      <BriefShareActions brief={brief} />
     </section>
   );
 }

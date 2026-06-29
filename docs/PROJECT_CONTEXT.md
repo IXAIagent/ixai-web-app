@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V14 Sprint 2 — Workspace Intelligence + Morning Brief`
+`V14 Sprint 3 — Beta Readiness & Production Polish`
 
-V14 Sprint 2 implements Workspace Intelligence and Workspace Morning Brief across V14.4 and V14.5. It aggregates V14 Sprint 1 live market / valuation / FCN risk context with portfolio risk, watchlist, alerts, timeline, and data quality into deterministic explain-only cards and an on-demand Workspace-readable Morning Brief. This Sprint does not change auth, RLS, schema, migrations, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, or AI model behavior. See `docs/V14_SPRINT_2_WORKSPACE_INTELLIGENCE_BRIEF.md`.
+V14 Sprint 3 implements Beta Readiness & Production Polish across V14.6. It adds a read-only Workspace Health Center, Beta Readiness Dashboard, Morning Brief share/export, feedback template, release notes, and production verification checklist. V14 Sprint 3 is complete only after production verification passes. This Sprint does not change auth, RLS, schema, migrations, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, or AI model behavior. See `docs/V14_SPRINT_3_BETA_READINESS_POLISH.md` and `docs/V14_BETA_RELEASE_NOTES.md`.
 
 V13.0 Internationalization Foundation is complete. It introduced the shared Public App + Workspace locale foundation for `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`. V13 remains a side track after V14 Beta: return to V13.1 Dictionary Migration, V13.2 Translation Packs, V13.3 Region, V13.4 Currency, and V13.5 Localization after the V14 Beta milestone.
 
@@ -102,7 +102,7 @@ Important:
 - V14 is now the active product mainline, starting with docs-only Live Workspace Program planning.
 - V14 Sprint 1 implements V14.1-V14.3.
 - V14 Sprint 2 implements V14.4 Workspace Intelligence and V14.5 Workspace Morning Brief as rule-based, explain-only Workspace-readable summaries.
-- V14.6 Beta Readiness remains pending.
+- V14 Sprint 3 implements V14.6 Beta readiness polish; invite-only Beta should begin only after production verification passes.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or new AI model behavior without the explicit V14 phase plan and approval.
 
 Program E production verification note:

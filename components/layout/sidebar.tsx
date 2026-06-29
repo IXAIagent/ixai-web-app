@@ -36,6 +36,8 @@ export function Sidebar() {
         { label: dictionary.workspaceNav.notifications, href: "/my-ixai/notifications" },
         { label: dictionary.workspaceNav.timeline, href: "/my-ixai/timeline" },
         { label: dictionary.workspaceNav.copilot, href: "/my-ixai/copilot" },
+        { label: "Health Center", href: "/my-ixai/health" },
+        { label: "V14 Beta", href: "/my-ixai/beta" },
         { label: dictionary.workspaceNav.risk, href: "/my-ixai/risk" },
         { label: dictionary.workspaceNav.fcn, href: "/my-ixai/fcn" },
         { label: dictionary.workspaceNav.intelligence, href: "/my-ixai/intelligence" },

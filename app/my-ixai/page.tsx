@@ -22,6 +22,8 @@ export default function MyIxaiWorkspacePage() {
         { href: "/my-ixai/risk", label: "Risk Center" },
         { href: "/my-ixai/fcn", label: "FCN Center" },
         { href: "/my-ixai/intelligence", label: "Intelligence Center" },
+        { href: "/my-ixai/health", label: "Health Center" },
+        { href: "/my-ixai/beta", label: "V14 Beta Preview" },
         { href: "/my-ixai/settings", label: "Settings" },
       ]}
       ownerItems={[
@@ -30,6 +32,8 @@ export default function MyIxaiWorkspacePage() {
         "Risk Center：集中度、相關性、情境、壓力測試與風險摘要。",
         "FCN Center：FCN 部位、underlyings、Worst-of、KI / KO 與票息排程。",
         "Intelligence Center：Daily、Weekly、News、Commentary 與 recommendation surfaces。",
+        "Health Center：provider、cache、runtime safety、data quality 與 i18n readiness。",
+        "V14 Beta Preview：Beta checklist、release notes 與 feedback template。",
         "Settings：帳號、會員、通知、語言、地區與 broker connections。",
       ]}
       title="我的 IXAI：Workspace Foundation"
