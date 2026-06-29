@@ -21,6 +21,10 @@ import type {
 const PREFERENCES_KEY = "ixai.user.preferences.v1";
 const PROFILE_MEMORY_TABLE = "ixai_profile_memory";
 const USER_PREFERENCES_TABLE = "ixai_user_preferences";
+const OPTIONAL_PERSONALIZATION_SYNC_ENABLED =
+  process.env.NEXT_PUBLIC_IXAI_OPTIONAL_PERSONALIZATION_SYNC === "1";
+
+const warnedOptionalPersonalizationResources = new Set<string>();
 
 function canUseStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -58,6 +62,30 @@ function pendingStatus(message = "跨裝置同步暫時不可用，已改用本�
     label: "等待同步",
     message,
   };
+}
+
+function warnOptionalPersonalizationFallback(resource: string) {
+  if (process.env.NODE_ENV === "production") {
+    return;
+  }
+
+  if (warnedOptionalPersonalizationResources.has(resource)) {
+    return;
+  }
+
+  warnedOptionalPersonalizationResources.add(resource);
+  console.warn("Optional personalization resource unavailable. Using defaults.", {
+    resource,
+  });
+}
+
+function optionalPersonalizationFallbackStatus(resource: string, message: string): PersistenceStatus {
+  warnOptionalPersonalizationFallback(resource);
+  return pendingStatus(message);
+}
+
+function canUseOptionalPersonalizationSync() {
+  return OPTIONAL_PERSONALIZATION_SYNC_ENABLED;
 }
 
 export function getLocalPreferences(userId?: string): IntelligenceInterest[] {
@@ -235,6 +263,16 @@ export async function loadUserPreferences(session: IXAISession): Promise<{
     };
   }
 
+  if (!canUseOptionalPersonalizationSync()) {
+    return {
+      preferences: getLocalPreferences(session.user.id),
+      status: optionalPersonalizationFallbackStatus(
+        USER_PREFERENCES_TABLE,
+        "偏好同步表尚未啟用，已改用本機內容。",
+      ),
+    };
+  }
+
   const userId = session.user.id;
   const result = await safeOptionalSupabaseRead<Array<{ preferred_categories?: IntelligenceInterest[] }>>(
     USER_PREFERENCES_TABLE,
@@ -289,6 +327,13 @@ export async function saveUserPreferences(
         };
   }
 
+  if (!canUseOptionalPersonalizationSync()) {
+    return optionalPersonalizationFallbackStatus(
+      USER_PREFERENCES_TABLE,
+      "偏好同步表尚未啟用，已保存在本機。",
+    );
+  }
+
   const userId = session.user.id;
   const result = await safeOptionalSupabaseWrite(USER_PREFERENCES_TABLE, () =>
     fetch(`${config.url}/rest/v1/ixai_user_preferences?on_conflict=user_id`, {
@@ -339,6 +384,16 @@ export async function loadProfileMemory(session: IXAISession): Promise<{
             label: "本機保存",
             message: "尚未登入 IXAI Account，市場記憶暫存於此裝置。",
           },
+    };
+  }
+
+  if (!canUseOptionalPersonalizationSync()) {
+    return {
+      memory: readPersonalMemory(session.user.id),
+      status: optionalPersonalizationFallbackStatus(
+        PROFILE_MEMORY_TABLE,
+        "市場記憶同步表尚未啟用，已改用本機內容。",
+      ),
     };
   }
 
@@ -410,6 +465,13 @@ export async function saveProfileMemory(
           label: "本機保存",
           message: "尚未登入 IXAI Account，市場記憶暫存於此裝置。",
         };
+  }
+
+  if (!canUseOptionalPersonalizationSync()) {
+    return optionalPersonalizationFallbackStatus(
+      PROFILE_MEMORY_TABLE,
+      "市場記憶同步表尚未啟用，已保存在本機。",
+    );
   }
 
   const userId = session.user.id;
