@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12.3.1 Optional Personalization Fallback
+
+Why:
+
+- V12.3 audit confirmed the remaining production Console 404 noise came from optional personalization reads.
+- `completed&limit=1` mapped to `ixai_profile_memory` selecting `onboarding_completed`.
+- `categories&limit=1` mapped to `ixai_user_preferences` selecting `preferred_categories`.
+- The goal is to remove optional personalization 404 noise without migration, schema, auth, RLS, Workspace Runtime, Portfolio, FCN, Risk, or Intelligence changes.
+
+What Changed:
+
+- Added `docs/V1231_OPTIONAL_PERSONALIZATION_FALLBACK.md`.
+- `src/lib/personalization/persistence.ts` now treats optional remote personalization sync as disabled by default.
+- Local personal memory and local user preferences remain the default fallback.
+- Remote optional personalization sync is only attempted when `NEXT_PUBLIC_IXAI_OPTIONAL_PERSONALIZATION_SYNC=1`.
+
+Key Decisions:
+
+- Missing optional personalization tables should not be probed on production route hydration by default.
+- Default profile memory fallback has `onboarding_completed: false`.
+- Default preferences fallback has `preferred_categories: []`.
+- Development can warn once per optional personalization resource; production stays quiet.
+- V12 remains under continued production observation and must not be marked complete from this fallback alone.
+
 ## V12.3 Production API 404 Cleanup Audit
 
 Why:
