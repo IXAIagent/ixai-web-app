@@ -28,7 +28,7 @@ export interface MarketProviderRegistryEntry {
   supportsQuotes: boolean;
 }
 
-export type MarketProviderId = "mock";
+export type MarketProviderId = "binance" | "mock" | "yahoo_finance";
 
 export function emptyMarketSnapshot(input: {
   providerId: string;

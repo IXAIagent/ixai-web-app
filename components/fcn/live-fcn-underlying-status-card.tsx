@@ -34,9 +34,9 @@ function formatDateTime(value: string | null | undefined) {
   }).format(date);
 }
 
-export function LiveFcnUnderlyingStatusCard() {
+export function LiveFcnUnderlyingStatusCard({ autoLoad = false }: { autoLoad?: boolean }) {
   const [snapshot, setSnapshot] = useState<FcnLiveUnderlyingSnapshot | null>(null);
-  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [loadState, setLoadState] = useState<LoadState>(autoLoad ? "loading" : "ready");
 
   const loadSnapshot = useCallback(async () => {
     setLoadState("loading");
@@ -50,10 +50,14 @@ export function LiveFcnUnderlyingStatusCard() {
   }, []);
 
   useEffect(() => {
+    if (!autoLoad) {
+      return;
+    }
+
     queueMicrotask(() => {
       void loadSnapshot();
     });
-  }, [loadSnapshot]);
+  }, [autoLoad, loadSnapshot]);
 
   const topWorstOf = snapshot?.topWorstOf ?? null;
   const worstUnderlying =
@@ -64,7 +68,7 @@ export function LiveFcnUnderlyingStatusCard() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Yahoo Live Underlying Preview
+            V14.3 Live Underlying Preview
           </p>
           <h2 className="mt-2 flex items-center gap-2 text-xl font-semibold text-[var(--ixai-forest)]">
             <ShieldCheck className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
@@ -117,12 +121,12 @@ export function LiveFcnUnderlyingStatusCard() {
         </p>
       ) : (
         <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          No analyzable FCN underlyings are available yet, or Yahoo quotes / stored prices are missing.
+          No analyzable FCN underlyings are available yet, or live quotes / stored prices are missing.
         </p>
       )}
 
       <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Source: {snapshot?.source ?? "yahoo_live_preview"} · As of:{" "}
+        Source: {snapshot?.source ?? "live_market_preview"} · As of:{" "}
         {formatDateTime(snapshot?.quoteSnapshot?.generatedAt)} · Missing quotes:{" "}
         {snapshot?.missingQuoteSymbols.length ?? 0} · Stale quotes:{" "}
         {snapshot?.staleQuoteSymbols.length ?? 0}
@@ -131,6 +135,10 @@ export function LiveFcnUnderlyingStatusCard() {
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
           Live FCN underlying preview could not be loaded. FCN Center draft and persisted readbacks remain available.
+        </p>
+      ) : !snapshot ? (
+        <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          Live FCN underlying preview is available on demand. Use Refresh to load this read-only card.
         </p>
       ) : null}
     </section>

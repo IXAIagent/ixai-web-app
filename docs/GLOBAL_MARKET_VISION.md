@@ -70,6 +70,13 @@ V14.0 Live Workspace planning note:
 - Provider health, fallback, currency, market, region, and source-quality labels should be designed so future Taiwan, Hong Kong, China, Japan, Korea, Europe, Singapore, crypto, and FCN structured-product coverage can fit without rewrites.
 - V14.0 is docs-only planning and does not implement live providers, broker integration, trading, recommendation, AI model calls, scheduler delivery, auth/RLS/schema/migration, or billing changes.
 
+V14 Sprint 1 implementation note:
+
+- Initial live provider coverage is intentionally narrow: Yahoo Finance for supported US equity symbols and Binance for BTC / ETH / BNB USDT pairs.
+- This is the first provider layer, not full global market coverage.
+- The live market architecture must remain ready for future Taiwan, Hong Kong, China, Japan, Korea, Europe, Singapore, crypto, and FCN structured-product coverage.
+- Provider failures must show source quality and fallback status rather than blocking Workspace routes.
+
 ## Architecture Principle
 
 All engines must be market-agnostic, including:

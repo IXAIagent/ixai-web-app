@@ -24,6 +24,14 @@ function quoteMapFromSnapshot(snapshot: YahooQuoteSnapshot | null | undefined) {
   return new Map((snapshot?.quotes ?? []).map((quote) => [quote.symbol.toUpperCase(), quote]));
 }
 
+function quoteKeyForSymbol(symbol: string) {
+  if (symbol === "BTC" || symbol === "ETH" || symbol === "BNB") {
+    return `${symbol}USDT`;
+  }
+
+  return symbol;
+}
+
 function quoteStatus(quote: YahooQuote | null | undefined): LiveValuationSourceStatus | null {
   if (!quote) return null;
   if (quote.dataQuality === "live") return "live";
@@ -93,7 +101,9 @@ function buildPositionStatus(position: FCNPosition, quoteMap: Map<string, YahooQ
     .map((underlying) =>
       analyzeUnderlying({
         fcnName: position.name,
-        quote: quoteMap.get(normalizeSymbol(underlying.symbol)),
+        quote:
+          quoteMap.get(normalizeSymbol(underlying.symbol)) ??
+          quoteMap.get(quoteKeyForSymbol(normalizeSymbol(underlying.symbol))),
         underlying,
       }),
     )
@@ -170,7 +180,7 @@ export function buildFcnLiveUnderlyingSnapshot(input: {
         }
       : null,
     readOnly: true,
-    source: "yahoo_live_preview",
+    source: "live_market_preview",
     staleQuoteSymbols: Array.from(
       new Set(
         allUnderlyings

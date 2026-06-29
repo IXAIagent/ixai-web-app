@@ -7,7 +7,6 @@ import {
 } from "@/src/lib/fcn/risk/fcn-risk-engine";
 import type { FcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-types";
 import type { MarketQuote, MarketQuoteResult } from "@/src/lib/market/types";
-import type { YahooQuoteSnapshot } from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 import {
   loadFcnDrafts,
   parseDraftNumber,
@@ -31,10 +30,10 @@ const EMPTY_SUMMARY = buildFcnPortfolioRiskSummary({
   quotesBySymbol: new Map(),
 });
 
-type YahooQuotesApiResponse = {
-  data?: YahooQuoteSnapshot;
+type LiveQuotesApiResponse = {
   error?: string;
   ok: boolean;
+  quotes?: MarketQuoteResult<MarketQuote>[];
 };
 
 function normalizeSymbol(symbol: string | null | undefined) {
@@ -95,8 +94,8 @@ function unavailableQuoteResult(symbol: string): MarketQuoteResult<MarketQuote> 
   return {
     error: {
       assetType: "unknown",
-      message: "Quote unavailable from internal Yahoo quote API route.",
-      provider: "yahoo_finance",
+      message: "Quote unavailable from internal live quote API route.",
+      provider: "unknown",
       sourceStatus: "unavailable",
       symbol: normalized,
       updatedAt,
@@ -108,45 +107,6 @@ function unavailableQuoteResult(symbol: string): MarketQuoteResult<MarketQuote> 
   };
 }
 
-function yahooSnapshotToMarketQuoteResults(
-  symbols: string[],
-  snapshot: YahooQuoteSnapshot | null,
-): MarketQuoteResult<MarketQuote>[] {
-  if (!snapshot) {
-    return symbols.map(unavailableQuoteResult);
-  }
-
-  const quoteMap = new Map(snapshot.quotes.map((quote) => [normalizeSymbol(quote.symbol), quote]));
-
-  return symbols.map((symbol) => {
-    const normalized = normalizeSymbol(symbol);
-    const quote = quoteMap.get(normalized);
-
-    if (!quote || quote.price === null || quote.dataQuality === "unavailable") {
-      return unavailableQuoteResult(normalized);
-    }
-
-    return {
-      error: null,
-      quote: {
-        assetType: normalized.endsWith("USDT") ? "crypto" : "equity",
-        change: quote.change,
-        changePercent: quote.changePercent,
-        currency: quote.currency ?? "USD",
-        marketState: quote.marketState === "regular" ? "open" : "unknown",
-        price: quote.price,
-        provider: "yahoo_finance",
-        sourceStatus: quote.dataQuality === "stale" ? "fallback" : "delayed",
-        symbol: normalized,
-        updatedAt: quote.asOf ?? snapshot.generatedAt,
-      },
-      requestedSymbol: normalized,
-      sourceStatus: quote.dataQuality === "stale" ? "fallback" : "delayed",
-      symbol: normalized,
-    };
-  });
-}
-
 async function getClientSafeMarketQuotes(symbols: string[]): Promise<MarketQuoteResult<MarketQuote>[]> {
   const requestedSymbols = Array.from(new Set(symbols.map(normalizeSymbol).filter(Boolean)));
 
@@ -156,18 +116,27 @@ async function getClientSafeMarketQuotes(symbols: string[]): Promise<MarketQuote
 
   try {
     const response = await fetch(
-      `/api/market/yahoo-quotes?symbols=${encodeURIComponent(requestedSymbols.join(","))}`,
+      `/api/market/live-quotes?symbols=${encodeURIComponent(requestedSymbols.join(","))}`,
       {
         cache: "no-store",
       },
     );
-    const payload = (await response.json().catch(() => ({}))) as YahooQuotesApiResponse;
+    const payload = (await response.json().catch(() => ({}))) as LiveQuotesApiResponse;
 
-    if (!response.ok || !payload.ok || !payload.data) {
+    if (!response.ok || !payload.ok || !payload.quotes) {
       return requestedSymbols.map(unavailableQuoteResult);
     }
 
-    return yahooSnapshotToMarketQuoteResults(requestedSymbols, payload.data);
+    const resultBySymbol = new Map<string, MarketQuoteResult<MarketQuote>>();
+
+    payload.quotes.forEach((result) => {
+      resultBySymbol.set(normalizeSymbol(result.symbol), result);
+      resultBySymbol.set(normalizeSymbol(result.requestedSymbol), result);
+    });
+
+    return requestedSymbols.map(
+      (symbol) => resultBySymbol.get(normalizeSymbol(symbol)) ?? unavailableQuoteResult(symbol),
+    );
   } catch {
     return requestedSymbols.map(unavailableQuoteResult);
   }

@@ -40,6 +40,13 @@ Scope:
 - No trading.
 - No recommendation.
 
+Sprint 1 status:
+
+- Implemented through the internal `/api/market/live-quotes` route.
+- Yahoo Finance equity quotes and Binance crypto quotes run server-side.
+- Direct browser provider fetch remains disabled.
+- Provider failures degrade to stale cache, fallback, or unavailable status.
+
 Done direction:
 
 - Live quote paths must have explicit provider status.
@@ -57,6 +64,13 @@ Scope:
 - Unrealized P/L.
 - Allocation.
 - Data quality warnings.
+
+Sprint 1 status:
+
+- Implemented as estimated live Portfolio valuation readback.
+- Stock and Crypto positions use live quotes when available.
+- FCN valuation remains notional placeholder only.
+- Unknown quote data produces unpriced/unavailable items instead of route failure.
 
 Done direction:
 
@@ -76,6 +90,13 @@ Scope:
 - Coupon schedule awareness.
 - No suitability advice.
 - No product recommendation.
+
+Sprint 1 status:
+
+- Implemented as FCN live underlying risk readback.
+- Supported underlyings use live quote data when available.
+- Worst-of, KI distance, KO distance, strike/barrier distance, and schedule awareness are shown where source data exists.
+- This remains monitoring-only and is not a full FCN pricing engine.
 
 Done direction:
 

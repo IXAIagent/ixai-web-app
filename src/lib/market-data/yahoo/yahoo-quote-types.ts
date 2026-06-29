@@ -13,7 +13,7 @@ export type YahooMarketState =
   | "regular"
   | "unknown";
 
-export type YahooQuoteSource = "yahoo";
+export type YahooQuoteSource = "live_market" | "yahoo";
 
 export type YahooQuote = {
   asOf: string | null;

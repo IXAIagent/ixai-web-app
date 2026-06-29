@@ -6,6 +6,7 @@ export type MarketQuoteSourceStatus =
   | "delayed"
   | "fallback"
   | "live"
+  | "stale"
   | "unavailable";
 
 export type MarketQuoteState =
@@ -20,9 +21,11 @@ export interface MarketQuote {
   change: number | null;
   changePercent: number | null;
   currency: string;
+  name?: string;
   marketState: MarketQuoteState;
   price: number | null;
   provider: MarketProviderName;
+  sourceNote?: string;
   sourceStatus: MarketQuoteSourceStatus;
   symbol: string;
   updatedAt: string;

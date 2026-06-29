@@ -31,6 +31,14 @@ function quoteMapFromSnapshot(snapshot: YahooQuoteSnapshot | null | undefined) {
   return new Map((snapshot?.quotes ?? []).map((quote) => [quote.symbol.toUpperCase(), quote]));
 }
 
+function quoteKeyForCrypto(symbol: string) {
+  if (symbol === "BTC" || symbol === "ETH" || symbol === "BNB") {
+    return `${symbol}USDT`;
+  }
+
+  return symbol;
+}
+
 function quoteStatus(quote: YahooQuote | null | undefined): LiveValuationSourceStatus | null {
   if (!quote) return null;
   if (quote.dataQuality === "live") return "live";
@@ -110,7 +118,7 @@ function cryptoToValuation(crypto: CryptoPosition, quoteMap: Map<string, YahooQu
     currency: crypto.currency,
     name: crypto.name,
     quantity: finiteNumber(crypto.quantity),
-    quote: quoteMap.get(symbol),
+    quote: quoteMap.get(symbol) ?? quoteMap.get(quoteKeyForCrypto(symbol)),
     symbol,
   });
 }
@@ -167,7 +175,7 @@ export function buildPortfolioLiveValuationSnapshot(input: {
         }
       : null,
     readOnly: true,
-    source: "yahoo_live_preview",
+    source: "live_market_preview",
     staleQuoteSymbols: positions
       .filter((position) => position.sourceStatus === "stale")
       .map((position) => position.symbol),

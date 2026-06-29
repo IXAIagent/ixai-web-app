@@ -7,6 +7,10 @@ import {
   isSupportedYahooEquitySymbol,
 } from "@/src/lib/market/providers/yahoo-finance";
 import {
+  recordMarketProviderFailure,
+  recordMarketProviderSuccess,
+} from "@/src/lib/market/provider-health";
+import {
   getCachedQuote,
   getMarketCacheSnapshot,
   setCachedQuote,
@@ -20,8 +24,8 @@ import type {
 } from "@/src/lib/market/types";
 import type { MarketCacheEntry } from "@/src/lib/market/cache/market-cache-types";
 
-const EQUITY_CACHE_TTL_MS = 15 * 60 * 1000;
-const CRYPTO_CACHE_TTL_MS = 2 * 60 * 1000;
+const EQUITY_CACHE_TTL_MS = 60 * 1000;
+const CRYPTO_CACHE_TTL_MS = 30 * 1000;
 
 const DEFAULT_CACHE_WARM_SYMBOLS = [
   "AAPL",
@@ -33,6 +37,8 @@ const DEFAULT_CACHE_WARM_SYMBOLS = [
   "ETHUSDT",
   "BNBUSDT",
 ] as const;
+
+const pendingQuoteRequests = new Map<string, Promise<MarketQuoteResult<MarketQuote>>>();
 
 function normalizeSymbol(symbol: string) {
   return symbol.trim().toUpperCase();
@@ -118,7 +124,8 @@ function resultFromCachedEntry(
   const quote: MarketQuote = staleFallback
     ? {
         ...entry.quote,
-        sourceStatus: "fallback",
+        sourceNote: "Returned from stale IXAI in-memory cache after provider refresh failed.",
+        sourceStatus: "stale",
       }
     : entry.quote;
 
@@ -173,6 +180,15 @@ export async function refreshQuote(
   const result = await fetchProviderQuote(normalizedSymbol);
   const now = new Date();
 
+  if (result.quote) {
+    recordMarketProviderSuccess(routing.provider);
+  } else {
+    recordMarketProviderFailure(
+      routing.provider,
+      result.error?.message ?? "Provider returned an unavailable quote result.",
+    );
+  }
+
   setCachedQuote({
     cachedAt: now.toISOString(),
     expiresAt: addMilliseconds(now, result.quote ? routing.ttlMs : 0).toISOString(),
@@ -208,7 +224,17 @@ export async function getQuoteWithCache(
     return resultFromCachedEntry(cachedEntry, requestedSymbol);
   }
 
-  const refreshedResult = await refreshQuote(normalizedSymbol);
+  const pendingKey = `${routing.provider}:${normalizedSymbol}`;
+  const pending = pendingQuoteRequests.get(pendingKey);
+  const refreshedResult = pending
+    ? await pending
+    : await (() => {
+        const request = refreshQuote(normalizedSymbol).finally(() => {
+          pendingQuoteRequests.delete(pendingKey);
+        });
+        pendingQuoteRequests.set(pendingKey, request);
+        return request;
+      })();
 
   if (refreshedResult.quote) {
     return refreshedResult;

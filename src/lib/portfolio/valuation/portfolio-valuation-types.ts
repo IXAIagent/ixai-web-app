@@ -5,6 +5,7 @@ export type ValuationSourceStatus =
   | "fallback"
   | "live"
   | "partial"
+  | "stale"
   | "unavailable";
 
 export type ValuationCurrency =

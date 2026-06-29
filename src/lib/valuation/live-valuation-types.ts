@@ -40,7 +40,7 @@ export type PortfolioLiveValuationSnapshot = {
     "cacheStatus" | "dataQuality" | "generatedAt" | "source" | "staleQuoteSymbols"
   > | null;
   readOnly: true;
-  source: "yahoo_live_preview";
+  source: "live_market_preview" | "yahoo_live_preview";
   staleQuoteSymbols: string[];
   unrealizedPnl: number | null;
   unrealizedPnlPercent: number | null;
@@ -86,7 +86,7 @@ export type FcnLiveUnderlyingSnapshot = {
     "cacheStatus" | "dataQuality" | "generatedAt" | "source" | "staleQuoteSymbols"
   > | null;
   readOnly: true;
-  source: "yahoo_live_preview";
+  source: "live_market_preview" | "yahoo_live_preview";
   staleQuoteSymbols: string[];
   topWorstOf: FcnLivePositionStatus | null;
 };

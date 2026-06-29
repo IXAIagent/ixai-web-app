@@ -116,15 +116,15 @@ export function WorkspaceMarketStatus({
             </h3>
           </div>
           <span className="w-fit rounded-full border border-[var(--ixai-border)] bg-white/75 px-3 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest-soft)]">
-            Browser fetch disabled
+            External browser fetch disabled
           </span>
         </div>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          Client-side direct Yahoo Finance requests are disabled. Live quote consumers must call
-          the internal API route so Yahoo is fetched server-side and CORS errors cannot crash the browser.
+          Client-side direct Yahoo Finance and Binance requests are disabled. Live quote consumers must call
+          the internal API route so providers are fetched server-side and CORS errors cannot crash the browser.
         </p>
         <div className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-          API route: <span className="font-mono">/api/market/yahoo-quotes?symbols=AAPL,MSFT</span>.
+          API route: <span className="font-mono">/api/market/live-quotes?symbols=AAPL,BTCUSDT</span>.
           This status card is readiness-only and performs no background quote fetch.
         </div>
         <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
