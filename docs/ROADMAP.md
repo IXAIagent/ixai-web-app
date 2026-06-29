@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V12.2 Settings / Copilot Runtime Hang Fix`
+`V12.3 Production API 404 Cleanup Audit`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V12.2 Settings / Copilot Runtime Hang Fix. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has merged, including PR #79, and PR #80 reduced authenticated Supabase read storms. Production evidence now shows Service Worker/site-data clearing does not remove the blocker, Intelligence is normal, and the remaining HUNG path is concentrated on Settings / Copilot shared diagnostics and Workspace Graph runtime fan-out. The evidence playbook remains `docs/V122_PRODUCTION_RUNTIME_ROOT_CAUSE_INVESTIGATION.md`. V12.2 makes Settings and Copilot route entry lightweight and moves heavy diagnostics/summary builders behind manual runtime-budgeted actions. V12.1 / V12.2 remains production-incomplete until `app.ixuan.ai` manual QA passes after this targeted fix.
+Current priority is V12.3 Production API 404 Cleanup Audit. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has merged, including PR #79, and PR #80 reduced authenticated Supabase read storms. PR #82 targeted Settings / Copilot route-entry fan-out by making initial render lightweight and moving heavy diagnostics/summary builders behind manual runtime-budgeted actions. Production manual verification after PR #82 shows `/my-ixai/home`, `/my-ixai/settings`, and `/my-ixai/copilot` normal, with no observed `RESULT_CODE_HUNG`, gray screen, white screen, or `401` storm. Remaining observed issue is production API 404 cleanup for `completed&limit=1` and `categories&limit=1`. V12.3 begins as docs-only audit in `docs/V123_PRODUCTION_API_404_CLEANUP_AUDIT.md`; V12 must not be marked complete from this audit alone.
 
 Runtime Stabilization Program Status:
 
@@ -34,11 +34,11 @@ Completed:
 Important:
 
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
-- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG.
+- PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG; PR #82 appears to have resolved it in manual production verification.
 - Local production-like QA is insufficient as completion evidence.
-- V12.2 targets Settings / Copilot route-entry fan-out specifically.
-- The full V12.1 / V12.2 Runtime Stabilization work requires production Settings / Copilot manual verification before it can be marked complete.
-- Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work until the production HUNG root cause is confirmed and fixed.
+- V12.3 is audit-only for remaining production 404 cleanup around optional personalization requests.
+- The full V12 runtime stabilization work remains under continued production observation and must not be marked complete from this audit alone.
+- Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work from this audit branch.
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
