@@ -6,7 +6,7 @@ import type {
 } from "@/src/lib/market-data/yahoo/yahoo-quote-types";
 import type { PortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-types";
 
-export type WorkspaceLiveMarketProvider = "yahoo";
+export type WorkspaceLiveMarketProvider = "live_market" | "yahoo";
 
 export type WorkspaceLiveMarketDataQuality =
   | "live"
@@ -23,7 +23,7 @@ export type WorkspaceLiveMarketQuote = {
   price: number | null;
   provider: WorkspaceLiveMarketProvider;
   sourceQuote: YahooQuote;
-  sourceStatus: "live" | "stale" | "unavailable";
+  sourceStatus: "delayed" | "fallback" | "live" | "stale" | "unavailable";
   symbol: string;
 };
 

@@ -39,9 +39,9 @@ function formatDateTime(value: string | null | undefined) {
   }).format(date);
 }
 
-export function LivePortfolioValuationCard() {
+export function LivePortfolioValuationCard({ autoLoad = false }: { autoLoad?: boolean }) {
   const [valuation, setValuation] = useState<PortfolioLiveValuationSnapshot | null>(null);
-  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [loadState, setLoadState] = useState<LoadState>(autoLoad ? "loading" : "ready");
 
   const loadValuation = useCallback(async () => {
     setLoadState("loading");
@@ -55,24 +55,28 @@ export function LivePortfolioValuationCard() {
   }, []);
 
   useEffect(() => {
+    if (!autoLoad) {
+      return;
+    }
+
     queueMicrotask(() => {
       void loadValuation();
     });
-  }, [loadValuation]);
+  }, [autoLoad, loadValuation]);
 
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Yahoo Live Valuation Preview
+            V14.2 Live Valuation Preview
           </p>
           <h2 className="mt-2 flex items-center gap-2 text-xl font-semibold text-[var(--ixai-forest)]">
             <WalletCards className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
             Portfolio Live Valuation
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Uses read-only Yahoo quotes when available, with stored/manual prices as fallback. This is an estimated preview, not advice or an order workflow.
+            Uses read-only Yahoo equity and Binance crypto quotes when available, with stored/manual prices as fallback. This is an estimated preview, not advice or an order workflow.
           </p>
         </div>
         <button
@@ -124,7 +128,7 @@ export function LivePortfolioValuationCard() {
       </div>
 
       <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Source: {valuation?.source ?? "yahoo_live_preview"} · As of:{" "}
+        Source: {valuation?.source ?? "live_market_preview"} · As of:{" "}
         {formatDateTime(valuation?.quoteSnapshot?.generatedAt)} · Stale quotes:{" "}
         {valuation?.staleQuoteSymbols.length ?? 0}
       </p>
@@ -132,6 +136,10 @@ export function LivePortfolioValuationCard() {
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
           Live valuation preview could not be loaded. Existing Portfolio Truth and local fallback remain available.
+        </p>
+      ) : !valuation ? (
+        <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
+          Live valuation preview is available on demand. Use Refresh to load this read-only card.
         </p>
       ) : null}
     </section>

@@ -88,6 +88,10 @@ function sourceStatusFromQuote(result: MarketQuoteResult | undefined): Valuation
     return "fallback";
   }
 
+  if (result.sourceStatus === "stale") {
+    return "stale";
+  }
+
   return "unavailable";
 }
 
@@ -331,6 +335,10 @@ function combineSourceStatus(statuses: ValuationSourceStatus[]): ValuationSource
 
   if (statuses.every((status) => status === "fallback")) {
     return "fallback";
+  }
+
+  if (statuses.every((status) => status === "stale")) {
+    return "stale";
   }
 
   if (statuses.some((status) => status === "delayed")) {

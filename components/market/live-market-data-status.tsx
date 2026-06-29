@@ -59,14 +59,14 @@ export function LiveMarketDataStatus({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Live Product 1
+            V14.1 Live Market Data
           </p>
           <h2 className="mt-2 flex items-center gap-2 text-xl font-semibold text-[var(--ixai-forest)]">
             <SatelliteDish className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
-            Yahoo Quote Status
+            Live Quote Status
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Read-only Yahoo quote preview with in-memory cache. Informational only; no DB write, broker action, order execution, or recommendation logic.
+            Read-only Yahoo equity and Binance crypto quote preview with in-memory cache. Informational only; no DB write, broker action, order execution, or recommendation logic.
           </p>
         </div>
         <button
@@ -114,7 +114,7 @@ export function LiveMarketDataStatus({
 
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
-          Yahoo quote preview could not be loaded. Existing Workspace fallback readbacks remain available.
+          Live quote preview could not be loaded. Existing Workspace fallback readbacks remain available.
         </p>
       ) : !preview ? (
         <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">

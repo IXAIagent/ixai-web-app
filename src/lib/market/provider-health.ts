@@ -1,4 +1,5 @@
 import { listMarketProviders } from "@/src/lib/market/provider-registry";
+import type { MarketProviderName } from "@/src/lib/market/types";
 import type { MarketProviderStatus } from "@/src/lib/market/market-types";
 
 export type ProviderStatus =
@@ -48,6 +49,14 @@ export interface ProviderHealthSummary {
   unavailableProviderCount: number;
 }
 
+type LiveProviderHealthState = {
+  lastFailureAt: string | null;
+  lastFailureReason: string | null;
+  lastSuccessAt: string | null;
+};
+
+const liveProviderHealth = new Map<MarketProviderName, LiveProviderHealthState>();
+
 function mapProviderStatus(status: MarketProviderStatus): ProviderStatus {
   if (status === "ready") return "healthy";
   if (status === "mock") return "mock";
@@ -75,6 +84,103 @@ function buildFallbackPolicy(providerId: string): ProviderFallbackPolicy {
   };
 }
 
+function getLiveProviderHealth(provider: MarketProviderName): LiveProviderHealthState {
+  return (
+    liveProviderHealth.get(provider) ?? {
+      lastFailureAt: null,
+      lastFailureReason: null,
+      lastSuccessAt: null,
+    }
+  );
+}
+
+function setLiveProviderHealth(
+  provider: MarketProviderName,
+  patch: Partial<LiveProviderHealthState>,
+) {
+  liveProviderHealth.set(provider, {
+    ...getLiveProviderHealth(provider),
+    ...patch,
+  });
+}
+
+export function recordMarketProviderSuccess(provider: MarketProviderName) {
+  if (provider === "unknown" || provider === "mock") {
+    return;
+  }
+
+  setLiveProviderHealth(provider, {
+    lastFailureReason: null,
+    lastSuccessAt: new Date().toISOString(),
+  });
+}
+
+export function recordMarketProviderFailure(provider: MarketProviderName, reason: string) {
+  if (provider === "unknown" || provider === "mock") {
+    return;
+  }
+
+  setLiveProviderHealth(provider, {
+    lastFailureAt: new Date().toISOString(),
+    lastFailureReason: reason,
+  });
+}
+
+function buildLiveProviderHealthItems(generatedAt: string): ProviderHealthItem[] {
+  const providers: Array<{
+    id: MarketProviderName;
+    label: string;
+    priority: ProviderPriority;
+    supportsQuotes: boolean;
+  }> = [
+    {
+      id: "yahoo_finance",
+      label: "Yahoo Finance equity quotes",
+      priority: "primary",
+      supportsQuotes: true,
+    },
+    {
+      id: "binance",
+      label: "Binance crypto quotes",
+      priority: "primary",
+      supportsQuotes: true,
+    },
+  ];
+
+  return providers.map((provider) => {
+    const state = getLiveProviderHealth(provider.id);
+    const hasSuccess = Boolean(state.lastSuccessAt);
+    const hasFailure = Boolean(state.lastFailureAt);
+    const status: ProviderStatus = hasSuccess
+      ? "healthy"
+      : hasFailure
+        ? "unavailable"
+        : "placeholder";
+
+    return {
+      dataFreshness: hasSuccess ? "fresh" : hasFailure ? "stale" : "unknown",
+      fallbackPolicy: {
+        fallbackProviderId: "stale_cache_or_unavailable",
+        policy: "none",
+        reason:
+          "Live providers fall back to fresh cache, stale cache, or unavailable quote results. They do not call browser providers directly.",
+      },
+      id: provider.id,
+      label: provider.label,
+      lastCheckedAt: state.lastSuccessAt ?? state.lastFailureAt ?? generatedAt,
+      priority: provider.priority,
+      status,
+      summary: state.lastFailureReason
+        ? `Last failure: ${state.lastFailureReason}`
+        : hasSuccess
+          ? "Latest quote refresh succeeded through the server-side provider route."
+          : "Provider is registered; health becomes active after the first quote refresh.",
+      supportsNews: false,
+      supportsQuotes: provider.supportsQuotes,
+    };
+  });
+}
+
 export function buildProviderHealthSummary(): ProviderHealthSummary {
   const generatedAt = new Date().toISOString();
   const providers = listMarketProviders();
@@ -97,7 +203,9 @@ export function buildProviderHealthSummary(): ProviderHealthSummary {
       supportsQuotes: provider.supportsQuotes,
     };
   });
-  const primaryProvider = items.find((item) => item.priority === "primary") ?? null;
+  const liveItems = buildLiveProviderHealthItems(generatedAt);
+  const allItems = [...liveItems, ...items];
+  const primaryProvider = allItems.find((item) => item.priority === "primary") ?? null;
 
   return {
     fallbackPolicy: {
@@ -107,13 +215,13 @@ export function buildProviderHealthSummary(): ProviderHealthSummary {
         "Until real market providers are explicitly approved, Workspace market surfaces should fall back to deterministic mock metadata.",
     },
     generatedAt,
-    healthyProviderCount: items.filter((item) => item.status === "healthy").length,
-    items,
-    mockProviderCount: items.filter((item) => item.status === "mock").length,
+    healthyProviderCount: allItems.filter((item) => item.status === "healthy").length,
+    items: allItems,
+    mockProviderCount: allItems.filter((item) => item.status === "mock").length,
     primaryProviderId: primaryProvider?.id ?? null,
-    providerCount: items.length,
+    providerCount: allItems.length,
     summary:
-      "Provider Health Framework is enabled with deterministic mock health data only. No external provider is connected.",
-    unavailableProviderCount: items.filter((item) => item.status === "unavailable").length,
+      "Provider Health Framework is enabled for server-side Yahoo equity quotes, Binance crypto quotes, and deterministic mock metadata. Failures return stale cache or unavailable quote results instead of throwing.",
+    unavailableProviderCount: allItems.filter((item) => item.status === "unavailable").length,
   };
 }

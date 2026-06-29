@@ -19,6 +19,7 @@ const SUPPORTED_EQUITY_SYMBOLS = new Set([
   "AFRM",
   "MRVL",
 ]);
+const YAHOO_TIMEOUT_MS = 5_000;
 
 type YahooChartResponse = {
   chart?: {
@@ -105,6 +106,7 @@ export async function fetchYahooEquityQuote(
       headers: {
         accept: "application/json",
       },
+      signal: AbortSignal.timeout(YAHOO_TIMEOUT_MS),
     });
 
     if (!response.ok) {
@@ -156,8 +158,10 @@ export async function fetchYahooEquityQuote(
       currency: meta?.currency ?? "USD",
       exchange: meta?.exchangeName ?? null,
       marketState: marketStateFromYahoo(meta?.instrumentType),
+      name: normalizedSymbol,
       price,
       provider: "yahoo_finance",
+      sourceNote: "Yahoo Finance chart endpoint via IXAI server route.",
       sourceStatus: "delayed",
       symbol: normalizeSymbol(meta?.symbol ?? normalizedSymbol),
       updatedAt,

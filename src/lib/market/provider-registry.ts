@@ -1,4 +1,5 @@
 import {
+  emptyMarketSnapshot,
   toMarketSnapshot,
   type MarketProvider,
   type MarketProviderId,
@@ -12,6 +13,21 @@ import type {
 } from "@/src/lib/market/market-types";
 
 const MOCK_PROVIDER_ID = "mock" satisfies MarketProviderId;
+const YAHOO_PROVIDER_ID = "yahoo_finance" satisfies MarketProviderId;
+const BINANCE_PROVIDER_ID = "binance" satisfies MarketProviderId;
+const YAHOO_SUPPORTED_SYMBOLS = [
+  "AAPL",
+  "TSLA",
+  "NVDA",
+  "MSFT",
+  "GOOGL",
+  "PLTR",
+  "AVGO",
+  "MDB",
+  "AFRM",
+  "MRVL",
+] as const;
+const BINANCE_SUPPORTED_SYMBOLS = ["BTCUSDT", "ETHUSDT", "BNBUSDT"] as const;
 
 const mockQuoteData = {
   AAPL: { assetType: "equity", currency: "USD", name: "Apple", price: 255, region: "US" },
@@ -148,7 +164,91 @@ export const mockMarketProvider: MarketProvider = {
 
 export const MockProvider = mockMarketProvider;
 
+const yahooFinanceMetadataProvider: MarketProvider = {
+  id: YAHOO_PROVIDER_ID,
+  label: "Yahoo Finance Equity Provider",
+  status: "ready",
+  description:
+    "Server-side public Yahoo Finance equity quote provider for supported US equity / ETF symbols. Browser direct provider calls remain disabled.",
+  supportsNews: false,
+  supportsQuotes: true,
+  async getNews(symbols) {
+    return {
+      generatedAt: new Date().toISOString(),
+      items: [],
+      providerId: YAHOO_PROVIDER_ID,
+      requestedSymbols: symbols,
+      status: "placeholder",
+      warnings: ["Yahoo Finance news is not enabled in V14 Sprint 1."],
+    };
+  },
+  async getQuotes(symbols) {
+    return emptyMarketSnapshot({
+      providerId: YAHOO_PROVIDER_ID,
+      requestedSymbols: symbols,
+      warnings: [
+        "Use getMarketQuote/getMarketQuotes for live server-side Yahoo quotes.",
+      ],
+    });
+  },
+  supportsSymbol(symbol) {
+    return YAHOO_SUPPORTED_SYMBOLS.includes(normalizeSymbol(symbol) as typeof YAHOO_SUPPORTED_SYMBOLS[number]);
+  },
+};
+
+const binanceMetadataProvider: MarketProvider = {
+  id: BINANCE_PROVIDER_ID,
+  label: "Binance Crypto Provider",
+  status: "ready",
+  description:
+    "Server-side public Binance crypto quote provider for BTCUSDT, ETHUSDT, and BNBUSDT. Browser direct provider calls remain disabled.",
+  supportsNews: false,
+  supportsQuotes: true,
+  async getNews(symbols) {
+    return {
+      generatedAt: new Date().toISOString(),
+      items: [],
+      providerId: BINANCE_PROVIDER_ID,
+      requestedSymbols: symbols,
+      status: "placeholder",
+      warnings: ["Binance news is not enabled in V14 Sprint 1."],
+    };
+  },
+  async getQuotes(symbols) {
+    return emptyMarketSnapshot({
+      providerId: BINANCE_PROVIDER_ID,
+      requestedSymbols: symbols,
+      warnings: [
+        "Use getMarketQuote/getMarketQuotes for live server-side Binance quotes.",
+      ],
+    });
+  },
+  supportsSymbol(symbol) {
+    return BINANCE_SUPPORTED_SYMBOLS.includes(normalizeSymbol(symbol) as typeof BINANCE_SUPPORTED_SYMBOLS[number]);
+  },
+};
+
 export const marketProviderRegistry = [
+  {
+    description: yahooFinanceMetadataProvider.description,
+    id: yahooFinanceMetadataProvider.id,
+    label: yahooFinanceMetadataProvider.label,
+    provider: yahooFinanceMetadataProvider,
+    status: yahooFinanceMetadataProvider.status,
+    supportedSymbols: [...YAHOO_SUPPORTED_SYMBOLS],
+    supportsNews: yahooFinanceMetadataProvider.supportsNews,
+    supportsQuotes: yahooFinanceMetadataProvider.supportsQuotes,
+  },
+  {
+    description: binanceMetadataProvider.description,
+    id: binanceMetadataProvider.id,
+    label: binanceMetadataProvider.label,
+    provider: binanceMetadataProvider,
+    status: binanceMetadataProvider.status,
+    supportedSymbols: [...BINANCE_SUPPORTED_SYMBOLS],
+    supportsNews: binanceMetadataProvider.supportsNews,
+    supportsQuotes: binanceMetadataProvider.supportsQuotes,
+  },
   {
     description: mockMarketProvider.description,
     id: mockMarketProvider.id,

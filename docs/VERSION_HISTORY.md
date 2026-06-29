@@ -6,6 +6,33 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V14 Sprint 1 Live Market Workspace
+
+Why:
+
+- V14 is now the active product mainline after V12 runtime stabilization and V13.0 i18n foundation.
+- IXAI needs live market data, live valuation, and FCN live risk before Workspace Intelligence and Morning Brief can become daily-use surfaces.
+- V14.1, V14.2, and V14.3 are tightly connected and should ship as one Sprint rather than three partial PRs.
+
+What Changed:
+
+- Added `docs/V14_SPRINT_1_LIVE_MARKET_WORKSPACE.md`.
+- Added `/api/market/live-quotes` as the internal server-side live quote route.
+- Expanded the market layer with Yahoo Finance equity quote support, Binance crypto quote support, short-lived memory cache, request coalescing, and provider health state.
+- Routed Portfolio valuation and FCN risk client services through the internal live quote API.
+- Added V14 live-risk facade exports under `src/lib/fcn/live-risk/`.
+- Updated Workspace Home, Portfolio, FCN, Risk, and Intelligence live-market status copy and integration points.
+
+Key Decisions:
+
+- Live quote providers stay server-side; browser direct provider fetch remains disabled.
+- Equity cache TTL is 60 seconds; crypto cache TTL is 30 seconds.
+- Provider failures return stale cache, fallback, or unavailable status instead of throwing to React.
+- Portfolio valuation is estimated monitoring only.
+- FCN live risk is barrier/risk-awareness monitoring only and is not a full FCN pricing engine.
+- V14.4 Workspace Intelligence, V14.5 Workspace Morning Brief, and V14.6 Beta Readiness remain pending.
+- No auth, RLS, schema, migration, billing, broker, trading, recommendation, scheduler, notification delivery, OpenAI, or AI model behavior changed.
+
 ## V14.0 Live Workspace Program Planning
 
 Why:

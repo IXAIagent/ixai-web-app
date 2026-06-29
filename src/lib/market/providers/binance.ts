@@ -5,6 +5,7 @@ import type {
 } from "@/src/lib/market/types";
 
 const SUPPORTED_CRYPTO_SYMBOLS = new Set(["BTCUSDT", "ETHUSDT", "BNBUSDT"]);
+const BINANCE_TIMEOUT_MS = 5_000;
 
 type BinanceTickerResponse = {
   lastPrice?: string;
@@ -92,6 +93,7 @@ export async function fetchBinanceCryptoQuote(
       headers: {
         accept: "application/json",
       },
+      signal: AbortSignal.timeout(BINANCE_TIMEOUT_MS),
     });
 
     if (!response.ok) {
@@ -122,9 +124,11 @@ export async function fetchBinanceCryptoQuote(
       changePercent: parseNumber(payload.priceChangePercent),
       currency: quoteAsset,
       marketState: "open",
+      name: baseAsset,
       price,
       provider: "binance",
       quoteAsset,
+      sourceNote: "Binance public 24hr ticker endpoint via IXAI server route.",
       sourceStatus: "live",
       symbol: normalizedResponseSymbol,
       updatedAt: new Date().toISOString(),

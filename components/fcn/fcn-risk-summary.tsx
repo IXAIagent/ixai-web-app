@@ -29,6 +29,7 @@ const SOURCE_CLASS: Record<FcnRiskSourceStatus, string> = {
   fallback: "border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] text-[var(--ixai-forest-soft)]",
   live: "border-emerald-200 bg-emerald-50 text-emerald-800",
   partial: "border-amber-200 bg-amber-50 text-amber-800",
+  stale: "border-[color-mix(in_srgb,var(--ixai-gold)_44%,transparent)] bg-[rgba(255,250,240,0.82)] text-[var(--ixai-forest)]",
   unavailable: "border-rose-200 bg-rose-50 text-rose-800",
 };
 

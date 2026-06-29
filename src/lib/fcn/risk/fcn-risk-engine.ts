@@ -28,6 +28,7 @@ const SOURCE_STATUS_RANK: Record<FcnRiskSourceStatus, number> = {
   delayed: 4,
   fallback: 3,
   partial: 2,
+  stale: 3,
   unavailable: 1,
 };
 
@@ -316,6 +317,10 @@ function combineSourceStatus(statuses: FcnRiskSourceStatus[]): FcnRiskSourceStat
 
   if (statuses.every((status) => status === "fallback")) {
     return "fallback";
+  }
+
+  if (statuses.every((status) => status === "stale")) {
+    return "stale";
   }
 
   if (statuses.every((status) => status === "unavailable")) {
