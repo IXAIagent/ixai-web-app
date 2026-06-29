@@ -6,6 +6,33 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V13.0 Internationalization Foundation
+
+Why:
+
+- IXAI is a Global Multi-Asset, Multi-Broker, Multi-Market, Multi-Language AI Risk Platform.
+- Public users need a simple language switcher without registering or entering Workspace.
+- Workspace Settings should manage the same locale state rather than inventing a separate language preference.
+- The first step is foundation-level i18n, not full-site translation.
+
+What Changed:
+
+- Added `src/lib/i18n/` with supported locale metadata, shared locale storage, dictionaries, and `useLocale()`.
+- Added `components/i18n/language-switcher.tsx`.
+- Added compact Language Switcher placement in public/Workspace desktop sidebar and mobile drawer.
+- Connected Workspace Settings Language card to the full Language Switcher.
+- Connected minimal public navigation and Workspace navigation labels to the locale dictionary.
+- Added `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`.
+
+Key Decisions:
+
+- Supported locales are `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`; unsupported values fall back to `zh-TW`.
+- Storage key and cookie are both `ixai.locale`.
+- Public App and Workspace share the same localStorage + cookie locale state.
+- No Supabase preference sync is enabled.
+- No full content translation is included yet.
+- No auth, RLS, schema, migration, billing, broker, trading, recommendation, scheduler, OpenAI, or AI behavior changed.
+
 ## V12.3.1 Optional Personalization Fallback
 
 Why:

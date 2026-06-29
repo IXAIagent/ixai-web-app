@@ -10,6 +10,7 @@ import {
   UserCircle,
 } from "lucide-react";
 
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { SettingsRuntimeDiagnosticsControl } from "@/components/workspace/settings-runtime-diagnostics-control";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -37,11 +38,12 @@ const settingsAreas = [
     status: "Preview",
   },
   {
-    description: "語言偏好將支援 zh-TW、zh-CN、en-US、ja-JP、ko-KR。此版只保留 IA 位置。",
+    description: "Public App 與 Workspace 共用此語言偏好。本版使用 localStorage + cookie，不接 Supabase；未來可同步到 user preferences。",
     href: null,
     icon: Languages,
+    id: "language",
     label: "Language",
-    status: "Coming Soon",
+    status: "Available",
   },
   {
     description: "地區與市場偏好將服務 US / TW / HK / CN / JP / KR / EU / SG / Crypto / FCN。",
@@ -105,8 +107,17 @@ export default function MyIxaiSettingsPage() {
                   <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
                     {area.description}
                   </p>
+                  {area.id === "language" ? (
+                    <div className="mt-4">
+                      <LanguageSwitcher mode="full" />
+                      <p className="mt-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                        Workspace Settings manages the same locale state used by the Public App.
+                        This version does not enable Supabase user-preference sync.
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
-                {area.href ? (
+                {area.id === "language" ? null : area.href ? (
                   <span className="mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)]">
                     Open
                     <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />

@@ -4,13 +4,13 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V12.3.1 Optional Personalization Fallback`
+`V13.0 Internationalization Foundation`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V12.3.1 Optional Personalization Fallback. Program A, Root Provider Stabilization, is complete via PR #75 and commit `9c73915` (`fix: stabilize root auth runtime promises`). Program B, Program C, Program D, and Program E implementation work has merged, including PR #79, and PR #80 reduced authenticated Supabase read storms. PR #82 targeted Settings / Copilot route-entry fan-out by making initial render lightweight and moving heavy diagnostics/summary builders behind manual runtime-budgeted actions. Production manual verification after PR #82 shows `/my-ixai/home`, `/my-ixai/settings`, and `/my-ixai/copilot` normal, with no observed `RESULT_CODE_HUNG`, gray screen, white screen, or `401` storm. V12.3 audited the remaining production API 404 fragments `completed&limit=1` and `categories&limit=1` to optional personalization reads. V12.3.1 disables optional remote personalization sync by default so `ixai_profile_memory` and `ixai_user_preferences` use local defaults without production 404 noise. V12 must not be marked complete from this fallback alone.
+Current priority is V13.0 Internationalization Foundation. IXAI is a Global Multi-Asset, Multi-Broker, Multi-Market, Multi-Language AI Risk Platform. V13.0 establishes the shared locale layer for the Public App and Workspace with `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`, stores the preference in `ixai.locale` localStorage + cookie, and adds a shared Language Switcher. Public users can change language without registration, and Workspace Settings manages the same locale state. This version only connects foundation-level labels such as public navigation, Workspace navigation, the language switcher, and the Workspace Settings Language card. It does not translate full content and does not add Supabase preference sync, auth changes, RLS, schema, migrations, billing, broker, trading, recommendation, scheduler, OpenAI, or AI behavior. See `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`.
 
 Runtime Stabilization Program Status:
 
@@ -36,9 +36,10 @@ Important:
 - Program A, Program B, Program C, Program D, and Program E implementation work has merged.
 - PR #79 and PR #80 did not resolve the Settings / Copilot production HUNG; PR #82 appears to have resolved it in manual production verification.
 - Local production-like QA is insufficient as completion evidence.
-- V12.3.1 only cleans optional personalization fallback behavior for `ixai_profile_memory` and `ixai_user_preferences`.
-- The full V12 runtime stabilization work remains under continued production observation and must not be marked complete from this fallback alone.
-- Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or new product feature work from this audit branch.
+- V13.0 is i18n foundation only, not a full translation program.
+- Public users can change language without registration; Workspace Settings manages the same locale state.
+- Locale state uses localStorage + cookie only; no Supabase preference sync is enabled.
+- Do not proceed to Live Market / Beta, broker/trading/recommendation, scheduler, billing, or unrelated product feature work from this i18n foundation branch.
 
 - Use `docs/LEGACY_PRO_MIGRATION_AUDIT_V211.md` as the canonical inventory for Legacy Pro migration, App module ownership, and v3.00 IA boundaries.
 - Use `docs/V300_UX_IA_FOUNDATION_PLAN.md` as the route and navigation foundation for v3.00.
