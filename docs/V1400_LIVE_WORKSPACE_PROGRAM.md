@@ -166,6 +166,13 @@ Done direction:
 - Every major Workspace route must pass production-like smoke.
 - Known limitations must be visible to the team before any public Beta claim.
 
+Sprint 3 status:
+
+- Implemented as Beta Readiness & Production Polish with `/my-ixai/health`, `/my-ixai/beta`, brief copy/export/print, feedback template, release notes, and production QA checklist.
+- V14 Sprint 3 completes Beta readiness polish only after production verification passes.
+- Feedback framework does not send, store, or sync user data yet.
+- No trading, broker integration, recommendations, target prices, AI model calls, scheduler, LINE, Telegram, email, push delivery, auth, RLS, schema, migration, or billing behavior changed.
+
 ## V13 Reminder
 
 After V14 Beta is complete, return to:

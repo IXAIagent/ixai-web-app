@@ -6,6 +6,32 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V14 Sprint 3 Beta Readiness & Production Polish
+
+Why:
+
+- V14 Sprint 1 added live market, valuation, and FCN live risk foundations.
+- V14 Sprint 2 added Workspace Intelligence and on-demand Morning Brief.
+- IXAI now needs production polish, share/export, health visibility, feedback framework, release notes, and a Beta readiness gate before inviting first users.
+
+What Changed:
+
+- Added `docs/V14_SPRINT_3_BETA_READINESS_POLISH.md`.
+- Added `docs/V14_BETA_RELEASE_NOTES.md`.
+- Added Brief copy, Markdown export, and print-friendly view support.
+- Added `/my-ixai/health` Workspace Health Center.
+- Added `/my-ixai/beta` Beta Readiness Dashboard.
+- Added local feedback template and release notes panel.
+- Added Health / Beta entries to Workspace navigation and Home.
+
+Key Decisions:
+
+- V14 Sprint 3 is Beta readiness polish, not public Beta launch.
+- Invite-only Beta should begin only after production verification passes.
+- Feedback framework is local-only and does not send or store user data.
+- No trading, broker integration, buy/sell/hold recommendations, target prices, AI model calls, scheduler, notification delivery, auth/RLS/schema/migration, membership, or billing changes are added.
+- After V14 Beta verification, return to V13.1-V13.5 i18n track.
+
 ## V14 Sprint 2 Workspace Intelligence + Morning Brief
 
 Why:
