@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V13 Sprint 4 Authenticated Workspace Translation Audit
+
+Why:
+
+- V13 Sprint 3 repaired the first visible coverage pass, but production signed-in review still found English copy inside authenticated Workspace pages.
+- `/my-ixai/portfolio` showed the clearest remaining issue, especially the Portfolio Persistence Layer readback card.
+- V13 completion criteria must include signed-in Workspace manual verification, not only public surfaces and i18n infrastructure.
+
+What Changed:
+
+- Added `docs/V13_SPRINT_4_AUTHENTICATED_WORKSPACE_TRANSLATION_AUDIT.md`.
+- Expanded dictionaries with authenticated Workspace namespaces for portfolio, persistence, valuation, risk, FCN, intelligence, watchlist, notifications, timeline, copilot, diagnostics, source status, asset types, warnings, and data health.
+- Added a shared Workspace display-label helper for source status, asset type, source name, and warning message mapping.
+- Updated `/my-ixai/portfolio` page copy to use dictionary-backed labels.
+- Updated Portfolio Truth, Portfolio Persistence, Portfolio Valuation, Portfolio Live Valuation, and FCN Live Underlying cards to use UI display label mapping.
+
+Key Decisions:
+
+- Sprint 4 localizes deterministic readback output at the UI display layer only.
+- Portfolio / FCN / Risk / Intelligence engine contracts remain unchanged.
+- Sprint 4 is not a full Workspace translation completion claim.
+- Known remaining areas include deep Risk, FCN, Intelligence, input forms, Watchlist, Notifications, Timeline, Copilot, and source-output messages that need dedicated mapping.
+- No auth, schema, migrations, RLS, API contracts, billing, broker/trading, recommendations, scheduler/delivery, AI provider behavior, live market provider behavior, exchange-rate provider behavior, or Portfolio / FCN / Risk core logic changed.
+
 ## V13 Sprint 3 Translation Coverage Repair
 
 Why:
