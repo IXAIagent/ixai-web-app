@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, RefreshCw, ShieldCheck } from "lucide-react";
 
+import { useTranslation } from "@/src/lib/i18n/use-locale";
+import { useWorkspaceDisplayLabels } from "@/src/lib/i18n/use-workspace-display-labels";
 import { loadWorkspaceLiveValuationPreview } from "@/src/lib/valuation/live-valuation-client";
 import type { FcnLiveUnderlyingSnapshot } from "@/src/lib/valuation";
 
@@ -35,6 +37,8 @@ function formatDateTime(value: string | null | undefined) {
 }
 
 export function LiveFcnUnderlyingStatusCard({ autoLoad = false }: { autoLoad?: boolean }) {
+  const { t } = useTranslation("fcn");
+  const { sourceStatusLabel } = useWorkspaceDisplayLabels();
   const [snapshot, setSnapshot] = useState<FcnLiveUnderlyingSnapshot | null>(null);
   const [loadState, setLoadState] = useState<LoadState>(autoLoad ? "loading" : "ready");
 
@@ -68,14 +72,14 @@ export function LiveFcnUnderlyingStatusCard({ autoLoad = false }: { autoLoad?: b
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            V14.3 Live Underlying Preview
+            {t("liveUnderlyingEyebrow")}
           </p>
           <h2 className="mt-2 flex items-center gap-2 text-xl font-semibold text-[var(--ixai-forest)]">
             <ShieldCheck className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
-            FCN Live Underlying Status
+            {t("liveUnderlyingTitle")}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Tracks underlying quote availability, worst-of performance, KI / KO / strike distance where input data exists. This is not an FCN pricing engine.
+            {t("liveUnderlyingBody")}
           </p>
         </div>
         <button
@@ -89,17 +93,17 @@ export function LiveFcnUnderlyingStatusCard({ autoLoad = false }: { autoLoad?: b
           ) : (
             <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           )}
-          Refresh
+          {t("refresh")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
-          ["FCNs", String(snapshot?.positionCount ?? 0)],
-          ["Status", snapshot?.dataQuality ?? "--"],
-          ["Worst-of", worstUnderlying?.symbol ?? "--"],
-          ["Performance", formatPercent(worstUnderlying?.performancePercent)],
-          ["KI Distance", formatPercent(worstUnderlying?.distanceToKiPercent)],
+          [t("fcnCount"), String(snapshot?.positionCount ?? 0)],
+          [t("status"), sourceStatusLabel(snapshot?.dataQuality)],
+          [t("worstOf"), worstUnderlying?.symbol ?? "--"],
+          [t("performance"), formatPercent(worstUnderlying?.performancePercent)],
+          [t("kiDistance"), formatPercent(worstUnderlying?.distanceToKiPercent)],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -117,28 +121,28 @@ export function LiveFcnUnderlyingStatusCard({ autoLoad = false }: { autoLoad?: b
 
       {worstUnderlying ? (
         <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          {topWorstOf?.name ?? "FCN"} · Current {formatPrice(worstUnderlying.currentPrice)} · Strike distance {formatPercent(worstUnderlying.distanceToStrikePercent)} · KO distance {formatPercent(worstUnderlying.distanceToKoPercent)}
+          {topWorstOf?.name ?? "FCN"} · Current {formatPrice(worstUnderlying.currentPrice)} · {t("strikeDistance")} {formatPercent(worstUnderlying.distanceToStrikePercent)} · {t("koDistance")} {formatPercent(worstUnderlying.distanceToKoPercent)}
         </p>
       ) : (
         <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          No analyzable FCN underlyings are available yet, or live quotes / stored prices are missing.
+          {t("noAnalyzableUnderlyings")}
         </p>
       )}
 
       <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Source: {snapshot?.source ?? "live_market_preview"} · As of:{" "}
-        {formatDateTime(snapshot?.quoteSnapshot?.generatedAt)} · Missing quotes:{" "}
-        {snapshot?.missingQuoteSymbols.length ?? 0} · Stale quotes:{" "}
+        {t("source")}: {snapshot?.source ?? "live_market_preview"} · As of:{" "}
+        {formatDateTime(snapshot?.quoteSnapshot?.generatedAt)} · {t("missingQuotes")}:{" "}
+        {snapshot?.missingQuoteSymbols.length ?? 0} · {t("staleQuotes")}:{" "}
         {snapshot?.staleQuoteSymbols.length ?? 0}
       </p>
 
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
-          Live FCN underlying preview could not be loaded. FCN Center draft and persisted readbacks remain available.
+          {t("liveUnderlyingError")}
         </p>
       ) : !snapshot ? (
         <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          Live FCN underlying preview is available on demand. Use Refresh to load this read-only card.
+          {t("liveUnderlyingReady")}
         </p>
       ) : null}
     </section>

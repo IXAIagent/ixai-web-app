@@ -9,6 +9,8 @@ import type {
   PortfolioValuationResult,
   ValuationSourceStatus,
 } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
+import { useWorkspaceDisplayLabels } from "@/src/lib/i18n/use-workspace-display-labels";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 const STATUS_CLASS: Record<ValuationSourceStatus, string> = {
@@ -59,16 +61,20 @@ function formatTime(value: string | null | undefined) {
 }
 
 function StatusBadge({ status }: { status: ValuationSourceStatus }) {
+  const { sourceStatusLabel } = useWorkspaceDisplayLabels();
+
   return (
     <span
       className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${STATUS_CLASS[status]}`}
     >
-      {status.toUpperCase()}
+      {sourceStatusLabel(status)}
     </span>
   );
 }
 
 export function PortfolioValuationSummary() {
+  const { t } = useTranslation("valuation");
+  const { assetTypeLabel, interpolate, sourceStatusLabel } = useWorkspaceDisplayLabels();
   const [valuation, setValuation] = useState<PortfolioValuationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
@@ -111,29 +117,31 @@ export function PortfolioValuationSummary() {
 
     return [
       {
-        label: "Estimated Market Value",
-        note: "Market quotes + FCN notional placeholder",
+        label: t("estimatedMarketValue"),
+        note: t("estimatedMarketValueNote"),
         value: formatCurrency(summary?.totalMarketValue, currency),
       },
       {
-        label: "Cost Basis",
-        note: "Known average cost / notional only",
+        label: t("costBasis"),
+        note: t("costBasisNote"),
         value: formatCurrency(summary?.totalCostBasis, currency),
       },
       {
-        label: "Unrealized P/L",
-        note: `${formatPercent(summary?.totalUnrealizedPnlPercent)} estimated return`,
+        label: t("unrealizedPnl"),
+        note: interpolate(t("unrealizedPnlNote"), {
+          percent: formatPercent(summary?.totalUnrealizedPnlPercent),
+        }),
         value: formatCurrency(summary?.totalUnrealizedPnl, currency),
       },
       {
-        label: "Priced / Unpriced",
-        note: "Positions with estimated market value",
+        label: t("pricedUnpriced"),
+        note: t("pricedUnpricedNote"),
         value: summary
           ? `${summary.pricedPositionCount} / ${summary.unpricedPositionCount}`
           : "--",
       },
     ];
-  }, [valuation]);
+  }, [interpolate, t, valuation]);
 
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
@@ -142,10 +150,10 @@ export function PortfolioValuationSummary() {
           <FeatureIcon icon={Calculator} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Portfolio Valuation Engine
+              {t("valuationEngine")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Estimated portfolio value
+              {t("estimatedPortfolioValue")}
             </h2>
           </div>
         </div>
@@ -156,17 +164,17 @@ export function PortfolioValuationSummary() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "估值中" : "重新估值"}
+          {isLoading ? t("refreshing") : t("refreshValuation")}
         </button>
       </div>
 
       <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-        v4.30 combines Portfolio Truth readback with Market Data Foundation quotes. FCN values use notional placeholders only; this is an estimated monitoring view, not investment advice.
+        {t("valuationBody")}
       </p>
 
       {valuation?.summary.positionCount === 0 ? (
         <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          No portfolio positions are available for valuation yet. Add Stock, Crypto, or FCN inputs to start building valuation readback.
+          {t("emptyState")}
         </div>
       ) : null}
 
@@ -195,10 +203,10 @@ export function PortfolioValuationSummary() {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-                  Asset Allocation
+                  {t("assetAllocation")}
                 </p>
                 <h3 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
-                  Estimated by asset class
+                  {t("assetAllocationSubtitle")}
                 </h3>
               </div>
               <StatusBadge status={valuation.summary.sourceStatus} />
@@ -208,7 +216,7 @@ export function PortfolioValuationSummary() {
                 <div key={item.assetClass}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-semibold capitalize text-[var(--ixai-forest)]">
-                      {item.assetClass}
+                      {assetTypeLabel(item.assetClass)}
                     </p>
                     <p className="font-mono text-xs font-semibold text-[var(--ixai-forest-soft)]">
                       {formatCurrency(item.marketValue, valuation.currency)} / {formatPercent(item.allocationPercent)}
@@ -223,13 +231,17 @@ export function PortfolioValuationSummary() {
                     />
                   </div>
                   <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                    {item.positionCount} position(s), {item.pricedPositionCount} priced · {item.sourceStatus}
+                    {interpolate(t("positionCountPriced"), {
+                      count: item.positionCount,
+                      priced: item.pricedPositionCount,
+                      status: sourceStatusLabel(item.sourceStatus),
+                    })}
                   </p>
                 </div>
               ))}
               {valuation.summary.assetAllocation.length === 0 ? (
                 <p className="text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                  No allocation is available yet.
+                  {t("allocationEmpty")}
                 </p>
               ) : null}
             </div>
@@ -239,7 +251,7 @@ export function PortfolioValuationSummary() {
             <div className="flex items-center gap-2">
               <WalletCards className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-                Position Valuation
+                {t("positionValuation")}
               </p>
             </div>
             <div className="mt-4 grid gap-2">
@@ -254,7 +266,7 @@ export function PortfolioValuationSummary() {
                         {position.symbol}
                       </p>
                       <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                        {position.name} · {position.assetClass}
+                        {position.name} · {assetTypeLabel(position.assetClass)}
                       </p>
                     </div>
                     <StatusBadge status={position.sourceStatus} />
@@ -280,7 +292,7 @@ export function PortfolioValuationSummary() {
       {valuation && valuation.summary.warnings.length > 0 ? (
         <article className="mt-5 rounded-xl border border-[rgba(176,141,87,0.30)] bg-[rgba(176,141,87,0.08)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Valuation Warnings
+            {t("valuationWarnings")}
           </p>
           <ul className="mt-3 grid gap-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
             {valuation.summary.warnings.slice(0, 5).map((warning, index) => (
@@ -293,7 +305,9 @@ export function PortfolioValuationSummary() {
       ) : null}
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-        Last updated: {formatTime(valuation?.summary.updatedAt)}. Valuation is informational and monitoring-only. It does not provide buy/sell instructions, target prices, order execution, auto trading, or return promises.
+        {interpolate(t("disclaimer"), {
+          time: formatTime(valuation?.summary.updatedAt),
+        })}
       </p>
     </section>
   );

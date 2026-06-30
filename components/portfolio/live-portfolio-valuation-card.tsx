@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, RefreshCw, WalletCards } from "lucide-react";
 
+import { useTranslation } from "@/src/lib/i18n/use-locale";
+import { useWorkspaceDisplayLabels } from "@/src/lib/i18n/use-workspace-display-labels";
 import { loadWorkspaceLiveValuationPreview } from "@/src/lib/valuation/live-valuation-client";
 import type { PortfolioLiveValuationSnapshot } from "@/src/lib/valuation";
 
@@ -40,6 +42,8 @@ function formatDateTime(value: string | null | undefined) {
 }
 
 export function LivePortfolioValuationCard({ autoLoad = false }: { autoLoad?: boolean }) {
+  const { t } = useTranslation("valuation");
+  const { sourceStatusLabel } = useWorkspaceDisplayLabels();
   const [valuation, setValuation] = useState<PortfolioLiveValuationSnapshot | null>(null);
   const [loadState, setLoadState] = useState<LoadState>(autoLoad ? "loading" : "ready");
 
@@ -69,14 +73,14 @@ export function LivePortfolioValuationCard({ autoLoad = false }: { autoLoad?: bo
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            V14.2 Live Valuation Preview
+            {t("livePreviewEyebrow")}
           </p>
           <h2 className="mt-2 flex items-center gap-2 text-xl font-semibold text-[var(--ixai-forest)]">
             <WalletCards className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
-            Portfolio Live Valuation
+            {t("livePreviewTitle")}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Uses read-only Yahoo equity and Binance crypto quotes when available, with stored/manual prices as fallback. This is an estimated preview, not advice or an order workflow.
+            {t("livePreviewBody")}
           </p>
         </div>
         <button
@@ -90,15 +94,15 @@ export function LivePortfolioValuationCard({ autoLoad = false }: { autoLoad?: bo
           ) : (
             <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           )}
-          Refresh
+          {t("refresh")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Estimated Value", formatMoney(valuation?.currentValue)],
-          ["Cost Basis", formatMoney(valuation?.costBasis)],
-          ["Unrealized P/L", formatSignedMoney(valuation?.unrealizedPnl)],
+          [t("estimatedMarketValue"), formatMoney(valuation?.currentValue)],
+          [t("costBasis"), formatMoney(valuation?.costBasis)],
+          [t("unrealizedPnl"), formatSignedMoney(valuation?.unrealizedPnl)],
           ["P/L %", formatPercent(valuation?.unrealizedPnlPercent)],
         ].map(([label, value]) => (
           <article
@@ -117,29 +121,29 @@ export function LivePortfolioValuationCard({ autoLoad = false }: { autoLoad?: bo
 
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         <p className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          Source status: <span className="font-semibold text-[var(--ixai-forest)]">{valuation?.dataQuality ?? "--"}</span>
+          {t("sourceStatus")}: <span className="font-semibold text-[var(--ixai-forest)]">{sourceStatusLabel(valuation?.dataQuality)}</span>
         </p>
         <p className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          Missing quotes: <span className="font-semibold text-[var(--ixai-forest)]">{valuation?.missingQuoteSymbols.length ?? 0}</span>
+          {t("missingQuotes")}: <span className="font-semibold text-[var(--ixai-forest)]">{valuation?.missingQuoteSymbols.length ?? 0}</span>
         </p>
         <p className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          Manual fallback: <span className="font-semibold text-[var(--ixai-forest)]">{valuation?.manualFallbackSymbols.length ?? 0}</span>
+          {t("manualFallback")}: <span className="font-semibold text-[var(--ixai-forest)]">{valuation?.manualFallbackSymbols.length ?? 0}</span>
         </p>
       </div>
 
       <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Source: {valuation?.source ?? "live_market_preview"} · As of:{" "}
-        {formatDateTime(valuation?.quoteSnapshot?.generatedAt)} · Stale quotes:{" "}
+        {t("source")}: {valuation?.source ?? "live_market_preview"} · {t("asOf")}:{" "}
+        {formatDateTime(valuation?.quoteSnapshot?.generatedAt)} · {t("staleQuotes")}:{" "}
         {valuation?.staleQuoteSymbols.length ?? 0}
       </p>
 
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
-          Live valuation preview could not be loaded. Existing Portfolio Truth and local fallback remain available.
+          {t("noAdviceError")}
         </p>
       ) : !valuation ? (
         <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          Live valuation preview is available on demand. Use Refresh to load this read-only card.
+          {t("onDemandReady")}
         </p>
       ) : null}
     </section>

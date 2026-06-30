@@ -7,3 +7,4 @@ export * from "@/src/lib/i18n/localization-store";
 export * from "@/src/lib/i18n/regions";
 export * from "@/src/lib/i18n/use-locale";
 export * from "@/src/lib/i18n/use-localization";
+export * from "@/src/lib/i18n/use-workspace-display-labels";

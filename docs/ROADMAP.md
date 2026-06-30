@@ -4,15 +4,15 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V13 Sprint 3 Translation Coverage Repair`
+`V13 Sprint 4 Authenticated Workspace Translation Audit`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V13 Sprint 3 Translation Coverage Repair. IXAI has completed V12 production runtime stabilization, V12.3.1 optional personalization fallback, V13.0 Internationalization Foundation, V13 Sprint 1 Internationalization Foundation, V13 Sprint 2 Region / Currency / Localization, V14.0 program planning, V14 Sprint 1 Live Market Workspace, V14 Sprint 2 Workspace Intelligence + Morning Brief, V14 Sprint 3 Beta Readiness & Production Polish, and V14 Beta Release Review. Sprint 3 repairs visible zh-TW coverage across primary Public / Workspace surfaces so V13 is not judged only by infrastructure completion. See `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md`, `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md`, `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md`, `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
+Current priority is V13 Sprint 4 Authenticated Workspace Translation Audit. IXAI has completed V12 production runtime stabilization, V12.3.1 optional personalization fallback, V13.0 Internationalization Foundation, V13 Sprint 1 Internationalization Foundation, V13 Sprint 2 Region / Currency / Localization, V14.0 program planning, V14 Sprint 1 Live Market Workspace, V14 Sprint 2 Workspace Intelligence + Morning Brief, V14 Sprint 3 Beta Readiness & Production Polish, and V14 Beta Release Review. Sprint 3 was the first visible coverage repair across primary Public / Workspace surfaces; Sprint 4 audits signed-in Workspace pages and repairs the high-confidence Portfolio authenticated readback gaps found in production. See `docs/V13_SPRINT_4_AUTHENTICATED_WORKSPACE_TRANSLATION_AUDIT.md`, `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md`, `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md`, `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md`, `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
 
-V13 infrastructure foundation is complete after Sprint 2, but product translation coverage requires visible zh-TW coverage on primary Public / Workspace surfaces. Sprint 3 is the first coverage repair pass. Recommended next options are V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration maintenance for deep Workspace centers and long-form public content. V15 remains unchanged by V13 Sprint 3.
+V13 infrastructure foundation is complete after Sprint 2, but product translation coverage requires visible zh-TW coverage on primary Public / Workspace surfaces and signed-in Workspace readback cards. Sprint 3 was the first coverage repair pass; Sprint 4 is an authenticated Workspace audit plus first repair pass. V13 completion still requires signed-in Workspace manual verification, and remaining deep Risk / FCN / Intelligence / input-form strings are tracked as follow-up work. Recommended next options are authenticated production verification, targeted deep Workspace translation repair, V14 Beta Production Verification / Invite-only Pilot, or V15 AI Wealth OS planning. V15 remains unchanged by V13 Sprint 4.
 
 Runtime Stabilization Program Status:
 
@@ -50,7 +50,8 @@ Important:
 - V13 Sprint 1 resumes the i18n mainline after V14 Beta Release Review.
 - V13 Sprint 2 completes Region / Currency / Localization foundations.
 - V13 Sprint 3 repairs visible translation coverage for primary Public / Workspace surfaces.
-- V13 completion criteria now include visible zh-TW coverage, not only infrastructure completion.
+- V13 Sprint 4 audits signed-in Workspace translation coverage and repairs the Portfolio authenticated readback surfaces first.
+- V13 completion criteria now include signed-in Workspace manual verification, not only infrastructure completion.
 - Next recommended options: V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration as maintenance for remaining long-tail surfaces.
 - V15 remains unchanged.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or AI model behavior outside an approved V14 phase.
@@ -131,6 +132,7 @@ Important:
 - Use `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md` as the source of truth for shared Public App + Workspace locale state, supported locales, Language Switcher placement, and V13.0 translation scope.
 - Use `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md` as the source of truth for namespace dictionaries, translation packs, LocaleProvider, useTranslation, localStorage + cookie locale persistence, and initial Public / Workspace i18n wiring.
 - Use `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md` as the source of truth for region metadata, currency metadata, Intl formatting helpers, local-only `ixai.region` / `ixai.currency` preferences, and Settings / Public / Workspace localization display wiring.
+- Use `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md` and `docs/V13_SPRINT_4_AUTHENTICATED_WORKSPACE_TRANSLATION_AUDIT.md` as the source of truth for visible translation coverage repair status. Sprint 3 was the first Public / Workspace coverage pass; Sprint 4 is the authenticated Workspace audit plus first Portfolio readback repair pass.
 - Use `docs/V1400_LIVE_WORKSPACE_PROGRAM.md` as the source of truth for the new V14 Live Workspace mainline, phase sequence, V13 reminder, compliance boundaries, technical boundaries, and done criteria.
 - Use `docs/V14_SPRINT_1_LIVE_MARKET_WORKSPACE.md` as the source of truth for the V14.1-V14.3 Sprint 1 implementation across live market data, live portfolio valuation, FCN live risk, Workspace integration, runtime safety, and compliance boundaries.
 - Use `docs/V14_SPRINT_2_WORKSPACE_INTELLIGENCE_BRIEF.md` as the source of truth for the V14.4-V14.5 Sprint 2 implementation across Workspace Intelligence, Workspace Morning Brief, Timeline enhancement, Copilot explain-only summary, Home / Intelligence integration, runtime safety, and compliance boundaries.
