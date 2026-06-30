@@ -64,9 +64,11 @@ Production foundation:
 
 Current development version:
 
-`V13 Sprint 1 — Internationalization Foundation`
+`V13 Sprint 2 — Region / Currency / Localization`
 
-V13 Sprint 1 resumes the internationalization mainline after V14 Beta Release Review. It expands the V13.0 locale foundation into namespace dictionaries, translation packs, `LocaleProvider`, `useLocale()`, `useTranslation()`, shared Language Switcher, localStorage + cookie persistence, and initial Public / Workspace wiring for Landing, Navigation, Footer, Home, Settings, Health, and Beta. This Sprint does not change auth, RLS, schema, migrations, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, AI model behavior, or Portfolio / FCN engine logic. See `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md`.
+V13 Sprint 2 completes the Region / Currency / Localization foundation after V13 Sprint 1. It adds region metadata, currency metadata, Intl formatting helpers, local-only `ixai.region` / `ixai.currency` preferences, `LocalizationProvider`, `useLocalization()`, Workspace Settings localization controls, and lightweight Public / Workspace display wiring. This Sprint does not change auth, RLS, schema, migrations, API contracts, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, AI model behavior, live market provider behavior, exchange-rate provider behavior, or Portfolio / FCN / Risk engine logic. See `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md`.
+
+V13 mainline foundation is complete after Sprint 2. Deeper dictionary migration can continue as maintenance, but it is not a blocker for the next product track.
 
 V14 Sprint 3 PR #89 has merged into `main`, and V14 Beta Release Review is complete as a release-governance checkpoint. V14 Beta is functionally ready for invite-only Beta preparation after review, but invite-only Beta should begin only after the production verification checklist passes. See `docs/V14_SPRINT_3_BETA_READINESS_POLISH.md`, `docs/V14_BETA_RELEASE_NOTES.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
 
@@ -107,7 +109,9 @@ Important:
 - V14 Sprint 3 implements V14.6 Beta readiness polish and has merged through PR #89.
 - V14 Beta Release Review is complete as a docs/governance checkpoint; invite-only Beta should begin only after the production verification checklist passes.
 - V13 Sprint 1 resumes the i18n mainline with namespace dictionaries, provider wiring, translation helpers, and initial Public / Workspace integration.
-- V13 Sprint 2 should cover Region / Currency / Localization foundations.
+- V13 Sprint 2 completes Region / Currency / Localization foundations.
+- V13 mainline foundation is complete after Sprint 2.
+- Recommended next options are V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration as maintenance.
 - V15 remains unchanged.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or new AI model behavior without the explicit V14 phase plan and approval.
 

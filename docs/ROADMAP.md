@@ -4,15 +4,15 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V13 Sprint 1 Internationalization Foundation`
+`V13 Sprint 2 Region / Currency / Localization`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V13 Sprint 1 Internationalization Foundation. IXAI has completed V12 production runtime stabilization, V12.3.1 optional personalization fallback, V13.0 Internationalization Foundation, V14.0 program planning, V14 Sprint 1 Live Market Workspace, V14 Sprint 2 Workspace Intelligence + Morning Brief, V14 Sprint 3 Beta Readiness & Production Polish, and V14 Beta Release Review. V13 Sprint 1 resumes the internationalization mainline with namespace dictionaries, translation helpers, LocaleProvider, useTranslation, shared Language Switcher, localStorage + cookie persistence, and initial Public / Workspace wiring. See `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md`, `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
+Current priority is V13 Sprint 2 Region / Currency / Localization. IXAI has completed V12 production runtime stabilization, V12.3.1 optional personalization fallback, V13.0 Internationalization Foundation, V13 Sprint 1 Internationalization Foundation, V14.0 program planning, V14 Sprint 1 Live Market Workspace, V14 Sprint 2 Workspace Intelligence + Morning Brief, V14 Sprint 3 Beta Readiness & Production Polish, and V14 Beta Release Review. V13 Sprint 2 completes the region, currency, and localization display foundation with metadata, Intl formatting helpers, local-only preferences, and Settings / Public / Workspace display wiring. See `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md`, `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md`, `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
 
-V13 is now the active internationalization track. V13 Sprint 2 should cover Region / Currency / Localization foundations, including locale-aware formatting helpers and fuller dictionary migration for connected surfaces. V15 remains unchanged.
+V13 mainline foundation is complete after Sprint 2. Deeper dictionary migration can continue as maintenance, but it is not a blocker. Recommended next options are V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration maintenance. V15 remains unchanged by V13 Sprint 2.
 
 Runtime Stabilization Program Status:
 
@@ -48,7 +48,9 @@ Important:
 - V14 Sprint 3 implements V14.6 Beta readiness polish and has merged through PR #89.
 - V14 Beta Release Review records that the V14 feature mainline is functionally ready after review, but invite-only Beta still requires production verification checklist completion.
 - V13 Sprint 1 resumes the i18n mainline after V14 Beta Release Review.
-- V13 Sprint 2 should cover Region / Currency / Localization foundations.
+- V13 Sprint 2 completes Region / Currency / Localization foundations.
+- V13 mainline foundation is complete after Sprint 2.
+- Next recommended options: V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration as maintenance.
 - V15 remains unchanged.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or AI model behavior outside an approved V14 phase.
 
@@ -127,6 +129,7 @@ Important:
 - Use `docs/V121_RUNTIME_STABILIZATION_PROGRAM.md` and `docs/V121_RUNTIME_STABILIZATION_COMPLETION.md` as the source of truth for V12.1 runtime stabilization completion. Runtime work does not change IXAI product positioning: intelligence, workflow, and risk awareness only; no broker, trading, signal selling, robo-advice, or recommendation functionality.
 - Use `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md` as the source of truth for shared Public App + Workspace locale state, supported locales, Language Switcher placement, and V13.0 translation scope.
 - Use `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md` as the source of truth for namespace dictionaries, translation packs, LocaleProvider, useTranslation, localStorage + cookie locale persistence, and initial Public / Workspace i18n wiring.
+- Use `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md` as the source of truth for region metadata, currency metadata, Intl formatting helpers, local-only `ixai.region` / `ixai.currency` preferences, and Settings / Public / Workspace localization display wiring.
 - Use `docs/V1400_LIVE_WORKSPACE_PROGRAM.md` as the source of truth for the new V14 Live Workspace mainline, phase sequence, V13 reminder, compliance boundaries, technical boundaries, and done criteria.
 - Use `docs/V14_SPRINT_1_LIVE_MARKET_WORKSPACE.md` as the source of truth for the V14.1-V14.3 Sprint 1 implementation across live market data, live portfolio valuation, FCN live risk, Workspace integration, runtime safety, and compliance boundaries.
 - Use `docs/V14_SPRINT_2_WORKSPACE_INTELLIGENCE_BRIEF.md` as the source of truth for the V14.4-V14.5 Sprint 2 implementation across Workspace Intelligence, Workspace Morning Brief, Timeline enhancement, Copilot explain-only summary, Home / Intelligence integration, runtime safety, and compliance boundaries.
