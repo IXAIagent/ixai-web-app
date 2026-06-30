@@ -6,6 +6,29 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Translation Maintenance Batch 1 — Authenticated Workspace Full Scan
+
+Why:
+
+- V13 Sprint 1 through Sprint 4 completed i18n foundations and the first authenticated Portfolio translation repair, but production signed-in review still found English copy on deeper Workspace pages.
+- Translation work now moves into focused maintenance batches instead of adding more V13 Sprints.
+- Batch 1 needed a full-route inventory before deeper Risk / FCN / Intelligence translation work continues.
+
+What Changed:
+
+- Added `docs/TRANSLATION_MAINTENANCE_BATCH_1.md`.
+- Scanned `/my-ixai/home`, `/my-ixai/portfolio`, `/my-ixai/input`, `/my-ixai/watchlist`, `/my-ixai/notifications`, `/my-ixai/timeline`, `/my-ixai/copilot`, `/my-ixai/health`, `/my-ixai/beta`, `/my-ixai/risk`, `/my-ixai/fcn`, `/my-ixai/intelligence`, and `/my-ixai/settings`.
+- Added easy dictionary wiring for Watchlist, Notifications, Timeline, Copilot, Stock / Crypto input forms, Input Review, and FCN live underlying display labels.
+- Documented remaining high-impact English areas across Risk, FCN, Intelligence, Input, Watchlist, Notifications, and Copilot.
+- Updated roadmap, project context, and project map to track Translation Maintenance Batch work.
+
+Key Decisions:
+
+- Batch 1 is translation maintenance, not a feature sprint.
+- Engine contracts remain unchanged; display mapping owns localization for deterministic engine values.
+- Risk, FCN, and Intelligence deep pages should be prioritized in Translation Maintenance Batch 2 by user impact.
+- No auth, API, Supabase, schema, migrations, RLS, billing, broker/trading, scheduler/delivery, AI provider behavior, notification delivery, valuation engine, risk engine, FCN engine, or recommendation logic changed.
+
 ## V13 Sprint 4 Authenticated Workspace Translation Audit
 
 Why:

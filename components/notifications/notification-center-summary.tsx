@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Bell, CheckCheck, RefreshCw, Send } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
+import { useWorkspaceDisplayLabels } from "@/src/lib/i18n/use-workspace-display-labels";
 import { getWorkspaceNotificationSummary } from "@/src/lib/notifications";
 import { getNotificationDeliveryReadiness } from "@/src/lib/notifications/delivery";
 import type {
@@ -43,6 +45,8 @@ function saveReadIds(ids: string[]) {
 }
 
 export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: boolean }) {
+  const { t } = useTranslation("notifications");
+  const { sourceStatusLabel } = useWorkspaceDisplayLabels();
   const [summary, setSummary] = useState<WorkspaceNotificationSummary | null>(null);
   const delivery = getNotificationDeliveryReadiness();
   const [isLoading, setIsLoading] = useState(autoLoad);
@@ -82,13 +86,13 @@ export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: bool
           <FeatureIcon icon={Bell} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Notification Center
+              {t("notificationCenter")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Local notification readback
+              {t("localReadback")}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Converts Alert Engine cards into local notifications. Delivery and backend persistence are not implemented.
+              {t("notificationBody")}
             </p>
           </div>
         </div>
@@ -100,7 +104,7 @@ export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: bool
             type="button"
           >
             <CheckCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-            Mark read
+            {t("markRead")}
           </button>
           <button
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] disabled:opacity-60"
@@ -109,17 +113,17 @@ export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: bool
             type="button"
           >
             <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-            {isLoading ? "讀取中" : "重新整理"}
+            {isLoading ? t("refreshing") : t("refresh")}
           </button>
         </div>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-4">
         {[
-          ["Notifications", summary?.notificationCount ?? "--"],
-          ["Unread", summary?.unreadCount ?? "--"],
-          ["Critical", summary?.criticalCount ?? "--"],
-          ["High", summary?.highCount ?? "--"],
+          [t("notifications"), summary?.notificationCount ?? "--"],
+          [t("unread"), summary?.unreadCount ?? "--"],
+          [t("critical"), summary?.criticalCount ?? "--"],
+          [t("high"), summary?.highCount ?? "--"],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -151,7 +155,7 @@ export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: bool
                 </p>
               </div>
               <span className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                {item.readStatus}
+                {sourceStatusLabel(item.readStatus)}
               </span>
             </div>
             <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
@@ -163,13 +167,13 @@ export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: bool
 
       {summary?.notificationCount === 0 ? (
         <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          No notification cards are available yet.
+          {t("noCards")}
         </div>
       ) : !summary ? (
         <div className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
           {hasError
-            ? "Notification readback could not be loaded. Existing Workspace cards remain available."
-            : "Notification readback is available on demand. Use Refresh to load local notification cards."}
+            ? t("readbackError")
+            : t("onDemandReady")}
         </div>
       ) : null}
 
@@ -183,7 +187,7 @@ export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: bool
         <div className="flex items-center gap-2">
           <Send className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Delivery readiness
+            {t("deliveryReadiness")}
           </p>
         </div>
         <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
@@ -195,7 +199,7 @@ export function NotificationCenterSummary({ autoLoad = true }: { autoLoad?: bool
               className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]"
               key={channel.channel}
             >
-              {channel.channel}: {channel.status}
+              {channel.channel}: {sourceStatusLabel(channel.status)}
             </span>
           ))}
         </div>

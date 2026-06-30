@@ -4,32 +4,46 @@ import { useEffect, useRef, useState } from "react";
 import { Bot, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
 import { getWorkspaceCopilotSummary } from "@/src/lib/copilot";
 import type { WorkspaceCopilotSummary } from "@/src/lib/copilot";
 import { runWorkspaceRuntimeBudget, runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
-function buildSafeCopilotShell(): WorkspaceCopilotSummary {
+function buildSafeCopilotShell(copy: {
+  disclaimer: string;
+  source: string;
+  summary: string;
+  title: string;
+}): WorkspaceCopilotSummary {
   return {
     capabilityCount: 1,
     explanations: [
       {
         capability: "explain_data_quality",
         id: "copilot-safe-shell",
-        sourceEngine: "safe_shell",
-        summary:
-          "Copilot diagnostics are paused until you request a refresh. This keeps route entry lightweight while preserving explain-only behavior.",
-        title: "Runtime-safe Copilot shell",
+        sourceEngine: copy.source,
+        summary: copy.summary,
+        title: copy.title,
       },
     ],
     generatedAt: new Date().toISOString(),
     informationalOnlyDisclaimer:
-      "Workspace Copilot is rule-based and explain-only. It does not call AI models and does not provide buy, sell, hold, target price, or order instructions.",
+      copy.disclaimer,
     mode: "rule_based_explain_only",
   };
 }
 
 export function WorkspaceCopilotSummary() {
-  const [summary, setSummary] = useState<WorkspaceCopilotSummary>(() => buildSafeCopilotShell());
+  const { t } = useTranslation("copilot");
+  const fallbackCopy = {
+    disclaimer: t("disclaimer"),
+    source: t("fallbackSource"),
+    summary: t("fallbackSummary"),
+    title: t("fallbackTitle"),
+  };
+  const [summary, setSummary] = useState<WorkspaceCopilotSummary>(() =>
+    buildSafeCopilotShell(fallbackCopy),
+  );
   const [isLoading, setIsLoading] = useState(false);
   const mountedRef = useRef(false);
 
@@ -43,7 +57,7 @@ export function WorkspaceCopilotSummary() {
 
   async function refresh() {
     setIsLoading(true);
-    const fallback = buildSafeCopilotShell();
+    const fallback = buildSafeCopilotShell(fallbackCopy);
     const result = await runWorkspaceRuntimeBudget(
       "copilot-summary-manual-refresh",
       () =>
@@ -76,13 +90,13 @@ export function WorkspaceCopilotSummary() {
           <FeatureIcon icon={Bot} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Workspace Copilot
+              {t("copilot")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Explain-only workspace assistant
+              {t("subtitle")}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Rule-based explanation templates for Portfolio, Risk, FCN, Schedule, Alerts, and data quality. No AI model calls are used.
+              {t("body")}
             </p>
           </div>
         </div>
@@ -93,7 +107,7 @@ export function WorkspaceCopilotSummary() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "讀取中" : "Run summary"}
+          {isLoading ? t("running") : t("runSummary")}
         </button>
       </div>
 
@@ -101,7 +115,10 @@ export function WorkspaceCopilotSummary() {
         {summary?.explanations.map((item) => (
           <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4" key={item.id}>
             <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.title}</p>
-            <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">{item.capability} · {item.sourceEngine}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
+              {item.id === "copilot-safe-shell" ? t("fallbackCapability") : item.capability} ·{" "}
+              {item.sourceEngine}
+            </p>
             <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.summary}</p>
           </article>
         ))}

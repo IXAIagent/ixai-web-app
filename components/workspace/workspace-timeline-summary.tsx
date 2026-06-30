@@ -4,16 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { CalendarClock, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
 import { getWorkspaceTimelineSummary } from "@/src/lib/workspace/timeline";
 import type { WorkspaceTimelineSummary } from "@/src/lib/workspace/timeline";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
-
-const GROUP_LABEL: Record<string, string> = {
-  later: "Later",
-  next7Days: "Next 7 Days",
-  overdue: "Overdue",
-  today: "Today",
-};
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("zh-TW", {
@@ -24,6 +18,7 @@ function formatDate(value: string) {
 }
 
 export function WorkspaceTimelineSummary() {
+  const { t } = useTranslation("timeline");
   const [timeline, setTimeline] = useState<WorkspaceTimelineSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
@@ -61,13 +56,13 @@ export function WorkspaceTimelineSummary() {
           <FeatureIcon icon={CalendarClock} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Timeline Engine
+              {t("engine")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Unified future events
+              {t("eventGroups")}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Aggregates FCN schedule events and dated alert cards. No fake dates are generated.
+              {t("timelineBody")}
             </p>
           </div>
         </div>
@@ -78,7 +73,7 @@ export function WorkspaceTimelineSummary() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "讀取中" : "重新整理"}
+          {isLoading ? t("refreshing") : t("refresh")}
         </button>
       </div>
 
@@ -90,7 +85,7 @@ export function WorkspaceTimelineSummary() {
           >
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm font-semibold text-[var(--ixai-forest)]">
-                {GROUP_LABEL[group.key]}
+                {t(group.key, group.key)}
               </p>
               <p className="font-mono text-sm font-semibold text-[var(--ixai-forest-soft)]">
                 {group.events.length}
@@ -120,7 +115,7 @@ export function WorkspaceTimelineSummary() {
               ))}
               {group.events.length === 0 ? (
                 <p className="rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                  No events in this bucket.
+                  {t("noEvents")}
                 </p>
               ) : null}
             </div>

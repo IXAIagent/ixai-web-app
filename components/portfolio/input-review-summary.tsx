@@ -1,3 +1,5 @@
+import { useTranslation } from "@/src/lib/i18n/use-locale";
+
 type InputReviewSection = {
   items: Array<[string, string]>;
   title: string;
@@ -12,21 +14,23 @@ type InputReviewSummaryProps = {
 export function InputReviewSummary({
   assetType,
   sections,
-  title = "Input Review",
+  title,
 }: InputReviewSummaryProps) {
+  const { t } = useTranslation("portfolio");
+
   return (
     <section className="rounded-2xl border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-            {title}
+            {title ?? t("inputReview")}
           </p>
           <h3 className="mt-1 text-lg font-semibold text-[var(--ixai-forest)]">
             {assetType}
           </h3>
         </div>
         <span className="w-fit rounded-full border border-[rgba(9,41,31,0.14)] bg-white/70 px-3 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-          Local review only
+          {t("localReviewOnly")}
         </span>
       </div>
 

@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { CheckCircle2, PlusCircle } from "lucide-react";
 
 import { InputReviewSummary } from "@/components/portfolio/input-review-summary";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
 import { savePendingPortfolioInput } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { saveRecentPortfolioInput } from "@/src/lib/portfolio/input/recent-inputs";
 import { saveStockPositionWithV13DatabaseWrite } from "@/src/lib/workspace/portfolio-database-write-activation";
@@ -39,6 +40,7 @@ function displayValue(value: string, fallback = "未填") {
 }
 
 export function StockInputForm() {
+  const { t } = useTranslation("portfolio");
   const [draft, setDraft] = useState<StockDraft>({
     assetName: "",
     costBasis: "",
@@ -75,8 +77,8 @@ export function StockInputForm() {
         throw new Error("請輸入 Ticker。");
       }
 
-      const quantity = parsePositiveNumber(draft.quantity, "Quantity");
-      const costBasis = parsePositiveNumber(draft.costBasis, "Cost Basis");
+      const quantity = parsePositiveNumber(draft.quantity, t("quantity"));
+      const costBasis = parsePositiveNumber(draft.costBasis, t("costBasis"));
 
       saveRecentPortfolioInput({
         category: "STOCK",
@@ -126,18 +128,18 @@ export function StockInputForm() {
     <form className="grid gap-5" onSubmit={handleSubmit}>
       <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Stock Input
+          {t("stockInput")}
         </p>
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-          建立股票 / ETF 部位
+          {t("buildStockPosition")}
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          本版先寫入 v4.10 Input Truth Bridge；V13 guard 開啟且資料庫可用時，才會在明確提交後嘗試 Supabase 寫入。fallback 會保留。
+          {t("stockInputBody")}
         </p>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <label className={LABEL_CLASS} htmlFor="stock-ticker">
-            Ticker
+            {t("ticker")}
             <input
               autoComplete="off"
               className={FIELD_INPUT_CLASS}
@@ -151,7 +153,7 @@ export function StockInputForm() {
             />
           </label>
           <label className={LABEL_CLASS} htmlFor="stock-name">
-            Asset Name（optional）
+            {t("assetNameOptional")}
             <input
               autoComplete="off"
               className={FIELD_INPUT_CLASS}
@@ -164,7 +166,7 @@ export function StockInputForm() {
             />
           </label>
           <label className={LABEL_CLASS} htmlFor="stock-quantity">
-            Quantity
+            {t("quantity")}
             <input
               className={FIELD_INPUT_CLASS}
               id="stock-quantity"
@@ -177,7 +179,7 @@ export function StockInputForm() {
             />
           </label>
           <label className={LABEL_CLASS} htmlFor="stock-cost">
-            Cost Basis
+            {t("costBasis")}
             <input
               className={FIELD_INPUT_CLASS}
               id="stock-cost"
@@ -190,7 +192,7 @@ export function StockInputForm() {
             />
           </label>
           <label className={LABEL_CLASS} htmlFor="stock-currency">
-            Currency
+            {t("currency")}
             <select
               className={FIELD_INPUT_CLASS}
               id="stock-currency"
@@ -207,7 +209,7 @@ export function StockInputForm() {
             </select>
           </label>
           <label className={LABEL_CLASS} htmlFor="stock-market">
-            Market
+            {t("market")}
             <select
               className={FIELD_INPUT_CLASS}
               id="stock-market"
@@ -227,30 +229,30 @@ export function StockInputForm() {
       </section>
 
       <InputReviewSummary
-        assetType="Stock / ETF"
+        assetType={t("stockEtf")}
         sections={[
           {
             items: [
-              ["Ticker", preview.ticker],
-              ["Asset Name", displayValue(draft.assetName)],
-              ["Market", draft.market],
+              [t("ticker"), preview.ticker],
+              [t("assetName"), displayValue(draft.assetName)],
+              [t("market"), draft.market],
             ],
-            title: "Key Fields",
+            title: t("keyFields"),
           },
           {
             items: [
-              ["Quantity", preview.quantity],
-              ["Cost", preview.cost],
-              ["Currency", preview.currency],
+              [t("quantity"), preview.quantity],
+              [t("cost"), preview.cost],
+              [t("currency"), preview.currency],
             ],
-            title: "Position Preview",
+            title: t("positionPreview"),
           },
           {
             items: [
-              ["Risk Fields", "Market / Currency"],
-              ["Data Source", "Database first when V13 guard allows; pending bridge fallback"],
+              [t("riskFields"), `${t("market")} / ${t("currency")}`],
+              [t("dataSource"), t("dataSourceGuardFallback")],
             ],
-            title: "Risk Fields",
+            title: t("riskFields"),
           },
         ]}
       />
@@ -274,7 +276,7 @@ export function StockInputForm() {
           type="submit"
         >
           <PlusCircle className="h-4 w-4" aria-hidden="true" />
-          建立 Stock Input
+          {t("createStockInput")}
         </button>
       </div>
     </form>

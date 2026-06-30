@@ -121,7 +121,10 @@ export function LiveFcnUnderlyingStatusCard({ autoLoad = false }: { autoLoad?: b
 
       {worstUnderlying ? (
         <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          {topWorstOf?.name ?? "FCN"} · Current {formatPrice(worstUnderlying.currentPrice)} · {t("strikeDistance")} {formatPercent(worstUnderlying.distanceToStrikePercent)} · {t("koDistance")} {formatPercent(worstUnderlying.distanceToKoPercent)}
+          {topWorstOf?.name ?? "FCN"} · {t("currentPrice")}{" "}
+          {formatPrice(worstUnderlying.currentPrice)} · {t("strikeDistance")}{" "}
+          {formatPercent(worstUnderlying.distanceToStrikePercent)} · {t("koDistance")}{" "}
+          {formatPercent(worstUnderlying.distanceToKoPercent)}
         </p>
       ) : (
         <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
@@ -130,7 +133,7 @@ export function LiveFcnUnderlyingStatusCard({ autoLoad = false }: { autoLoad?: b
       )}
 
       <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/55 p-3 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        {t("source")}: {snapshot?.source ?? "live_market_preview"} · As of:{" "}
+        {t("source")}: {snapshot?.source ?? "live_market_preview"} · {t("asOf")}:{" "}
         {formatDateTime(snapshot?.quoteSnapshot?.generatedAt)} · {t("missingQuotes")}:{" "}
         {snapshot?.missingQuoteSymbols.length ?? 0} · {t("staleQuotes")}:{" "}
         {snapshot?.staleQuoteSymbols.length ?? 0}
