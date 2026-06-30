@@ -10,16 +10,9 @@ import { useLocalization, useTranslation } from "@/src/lib/i18n";
 type BetaStatus = "blocked" | "not_started" | "partial" | "ready";
 
 type BetaChecklistItem = {
-  detail: string;
-  label: string;
+  detailKey: string;
+  labelKey: string;
   status: BetaStatus;
-};
-
-const STATUS_LABEL: Record<BetaStatus, string> = {
-  blocked: "blocked",
-  not_started: "not started",
-  partial: "partial",
-  ready: "ready",
 };
 
 const STATUS_CLASS: Record<BetaStatus, string> = {
@@ -31,69 +24,70 @@ const STATUS_CLASS: Record<BetaStatus, string> = {
 
 const CHECKLIST: BetaChecklistItem[] = [
   {
-    detail: "V12 runtime stabilization passed production manual verification; Sprint 3 still requires production smoke before final Beta claim.",
-    label: "Runtime stable",
+    detailKey: "runtimeStableDetail",
+    labelKey: "runtimeStable",
     status: "partial",
   },
   {
-    detail: "Server-side Yahoo/Binance quote route, cache fallback, and provider failure containment are present.",
-    label: "Live Market Data",
+    detailKey: "liveMarketDataDetail",
+    labelKey: "liveMarketData",
     status: "ready",
   },
   {
-    detail: "Portfolio valuation reads internal quote API and distinguishes live, stale, fallback, and unavailable data.",
-    label: "Portfolio valuation",
+    detailKey: "portfolioValuationDetail",
+    labelKey: "portfolioValuation",
     status: "ready",
   },
   {
-    detail: "FCN live risk reads internal quote context and remains monitoring-only.",
-    label: "FCN live risk",
+    detailKey: "fcnLiveRiskDetail",
+    labelKey: "fcnLiveRisk",
     status: "ready",
   },
   {
-    detail: "V14 Workspace Intelligence cards are deterministic, explain-only, and source-labeled.",
-    label: "Workspace Intelligence",
+    detailKey: "workspaceIntelligenceDetail",
+    labelKey: "workspaceIntelligence",
     status: "ready",
   },
   {
-    detail: "Workspace Morning Brief is on-demand and Workspace-readable only.",
-    label: "Morning Brief",
+    detailKey: "morningBriefDetail",
+    labelKey: "morningBrief",
     status: "ready",
   },
   {
-    detail: "Timeline groups source-labeled events by overdue, today, next 7 days, and later.",
-    label: "Timeline",
+    detailKey: "timelineDetail",
+    labelKey: "timeline",
     status: "ready",
   },
   {
-    detail: "Copilot starts from a safe shell and only summarizes on manual Run summary.",
-    label: "Copilot explain-only summary",
+    detailKey: "copilotDetail",
+    labelKey: "copilot",
     status: "ready",
   },
   {
-    detail: "V13.0 shared locale foundation exists; full content translation remains future V13.1-V13.5 work.",
-    label: "i18n foundation",
+    detailKey: "i18nDetail",
+    labelKey: "i18n",
     status: "partial",
   },
   {
-    detail: "Mobile QA must pass in Sprint 3 validation before this item is final.",
-    label: "Mobile QA",
+    detailKey: "mobileQaDetail",
+    labelKey: "mobileQa",
     status: "partial",
   },
   {
-    detail: "Production-like smoke must pass locally and production verification remains a release gate.",
-    label: "Production smoke",
+    detailKey: "productionSmokeDetail",
+    labelKey: "productionSmoke",
     status: "partial",
   },
   {
-    detail: "Known limitations are documented in Sprint 1, Sprint 2, Sprint 3, and V14 Beta release notes.",
-    label: "Known limitations documented",
+    detailKey: "knownLimitationsDetail",
+    labelKey: "knownLimitations",
     status: "ready",
   },
 ];
 
 export function BetaReadinessDashboard() {
   const { t } = useTranslation("beta");
+  const { t: tStatus } = useTranslation("status");
   const { currency, examples, region } = useLocalization();
   const readyCount = CHECKLIST.filter((item) => item.status === "ready").length;
   const blockedCount = CHECKLIST.filter((item) => item.status === "blocked").length;
@@ -121,9 +115,9 @@ export function BetaReadinessDashboard() {
       <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
         <div className="grid gap-3 md:grid-cols-4">
           {[
-            ["Ready", readyCount],
-            ["Partial", partialCount],
-            ["Blocked", blockedCount],
+            [tStatus("ready"), readyCount],
+            [tStatus("partial"), partialCount],
+            [tStatus("blocked"), blockedCount],
             [t("total"), CHECKLIST.length],
           ].map(([label, value]) => (
             <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4" key={label}>
@@ -135,17 +129,17 @@ export function BetaReadinessDashboard() {
 
         <div className="mt-5 grid gap-3 lg:grid-cols-2">
           {CHECKLIST.map((item) => (
-            <article className={`rounded-xl border p-4 ${STATUS_CLASS[item.status]}`} key={item.label}>
+            <article className={`rounded-xl border p-4 ${STATUS_CLASS[item.status]}`} key={item.labelKey}>
               <div className="flex items-start gap-3">
                 <FeatureIcon icon={item.status === "ready" ? CheckCircle2 : CircleDot} size="sm" shadow={false} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                    <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.label}</p>
+                    <p className="text-base font-semibold text-[var(--ixai-forest)]">{t(item.labelKey)}</p>
                     <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/65 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                      {t(STATUS_LABEL[item.status].replace(" ", "_"), STATUS_LABEL[item.status])}
+                      {tStatus(item.status, item.status)}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.detail}</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{t(item.detailKey)}</p>
                 </div>
               </div>
             </article>
@@ -166,7 +160,7 @@ export function BetaReadinessDashboard() {
               {t("productionQaBody")}
             </p>
             <p className="mt-2 max-w-3xl text-xs leading-6 text-[var(--ixai-forest-soft)]">
-              Localization display check: {region} / {currency} / {examples.currency} / {examples.percent}.
+              {t("localizationDisplayCheck")} {region} / {currency} / {examples.currency} / {examples.percent}.
             </p>
           </div>
           <Link

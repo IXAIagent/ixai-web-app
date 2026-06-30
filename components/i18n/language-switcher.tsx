@@ -30,7 +30,7 @@ export function LanguageSwitcher({ mode = "compact" }: LanguageSwitcherProps) {
           {dictionary.language.fullLabel}
         </label>
         <select
-          aria-label="Change language"
+          aria-label={dictionary.language.fullLabel}
           className="mt-3 min-h-11 w-full rounded-lg border border-[var(--ixai-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] outline-none transition focus:border-[var(--ixai-gold)]"
           id="ixai-language-switcher-full"
           onChange={handleChange}
@@ -55,12 +55,12 @@ export function LanguageSwitcher({ mode = "compact" }: LanguageSwitcherProps) {
   return (
     <label className="flex min-h-10 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.045] px-3 py-2 text-xs text-[rgba(245,240,230,0.72)]">
       <Languages className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-      <span className="sr-only">Change language</span>
+      <span className="sr-only">{dictionary.language.fullLabel}</span>
       <span aria-hidden="true" className="font-mono uppercase tracking-[0.14em]">
         {dictionary.language.compactLabel}
       </span>
       <select
-        aria-label="Change language"
+        aria-label={dictionary.language.fullLabel}
         className="min-w-0 flex-1 bg-transparent text-xs font-semibold text-[var(--ixai-cream)] outline-none"
         onChange={handleChange}
         value={locale}

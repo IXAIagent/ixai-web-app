@@ -22,7 +22,7 @@ type NavGroup = {
 export function Sidebar() {
   const pathname = usePathname();
   const { mounted, session, signOut } = useIdentity();
-  const { dictionary } = useLocale();
+  const { dictionary, t } = useLocale();
   const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
   const isAuthenticated = mounted && session.mode === "authenticated";
   const workspaceNavGroups: NavGroup[] = [
@@ -82,8 +82,8 @@ export function Sidebar() {
   const subtitle = isWorkspaceRoute ? dictionary.workspaceNav.subtitle : dictionary.publicNav.subtitle;
   const footerLabel = isWorkspaceRoute ? dictionary.common.workspaceMode : dictionary.common.publicWebsite;
   const footerText = isWorkspaceRoute
-    ? "Portfolio、Risk、FCN、Intelligence 與 Settings 已分離成工作區導覽。"
-    : "官網導覽保留品牌、教育與市場內容，不混入 Workspace。";
+    ? t("disclaimers", "workspaceNavigationBoundary")
+    : t("disclaimers", "publicNavigationBoundary");
 
   return (
     <aside className={`fixed inset-y-0 left-0 z-30 hidden ${shellTokens.publicSidebarWidth} border-r border-[rgba(176,141,87,0.22)] bg-[#071f17] text-[var(--ixai-cream)] md:flex md:flex-col`}>

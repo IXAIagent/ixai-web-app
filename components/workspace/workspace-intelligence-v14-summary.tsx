@@ -10,14 +10,8 @@ import {
   type WorkspaceIntelligenceReportV14,
   type WorkspaceIntelligenceSeverity,
 } from "@/src/lib/workspace/intelligence";
+import { useTranslation } from "@/src/lib/i18n";
 import { runWorkspaceRuntimeBudget, runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
-
-const SEVERITY_LABEL: Record<WorkspaceIntelligenceSeverity, string> = {
-  critical: "Critical",
-  elevated: "Elevated",
-  info: "Info",
-  watch: "Watch",
-};
 
 const SEVERITY_CLASS: Record<WorkspaceIntelligenceSeverity, string> = {
   critical: "border-[color-mix(in_srgb,var(--ixai-risk-critical)_32%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-critical)_8%,white)]",
@@ -27,6 +21,8 @@ const SEVERITY_CLASS: Record<WorkspaceIntelligenceSeverity, string> = {
 };
 
 export function WorkspaceIntelligenceV14Summary({ autoLoad = true }: { autoLoad?: boolean }) {
+  const { locale, t } = useTranslation("workspace");
+  const { t: tStatus } = useTranslation("status");
   const [report, setReport] = useState<WorkspaceIntelligenceReportV14>(() =>
     buildEmptyWorkspaceIntelligenceReportV14(),
   );
@@ -82,10 +78,10 @@ export function WorkspaceIntelligenceV14Summary({ autoLoad = true }: { autoLoad?
               V14.4 Workspace Intelligence
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Rule-based intelligence cards
+              {t("intelligenceCardsTitle", "Rule-based intelligence cards")}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Aggregates live valuation, FCN live risk, risk, watchlist, alerts, timeline, and data quality into explain-only cards.
+              {t("intelligenceCardsBody", "Aggregates live valuation, FCN live risk, risk, watchlist, alerts, timeline, and data quality into explain-only cards.")}
             </p>
           </div>
         </div>
@@ -96,15 +92,15 @@ export function WorkspaceIntelligenceV14Summary({ autoLoad = true }: { autoLoad?
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "讀取中" : "Refresh"}
+          {isLoading ? tStatus("checking") : t("refresh", "Refresh")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-3">
         {[
-          ["Readiness", report.readinessStatus],
-          ["Cards", String(report.cardCount)],
-          ["Watch / Elevated", String(report.watchCount + report.elevatedCount)],
+          [t("readiness", "Readiness"), tStatus(report.readinessStatus, report.readinessStatus)],
+          [t("cards", "Cards"), String(report.cardCount)],
+          [t("watchElevated", "Watch / Elevated"), String(report.watchCount + report.elevatedCount)],
         ].map(([label, value]) => (
           <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4" key={label}>
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
@@ -122,16 +118,20 @@ export function WorkspaceIntelligenceV14Summary({ autoLoad = true }: { autoLoad?
           <article className={`rounded-xl border p-4 ${SEVERITY_CLASS[card.severity]}`} key={card.id}>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-base font-semibold text-[var(--ixai-forest)]">{card.title}</p>
+                <p className="text-base font-semibold text-[var(--ixai-forest)]">
+                  {locale === "zh-TW" ? t(`intelligenceCardTitle_${card.type}`, card.title) : card.title}
+                </p>
                 <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
-                  {card.type} · {card.source} · {card.dataQuality}
+                  {t(`intelligenceType_${card.type}`, card.type)} · {card.source} · {tStatus(card.dataQuality, card.dataQuality)}
                 </p>
               </div>
               <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/65 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                {SEVERITY_LABEL[card.severity]}
+                {tStatus(card.severity, card.severity)}
               </span>
             </div>
-            <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{card.summary}</p>
+            <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              {locale === "zh-TW" ? t(`intelligenceCardSummary_${card.type}`, card.summary) : card.summary}
+            </p>
             {card.details.length > 0 ? (
               <div className="mt-3 flex flex-wrap gap-2">
                 {card.details.slice(0, 3).map((detail) => (
@@ -146,7 +146,7 @@ export function WorkspaceIntelligenceV14Summary({ autoLoad = true }: { autoLoad?
       </div>
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        {report.informationalOnlyDisclaimer}
+        {t("intelligenceDisclaimer", report.informationalOnlyDisclaimer)}
       </p>
     </section>
   );

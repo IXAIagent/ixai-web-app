@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V13 Sprint 3 Translation Coverage Repair
+
+Why:
+
+- V13.0, V13 Sprint 1, and V13 Sprint 2 completed i18n and localization infrastructure.
+- Production-facing inspection found that `zh-TW` mode still showed visible English strings across primary Workspace surfaces.
+- V13 completion criteria should include visible product translation coverage, not only provider/dictionary infrastructure.
+
+What Changed:
+
+- Added `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md`.
+- Added a small `TranslatedText` bridge so server pages can render dictionary-backed labels without becoming client pages.
+- Expanded dictionaries with Morning Brief, status, action, disclaimer, Workspace Intelligence, Home, Settings, Health, and Beta labels.
+- Updated Workspace sidebar and mobile drawer copy coverage.
+- Updated Workspace Home, Settings, Morning Brief, Workspace Intelligence, Health Center, Beta Dashboard, and Settings localization card display labels.
+- Added display-only mapping for Morning Brief and Workspace Intelligence summaries while keeping deterministic engine contracts stable.
+
+Key Decisions:
+
+- Sprint 1 / 2 are foundation work; Sprint 3 is the first product translation coverage repair pass.
+- Engine output contracts remain stable and are localized only at the UI display layer.
+- Known remaining hard-coded areas include deep Workspace centers, long-form Public Landing sections, admin tools, and authored Daily / Weekly content.
+- No auth, schema, migrations, RLS, API contracts, billing, broker/trading, recommendations, scheduler/delivery, AI provider behavior, Portfolio / FCN / Risk core logic, live market provider behavior, or exchange-rate provider behavior changed.
+
 ## V13 Sprint 2 Region / Currency / Localization
 
 Why:

@@ -4,15 +4,15 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V13 Sprint 2 Region / Currency / Localization`
+`V13 Sprint 3 Translation Coverage Repair`
 
 ## Current Priority
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 
-Current priority is V13 Sprint 2 Region / Currency / Localization. IXAI has completed V12 production runtime stabilization, V12.3.1 optional personalization fallback, V13.0 Internationalization Foundation, V13 Sprint 1 Internationalization Foundation, V14.0 program planning, V14 Sprint 1 Live Market Workspace, V14 Sprint 2 Workspace Intelligence + Morning Brief, V14 Sprint 3 Beta Readiness & Production Polish, and V14 Beta Release Review. V13 Sprint 2 completes the region, currency, and localization display foundation with metadata, Intl formatting helpers, local-only preferences, and Settings / Public / Workspace display wiring. See `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md`, `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md`, `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
+Current priority is V13 Sprint 3 Translation Coverage Repair. IXAI has completed V12 production runtime stabilization, V12.3.1 optional personalization fallback, V13.0 Internationalization Foundation, V13 Sprint 1 Internationalization Foundation, V13 Sprint 2 Region / Currency / Localization, V14.0 program planning, V14 Sprint 1 Live Market Workspace, V14 Sprint 2 Workspace Intelligence + Morning Brief, V14 Sprint 3 Beta Readiness & Production Polish, and V14 Beta Release Review. Sprint 3 repairs visible zh-TW coverage across primary Public / Workspace surfaces so V13 is not judged only by infrastructure completion. See `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md`, `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md`, `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md`, `docs/V1300_INTERNATIONALIZATION_FOUNDATION.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
 
-V13 mainline foundation is complete after Sprint 2. Deeper dictionary migration can continue as maintenance, but it is not a blocker. Recommended next options are V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration maintenance. V15 remains unchanged by V13 Sprint 2.
+V13 infrastructure foundation is complete after Sprint 2, but product translation coverage requires visible zh-TW coverage on primary Public / Workspace surfaces. Sprint 3 is the first coverage repair pass. Recommended next options are V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration maintenance for deep Workspace centers and long-form public content. V15 remains unchanged by V13 Sprint 3.
 
 Runtime Stabilization Program Status:
 
@@ -49,8 +49,9 @@ Important:
 - V14 Beta Release Review records that the V14 feature mainline is functionally ready after review, but invite-only Beta still requires production verification checklist completion.
 - V13 Sprint 1 resumes the i18n mainline after V14 Beta Release Review.
 - V13 Sprint 2 completes Region / Currency / Localization foundations.
-- V13 mainline foundation is complete after Sprint 2.
-- Next recommended options: V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration as maintenance.
+- V13 Sprint 3 repairs visible translation coverage for primary Public / Workspace surfaces.
+- V13 completion criteria now include visible zh-TW coverage, not only infrastructure completion.
+- Next recommended options: V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration as maintenance for remaining long-tail surfaces.
 - V15 remains unchanged.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or AI model behavior outside an approved V14 phase.
 

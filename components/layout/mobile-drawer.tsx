@@ -71,7 +71,7 @@ export function MobileDrawer({
 }) {
   const pathname = usePathname();
   const { mounted, session, signOut } = useIdentity();
-  const { dictionary } = useLocale();
+  const { dictionary, t } = useLocale();
   const isWorkspaceRoute = pathname === "/my-ixai" || pathname.startsWith("/my-ixai/");
   const isAuthenticated = mounted && session.mode === "authenticated";
   const workspaceDrawerSections: DrawerSection[] = [
@@ -123,7 +123,7 @@ export function MobileDrawer({
     },
   ];
   const drawerSections = isWorkspaceRoute ? workspaceDrawerSections : publicDrawerSections;
-  const eyebrow = isWorkspaceRoute ? "IXAI WORKSPACE" : "IXAI";
+  const eyebrow = isWorkspaceRoute ? dictionary.workspaceNav.title : "IXAI";
   const subtitle = isWorkspaceRoute ? dictionary.workspaceNav.subtitle : dictionary.publicNav.subtitle;
 
   // Body scroll lock + ESC close while open.
@@ -159,7 +159,7 @@ export function MobileDrawer({
       className={`fixed inset-0 z-40 md:hidden ${open ? "pointer-events-auto" : "pointer-events-none"}`}
     >
       <button
-        aria-label="關閉導覽選單"
+        aria-label={t("actions", "closeNavigationMenu")}
         className={`absolute inset-0 bg-[rgba(8,34,26,0.55)] transition-opacity duration-200 ${
           open ? "opacity-100" : "opacity-0"
         }`}
@@ -168,7 +168,7 @@ export function MobileDrawer({
         type="button"
       />
       <aside
-        aria-label="IXAI 主要導覽選單"
+        aria-label={t("navigation", "workspaceTitle")}
         className={`absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col border-r border-[rgba(176,141,87,0.30)] bg-[#071f17] text-[var(--ixai-cream)] shadow-[24px_0_64px_rgba(9,41,31,0.34)] transition-transform duration-220 ease-out ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
@@ -184,7 +184,7 @@ export function MobileDrawer({
             </p>
           </div>
           <button
-            aria-label="關閉選單"
+            aria-label={t("actions", "closeMenu")}
             className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/15 bg-white/[0.05] text-[rgba(245,240,230,0.78)]"
             onClick={onClose}
             type="button"
@@ -270,9 +270,7 @@ export function MobileDrawer({
           <div className="mb-3">
             <LanguageSwitcher mode="compact" />
           </div>
-          {isWorkspaceRoute
-            ? "IXAI Workspace · 監控與風險意識用途，不構成投資建議。"
-            : "IXAI Public Intelligence · 不構成投資建議或績效保證。"}
+          {t("common", "footerDisclaimer")}
         </footer>
       </aside>
     </div>
