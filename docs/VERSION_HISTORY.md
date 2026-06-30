@@ -6,6 +6,28 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V14 Beta Release Review
+
+Why:
+
+- V14 Sprint 1, Sprint 2, and Sprint 3 have merged.
+- Sprint 3 PR #89 merged the Beta Readiness & Production Polish work into `main`.
+- Vercel is Ready, and the V14 Beta feature mainline needs a release-governance review before invite-only Beta begins.
+
+What Changed:
+
+- Added `docs/V14_BETA_RELEASE_REVIEW.md`.
+- Updated roadmap, project context, project map, and version history status.
+- Recorded that V14 Beta is functionally ready for invite-only Beta preparation after review.
+- Recorded that invite-only Beta still requires the production verification checklist before launch.
+
+Key Decisions:
+
+- V14 Beta Release Review is docs/governance only.
+- V14 Sprint 3 is completed and merged.
+- The next recommended track is V14 Beta production verification / invite-only pilot, then return to V13.1-V13.5 i18n work.
+- No product code, app routes, components, API routes, auth, RLS, schema, migration, membership, billing, broker/trading, scheduler/delivery, or AI provider behavior changed.
+
 ## V14 Sprint 3 Beta Readiness & Production Polish
 
 Why:

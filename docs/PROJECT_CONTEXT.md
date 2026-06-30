@@ -64,9 +64,9 @@ Production foundation:
 
 Current development version:
 
-`V14 Sprint 3 — Beta Readiness & Production Polish`
+`V14 Beta Release Review`
 
-V14 Sprint 3 implements Beta Readiness & Production Polish across V14.6. It adds a read-only Workspace Health Center, Beta Readiness Dashboard, Morning Brief share/export, feedback template, release notes, and production verification checklist. V14 Sprint 3 is complete only after production verification passes. This Sprint does not change auth, RLS, schema, migrations, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, or AI model behavior. See `docs/V14_SPRINT_3_BETA_READINESS_POLISH.md` and `docs/V14_BETA_RELEASE_NOTES.md`.
+V14 Sprint 3 implements Beta Readiness & Production Polish across V14.6. It adds a read-only Workspace Health Center, Beta Readiness Dashboard, Morning Brief share/export, feedback template, release notes, and production verification checklist. V14 Sprint 3 PR #89 has merged into `main`, and V14 Beta Release Review is the active release-governance status. V14 Beta is functionally ready for invite-only Beta preparation after review, but invite-only Beta should begin only after the production verification checklist passes. This review does not change auth, RLS, schema, migrations, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, or AI model behavior. See `docs/V14_SPRINT_3_BETA_READINESS_POLISH.md`, `docs/V14_BETA_RELEASE_NOTES.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
 
 V13.0 Internationalization Foundation is complete. It introduced the shared Public App + Workspace locale foundation for `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`. V13 remains a side track after V14 Beta: return to V13.1 Dictionary Migration, V13.2 Translation Packs, V13.3 Region, V13.4 Currency, and V13.5 Localization after the V14 Beta milestone.
 
@@ -102,7 +102,9 @@ Important:
 - V14 is now the active product mainline, starting with docs-only Live Workspace Program planning.
 - V14 Sprint 1 implements V14.1-V14.3.
 - V14 Sprint 2 implements V14.4 Workspace Intelligence and V14.5 Workspace Morning Brief as rule-based, explain-only Workspace-readable summaries.
-- V14 Sprint 3 implements V14.6 Beta readiness polish; invite-only Beta should begin only after production verification passes.
+- V14 Sprint 3 implements V14.6 Beta readiness polish and has merged through PR #89.
+- V14 Beta Release Review is complete as a docs/governance checkpoint; invite-only Beta should begin only after the production verification checklist passes.
+- After V14 Beta production verification / invite-only pilot, return to V13.1-V13.5 for dictionary migration, translation packs, region, currency, and localization.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or new AI model behavior without the explicit V14 phase plan and approval.
 
 Program E production verification note:
