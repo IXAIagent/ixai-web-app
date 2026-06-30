@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
+import { I18nFoundationStatusCard } from "@/components/i18n/i18n-foundation-status-card";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { SettingsRuntimeDiagnosticsControl } from "@/components/workspace/settings-runtime-diagnostics-control";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -139,6 +140,8 @@ export default function MyIxaiSettingsPage() {
             );
           })}
         </section>
+
+        <I18nFoundationStatusCard />
 
         <SettingsRuntimeDiagnosticsControl />
 

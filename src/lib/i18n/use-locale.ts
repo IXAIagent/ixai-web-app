@@ -1,7 +1,19 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
-import { getDictionary } from "@/src/lib/i18n/dictionaries";
+import {
+  createContext,
+  createElement,
+  useContext,
+  useMemo,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import {
+  getDictionary,
+  translate,
+  type Dictionary,
+  type I18NNamespace,
+} from "@/src/lib/i18n/dictionaries";
 import {
   DEFAULT_LOCALE,
   getLocaleLabel,
@@ -18,7 +30,17 @@ function getServerSnapshot(): IXAILocale {
   return DEFAULT_LOCALE;
 }
 
-export function useLocale() {
+type LocaleContextValue = {
+  dictionary: Dictionary;
+  locale: IXAILocale;
+  localeLabel: string;
+  setLocale: (nextLocale: IXAILocale) => void;
+  t: (namespace: I18NNamespace, key: string, fallback?: string) => string;
+};
+
+const LocaleContext = createContext<LocaleContextValue | null>(null);
+
+function useLocaleStoreValue(): LocaleContextValue {
   const locale: IXAILocale = useSyncExternalStore(
     subscribeToLocale,
     getStoredLocale,
@@ -26,12 +48,44 @@ export function useLocale() {
   );
   const dictionary = useMemo(() => getDictionary(locale), [locale]);
 
-  return {
+  return useMemo(() => ({
     dictionary,
     locale,
     localeLabel: getLocaleLabel(locale),
     setLocale(nextLocale: IXAILocale) {
       setStoredLocale(normalizeLocale(nextLocale));
     },
+    t(namespace: I18NNamespace, key: string, fallback?: string) {
+      return translate(dictionary, namespace, key, fallback);
+    },
+  }), [dictionary, locale]);
+}
+
+export function LocaleProvider({ children }: { children: ReactNode }) {
+  const value = useLocaleStoreValue();
+
+  return createElement(LocaleContext.Provider, { value }, children);
+}
+
+export function useLocale() {
+  const contextValue = useContext(LocaleContext);
+  const fallbackValue = useLocaleStoreValue();
+
+  return contextValue ?? fallbackValue;
+}
+
+export function useTranslation(namespace?: I18NNamespace) {
+  const localeContext = useLocale();
+
+  return {
+    ...localeContext,
+    t(key: string, fallback?: string) {
+      if (!namespace) {
+        return key;
+      }
+
+      return localeContext.t(namespace, key, fallback);
+    },
+    tGlobal: localeContext.t,
   };
 }

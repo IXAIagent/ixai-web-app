@@ -18,6 +18,7 @@ import {
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { trackEvent } from "@/src/lib/analytics/analytics";
+import { useTranslation } from "@/src/lib/i18n";
 
 const PAIN_POINTS = [
   {
@@ -99,6 +100,8 @@ function trackLandingClick(
 }
 
 export function IntelligenceLanding() {
+  const { t } = useTranslation("common");
+
   useEffect(() => {
     trackEvent("landing_view", {
       path: window.location.pathname,
@@ -112,13 +115,13 @@ export function IntelligenceLanding() {
         <div className="grid gap-6 p-4 sm:p-8 lg:grid-cols-[1.08fr_0.92fr] lg:p-10">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
-              一玄 AI 投資助理
+              {t("landingEyebrow")}
             </p>
             <h1 className="mt-3 max-w-4xl font-serif text-3xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-              一玄 AI 投資助理，幫你看懂市場，也看見風險。
+              {t("landingTitle")}
             </h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-white/74 sm:text-base sm:leading-8">
-              從每日市場情報、FCN 教育到 IXAI Pro 監控工作區，一玄把投資顧問經驗轉化成可持續使用的 AI 投資情報系統。
+              {t("landingBody")}
             </p>
             <div className="mt-4 grid gap-2 rounded-lg border border-white/12 bg-white/[0.045] p-3 text-xs leading-6 text-white/72 sm:grid-cols-2">
               <span>市場情報：每日晨報與每週情報</span>
@@ -132,7 +135,7 @@ export function IntelligenceLanding() {
                 href="/daily-brief"
                 onClick={() => trackLandingClick("landing_primary_cta_click", "/daily-brief")}
               >
-                閱讀每日晨報
+                {t("landingCtaPrimary")}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <Link
@@ -140,7 +143,7 @@ export function IntelligenceLanding() {
                 href="/fcn"
                 onClick={() => trackLandingClick("landing_preview_click", "/fcn")}
               >
-                了解 FCN 監控
+                {t("landingCtaFcn")}
                 <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               </Link>
               <Link
@@ -148,7 +151,7 @@ export function IntelligenceLanding() {
                 href="/account"
                 onClick={() => trackLandingClick("pro_cta_click", "/account")}
               >
-                申請 Pro 測試
+                {t("landingCtaPro")}
                 <Sparkles className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               </Link>
             </div>

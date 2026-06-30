@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Globe2, HeartPulse, RefreshCw, ShieldCheck } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n";
 import { getWorkspaceHealthScore, type WorkspaceHealthScore } from "@/src/lib/workspace/health";
 import { getClientSafeMarketCacheSnapshot, getClientSafeMarketReadiness } from "@/src/lib/market/client-safe-market-readiness";
 import { runWorkspaceRuntimeBudget, runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
@@ -102,6 +103,7 @@ async function probeLiveQuoteRoute(): Promise<LiveQuoteProbe> {
 }
 
 export function WorkspaceHealthCenter() {
+  const { t } = useTranslation("health");
   const [isLoading, setIsLoading] = useState(false);
   const [health, setHealth] = useState<WorkspaceHealthScore | null>(null);
   const [probe, setProbe] = useState<LiveQuoteProbe>(() => buildInitialProbe());
@@ -145,43 +147,43 @@ export function WorkspaceHealthCenter() {
     probe.binance,
     {
       detail: clientCache.metadata.summary,
-      label: "Quote cache status",
+      label: t("quoteCacheStatus"),
       status: "partial",
     },
     {
       detail: health
         ? `Portfolio health score ${health.portfolioHealth}.`
         : "Manual refresh has not calculated portfolio valuation readiness yet.",
-      label: "Portfolio valuation readiness",
+      label: t("portfolioReadiness"),
       status: health ? (health.portfolioHealth >= 70 ? "ready" : "partial") : "unknown",
     },
     {
       detail: health
         ? `FCN health score ${health.fcnHealth}.`
         : "Manual refresh has not calculated FCN live risk readiness yet.",
-      label: "FCN live risk readiness",
+      label: t("fcnReadiness"),
       status: health ? (health.fcnHealth >= 70 ? "ready" : "partial") : "unknown",
     },
     {
-      detail: "Morning Brief uses on-demand Workspace Intelligence and fallback sections.",
-      label: "Morning Brief readiness",
+      detail: t("morningBriefDetail"),
+      label: t("morningBriefReadiness"),
       status: "ready",
     },
     {
-      detail: "Runtime safety uses manual refresh, budget guards, settled fallbacks, and no direct browser provider fetch.",
-      label: "Runtime safety status",
+      detail: t("runtimeDetail"),
+      label: t("runtimeStatus"),
       status: "ready",
     },
     {
       detail: health
         ? `Data quality health score ${health.dataQualityHealth}.`
         : "Manual refresh has not calculated data quality summary yet.",
-      label: "Data quality summary",
+      label: t("dataQualitySummary"),
       status: health ? (health.dataQualityHealth >= 70 ? "ready" : "partial") : "unknown",
     },
     {
-      detail: "V13.0 locale foundation is localStorage + cookie only across zh-TW, zh-CN, en-US, ja-JP, and ko-KR.",
-      label: "i18n foundation status",
+      detail: t("i18nDetail"),
+      label: t("i18nStatus"),
       status: "ready",
     },
   ];
@@ -193,13 +195,13 @@ export function WorkspaceHealthCenter() {
           <FeatureIcon icon={HeartPulse} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Workspace Health Center
+              {t("healthCenter")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Production readiness health
+              {t("title")}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Read-only health view for market provider status, cache awareness, runtime safety, data quality, and V13 i18n foundation. Refresh is manual to avoid request storms.
+              {t("subtitle")}
             </p>
           </div>
         </div>
@@ -210,22 +212,22 @@ export function WorkspaceHealthCenter() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "Checking" : "Refresh Health"}
+          {isLoading ? t("checking") : t("refresh")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-3">
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">Overall Health</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">{t("overallHealth")}</p>
           <p className="mt-2 font-mono text-3xl font-semibold text-[var(--ixai-forest)]">{health?.overallHealth ?? "--"}</p>
         </article>
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">Market API</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">{t("marketApi")}</p>
           <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">Internal route only</p>
           <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">{clientReadiness.summary}</p>
         </article>
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">Generated</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">{t("generated")}</p>
           <p className="mt-2 break-words font-mono text-sm font-semibold text-[var(--ixai-forest)]">{generatedAt ?? "manual refresh pending"}</p>
         </article>
       </div>
