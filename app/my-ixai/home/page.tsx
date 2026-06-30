@@ -16,6 +16,7 @@ import {
 
 import { LiveMarketDataStatus } from "@/components/market/live-market-data-status";
 import { I18nFoundationStatusCard } from "@/components/i18n/i18n-foundation-status-card";
+import { LocalizationPreview } from "@/components/i18n/localization-preview";
 import { WorkspaceMorningBriefV14Card } from "@/components/workspace/workspace-morning-brief-v14-card";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -132,6 +133,8 @@ export default function MyIxaiHomePage() {
       <LiveMarketDataStatus autoLoad={false} compact />
 
       <I18nFoundationStatusCard />
+
+      <LocalizationPreview />
 
       <WorkspaceMorningBriefV14Card autoLoad={false} compact />
 

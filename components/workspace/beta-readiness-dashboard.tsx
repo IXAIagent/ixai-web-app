@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, CircleDot, ShieldAlert } from "lucide-react";
 
 import { BetaFeedbackPanel } from "@/components/workspace/beta-feedback-panel";
 import { FeatureIcon } from "@/components/ui/feature-icon";
-import { useTranslation } from "@/src/lib/i18n";
+import { useLocalization, useTranslation } from "@/src/lib/i18n";
 
 type BetaStatus = "blocked" | "not_started" | "partial" | "ready";
 
@@ -94,6 +94,7 @@ const CHECKLIST: BetaChecklistItem[] = [
 
 export function BetaReadinessDashboard() {
   const { t } = useTranslation("beta");
+  const { currency, examples, region } = useLocalization();
   const readyCount = CHECKLIST.filter((item) => item.status === "ready").length;
   const blockedCount = CHECKLIST.filter((item) => item.status === "blocked").length;
   const partialCount = CHECKLIST.filter((item) => item.status === "partial").length;
@@ -163,6 +164,9 @@ export function BetaReadinessDashboard() {
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">{t("beforeUsers")}</h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
               {t("productionQaBody")}
+            </p>
+            <p className="mt-2 max-w-3xl text-xs leading-6 text-[var(--ixai-forest-soft)]">
+              Localization display check: {region} / {currency} / {examples.currency} / {examples.percent}.
             </p>
           </div>
           <Link

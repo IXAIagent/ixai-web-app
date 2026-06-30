@@ -6,6 +6,32 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V13 Sprint 2 Region / Currency / Localization
+
+Why:
+
+- V13 Sprint 1 completed the shared i18n dictionary, provider, and Language Switcher foundation.
+- IXAI needs a display-only region, currency, and localization layer before deeper global-market UI work.
+- The Sprint must avoid exchange rates, valuation-engine changes, and investment feature expansion.
+
+What Changed:
+
+- Added `docs/V13_SPRINT_2_REGION_CURRENCY_LOCALIZATION.md`.
+- Added region metadata for `TW`, `US`, `HK`, `JP`, `KR`, and `EU`.
+- Added currency metadata for `USD`, `TWD`, `HKD`, `JPY`, `EUR`, and `KRW`.
+- Added Intl-based formatting helpers for currency, compact currency, number, percent, date, date-time, and relative-date labels.
+- Added local-only `ixai.region` and `ixai.currency` preference persistence through localStorage + cookie.
+- Added `LocalizationProvider` and `useLocalization()`.
+- Added Workspace Settings Region / Currency / Localization card.
+- Wired lightweight localization display into Public Landing, Footer, Workspace Home, Health Center, and Beta Dashboard.
+
+Key Decisions:
+
+- V13 mainline foundation is complete after Sprint 2.
+- Deeper dictionary migration is maintenance, not a blocker.
+- Recommended next options are V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration maintenance.
+- No exchange-rate provider, live market provider behavior, Portfolio valuation core, FCN / Risk engine core, auth, RLS, schema, migration, API contract, billing, broker/trading, scheduler/delivery, AI provider, OpenAI, or LLM behavior changed.
+
 ## V13 Sprint 1 Internationalization Foundation
 
 Why:

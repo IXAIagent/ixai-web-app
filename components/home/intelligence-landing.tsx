@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { LocalizationPreview } from "@/components/i18n/localization-preview";
 import { trackEvent } from "@/src/lib/analytics/analytics";
 import { useTranslation } from "@/src/lib/i18n";
 
@@ -128,6 +129,9 @@ export function IntelligenceLanding() {
               <span>FCN 風險：Worst-of、KI / KO、觀察日</span>
               <span>投資組合：配置、集中度、主題曝險</span>
               <span>顧問服務：FCN 健檢與投資組合診斷</span>
+            </div>
+            <div className="mt-4">
+              <LocalizationPreview tone="dark" />
             </div>
             <div className="mt-6 grid gap-2 sm:flex sm:flex-wrap">
               <Link

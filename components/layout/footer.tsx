@@ -1,6 +1,7 @@
 "use client";
 
 import { IxaiLogoFrame } from "@/components/brand/ixai-logo";
+import { LocalizationPreview } from "@/components/i18n/localization-preview";
 import { getPrimaryContactLinks } from "@/src/lib/brand/contact";
 import { ixaiEcosystem } from "@/src/lib/ixai/ecosystem";
 import { useTranslation } from "@/src/lib/i18n";
@@ -22,6 +23,7 @@ export function Footer() {
           <IxaiLogoFrame className="h-9 w-[4.5rem]" logoSize="xs" tone="dark" />
           <p>{t("footerDisclaimer")}</p>
         </div>
+        <LocalizationPreview tone="dark" />
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <a
             className="text-[rgba(245,240,230,0.64)] transition hover:text-[var(--ixai-cream)]"

@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Globe2, HeartPulse, RefreshCw, ShieldCheck } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
-import { useTranslation } from "@/src/lib/i18n";
+import { useLocalization, useTranslation } from "@/src/lib/i18n";
 import { getWorkspaceHealthScore, type WorkspaceHealthScore } from "@/src/lib/workspace/health";
 import { getClientSafeMarketCacheSnapshot, getClientSafeMarketReadiness } from "@/src/lib/market/client-safe-market-readiness";
 import { runWorkspaceRuntimeBudget, runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
@@ -104,6 +104,7 @@ async function probeLiveQuoteRoute(): Promise<LiveQuoteProbe> {
 
 export function WorkspaceHealthCenter() {
   const { t } = useTranslation("health");
+  const { currency, examples, region, regionMetadata } = useLocalization();
   const [isLoading, setIsLoading] = useState(false);
   const [health, setHealth] = useState<WorkspaceHealthScore | null>(null);
   const [probe, setProbe] = useState<LiveQuoteProbe>(() => buildInitialProbe());
@@ -186,6 +187,11 @@ export function WorkspaceHealthCenter() {
       label: t("i18nStatus"),
       status: "ready",
     },
+    {
+      detail: `${region} / ${currency} display foundation active. Example: ${examples.currency}, ${examples.date}.`,
+      label: "Region / currency localization",
+      status: "ready",
+    },
   ];
 
   return (
@@ -229,6 +235,9 @@ export function WorkspaceHealthCenter() {
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">{t("generated")}</p>
           <p className="mt-2 break-words font-mono text-sm font-semibold text-[var(--ixai-forest)]">{generatedAt ?? "manual refresh pending"}</p>
+          <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+            {regionMetadata.defaultTimezone}
+          </p>
         </article>
       </div>
 
