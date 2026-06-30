@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { CheckCircle2, PlusCircle } from "lucide-react";
 
 import { InputReviewSummary } from "@/components/portfolio/input-review-summary";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
 import { savePendingPortfolioInput } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { saveRecentPortfolioInput } from "@/src/lib/portfolio/input/recent-inputs";
 import { saveCryptoPositionWithV13DatabaseWrite } from "@/src/lib/workspace/portfolio-database-write-activation";
@@ -38,6 +39,7 @@ function displayValue(value: string, fallback = "未填") {
 }
 
 export function CryptoInputForm() {
+  const { t } = useTranslation("portfolio");
   const [draft, setDraft] = useState<CryptoDraft>({
     asset: "BTC",
     costBasis: "",
@@ -66,8 +68,8 @@ export function CryptoInputForm() {
         throw new Error("請輸入 Crypto Asset。");
       }
 
-      const quantity = parsePositiveNumber(draft.quantity, "Quantity");
-      const costBasis = parsePositiveNumber(draft.costBasis, "Cost Basis");
+      const quantity = parsePositiveNumber(draft.quantity, t("quantity"));
+      const costBasis = parsePositiveNumber(draft.costBasis, t("costBasis"));
 
       saveRecentPortfolioInput({
         category: "CRYPTO",
@@ -111,18 +113,18 @@ export function CryptoInputForm() {
     <form className="grid gap-5" onSubmit={handleSubmit}>
       <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-          Crypto Input
+          {t("cryptoInput")}
         </p>
         <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-          建立 Crypto 部位
+          {t("buildCryptoPosition")}
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          本版先寫入 v4.10 Input Truth Bridge；V13 guard 開啟且資料庫可用時，才會在明確提交後嘗試 Supabase 寫入。不連接交易所或行情 API。
+          {t("cryptoInputBody")}
         </p>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <label className={LABEL_CLASS} htmlFor="crypto-asset">
-            Asset
+            {t("asset")}
             <select
               className={FIELD_INPUT_CLASS}
               id="crypto-asset"
@@ -140,7 +142,7 @@ export function CryptoInputForm() {
           </label>
           {draft.asset === "Other" ? (
             <label className={LABEL_CLASS} htmlFor="crypto-custom-asset">
-              Other Asset
+              {t("otherAsset")}
               <input
                 autoComplete="off"
                 className={FIELD_INPUT_CLASS}
@@ -155,7 +157,7 @@ export function CryptoInputForm() {
             </label>
           ) : null}
           <label className={LABEL_CLASS} htmlFor="crypto-quantity">
-            Quantity
+            {t("quantity")}
             <input
               className={FIELD_INPUT_CLASS}
               id="crypto-quantity"
@@ -168,7 +170,7 @@ export function CryptoInputForm() {
             />
           </label>
           <label className={LABEL_CLASS} htmlFor="crypto-cost">
-            Cost Basis
+            {t("costBasis")}
             <input
               className={FIELD_INPUT_CLASS}
               id="crypto-cost"
@@ -181,7 +183,7 @@ export function CryptoInputForm() {
             />
           </label>
           <label className={LABEL_CLASS} htmlFor="crypto-source">
-            Wallet / Exchange（optional）
+            {t("walletExchangeOptional")}
             <select
               className={FIELD_INPUT_CLASS}
               id="crypto-source"
@@ -205,25 +207,25 @@ export function CryptoInputForm() {
         sections={[
           {
             items: [
-              ["Asset", assetSymbol || "未填"],
-              ["Wallet / Exchange", draft.source],
+              [t("asset"), assetSymbol || "未填"],
+              [t("walletExchangeOptional"), draft.source],
             ],
-            title: "Key Fields",
+            title: t("keyFields"),
           },
           {
             items: [
-              ["Quantity", displayValue(draft.quantity, "0")],
-              ["Cost", displayValue(draft.costBasis, "0")],
-              ["Currency", "USDT"],
+              [t("quantity"), displayValue(draft.quantity, "0")],
+              [t("cost"), displayValue(draft.costBasis, "0")],
+              [t("currency"), "USDT"],
             ],
-            title: "Position Preview",
+            title: t("positionPreview"),
           },
           {
             items: [
-              ["Risk Fields", "Crypto / Source"],
-              ["Data Source", "Database first when V13 guard allows; pending bridge fallback"],
+              [t("riskFields"), `Crypto / ${t("source")}`],
+              [t("dataSource"), t("dataSourceGuardFallback")],
             ],
-            title: "Risk Fields",
+            title: t("riskFields"),
           },
         ]}
       />
@@ -247,7 +249,7 @@ export function CryptoInputForm() {
           type="submit"
         >
           <PlusCircle className="h-4 w-4" aria-hidden="true" />
-          建立 Crypto Input
+          {t("createCryptoInput")}
         </button>
       </div>
     </form>

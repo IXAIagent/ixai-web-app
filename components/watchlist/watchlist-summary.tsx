@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Eye, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
+import { useWorkspaceDisplayLabels } from "@/src/lib/i18n/use-workspace-display-labels";
 import {
   getWatchlistPersistenceSummary,
   type WatchlistPersistenceSummary,
@@ -38,6 +40,8 @@ function formatDateTime(value: string | null | undefined) {
 }
 
 export function WatchlistSummary() {
+  const { t } = useTranslation("watchlist");
+  const { assetTypeLabel, sourceStatusLabel } = useWorkspaceDisplayLabels();
   const [summary, setSummary] = useState<WorkspaceWatchlistSummary | null>(null);
   const [persistence, setPersistence] = useState<WatchlistPersistenceSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,13 +85,13 @@ export function WatchlistSummary() {
           <FeatureIcon icon={Eye} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Watchlist Engine
+              {t("watchlistEngine")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Workspace watchlist readback
+              {t("watchlistReadback")}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Local/fallback watchlist items are matched with Market Service quotes when available. This is monitoring only, not a trade list.
+              {t("watchlistBody")}
             </p>
           </div>
         </div>
@@ -98,15 +102,15 @@ export function WatchlistSummary() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "讀取中" : "重新整理"}
+          {isLoading ? t("refreshing") : t("refresh")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         {[
-          ["Items", summary?.itemCount ?? "--"],
-          ["Quoted", summary?.quotedItemCount ?? "--"],
-          ["Unquoted", summary?.unquotedItemCount ?? "--"],
+          [t("items"), summary?.itemCount ?? "--"],
+          [t("quoted"), summary?.quotedItemCount ?? "--"],
+          [t("unquoted"), summary?.unquotedItemCount ?? "--"],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -125,10 +129,10 @@ export function WatchlistSummary() {
       {persistence ? (
         <article className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Persistence readiness
+            {t("persistenceReadiness")}
           </p>
           <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-            Source status: {persistence.sourceStatus}. Persisted items: {persistence.persistedItems}; local items: {persistence.localItems}; fallback items: {persistence.fallbackItems}.
+            {t("sourceStatus")}: {sourceStatusLabel(persistence.sourceStatus)}. {t("persisted", "Persisted")}: {persistence.persistedItems}; {t("local", "Local")}: {persistence.localItems}; {t("fallbackItems")}: {persistence.fallbackItems}.
           </p>
         </article>
       ) : null}
@@ -145,18 +149,18 @@ export function WatchlistSummary() {
                   {item.symbol}
                 </p>
                 <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">
-                  {item.name} · {item.assetType}
+                  {item.name} · {assetTypeLabel(item.assetType)}
                 </p>
               </div>
               <span className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                {item.sourceStatus}
+                {sourceStatusLabel(item.sourceStatus)}
               </span>
             </div>
             <p className="mt-3 text-lg font-semibold text-[var(--ixai-forest)]">
               {formatPrice(item.quote?.quote?.price, item.quote?.quote?.currency)}
             </p>
             <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-              Quote status: {item.quote?.sourceStatus ?? "unavailable"}
+              {t("quoteStatus")}: {sourceStatusLabel(item.quote?.sourceStatus)}
             </p>
             {item.note ? (
               <p className="mt-3 rounded-lg border border-[var(--ixai-border)] bg-white/60 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
@@ -169,9 +173,9 @@ export function WatchlistSummary() {
 
       {summary ? (
         <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-          Live source: {summary.liveMarketSource ?? "yahoo"} · As of:{" "}
-          {formatDateTime(summary.liveMarketAsOf)} · Missing quotes:{" "}
-          {summary.missingQuoteCount ?? summary.unquotedItemCount} · Stale quotes:{" "}
+          {t("liveSource")}: {summary.liveMarketSource ?? "yahoo"} · {t("asOf")}:{" "}
+          {formatDateTime(summary.liveMarketAsOf)} · {t("missingQuotes")}:{" "}
+          {summary.missingQuoteCount ?? summary.unquotedItemCount} · {t("staleQuotes")}:{" "}
           {summary.staleQuoteCount ?? 0}. {summary.informationalOnlyDisclaimer}
         </p>
       ) : null}

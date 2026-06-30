@@ -64,11 +64,11 @@ Production foundation:
 
 Current development version:
 
-`V13 Sprint 4 — Authenticated Workspace Translation Audit`
+`Translation Maintenance Batch 1 — Authenticated Workspace Full Scan`
 
-V13 Sprint 4 performs the authenticated Workspace Translation Audit after Sprint 3 repaired the first visible Public / Workspace coverage pass. Production signed-in review found remaining English inside `/my-ixai/portfolio`, especially the Portfolio Persistence Layer readback card. Sprint 4 adds UI display-label mapping and dictionary coverage for Portfolio page, Portfolio Truth, Portfolio Persistence, Portfolio Valuation, Portfolio Live Valuation, and the FCN live underlying card without changing engine contracts. This Sprint does not change auth, RLS, schema, migrations, API contracts, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, AI model behavior, live market provider behavior, exchange-rate provider behavior, or Portfolio / FCN / Risk engine logic. See `docs/V13_SPRINT_4_AUTHENTICATED_WORKSPACE_TRANSLATION_AUDIT.md` and `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md`.
+Translation Maintenance Batch 1 follows V13 Sprint 4 after production signed-in review found deeper authenticated Workspace English copy beyond the first Portfolio readback repair. Batch 1 scans `/my-ixai/home`, `/my-ixai/portfolio`, `/my-ixai/input`, `/my-ixai/watchlist`, `/my-ixai/notifications`, `/my-ixai/timeline`, `/my-ixai/copilot`, `/my-ixai/health`, `/my-ixai/beta`, `/my-ixai/risk`, `/my-ixai/fcn`, `/my-ixai/intelligence`, and `/my-ixai/settings`. It repairs easy dictionary wiring for Watchlist, Notifications, Timeline, Copilot, Stock / Crypto input, Input Review, and FCN live underlying display labels while documenting remaining deep Risk / FCN / Intelligence / input-form gaps. This batch does not change auth, RLS, schema, migrations, API contracts, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, AI model behavior, live market provider behavior, exchange-rate provider behavior, valuation engine, risk engine, or FCN engine logic. See `docs/TRANSLATION_MAINTENANCE_BATCH_1.md`, `docs/V13_SPRINT_4_AUTHENTICATED_WORKSPACE_TRANSLATION_AUDIT.md`, and `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md`.
 
-V13 infrastructure foundation is complete after Sprint 2, but product translation coverage must be judged by visible `zh-TW` coverage on primary Public / Workspace surfaces and signed-in Workspace readback pages. Sprint 3 was the first coverage repair pass; Sprint 4 is the authenticated Workspace audit plus first repair pass. Deep Risk, FCN, Intelligence, input forms, Watchlist, Notifications, Timeline, Copilot, and long-form public content remain candidates for targeted dictionary migration after manual verification.
+V13 infrastructure foundation is complete after Sprint 2, but product translation coverage must be judged by visible `zh-TW` coverage on primary Public / Workspace surfaces and signed-in Workspace readback pages. Sprint 3 was the first coverage repair pass; Sprint 4 repaired Portfolio authenticated readback first; Translation Maintenance Batch 1 starts a full authenticated Workspace maintenance scan. Deep Risk, FCN, Intelligence, FCN input forms, and long-form public content remain candidates for targeted dictionary migration after manual verification.
 
 V14 Sprint 3 PR #89 has merged into `main`, and V14 Beta Release Review is complete as a release-governance checkpoint. V14 Beta is functionally ready for invite-only Beta preparation after review, but invite-only Beta should begin only after the production verification checklist passes. See `docs/V14_SPRINT_3_BETA_READINESS_POLISH.md`, `docs/V14_BETA_RELEASE_NOTES.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
 
@@ -112,8 +112,9 @@ Important:
 - V13 Sprint 2 completes Region / Currency / Localization foundations.
 - V13 Sprint 3 repairs visible translation coverage for primary Public / Workspace surfaces.
 - V13 Sprint 4 audits signed-in Workspace translation coverage and repairs the Portfolio authenticated readback surfaces first.
+- Translation Maintenance Batch 1 scans all major authenticated Workspace routes and repairs low-risk dictionary wiring for Watchlist, Notifications, Timeline, Copilot, Input, and FCN live underlying display labels.
 - V13 completion criteria now include signed-in Workspace manual verification, not only infrastructure completion.
-- Recommended next options are V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration as maintenance for remaining long-tail surfaces.
+- Recommended next options are Translation Maintenance Batch 2 for Risk / FCN / Intelligence, V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration as maintenance for remaining long-tail surfaces.
 - V15 remains unchanged.
 - Do not implement Live Market, broker/trading/recommendation, scheduler/notification delivery, billing, or new AI model behavior without the explicit V14 phase plan and approval.
 
