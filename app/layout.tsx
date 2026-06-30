@@ -16,6 +16,7 @@ import {
   ixaiMetadataBase,
   ixaiOgImage,
 } from "@/src/lib/brand/metadata";
+import { LocaleProvider } from "@/src/lib/i18n";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -102,13 +103,15 @@ export default function RootLayout({
             CTA reads them. No third-party tracking. */}
         <DistributionProvider />
         <PageViewTracker />
-        <AuthProvider>
-          <IdentityProvider>
-            <AuthEntryGate>
-              <AppShell>{children}</AppShell>
-            </AuthEntryGate>
-          </IdentityProvider>
-        </AuthProvider>
+        <LocaleProvider>
+          <AuthProvider>
+            <IdentityProvider>
+              <AuthEntryGate>
+                <AppShell>{children}</AppShell>
+              </AuthEntryGate>
+            </IdentityProvider>
+          </AuthProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

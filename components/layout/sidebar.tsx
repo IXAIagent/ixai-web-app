@@ -36,8 +36,8 @@ export function Sidebar() {
         { label: dictionary.workspaceNav.notifications, href: "/my-ixai/notifications" },
         { label: dictionary.workspaceNav.timeline, href: "/my-ixai/timeline" },
         { label: dictionary.workspaceNav.copilot, href: "/my-ixai/copilot" },
-        { label: "Health Center", href: "/my-ixai/health" },
-        { label: "V14 Beta", href: "/my-ixai/beta" },
+        { label: dictionary.workspaceNav.health, href: "/my-ixai/health" },
+        { label: dictionary.workspaceNav.beta, href: "/my-ixai/beta" },
         { label: dictionary.workspaceNav.risk, href: "/my-ixai/risk" },
         { label: dictionary.workspaceNav.fcn, href: "/my-ixai/fcn" },
         { label: dictionary.workspaceNav.intelligence, href: "/my-ixai/intelligence" },
@@ -80,7 +80,7 @@ export function Sidebar() {
   const navGroups = isWorkspaceRoute ? workspaceNavGroups : publicNavGroups;
   const title = isWorkspaceRoute ? dictionary.workspaceNav.title : dictionary.publicNav.title;
   const subtitle = isWorkspaceRoute ? dictionary.workspaceNav.subtitle : dictionary.publicNav.subtitle;
-  const footerLabel = isWorkspaceRoute ? "Workspace Mode" : "Public Website";
+  const footerLabel = isWorkspaceRoute ? dictionary.common.workspaceMode : dictionary.common.publicWebsite;
   const footerText = isWorkspaceRoute
     ? "Portfolio、Risk、FCN、Intelligence 與 Settings 已分離成工作區導覽。"
     : "官網導覽保留品牌、教育與市場內容，不混入 Workspace。";

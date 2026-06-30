@@ -6,6 +6,32 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V13 Sprint 1 Internationalization Foundation
+
+Why:
+
+- V12 Runtime Stabilization is complete.
+- V14 Beta Sprint 1, Sprint 2, Sprint 3, and Beta Release Review are complete.
+- IXAI now returns to the V13 internationalization mainline.
+- V13.0 established locale state; Sprint 1 expands it into a more complete foundation architecture.
+
+What Changed:
+
+- Added `docs/V13_SPRINT_1_INTERNATIONALIZATION_FOUNDATION.md`.
+- Expanded `src/lib/i18n/dictionaries.ts` with namespace dictionaries for `common`, `navigation`, `workspace`, `settings`, `health`, `beta`, `errors`, `buttons`, and `labels`.
+- Added translation helper support and `useTranslation(namespace)`.
+- Added `LocaleProvider` / LocaleContext and mounted it at the root layout.
+- Kept localStorage + cookie persistence under `ixai.locale`.
+- Wired initial Public surfaces: Landing, Navigation, and Footer.
+- Wired initial Workspace surfaces: Home, Settings, Health, and Beta.
+
+Key Decisions:
+
+- V13 Sprint 1 is foundation-first, not full-site translation.
+- Full translation, region formatting, currency formatting, and market-localized content remain for V13 Sprint 2 and later.
+- V15 remains unchanged.
+- No auth, RLS, schema, migration, membership, billing, broker/trading, scheduler/delivery, AI provider, OpenAI, Portfolio engine, FCN engine, Risk engine, or Intelligence engine behavior changed.
+
 ## V14 Beta Release Review
 
 Why:
