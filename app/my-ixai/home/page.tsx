@@ -17,6 +17,7 @@ import {
 import { LiveMarketDataStatus } from "@/components/market/live-market-data-status";
 import { I18nFoundationStatusCard } from "@/components/i18n/i18n-foundation-status-card";
 import { LocalizationPreview } from "@/components/i18n/localization-preview";
+import { TranslatedText } from "@/components/i18n/translated-text";
 import { WorkspaceMorningBriefV14Card } from "@/components/workspace/workspace-morning-brief-v14-card";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
@@ -29,73 +30,73 @@ export const metadata = buildPublicMetadata({
 
 const workspaceCards = [
   {
-    description: "查看 Portfolio、資產輸入、估值與資料狀態。",
+    descriptionKey: "portfolioCardDescription",
     href: "/my-ixai/portfolio",
     icon: BriefcaseBusiness,
-    label: "Portfolio Center",
+    labelKey: "portfolio",
   },
   {
-    description: "查看集中度、曝險、風險摘要與資料品質。",
+    descriptionKey: "riskCardDescription",
     href: "/my-ixai/risk",
     icon: ShieldAlert,
-    label: "Risk Center",
+    labelKey: "risk",
   },
   {
-    description: "管理 FCN 部位、underlyings、KI / KO 與 schedule。",
+    descriptionKey: "fcnCardDescription",
     href: "/my-ixai/fcn",
     icon: ShieldCheck,
-    label: "FCN Center",
+    labelKey: "fcn",
   },
   {
-    description: "整理 workspace intelligence、brief 與 readback 入口。",
+    descriptionKey: "intelligenceCardDescription",
     href: "/my-ixai/intelligence",
     icon: Newspaper,
-    label: "Intelligence Center",
+    labelKey: "intelligence",
   },
   {
-    description: "檢查 provider、cache、runtime safety、data quality 與 i18n readiness。",
+    descriptionKey: "healthCardDescription",
     href: "/my-ixai/health",
     icon: HeartPulse,
-    label: "Health Center",
+    labelKey: "health",
   },
   {
-    description: "查看 V14 Beta checklist、release notes 與 feedback template。",
+    descriptionKey: "betaCardDescription",
     href: "/my-ixai/beta",
     icon: Rocket,
-    label: "V14 Beta Preview",
+    labelKey: "beta",
   },
   {
-    description: "查看 watchlist 與市場資料狀態。",
+    descriptionKey: "watchlistCardDescription",
     href: "/my-ixai/watchlist",
     icon: Eye,
-    label: "Watchlist",
+    labelKey: "watchlist",
   },
   {
-    description: "查看設定、診斷與 platform readiness。",
+    descriptionKey: "settingsCardDescription",
     href: "/my-ixai/settings",
     icon: Settings,
-    label: "Settings",
+    labelKey: "settings",
   },
 ];
 
 const assetShortcutCards = [
   {
-    description: "新增股票 / ETF 資料。",
+    descriptionKey: "assetShortcutStockDescription",
     href: "/my-ixai/input/stock",
     icon: CandlestickChart,
-    label: "新增股票",
+    labelKey: "assetShortcutStockLabel",
   },
   {
-    description: "新增 Crypto 資產資料。",
+    descriptionKey: "assetShortcutCryptoDescription",
     href: "/my-ixai/input/crypto",
     icon: Bitcoin,
-    label: "新增 Crypto",
+    labelKey: "assetShortcutCryptoLabel",
   },
   {
-    description: "使用 FCN Wizard 建立 FCN 部位。",
+    descriptionKey: "assetShortcutFcnDescription",
     href: "/my-ixai/input/fcn",
     icon: ShieldCheck,
-    label: "新增 FCN",
+    labelKey: "assetShortcutFcnLabel",
   },
 ];
 
@@ -104,13 +105,13 @@ export default function MyIxaiHomePage() {
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
       <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-4 text-[var(--ixai-cream)] shadow-[0_18px_56px_rgba(9,41,31,0.14)] sm:p-7 sm:shadow-[0_24px_80px_rgba(9,41,31,0.16)]">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-          IXAI Workspace
+          <TranslatedText k="heroEyebrow" namespace="workspace" />
         </p>
         <h1 className="mt-2 max-w-3xl font-serif text-2xl font-semibold leading-8 sm:mt-3 sm:text-5xl sm:leading-snug">
-          歡迎回到 IXAI Workspace。
+          <TranslatedText k="heroTitle" namespace="workspace" />
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:leading-7">
-          V14 Sprint 2 將 Live Market、Portfolio Valuation、FCN Live Risk 串成 Workspace Intelligence 與 Morning Brief。Home 仍維持 runtime-safe：重型 readback 採手動刷新。
+          <TranslatedText k="heroBody" namespace="workspace" />
         </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <Link
@@ -118,14 +119,14 @@ export default function MyIxaiHomePage() {
             href="/my-ixai/portfolio"
           >
             <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
-            進入 Portfolio Center
+            <TranslatedText k="heroCtaPrimary" namespace="workspace" />
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.055] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
             href="/my-ixai/fcn"
           >
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-            進入 FCN Center
+            <TranslatedText k="heroCtaFcn" namespace="workspace" />
           </Link>
         </div>
       </section>
@@ -142,14 +143,14 @@ export default function MyIxaiHomePage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              V14 Sprint 2
+              <TranslatedText k="liveIntelligenceEyebrow" namespace="workspace" />
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-              Live Intelligence snapshot
+              <TranslatedText k="snapshotTitle" namespace="workspace" />
             </h2>
           </div>
           <span className="inline-flex w-fit rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-            On-demand refresh only
+            <TranslatedText k="liveIntelligenceStatus" namespace="workspace" />
           </span>
         </div>
 
@@ -157,23 +158,23 @@ export default function MyIxaiHomePage() {
           {[
             {
               href: "/my-ixai/intelligence",
-              label: "Workspace intelligence",
-              note: "Intelligence Center now aggregates portfolio, risk, FCN, watchlist, alerts, timeline, and data quality into rule-based explain-only cards.",
+              labelKey: "liveIntelligenceWorkspaceTitle",
+              noteKey: "liveIntelligenceWorkspaceNote",
             },
             {
               href: "/my-ixai/portfolio",
-              label: "Live valuation",
-              note: "Portfolio Center now estimates Stock and Crypto value from live quotes when available; FCN remains notional placeholder.",
+              labelKey: "liveIntelligencePortfolioTitle",
+              noteKey: "liveIntelligencePortfolioNote",
             },
             {
               href: "/my-ixai/fcn",
-              label: "FCN live risk",
-              note: "FCN Center reads live underlying quotes where available for worst-of, KI, KO, strike distance, and schedule awareness.",
+              labelKey: "liveIntelligenceFcnTitle",
+              noteKey: "liveIntelligenceFcnNote",
             },
             {
               href: "/my-ixai/timeline",
-              label: "Timeline context",
-              note: "Timeline groups FCN coupon, observation, maturity, alert, and data-quality events without inventing dates or activating a scheduler.",
+              labelKey: "liveIntelligenceTimelineTitle",
+              noteKey: "liveIntelligenceTimelineNote",
             },
           ].map((item) => (
             <Link
@@ -182,13 +183,15 @@ export default function MyIxaiHomePage() {
               key={item.href}
             >
               <span>
-                <span className="text-sm font-semibold">{item.label}</span>
+                <span className="text-sm font-semibold">
+                  <TranslatedText k={item.labelKey} namespace="workspace" />
+                </span>
                 <span className="mt-3 block text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                  {item.note}
+                  <TranslatedText k={item.noteKey} namespace="workspace" />
                 </span>
               </span>
               <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--ixai-forest)]">
-                Open
+                <TranslatedText k="open" namespace="workspace" />
                 <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)] transition group-hover:translate-x-0.5" aria-hidden="true" />
               </span>
             </Link>
@@ -200,15 +203,15 @@ export default function MyIxaiHomePage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Workspace Centers
+              <TranslatedText k="centersEyebrow" namespace="workspace" />
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-              主要工作中心
+              <TranslatedText k="centersTitle" namespace="workspace" />
             </h2>
           </div>
           <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-xs font-semibold text-[var(--ixai-forest-soft)]">
             <Home className="h-3.5 w-3.5 text-[var(--ixai-gold)]" aria-hidden="true" />
-            Static safe shell
+            <TranslatedText k="safeShell" namespace="workspace" />
           </div>
         </div>
 
@@ -224,7 +227,7 @@ export default function MyIxaiHomePage() {
                 <span className="flex items-center justify-between gap-3">
                   <span className="inline-flex items-center gap-2 text-sm font-semibold">
                     <Icon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-                    {card.label}
+                    <TranslatedText k={card.labelKey} namespace="navigation" />
                   </span>
                   <ArrowRight
                     className="h-4 w-4 text-[var(--ixai-gold)] transition group-hover:translate-x-0.5"
@@ -232,7 +235,7 @@ export default function MyIxaiHomePage() {
                   />
                 </span>
                 <span className="mt-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                  {card.description}
+                  <TranslatedText k={card.descriptionKey} namespace="workspace" />
                 </span>
               </Link>
             );
@@ -244,17 +247,17 @@ export default function MyIxaiHomePage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Asset Onboarding
+              <TranslatedText k="assetOnboardingEyebrow" namespace="workspace" />
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-              快速新增資產
+              <TranslatedText k="assetInputTitle" namespace="workspace" />
             </h2>
           </div>
           <Link
             className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/55 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] sm:w-fit"
             href="/my-ixai/input"
           >
-            Asset Input Center
+            <TranslatedText k="assetInputCta" namespace="workspace" />
             <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
@@ -270,10 +273,10 @@ export default function MyIxaiHomePage() {
               >
                 <span className="inline-flex items-center gap-2 text-sm font-semibold">
                   <Icon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-                  {card.label}
+                  <TranslatedText k={card.labelKey} namespace="workspace" />
                 </span>
                 <span className="mt-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                  {card.description}
+                  <TranslatedText k={card.descriptionKey} namespace="workspace" />
                 </span>
               </Link>
             );
@@ -282,7 +285,7 @@ export default function MyIxaiHomePage() {
       </section>
 
       <p className="rounded-lg border border-[var(--ixai-border)] bg-white/45 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Home shell 保持 runtime-safe：沒有自動 diagnostics loader、投資建議、交易指令或自動交易。Morning Brief 與 live quote 狀態可手動刷新，且所有外部來源都必須 fallback。
+        <TranslatedText k="footerRuntimeSafe" namespace="workspace" />
       </p>
     </div>
   );

@@ -13,6 +13,7 @@ import {
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { I18nFoundationStatusCard } from "@/components/i18n/i18n-foundation-status-card";
 import { LocalizationPreferenceCard } from "@/components/i18n/localization-preference-card";
+import { TranslatedText } from "@/components/i18n/translated-text";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { SettingsRuntimeDiagnosticsControl } from "@/components/workspace/settings-runtime-diagnostics-control";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
@@ -26,47 +27,47 @@ export const metadata = buildPublicMetadata({
 
 const settingsAreas = [
   {
-    description: "查看帳號狀態與 Workspace transition。完整會員與方案設定留待後續版本。",
+    descriptionKey: "accountDescription",
     href: "/account",
     icon: UserCircle,
-    label: "Account",
-    status: "Available",
+    labelKey: "accountLabel",
+    statusKey: "available",
   },
   {
-    description: "通知偏好入口已存在；正式 alert routing、LINE / email delivery 尚未啟用。",
+    descriptionKey: "notificationsDescription",
     href: "/settings/notifications",
     icon: Bell,
-    label: "Notifications",
-    status: "Preview",
+    labelKey: "notificationsLabel",
+    statusKey: "preview",
   },
   {
-    description: "Public App 與 Workspace 共用此語言偏好。本版使用 localStorage + cookie，不接 Supabase；未來可同步到 user preferences。",
+    descriptionKey: "languageCopy",
     href: null,
     icon: Languages,
     id: "language",
-    label: "Language",
-    status: "Available",
+    labelKey: "languageLabel",
+    statusKey: "available",
   },
   {
-    description: "地區與市場偏好將服務 US / TW / HK / CN / JP / KR / EU / SG / Crypto / FCN。",
+    descriptionKey: "regionDescription",
     href: null,
     icon: Globe2,
-    label: "Region",
-    status: "Coming Soon",
+    labelKey: "regionLabel",
+    statusKey: "comingSoon",
   },
   {
-    description: "Broker connection 將採 read-only、consent-first、安全 credential 管理；目前未啟用。",
+    descriptionKey: "brokerDescription",
     href: null,
     icon: KeyRound,
-    label: "Broker Connections",
-    status: "Coming Soon",
+    labelKey: "brokerLabel",
+    statusKey: "comingSoon",
   },
   {
-    description: "資料隱私、local pending input、manual price overlay 與未來 export / delete controls 的設定區。",
+    descriptionKey: "dataDescription",
     href: null,
     icon: ShieldCheck,
-    label: "Data & Privacy",
-    status: "Coming Soon",
+    labelKey: "dataLabel",
+    statusKey: "comingSoon",
   },
 ];
 
@@ -78,13 +79,13 @@ export default function MyIxaiSettingsPage() {
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start">
             <div className="min-w-0">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
-                Workspace Settings Preview
+                <TranslatedText k="heroEyebrow" namespace="settings" />
               </p>
               <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-5xl">
-                Settings
+                <TranslatedText k="heroTitle" namespace="settings" />
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/74 sm:text-base sm:leading-8">
-                Settings 目前是 Workspace 設定預覽頁，先整理帳號、通知、語言、地區、資料與未來 broker connection 的資訊架構；本版不改 auth、membership、entitlement 或 payment。
+                <TranslatedText k="heroBody" namespace="settings" />
               </p>
             </div>
             <FeatureIcon icon={Settings} shadow={false} tone="cream" />
@@ -100,44 +101,43 @@ export default function MyIxaiSettingsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <FeatureIcon icon={Icon} size="sm" shadow={false} />
                     <span className="rounded-full border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.82)] px-2.5 py-1 font-mono text-[10px] font-semibold text-[var(--ixai-forest-soft)]">
-                      {area.status}
+                      <TranslatedText k={area.statusKey} namespace="settings" />
                     </span>
                   </div>
                   <h2 className="mt-4 text-lg font-semibold text-[var(--ixai-forest)]">
-                    {area.label}
+                    <TranslatedText k={area.labelKey} namespace="settings" />
                   </h2>
                   <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                    {area.description}
+                    <TranslatedText k={area.descriptionKey} namespace="settings" />
                   </p>
                   {area.id === "language" ? (
                     <div className="mt-4">
                       <LanguageSwitcher mode="full" />
                       <p className="mt-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                        Workspace Settings manages the same locale state used by the Public App.
-                        This version does not enable Supabase user-preference sync.
+                        <TranslatedText k="sharedLocaleNote" namespace="settings" />
                       </p>
                     </div>
                   ) : null}
                 </div>
                 {area.id === "language" ? null : area.href ? (
                   <span className="mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)]">
-                    Open
+                    <TranslatedText k="open" namespace="settings" />
                     <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
                   </span>
                 ) : (
                   <span className="mt-5 inline-flex min-h-10 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] px-3 py-2 text-sm font-semibold text-[var(--ixai-forest-soft)]">
-                    Coming Soon
+                    <TranslatedText k="comingSoon" namespace="settings" />
                   </span>
                 )}
               </article>
             );
 
             return area.href ? (
-              <Link href={area.href} key={area.label}>
+              <Link href={area.href} key={area.labelKey}>
                 {content}
               </Link>
             ) : (
-              <div key={area.label}>{content}</div>
+              <div key={area.labelKey}>{content}</div>
             );
           })}
         </section>
@@ -149,7 +149,7 @@ export default function MyIxaiSettingsPage() {
         <SettingsRuntimeDiagnosticsControl />
 
         <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-          Settings Preview 僅整理 Workspace preference architecture。本頁不啟用付款、會員升級、broker sync、通知投遞、自動交易或投資建議。
+          <TranslatedText k="footerNote" namespace="settings" />
         </p>
       </section>
     </main>

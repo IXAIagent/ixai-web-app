@@ -13,7 +13,9 @@ type HealthStatus = "blocked" | "partial" | "ready" | "unknown";
 
 type HealthItem = {
   detail: string;
+  detailKey?: string;
   label: string;
+  labelKey?: string;
   status: HealthStatus;
 };
 
@@ -49,12 +51,16 @@ function buildInitialProbe(): LiveQuoteProbe {
   return {
     binance: {
       detail: "Manual refresh has not checked BTCUSDT through the internal quote route yet.",
+      detailKey: "binancePending",
       label: "Binance status",
+      labelKey: "binanceStatus",
       status: "unknown",
     },
     yahoo: {
       detail: "Manual refresh has not checked AAPL through the internal quote route yet.",
+      detailKey: "yahooPending",
       label: "Yahoo status",
+      labelKey: "yahooStatus",
       status: "unknown",
     },
   };
@@ -104,6 +110,8 @@ async function probeLiveQuoteRoute(): Promise<LiveQuoteProbe> {
 
 export function WorkspaceHealthCenter() {
   const { t } = useTranslation("health");
+  const { t: tDisclaimer } = useTranslation("disclaimers");
+  const { t: tStatus } = useTranslation("status");
   const { currency, examples, region, regionMetadata } = useLocalization();
   const [isLoading, setIsLoading] = useState(false);
   const [health, setHealth] = useState<WorkspaceHealthScore | null>(null);
@@ -189,7 +197,7 @@ export function WorkspaceHealthCenter() {
     },
     {
       detail: `${region} / ${currency} display foundation active. Example: ${examples.currency}, ${examples.date}.`,
-      label: "Region / currency localization",
+      label: t("localizationStatus", "Region / currency localization"),
       status: "ready",
     },
   ];
@@ -234,7 +242,7 @@ export function WorkspaceHealthCenter() {
         </article>
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">{t("generated")}</p>
-          <p className="mt-2 break-words font-mono text-sm font-semibold text-[var(--ixai-forest)]">{generatedAt ?? "manual refresh pending"}</p>
+          <p className="mt-2 break-words font-mono text-sm font-semibold text-[var(--ixai-forest)]">{generatedAt ?? t("manualRefreshPending", "manual refresh pending")}</p>
           <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
             {regionMetadata.defaultTimezone}
           </p>
@@ -248,12 +256,12 @@ export function WorkspaceHealthCenter() {
               <div className="flex items-start gap-3">
                 <FeatureIcon icon={item.status === "ready" ? ShieldCheck : Globe2} size="sm" shadow={false} />
                 <div>
-                  <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.label}</p>
-                  <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.detail}</p>
+                  <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.labelKey ? t(item.labelKey, item.label) : item.label}</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.detailKey ? t(item.detailKey, item.detail) : item.detail}</p>
                 </div>
               </div>
               <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/65 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                {item.status}
+                {tStatus(item.status, item.status)}
               </span>
             </div>
           </article>
@@ -261,7 +269,7 @@ export function WorkspaceHealthCenter() {
       </div>
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Health Center is read-only. It does not run migrations, change auth/RLS, write data, activate scheduler/notifications, call AI models, or enable broker/trading/recommendation behavior.
+        {tDisclaimer("healthReadOnly")}
       </p>
     </section>
   );

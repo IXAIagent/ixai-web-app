@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Newspaper, RefreshCw } from "lucide-react";
 
 import { BriefShareActions } from "@/components/workspace/brief-share-actions";
@@ -10,7 +10,32 @@ import {
   getWorkspaceMorningBriefV14,
   type WorkspaceMorningBrief,
 } from "@/src/lib/workspace/morning-brief";
+import { useTranslation } from "@/src/lib/i18n";
 import { runWorkspaceRuntimeBudget, runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
+
+const SECTION_TITLE_KEYS: Record<string, string> = {
+  compliance: "disclaimer",
+  data_quality: "dataQualityTitle",
+  fcn: "fcnTitle",
+  market: "marketTitle",
+  opening: "openingTitle",
+  portfolio: "portfolioTitle",
+  risk: "riskTitle",
+  timeline: "timelineTitle",
+  watchlist: "watchlistTitle",
+};
+
+const SECTION_SUMMARY_KEYS: Record<string, string> = {
+  compliance: "complianceSummary",
+  data_quality: "dataQualitySummary",
+  fcn: "fcnSummary",
+  market: "marketSummary",
+  opening: "openingSummary",
+  portfolio: "portfolioSummary",
+  risk: "riskSummary",
+  timeline: "timelineSummary",
+  watchlist: "watchlistSummary",
+};
 
 export function WorkspaceMorningBriefV14Card({
   autoLoad = false,
@@ -19,6 +44,8 @@ export function WorkspaceMorningBriefV14Card({
   autoLoad?: boolean;
   compact?: boolean;
 }) {
+  const { locale, t } = useTranslation("morningBrief");
+  const { t: tStatus } = useTranslation("status");
   const [brief, setBrief] = useState<WorkspaceMorningBrief>(() => buildEmptyWorkspaceMorningBrief());
   const [isLoading, setIsLoading] = useState(autoLoad);
   const mountedRef = useRef(false);
@@ -62,7 +89,19 @@ export function WorkspaceMorningBriefV14Card({
     };
   }, [autoLoad]);
 
-  const visibleSections = compact ? brief.sections.slice(0, 4) : brief.sections;
+  const localizedBrief = useMemo<WorkspaceMorningBrief>(() => ({
+    ...brief,
+    informationalOnlyDisclaimer: t("disclaimer", brief.informationalOnlyDisclaimer),
+    sections: brief.sections.map((section) => ({
+      ...section,
+      summary: locale === "zh-TW"
+        ? t(SECTION_SUMMARY_KEYS[section.key] ?? "unavailableSummary", section.summary)
+        : section.summary,
+      title: t(SECTION_TITLE_KEYS[section.key] ?? section.key, section.title),
+    })),
+    title: `${t("generatedPrefix", "Workspace Morning Brief")} · ${brief.date}`,
+  }), [brief, locale, t]);
+  const visibleLocalizedSections = compact ? localizedBrief.sections.slice(0, 4) : localizedBrief.sections;
 
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
@@ -71,13 +110,13 @@ export function WorkspaceMorningBriefV14Card({
           <FeatureIcon icon={Newspaper} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              V14.5 Workspace Morning Brief
+              V14.5 {t("generatedPrefix", "Workspace Morning Brief")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              {brief.title}
+              {localizedBrief.title}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              On-demand Workspace-readable brief. No scheduled delivery, notification send, AI model call, or trading signal.
+              {t("subtitle")}
             </p>
           </div>
         </div>
@@ -88,22 +127,22 @@ export function WorkspaceMorningBriefV14Card({
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "讀取中" : "Run brief"}
+          {isLoading ? t("loading") : t("runBrief")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-3">
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Status
+            {t("status")}
           </p>
           <p className="mt-2 font-mono text-xl font-semibold text-[var(--ixai-forest)]">
-            {brief.status}
+            {tStatus(brief.status, brief.status)}
           </p>
         </article>
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Source
+            {t("source")}
           </p>
           <p className="mt-2 font-mono text-xl font-semibold text-[var(--ixai-forest)]">
             {brief.sourceStatus}
@@ -111,7 +150,7 @@ export function WorkspaceMorningBriefV14Card({
         </article>
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Warnings
+            {t("warnings")}
           </p>
           <p className="mt-2 font-mono text-xl font-semibold text-[var(--ixai-forest)]">
             {brief.warnings.length}
@@ -120,16 +159,16 @@ export function WorkspaceMorningBriefV14Card({
       </div>
 
       <div className={`mt-5 grid gap-3 ${compact ? "lg:grid-cols-2" : "xl:grid-cols-3"}`}>
-        {visibleSections.map((section) => (
+        {visibleLocalizedSections.map((section) => (
           <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4" key={section.key}>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <p className="text-base font-semibold text-[var(--ixai-forest)]">{section.title}</p>
               <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/65 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                {section.severity}
+                {tStatus(section.severity, section.severity)}
               </span>
             </div>
             <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
-              {section.source} · {section.dataQuality}
+              {section.source} · {tStatus(section.dataQuality, section.dataQuality)}
             </p>
             <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
               {section.summary}
@@ -139,10 +178,10 @@ export function WorkspaceMorningBriefV14Card({
       </div>
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        {brief.informationalOnlyDisclaimer}
+        {localizedBrief.informationalOnlyDisclaimer}
       </p>
 
-      <BriefShareActions brief={brief} />
+      <BriefShareActions brief={localizedBrief} />
     </section>
   );
 }
