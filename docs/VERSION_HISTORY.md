@@ -6,6 +6,29 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V12 Translation Maintenance Program — Batch 3 Authenticated Workspace Visual QA
+
+Why:
+
+- Batch 2 confirmed that translation maintenance must be production Visual QA driven.
+- The next required step was a signed-in visual QA pass across protected `/my-ixai/*` routes.
+- Authenticated route coverage is required before claiming Workspace translation, icon contrast, accessibility, responsive, or runtime QA completion.
+
+What Changed:
+
+- Added `docs/V123_TRANSLATION_MAINTENANCE_BATCH3.md`.
+- Attempted production Workspace auth verification on `https://app.ixuan.ai/my-ixai/home` and `https://app.ixuan.ai/my-ixai/fcn`.
+- Confirmed the available browser session is not signed in; protected routes render the public account/login gate.
+- Documented existing `app/my-ixai` route inventory and requested routes that do not currently exist under `app/my-ixai`.
+- Updated roadmap and project context to record that Batch 3 is blocked until a signed-in production browser session is available.
+
+Key Decisions:
+
+- Authenticated Workspace visual QA is not claimed complete.
+- No UI or runtime fixes were applied because the signed-in Workspace could not be inspected.
+- The next Batch 3 attempt must begin after signing into production Workspace in the browser.
+- No product code, UI code, dictionary entries, auth, API, Supabase, schema, migration, RLS, broker/trading, scheduler/delivery, billing, AI provider behavior, valuation engine, risk engine, FCN engine, or recommendation logic changed.
+
 ## Translation Maintenance Batch 2 — Full-Site Authenticated Visual QA
 
 Why:
