@@ -18,6 +18,7 @@ import { FeatureIcon } from "@/components/ui/feature-icon";
 import { FcnRiskSummary } from "@/components/fcn/fcn-risk-summary";
 import { FcnScheduleSummary } from "@/components/fcn/fcn-schedule-summary";
 import { LiveFcnUnderlyingStatusCard } from "@/components/fcn/live-fcn-underlying-status-card";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
 import {
   buildFcnIntelligenceCenterReadback,
   calculateUnderlyingRisk,
@@ -173,9 +174,9 @@ function formatPercent(value: number | null | undefined) {
   return `${formatNumber(value, 2)}%`;
 }
 
-function formatSignedPercent(value: number | null | undefined) {
+function formatSignedPercent(value: number | null | undefined, unknownLabel = "UNKNOWN") {
   if (typeof value !== "number" || !Number.isFinite(value)) {
-    return "UNKNOWN";
+    return unknownLabel;
   }
 
   return `${value >= 0 ? "+" : ""}${formatNumber(value, 2)}%`;
@@ -285,22 +286,26 @@ function MetricTile({
 }
 
 function RiskBadge({ status }: { status: FCNIntelligenceRiskStatus }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <span
       className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${RISK_STATUS_CLASS[status]}`}
     >
       <span className={`h-2 w-2 rounded-full ${RISK_DOT_CLASS[status]}`} />
-      {RISK_STATUS_LABEL[status]}
+      {t(`riskStatus_${status}`, RISK_STATUS_LABEL[status])}
     </span>
   );
 }
 
 function LifecycleBadge({ status }: { status: FCNLifecycleStatus }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <span
       className={`inline-flex w-fit rounded-full border px-3 py-1 text-xs font-semibold ${LIFECYCLE_STATUS_CLASS[status]}`}
     >
-      {LIFECYCLE_STATUS_LABEL[status]}
+      {t(`lifecycle_${status}`, LIFECYCLE_STATUS_LABEL[status])}
     </span>
   );
 }
@@ -312,6 +317,7 @@ function UnderlyingRiskCard({
   manualPrices: FCNManualPriceOverrides;
   underlying: FCNUnderlying;
 }) {
+  const { t } = useTranslation("fcn");
   const underlyingRisk = calculateUnderlyingRisk(underlying, manualPrices);
 
   return (
@@ -329,13 +335,13 @@ function UnderlyingRiskCard({
       </div>
       <dl className="mt-3 grid gap-2 text-xs text-[var(--ixai-forest-soft)]">
         <div className="flex justify-between gap-3">
-          <dt>Initial</dt>
+          <dt>{t("initialPrice")}</dt>
           <dd className="font-semibold text-[var(--ixai-forest)]">
             {formatNumber(underlying.initialPrice, 2)}
           </dd>
         </div>
         <div className="flex justify-between gap-3">
-          <dt>Current</dt>
+          <dt>{t("currentPrice")}</dt>
           <dd className="font-semibold text-[var(--ixai-forest)]">
             {formatNumber(underlyingRisk.currentPrice, 2)}
           </dd>
@@ -347,15 +353,15 @@ function UnderlyingRiskCard({
           </dd>
         </div>
         <div className="flex justify-between gap-3">
-          <dt>KI Distance</dt>
+          <dt>{t("kiDistance")}</dt>
           <dd className="font-semibold text-[var(--ixai-forest)]">
-            {formatSignedPercent(underlyingRisk.distanceToKiPct)}
+            {formatSignedPercent(underlyingRisk.distanceToKiPct, t("unknown"))}
           </dd>
         </div>
       </dl>
       {underlyingRisk.missingCurrentPrice ? (
         <p className="mt-3 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-          Missing stored current price. KI distance is unavailable until price is recorded.
+          {t("missingStoredCurrentPrice")}
         </p>
       ) : null}
     </article>
@@ -371,6 +377,7 @@ function FcnPositionCard({
   position: FCNPosition;
   risk: FCNPositionRiskReadback;
 }) {
+  const { t } = useTranslation("fcn");
   const schedulePreview = position.observationSchedule.slice(0, 3);
 
   return (
@@ -395,18 +402,18 @@ function FcnPositionCard({
 
       <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Currency", position.currency],
-          ["Notional", formatNumber(position.notionalAmount)],
-          ["Strike", formatPercent(position.strikePct)],
+          [t("currency"), position.currency],
+          [t("notional"), formatNumber(position.notionalAmount)],
+          [t("strike"), formatPercent(position.strikePct)],
           ["KI / KO", `${formatPercent(position.kiPct)} / ${formatPercent(position.koPct)}`],
-          ["Coupon", formatPercent(position.couponRatePct)],
-          ["Observation", getObservationFrequencyLabel(position)],
-          ["Underlying Count", String(position.underlyings.length)],
-          ["Lifecycle", LIFECYCLE_STATUS_LABEL[risk.lifecycleStatus]],
-          ["Risk Status", RISK_STATUS_LABEL[risk.riskStatus]],
-          ["Risk Score", risk.riskScore === null ? "UNKNOWN" : String(risk.riskScore)],
-          ["Worst Underlying", risk.worstUnderlying?.underlying.symbol ?? "UNKNOWN"],
-          ["Worst KI Distance", formatSignedPercent(risk.worstKiDistancePct)],
+          [t("coupon"), formatPercent(position.couponRatePct)],
+          [t("observation"), getObservationFrequencyLabel(position)],
+          [t("underlyingCount"), String(position.underlyings.length)],
+          [t("lifecycle"), t(`lifecycle_${risk.lifecycleStatus}`, LIFECYCLE_STATUS_LABEL[risk.lifecycleStatus])],
+          [t("riskStatus"), t(`riskStatus_${risk.riskStatus}`, RISK_STATUS_LABEL[risk.riskStatus])],
+          [t("riskScore"), risk.riskScore === null ? t("unknown") : String(risk.riskScore)],
+          [t("worstUnderlying"), risk.worstUnderlying?.underlying.symbol ?? t("unknown")],
+          [t("worstKiDistance"), formatSignedPercent(risk.worstKiDistancePct, t("unknown"))],
         ].map(([label, value]) => (
           <div
             className="min-w-0 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3"
@@ -428,11 +435,13 @@ function FcnPositionCard({
             <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
               Position Risk Status
             </p>
-            <p className="mt-2 text-sm font-semibold">{RISK_STATUS_COPY[risk.riskStatus]}</p>
+            <p className="mt-2 text-sm font-semibold">
+              {t(`riskStatusCopy_${risk.riskStatus}`, RISK_STATUS_COPY[risk.riskStatus])}
+            </p>
             <p className="mt-2 text-xs leading-5">
-              Worst underlying: {risk.worstUnderlying?.underlying.symbol ?? "UNKNOWN"} · Worst KI
-              distance: {formatSignedPercent(risk.worstKiDistancePct)} · Score:{" "}
-              {risk.riskScore === null ? "UNKNOWN" : risk.riskScore}
+              {t("worstUnderlying")}: {risk.worstUnderlying?.underlying.symbol ?? t("unknown")} ·{" "}
+              {t("worstKiDistance")}: {formatSignedPercent(risk.worstKiDistancePct, t("unknown"))} ·{" "}
+              {t("score")}: {risk.riskScore === null ? t("unknown") : risk.riskScore}
             </p>
             {risk.missingPriceCount > 0 ? (
               <p className="mt-2 text-xs leading-5">
@@ -466,7 +475,9 @@ function FcnPositionCard({
       <section className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.56)] p-4">
         <div className="flex items-center gap-2">
           <FeatureIcon icon={Layers3} size="sm" shadow={false} />
-          <h3 className="text-base font-semibold text-[var(--ixai-forest)]">Underlyings</h3>
+            <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
+              {t("underlyings")}
+            </h3>
         </div>
         {position.underlyings.length > 0 ? (
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -532,19 +543,20 @@ function LifecyclePanel({
     unknownStatusCount: number;
   };
 }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Lifecycle
+            {t("lifecycle")}
           </p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-            FCN Lifecycle Status
+            {t("lifecycleTitle")}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Default view shows ACTIVE and UNKNOWN FCNs. Archive / restore persistence is disabled
-            until a dedicated lifecycle QA task approves the existing API path.
+            {t("lifecycleBody")}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -559,18 +571,18 @@ function LifecyclePanel({
               onClick={() => onFilterChange(filter.value)}
               type="button"
             >
-              {filter.label}
+              {t(`lifecycleFilter_${filter.value}`, filter.label)}
             </button>
           ))}
         </div>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {[
-          ["Active", summary.activeCount],
-          ["Archived", summary.archivedCount],
-          ["Matured", summary.maturedCount],
-          ["Called", summary.calledCount],
-          ["Unknown", summary.unknownStatusCount],
+          [t("lifecycle_ACTIVE"), summary.activeCount],
+          [t("lifecycle_ARCHIVED"), summary.archivedCount],
+          [t("lifecycle_MATURED"), summary.maturedCount],
+          [t("lifecycle_CALLED"), summary.calledCount],
+          [t("lifecycle_UNKNOWN"), summary.unknownStatusCount],
         ].map(([label, value]) => (
           <div
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -600,6 +612,8 @@ function PriceUpdatePanel({
   priceInputs: Record<string, string>;
   rows: FCNPriceUpdateRow[];
 }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
       <div className="flex items-center gap-3">
@@ -639,13 +653,13 @@ function PriceUpdatePanel({
               <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
                 <label className="block">
                   <span className="text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                    Current Price
+                    {t("currentPrice")}
                   </span>
                   <input
                     className="mt-1 min-h-11 w-full rounded-lg border border-[var(--ixai-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] outline-none focus:border-[var(--ixai-gold)]"
                     inputMode="decimal"
                     onChange={(event) => onPriceChange(row.symbol, event.target.value)}
-                    placeholder={row.currentPrice === null ? "Missing price" : String(row.currentPrice)}
+                    placeholder={row.currentPrice === null ? t("missingPrice") : String(row.currentPrice)}
                     value={priceInputs[row.symbol] ?? ""}
                   />
                 </label>
@@ -654,17 +668,17 @@ function PriceUpdatePanel({
                   onClick={() => onPriceChange(row.symbol, "")}
                   type="button"
                 >
-                  Clear
+                  {t("clear")}
                 </button>
               </div>
               <p className="mt-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                Current: {formatNumber(row.currentPrice, 2)} · KI Distance:{" "}
-                {formatSignedPercent(row.distanceToKiPct)}
-                {manualPrices[row.symbol] !== undefined ? " · Local override active" : ""}
+                {t("currentPrice")}: {formatNumber(row.currentPrice, 2)} · {t("kiDistance")}:{" "}
+                {formatSignedPercent(row.distanceToKiPct, t("unknown"))}
+                {manualPrices[row.symbol] !== undefined ? ` · ${t("localOverrideActive")}` : ""}
               </p>
               {row.missingPrice ? (
                 <p className="mt-2 text-xs font-semibold text-amber-700">
-                  Missing stored current price. Add a manual price to calculate risk locally.
+                  {t("missingStoredCurrentPriceManual")}
                 </p>
               ) : null}
             </article>

@@ -6,6 +6,31 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Translation Maintenance Batch 2 — Full-Site Authenticated Visual QA
+
+Why:
+
+- Production review found that Batch 1 was still too source-level and did not complete authenticated visual QA.
+- `zh-TW` still showed high-impact English on deep Workspace pages, especially FCN.
+- `ja-JP` could be selected but did not have real content coverage.
+- Some Workspace icons needed contrast review against the IXAI icon contrast rule.
+
+What Changed:
+
+- Added `docs/TRANSLATION_VISUAL_QA_BATCH_2.md`.
+- Attempted production Workspace visual QA on `https://app.ixuan.ai`; the available browser session was not authenticated, so authenticated Workspace visual QA is explicitly not claimed.
+- Scanned production public routes in `zh-TW`, `en-US`, and `ja-JP` and recorded that `ja-JP` is metadata-supported but not content-covered.
+- Added first-pass FCN display mapping for risk metrics, KO status, source status, unavailable / unknown labels, and FCN risk warning messages.
+- Replaced a low-contrast FCN Risk Summary inline icon with the shared `FeatureIcon` primitive.
+
+Key Decisions:
+
+- Translation maintenance is now Visual QA driven.
+- Authenticated production Workspace visual QA must be rerun with a signed-in browser session before claiming completion.
+- `ja-JP` should not be treated as full content coverage yet.
+- FCN engine contracts remain unchanged; UI display mapping owns translation of deterministic labels and warnings.
+- No auth, API, Supabase schema, migrations, RLS, billing, broker/trading, scheduler/delivery, AI provider behavior, notification delivery, valuation engine, risk engine, FCN engine, or recommendation logic changed.
+
 ## Translation Maintenance Batch 1 — Authenticated Workspace Full Scan
 
 Why:

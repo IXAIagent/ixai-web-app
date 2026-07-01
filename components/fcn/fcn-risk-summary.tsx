@@ -6,6 +6,8 @@ import { Gauge, RefreshCw, ShieldAlert } from "lucide-react";
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { FCN_MANUAL_PRICE_EVENT } from "@/src/lib/fcn/manual-price-overrides";
 import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service";
+import { useTranslation } from "@/src/lib/i18n/use-locale";
+import { useWorkspaceDisplayLabels } from "@/src/lib/i18n/use-workspace-display-labels";
 import { INPUT_TRUTH_BRIDGE_EVENT } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { FCN_DRAFT_STORE_EVENT } from "@/src/lib/portfolio/input/fcn-draft-store";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
@@ -33,9 +35,9 @@ const SOURCE_CLASS: Record<FcnRiskSourceStatus, string> = {
   unavailable: "border-rose-200 bg-rose-50 text-rose-800",
 };
 
-function formatNumber(value: number | null | undefined, digits = 0) {
+function formatNumber(value: number | null | undefined, digits = 0, unknownLabel = "UNKNOWN") {
   if (typeof value !== "number" || !Number.isFinite(value)) {
-    return "UNKNOWN";
+    return unknownLabel;
   }
 
   return new Intl.NumberFormat("en-US", {
@@ -44,73 +46,79 @@ function formatNumber(value: number | null | undefined, digits = 0) {
   }).format(value);
 }
 
-function formatPercent(value: number | null | undefined) {
+function formatPercent(value: number | null | undefined, unknownLabel = "UNKNOWN") {
   if (typeof value !== "number" || !Number.isFinite(value)) {
-    return "UNKNOWN";
+    return unknownLabel;
   }
 
-  return `${value >= 0 ? "+" : ""}${formatNumber(value, 2)}%`;
+  return `${value >= 0 ? "+" : ""}${formatNumber(value, 2, unknownLabel)}%`;
 }
 
 function RiskBadge({ level }: { level: FcnRiskLevel }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <span
       className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${LEVEL_CLASS[level]}`}
     >
-      {level.toUpperCase()}
+      {t(`riskLevel_${level}`, level.toUpperCase())}
     </span>
   );
 }
 
 function SourceBadge({ status }: { status: FcnRiskSourceStatus }) {
+  const { sourceStatusLabel } = useWorkspaceDisplayLabels();
+
   return (
     <span
       className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${SOURCE_CLASS[status]}`}
     >
-      {status.toUpperCase()}
+      {sourceStatusLabel(status)}
     </span>
   );
 }
 
 function UnderlyingRiskRow({ underlying }: { underlying: FcnUnderlyingRisk }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <div className="rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="font-mono text-sm font-semibold text-[var(--ixai-forest)]">
             {underlying.symbol}
-            {underlying.isWorstOf ? " · Worst-of" : ""}
+            {underlying.isWorstOf ? ` · ${t("worstOf")}` : ""}
           </p>
           <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-            Current {formatNumber(underlying.currentPrice, 2)} · Initial{" "}
-            {formatNumber(underlying.initialPrice, 2)}
+            {t("currentPrice")} {formatNumber(underlying.currentPrice, 2, t("unknown"))} ·{" "}
+            {t("initialPrice")} {formatNumber(underlying.initialPrice, 2, t("unknown"))}
           </p>
         </div>
         <SourceBadge status={underlying.sourceStatus} />
       </div>
       <dl className="mt-3 grid gap-2 text-xs text-[var(--ixai-forest-soft)] sm:grid-cols-3">
         <div>
-          <dt>Performance</dt>
+          <dt>{t("performance")}</dt>
           <dd className="font-semibold text-[var(--ixai-forest)]">
-            {formatPercent(underlying.performancePercent)}
+            {formatPercent(underlying.performancePercent, t("unknown"))}
           </dd>
         </div>
         <div>
-          <dt>KI Distance</dt>
+          <dt>{t("kiDistance")}</dt>
           <dd className="font-semibold text-[var(--ixai-forest)]">
-            {formatPercent(underlying.distanceToKiPercent)}
+            {formatPercent(underlying.distanceToKiPercent, t("unknown"))}
           </dd>
         </div>
         <div>
-          <dt>Strike Distance</dt>
+          <dt>{t("strikeDistance")}</dt>
           <dd className="font-semibold text-[var(--ixai-forest)]">
-            {formatPercent(underlying.distanceToStrikePercent)}
+            {formatPercent(underlying.distanceToStrikePercent, t("unknown"))}
           </dd>
         </div>
       </dl>
       {underlying.warningMessage ? (
         <p className="mt-3 rounded-md border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-          {underlying.warningMessage}
+          {t(`warning_${underlying.warningMessage}`, underlying.warningMessage)}
         </p>
       ) : null}
     </div>
@@ -118,6 +126,8 @@ function UnderlyingRiskRow({ underlying }: { underlying: FcnUnderlyingRisk }) {
 }
 
 export function FcnRiskSummary() {
+  const { t } = useTranslation("fcn");
+  const { sourceStatusLabel } = useWorkspaceDisplayLabels();
   const [isLoading, setIsLoading] = useState(true);
   const [summary, setSummary] = useState<FcnPortfolioRiskSummary | null>(null);
   const mountedRef = useRef(false);
@@ -181,10 +191,10 @@ export function FcnRiskSummary() {
           <FeatureIcon icon={ShieldAlert} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              FCN Risk Engine v1
+              {t("riskEngineEyebrow")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Worst-of / KI / Strike / KO Monitoring
+              {t("riskEngineTitle")}
             </h2>
           </div>
         </div>
@@ -195,21 +205,21 @@ export function FcnRiskSummary() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "計算中" : "重新計算"}
+          {isLoading ? t("calculating") : t("recalculate")}
         </button>
       </div>
 
       <p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-        v4.50 uses existing FCN input/readback, local manual price overlays, and v4.20 market-service quotes where available. This is FCN barrier monitoring only, not a full FCN pricing engine.
+        {t("riskEngineBody")}
       </p>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
-          ["Positions", summary?.positionCount ?? 0],
-          ["Analyzed", summary?.analyzedPositionCount ?? 0],
-          ["Unavailable", summary?.unavailablePositionCount ?? 0],
-          ["High Risk", summary?.highRiskCount ?? 0],
-          ["Critical", summary?.criticalRiskCount ?? 0],
+          [t("positions"), summary?.positionCount ?? 0],
+          [t("analyzed"), summary?.analyzedPositionCount ?? 0],
+          [t("unavailable"), summary?.unavailablePositionCount ?? 0],
+          [t("highRisk"), summary?.highRiskCount ?? 0],
+          [t("critical"), summary?.criticalRiskCount ?? 0],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -229,23 +239,23 @@ export function FcnRiskSummary() {
         <div className="mt-5 flex flex-wrap items-center gap-2">
           <SourceBadge status={summary.sourceStatus} />
           <span className="rounded-full border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-            Updated {new Date(summary.updatedAt).toLocaleString("zh-TW")}
+            {t("updated")} {new Date(summary.updatedAt).toLocaleString("zh-TW")}
           </span>
         </div>
       ) : null}
 
       {summary?.positionCount === 0 ? (
         <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          No FCN positions or local drafts are available for FCN Risk Engine v1 yet.
+          {t("noRiskPositions")}
         </p>
       ) : null}
 
       {summary?.topRiskPositions.length ? (
         <section className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <div className="flex items-center gap-2">
-            <Gauge className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+            <FeatureIcon icon={Gauge} size="sm" shadow={false} />
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-              Top Risk FCNs
+              {t("topRiskFcns")}
             </p>
           </div>
           <div className="mt-4 grid gap-3 lg:grid-cols-2">
@@ -258,8 +268,9 @@ export function FcnRiskSummary() {
                   <div>
                     <p className="font-semibold text-[var(--ixai-forest)]">{position.name}</p>
                     <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                      Worst-of {position.worstOfSymbol ?? "UNKNOWN"} · Performance{" "}
-                      {formatPercent(position.worstOfPerformancePercent)}
+                      {t("worstOf")} {position.worstOfSymbol ?? t("unknown")} ·{" "}
+                      {t("performance")}{" "}
+                      {formatPercent(position.worstOfPerformancePercent, t("unknown"))}
                     </p>
                   </div>
                   <RiskBadge level={position.riskLevel} />
@@ -281,17 +292,27 @@ export function FcnRiskSummary() {
                 <div>
                   <p className="font-semibold text-[var(--ixai-forest)]">{position.name}</p>
                   <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                    Worst-of {position.worstOfSymbol ?? "UNKNOWN"} · Source {position.sourceStatus}
+                    {t("worstOf")} {position.worstOfSymbol ?? t("unknown")} · {t("source")}{" "}
+                    {sourceStatusLabel(position.sourceStatus)}
                   </p>
                 </div>
                 <RiskBadge level={position.riskLevel} />
               </div>
               <dl className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 {[
-                  ["Worst-of Performance", formatPercent(position.worstOfPerformancePercent)],
-                  ["Nearest KI Distance", formatPercent(position.nearestKiDistancePercent)],
-                  ["Nearest Strike Distance", formatPercent(position.nearestStrikeDistancePercent)],
-                  ["KO Status", position.koReady ? "KO ready" : "Not KO ready / unavailable"],
+                  [
+                    t("worstOfPerformance"),
+                    formatPercent(position.worstOfPerformancePercent, t("unknown")),
+                  ],
+                  [
+                    t("nearestKiDistance"),
+                    formatPercent(position.nearestKiDistancePercent, t("unknown")),
+                  ],
+                  [
+                    t("nearestStrikeDistance"),
+                    formatPercent(position.nearestStrikeDistancePercent, t("unknown")),
+                  ],
+                  [t("koStatus"), position.koReady ? t("koReady") : t("koNotReady")],
                 ].map(([label, value]) => (
                   <div
                     className="rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3"
@@ -314,7 +335,7 @@ export function FcnRiskSummary() {
                       key={`${position.id}-${warning.code}-${warning.symbol ?? index}`}
                     >
                       {warning.symbol ? `${warning.symbol}: ` : ""}
-                      {warning.message}
+                      {t(`warning_${warning.message}`, warning.message)}
                     </li>
                   ))}
                 </ul>
@@ -336,7 +357,7 @@ export function FcnRiskSummary() {
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
         {summary?.informationalOnlyDisclaimer ??
-          "FCN Risk Engine v1 is informational and monitoring-only. It does not provide investment recommendations, order execution, auto trading, target prices, or return promises."}
+          t("riskEngineDisclaimer")}
       </p>
     </section>
   );
