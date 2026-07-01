@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V13.5 Full Translation Coverage Program
+
+Why:
+
+- V13 Sprint 1 through Sprint 4 and Translation Maintenance Batches 1 through 3 established the translation foundation and documented remaining authenticated Workspace coverage gaps.
+- `zh-CN`, `ja-JP`, and `ko-KR` were selectable but still relied too heavily on base pack fallback behavior.
+- High-exposure Settings diagnostics, Risk Center, and Intelligence Center UI labels still contained hard-coded English strings.
+
+What Changed:
+
+- Added `docs/V135_FULL_TRANSLATION_COVERAGE.md`.
+- Expanded `src/lib/i18n/dictionaries.ts` with major UI namespace coverage for Risk, Intelligence, Settings diagnostics, status labels, action labels, and locale pack overrides.
+- Added locale-specific dictionary pack mappings for `zh-CN`, `ja-JP`, and `ko-KR`.
+- Wired Settings runtime diagnostics to `useTranslation("settings")`.
+- Wired Risk Center and Risk Engine summary visible labels to `useTranslation("risk")`.
+- Wired Intelligence Center visible labels to `useTranslation("intelligence")`.
+
+Key Decisions:
+
+- V13.5 is translation coverage and display mapping only.
+- Engine contracts remain stable; deterministic engine output is not rewritten.
+- Full historical/editorial/admin/legacy preview translation still requires follow-up visual QA and product review.
+- No auth, API, Supabase schema, migrations, RLS, membership, billing, broker/trading, scheduler/delivery, AI provider behavior, service worker/runtime stabilization logic, valuation engine, risk scoring logic, FCN engine logic, market provider behavior, or recommendation logic changed.
+
 ## V12 Translation Maintenance Program — Batch 3 Authenticated Workspace Visual QA
 
 Why:

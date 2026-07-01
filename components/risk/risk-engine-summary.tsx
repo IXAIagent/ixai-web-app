@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n";
 import { getWorkspacePortfolioRiskSummary } from "@/src/lib/risk/risk-service";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 import type {
@@ -49,17 +50,24 @@ function StatusBadge({ label }: { label: string }) {
   );
 }
 
-function SeverityBadge({ severity }: { severity: RiskSignalSeverity }) {
+function SeverityBadge({
+  label,
+  severity,
+}: {
+  label: string;
+  severity: RiskSignalSeverity;
+}) {
   return (
     <span
       className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${SEVERITY_CLASS[severity]}`}
     >
-      {severity.toUpperCase()}
+      {label}
     </span>
   );
 }
 
 export function RiskEngineSummary() {
+  const { t } = useTranslation("risk");
   const [risk, setRisk] = useState<PortfolioRiskResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
@@ -101,23 +109,23 @@ export function RiskEngineSummary() {
 
     return [
       {
-        label: "Critical",
+        label: t("critical"),
         value: String(summary?.criticalSignalCount ?? 0),
       },
       {
-        label: "High",
+        label: t("high"),
         value: String(summary?.highSignalCount ?? 0),
       },
       {
-        label: "Warning",
+        label: t("warning"),
         value: String(summary?.warningSignalCount ?? 0),
       },
       {
-        label: "Signals",
+        label: t("signals"),
         value: String(summary?.signalCount ?? 0),
       },
     ];
-  }, [risk]);
+  }, [risk, t]);
 
   const level = risk?.summary.riskLevel ?? "unavailable";
 
@@ -131,7 +139,7 @@ export function RiskEngineSummary() {
               Risk Engine v1
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Portfolio Risk Summary
+              {t("portfolioRiskSummary")}
             </h2>
           </div>
         </div>
@@ -142,12 +150,12 @@ export function RiskEngineSummary() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? "計算中" : "重新計算"}
+          {isLoading ? t("loading") : t("recalculate")}
         </button>
       </div>
 
       <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-        v4.40 converts Portfolio Valuation readback into deterministic monitoring signals for concentration, allocation, crypto exposure, market data quality, and FCN placeholder awareness.
+        {t("riskEngineBody")}
       </p>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
@@ -155,16 +163,19 @@ export function RiskEngineSummary() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
-                Foundation Risk Score
+                {t("foundationRiskScore")}
               </p>
               <p className="mt-2 break-words font-mono text-4xl font-semibold">
                 {formatScore(risk?.summary.riskScore)}
               </p>
             </div>
-            <StatusBadge label={level} />
+            <StatusBadge label={t(`riskLevel_${level}`, level)} />
           </div>
           <p className="mt-4 text-sm leading-7">
-            Source status: {risk?.summary.sourceStatus ?? "unavailable"}. This score is deterministic and based only on available Portfolio Valuation output.
+            {t("sourceStatusSentence").replace(
+              "{status}",
+              risk?.summary.sourceStatus ?? t("unavailable"),
+            )}
           </p>
         </article>
 
@@ -172,7 +183,7 @@ export function RiskEngineSummary() {
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-              Signal Counts
+              {t("signalCounts")}
             </p>
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -198,7 +209,7 @@ export function RiskEngineSummary() {
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-              Top Signals
+              {t("topSignals")}
             </p>
           </div>
           {risk?.summary.topSignals.length ? (
@@ -217,11 +228,11 @@ export function RiskEngineSummary() {
                         {signal.message}
                       </p>
                     </div>
-                    <SeverityBadge severity={signal.severity} />
+                    <SeverityBadge label={t(signal.severity, signal.severity)} severity={signal.severity} />
                   </div>
                   {signal.affectedSymbols.length > 0 ? (
                     <p className="mt-2 font-mono text-xs text-[rgba(9,41,31,0.54)]">
-                      Symbols: {signal.affectedSymbols.join(", ")}
+                      {t("symbols")}: {signal.affectedSymbols.join(", ")}
                     </p>
                   ) : null}
                 </article>
@@ -229,7 +240,7 @@ export function RiskEngineSummary() {
             </div>
           ) : (
             <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              No risk signals are available yet. Add positions and valuation data to build the Risk Engine readback.
+              {t("noSignals")}
             </p>
           )}
         </article>
@@ -238,7 +249,7 @@ export function RiskEngineSummary() {
           <div className="flex items-center gap-2">
             <Signal className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-              Score Breakdown
+              {t("scoreBreakdown")}
             </p>
           </div>
           {risk?.summary.scoreBreakdown.length ? (
@@ -250,7 +261,7 @@ export function RiskEngineSummary() {
                       {item.label}
                     </p>
                     <p className="font-mono text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                      +{item.scoreImpact} · {item.signalCount} signal(s)
+                      +{item.scoreImpact} · {item.signalCount} {t("signals")}
                     </p>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/80">
