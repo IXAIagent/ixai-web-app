@@ -7,6 +7,7 @@ import {
   getClientSafeMarketReadiness,
   type ClientSafeMarketReadiness,
 } from "@/src/lib/market/client-safe-market-readiness";
+import { useTranslation } from "@/src/lib/i18n";
 
 const MARKET_STATUS_CLASS = {
   disabled: "border-slate-200 bg-slate-50 text-slate-700",
@@ -60,6 +61,15 @@ function ProviderHealthBadge({
   );
 }
 
+type TranslationFn = (key: string, fallback?: string) => string;
+
+function getContextLabel(contextLabel: string, t: TranslationFn) {
+  if (contextLabel === "Portfolio Center") return t("portfolioContext", "投資組合中心");
+  if (contextLabel === "Risk Center") return t("riskContext", "風險中心");
+  if (contextLabel === "Intelligence Center") return t("intelligenceContext", "情報中心");
+  return contextLabel;
+}
+
 export function WorkspaceMarketStatus({
   contextLabel,
   readback = getClientSafeMarketReadiness(),
@@ -67,16 +77,19 @@ export function WorkspaceMarketStatus({
   contextLabel: string;
   readback?: ClientSafeMarketReadiness;
 }) {
+  const { t } = useTranslation("workspace");
+  const localizedContext = getContextLabel(contextLabel, t);
+
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
       <div className="flex items-center gap-3">
         <FeatureIcon icon={Gauge} shadow={false} />
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Workspace Market Integration
+            {t("marketIntegration")}
           </p>
           <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-            {contextLabel} Market Service Status
+            {t("marketServiceStatus").replace("{context}", localizedContext)}
           </h2>
         </div>
       </div>
@@ -86,10 +99,10 @@ export function WorkspaceMarketStatus({
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Providers", readback.readiness.providerCount],
-          ["Quote Contracts", readback.readiness.quoteProviderCount],
-          ["News Contracts", readback.readiness.newsProviderCount],
-          ["Service Entrypoints", readback.serviceEntrypoints.length],
+          [t("providers"), readback.readiness.providerCount],
+          [t("quoteContracts"), readback.readiness.quoteProviderCount],
+          [t("newsContracts"), readback.readiness.newsProviderCount],
+          [t("serviceEntrypoints"), readback.serviceEntrypoints.length],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -109,26 +122,26 @@ export function WorkspaceMarketStatus({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-              Workspace Market Quotes
+              {t("marketQuotes")}
             </p>
             <h3 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
-              Equity / Crypto quote foundation
+              {t("quoteFoundation")}
             </h3>
           </div>
           <span className="w-fit rounded-full border border-[var(--ixai-border)] bg-white/75 px-3 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest-soft)]">
-            External browser fetch disabled
+            {t("externalBrowserFetchDisabled")}
           </span>
         </div>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          Client-side direct Yahoo Finance and Binance requests are disabled. Live quote consumers must call
-          the internal API route so providers are fetched server-side and CORS errors cannot crash the browser.
+          {t("quoteBoundary")}
         </p>
         <div className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-          API route: <span className="font-mono">/api/market/live-quotes?symbols=AAPL,BTCUSDT</span>.
-          This status card is readiness-only and performs no background quote fetch.
+          {t("apiRoute")}: <span className="font-mono">/api/market/live-quotes?symbols=AAPL,BTCUSDT</span>.
+          {" "}
+          {t("readinessOnlyNoFetch")}
         </div>
         <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-          Market data is informational only. IXAI does not provide buy/sell instructions, order execution, automatic trading, target prices, or return promises.
+          {t("marketDisclaimer")}
         </p>
       </article>
 
@@ -137,7 +150,7 @@ export function WorkspaceMarketStatus({
           <div className="flex items-center gap-2">
             <Activity className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-              Market Readiness
+              {t("marketReadiness")}
             </p>
           </div>
           <div className="mt-4 grid gap-3">
@@ -169,7 +182,7 @@ export function WorkspaceMarketStatus({
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-              Provider Health
+              {t("providerHealth")}
             </p>
           </div>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
@@ -202,7 +215,7 @@ export function WorkspaceMarketStatus({
 
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Fallback Policy Awareness
+            {t("fallbackPolicy")}
           </p>
           <p className="mt-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
             {readback.health.fallbackPolicy.reason}
@@ -210,7 +223,7 @@ export function WorkspaceMarketStatus({
           <div className="mt-4 grid gap-3">
             <div className="rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-                Policy
+                {t("policy")}
               </p>
               <p className="mt-2 font-mono text-sm font-semibold text-[var(--ixai-forest)]">
                 {readback.health.fallbackPolicy.policy.replaceAll("_", " ")}
@@ -218,7 +231,7 @@ export function WorkspaceMarketStatus({
             </div>
             <div className="rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-                Fallback Provider
+                {t("fallbackProvider")}
               </p>
               <p className="mt-2 font-mono text-sm font-semibold text-[var(--ixai-forest)]">
                 {readback.health.fallbackPolicy.fallbackProviderId}
@@ -226,7 +239,7 @@ export function WorkspaceMarketStatus({
             </div>
           </div>
           <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-            Read-only status metadata plus v4.20 public quote foundation. No broker feed, trading workflow, recommendation engine, or FCN pricing engine is enabled.
+            {t("marketReadOnlyNote")}
           </p>
         </article>
       </div>

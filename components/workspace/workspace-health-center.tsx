@@ -50,23 +50,23 @@ function statusFromSource(sourceStatus: string | undefined): HealthStatus {
 function buildInitialProbe(): LiveQuoteProbe {
   return {
     binance: {
-      detail: "Manual refresh has not checked BTCUSDT through the internal quote route yet.",
+      detail: "",
       detailKey: "binancePending",
-      label: "Binance status",
+      label: "",
       labelKey: "binanceStatus",
       status: "unknown",
     },
     yahoo: {
-      detail: "Manual refresh has not checked AAPL through the internal quote route yet.",
+      detail: "",
       detailKey: "yahooPending",
-      label: "Yahoo status",
+      label: "",
       labelKey: "yahooStatus",
       status: "unknown",
     },
   };
 }
 
-async function probeLiveQuoteRoute(): Promise<LiveQuoteProbe> {
+async function probeLiveQuoteRoute(t: (key: string, fallback?: string) => string): Promise<LiveQuoteProbe> {
   try {
     const response = await fetch("/api/market/live-quotes?symbols=AAPL,BTCUSDT", {
       cache: "no-store",
@@ -79,29 +79,33 @@ async function probeLiveQuoteRoute(): Promise<LiveQuoteProbe> {
     return {
       binance: {
         detail: response.ok && payload.ok
-          ? `BTCUSDT returned ${binance?.sourceStatus ?? "unavailable"} through /api/market/live-quotes.`
-          : "Internal live quote route did not return an ok payload for Binance probe.",
-        label: "Binance status",
+          ? t("liveQuoteSuccess")
+              .replace("{symbol}", "BTCUSDT")
+              .replace("{status}", binance?.sourceStatus ?? "unavailable")
+          : t("liveQuoteFailed"),
+        label: t("binanceStatus"),
         status: response.ok && payload.ok ? statusFromSource(binance?.sourceStatus) : "blocked",
       },
       yahoo: {
         detail: response.ok && payload.ok
-          ? `AAPL returned ${yahoo?.sourceStatus ?? "unavailable"} through /api/market/live-quotes.`
-          : "Internal live quote route did not return an ok payload for Yahoo probe.",
-        label: "Yahoo status",
+          ? t("liveQuoteSuccess")
+              .replace("{symbol}", "AAPL")
+              .replace("{status}", yahoo?.sourceStatus ?? "unavailable")
+          : t("liveQuoteFailed"),
+        label: t("yahooStatus"),
         status: response.ok && payload.ok ? statusFromSource(yahoo?.sourceStatus) : "blocked",
       },
     };
   } catch {
     return {
       binance: {
-        detail: "Internal quote route probe failed before returning a Binance result.",
-        label: "Binance status",
+        detail: t("quoteProbeFailed"),
+        label: t("binanceStatus"),
         status: "blocked",
       },
       yahoo: {
-        detail: "Internal quote route probe failed before returning a Yahoo result.",
-        label: "Yahoo status",
+        detail: t("quoteProbeFailed"),
+        label: t("yahooStatus"),
         status: "blocked",
       },
     };
@@ -129,7 +133,7 @@ export function WorkspaceHealthCenter() {
       async () => {
         const [healthResult, probeResult] = await Promise.allSettled([
           runWorkspaceSafe("workspace-health-center-score", getWorkspaceHealthScore, null),
-          probeLiveQuoteRoute(),
+          probeLiveQuoteRoute(t),
         ]);
 
         return {
@@ -161,15 +165,15 @@ export function WorkspaceHealthCenter() {
     },
     {
       detail: health
-        ? `Portfolio health score ${health.portfolioHealth}.`
-        : "Manual refresh has not calculated portfolio valuation readiness yet.",
+        ? t("portfolioHealthScore").replace("{score}", String(health.portfolioHealth))
+        : t("portfolioHealthPending"),
       label: t("portfolioReadiness"),
       status: health ? (health.portfolioHealth >= 70 ? "ready" : "partial") : "unknown",
     },
     {
       detail: health
-        ? `FCN health score ${health.fcnHealth}.`
-        : "Manual refresh has not calculated FCN live risk readiness yet.",
+        ? t("fcnHealthScore").replace("{score}", String(health.fcnHealth))
+        : t("fcnHealthPending"),
       label: t("fcnReadiness"),
       status: health ? (health.fcnHealth >= 70 ? "ready" : "partial") : "unknown",
     },
@@ -185,8 +189,8 @@ export function WorkspaceHealthCenter() {
     },
     {
       detail: health
-        ? `Data quality health score ${health.dataQualityHealth}.`
-        : "Manual refresh has not calculated data quality summary yet.",
+        ? t("dataQualityHealthScore").replace("{score}", String(health.dataQualityHealth))
+        : t("dataQualityHealthPending"),
       label: t("dataQualitySummary"),
       status: health ? (health.dataQualityHealth >= 70 ? "ready" : "partial") : "unknown",
     },
@@ -196,7 +200,11 @@ export function WorkspaceHealthCenter() {
       status: "ready",
     },
     {
-      detail: `${region} / ${currency} display foundation active. Example: ${examples.currency}, ${examples.date}.`,
+      detail: t("localizationDetail")
+        .replace("{region}", region)
+        .replace("{currency}", currency)
+        .replace("{currencyExample}", examples.currency)
+        .replace("{dateExample}", examples.date),
       label: t("localizationStatus", "Region / currency localization"),
       status: "ready",
     },
@@ -237,7 +245,7 @@ export function WorkspaceHealthCenter() {
         </article>
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">{t("marketApi")}</p>
-          <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">Internal route only</p>
+          <p className="mt-2 text-sm font-semibold text-[var(--ixai-forest)]">{t("internalRouteOnly")}</p>
           <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">{clientReadiness.summary}</p>
         </article>
         <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">

@@ -6,6 +6,29 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V13.7 Real Translation Coverage Completion Program
+
+Why:
+
+- V13.6 added authenticated production audit tooling, but translation verification still needed a real DOM coverage signal rather than keyword-only leftovers.
+- Production Workspace content still contained high-impact English in shared Market Status, Health, FCN, Settings, Risk, and Intelligence surfaces.
+- `zh-TW`, `zh-CN`, `ja-JP`, and `ko-KR` needed evidence-based coverage review across authenticated Workspace routes.
+
+What Changed:
+
+- Extended `scripts/audit-production-authenticated.mjs` with DOM translation coverage scoring and V13.7 report output.
+- Added `docs/V137_REAL_TRANSLATION_COVERAGE.md` as the generated authenticated production coverage report.
+- Expanded `src/lib/i18n/dictionaries.ts` for major Workspace, Health, FCN, Settings, Risk, and Intelligence content.
+- Wired shared Workspace Market Status, Health Center, and FCN Center visible copy to the shared i18n layer.
+- Added locale-specific overrides for key `ja-JP` and `ko-KR` Workspace/FCN content to reduce fallback English.
+
+Key Decisions:
+
+- V13.7 is translation coverage, audit evidence, and UI display mapping only.
+- DOM coverage excludes intentional technical finance tokens such as FCN, KI, KO, API, tickers, and currency codes.
+- Engine output should continue to be localized through UI display mapping rather than modifying engine internals.
+- No auth, API, Supabase schema, migrations, RLS, membership, billing, broker/trading, scheduler/delivery, AI provider behavior, valuation engine, risk scoring logic, FCN engine logic, market provider behavior, or recommendation logic changed.
+
 ## V13.5 Full Translation Coverage Program
 
 Why:

@@ -182,18 +182,18 @@ function formatSignedPercent(value: number | null | undefined, unknownLabel = "U
   return `${value >= 0 ? "+" : ""}${formatNumber(value, 2)}%`;
 }
 
-function getObservationFrequencyLabel(position: FCNPosition) {
+function getObservationFrequencyLabel(position: FCNPosition, t: (key: string, fallback?: string) => string) {
   const scheduleCount = position.observationSchedule.length;
 
   if (scheduleCount > 1) {
-    return `${scheduleCount} observations`;
+    return t("observationsCount").replace("{count}", String(scheduleCount));
   }
 
   if (scheduleCount === 1) {
-    return "Single observation";
+    return t("singleObservation");
   }
 
-  return "未設定";
+  return t("notConfigured");
 }
 
 function getUniqueUnderlyingPriceRows(
@@ -407,7 +407,7 @@ function FcnPositionCard({
           [t("strike"), formatPercent(position.strikePct)],
           ["KI / KO", `${formatPercent(position.kiPct)} / ${formatPercent(position.koPct)}`],
           [t("coupon"), formatPercent(position.couponRatePct)],
-          [t("observation"), getObservationFrequencyLabel(position)],
+          [t("observation"), getObservationFrequencyLabel(position, t)],
           [t("underlyingCount"), String(position.underlyings.length)],
           [t("lifecycle"), t(`lifecycle_${risk.lifecycleStatus}`, LIFECYCLE_STATUS_LABEL[risk.lifecycleStatus])],
           [t("riskStatus"), t(`riskStatus_${risk.riskStatus}`, RISK_STATUS_LABEL[risk.riskStatus])],
@@ -433,7 +433,7 @@ function FcnPositionCard({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
-              Position Risk Status
+              {t("positionRiskStatus")}
             </p>
             <p className="mt-2 text-sm font-semibold">
               {t(`riskStatusCopy_${risk.riskStatus}`, RISK_STATUS_COPY[risk.riskStatus])}
@@ -445,14 +445,12 @@ function FcnPositionCard({
             </p>
             {risk.missingPriceCount > 0 ? (
               <p className="mt-2 text-xs leading-5">
-                {risk.missingPriceCount} underlying
-                {risk.missingPriceCount > 1 ? "s are" : " is"} missing stored current price.
+                {t("missingPriceCount").replace("{count}", String(risk.missingPriceCount))}
               </p>
             ) : null}
             {risk.invalidDataCount > 0 ? (
               <p className="mt-2 text-xs leading-5">
-                {risk.invalidDataCount} underlying
-                {risk.invalidDataCount > 1 ? "s have" : " has"} invalid initial or KI input.
+                {t("invalidDataCount").replace("{count}", String(risk.invalidDataCount))}
               </p>
             ) : null}
           </div>
@@ -466,7 +464,7 @@ function FcnPositionCard({
               type="button"
             >
               <Archive className="h-3.5 w-3.5" aria-hidden="true" />
-              {risk.lifecycleStatus === "ARCHIVED" ? "Restore disabled" : "Archive disabled"}
+              {risk.lifecycleStatus === "ARCHIVED" ? t("restoreDisabled") : t("archiveDisabled")}
             </button>
           </div>
         </div>
@@ -491,7 +489,7 @@ function FcnPositionCard({
           </div>
         ) : (
           <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/74 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            此 FCN 尚未儲存 underlyings。
+            {t("noSavedUnderlyings")}
           </p>
         )}
       </section>
@@ -501,7 +499,7 @@ function FcnPositionCard({
           <div className="flex items-center gap-2">
             <FeatureIcon icon={CalendarDays} size="sm" shadow={false} />
             <h3 className="text-base font-semibold text-[var(--ixai-forest)]">
-              Observation Preview
+              {t("observationPreview")}
             </h3>
           </div>
           <div className="mt-4 grid gap-2 lg:grid-cols-3">
@@ -511,13 +509,13 @@ function FcnPositionCard({
                 key={`${position.id}-${item.observationEnd ?? item.observationStart ?? index}`}
               >
                 <p className="text-xs font-semibold text-[var(--ixai-forest)]">
-                  {item.periodLabel || `Observation ${index + 1}`}
+                  {item.periodLabel || t("observationNumber").replace("{count}", String(index + 1))}
                 </p>
                 <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                  Observation: {formatDate(item.observationEnd ?? item.observationStart)}
+                  {t("observation")}: {formatDate(item.observationEnd ?? item.observationStart)}
                 </p>
                 <p className="text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                  Coupon: {formatDate(item.couponPaymentDate)}
+                  {t("coupon")}: {formatDate(item.couponPaymentDate)}
                 </p>
               </div>
             ))}
@@ -694,6 +692,7 @@ function PriceUpdatePanel({
 }
 
 function TimelinePanel({ events }: { events: FCNTimelineEvent[] }) {
+  const { t } = useTranslation("fcn");
   const visibleEvents = events.filter((event) => event.status !== "overdue").slice(0, MAX_TIMELINE_EVENTS);
   const overdueCount = events.filter((event) => event.status === "overdue").length;
 
@@ -703,17 +702,16 @@ function TimelinePanel({ events }: { events: FCNTimelineEvent[] }) {
         <FeatureIcon icon={CalendarDays} shadow={false} />
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Timeline / Event Center
+            {t("eventCenter")}
           </p>
           <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-            Upcoming FCN Events
+            {t("upcomingFcnEvents")}
           </h2>
         </div>
       </div>
       {overdueCount > 0 ? (
         <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-semibold text-amber-800">
-          {overdueCount} stored event{overdueCount > 1 ? "s are" : " is"} overdue and should be
-          reviewed for lifecycle cleanup.
+          {t("overdueEventWarning").replace("{count}", String(overdueCount))}
         </p>
       ) : null}
       {visibleEvents.length > 0 ? (
@@ -726,14 +724,14 @@ function TimelinePanel({ events }: { events: FCNTimelineEvent[] }) {
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-                    {EVENT_TYPE_LABEL[event.eventType]}
+                    {t(`event_${event.eventType}`, EVENT_TYPE_LABEL[event.eventType])}
                   </p>
                   <h3 className="mt-2 text-base font-semibold text-[var(--ixai-forest)]">
                     {event.fcnName}
                   </h3>
                 </div>
                 <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
-                  {EVENT_STATUS_LABEL[event.status]}
+                  {t(`eventStatus_${event.status}`, EVENT_STATUS_LABEL[event.status])}
                 </span>
               </div>
               <p className="mt-3 text-sm font-semibold text-[var(--ixai-forest)]">
@@ -747,7 +745,7 @@ function TimelinePanel({ events }: { events: FCNTimelineEvent[] }) {
         </div>
       ) : (
         <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          目前沒有 upcoming observation、coupon payment、KO observation 或 maturity events。
+          {t("noUpcomingFcnEvents")}
         </p>
       )}
     </section>
@@ -755,13 +753,15 @@ function TimelinePanel({ events }: { events: FCNTimelineEvent[] }) {
 }
 
 function ConcentrationPanel({ items }: { items: FCNConcentrationItem[] }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
       <div className="flex items-center gap-3">
         <FeatureIcon icon={Gauge} shadow={false} />
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Underlying Concentration
+            {t("underlyingConcentration", "標的集中度")}
           </p>
           <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
             標的集中度
@@ -788,15 +788,15 @@ function ConcentrationPanel({ items }: { items: FCNConcentrationItem[] }) {
               </div>
               <dl className="mt-4 grid gap-2 text-xs text-[var(--ixai-forest-soft)]">
                 <div className="flex justify-between gap-3">
-                  <dt>Total Notional</dt>
+                  <dt>{t("totalNotional")}</dt>
                   <dd className="font-semibold text-[var(--ixai-forest)]">
                     {formatNumber(item.totalNotional)}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt>Missing Price</dt>
+                  <dt>{t("missingPrice")}</dt>
                   <dd className="font-semibold text-[var(--ixai-forest)]">
-                    {item.missingPrice ? "Yes" : "No"}
+                    {item.missingPrice ? t("yes", "是") : t("no", "否")}
                   </dd>
                 </div>
               </dl>
@@ -805,7 +805,7 @@ function ConcentrationPanel({ items }: { items: FCNConcentrationItem[] }) {
         </div>
       ) : (
         <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          目前 FCN 尚未儲存 underlyings。
+          {t("noSavedUnderlyings")}
         </p>
       )}
     </section>
@@ -813,6 +813,7 @@ function ConcentrationPanel({ items }: { items: FCNConcentrationItem[] }) {
 }
 
 export function FCNCenterWorkspace() {
+  const { t } = useTranslation("fcn");
   const [lifecycleFilter, setLifecycleFilter] = useState<FCNLifecycleFilter>("active");
   const [manualPrices, setManualPrices] = useState<FCNManualPriceOverrides>({});
   const [pendingFcnInputs, setPendingFcnInputs] = useState<PendingPortfolioInputRecord[]>([]);
@@ -820,6 +821,7 @@ export function FCNCenterWorkspace() {
   const [positions, setPositions] = useState<FCNPosition[]>([]);
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [message, setMessage] = useState<string | null>(null);
+  const fcnLoadErrorMessage = t("fcnPositionsCouldNotBeLoaded");
 
   const loadPositions = useCallback(async () => {
     setStatus("loading");
@@ -843,7 +845,7 @@ export function FCNCenterWorkspace() {
       if (!response.ok || !payload.ok) {
         setPositions([]);
         setStatus(response.status === 401 ? "unauthenticated" : "error");
-        setMessage(payload.message ?? "FCN positions could not be loaded.");
+        setMessage(payload.message ?? fcnLoadErrorMessage);
         return;
       }
 
@@ -852,9 +854,9 @@ export function FCNCenterWorkspace() {
     } catch {
       setPositions([]);
       setStatus("error");
-      setMessage("FCN positions could not be loaded.");
+      setMessage(fcnLoadErrorMessage);
     }
-  }, []);
+  }, [fcnLoadErrorMessage]);
 
   useEffect(() => {
     const refreshAfterV14Write = () => {
@@ -954,46 +956,44 @@ export function FCNCenterWorkspace() {
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start">
             <div className="min-w-0">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
-                v3.20 FCN Intelligence Center
+                {t("heroEyebrow")}
               </p>
               <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-5xl">
-                FCN Management and Risk Workspace
+                {t("heroTitle")}
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/74 sm:text-base sm:leading-8">
-                從現有 FCN Wizard 與 Supabase persistence 讀取 FCN positions、
-                underlyings、barrier terms 與 observation schedule，加入 lifecycle、manual price
-                overlay、timeline、concentration 與 Risk Engine v2 readback。
+                {t("heroBody")}
               </p>
             </div>
             <FeatureIcon icon={ShieldCheck} shadow={false} tone="cream" />
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricTile label="Total FCNs" value={String(intelligence.summary.totalCount)} />
-            <MetricTile label="Total Notional" value={intelligence.summary.totalNotionalLabel} />
+            <MetricTile label={t("totalFcns")} value={String(intelligence.summary.totalCount)} />
+            <MetricTile label={t("totalNotional")} value={intelligence.summary.totalNotionalLabel} />
             <MetricTile
-              label="High Risk Positions"
-              note="Underlying at or below KI."
+              label={t("highRiskPositions")}
+              note={t("highRiskPositionsNote")}
               value={String(intelligence.summary.highRiskCount)}
             />
             <MetricTile
-              label="Watch Positions"
-              note="Worst KI distance within 10%."
+              label={t("watchPositions")}
+              note={t("watchPositionsNote")}
               value={String(intelligence.summary.watchCount)}
             />
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             <MetricTile
-              label="Unknown Risk Data"
-              note="Missing current price or invalid KI input."
+              label={t("unknownRiskData")}
+              note={t("unknownRiskDataNote")}
               value={String(intelligence.summary.unknownRiskCount)}
             />
             <MetricTile
-              label="Upcoming Events"
+              label={t("upcomingEvents")}
               value={String(intelligence.summary.upcomingEventsCount)}
             />
             <MetricTile
-              label="Unique Underlyings"
+              label={t("uniqueUnderlyings")}
               value={String(intelligence.summary.uniqueUnderlyingCount)}
             />
           </div>
@@ -1003,16 +1003,13 @@ export function FCNCenterWorkspace() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                Data Path
+                {t("dataPath")}
               </p>
               <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                FCN Wizard → Input Bridge / API → FCN Intelligence Center
+                {t("dataPathTitle")}
               </h2>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                本頁優先讀取現有 `/api/fcn` 與 authenticated Supabase session；若 database readback
-                為空或不可用，仍會顯示 Input Truth Bridge、FCN Draft Store 與 legacy recent fallback
-                的 browser-local pending FCN input。V14 guarded writes 只會在 FCN Wizard 明確 submit
-                且 guards 啟用後嘗試，不會由頁面 render 或 diagnostics 觸發。
+                {t("dataPathBody")}
               </p>
             </div>
             <button
@@ -1026,20 +1023,20 @@ export function FCNCenterWorkspace() {
               ) : (
                 <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               )}
-              Refresh
+              {t("refresh")}
             </button>
           </div>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {[
-              ["Readback Status", STATUS_LABEL[status]],
-              ["Read Priority", "database -> truth -> draft_store -> legacy_recent -> empty"],
-              ["Repository Source", "Supabase /api/fcn + V14 guarded write metadata"],
-              ["Pending Bridge", `${pendingFcnInputs.length} local FCN input(s)`],
-              ["Persistence", "fcn_positions + fcn_underlyings"],
-              ["Manual Prices", "localStorage overlay"],
-              ["Risk Engine", "FCN Risk v2"],
-              ["External Providers", "None"],
+              [t("readbackStatus"), t(`status_${status}`, STATUS_LABEL[status])],
+              [t("readPriority"), t("readPriorityValue")],
+              [t("repositorySource"), t("repositorySourceValue")],
+              [t("pendingBridge"), t("pendingBridgeValue").replace("{count}", String(pendingFcnInputs.length))],
+              [t("persistence"), t("persistenceValue")],
+              [t("manualPrices"), t("manualPricesValue")],
+              [t("riskEngine"), t("riskEngineValue")],
+              [t("externalProviders"), t("externalProvidersValue")],
             ].map(([label, value]) => (
               <div
                 className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -1067,18 +1064,18 @@ export function FCNCenterWorkspace() {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                  Pending FCN Inputs
+                  {t("pendingFcnInputs")}
                 </p>
                 <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                  FCN Wizard local pending readback
+                  {t("fcnWizardPendingReadback")}
                 </h2>
               </div>
               <span className="w-fit rounded-full border border-[rgba(176,141,87,0.38)] bg-[rgba(255,250,240,0.82)] px-3 py-1 text-xs font-semibold text-[var(--ixai-forest)]">
-                Local pending only
+                {t("localPendingOnly")}
               </span>
             </div>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              These FCN inputs are visible through the v4.10 Input Truth Bridge, but they are not persisted Supabase positions yet. Persisted FCN risk readback still comes from `/api/fcn`.
+              {t("pendingInputBody")}
             </p>
             <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {pendingFcnInputs.slice(0, 6).map((input) => (
@@ -1091,11 +1088,11 @@ export function FCNCenterWorkspace() {
                       {input.title}
                     </h3>
                     <span className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 font-mono text-[10px] font-semibold text-[var(--ixai-forest-soft)]">
-                      PENDING
+                      {t("pendingBadge")}
                     </span>
                   </div>
                   <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                    {input.symbols.length > 0 ? input.symbols.join(" / ") : "No underlyings recorded"}
+                    {input.symbols.length > 0 ? input.symbols.join(" / ") : t("noUnderlyingsRecorded")}
                   </p>
                   <ul className="mt-3 grid gap-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
                     {input.details.slice(0, 3).map((detail) => (
@@ -1118,7 +1115,7 @@ export function FCNCenterWorkspace() {
           <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 text-sm leading-7 text-[var(--ixai-forest-soft)] sm:p-6">
             <span className="inline-flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin text-[var(--ixai-gold)]" aria-hidden="true" />
-              正在讀取 FCN positions...
+              {t("loadingPositions")}
             </span>
           </section>
         ) : null}
@@ -1126,16 +1123,16 @@ export function FCNCenterWorkspace() {
         {status === "unauthenticated" ? (
           <section className="rounded-2xl border border-[rgba(176,141,87,0.30)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
             <h2 className="text-xl font-semibold text-[var(--ixai-forest)]">
-              請先登入 IXAI
+              {t("status_unauthenticated")}
             </h2>
             <p className="mt-2 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              FCN Center 需要讀取你的 Supabase FCN positions。登入後即可查看已建立的 FCN。
+              {t("signInRequiredBody")}
             </p>
             <Link
               className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] sm:w-fit"
               href="/login"
             >
-              前往登入
+              {t("goToLogin")}
               <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             </Link>
           </section>
@@ -1146,21 +1143,20 @@ export function FCNCenterWorkspace() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                  Empty State
+                  {t("emptyState")}
                 </p>
                 <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                  尚未建立 FCN
+                  {t("noFcnPositionsTitle")}
                 </h2>
                 <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                  先從 Asset Input 建立 FCN。建立成功後回到本頁，即可看到 position、
-                  underlyings、KI / KO 與 observation schedule readback。
+                  {t("noFcnPositionsBody")}
                 </p>
               </div>
               <Link
                 className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)] sm:w-fit"
                 href="/my-ixai/input/fcn"
               >
-                新增 FCN
+                {t("addFcn")}
                 <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               </Link>
             </div>
@@ -1186,19 +1182,17 @@ export function FCNCenterWorkspace() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                    Positions
+                    {t("positions")}
                   </p>
                   <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                    FCN Position Risk Readback
+                    {t("positionRiskStatus")}
                   </h2>
                   <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                    Showing {visiblePositions.length} position
-                    {visiblePositions.length === 1 ? "" : "s"} for the selected lifecycle filter.
+                    {t("positionsBody").replace("{count}", String(visiblePositions.length))}
                   </p>
                 </div>
                 <div className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                  Lifecycle actions are read-only in v3.20. Archive / restore is disabled until
-                  persistence QA is approved.
+                  {t("lifecycleActionsReadOnly")}
                 </div>
               </div>
               {visiblePositions.length > 0 ? (
@@ -1222,7 +1216,7 @@ export function FCNCenterWorkspace() {
                 </div>
               ) : (
                 <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                  目前沒有符合此 lifecycle filter 的 FCN。
+                  {t("noMatchingLifecycle")}
                 </p>
               )}
             </section>
