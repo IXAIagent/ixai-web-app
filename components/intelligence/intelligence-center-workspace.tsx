@@ -23,6 +23,7 @@ import { FeatureIcon } from "@/components/ui/feature-icon";
 import { WorkspaceIntelligenceV14Summary } from "@/components/workspace/workspace-intelligence-v14-summary";
 import { WorkspaceMorningBriefV14Card } from "@/components/workspace/workspace-morning-brief-v14-card";
 import { loadFcnManualPriceOverrides } from "@/src/lib/fcn/manual-price-overrides";
+import { useTranslation } from "@/src/lib/i18n";
 import { buildIntelligenceCenterReadback } from "@/src/lib/intelligence/intelligence-center";
 import type {
   IntelligenceCenterReadback,
@@ -148,10 +149,16 @@ function ReadbackSummaryCard({
 }
 
 export function IntelligenceCenterWorkspace() {
+  const { t, tGlobal } = useTranslation("intelligence");
   const [readback, setReadback] = useState<IntelligenceCenterReadback>(() => buildInitialReadback());
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [message, setMessage] = useState<string | null>(null);
   const mountedRef = useRef(false);
+  const tRef = useRef(t);
+
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
 
   const loadIntelligenceCenter = useCallback(async () => {
     setStatus("loading");
@@ -172,7 +179,7 @@ export function IntelligenceCenterWorkspace() {
     if (!truth) {
       setReadback(buildInitialReadback());
       setStatus("error");
-      setMessage("Intelligence sources are temporarily unavailable. Safe fallback mode is active.");
+      setMessage(tRef.current("portfolioRiskReadinessUnavailable"));
       return;
     }
 
@@ -215,7 +222,7 @@ export function IntelligenceCenterWorkspace() {
 
     if (truth.readinessLevel === "unavailable") {
       setStatus("error");
-      setMessage("Some intelligence sources could not be read. Available readiness states are still shown.");
+      setMessage(tRef.current("portfolioWarning"));
       return;
     }
 
@@ -253,13 +260,13 @@ export function IntelligenceCenterWorkspace() {
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start">
             <div className="min-w-0">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
-                V14 Sprint 2 Workspace Intelligence
+                V14 Sprint 2 {t("workspaceIntelligence")}
               </p>
               <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-5xl">
-                Intelligence Center
+                {t("intelligenceCenter")}
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/74 sm:text-base sm:leading-8">
-                Workspace intelligence now aggregates live valuation, FCN live risk, watchlist, alerts, timeline, and data quality into rule-based explain-only briefings.
+                {t("body")}
               </p>
             </div>
             <FeatureIcon icon={Brain} shadow={false} tone="cream" />
@@ -267,23 +274,23 @@ export function IntelligenceCenterWorkspace() {
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard
-              label="FCN Highlights"
-              note="Existing /api/fcn readback and v3.20 helper output."
+              label={t("fcnHighlights")}
+              note={t("fcnRiskReadback", "Existing /api/fcn readback and v3.20 helper output.")}
               value={formatNumber(readback.stats.fcnCount)}
             />
             <MetricCard
-              label="Stock Positions"
-              note="Readiness from /api/stocks, not a new intelligence engine."
+              label={t("stockPositions")}
+              note={t("stockReadiness", "Readiness from /api/stocks, not a new intelligence engine.")}
               value={formatNumber(readback.stats.stockCount)}
             />
             <MetricCard
-              label="Crypto Positions"
-              note="Readiness from /api/crypto, not a new market provider."
+              label={t("cryptoPositions")}
+              note={t("cryptoReadiness", "Readiness from /api/crypto, not a new market provider.")}
               value={formatNumber(readback.stats.cryptoCount)}
             />
             <MetricCard
-              label="Truth Assets"
-              note="Shared Portfolio Truth Layer holdings count."
+              label={t("truthAssets")}
+              note={t("sharedHoldingsReadback")}
               value={formatNumber(readback.stats.portfolioCount)}
             />
           </div>
@@ -299,13 +306,13 @@ export function IntelligenceCenterWorkspace() {
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Intelligence Readback Layer
+            {t("intelligenceReadbackLayer")}
           </p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-            Portfolio, risk, exposure, and readiness summaries
+            {t("intelligenceReadbackTitle")}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            v4.04 reuses the Portfolio Truth Layer and Risk Intelligence Layer to summarize what is known, what needs review, and what is still readiness-only. No AI commentary, news provider, market data, broker sync, or trading logic is added.
+            {t("intelligenceReadbackBody")}
           </p>
 
           <div className="mt-5 grid gap-5 xl:grid-cols-2">
@@ -314,10 +321,10 @@ export function IntelligenceCenterWorkspace() {
                 <FeatureIcon icon={BarChart3} shadow={false} />
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                    Portfolio Intelligence Summary
+                    {t("portfolioIntelligenceSummary")}
                   </p>
                   <h3 className="mt-1 text-lg font-semibold text-[var(--ixai-forest)]">
-                    Shared holdings readback
+                    {t("sharedHoldingsReadback")}
                   </h3>
                 </div>
               </div>
@@ -333,10 +340,10 @@ export function IntelligenceCenterWorkspace() {
                 <FeatureIcon icon={ShieldAlert} shadow={false} />
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                    Risk Snapshot Summary
+                    {t("riskSnapshotSummary")}
                   </p>
                   <h3 className="mt-1 text-lg font-semibold text-[var(--ixai-forest)]">
-                    Reused from Risk Intelligence
+                    {t("reusedFromRiskIntelligence")}
                   </h3>
                 </div>
               </div>
@@ -352,10 +359,10 @@ export function IntelligenceCenterWorkspace() {
                 <FeatureIcon icon={Gauge} shadow={false} />
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                    Exposure Intelligence Summary
+                    {t("exposureIntelligenceSummary")}
                   </p>
                   <h3 className="mt-1 text-lg font-semibold text-[var(--ixai-forest)]">
-                    Occurrence-based symbols
+                    {t("occurrenceBasedSymbols")}
                   </h3>
                 </div>
               </div>
@@ -374,7 +381,7 @@ export function IntelligenceCenterWorkspace() {
                           {exposure.symbol}
                         </p>
                         <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                          Sources: {exposure.sources.join(", ")}
+                          {t("sourceStatus")}: {exposure.sources.join(", ")}
                         </p>
                       </div>
                       <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/80 px-2.5 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest)]">
@@ -385,7 +392,7 @@ export function IntelligenceCenterWorkspace() {
                 </div>
               ) : (
                 <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                  No exposure symbols are available from FCN, Stock, or Crypto readback yet.
+                  {t("noExposureSymbols")}
                 </p>
               )}
             </article>
@@ -395,16 +402,16 @@ export function IntelligenceCenterWorkspace() {
                 <FeatureIcon icon={FileText} shadow={false} />
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                    Readiness Warning Summary
+                    {t("readinessWarningSummary")}
                   </p>
                   <h3 className="mt-1 text-lg font-semibold text-[var(--ixai-forest)]">
-                    Missing data and source warnings
+                    {t("missingDataWarnings")}
                   </h3>
                 </div>
               </div>
               <div className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-                  Total Warnings
+                  {t("totalWarnings")}
                 </p>
                 <p className="mt-2 font-mono text-2xl font-semibold text-[var(--ixai-forest)]">
                   {formatNumber(readback.readinessWarningSummary.warningCount)}
@@ -423,7 +430,7 @@ export function IntelligenceCenterWorkspace() {
                 </div>
               ) : (
                 <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                  No missing-data warnings are present in the shared readback.
+                  {t("noMissingDataWarnings")}
                 </p>
               )}
             </article>
@@ -434,23 +441,23 @@ export function IntelligenceCenterWorkspace() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                Portfolio Truth Status
+                {t("portfolioTruthStatus")}
               </p>
               <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                Holdings context for future intelligence
+                {t("holdingsContextTitle")}
               </h2>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                Intelligence Center now reads the same v4.01 Portfolio Truth Layer as Portfolio and Risk. This does not invent news, prices, or AI commentary.
+                {t("holdingsContextBody")}
               </p>
             </div>
             <StatusBadge status={readback.portfolioTruth?.readinessLevel ?? "placeholder"} />
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[
-              ["Total Holdings", readback.portfolioTruth?.counts.totalAssets ?? 0],
+              [t("totalHoldings"), readback.portfolioTruth?.counts.totalAssets ?? 0],
               ["FCN", readback.portfolioTruth?.counts.totalFcnPositions ?? 0],
-              ["Stocks", readback.portfolioTruth?.counts.totalStockPositions ?? 0],
-              ["Crypto", readback.portfolioTruth?.counts.totalCryptoPositions ?? 0],
+              [t("stockPositions"), readback.portfolioTruth?.counts.totalStockPositions ?? 0],
+              [t("cryptoPositions"), readback.portfolioTruth?.counts.totalCryptoPositions ?? 0],
             ].map(([label, value]) => (
               <article
                 className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -478,7 +485,7 @@ export function IntelligenceCenterWorkspace() {
             </div>
           ) : (
             <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              No holdings symbols are available yet for portfolio-aware intelligence.
+              {t("noHoldingsSymbols")}
             </p>
           )}
           {readback.portfolioTruth?.missingDataWarnings.length ? (
@@ -492,13 +499,13 @@ export function IntelligenceCenterWorkspace() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                Intelligence Overview
+                {t("intelligenceOverview")}
               </p>
               <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                Workspace intelligence entry points
+                {t("workspaceIntelligence")}
               </h2>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                These links keep public intelligence as source material while this workspace organizes what the user should review next.
+                {t("intelligenceOverviewBody")}
               </p>
             </div>
             <button
@@ -512,7 +519,7 @@ export function IntelligenceCenterWorkspace() {
               ) : (
                 <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               )}
-              Refresh
+              {tGlobal("buttons", "refresh")}
             </button>
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-3">
@@ -547,10 +554,10 @@ export function IntelligenceCenterWorkspace() {
               <FeatureIcon icon={Sparkles} shadow={false} />
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                  Today&apos;s Portfolio-Aware Highlights
+                  {t("todaysHighlights")}
                 </p>
                 <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-                  What is ready to review
+                  {t("whatReadyToReview")}
                 </h2>
               </div>
             </div>
@@ -566,7 +573,7 @@ export function IntelligenceCenterWorkspace() {
             </div>
             {status === "unauthenticated" ? (
               <p className="mt-4 rounded-xl border border-[color-mix(in_srgb,var(--ixai-risk-watch)_34%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_10%,white)] p-3 text-sm leading-7 text-[var(--ixai-forest)]">
-                登入後才能讀取 portfolio-aware FCN / Stock / Crypto intelligence readiness。
+                {t("loginRequired")}
               </p>
             ) : null}
             {message ? (
@@ -581,21 +588,21 @@ export function IntelligenceCenterWorkspace() {
               <FeatureIcon icon={ShieldAlert} shadow={false} />
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                  FCN Intelligence Highlights
+                  {t("fcnIntelligenceHighlights")}
                 </p>
                 <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-                  Reused from FCN Center
+                  {t("reusedFromFcnCenter")}
                 </h2>
               </div>
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {[
-                ["Total FCNs", readback.fcn.summary.totalCount],
-                ["High Risk", readback.fcn.summary.highRiskCount],
-                ["Watch", readback.fcn.summary.watchCount],
-                ["Unknown Risk", readback.fcn.summary.unknownRiskCount],
-                ["Upcoming Events", readback.fcn.summary.upcomingEventsCount],
-                ["Unique Underlyings", readback.fcn.summary.uniqueUnderlyingCount],
+                [t("totalFcns"), readback.fcn.summary.totalCount],
+                [t("highRisk"), readback.fcn.summary.highRiskCount],
+                [t("watch"), readback.fcn.summary.watchCount],
+                [tGlobal("risk", "unknownRisk", "Unknown Risk"), readback.fcn.summary.unknownRiskCount],
+                [t("upcomingEvents"), readback.fcn.summary.upcomingEventsCount],
+                [t("uniqueUnderlyings"), readback.fcn.summary.uniqueUnderlyingCount],
               ].map(([label, value]) => (
                 <div
                   className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -614,7 +621,7 @@ export function IntelligenceCenterWorkspace() {
               className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2 text-sm font-semibold text-[var(--ixai-cream)] sm:w-fit"
               href="/my-ixai/fcn"
             >
-              Open FCN Center
+              {t("fcnOpen")}
               <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             </Link>
           </article>

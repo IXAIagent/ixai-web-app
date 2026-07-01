@@ -20,6 +20,7 @@ import { LegacyRiskEngineStatus } from "@/components/risk/legacy-risk-engine-sta
 import { LiveRiskAdapterCard } from "@/components/risk/live-risk-adapter-card";
 import { RiskEngineSummary } from "@/components/risk/risk-engine-summary";
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n";
 import { loadFcnManualPriceOverrides } from "@/src/lib/fcn/manual-price-overrides";
 import { loadPortfolioTruthReadback } from "@/src/lib/portfolio/truth/portfolio-truth-client";
 import { buildGlobalRiskCenterReadback } from "@/src/lib/risk/global-risk-center";
@@ -202,10 +203,16 @@ function buildInitialReadback(): GlobalRiskCenterReadback {
 }
 
 export function GlobalRiskCenterWorkspace() {
+  const { t } = useTranslation("risk");
   const [readback, setReadback] = useState<GlobalRiskCenterReadback>(() => buildInitialReadback());
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [message, setMessage] = useState<string | null>(null);
   const mountedRef = useRef(false);
+  const tRef = useRef(t);
+
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
 
   const loadRiskCenter = useCallback(async () => {
     setStatus("loading");
@@ -226,7 +233,7 @@ export function GlobalRiskCenterWorkspace() {
     if (!truth) {
       setReadback(buildInitialReadback());
       setStatus("error");
-      setMessage("Risk sources are temporarily unavailable. Safe fallback mode is active.");
+      setMessage(tRef.current("portfolioRiskReadinessUnavailable", "Risk sources are temporarily unavailable. Safe fallback mode is active."));
       return;
     }
 
@@ -264,7 +271,7 @@ export function GlobalRiskCenterWorkspace() {
 
     if (truth.readinessLevel === "unavailable") {
       setStatus("error");
-      setMessage("Some risk data sources could not be read. Available sources are still shown.");
+      setMessage(tRef.current("portfolioWarning", "Some risk data sources could not be read. Available sources are still shown."));
       return;
     }
 
@@ -301,14 +308,13 @@ export function GlobalRiskCenterWorkspace() {
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-start">
             <div className="min-w-0">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--ixai-gold)]">
-                v4.03 Risk Intelligence Layer
+                {t("heroEyebrow")}
               </p>
               <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-5xl">
-                Global Risk Center
+                {t("heroTitle")}
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-white/74 sm:text-base sm:leading-8">
-                Risk Center 現在使用 Portfolio Truth Layer 產生 concentration、top exposure、FCN worst-of 與 data quality readback。
-                這是監控與風險意識，不是交易或投資建議。
+                {t("heroBody")}
               </p>
             </div>
             <FeatureIcon icon={ShieldAlert} shadow={false} tone="cream" />
@@ -316,23 +322,23 @@ export function GlobalRiskCenterWorkspace() {
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard
-              label="Foundation Score"
+              label={t("foundationRiskScore")}
               note={readback.riskScore.summary}
               value={scoreLabel}
             />
             <MetricCard
-              label="Total Holdings"
-              note="Shared Portfolio Truth Layer count."
+              label={t("totalHoldings")}
+              note={t("sharedHoldingsReadback")}
               value={formatNumber(readback.portfolioTruth?.counts.totalAssets ?? 0)}
             />
             <MetricCard
-              label="FCN High Risk"
-              note="RED FCN readback from v3.20 logic."
+              label={t("fcnHighRisk")}
+              note={t("fcnRiskReadback")}
               value={formatNumber(readback.fcn.summary.highRiskCount)}
             />
             <MetricCard
-              label="FCN Watch"
-              note="YELLOW FCN readback from v3.20 logic."
+              label={t("fcnWatch")}
+              note={t("fcnRiskReadback")}
               value={formatNumber(readback.fcn.summary.watchCount)}
             />
           </div>
@@ -343,17 +349,17 @@ export function GlobalRiskCenterWorkspace() {
             Portfolio Truth Status
           </p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-            Shared Holdings Readback
+            {t("sharedHoldingsReadback")}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            v4.01 keeps the existing Risk score unchanged, but adds the shared Portfolio Truth Layer so Risk Center can see available FCN, Stock, and Crypto records.
+            {t("portfolioTruthStatusBody")}
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[
-              ["Total Holdings", formatNumber(readback.portfolioTruth?.counts.totalAssets ?? 0)],
-              ["FCN", formatNumber(readback.portfolioTruth?.counts.totalFcnPositions ?? 0)],
-              ["Stocks", formatNumber(readback.portfolioTruth?.counts.totalStockPositions ?? 0)],
-              ["Crypto", formatNumber(readback.portfolioTruth?.counts.totalCryptoPositions ?? 0)],
+              [t("totalHoldings"), formatNumber(readback.portfolioTruth?.counts.totalAssets ?? 0)],
+              [t("fcn"), formatNumber(readback.portfolioTruth?.counts.totalFcnPositions ?? 0)],
+              [t("stocks"), formatNumber(readback.portfolioTruth?.counts.totalStockPositions ?? 0)],
+              [t("crypto"), formatNumber(readback.portfolioTruth?.counts.totalCryptoPositions ?? 0)],
             ].map(([label, value]) => (
               <article
                 className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -383,13 +389,13 @@ export function GlobalRiskCenterWorkspace() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.18em]">
-                Global Risk Overview
+                {t("globalRiskOverview")}
               </p>
               <h2 className="mt-2 text-xl font-semibold">
                 {readback.riskScore.level}
               </h2>
               <p className="mt-2 max-w-4xl text-sm leading-7">
-                {readback.riskScore.summary} Stock / Crypto / Grid / Dual are shown as readiness cards until their full risk engines are approved.
+                {readback.riskScore.summary}
               </p>
             </div>
             <span className="inline-flex w-fit rounded-full border border-current px-3 py-1 text-xs font-semibold">
@@ -404,13 +410,13 @@ export function GlobalRiskCenterWorkspace() {
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Risk Intelligence Layer
+                {t("riskIntelligenceLayer")}
           </p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-            Truth-Layer Risk Readback
+                {t("truthLayerRiskReadback")}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            v4.03 extends the shared Portfolio Truth Layer into deterministic risk readback for concentration, top exposure, FCN worst-of, and data quality. No market data, AI, broker sync, or trading function is added.
+            {t("riskIntelligenceLayerBody")}
           </p>
 
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
@@ -418,14 +424,14 @@ export function GlobalRiskCenterWorkspace() {
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
-                    Concentration Risk
+                    {t("concentrationRisk")}
                   </p>
                   <h3 className="mt-2 text-lg font-semibold">
                     {concentrationRisk.level}
                   </h3>
                 </div>
                 <span className="inline-flex w-fit rounded-full border border-current px-2.5 py-1 text-xs font-semibold">
-                  Score {concentrationRisk.score ?? "UNKNOWN"}
+                  {t("score")} {concentrationRisk.score ?? "UNKNOWN"}
                 </span>
               </div>
               <p className="mt-3 text-sm leading-7">
@@ -433,15 +439,15 @@ export function GlobalRiskCenterWorkspace() {
               </p>
               <div className="mt-4 grid gap-2 sm:grid-cols-3">
                 <LightFactCard
-                  label="Top Symbol"
+                  label={t("topSymbol")}
                   value={concentrationRisk.topExposure?.symbol ?? "--"}
                 />
                 <LightFactCard
-                  label="Occurrences"
+                  label={t("occurrences")}
                   value={formatNumber(concentrationRisk.topExposure?.occurrenceCount ?? null)}
                 />
                 <LightFactCard
-                  label="Share"
+                  label={t("share")}
                   value={formatPercent(concentrationRisk.topExposureSharePct)}
                 />
               </div>
@@ -449,10 +455,10 @@ export function GlobalRiskCenterWorkspace() {
 
             <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-                Top Exposure Aggregation
+                {t("topExposureAggregation")}
               </p>
               <h3 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
-                Top Available Symbols
+                {t("topAvailableSymbols")}
               </h3>
               {readback.riskIntelligence.topExposures.length > 0 ? (
                 <div className="mt-4 grid gap-2">
@@ -466,7 +472,7 @@ export function GlobalRiskCenterWorkspace() {
                           {exposure.symbol}
                         </p>
                         <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                          Sources: {exposure.sources.join(", ")}
+                          {t("sourceStatus")}: {exposure.sources.join(", ")}
                         </p>
                       </div>
                       <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.9)] px-2.5 py-1 font-mono text-xs font-semibold text-[var(--ixai-forest)]">
@@ -477,14 +483,14 @@ export function GlobalRiskCenterWorkspace() {
                 </div>
               ) : (
                 <p className="mt-4 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                  No shared symbol exposures are available from FCN, Stock, or Crypto readback yet.
+                  {t("noSharedExposure")}
                 </p>
               )}
             </article>
 
             <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-                FCN Worst-of Risk Summary
+                {t("fcnWorstOfRiskSummary")}
               </p>
               <h3 className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
                 {fcnWorstOfRisk.worstPosition?.riskStatus ?? "UNKNOWN"}
@@ -494,19 +500,19 @@ export function GlobalRiskCenterWorkspace() {
               </p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
                 <LightFactCard
-                  label="Worst Underlying"
+                  label={t("worstUnderlying")}
                   value={worstUnderlying?.underlying.symbol ?? "--"}
                 />
                 <LightFactCard
-                  label="Worst KI Distance"
+                  label={t("worstKiDistance")}
                   value={formatPercent(fcnWorstOfRisk.worstPosition?.worstKiDistancePct)}
                 />
                 <LightFactCard
-                  label="Missing Prices"
+                  label={t("missingPrices")}
                   value={formatNumber(fcnWorstOfRisk.missingPriceCount)}
                 />
                 <LightFactCard
-                  label="Watch + High"
+                  label={t("watchHigh")}
                   value={formatNumber(fcnWorstOfRisk.highRiskCount + fcnWorstOfRisk.watchCount)}
                 />
               </div>
@@ -516,14 +522,14 @@ export function GlobalRiskCenterWorkspace() {
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
-                    Data Quality Risk
+                    {t("dataQualityRisk")}
                   </p>
                   <h3 className="mt-2 text-lg font-semibold">
                     {dataQualityRisk.level}
                   </h3>
                 </div>
                 <span className="inline-flex w-fit rounded-full border border-current px-2.5 py-1 text-xs font-semibold">
-                  Score {dataQualityRisk.score ?? "UNKNOWN"}
+                  {t("score")} {dataQualityRisk.score ?? "UNKNOWN"}
                 </span>
               </div>
               <p className="mt-3 text-sm leading-7">
@@ -531,15 +537,15 @@ export function GlobalRiskCenterWorkspace() {
               </p>
               <div className="mt-4 grid gap-2 sm:grid-cols-3">
                 <LightFactCard
-                  label="Warnings"
+                  label={t("warnings")}
                   value={formatNumber(dataQualityRisk.warningCount)}
                 />
                 <LightFactCard
-                  label="Partial Sources"
+                  label={t("partialSources")}
                   value={formatNumber(dataQualityRisk.partialSourceCount)}
                 />
                 <LightFactCard
-                  label="Unavailable"
+                  label={t("unavailable")}
                   value={formatNumber(dataQualityRisk.unavailableSourceCount)}
                 />
               </div>
@@ -551,13 +557,13 @@ export function GlobalRiskCenterWorkspace() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                FCN Risk Summary
+                {t("fcnRiskSummary")}
               </p>
               <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-                v3.20 FCN Risk Readback
+                {t("fcnRiskReadback")}
               </h2>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-                Reuses FCN Intelligence Center calculations and manual price overlays. No duplicate FCN risk logic is introduced.
+                {t("fcnRiskReadback")}
               </p>
             </div>
             <button
@@ -571,17 +577,17 @@ export function GlobalRiskCenterWorkspace() {
               ) : (
                 <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
               )}
-              Refresh
+              {t("refresh")}
             </button>
           </div>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             {[
-              ["Total FCNs", formatNumber(readback.fcn.summary.totalCount)],
-              ["Total Notional", readback.fcn.summary.totalNotionalLabel],
-              ["High Risk", formatNumber(readback.fcn.summary.highRiskCount)],
-              ["Watch", formatNumber(readback.fcn.summary.watchCount)],
-              ["Unknown Risk", formatNumber(readback.fcn.summary.unknownRiskCount)],
+              [t("totalFcns"), formatNumber(readback.fcn.summary.totalCount)],
+              [t("totalNotional"), readback.fcn.summary.totalNotionalLabel],
+              [t("highRisk"), formatNumber(readback.fcn.summary.highRiskCount)],
+              [t("watch"), formatNumber(readback.fcn.summary.watchCount)],
+              [t("unknownRisk"), formatNumber(readback.fcn.summary.unknownRiskCount)],
             ].map(([label, value]) => (
               <div
                 className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -605,14 +611,14 @@ export function GlobalRiskCenterWorkspace() {
 
           {status === "unauthenticated" ? (
             <p className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
-              登入後才能讀取你的 FCN / Stock / Crypto risk sources。
+              {t("loginRequired")}
             </p>
           ) : null}
         </section>
 
         <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Multi-Asset Readiness
+            {t("multiAssetReadiness")}
           </p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
             Stock / Crypto / Grid / Dual Readiness
@@ -629,10 +635,10 @@ export function GlobalRiskCenterWorkspace() {
             <FeatureIcon icon={CalendarDays} shadow={false} />
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                Upcoming Risk Events
+                {t("upcomingRiskEvents")}
               </p>
               <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-                FCN Timeline Feed
+                {t("fcnTimelineFeed")}
               </h2>
             </div>
           </div>
@@ -667,7 +673,7 @@ export function GlobalRiskCenterWorkspace() {
             </div>
           ) : (
             <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              目前沒有 upcoming FCN observation、coupon payment、KO observation 或 maturity events。
+              {t("noUpcomingEvents")}
             </p>
           )}
         </section>
@@ -677,10 +683,10 @@ export function GlobalRiskCenterWorkspace() {
             <FeatureIcon icon={Gauge} shadow={false} />
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-                Data Source Status
+                {t("dataSourceStatus")}
               </p>
               <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-                Risk Source Readiness
+                {t("sourceReadiness")}
               </h2>
             </div>
           </div>
@@ -696,22 +702,20 @@ export function GlobalRiskCenterWorkspace() {
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
             href="/my-ixai/fcn"
           >
-            Open FCN Intelligence Center
+            {t("openFcnCenter")}
             <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
             href="/my-ixai/portfolio"
           >
-            Open Portfolio Center
+            {t("openPortfolioCenter")}
             <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           </Link>
         </div>
 
         <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-          Monitoring and risk-awareness only. No investment recommendation. No order execution.
-          No auto trading. v3.30 does not connect live market data, broker sync, alert routing,
-          or AI recommendation logic.
+          {t("footerDisclaimer")}
         </p>
       </section>
     </main>

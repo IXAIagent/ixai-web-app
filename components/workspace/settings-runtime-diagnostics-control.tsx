@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Activity, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n";
 import { runWorkspaceRuntimeBudget } from "@/src/lib/workspace/runtime-safety";
 
 type DiagnosticsStatus = "idle" | "ready" | "running" | "skipped" | "unavailable";
@@ -15,44 +16,53 @@ type DiagnosticsCard = {
   title: string;
 };
 
-const INITIAL_CARDS: DiagnosticsCard[] = [
+function interpolate(template: string, values: Record<string, string | number>) {
+  return Object.entries(values).reduce(
+    (nextTemplate, [key, value]) => nextTemplate.replaceAll(`{${key}}`, String(value)),
+    template,
+  );
+}
+
+function buildInitialCards(t: (key: string, fallback?: string) => string): DiagnosticsCard[] {
+  return [
   {
-    detail: "Advanced diagnostics are paused on initial render to keep Settings route entry lightweight.",
+    detail: t("diagnosticsWorkspaceIntegrationIdle"),
     key: "workspace-integration",
     status: "idle",
-    title: "Workspace Integration Status",
+    title: t("diagnosticsWorkspaceIntegrationTitle"),
   },
   {
-    detail: "Platform cutover diagnostics run only after a manual request.",
+    detail: t("diagnosticsPlatformCutoverIdle"),
     key: "platform-cutover",
     status: "idle",
-    title: "Platform Cutover Status",
+    title: t("diagnosticsPlatformCutoverTitle"),
   },
   {
-    detail: "Database activation diagnostics run only after a manual request.",
+    detail: t("diagnosticsDatabaseActivationIdle"),
     key: "database-activation",
     status: "idle",
-    title: "Database Activation Status",
+    title: t("diagnosticsDatabaseActivationTitle"),
   },
   {
-    detail: "Migration health is deferred so Settings never blocks on mount.",
+    detail: t("diagnosticsMigrationHealthIdle"),
     key: "migration-health",
     status: "idle",
-    title: "Migration Health",
+    title: t("diagnosticsMigrationHealthTitle"),
   },
   {
-    detail: "Runtime stabilization status is documented and does not auto-run builders on mount.",
+    detail: t("diagnosticsRuntimeStabilizationIdle"),
     key: "runtime-stabilization",
     status: "idle",
-    title: "Runtime Stabilization Status",
+    title: t("diagnosticsRuntimeStabilizationTitle"),
   },
   {
-    detail: "Workspace Graph diagnostics are not aggregated until requested.",
+    detail: t("diagnosticsWorkspaceGraphIdle"),
     key: "workspace-graph",
     status: "idle",
-    title: "Workspace Graph Diagnostics",
+    title: t("diagnosticsWorkspaceGraphTitle"),
   },
-];
+  ];
+}
 
 function statusLabel(status: DiagnosticsStatus) {
   if (status === "ready") return "ready";
@@ -63,7 +73,8 @@ function statusLabel(status: DiagnosticsStatus) {
 }
 
 export function SettingsRuntimeDiagnosticsControl() {
-  const [cards, setCards] = useState<DiagnosticsCard[]>(INITIAL_CARDS);
+  const { t } = useTranslation("settings");
+  const [cards, setCards] = useState<DiagnosticsCard[]>(() => buildInitialCards(t));
   const [isRunning, setIsRunning] = useState(false);
   const mountedRef = useRef(false);
 
@@ -76,21 +87,22 @@ export function SettingsRuntimeDiagnosticsControl() {
   }, []);
 
   async function runDiagnostics() {
+    const initialCards = buildInitialCards(t);
     setIsRunning(true);
     setCards((current) =>
       current.map((card) => ({
         ...card,
         detail:
           card.status === "idle"
-            ? "Diagnostics requested. This section is running with a runtime budget."
+            ? t("diagnosticsRequested")
             : card.detail,
         status: "running",
       })),
     );
 
-    const fallbackCards = INITIAL_CARDS.map((card) => ({
+    const fallbackCards = initialCards.map((card) => ({
       ...card,
-      detail: "Diagnostics reached the runtime budget and fell back safely.",
+      detail: t("diagnosticsFallback"),
       status: "unavailable" as const,
     }));
 
@@ -126,56 +138,74 @@ export function SettingsRuntimeDiagnosticsControl() {
           {
             detail:
               integration.status === "fulfilled"
-                ? `${integration.value.moduleCount} modules checked; status ${integration.value.overallStatus}.`
-                : "Workspace integration audit fell back safely.",
+                ? interpolate(t("diagnosticsIntegrationReady"), {
+                    count: integration.value.moduleCount,
+                    status: integration.value.overallStatus,
+                  })
+                : t("diagnosticsIntegrationFallback"),
             key: "workspace-integration",
             status: integration.status === "fulfilled" ? "ready" : "unavailable",
-            title: "Workspace Integration Status",
+            title: t("diagnosticsWorkspaceIntegrationTitle"),
           },
           {
             detail:
               platform.status === "fulfilled"
-                ? `Platform cutover status ${platform.value.sourceStatus}; access ${platform.value.access.source}.`
-                : "Platform cutover diagnostics fell back safely.",
+                ? interpolate(t("diagnosticsPlatformReady"), {
+                    source: platform.value.access.source,
+                    status: platform.value.sourceStatus,
+                  })
+                : t("diagnosticsPlatformFallback"),
             key: "platform-cutover",
             status: platform.status === "fulfilled" ? "ready" : "unavailable",
-            title: "Platform Cutover Status",
+            title: t("diagnosticsPlatformCutoverTitle"),
           },
           {
             detail:
               databaseActivation.status === "fulfilled"
-                ? `Activation phase ${databaseActivation.value.activationPhase}; missing tables ${databaseActivation.value.missingTables.length}.`
-                : "Database activation diagnostics fell back safely.",
+                ? interpolate(t("diagnosticsDatabaseReady"), {
+                    count: databaseActivation.value.missingTables.length,
+                    phase: databaseActivation.value.activationPhase,
+                  })
+                : t("diagnosticsDatabaseFallback"),
             key: "database-activation",
             status: databaseActivation.status === "fulfilled" ? "ready" : "unavailable",
-            title: "Database Activation Status",
+            title: t("diagnosticsDatabaseActivationTitle"),
           },
           {
             detail:
               migration.status === "fulfilled"
-                ? `Migration health ${migration.value.sourceStatus}; expected tables ${migration.value.expectedTables.length}.`
-                : "Migration health diagnostics fell back safely.",
+                ? interpolate(t("diagnosticsMigrationReady"), {
+                    count: migration.value.expectedTables.length,
+                    status: migration.value.sourceStatus,
+                  })
+                : t("diagnosticsMigrationFallback"),
             key: "migration-health",
             status: migration.status === "fulfilled" ? "ready" : "unavailable",
-            title: "Migration Health",
+            title: t("diagnosticsMigrationHealthTitle"),
           },
           {
             detail:
               readPriority.status === "fulfilled"
-                ? `Read priority ${readPriority.value.sourceStatus}; ${readPriority.value.items.length} modules checked.`
-                : "Runtime stabilization read-priority check fell back safely.",
+                ? interpolate(t("diagnosticsReadPriorityReady"), {
+                    count: readPriority.value.items.length,
+                    status: readPriority.value.sourceStatus,
+                  })
+                : t("diagnosticsReadPriorityFallback"),
             key: "runtime-stabilization",
             status: readPriority.status === "fulfilled" ? "ready" : "unavailable",
-            title: "Runtime Stabilization Status",
+            title: t("diagnosticsRuntimeStabilizationTitle"),
           },
           {
             detail:
               graph.status === "fulfilled"
-                ? `Workspace Graph ${graph.value.sourceStatus}; ${graph.value.moduleCount} modules summarized.`
-                : "Workspace Graph diagnostics fell back safely.",
+                ? interpolate(t("diagnosticsGraphReady"), {
+                    count: graph.value.moduleCount,
+                    status: graph.value.sourceStatus,
+                  })
+                : t("diagnosticsGraphFallback"),
             key: "workspace-graph",
             status: graph.status === "fulfilled" ? "ready" : "unavailable",
-            title: "Workspace Graph Diagnostics",
+            title: t("diagnosticsWorkspaceGraphTitle"),
           },
         ] satisfies DiagnosticsCard[];
       },
@@ -195,16 +225,16 @@ export function SettingsRuntimeDiagnosticsControl() {
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3">
-          <FeatureIcon icon={Activity} shadow={false} />
+              <FeatureIcon icon={Activity} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Runtime-safe diagnostics
+              {t("runtimeDiagnosticsEyebrow")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Settings diagnostics are manual
+              {t("runtimeDiagnosticsTitle")}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Heavy Workspace diagnostics are paused on route entry. Run them manually when needed; each run has a runtime budget and falls back safely.
+              {t("runtimeDiagnosticsBody")}
             </p>
           </div>
         </div>
@@ -215,7 +245,7 @@ export function SettingsRuntimeDiagnosticsControl() {
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isRunning ? "Running" : "Run diagnostics"}
+          {isRunning ? t("runtimeDiagnosticsRunning") : t("runtimeDiagnosticsRun")}
         </button>
       </div>
 
@@ -241,7 +271,7 @@ export function SettingsRuntimeDiagnosticsControl() {
       </div>
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Diagnostics are read-only. No migrations, auth behavior, RLS, membership, billing, broker, trading, recommendation, scheduler, or notification delivery changes are introduced.
+        {t("runtimeDiagnosticsDisclaimer")}
       </p>
     </section>
   );
