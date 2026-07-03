@@ -60,6 +60,22 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 V15 Product Experience Redesign has started. The current highest priority is product experience, not new feature expansion.
 
+V15.0.1 production hotfix status:
+
+- After PR #101, production showed a Chrome renderer hang / `RESULT_CODE_HUNG` on `/my-ixai/home`.
+- The strongest suspicion is eager mounting of heavy diagnostics inside collapsed `<details>` panels.
+- V15.0.1 stabilizes the shared `WorkspaceDiagnosticsPanel` so collapsed diagnostics do not render or mount children until the user opens the panel.
+- This is runtime stabilization only. It does not change product direction, API, database, Supabase, auth, Risk / FCN / Portfolio engines, market providers, AI / LLM behavior, scheduler, trading, or recommendation logic.
+- Source of truth: `docs/V1501_PRODUCTION_RENDERER_HUNG_HOTFIX.md`.
+
+V15.0.2 production hotfix status:
+
+- PR #102 preview reproduced `RESULT_CODE_HUNG` on `/my-ixai/copilot`, proving V15.0.1 was incomplete.
+- Investigation identified the stronger root cause: `CopilotExperienceWorkspace` auto-ran `getWorkspaceCopilotSummary()` on mount, which called `getWorkspaceGraph()` and fanned out across 37 Workspace modules client-side.
+- V15.0.2 changes Copilot to a static safe shell on initial render. Full summary generation is manual-only through the existing run button.
+- Do not merge PR #102 as the final fix unless it includes V15.0.2 safe-shell behavior.
+- Sources of truth: `docs/V1502_RENDERER_HUNG_INVESTIGATION.md` and `docs/V1502_COPILOT_SAFE_SHELL_HOTFIX.md`.
+
 Highest-priority work:
 
 - Home UX.
