@@ -12,6 +12,7 @@ import {
   Eye,
   LineChart,
   MessageSquareText,
+  Newspaper,
   PieChart,
   Plus,
   ShieldAlert,
@@ -25,7 +26,6 @@ import { I18nFoundationStatusCard } from "@/components/i18n/i18n-foundation-stat
 import { LocalizationPreview } from "@/components/i18n/localization-preview";
 import { LiveMarketDataStatus } from "@/components/market/live-market-data-status";
 import { WorkspaceHealthSummary } from "@/components/workspace/workspace-health-summary";
-import { WorkspaceMorningBriefV14Card } from "@/components/workspace/workspace-morning-brief-v14-card";
 import {
   WorkspaceDiagnosticsPanel,
   WorkspaceKpiGrid,
@@ -288,20 +288,92 @@ function HomeHeroSummary({
       side={
         <>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-            今日摘要
+            今日工作重點
           </p>
           <p className="mt-3 text-2xl font-semibold text-white">{today}</p>
           <div className="mt-4 grid gap-2 text-sm leading-6 text-white/72">
             <p>資產：{portfolio?.summary.positionCount ? "已整理可用資產概況。" : "尚未有完整資產資料。"}</p>
             <p>風險：{riskState.value}。</p>
             <p>市場：{marketUpdatedAt === "待更新" ? "等待下一次更新。" : `最近更新 ${marketUpdatedAt}。`}</p>
-            <p>下一步：從 Morning Brief 或 Quick Actions 開始。</p>
+            <p>下一步：先處理需要留意的提醒，再進入完整報告。</p>
           </div>
         </>
       }
-      summary="IXAI 已把今日投資狀況整理成 Morning Brief、我的資產、今天需要注意、與市場狀態，協助你快速知道下一步要查看哪裡。"
-      title={`${displayName}，今天先看資產、風險與市場重點。`}
+      summary="首頁先整理今天的工作順序：資產狀態、風險提醒、市場更新與下一步入口。完整每日報告留在 Morning Brief。"
+      title={`${displayName}，今天先掌握工作重點。`}
     />
+  );
+}
+
+function MorningBriefSummaryCard({
+  alerts,
+  fcnRisk,
+  portfolio,
+  updatedAt,
+}: {
+  alerts: WorkspaceAlertSummary;
+  fcnRisk: FcnPortfolioRiskSummary | null;
+  portfolio: PortfolioValuationResult | null;
+  updatedAt?: string | null;
+}) {
+  const attentionCount = getAttentionCount(alerts, fcnRisk);
+  const riskState = getRiskState(alerts, fcnRisk);
+  const updatedLabel = formatTime(updatedAt);
+
+  return (
+    <WorkspaceProductSection
+      action={
+        <Link
+          className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-sm font-semibold text-[var(--ixai-cream)] sm:w-fit"
+          href="/my-ixai/morning-brief"
+        >
+          閱讀完整 Morning Brief
+          <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+        </Link>
+      }
+      description="首頁只保留今日摘要，完整章節、分享與匯出留在 Morning Brief 頁。"
+      eyebrow="Morning Brief Summary"
+      title="今日摘要"
+    >
+      <div className="grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
+        <article className="rounded-lg border border-[rgba(176,141,87,0.30)] bg-white/72 p-4">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
+              <Newspaper className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-base font-semibold text-[var(--ixai-forest)]">
+                今天先看 {attentionCount > 0 ? "需要留意的風險與市場更新" : "資產狀態與市場更新"}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                {portfolio?.summary.positionCount
+                  ? `目前有 ${portfolio.summary.positionCount} 筆持倉納入首頁摘要。`
+                  : "新增資產後，Morning Brief 會更完整地整理 Portfolio 與風險脈絡。"}
+                {" "}
+                風險狀態為「{riskState.value}」，市場資料{updatedLabel === "待更新" ? "等待更新" : `最近於 ${updatedLabel} 更新`}。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <WorkspaceKpiGrid
+          items={[
+            {
+              description: "完整報告會整理 Portfolio、Risk、FCN、Watchlist 與時間線。",
+              icon: Newspaper,
+              label: "完整報告",
+              value: "獨立頁面",
+            },
+            {
+              description: attentionCount > 0 ? "建議先查看今天需要留意的提醒。" : "目前沒有立即處理項目。",
+              icon: Bell,
+              label: "今日提醒",
+              value: `${attentionCount} 項`,
+            },
+          ]}
+        />
+      </div>
+    </WorkspaceProductSection>
   );
 }
 
@@ -612,9 +684,12 @@ export function WorkspaceHomeDashboard() {
         today={today}
       />
 
-      <section className="rounded-lg border border-[rgba(176,141,87,0.32)] bg-[rgba(255,250,240,0.92)] p-3 shadow-[0_18px_56px_rgba(9,41,31,0.08)] sm:p-4">
-        <WorkspaceMorningBriefV14Card autoLoad={false} compact />
-      </section>
+      <MorningBriefSummaryCard
+        alerts={homeData.alerts}
+        fcnRisk={homeData.fcnRisk}
+        portfolio={homeData.portfolio}
+        updatedAt={homeData.portfolio?.summary.updatedAt ?? homeData.timeline?.generatedAt}
+      />
 
       <PortfolioSnapshot portfolio={homeData.portfolio} />
       <TodaysAlerts alerts={homeData.alerts} fcnRisk={homeData.fcnRisk} />

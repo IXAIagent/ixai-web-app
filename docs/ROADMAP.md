@@ -8,7 +8,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Priority
 
-Current priority is `V15.0.2 Copilot Safe Shell Hotfix`, a runtime stabilization pass after the V15 Workspace redesign merge. IXAI's product direction remains AI Wealth Workspace, but the immediate priority is production stability on `/my-ixai/home` and `/my-ixai/copilot`, not new feature expansion, V16 planning, or further redesign.
+Current priority is `V15.0.3 Information Architecture Refinement`, a product-structure pass after the V15 Workspace redesign and V15.0.1 / V15.0.2 runtime hotfixes. IXAI's product direction remains AI Wealth Workspace, but the immediate priority is clearer Home versus Morning Brief positioning, not new feature expansion, V16 planning, or backend work.
 
 V15 current sequence:
 
@@ -17,14 +17,20 @@ V15 current sequence:
 - Completed: Wave 1 Portfolio Experience for Home, Portfolio, FCN, and Risk.
 - Completed: Wave 2 AI / Information Experience for Intelligence, Copilot, Watchlist, Notifications, and Timeline.
 - Completed: Wave 3 Platform Experience & Navigation Polish for Workspace navigation, Settings, Health, Beta, Advanced diagnostics, mobile navigation, and platform consistency.
-- Active: V15.0.1 Production Renderer Hung Hotfix.
+- Completed: V15.0.1 Production Renderer Hung Hotfix.
   - Collapsed Workspace diagnostics no longer mount heavy children until opened.
   - This addresses the high-confidence renderer-hang risk introduced by V15 diagnostics demotion.
   - See `docs/V1501_PRODUCTION_RENDERER_HUNG_HOTFIX.md`.
-- Active: V15.0.2 Copilot Safe Shell Hotfix.
+- Completed: V15.0.2 Copilot Safe Shell Hotfix.
   - Copilot no longer auto-runs `getWorkspaceCopilotSummary()` or `getWorkspaceGraph()` on initial mount.
   - Full Copilot summary generation is manual-only.
   - See `docs/V1502_RENDERER_HUNG_INVESTIGATION.md` and `docs/V1502_COPILOT_SAFE_SHELL_HOTFIX.md`.
+- Active: V15.0.3 Information Architecture Refinement.
+  - Home no longer embeds the full Workspace Morning Brief card.
+  - Home now shows a lightweight Morning Brief Summary Card with a CTA to `/my-ixai/morning-brief`.
+  - `/my-ixai/morning-brief` is the full daily Workspace report surface.
+  - Desktop sidebar main navigation scrolls independently while Settings / exit actions remain fixed at the bottom.
+  - See `docs/V1503_INFORMATION_ARCHITECTURE_REFINEMENT.md`.
 - Next: Sprint 4 Design Polish.
 
 V15 does not add:

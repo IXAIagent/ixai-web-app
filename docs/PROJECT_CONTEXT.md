@@ -73,8 +73,17 @@ V15.0.2 production hotfix status:
 - PR #102 preview reproduced `RESULT_CODE_HUNG` on `/my-ixai/copilot`, proving V15.0.1 was incomplete.
 - Investigation identified the stronger root cause: `CopilotExperienceWorkspace` auto-ran `getWorkspaceCopilotSummary()` on mount, which called `getWorkspaceGraph()` and fanned out across 37 Workspace modules client-side.
 - V15.0.2 changes Copilot to a static safe shell on initial render. Full summary generation is manual-only through the existing run button.
-- Do not merge PR #102 as the final fix unless it includes V15.0.2 safe-shell behavior.
+- PR #102 merged after V15.0.2 safe-shell behavior was added and manually verified on Preview.
 - Sources of truth: `docs/V1502_RENDERER_HUNG_INVESTIGATION.md` and `docs/V1502_COPILOT_SAFE_SHELL_HOTFIX.md`.
+
+V15.0.3 information architecture refinement:
+
+- Home and Morning Brief had overlapping content because Home embedded the compact Workspace Morning Brief card directly below the hero.
+- V15.0.3 separates the surfaces: Home is the daily dashboard and `/my-ixai/morning-brief` is the full daily Workspace report.
+- Home now keeps only a lightweight Morning Brief Summary Card with the CTA `閱讀完整 Morning Brief`.
+- Hero copy focuses on today's work priority; Morning Brief Summary focuses on the daily report preview.
+- Desktop sidebar main navigation scrolls independently, with Settings / exit actions fixed at the bottom.
+- Source of truth: `docs/V1503_INFORMATION_ARCHITECTURE_REFINEMENT.md`.
 
 Highest-priority work:
 

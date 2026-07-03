@@ -105,7 +105,7 @@ const WORKSPACE_NAV_ITEMS: NavItem[] = [
     label: "AI",
     href: "/my-ixai/intelligence",
     icon: Sparkles,
-    matchPrefixes: ["/my-ixai/intelligence", "/my-ixai/copilot", "/my-ixai/notifications"],
+    matchPrefixes: ["/my-ixai/morning-brief", "/my-ixai/intelligence", "/my-ixai/copilot", "/my-ixai/notifications"],
   },
   {
     key: "settings",

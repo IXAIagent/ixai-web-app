@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15.0.3 — Information Architecture Refinement
+
+Why:
+
+- Home and Morning Brief overlapped after the V15 Product Experience Redesign.
+- Home embedded the compact Workspace Morning Brief card, making the first dashboard screen feel like a second report page.
+- Sidebar settings / exit actions also needed to remain reachable on short viewport heights.
+
+What Changed:
+
+- Removed the full Workspace Morning Brief card from Home.
+- Added a lightweight Morning Brief Summary Card on Home with the CTA `閱讀完整 Morning Brief`.
+- Added `/my-ixai/morning-brief` as the full Workspace Morning Brief report surface.
+- Repositioned Home hero copy around today's work priority instead of duplicating report summary language.
+- Updated desktop sidebar so the main navigation scrolls independently while Settings / exit actions stay fixed at the bottom.
+- Updated the AI navigation Morning Brief entry to point at `/my-ixai/morning-brief`.
+- Added `docs/V1503_INFORMATION_ARCHITECTURE_REFINEMENT.md`.
+
+Key Decisions:
+
+- Home is the daily Workspace dashboard.
+- Morning Brief is the full daily report.
+- No API, database, Supabase, auth, Workspace Graph, AI / LLM, engine, provider, trading, or recommendation behavior changed.
+
 ## V15.0.2 — Copilot Safe Shell Hotfix
 
 Why:

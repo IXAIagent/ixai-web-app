@@ -102,7 +102,7 @@ export function MobileDrawer({
     {
       title: "AI",
       entries: [
-        { label: "Morning Brief", href: "/my-ixai/home", icon: FileText },
+        { label: "Morning Brief", href: "/my-ixai/morning-brief", icon: FileText },
         { label: dictionary.workspaceNav.intelligence, href: "/my-ixai/intelligence", icon: Newspaper },
         { label: dictionary.workspaceNav.copilot, href: "/my-ixai/copilot", icon: Sparkles },
       ],

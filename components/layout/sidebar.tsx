@@ -51,7 +51,7 @@ export function Sidebar() {
     {
       heading: "AI",
       items: [
-        { label: "Morning Brief", href: "/my-ixai/home" },
+        { label: "Morning Brief", href: "/my-ixai/morning-brief" },
         { label: dictionary.workspaceNav.intelligence, href: "/my-ixai/intelligence" },
         { label: dictionary.workspaceNav.copilot, href: "/my-ixai/copilot" },
       ],
@@ -60,19 +60,6 @@ export function Sidebar() {
       heading: "提醒",
       items: [
         { label: dictionary.workspaceNav.notifications, href: "/my-ixai/notifications" },
-      ],
-    },
-    {
-      heading: "設定",
-      items: [
-        { label: dictionary.workspaceNav.settings, href: "/my-ixai/settings" },
-      ],
-    },
-    {
-      heading: dictionary.workspaceNav.exitHeading,
-      items: [
-        { label: dictionary.workspaceNav.exitPublic, href: "/" },
-        { action: "signOut", label: dictionary.workspaceNav.signOut, href: "/login" },
       ],
     },
   ];
@@ -108,10 +95,16 @@ export function Sidebar() {
   const footerText = isWorkspaceRoute
     ? t("disclaimers", "workspaceNavigationBoundary")
     : t("disclaimers", "publicNavigationBoundary");
+  const workspaceFooterItems: NavGroup["items"] = [
+    { label: dictionary.workspaceNav.settings, href: "/my-ixai/settings" },
+    { label: dictionary.workspaceNav.exitPublic, href: "/" },
+    { action: "signOut", label: dictionary.workspaceNav.signOut, href: "/login" },
+  ];
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
     <aside className={`fixed inset-y-0 left-0 z-30 hidden ${shellTokens.publicSidebarWidth} border-r border-[rgba(176,141,87,0.22)] bg-[#071f17] text-[var(--ixai-cream)] md:flex md:flex-col`}>
-      <div className="border-b border-white/10 px-4 py-5">
+      <div className="shrink-0 border-b border-white/10 px-4 py-5">
         <div className="flex items-center gap-3">
           <IxaiLogoFrame className="h-10 w-[4.75rem]" logoSize="sm" priority tone="dark" />
           <div>
@@ -128,12 +121,12 @@ export function Sidebar() {
         </p>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-4 px-2.5 py-4">
+      <nav className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-2.5 py-4">
         {navGroups.map((group) => (
           <ShellSidebarSection key={group.heading} title={group.heading}>
             {group.items.map((item) => (
               <ShellNavButton
-                active={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)}
+                active={isActive(item.href)}
                 external={item.external}
                 href={item.href}
                 key={item.label}
@@ -145,7 +138,21 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="m-2.5 grid gap-2">
+      <div className="m-2.5 grid shrink-0 gap-2 border-t border-white/10 pt-2">
+        {isWorkspaceRoute ? (
+          <ShellSidebarSection title="設定與離開">
+            {workspaceFooterItems.map((item) => (
+              <ShellNavButton
+                active={isActive(item.href)}
+                external={item.external}
+                href={item.href}
+                key={item.label}
+                label={item.label}
+                onClick={item.action === "signOut" ? signOut : undefined}
+              />
+            ))}
+          </ShellSidebarSection>
+        ) : null}
         <LanguageSwitcher mode="compact" />
         <div className="rounded-lg border border-white/10 bg-white/[0.045] p-3">
           <Eyebrow mono className="text-[10px]">
