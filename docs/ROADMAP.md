@@ -6,6 +6,19 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 `V15 Product Experience Redesign`
 
+## Current Strategic Direction
+
+IXAI's long-term product direction is `AI Investment Monitoring System`.
+
+Core sentence:
+
+```text
+讓 AI 全天候監控你的投資，而不是你全天候盯著市場。
+AI watches your investments, so you don't have to.
+```
+
+IXAI should not drift into being only a brokerage app, news platform, finance dashboard, robo-advisor, generic chatbot, trading system, or signal-selling product. The highest-level source of truth is `docs/IXAI_PRODUCT_VISION.md`.
+
 ## Current Priority
 
 Current priority is `V15.1 Product Polish Program`, a product-experience pass after the V15 Workspace redesign, V15.0.1 / V15.0.2 runtime hotfixes, and V15.0.3 IA refinement. IXAI's product direction remains AI Wealth Workspace, but the immediate priority is externally usable product polish, not new feature expansion, V16 planning, or backend work.
@@ -38,6 +51,12 @@ V15 current sequence:
   - Shared product components now include `WorkspaceEmptyState` and dictionary-backed polish copy.
   - See `docs/V151_PRODUCT_POLISH_PROGRAM.md`.
 - Next: Sprint 4 Design Polish.
+
+Next major version:
+
+- `V16 — AI Monitoring Platform`.
+- V16 should be driven by `docs/IXAI_PRODUCT_VISION.md`.
+- Priority tracks: Asset Intelligence, FCN Intelligence, Portfolio Intelligence, News Relevance Engine, AI Monitoring Feed, Today Focus, Copilot Suggested Questions, and Observation / Coupon Calendar.
 
 V15 does not add:
 

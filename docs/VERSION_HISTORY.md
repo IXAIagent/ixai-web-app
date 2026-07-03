@@ -6,6 +6,27 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Docs — IXAI AI Investment Monitoring System Vision
+
+Why:
+
+- IXAI needed a durable product vision document to prevent future work from drifting into a brokerage app, news app, generic finance dashboard, robo-advisor, trading system, or chatbot.
+- The product center should be AI monitoring of user-held assets, FCN risk, Portfolio risk, relevant news, events, and next actions.
+
+What Changed:
+
+- Added `docs/IXAI_PRODUCT_VISION.md`.
+- Defined IXAI as an AI Investment Monitoring System.
+- Recorded the core sentence: `讓 AI 全天候監控你的投資，而不是你全天候盯著市場。`
+- Recorded the English sentence: `AI watches your investments, so you don't have to.`
+- Set V16 direction as `V16 — AI Monitoring Platform`.
+- Updated `PROJECT_CONTEXT`, `ROADMAP`, and `PROJECT_MAP` to treat `IXAI_PRODUCT_VISION.md` as the highest-level product vision source.
+
+Key Decisions:
+
+- IXAI's future features must help AI understand user holdings, monitor proactively, reduce irrelevant news, connect price/news/risk/holdings, and avoid investment-advice or trading language.
+- This is docs-only. No product code, API, database, auth, UI, or business logic changed.
+
 ## V15.1 — Product Polish Program
 
 Why:

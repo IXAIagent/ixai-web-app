@@ -4,15 +4,29 @@ This document is the long-term project memory layer for AI-assisted development 
 
 ## A. Project Identity
 
-IXAI is an AI-native investment intelligence platform built around market interpretation, risk awareness, and investor workflow.
+IXAI is an AI Investment Monitoring System: AI watches the user's investments so the user does not have to watch markets all day.
 
-IXAI is not a broker, not an automated order execution system, and not a signal-selling product. The product direction is to help users understand what matters in markets, organize that intelligence into daily habits, and eventually connect public market intelligence to personal risk workflows.
+IXAI is not a brokerage app, not a news app, not a generic finance dashboard, not a broker, not an automated order execution system, not a robo-advisor, not a generic chatbot, and not a signal-selling product. The product direction is to remember what the user holds, monitor prices, news, events, FCN risk, Portfolio risk, and market regime, then surface only the things that matter to that user.
+
+Core product sentence:
+
+```text
+讓 AI 全天候監控你的投資，而不是你全天候盯著市場。
+AI watches your investments, so you don't have to.
+```
+
+The highest-level product vision source is `docs/IXAI_PRODUCT_VISION.md`. Read it before starting V16, AI monitoring, asset intelligence, FCN intelligence, Portfolio intelligence, news relevance, alerts, Copilot, or Workspace IA work.
 
 The core product layers are:
 
 - Intelligence: daily and weekly market interpretation, cross-asset context, and AI-assisted synthesis.
 - Workflow: watchlist, account identity, editorial review, distribution, and future Pro operating surfaces.
 - Risk layer: FCN education, gated Pro intelligence previews, and future portfolio and alert workflows.
+
+Next major direction:
+
+- V16 should be `V16 — AI Monitoring Platform`.
+- V16 should prioritize Asset Intelligence, FCN Intelligence, Portfolio Intelligence, News Relevance Engine, AI Monitoring Feed, Today Focus, Copilot Suggested Questions, and Observation / Coupon Calendar.
 
 I-Xuan remains the trust brand behind the product. IXAI is the AI operating layer that extends that trust into a durable market intelligence system.
 

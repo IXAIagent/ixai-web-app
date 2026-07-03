@@ -23,6 +23,21 @@ Role:
 - Active Production App.
 - Current Vercel / public app mainline.
 - Owns the public IXAI experience: landing, onboarding, Daily Brief, Weekly Intelligence, Share Intelligence, Account, Pro Preview, Admin Editorial Studio, and Social Intelligence Pack Studio.
+- Highest-level product vision source: `docs/IXAI_PRODUCT_VISION.md`.
+- Core product positioning: IXAI is an AI Investment Monitoring System, not a brokerage app, news app, generic finance dashboard, robo-advisor, trading system, or generic chatbot.
+- Next major direction: `V16 — AI Monitoring Platform`.
+
+Product vision hierarchy:
+
+```text
+docs/IXAI_PRODUCT_VISION.md
+↓
+docs/PROJECT_CONTEXT.md
+↓
+docs/ROADMAP.md
+↓
+V15 / V16 implementation docs
+```
 
 V15 Product Layer:
 
