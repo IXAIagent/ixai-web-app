@@ -35,6 +35,9 @@ V15 Product Layer:
 - Watchlist — redesigned in V15 Wave 2.
 - Notifications — redesigned in V15 Wave 2.
 - Timeline — redesigned in V15 Wave 2.
+- Settings — redesigned in V15 Wave 3.
+- Health — moved under Settings -> Advanced in V15 Wave 3.
+- Beta — moved under Settings -> About in V15 Wave 3.
 
 These Workspace product surfaces should follow one Dashboard Layout system:
 
@@ -55,6 +58,8 @@ Diagnostics rule:
 - Provider, runtime, health, source, readiness, cache, activation, foundation, and diagnostics surfaces belong at the bottom of the page or under Settings -> Advanced.
 - They must not be first-screen primary content unless the page itself is Settings -> Advanced.
 - AI / information surfaces remain explain-only and must not introduce AI provider calls, recommendation logic, trading actions, or external notification delivery.
+- Workspace platform navigation uses the primary IA: 首頁, 我的資產, 市場, AI, 提醒, 設定.
+- Mobile bottom navigation uses only five primary destinations: 首頁, 資產, 市場, AI, 設定.
 
 Current V15 source docs:
 

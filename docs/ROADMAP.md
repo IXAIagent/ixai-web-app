@@ -8,7 +8,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Priority
 
-Current priority is `V15 Wave 2 — AI / Information Experience`, completed as the second multi-page Product Experience Redesign implementation pass. IXAI's product direction has shifted from Developer Workspace to AI Wealth Workspace. The highest priority is not new feature expansion; it is product experience redesign across UX, IA, navigation, dashboard hierarchy, design system, copywriting, and component hierarchy.
+Current priority is `V15 Wave 3 — Platform Experience & Navigation Polish`, completed as the final major V15 UX wave. IXAI's product direction has shifted from Developer Workspace to AI Wealth Workspace. The highest priority is not new feature expansion; it is product experience redesign across UX, IA, navigation, dashboard hierarchy, design system, copywriting, and component hierarchy.
 
 V15 current sequence:
 
@@ -16,7 +16,7 @@ V15 current sequence:
 - Completed: Sprint 2.1a Dashboard Polish.
 - Completed: Wave 1 Portfolio Experience for Home, Portfolio, FCN, and Risk.
 - Completed: Wave 2 AI / Information Experience for Intelligence, Copilot, Watchlist, Notifications, and Timeline.
-- Next: Sprint 3 Navigation Redesign.
+- Completed: Wave 3 Platform Experience & Navigation Polish for Workspace navigation, Settings, Health, Beta, Advanced diagnostics, mobile navigation, and platform consistency.
 - Next: Sprint 4 Design Polish.
 
 V15 does not add:
@@ -42,6 +42,8 @@ V15 only refactors:
 - Diagnostics demotion.
 - Shared page hierarchy across Home, Portfolio, FCN, Risk, Intelligence, Copilot, Watchlist, Notifications, and Timeline.
 - Explain-only AI / information surfaces without new AI provider, recommendation, trading, or delivery behavior.
+- Platform navigation IA with Health, Beta, and Diagnostics under Settings -> Advanced / About.
+- Mobile bottom navigation limited to five primary destinations.
 
 Use these V15 source documents before future Workspace UI work:
 

@@ -33,10 +33,14 @@ Completed:
 - V15 Wave 2 — AI / Information Experience.
   - Intelligence, Copilot, Watchlist, Notifications, and Timeline now share the V15 page hierarchy.
   - AI / information pages remain explain-only and do not add AI provider, recommendation, trading, or delivery behavior.
+- V15 Wave 3 — Platform Experience & Navigation Polish.
+  - Workspace navigation now follows the primary IA: 首頁, 我的資產, 市場, AI, 提醒, 設定.
+  - Settings is the platform home for General, Workspace, Language, Notifications, Privacy, About, and Advanced.
+  - Health, Beta, and Diagnostics are no longer first-level navigation items; they live under Settings -> Advanced / About.
+  - Mobile bottom navigation is limited to five items: 首頁, 資產, 市場, AI, 設定.
 
 Next:
 
-- Sprint 3 Navigation Redesign.
 - Sprint 4 Design Polish.
 
 ## UX Principles
@@ -100,6 +104,15 @@ Wave 2 applies this hierarchy to:
 - Notifications.
 - Timeline.
 
+Wave 3 applies the same product language to:
+
+- Workspace navigation.
+- Settings.
+- Health.
+- Beta.
+- Advanced diagnostics.
+- Mobile navigation.
+
 ## Navigation Principles
 
 Primary navigation should be user-job-oriented:
@@ -118,6 +131,7 @@ Route grouping:
 - Morning Brief, Intelligence, and Copilot belong under AI.
 - Notifications and Timeline belong under 通知.
 - Health, Beta, diagnostics, provider health, and runtime status belong under Settings -> Advanced.
+- Mobile bottom navigation must not exceed five items: 首頁, 資產, 市場, AI, 設定.
 
 ## Design Principles
 

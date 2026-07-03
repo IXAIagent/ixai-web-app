@@ -71,6 +71,9 @@ Highest-priority work:
 - Watchlist UX.
 - Notifications UX.
 - Timeline UX.
+- Settings UX.
+- Platform navigation.
+- Mobile navigation.
 - Dashboard hierarchy.
 - Navigation.
 - Design System.
@@ -101,7 +104,8 @@ Sprint status:
 - V15 Sprint 2.1a Dashboard Polish is complete.
 - V15 Wave 1 Portfolio Experience is complete for Home, Portfolio, FCN, and Risk.
 - V15 Wave 2 AI / Information Experience is complete for Intelligence, Copilot, Watchlist, Notifications, and Timeline.
-- Next recommended sequence: Sprint 3 Navigation Redesign, Sprint 4 Design Polish.
+- V15 Wave 3 Platform Experience & Navigation Polish is complete for Workspace navigation, Settings, Health, Beta, Advanced diagnostics, mobile navigation, and platform consistency.
+- Next recommended sequence: Sprint 4 Design Polish and authenticated production visual QA.
 
 Wave 1 product hierarchy:
 
@@ -118,6 +122,12 @@ Diagnostics collapsed by default
 ```
 
 Wave 2 AI / information pages remain explain-only. They do not add AI provider calls, recommendation logic, trading behavior, external notification delivery, scheduler behavior, API contracts, database schema, Supabase behavior, or engine logic.
+
+Wave 3 Platform Experience rule:
+
+- Primary Workspace navigation is 首頁, 我的資產, 市場, AI, 提醒, 設定.
+- Health, Beta, and Diagnostics are Settings -> Advanced / About surfaces, not first-level navigation.
+- Mobile bottom navigation is limited to five items: 首頁, 資產, 市場, AI, 設定.
 
 Canonical V15 product context:
 

@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15 Wave 3 — Platform Experience & Navigation Polish
+
+Why:
+
+- V15 Wave 1 and Wave 2 redesigned the major Workspace content pages, but platform navigation still exposed Health and Beta as first-level destinations.
+- Settings needed to become the platform home for General, Workspace, Language, Notifications, Privacy, About, and Advanced.
+- Mobile navigation needed to fit the AI Wealth Workspace IA with no more than five primary items.
+
+What Changed:
+
+- Reorganized desktop sidebar into 首頁, 我的資產, 市場, AI, 提醒, 設定.
+- Reorganized mobile bottom navigation into 首頁, 資產, 市場, AI, 設定.
+- Reorganized mobile drawer using the same product IA and moved System Health / Beta under Settings.
+- Reworked `/my-ixai/settings` into the platform settings home with General, Workspace, Language, Notifications, Privacy, About, and Advanced sections.
+- Reworked `/my-ixai/health` as Settings / Advanced / System Health.
+- Reworked `/my-ixai/beta` as Settings / About / Beta.
+- Updated `/my-ixai` entry copy so Health, Beta, and Diagnostics are not first-level Workspace concepts.
+
+Key Decisions:
+
+- Wave 3 changes platform IA, navigation hierarchy, Settings composition, Health/Beta placement, mobile navigation, and product language only.
+- Health, Beta, and Diagnostics remain available, but are demoted into Settings -> Advanced / About.
+- No API, database, Supabase, auth, schema, migration, scheduler, market provider, portfolio engine, FCN engine, risk engine, Morning Brief engine, AI/LLM, trading, recommendation, billing, backend, or external integration behavior changed.
+
 ## V15 Wave 2 — AI / Information Experience
 
 Why:

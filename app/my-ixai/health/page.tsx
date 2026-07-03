@@ -1,4 +1,4 @@
-import { WorkspaceHealthCenter } from "@/components/workspace/workspace-health-center";
+import { WorkspaceHealthExperience } from "@/components/workspace/platform/workspace-health-experience";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -9,9 +9,5 @@ export const metadata = buildPublicMetadata({
 });
 
 export default function WorkspaceHealthPage() {
-  return (
-    <main className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-3 py-3 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
-      <WorkspaceHealthCenter />
-    </main>
-  );
+  return <WorkspaceHealthExperience />;
 }
