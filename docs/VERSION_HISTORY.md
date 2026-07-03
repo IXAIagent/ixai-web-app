@@ -6,6 +6,27 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15.0.1 — Production Renderer Hung Hotfix
+
+Why:
+
+- After the V15 Workspace redesign merged, production showed a Chrome renderer hang / `RESULT_CODE_HUNG` on `/my-ixai/home`.
+- Authenticated Home could appear briefly before the tab hung.
+- The high-confidence suspicion was that V15 moved heavy diagnostics into collapsed `<details>` panels, but those hidden children still mounted immediately and ran their client effects.
+
+What Changed:
+
+- Updated `WorkspaceDiagnosticsPanel` so collapsed diagnostics do not render children until the panel is opened.
+- Kept diagnostics collapsed by default.
+- Preserved V15 Home / Portfolio / FCN / Risk / Intelligence / Copilot / Watchlist / Notifications / Timeline / Settings product hierarchy.
+- Added `docs/V1501_PRODUCTION_RENDERER_HUNG_HOTFIX.md`.
+
+Key Decisions:
+
+- V15.0.1 is runtime stabilization only.
+- No product feature, UI redesign, API, database, Supabase, auth, engine, provider, scheduler, AI / LLM, trading, or recommendation behavior changed.
+- Production verification must confirm `/my-ixai/home` stays open for 2 minutes and route switching no longer triggers renderer hangs.
+
 ## V15 Wave 3 — Platform Experience & Navigation Polish
 
 Why:

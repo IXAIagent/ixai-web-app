@@ -60,6 +60,14 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 V15 Product Experience Redesign has started. The current highest priority is product experience, not new feature expansion.
 
+V15.0.1 production hotfix status:
+
+- After PR #101, production showed a Chrome renderer hang / `RESULT_CODE_HUNG` on `/my-ixai/home`.
+- The strongest suspicion is eager mounting of heavy diagnostics inside collapsed `<details>` panels.
+- V15.0.1 stabilizes the shared `WorkspaceDiagnosticsPanel` so collapsed diagnostics do not render or mount children until the user opens the panel.
+- This is runtime stabilization only. It does not change product direction, API, database, Supabase, auth, Risk / FCN / Portfolio engines, market providers, AI / LLM behavior, scheduler, trading, or recommendation logic.
+- Source of truth: `docs/V1501_PRODUCTION_RENDERER_HUNG_HOTFIX.md`.
+
 Highest-priority work:
 
 - Home UX.
