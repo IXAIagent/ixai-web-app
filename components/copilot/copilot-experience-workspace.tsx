@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Bot, Copy, MessageSquareText, ShieldCheck, Sparkles, WalletCards } from "lucide-react";
 
 import { WorkspaceCopilotSummary } from "@/components/copilot/workspace-copilot-summary";
@@ -10,8 +10,6 @@ import {
   WorkspaceProductHero,
   WorkspaceProductSection,
 } from "@/components/workspace/product";
-import { getWorkspaceCopilotSummary, type WorkspaceCopilotSummary as CopilotSummary } from "@/src/lib/copilot";
-import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 const suggestedQuestions = [
   "今天有哪些 FCN 快 KI？",
@@ -21,37 +19,8 @@ const suggestedQuestions = [
   "今天 Morning Brief 重點是什麼？",
 ];
 
-function buildEmptySummary(): CopilotSummary {
-  return {
-    capabilityCount: 0,
-    explanations: [],
-    generatedAt: new Date().toISOString(),
-    informationalOnlyDisclaimer:
-      "Workspace Copilot is rule-based and explain-only. It does not provide buy, sell, hold, target price, or order instructions.",
-    mode: "rule_based_explain_only",
-  };
-}
-
 export function CopilotExperienceWorkspace() {
-  const [summary, setSummary] = useState<CopilotSummary>(() => buildEmptySummary());
   const [copied, setCopied] = useState<string | null>(null);
-  const mountedRef = useRef(false);
-
-  useEffect(() => {
-    mountedRef.current = true;
-
-    async function load() {
-      const result = await runWorkspaceSafe("copilot-experience-summary", getWorkspaceCopilotSummary, buildEmptySummary());
-      if (!mountedRef.current) return;
-      setSummary(result.data);
-    }
-
-    queueMicrotask(() => void load());
-
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
 
   async function copyQuestion(question: string) {
     try {
@@ -70,7 +39,7 @@ export function CopilotExperienceWorkspace() {
           kpis={[
             { description: "可直接複製或用作提問起點。", icon: MessageSquareText, label: "Suggested Questions", value: String(suggestedQuestions.length) },
             { description: "目前以 rule-based summary 呈現。", icon: Bot, label: "Recent Conversations", value: "準備中" },
-            { description: "可讀取 Workspace 的摘要脈絡。", icon: WalletCards, label: "Available Context", value: String(summary.capabilityCount) },
+            { description: "點擊產生摘要後才整理 Workspace 脈絡。", icon: WalletCards, label: "Available Context", value: "手動整理" },
             { description: "只做 explain-only，不提供交易指令。", icon: ShieldCheck, label: "Safe Mode", value: "開啟" },
           ]}
           side={
@@ -138,13 +107,13 @@ export function CopilotExperienceWorkspace() {
         <WorkspaceDiagnosticsPanel description="graph、runtime、source">
           <WorkspaceKpiGrid
             items={[
-              { description: "目前可解釋的 Workspace 脈絡數。", icon: Sparkles, label: "Context", value: String(summary.capabilityCount) },
+              { description: "初始載入不自動讀取 Workspace Graph。", icon: Sparkles, label: "Context", value: "Manual only" },
               { description: "Copilot 不呼叫外部 AI model。", icon: ShieldCheck, label: "Mode", value: "Explain-only" },
-              { description: "最近摘要生成時間。", icon: Bot, label: "Generated", value: new Intl.DateTimeFormat("zh-TW", { hour: "2-digit", minute: "2-digit" }).format(new Date(summary.generatedAt)) },
+              { description: "點擊產生摘要後才執行。", icon: Bot, label: "Generated", value: "待手動執行" },
             ]}
           />
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-            {summary.informationalOnlyDisclaimer}
+            Workspace Copilot is rule-based and explain-only. Initial page load does not run Workspace Graph, call AI models, or provide buy, sell, hold, target price, or order instructions.
           </p>
         </WorkspaceDiagnosticsPanel>
       </section>
