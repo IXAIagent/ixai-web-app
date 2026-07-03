@@ -4,9 +4,50 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V13.8 Full Workspace Localization Completion`
+`V15 Product Experience Redesign`
 
 ## Current Priority
+
+Current priority is `V15 Sprint 2.1 Home Redesign`, completed as the first Product Experience Redesign implementation pass. IXAI's product direction has shifted from Developer Workspace to AI Wealth Workspace. The highest priority is not new feature expansion; it is product experience redesign across UX, IA, navigation, dashboard hierarchy, design system, copywriting, and component hierarchy.
+
+V15 current sequence:
+
+- Completed: Sprint 2.1 Home Redesign.
+- Next: Sprint 2.1a Dashboard Polish.
+- Next: Sprint 2.2 Portfolio Redesign.
+- Next: Sprint 2.3 FCN Redesign.
+- Next: Sprint 2.4 Risk Redesign.
+- Next: Sprint 2.5 Intelligence Redesign.
+- Next: Sprint 2.6 Copilot Redesign.
+
+V15 does not add:
+
+- API.
+- Database.
+- AI model behavior.
+- Risk Engine.
+- FCN Engine.
+- Scheduler.
+- Trading.
+- Recommendation.
+
+V15 only refactors:
+
+- UX.
+- IA.
+- Navigation.
+- Dashboard.
+- Design System.
+- Copywriting.
+- Component hierarchy.
+
+Use these V15 source documents before future Workspace UI work:
+
+- `docs/V15_PRODUCT_EXPERIENCE_CONTEXT.md`.
+- `docs/V15_UX_AUDIT.md`.
+- `docs/V15_SPRINT_1_IA_NAVIGATION_REDESIGN_PLAN.md`.
+- `docs/V15_DESIGN_SYSTEM_2.md`.
+- `docs/V15_SPRINT_2_UI_IMPLEMENTATION_SPEC.md`.
 
 IXAI has completed the Portfolio Foundation, FCN Foundation, FCN Worst-of Engine, FCN Risk Engine MVP, first Portfolio Intelligence Dashboard MVP, Membership / Entitlement Foundation, Multi-Asset Portfolio Foundation, Portfolio Center UI, Architecture Visualization, Portfolio Input Foundation, mock CRUD, Data Model, Repository, Persistence, Ownership Validation, Repository-driven Dashboard, News Intelligence, mock News Provider, mock AI Commentary, mock Intelligence Engine, mock Risk Engine, mock Recommendation Engine, mock Market Data, mock Valuation, mock Exposure, mock Concentration, mock Correlation, mock Scenario Engine, mock Stress Test Engine, mock Portfolio FCN Risk Engine, Global Market Foundation Review, and v2.11 Legacy Pro Migration Audit / Product Inventory.
 

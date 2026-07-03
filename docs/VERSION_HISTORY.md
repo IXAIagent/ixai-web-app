@@ -6,6 +6,32 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15 Sprint 2.1 Home Redesign
+
+Why:
+
+- V15 Product Experience Redesign shifts IXAI from a Developer Workspace toward an AI Wealth Workspace.
+- The previous Home hierarchy exposed live quote status, i18n/localization cards, runtime readiness, and diagnostics before answering the user's daily investment questions.
+- The first screen needed to prioritize Morning Brief, portfolio state, risk/alerts, market context, and next actions.
+
+What Changed:
+
+- Reworked `/my-ixai/home` to render a V15 Home dashboard composition.
+- Added Hero Summary that frames the page as an AI Wealth Workspace.
+- Promoted Morning Brief to the first-screen area.
+- Added Portfolio Snapshot with Total Assets, Allocation, Today's Performance, and Holdings Count.
+- Added Today's Alerts grouped as Critical, Warning, and Info.
+- Added Market Snapshot with provider/cache/runtime details demoted to diagnostics.
+- Added Quick Actions for Portfolio, Add Asset, FCN, Watchlist, and Copilot.
+- Added Recent Activity limited to the latest five timeline events.
+- Moved Provider, Runtime, Health, Source, Readiness, Cache, and Diagnostics into a collapsed Diagnostics section at the bottom.
+
+Key Decisions:
+
+- Sprint 2.1 changes hierarchy, layout, spacing, cards, copy, and information architecture only.
+- No API, database, business logic, Risk Engine, FCN Engine, Morning Brief Engine, Market Service, Supabase, auth, scheduler, provider, runtime, translation keys, i18n dictionaries, backend, trading, recommendation, or AI model behavior changed.
+- The V15 source of truth is `docs/V15_PRODUCT_EXPERIENCE_CONTEXT.md` plus the V15 UX Audit, IA plan, Design System 2.0, and Sprint 2 UI implementation spec.
+
 ## V13.8 Full Workspace Localization Completion
 
 Why:

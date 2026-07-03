@@ -24,6 +24,40 @@ Role:
 - Current Vercel / public app mainline.
 - Owns the public IXAI experience: landing, onboarding, Daily Brief, Weekly Intelligence, Share Intelligence, Account, Pro Preview, Admin Editorial Studio, and Social Intelligence Pack Studio.
 
+V15 Product Layer:
+
+- Home.
+- Portfolio.
+- FCN.
+- Risk.
+- Intelligence.
+- Copilot.
+
+These Workspace product surfaces should follow one Dashboard Layout system:
+
+```text
+Hero / Summary
+↓
+Primary user-facing cards
+↓
+Detail sections
+↓
+Secondary diagnostics
+```
+
+Diagnostics rule:
+
+- Provider, runtime, health, source, readiness, cache, activation, foundation, and diagnostics surfaces belong at the bottom of the page or under Settings -> Advanced.
+- They must not be first-screen primary content unless the page itself is Settings -> Advanced.
+
+Current V15 source docs:
+
+- `docs/V15_PRODUCT_EXPERIENCE_CONTEXT.md`.
+- `docs/V15_UX_AUDIT.md`.
+- `docs/V15_SPRINT_1_IA_NAVIGATION_REDESIGN_PLAN.md`.
+- `docs/V15_DESIGN_SYSTEM_2.md`.
+- `docs/V15_SPRINT_2_UI_IMPLEMENTATION_SPEC.md`.
+
 Production data ownership update:
 
 - `app/ixai-web-app` now owns the real Portfolio / FCN production data layer.

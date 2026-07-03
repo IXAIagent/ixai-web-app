@@ -56,6 +56,50 @@ This origin matters because IXAI's product center is not "content marketing" or 
 
 The current IXAI public app is live and deployed on Vercel, with `https://app.ixuan.ai` as the production public domain.
 
+## B0. V15 Product Experience Redesign Status
+
+V15 Product Experience Redesign has started. The current highest priority is product experience, not new feature expansion.
+
+Highest-priority work:
+
+- Home UX.
+- Dashboard hierarchy.
+- Navigation.
+- Design System.
+- Morning Brief prominence.
+- Diagnostics demotion.
+- Workspace language.
+
+All Workspace first screens should answer:
+
+- 今天我的資產如何？
+- 今天有哪些風險？
+- 今天市場如何？
+- 下一步做什麼？
+
+V15 Product Direction:
+
+```text
+Developer Workspace
+↓
+AI Wealth Workspace
+```
+
+V15 must not add API, database, AI model behavior, Risk Engine, FCN Engine, scheduler, trading, or recommendation scope unless separately approved. V15 work should focus on UX, IA, navigation, dashboard hierarchy, design system, copywriting, component hierarchy, and demoting diagnostics below user-facing summaries.
+
+Sprint status:
+
+- V15 Sprint 2.1 Home Redesign is complete.
+- Next recommended sequence: Sprint 2.1a Dashboard Polish, Sprint 2.2 Portfolio Redesign, Sprint 2.3 FCN Redesign, Sprint 2.4 Risk Redesign, Sprint 2.5 Intelligence Redesign, Sprint 2.6 Copilot Redesign.
+
+Canonical V15 product context:
+
+- `docs/V15_PRODUCT_EXPERIENCE_CONTEXT.md`.
+- `docs/V15_UX_AUDIT.md`.
+- `docs/V15_SPRINT_1_IA_NAVIGATION_REDESIGN_PLAN.md`.
+- `docs/V15_DESIGN_SYSTEM_2.md`.
+- `docs/V15_SPRINT_2_UI_IMPLEMENTATION_SPEC.md`.
+
 ## B0. v1.80 / v1.81 Production Status — Portfolio + FCN Foundation
 
 Production foundation:

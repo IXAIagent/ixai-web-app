@@ -84,6 +84,14 @@ Public Route Gate rules:
 
 ## B. Design System Rules
 
+Product First Rule:
+
+- UX priority is higher than new feature creation during V15 Product Experience Redesign.
+- Unless a major product requirement explicitly approves it, do not add Engine, Runtime, Provider, Cache, Source status, Readback, Diagnostics, Activation, Foundation, or Readiness content to the first screen of Workspace pages.
+- Workspace first screens should prioritize Morning Brief, Portfolio, Risk, Alerts, Market, and Quick Actions.
+- Diagnostics belong at the bottom of the page, collapsed by default, or under Settings -> Advanced.
+- Future V15 work must follow `docs/V15_PRODUCT_EXPERIENCE_CONTEXT.md`, `docs/V15_DESIGN_SYSTEM_2.md`, and `docs/V15_SPRINT_2_UI_IMPLEMENTATION_SPEC.md`.
+
 CTA and icon color rules:
 
 - Forest CTA: cream text with cream or gold icon.
