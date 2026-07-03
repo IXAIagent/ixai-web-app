@@ -30,11 +30,12 @@ Completed:
 - V15 Wave 1 — Portfolio Experience.
   - Home, Portfolio, FCN, and Risk now share the V15 page hierarchy.
   - Diagnostics are collapsed below user-facing summaries.
+- V15 Wave 2 — AI / Information Experience.
+  - Intelligence, Copilot, Watchlist, Notifications, and Timeline now share the V15 page hierarchy.
+  - AI / information pages remain explain-only and do not add AI provider, recommendation, trading, or delivery behavior.
 
 Next:
 
-- Sprint 2.5 Intelligence Redesign.
-- Sprint 2.6 Copilot Redesign.
 - Sprint 3 Navigation Redesign.
 - Sprint 4 Design Polish.
 
@@ -90,6 +91,14 @@ Wave 1 applies this hierarchy to:
 - Portfolio.
 - FCN.
 - Risk.
+
+Wave 2 applies this hierarchy to:
+
+- Intelligence.
+- Copilot.
+- Watchlist.
+- Notifications.
+- Timeline.
 
 ## Navigation Principles
 

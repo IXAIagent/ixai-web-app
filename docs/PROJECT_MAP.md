@@ -30,8 +30,11 @@ V15 Product Layer:
 - Portfolio — redesigned in V15 Wave 1.
 - FCN — redesigned in V15 Wave 1.
 - Risk — redesigned in V15 Wave 1.
-- Intelligence.
-- Copilot.
+- Intelligence — redesigned in V15 Wave 2.
+- Copilot — redesigned in V15 Wave 2.
+- Watchlist — redesigned in V15 Wave 2.
+- Notifications — redesigned in V15 Wave 2.
+- Timeline — redesigned in V15 Wave 2.
 
 These Workspace product surfaces should follow one Dashboard Layout system:
 
@@ -51,6 +54,7 @@ Diagnostics rule:
 
 - Provider, runtime, health, source, readiness, cache, activation, foundation, and diagnostics surfaces belong at the bottom of the page or under Settings -> Advanced.
 - They must not be first-screen primary content unless the page itself is Settings -> Advanced.
+- AI / information surfaces remain explain-only and must not introduce AI provider calls, recommendation logic, trading actions, or external notification delivery.
 
 Current V15 source docs:
 

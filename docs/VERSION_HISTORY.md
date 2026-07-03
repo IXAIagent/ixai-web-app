@@ -6,6 +6,28 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15 Wave 2 — AI / Information Experience
+
+Why:
+
+- V15 Wave 1 established the shared AI Wealth Workspace hierarchy for Home, Portfolio, FCN, and Risk.
+- Intelligence, Copilot, Watchlist, Notifications, and Timeline still exposed too much source, readiness, engine, delivery, or event-log language before explaining what users should read or do next.
+- AI / information pages needed to feel like readable market and workflow surfaces while preserving explain-only and monitoring-only boundaries.
+
+What Changed:
+
+- Reworked `/my-ixai/intelligence` around Today's Market, Portfolio Impact, explain-only AI Summary, News / Watchlist, and collapsed diagnostics.
+- Reworked `/my-ixai/copilot` into an AI assistant entry point with suggested questions, empty-state guidance, explain-only summary, and collapsed diagnostics.
+- Reworked `/my-ixai/watchlist` into a market tracking page with watched symbols, market snapshot, empty state CTA, and collapsed diagnostics.
+- Reworked `/my-ixai/notifications` into a reminder center with priority-based notifications, delivery preview, empty state, and collapsed diagnostics.
+- Reworked `/my-ixai/timeline` into a recent events page with today / next 7 days grouping, FCN / portfolio events, empty state, and collapsed diagnostics.
+
+Key Decisions:
+
+- Wave 2 changes hierarchy, layout, copy, card structure, product language, and diagnostics placement only.
+- Existing Intelligence, Copilot, Watchlist, Notification, Timeline, Market, Morning Brief, Portfolio, FCN, and Risk services remain unchanged.
+- No API, database, Supabase, auth, schema, migration, scheduler, market provider, trading, recommendation, billing, external integration, AI provider, LLM behavior, or engine logic changed.
+
 ## V15 Wave 1 — Portfolio Experience
 
 Why:

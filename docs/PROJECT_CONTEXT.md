@@ -66,6 +66,11 @@ Highest-priority work:
 - Portfolio UX.
 - FCN UX.
 - Risk UX.
+- Intelligence UX.
+- Copilot UX.
+- Watchlist UX.
+- Notifications UX.
+- Timeline UX.
 - Dashboard hierarchy.
 - Navigation.
 - Design System.
@@ -95,7 +100,8 @@ Sprint status:
 - V15 Sprint 2.1 Home Redesign is complete.
 - V15 Sprint 2.1a Dashboard Polish is complete.
 - V15 Wave 1 Portfolio Experience is complete for Home, Portfolio, FCN, and Risk.
-- Next recommended sequence: Sprint 2.5 Intelligence Redesign, Sprint 2.6 Copilot Redesign, Sprint 3 Navigation Redesign, Sprint 4 Design Polish.
+- V15 Wave 2 AI / Information Experience is complete for Intelligence, Copilot, Watchlist, Notifications, and Timeline.
+- Next recommended sequence: Sprint 3 Navigation Redesign, Sprint 4 Design Polish.
 
 Wave 1 product hierarchy:
 
@@ -110,6 +116,8 @@ Detail sections
 ↓
 Diagnostics collapsed by default
 ```
+
+Wave 2 AI / information pages remain explain-only. They do not add AI provider calls, recommendation logic, trading behavior, external notification delivery, scheduler behavior, API contracts, database schema, Supabase behavior, or engine logic.
 
 Canonical V15 product context:
 

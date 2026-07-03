@@ -1,4 +1,4 @@
-import { IntelligenceCenterWorkspace } from "@/components/intelligence/intelligence-center-workspace";
+import { IntelligenceExperienceWorkspace } from "@/components/intelligence/intelligence-experience-workspace";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -9,5 +9,5 @@ export const metadata = buildPublicMetadata({
 });
 
 export default function MyIxaiIntelligencePage() {
-  return <IntelligenceCenterWorkspace />;
+  return <IntelligenceExperienceWorkspace />;
 }
