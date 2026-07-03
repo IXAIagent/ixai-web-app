@@ -6,6 +6,28 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15 Wave 1 — Portfolio Experience
+
+Why:
+
+- V15 needed to extend the Home redesign into the most important authenticated Workspace surfaces.
+- Portfolio, FCN, and Risk still presented too much provider, source, runtime, readback, and diagnostics language before answering what users should watch today.
+- Home, Portfolio, FCN, and Risk needed one consistent AI Wealth Workspace page hierarchy before deeper Intelligence, Copilot, and navigation redesign work.
+
+What Changed:
+
+- Added shared V15 product primitives for product heroes, KPI grids, product sections, and collapsed diagnostics panels.
+- Updated Home to use the shared V15 product hero and diagnostics panel.
+- Reworked `/my-ixai/portfolio` around portfolio hero, total assets, allocation, today's performance, holdings, recent changes, and collapsed diagnostics.
+- Reworked `/my-ixai/fcn` around FCN risk status, upcoming observation, schedule awareness, positions, and collapsed diagnostics.
+- Reworked `/my-ixai/risk` around today's risk, risk explanation, top risk drivers, concentration, exposure, and collapsed diagnostics.
+
+Key Decisions:
+
+- Wave 1 changes hierarchy, layout, copy, card composition, and diagnostics placement only.
+- Existing Portfolio valuation, FCN risk/schedule, Risk Engine, Market Service, Morning Brief, and Workspace runtime logic remain unchanged.
+- No API, database, Supabase, auth, schema, migration, scheduler, provider, trading, recommendation, billing, AI/LLM, or engine behavior changed.
+
 ## V15 Sprint 2.1 Home Redesign
 
 Why:

@@ -8,17 +8,17 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Priority
 
-Current priority is `V15 Sprint 2.1 Home Redesign`, completed as the first Product Experience Redesign implementation pass. IXAI's product direction has shifted from Developer Workspace to AI Wealth Workspace. The highest priority is not new feature expansion; it is product experience redesign across UX, IA, navigation, dashboard hierarchy, design system, copywriting, and component hierarchy.
+Current priority is `V15 Wave 1 — Portfolio Experience`, completed as the first multi-page Product Experience Redesign implementation pass. IXAI's product direction has shifted from Developer Workspace to AI Wealth Workspace. The highest priority is not new feature expansion; it is product experience redesign across UX, IA, navigation, dashboard hierarchy, design system, copywriting, and component hierarchy.
 
 V15 current sequence:
 
 - Completed: Sprint 2.1 Home Redesign.
-- Next: Sprint 2.1a Dashboard Polish.
-- Next: Sprint 2.2 Portfolio Redesign.
-- Next: Sprint 2.3 FCN Redesign.
-- Next: Sprint 2.4 Risk Redesign.
+- Completed: Sprint 2.1a Dashboard Polish.
+- Completed: Wave 1 Portfolio Experience for Home, Portfolio, FCN, and Risk.
 - Next: Sprint 2.5 Intelligence Redesign.
 - Next: Sprint 2.6 Copilot Redesign.
+- Next: Sprint 3 Navigation Redesign.
+- Next: Sprint 4 Design Polish.
 
 V15 does not add:
 
@@ -40,6 +40,8 @@ V15 only refactors:
 - Design System.
 - Copywriting.
 - Component hierarchy.
+- Diagnostics demotion.
+- Shared page hierarchy across Home, Portfolio, FCN, and Risk.
 
 Use these V15 source documents before future Workspace UI work:
 

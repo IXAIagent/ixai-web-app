@@ -63,6 +63,9 @@ V15 Product Experience Redesign has started. The current highest priority is pro
 Highest-priority work:
 
 - Home UX.
+- Portfolio UX.
+- FCN UX.
+- Risk UX.
 - Dashboard hierarchy.
 - Navigation.
 - Design System.
@@ -90,7 +93,23 @@ V15 must not add API, database, AI model behavior, Risk Engine, FCN Engine, sche
 Sprint status:
 
 - V15 Sprint 2.1 Home Redesign is complete.
-- Next recommended sequence: Sprint 2.1a Dashboard Polish, Sprint 2.2 Portfolio Redesign, Sprint 2.3 FCN Redesign, Sprint 2.4 Risk Redesign, Sprint 2.5 Intelligence Redesign, Sprint 2.6 Copilot Redesign.
+- V15 Sprint 2.1a Dashboard Polish is complete.
+- V15 Wave 1 Portfolio Experience is complete for Home, Portfolio, FCN, and Risk.
+- Next recommended sequence: Sprint 2.5 Intelligence Redesign, Sprint 2.6 Copilot Redesign, Sprint 3 Navigation Redesign, Sprint 4 Design Polish.
+
+Wave 1 product hierarchy:
+
+```text
+Hero / Summary
+↓
+KPI Row
+↓
+Primary user-facing cards
+↓
+Detail sections
+↓
+Diagnostics collapsed by default
+```
 
 Canonical V15 product context:
 

@@ -1,13 +1,13 @@
-import { FCNCenterWorkspace } from "@/components/fcn/fcn-center-workspace";
+import { FcnExperienceWorkspace } from "@/components/fcn/fcn-experience-workspace";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
   canonical: "/my-ixai/fcn",
   description:
-    "FCN Intelligence Center 讀取 Supabase FCN positions，顯示 lifecycle、manual price overlay、KI distance、timeline 與 concentration risk readback。",
-  title: "FCN Intelligence Center | 我的 IXAI",
+    "FCN Risk Workspace 顯示 FCN 風險、KI 距離、觀察日、配息、到期與進階資料狀態。",
+  title: "FCN Risk Workspace | 我的 IXAI",
 });
 
 export default function MyIxaiFcnPage() {
-  return <FCNCenterWorkspace />;
+  return <FcnExperienceWorkspace />;
 }

@@ -27,12 +27,12 @@ Completed:
 - V15 Sprint 2 UI Implementation Specification.
 - V15 Sprint 2.1 Home Redesign.
 - V15 Sprint 2.1a Dashboard Polish.
+- V15 Wave 1 — Portfolio Experience.
+  - Home, Portfolio, FCN, and Risk now share the V15 page hierarchy.
+  - Diagnostics are collapsed below user-facing summaries.
 
 Next:
 
-- Sprint 2.2 Portfolio Redesign.
-- Sprint 2.3 FCN Redesign.
-- Sprint 2.4 Risk Redesign.
 - Sprint 2.5 Intelligence Redesign.
 - Sprint 2.6 Copilot Redesign.
 - Sprint 3 Navigation Redesign.
@@ -75,12 +75,21 @@ Use the same product hierarchy for other Workspace pages:
 ```text
 Hero / Summary
 ↓
+KPI Row
+↓
 Primary user-facing cards
 ↓
 Detail sections
 ↓
 Secondary diagnostics
 ```
+
+Wave 1 applies this hierarchy to:
+
+- Home.
+- Portfolio.
+- FCN.
+- Risk.
 
 ## Navigation Principles
 

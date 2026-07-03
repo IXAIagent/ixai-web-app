@@ -8,7 +8,6 @@ import {
   Bell,
   BriefcaseBusiness,
   CalendarClock,
-  ChevronDown,
   CircleAlert,
   Eye,
   LineChart,
@@ -27,6 +26,12 @@ import { LocalizationPreview } from "@/components/i18n/localization-preview";
 import { LiveMarketDataStatus } from "@/components/market/live-market-data-status";
 import { WorkspaceHealthSummary } from "@/components/workspace/workspace-health-summary";
 import { WorkspaceMorningBriefV14Card } from "@/components/workspace/workspace-morning-brief-v14-card";
+import {
+  WorkspaceDiagnosticsPanel,
+  WorkspaceKpiGrid,
+  WorkspaceProductHero,
+  WorkspaceProductSection,
+} from "@/components/workspace/product";
 import { buildEmptyWorkspaceAlertSummary, getWorkspaceAlertSummary } from "@/src/lib/alerts";
 import type { WorkspaceAlertSummary } from "@/src/lib/alerts";
 import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service";
@@ -188,65 +193,6 @@ function sortTimelineEvents(timeline: WorkspaceTimelineSummary | null) {
     .slice(0, 5);
 }
 
-function SectionHeader({
-  eyebrow,
-  title,
-  description,
-}: {
-  description?: string;
-  eyebrow: string;
-  title: string;
-}) {
-  return (
-    <div>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-        {eyebrow}
-      </p>
-      <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)] sm:text-2xl">
-        {title}
-      </h2>
-      {description ? (
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--ixai-forest-soft)]">
-          {description}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function MetricCard({
-  description,
-  icon: Icon,
-  label,
-  value,
-}: {
-  description: string;
-  icon: typeof WalletCards;
-  label: string;
-  value: string;
-}) {
-  return (
-    <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            {label}
-          </p>
-          <p className="mt-3 text-2xl font-semibold text-[var(--ixai-forest)]">
-            {value}
-          </p>
-        </div>
-        <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
-          <Icon className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
-        </span>
-      </div>
-      <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-        {description}
-      </p>
-    </article>
-  );
-}
-
 function getAttentionCount(alerts: WorkspaceAlertSummary, fcnRisk: FcnPortfolioRiskSummary | null) {
   return (
     alerts.criticalCount +
@@ -283,33 +229,6 @@ function getRiskState(alerts: WorkspaceAlertSummary, fcnRisk: FcnPortfolioRiskSu
   };
 }
 
-function HeroKpiCard({
-  description,
-  icon: Icon,
-  label,
-  value,
-}: {
-  description: string;
-  icon: typeof WalletCards;
-  label: string;
-  value: string;
-}) {
-  return (
-    <article className="rounded-lg border border-white/12 bg-white/[0.065] p-3.5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[11px] font-semibold text-white/56">{label}</p>
-          <p className="mt-2 text-lg font-semibold text-white">{value}</p>
-        </div>
-        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/12 bg-white/[0.075]">
-          <Icon className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-        </span>
-      </div>
-      <p className="mt-2 text-xs leading-5 text-white/58">{description}</p>
-    </article>
-  );
-}
-
 function HomeHeroSummary({
   alerts,
   fcnRisk,
@@ -334,36 +253,40 @@ function HomeHeroSummary({
   const marketUpdatedAt = formatTime(portfolio?.summary.updatedAt ?? timeline?.generatedAt);
 
   return (
-    <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[var(--ixai-forest)] p-5 text-[var(--ixai-cream)] shadow-[0_24px_80px_rgba(9,41,31,0.16)] sm:p-7 lg:p-8">
-      <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--ixai-gold)]">
-            AI Wealth Workspace
-          </p>
-          <h1 className="mt-3 max-w-4xl font-serif text-3xl font-semibold leading-tight sm:text-5xl">
-            {displayName}，今天先看資產、風險與市場重點。
-          </h1>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-white/74 sm:text-base">
-            IXAI 已把今日投資狀況整理成 Morning Brief、我的資產、今天需要注意、與市場狀態，協助你快速知道下一步要查看哪裡。
-          </p>
-          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-            <Link
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-cream)] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-forest)]"
-              href="/my-ixai/portfolio"
-            >
-              <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
-              查看我的資產
-            </Link>
-            <Link
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.055] px-4 py-2.5 text-sm font-semibold text-[var(--ixai-cream)]"
-              href="/my-ixai/copilot"
-            >
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              詢問 Copilot
-            </Link>
-          </div>
-        </div>
-        <div className="rounded-lg border border-white/12 bg-white/[0.055] p-4">
+    <WorkspaceProductHero
+      actions={[
+        { href: "/my-ixai/portfolio", icon: BriefcaseBusiness, label: "查看我的資產" },
+        { href: "/my-ixai/copilot", icon: Sparkles, label: "詢問 Copilot", variant: "secondary" },
+      ]}
+      eyebrow="AI Wealth Workspace"
+      kpis={[
+        {
+          description: portfolio?.summary.positionCount ? `${portfolio.summary.positionCount} 筆持倉納入首頁摘要。` : "新增資產後會顯示總資產與配置。",
+          icon: WalletCards,
+          label: "今天我的資產如何？",
+          value: portfolioValue,
+        },
+        {
+          description: riskState.description,
+          icon: ShieldAlert,
+          label: riskState.label,
+          value: riskState.value,
+        },
+        {
+          description: attentionCount > 0 ? "已整理成需要優先查看與一般留意。" : "目前沒有需要立即處理的提醒。",
+          icon: Bell,
+          label: "今天需要注意",
+          value: `${attentionCount} 項`,
+        },
+        {
+          description: "主卡只顯示市場狀態；資料來源細節放進進階診斷。",
+          icon: LineChart,
+          label: "今天市場如何？",
+          value: marketUpdatedAt === "待更新" ? "待更新" : "已更新",
+        },
+      ]}
+      side={
+        <>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
             今日摘要
           </p>
@@ -374,36 +297,11 @@ function HomeHeroSummary({
             <p>市場：{marketUpdatedAt === "待更新" ? "等待下一次更新。" : `最近更新 ${marketUpdatedAt}。`}</p>
             <p>下一步：從 Morning Brief 或 Quick Actions 開始。</p>
           </div>
-        </div>
-      </div>
-
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <HeroKpiCard
-          description={portfolio?.summary.positionCount ? `${portfolio.summary.positionCount} 筆持倉納入首頁摘要。` : "新增資產後會顯示總資產與配置。"}
-          icon={WalletCards}
-          label="今天我的資產如何？"
-          value={portfolioValue}
-        />
-        <HeroKpiCard
-          description={riskState.description}
-          icon={ShieldAlert}
-          label={riskState.label}
-          value={riskState.value}
-        />
-        <HeroKpiCard
-          description={attentionCount > 0 ? "已整理成需要優先查看與一般留意。" : "目前沒有需要立即處理的提醒。"}
-          icon={Bell}
-          label="今天需要注意"
-          value={`${attentionCount} 項`}
-        />
-        <HeroKpiCard
-          description="主卡只顯示市場狀態；資料來源細節放進進階診斷。"
-          icon={LineChart}
-          label="今天市場如何？"
-          value={marketUpdatedAt === "待更新" ? "待更新" : "已更新"}
-        />
-      </div>
-    </section>
+        </>
+      }
+      summary="IXAI 已把今日投資狀況整理成 Morning Brief、我的資產、今天需要注意、與市場狀態，協助你快速知道下一步要查看哪裡。"
+      title={`${displayName}，今天先看資產、風險與市場重點。`}
+    />
   );
 }
 
@@ -414,13 +312,8 @@ function PortfolioSnapshot({ portfolio }: { portfolio: PortfolioValuationResult 
     .sort((a, b) => b.marketValue - a.marketValue)[0];
 
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 shadow-[0_18px_48px_rgba(9,41,31,0.05)] sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <SectionHeader
-          eyebrow="Portfolio Snapshot"
-          title="我的資產概況"
-          description="先看總資產、配置、今日表現與持倉數；資料不足時會保留可理解的 placeholder。"
-        />
+    <WorkspaceProductSection
+      action={
         <Link
           className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] sm:w-fit"
           href="/my-ixai/portfolio"
@@ -428,35 +321,40 @@ function PortfolioSnapshot({ portfolio }: { portfolio: PortfolioValuationResult 
           打開 Portfolio
           <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
         </Link>
-      </div>
-
-      <div className="mt-5 grid gap-3 md:grid-cols-4">
-        <MetricCard
-          description={summary?.positionCount ? "已依目前可用資料估算。" : "新增資產後會顯示總資產。"}
-          icon={WalletCards}
-          label="Total Assets"
-          value={formatCurrency(summary?.totalMarketValue, portfolio?.currency)}
-        />
-        <MetricCard
-          description={topAllocation ? "目前占比最高的資產類別。" : "尚未有可用配置資料。"}
-          icon={PieChart}
-          label="Allocation"
-          value={topAllocation ? `${topAllocation.assetClass.toUpperCase()} ${topAllocation.allocationPercent.toFixed(0)}%` : "暫無資料"}
-        />
-        <MetricCard
-          description="若今日行情不足，先顯示目前可估損益。"
-          icon={LineChart}
-          label="Today's Performance"
-          value={formatPercent(summary?.totalUnrealizedPnlPercent)}
-        />
-        <MetricCard
-          description={summary?.unpricedPositionCount ? `${summary.unpricedPositionCount} 筆仍需補資料。` : "持倉資料可用時會在這裡整理。"}
-          icon={BarChart3}
-          label="Holdings Count"
-          value={typeof summary?.positionCount === "number" ? String(summary.positionCount) : "0"}
-        />
-      </div>
-    </section>
+      }
+      description="先看總資產、配置、今日表現與持倉數；資料不足時會保留可理解的 placeholder。"
+      eyebrow="Portfolio Snapshot"
+      title="我的資產概況"
+    >
+      <WorkspaceKpiGrid
+        items={[
+          {
+            description: summary?.positionCount ? "已依目前可用資料估算。" : "新增資產後會顯示總資產。",
+            icon: WalletCards,
+            label: "Total Assets",
+            value: formatCurrency(summary?.totalMarketValue, portfolio?.currency),
+          },
+          {
+            description: topAllocation ? "目前占比最高的資產類別。" : "尚未有可用配置資料。",
+            icon: PieChart,
+            label: "Allocation",
+            value: topAllocation ? `${topAllocation.assetClass.toUpperCase()} ${topAllocation.allocationPercent.toFixed(0)}%` : "暫無資料",
+          },
+          {
+            description: "若今日行情不足，先顯示目前可估損益。",
+            icon: LineChart,
+            label: "Today's Performance",
+            value: formatPercent(summary?.totalUnrealizedPnlPercent),
+          },
+          {
+            description: summary?.unpricedPositionCount ? `${summary.unpricedPositionCount} 筆仍需補資料。` : "持倉資料可用時會在這裡整理。",
+            icon: BarChart3,
+            label: "Holdings Count",
+            value: typeof summary?.positionCount === "number" ? String(summary.positionCount) : "0",
+          },
+        ]}
+      />
+    </WorkspaceProductSection>
   );
 }
 
@@ -467,13 +365,8 @@ function TodaysAlerts({ alerts, fcnRisk }: { alerts: WorkspaceAlertSummary; fcnR
   const visibleAlerts = alerts.alerts.slice(0, 3);
 
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <SectionHeader
-          eyebrow="今日提醒"
-          title="今天需要留意"
-          description="首頁只整理需要優先查看、今天留意與一般提醒，不直接傾倒全部 alerts。"
-        />
+    <WorkspaceProductSection
+      action={
         <Link
           className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] sm:w-fit"
           href="/my-ixai/notifications"
@@ -481,13 +374,35 @@ function TodaysAlerts({ alerts, fcnRisk }: { alerts: WorkspaceAlertSummary; fcnR
           查看通知
           <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
         </Link>
-      </div>
-
-      <div className="mt-5 grid gap-3 md:grid-cols-3">
-        <MetricCard description="需要優先查看的高風險提醒。" icon={CircleAlert} label="需要優先查看" value={String(urgent)} />
-        <MetricCard description="值得今天留意的風險或資料變化。" icon={ShieldAlert} label="今天留意" value={String(attention)} />
-        <MetricCard description="一般資訊或後續可查看的狀態。" icon={Bell} label="一般提醒" value={String(note)} />
-      </div>
+      }
+      description="首頁只整理需要優先查看、今天留意與一般提醒，不直接傾倒全部 alerts。"
+      eyebrow="今日提醒"
+      title="今天需要留意"
+    >
+      <WorkspaceKpiGrid
+        items={[
+          {
+            description: "需要優先查看的高風險提醒。",
+            icon: CircleAlert,
+            label: "需要優先查看",
+            tone: urgent > 0 ? "critical" : "default",
+            value: String(urgent),
+          },
+          {
+            description: "值得今天留意的風險或資料變化。",
+            icon: ShieldAlert,
+            label: "今天留意",
+            tone: attention > 0 ? "warning" : "default",
+            value: String(attention),
+          },
+          {
+            description: "一般資訊或後續可查看的狀態。",
+            icon: Bell,
+            label: "一般提醒",
+            value: String(note),
+          },
+        ]}
+      />
 
       <div className="mt-4 grid gap-2">
         {visibleAlerts.length > 0 ? (
@@ -508,7 +423,7 @@ function TodaysAlerts({ alerts, fcnRisk }: { alerts: WorkspaceAlertSummary; fcnR
           </p>
         )}
       </div>
-    </section>
+    </WorkspaceProductSection>
   );
 }
 
@@ -516,13 +431,8 @@ function MarketSnapshot({ updatedAt }: { updatedAt?: string | null }) {
   const updatedLabel = formatTime(updatedAt);
 
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <SectionHeader
-          eyebrow="Market Snapshot"
-          title="市場狀態"
-          description="首頁只顯示市場狀態與更新時間；資料來源、cache 與 runtime 細節放在進階診斷。"
-        />
+    <WorkspaceProductSection
+      action={
         <Link
           className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] sm:w-fit"
           href="/my-ixai/watchlist"
@@ -530,28 +440,48 @@ function MarketSnapshot({ updatedAt }: { updatedAt?: string | null }) {
           查看 Watchlist
           <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
         </Link>
-      </div>
-      <div className="mt-5 grid gap-3 md:grid-cols-3">
-        <MetricCard description="目前以可用資料整理首頁市場狀態。" icon={LineChart} label="市場狀態" value={updatedLabel === "待更新" ? "待更新" : "已更新"} />
-        <MetricCard description="最近一次可用資料時間。" icon={CalendarClock} label="更新時間" value={updatedLabel} />
-        <MetricCard description="加入 watchlist 後會整理今日值得注意的標的。" icon={Eye} label="Watchlist" value="觀察中" />
-      </div>
+      }
+      description="首頁只顯示市場狀態與更新時間；資料來源、cache 與 runtime 細節放在進階診斷。"
+      eyebrow="Market Snapshot"
+      title="市場狀態"
+    >
+      <WorkspaceKpiGrid
+        items={[
+          {
+            description: "目前以可用資料整理首頁市場狀態。",
+            icon: LineChart,
+            label: "市場狀態",
+            value: updatedLabel === "待更新" ? "待更新" : "已更新",
+          },
+          {
+            description: "最近一次可用資料時間。",
+            icon: CalendarClock,
+            label: "更新時間",
+            value: updatedLabel,
+          },
+          {
+            description: "加入 watchlist 後會整理今日值得注意的標的。",
+            icon: Eye,
+            label: "Watchlist",
+            value: "觀察中",
+          },
+        ]}
+      />
       <p className="mt-4 text-xs leading-5 text-[var(--ixai-forest-soft)]">
         資料來源、更新狀態、備用資料與 runtime 細節已收納在底部 Advanced / 進階診斷。
       </p>
-    </section>
+    </WorkspaceProductSection>
   );
 }
 
 function QuickActions() {
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
-      <SectionHeader
-        eyebrow="Quick Actions"
-        title="下一步可以做什麼"
-        description="常用入口整理成 icon + 大按鈕，避免在首頁散落成工程模組。"
-      />
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <WorkspaceProductSection
+      description="常用入口整理成 icon + 大按鈕，避免在首頁散落成工程模組。"
+      eyebrow="Quick Actions"
+      title="下一步可以做什麼"
+    >
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {quickActions.map((action) => {
           const Icon = action.icon;
           return (
@@ -576,19 +506,14 @@ function QuickActions() {
           );
         })}
       </div>
-    </section>
+    </WorkspaceProductSection>
   );
 }
 
 function RecentActivity({ events }: { events: WorkspaceTimelineEvent[] }) {
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)] p-4 sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <SectionHeader
-          eyebrow="Recent Activity"
-          title="最近 5 筆活動"
-          description="Timeline 只在首頁顯示最近重點，完整事件留在 Timeline 頁。"
-        />
+    <WorkspaceProductSection
+      action={
         <Link
           className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] sm:w-fit"
           href="/my-ixai/timeline"
@@ -596,8 +521,12 @@ function RecentActivity({ events }: { events: WorkspaceTimelineEvent[] }) {
           查看 Timeline
           <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
         </Link>
-      </div>
-      <div className="mt-5 grid gap-2">
+      }
+      description="Timeline 只在首頁顯示最近重點，完整事件留在 Timeline 頁。"
+      eyebrow="Recent Activity"
+      title="最近 5 筆活動"
+    >
+      <div className="grid gap-2">
         {events.length > 0 ? (
           events.map((event) => (
             <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-3" key={event.id}>
@@ -619,31 +548,18 @@ function RecentActivity({ events }: { events: WorkspaceTimelineEvent[] }) {
           </p>
         )}
       </div>
-    </section>
+    </WorkspaceProductSection>
   );
 }
 
 function DiagnosticsPanel() {
   return (
-    <section className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3 sm:p-4">
-      <details className="rounded-lg border border-[var(--ixai-border)] bg-white/60 p-4 text-[var(--ixai-forest)] sm:p-5">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold">
-          <span>
-            Advanced / 進階診斷
-            <span className="ml-2 text-xs font-normal text-[var(--ixai-forest-soft)]">
-              Health、Provider、Localization、Runtime
-            </span>
-          </span>
-          <ChevronDown className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-        </summary>
-        <div className="mt-4 grid gap-4">
-          <LiveMarketDataStatus autoLoad={false} compact />
-          <WorkspaceHealthSummary />
-          <I18nFoundationStatusCard />
-          <LocalizationPreview />
-        </div>
-      </details>
-    </section>
+    <WorkspaceDiagnosticsPanel>
+      <LiveMarketDataStatus autoLoad={false} compact />
+      <WorkspaceHealthSummary />
+      <I18nFoundationStatusCard />
+      <LocalizationPreview />
+    </WorkspaceDiagnosticsPanel>
   );
 }
 

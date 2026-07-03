@@ -26,10 +26,10 @@ Role:
 
 V15 Product Layer:
 
-- Home.
-- Portfolio.
-- FCN.
-- Risk.
+- Home — redesigned in V15 Sprint 2.1 / 2.1a.
+- Portfolio — redesigned in V15 Wave 1.
+- FCN — redesigned in V15 Wave 1.
+- Risk — redesigned in V15 Wave 1.
 - Intelligence.
 - Copilot.
 
@@ -37,6 +37,8 @@ These Workspace product surfaces should follow one Dashboard Layout system:
 
 ```text
 Hero / Summary
+↓
+KPI Row
 ↓
 Primary user-facing cards
 ↓
