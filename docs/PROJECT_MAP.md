@@ -24,6 +24,51 @@ Role:
 - Current Vercel / public app mainline.
 - Owns the public IXAI experience: landing, onboarding, Daily Brief, Weekly Intelligence, Share Intelligence, Account, Pro Preview, Admin Editorial Studio, and Social Intelligence Pack Studio.
 
+V15 Product Layer:
+
+- Home — redesigned in V15 Sprint 2.1 / 2.1a.
+- Portfolio — redesigned in V15 Wave 1.
+- FCN — redesigned in V15 Wave 1.
+- Risk — redesigned in V15 Wave 1.
+- Intelligence — redesigned in V15 Wave 2.
+- Copilot — redesigned in V15 Wave 2.
+- Watchlist — redesigned in V15 Wave 2.
+- Notifications — redesigned in V15 Wave 2.
+- Timeline — redesigned in V15 Wave 2.
+- Settings — redesigned in V15 Wave 3.
+- Health — moved under Settings -> Advanced in V15 Wave 3.
+- Beta — moved under Settings -> About in V15 Wave 3.
+
+These Workspace product surfaces should follow one Dashboard Layout system:
+
+```text
+Hero / Summary
+↓
+KPI Row
+↓
+Primary user-facing cards
+↓
+Detail sections
+↓
+Secondary diagnostics
+```
+
+Diagnostics rule:
+
+- Provider, runtime, health, source, readiness, cache, activation, foundation, and diagnostics surfaces belong at the bottom of the page or under Settings -> Advanced.
+- They must not be first-screen primary content unless the page itself is Settings -> Advanced.
+- AI / information surfaces remain explain-only and must not introduce AI provider calls, recommendation logic, trading actions, or external notification delivery.
+- Workspace platform navigation uses the primary IA: 首頁, 我的資產, 市場, AI, 提醒, 設定.
+- Mobile bottom navigation uses only five primary destinations: 首頁, 資產, 市場, AI, 設定.
+
+Current V15 source docs:
+
+- `docs/V15_PRODUCT_EXPERIENCE_CONTEXT.md`.
+- `docs/V15_UX_AUDIT.md`.
+- `docs/V15_SPRINT_1_IA_NAVIGATION_REDESIGN_PLAN.md`.
+- `docs/V15_DESIGN_SYSTEM_2.md`.
+- `docs/V15_SPRINT_2_UI_IMPLEMENTATION_SPEC.md`.
+
 Production data ownership update:
 
 - `app/ixai-web-app` now owns the real Portfolio / FCN production data layer.
@@ -108,6 +153,7 @@ Production data ownership update:
 - Translation Maintenance Batch 1 scans all major authenticated Workspace routes after V13 Sprint 4 and repairs easy dictionary wiring for Watchlist, Notifications, Timeline, Copilot, Stock / Crypto input, Input Review, and FCN live underlying display labels. It documents remaining Risk / FCN / Intelligence / input-form translation work in `docs/TRANSLATION_MAINTENANCE_BATCH_1.md` without changing engines, APIs, auth, schema, migrations, broker/trading, scheduler/delivery, AI, or notification delivery.
 - Translation Maintenance Batch 2 makes V13 translation maintenance production Visual QA driven. It documents that the available production browser session was unauthenticated, records `ja-JP` as metadata-supported but not content-covered, fixes first-pass FCN display labels and warning mappings, and replaces one low-contrast FCN Risk Summary icon with the shared `FeatureIcon` primitive. See `docs/TRANSLATION_VISUAL_QA_BATCH_2.md`.
 - V13.7 Real Translation Coverage Completion Program extends `scripts/audit-production-authenticated.mjs` with DOM translation coverage scoring and writes `docs/V137_REAL_TRANSLATION_COVERAGE.md`. It repairs major authenticated Workspace content translation surfaces in shared Market Status, Health Center, FCN Center, Settings, Risk, Intelligence, and locale pack overrides without changing engines, APIs, auth, schema, migrations, market providers, broker/trading, scheduler/delivery, billing, AI, or notification delivery.
+- V13.8 Full Workspace Localization Completion corrects the V13.7 audit blind spot by adding DOM visible text block evidence in `scripts/audit-production-authenticated.mjs` and writing `docs/V138_FULL_WORKSPACE_LOCALIZATION_COMPLETION.md`. It repairs Morning Brief export/preview copy, Workspace Health summary, Risk Engine / Live Risk display labels, FCN schedule summary, Intelligence v2 / structured cards, and source status badge localization without changing engines, APIs, auth, schema, migrations, market providers, broker/trading, scheduler/delivery, billing, AI, or notification delivery.
 - V14.0 opens the Live Workspace Program as the active product mainline. It is docs-only planning for V14.1 Live Market Data, V14.2 Live Portfolio Valuation, V14.3 FCN Live Risk, V14.4 Workspace Intelligence, V14.5 Workspace Morning Brief, and V14.6 Beta Readiness. It does not implement live market features, product code, auth/RLS/schema/migration/billing changes, broker/trading/recommendation behavior, AI model calls, or scheduler/notification delivery activation.
 - V14 Sprint 1 implements V14.1-V14.3. It adds the internal `/api/market/live-quotes` route, server-side Yahoo Finance equity quotes, Binance crypto quotes, short-lived memory cache with stale fallback, provider health state, live Portfolio valuation readback, and FCN live risk readback. V14.4-V14.6 remain pending.
 - V14 Beta Release Review records that Sprint 1, Sprint 2, and Sprint 3 have merged, with Sprint 3 PR #89 completing Beta readiness polish. `docs/V14_BETA_RELEASE_REVIEW.md` is the source of truth for invite-only Beta governance, production verification checklist, known limitations, and the recommended next tracks.
@@ -137,6 +183,7 @@ Current architecture:
 - Translation Maintenance Batch 2 extends FCN display mapping for risk metrics, KO status, source status, unavailable / unknown labels, current / initial price labels, and FCN risk warnings. It does not change FCN risk calculations or engine contracts.
 - V13.5 Full Translation Coverage Program expands `src/lib/i18n/dictionaries.ts` with `zh-CN`, `ja-JP`, and `ko-KR` locale pack mappings for major UI namespaces, and wires Settings diagnostics, Risk Center, and Intelligence Center visible labels to the shared translation layer. It remains UI copy / display mapping only and does not change auth, API, schema, runtime stabilization, valuation, risk scoring, FCN engine, market provider, broker/trading, scheduler, billing, or AI behavior.
 - V13.7 Real Translation Coverage Completion Program adds authenticated production DOM coverage reporting through `scripts/audit-production-authenticated.mjs` and extends UI display mapping for shared Workspace Market Status, Health, FCN, and non-English locale packs. It remains UI copy / display mapping only and does not change auth, API, schema, runtime stabilization, valuation, risk scoring, FCN engine, market provider, broker/trading, scheduler, billing, or AI behavior.
+- V13.8 Full Workspace Localization Completion extends the authenticated audit from body-token coverage to visible text block evidence and completes high-impact Workspace display mapping for Morning Brief, Health, Risk, FCN schedule, Intelligence, and shared status badges across supported locales. It remains UI copy / display mapping only and does not change auth, API, schema, runtime stabilization, valuation, risk scoring, FCN engine, market provider, broker/trading, scheduler, billing, or AI behavior.
 - V14 Live Workspace Program is the active app evolution track. Its implementation phases should connect live market data, valuation, FCN live risk, Workspace Intelligence, Morning Brief, and Beta readiness only through approved phase work while preserving V12 runtime safety and V13 global localization readiness.
 - V14 Sprint 2 adds Workspace Intelligence and Workspace Morning Brief under `src/lib/workspace/intelligence/` and `src/lib/workspace/morning-brief/`. These layers are deterministic, explain-only, Workspace-readable, and do not call AI models, deliver notifications, create recommendations, change schemas, or activate broker/trading behavior.
 - V14 Sprint 3 adds Beta readiness polish through `/my-ixai/health`, `/my-ixai/beta`, Brief share/export helpers, feedback template, and release notes. These additions are read-only/local-only and do not write database records, send feedback, activate notification delivery, call AI models, or enable broker/trading/recommendation behavior.

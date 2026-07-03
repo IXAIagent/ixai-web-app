@@ -6,8 +6,10 @@ import { useCallback, useEffect } from "react";
 import {
   ArrowRight,
   BarChart3,
+  Bell,
   BookOpen,
   BriefcaseBusiness,
+  CalendarClock,
   FileText,
   Globe2,
   HeartPulse,
@@ -76,17 +78,47 @@ export function MobileDrawer({
   const isAuthenticated = mounted && session.mode === "authenticated";
   const workspaceDrawerSections: DrawerSection[] = [
     {
-      title: dictionary.workspaceNav.workspaceHeading,
+      title: "首頁",
       entries: [
         { label: dictionary.workspaceNav.home, href: "/my-ixai/home", icon: Home },
+      ],
+    },
+    {
+      title: "我的資產",
+      entries: [
         { label: dictionary.workspaceNav.portfolio, href: "/my-ixai/portfolio", icon: BriefcaseBusiness },
         { label: dictionary.workspaceNav.assetInput, href: "/my-ixai/input", icon: FileText },
         { label: dictionary.workspaceNav.risk, href: "/my-ixai/risk", icon: ShieldAlert },
         { label: dictionary.workspaceNav.fcn, href: "/my-ixai/fcn", icon: ShieldCheck },
+      ],
+    },
+    {
+      title: "市場",
+      entries: [
+        { label: dictionary.workspaceNav.watchlist, href: "/my-ixai/watchlist", icon: BarChart3 },
+        { label: dictionary.workspaceNav.timeline, href: "/my-ixai/timeline", icon: CalendarClock },
+      ],
+    },
+    {
+      title: "AI",
+      entries: [
+        { label: "Morning Brief", href: "/my-ixai/home", icon: FileText },
         { label: dictionary.workspaceNav.intelligence, href: "/my-ixai/intelligence", icon: Newspaper },
-        { label: dictionary.workspaceNav.health, href: "/my-ixai/health", icon: HeartPulse },
-        { label: dictionary.workspaceNav.beta, href: "/my-ixai/beta", icon: Rocket },
+        { label: dictionary.workspaceNav.copilot, href: "/my-ixai/copilot", icon: Sparkles },
+      ],
+    },
+    {
+      title: "提醒",
+      entries: [
+        { label: dictionary.workspaceNav.notifications, href: "/my-ixai/notifications", icon: Bell },
+      ],
+    },
+    {
+      title: "設定",
+      entries: [
         { label: dictionary.workspaceNav.settings, href: "/my-ixai/settings", icon: Settings },
+        { label: "System Health", href: "/my-ixai/health", icon: HeartPulse },
+        { label: "Beta", href: "/my-ixai/beta", icon: Rocket },
       ],
     },
     {

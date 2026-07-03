@@ -13,30 +13,27 @@ export const metadata = buildPublicMetadata({
 export default function MyIxaiWorkspacePage() {
   return (
     <WorkspacePlaceholder
-      description="v3.00 將 IXAI 從 engine foundation 轉向 product workspace。這裡先建立中心入口，不新增新功能。"
-      eyebrow="My IXAI Workspace"
+      description="V15 將 Workspace 從工程 dashboard 整理成 AI Wealth Workspace。第一層只保留首頁、我的資產、市場、AI、提醒與設定。"
+      eyebrow="AI Wealth Workspace"
       icon={LayoutDashboard}
       links={[
-        { href: "/my-ixai/home", label: "Home" },
-        { href: "/my-ixai/portfolio", label: "Portfolio Center" },
-        { href: "/my-ixai/risk", label: "Risk Center" },
-        { href: "/my-ixai/fcn", label: "FCN Center" },
-        { href: "/my-ixai/intelligence", label: "Intelligence Center" },
-        { href: "/my-ixai/health", label: "Health Center" },
-        { href: "/my-ixai/beta", label: "V14 Beta Preview" },
-        { href: "/my-ixai/settings", label: "Settings" },
+        { href: "/my-ixai/home", label: "首頁" },
+        { href: "/my-ixai/portfolio", label: "我的資產" },
+        { href: "/my-ixai/watchlist", label: "市場" },
+        { href: "/my-ixai/intelligence", label: "AI" },
+        { href: "/my-ixai/notifications", label: "提醒" },
+        { href: "/my-ixai/settings", label: "設定" },
       ]}
       ownerItems={[
-        "Home：登入後摘要與下一步工作流入口。",
-        "Portfolio Center：資產、部位、估值、配置與曝險。",
-        "Risk Center：集中度、相關性、情境、壓力測試與風險摘要。",
-        "FCN Center：FCN 部位、underlyings、Worst-of、KI / KO 與票息排程。",
-        "Intelligence Center：Daily、Weekly、News、Commentary 與 recommendation surfaces。",
-        "Health Center：provider、cache、runtime safety、data quality 與 i18n readiness。",
-        "V14 Beta Preview：Beta checklist、release notes 與 feedback template。",
-        "Settings：帳號、會員、通知、語言、地區與 broker connections。",
+        "首頁：每日摘要、資產、風險、市場與下一步。",
+        "我的資產：Portfolio、FCN、Risk 與新增資產。",
+        "市場：Watchlist 與近期事件。",
+        "AI：Morning Brief、Intelligence 與 Copilot。",
+        "提醒：Notifications。",
+        "設定：General、Workspace、Language、Notifications、Privacy、About 與 Advanced。",
+        "Advanced：System Health、Beta 與進階診斷已移到 Settings 底下。",
       ]}
-      title="我的 IXAI：Workspace Foundation"
+      title="我的 IXAI：AI Wealth Workspace"
     />
   );
 }

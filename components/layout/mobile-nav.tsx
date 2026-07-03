@@ -11,7 +11,6 @@ import {
   Settings,
   Sparkles,
   ShieldCheck,
-  ShieldAlert,
   UserCircle,
   type LucideIcon,
 } from "lucide-react";
@@ -82,43 +81,38 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
 const WORKSPACE_NAV_ITEMS: NavItem[] = [
   {
     key: "home",
-    label: "Home",
+    label: "首頁",
     href: "/my-ixai/home",
     icon: Home,
     matchPrefixes: ["/my-ixai/home"],
   },
   {
-    key: "portfolio",
-    label: "Portfolio",
+    key: "assets",
+    label: "資產",
     href: "/my-ixai/portfolio",
     icon: BriefcaseBusiness,
-    matchPrefixes: ["/my-ixai/portfolio", "/my-ixai/input"],
+    matchPrefixes: ["/my-ixai/portfolio", "/my-ixai/input", "/my-ixai/fcn", "/my-ixai/risk"],
   },
   {
-    key: "watchlist",
-    label: "Watchlist",
+    key: "market",
+    label: "市場",
     href: "/my-ixai/watchlist",
     icon: Eye,
-    matchPrefixes: ["/my-ixai/watchlist"],
+    matchPrefixes: ["/my-ixai/watchlist", "/my-ixai/timeline"],
   },
   {
-    key: "risk",
-    label: "Risk",
-    href: "/my-ixai/risk",
-    icon: ShieldAlert,
-  },
-  {
-    key: "fcn",
-    label: "FCN",
-    href: "/my-ixai/fcn",
-    icon: ShieldCheck,
+    key: "ai",
+    label: "AI",
+    href: "/my-ixai/intelligence",
+    icon: Sparkles,
+    matchPrefixes: ["/my-ixai/intelligence", "/my-ixai/copilot", "/my-ixai/notifications"],
   },
   {
     key: "settings",
-    label: "Settings",
+    label: "設定",
     href: "/my-ixai/settings",
     icon: Settings,
-    matchPrefixes: ["/my-ixai/settings"],
+    matchPrefixes: ["/my-ixai/settings", "/my-ixai/health", "/my-ixai/beta"],
   },
 ];
 
@@ -172,12 +166,11 @@ export function MobileNav() {
     },
   ];
   const localizedWorkspaceNavItems: NavItem[] = [
-    { ...WORKSPACE_NAV_ITEMS[0], label: dictionary.workspaceNav.home },
-    { ...WORKSPACE_NAV_ITEMS[1], label: dictionary.workspaceNav.portfolio },
-    { ...WORKSPACE_NAV_ITEMS[2], label: dictionary.workspaceNav.watchlist },
-    { ...WORKSPACE_NAV_ITEMS[3], label: dictionary.workspaceNav.risk },
-    { ...WORKSPACE_NAV_ITEMS[4], label: dictionary.workspaceNav.fcn },
-    { ...WORKSPACE_NAV_ITEMS[5], label: dictionary.workspaceNav.settings },
+    WORKSPACE_NAV_ITEMS[0],
+    WORKSPACE_NAV_ITEMS[1],
+    WORKSPACE_NAV_ITEMS[2],
+    WORKSPACE_NAV_ITEMS[3],
+    WORKSPACE_NAV_ITEMS[4],
   ];
   const publicNavItems = isAuthenticated
     ? localizedPublicNavItems.map((item) =>
@@ -200,7 +193,7 @@ export function MobileNav() {
     >
       <div
         className={`relative mx-auto grid max-w-xl items-end gap-1 ${
-          isWorkspaceRoute ? "grid-cols-6" : "grid-cols-5"
+          "grid-cols-5"
         }`}
       >
         {navItems.map((item) => {

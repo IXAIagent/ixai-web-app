@@ -1,4 +1,4 @@
-import { BetaReadinessDashboard } from "@/components/workspace/beta-readiness-dashboard";
+import { WorkspaceBetaExperience } from "@/components/workspace/platform/workspace-beta-experience";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -9,5 +9,5 @@ export const metadata = buildPublicMetadata({
 });
 
 export default function WorkspaceBetaPage() {
-  return <BetaReadinessDashboard />;
+  return <WorkspaceBetaExperience />;
 }

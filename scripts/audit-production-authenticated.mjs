@@ -7,7 +7,7 @@ import { chromium } from "playwright";
 const BASE_URL = "https://app.ixuan.ai";
 const STORAGE_STATE_PATH = path.resolve(process.cwd(), ".auth", "production-storage-state.json");
 const ARTIFACT_ROOT = path.resolve(process.cwd(), "qa-artifacts", "production-authenticated-audit");
-const REPORT_PATH = path.resolve(process.cwd(), "docs", "V137_REAL_TRANSLATION_COVERAGE.md");
+const REPORT_PATH = path.resolve(process.cwd(), "docs", "V138_FULL_WORKSPACE_LOCALIZATION_COMPLETION.md");
 
 const WORKSPACE_ROUTES = [
   "/my-ixai/home",
@@ -26,6 +26,18 @@ const WORKSPACE_ROUTES = [
   "/my-ixai/fcn",
   "/my-ixai/intelligence",
   "/my-ixai/settings",
+];
+
+const PUBLIC_ROUTES = [
+  "/",
+  "/pro",
+  "/fcn",
+  "/market",
+  "/daily-brief",
+  "/weekly-brief",
+  "/about",
+  "/login",
+  "/register",
 ];
 
 const LOCALES = ["zh-TW", "zh-CN", "en-US", "ja-JP", "ko-KR"];
@@ -59,12 +71,9 @@ const TECHNICAL_TOKEN_PATTERNS = [
   /^https?:\/\//i,
   /^[a-z0-9._-]+\.(js|css|json|png|jpg|jpeg|svg|webp|ts|tsx|mjs)$/i,
   /^(USD|TWD|HKD|JPY|EUR|KRW|BTC|ETH|BTCUSDT|AAPL)$/i,
-  /^(FCN|KI|KO|API|RLS|JSON|URL|ETF)$/i,
-  /^(Supabase|Yahoo|Binance|PostHog|localStorage|Cookie)$/i,
+  /^(FCN|KI|KO|API|RLS|JSON|URL|ETF|LLM)$/i,
+  /^(Supabase|Yahoo|Binance|PostHog|localStorage|Cookie|React|Next)$/i,
   /^(IXAI|I-Xuan)$/i,
-  /^(Workspace|Portfolio|Risk|Intelligence|Watchlist|Account|Personal|Public|App|Free)$/i,
-  /^(Daily|Weekly|Brief|Copilot|Settings|Health|Beta)$/i,
-  /^(monitoring|workflow|workspace|intelligence|risk)$/i,
   /^[a-z]+:[a-z0-9:_-]+$/i,
 ];
 
@@ -117,6 +126,79 @@ function calculateDomTranslationCoverage(text, locale) {
     pass: englishPercent <= COVERAGE_STANDARD_ENGLISH_MAX,
     sampleEnglishTokens: unique(englishTokens).slice(0, 30),
   };
+}
+
+async function extractVisibleTextBlocks(page) {
+  return page
+    .evaluate(() => {
+      const selector = [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "p",
+        "span",
+        "button",
+        "a",
+        "label",
+        "dt",
+        "dd",
+        "li",
+        "th",
+        "td",
+        "summary",
+        "[role='button']",
+        "[aria-label]",
+      ].join(",");
+      const seen = new Set();
+      return Array.from(document.querySelectorAll(selector))
+        .filter((element) => {
+          const rect = element.getBoundingClientRect();
+          const style = window.getComputedStyle(element);
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            style.visibility !== "hidden" &&
+            style.display !== "none"
+          );
+        })
+        .map((element) => {
+          const aria = element.getAttribute("aria-label") ?? "";
+          const text = `${aria} ${element.textContent ?? ""}`.replace(/\s+/g, " ").trim();
+          return text;
+        })
+        .filter((text) => text.length >= 2 && text.length <= 500)
+        .filter((text) => {
+          if (seen.has(text)) return false;
+          seen.add(text);
+          return true;
+        });
+    })
+    .catch(() => []);
+}
+
+function findEnglishTokens(text) {
+  const normalized = text
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/\/api\/[^\s]+/g, " ")
+    .replace(/[_/][A-Za-z0-9._/-]+/g, " ");
+  return unique(
+    (normalized.match(/[A-Za-z][A-Za-z0-9'’.-]*/g) ?? [])
+      .map((token) => token.replace(/^[-.'’]+|[-.'’]+$/g, ""))
+      .filter((token) => token.length > 1 && !isTechnicalToken(token)),
+  );
+}
+
+function analyzeVisibleBlocks(blocks, locale) {
+  if (locale === "en-US") return [];
+  return blocks
+    .map((text) => ({
+      text,
+      tokens: findEnglishTokens(text),
+    }))
+    .filter((block) => block.tokens.length > 0)
+    .slice(0, 80);
 }
 
 function routeSlug(route) {
@@ -211,10 +293,14 @@ async function isWorkspaceAuthenticated(page) {
     url.pathname.startsWith("/register") ||
     url.pathname === "/account";
   const blockedByText =
-    /建立 IXAI Account|登入|Log in|Create account|IXAI Pro access|請先登入/i.test(text) &&
+    /建立你的 IXAI intelligence workspace|建立 IXAI Account|Create IXAI Account|IXAI Public Intelligence|IXAI Pro access|請先登入|登入|Log in|Create account/i.test(text) &&
     !/IXAI Workspace|Workspace Home|工作區|Portfolio Center|Risk Center|Settings/i.test(text);
+  const accountGateText =
+    /建立你的 IXAI intelligence workspace|建立 IXAI Account|Create IXAI Account|IXAI Public Intelligence/i.test(
+      text,
+    );
 
-  return !blockedByUrl && !blockedByText && url.pathname.startsWith("/my-ixai");
+  return !blockedByUrl && !blockedByText && !accountGateText && url.pathname.startsWith("/my-ixai");
 }
 
 async function verifyStoredAuth(context) {
@@ -229,10 +315,16 @@ async function verifyStoredAuth(context) {
 
     const authenticated = await isWorkspaceAuthenticated(page);
     if (!authenticated) {
-      throw new Error(
-        `Stored auth did not reach authenticated Workspace. Current URL: ${page.url()}`,
-      );
+      return {
+        authenticated: false,
+        finalUrl: page.url(),
+      };
     }
+
+    return {
+      authenticated: true,
+      finalUrl: page.url(),
+    };
   } finally {
     await page.close();
   }
@@ -277,12 +369,14 @@ async function auditRoute(context, locale, route) {
     await page.waitForTimeout(900);
 
     const visibleText = await page.locator("body").innerText({ timeout: 10000 }).catch(() => "");
+    const visibleTextBlocks = await extractVisibleTextBlocks(page);
     const authenticated = await isWorkspaceAuthenticated(page);
     const leftovers =
       locale === "en-US"
         ? []
         : ENGLISH_LEFTOVER_PATTERNS.filter((pattern) => visibleText.includes(pattern));
-    const coverage = calculateDomTranslationCoverage(visibleText, locale);
+    const suspectedEnglishBlocks = analyzeVisibleBlocks(visibleTextBlocks, locale);
+    const coverage = calculateDomTranslationCoverage(visibleTextBlocks.join("\n"), locale);
 
     await mkdir(path.dirname(screenshotPath), { recursive: true });
     await page.screenshot({ path: screenshotPath, fullPage: true });
@@ -298,7 +392,9 @@ async function auditRoute(context, locale, route) {
       route,
       screenshotPath: path.relative(process.cwd(), screenshotPath),
       suspectedEnglishLeftovers: leftovers,
+      suspectedEnglishBlocks,
       translationCoverage: coverage,
+      visibleTextBlockCount: visibleTextBlocks.length,
       visibleTextSample: visibleText.replace(/\s+/g, " ").trim().slice(0, 1200),
     };
   } catch (error) {
@@ -314,7 +410,9 @@ async function auditRoute(context, locale, route) {
       route,
       screenshotPath: null,
       suspectedEnglishLeftovers: [],
+      suspectedEnglishBlocks: [],
       translationCoverage: calculateDomTranslationCoverage("", locale),
+      visibleTextBlockCount: 0,
       visibleTextSample: "",
     };
   } finally {
@@ -335,7 +433,10 @@ function buildReport({ authStorageCreated, generatedAt, results }) {
   const consoleRows = results.filter((result) => result.consoleErrors.length > 0);
   const pageErrorRows = results.filter((result) => result.pageErrors.length > 0 || result.error);
   const failedRequestRows = results.filter((result) => result.failedRequests.length > 0);
-  const leftoverRows = results.filter((result) => result.suspectedEnglishLeftovers.length > 0);
+  const leftoverRows = results.filter(
+    (result) =>
+      result.suspectedEnglishLeftovers.length > 0 || result.suspectedEnglishBlocks.length > 0,
+  );
   const coverageFailRows = results.filter(
     (result) => result.locale !== "en-US" && !result.translationCoverage.pass,
   );
@@ -350,31 +451,35 @@ function buildReport({ authStorageCreated, generatedAt, results }) {
           result.failedRequests.length
         } | ${result.translationCoverage.englishPercent.toFixed(1)}% | ${
           result.translationCoverage.pass ? "PASS" : "FAIL"
-        } | ${result.suspectedEnglishLeftovers.join(", ") || "-"} |`,
+        } | ${result.suspectedEnglishLeftovers.join(", ") || "-"} | ${
+          result.suspectedEnglishBlocks.length
+        } |`,
     )
     .join("\n");
 
-  return `# V13.7 Real Translation Coverage Report
+  return `# V13.8 Full Workspace Localization Completion
 
 Generated: ${generatedAt}
 
 Base URL: ${BASE_URL}
 
-## V13.7 Goal
+## V13.8 Goal
 
-Measure authenticated Workspace DOM translation coverage across production routes and locales, then provide page-level evidence for real translation completion. This report does not rely on keyword leftover detection as the pass criterion.
+Complete and verify authenticated Workspace main-content localization across zh-TW, zh-CN, en-US, ja-JP, and ko-KR. This report is generated by the authenticated production audit and is intentionally stricter than the V13.7 coverage report.
 
 ## Root Cause
 
-Previous i18n work connected sidebar and some shared labels, but many main-content dictionary values and deep Workspace components still rendered English in non-English locales.
+V13.7 over-reported translation coverage because body-level token filtering allowed major product words and finance labels to be ignored. V13.8 uses DOM visible text blocks, source scan follow-up, and screenshot review to identify main-content English that still appears in non-English locales.
 
-## Translation Coverage Algorithm
+## Audit Method
 
-- Reads \`document.body.innerText\` for each authenticated route and locale.
-- Extracts visible English tokens.
+- Reads visible DOM text blocks for headings, paragraphs, buttons, links, labels, tables, list items, and aria labels.
+- Extracts suspicious English tokens from each visible text block.
 - Extracts visible localized CJK/Kana/Hangul segments.
-- Excludes numbers, tickers, FCN codes, currency codes, API paths, URLs, file names, enums, technical IDs, provider names, storage/cookie terms, and code-like identifiers.
+- Excludes only technical tokens such as numbers, tickers, FCN codes, currency codes, API paths, URLs, file names, enums, provider names, and code-like identifiers.
 - Calculates English % as \`english tokens / (english tokens + localized visible segments)\`.
+- Keeps screenshot evidence for every route + locale.
+- Keeps suspected English block evidence so finance/product labels are reviewed instead of silently allowed.
 
 Coverage standard:
 
@@ -392,12 +497,16 @@ Coverage standard:
 - Uses Playwright Chromium with persisted production storage state.
 - Reads production Workspace routes from \`${BASE_URL}\`.
 - Saves route + locale screenshots under \`qa-artifacts/production-authenticated-audit/\`.
-- Writes this markdown evidence file to \`docs/V137_REAL_TRANSLATION_COVERAGE.md\`.
+- Writes this markdown evidence file to \`docs/V138_FULL_WORKSPACE_LOCALIZATION_COMPLETION.md\`.
 - This audit script is allowed to scan production but does not modify auth, API, Supabase, or product data.
 
 ## Audited Routes
 
 ${markdownList(WORKSPACE_ROUTES.map((route) => `\`${route}\``))}
+
+## Lower-Priority Public Routes For Source/Screenshot Follow-Up
+
+${markdownList(PUBLIC_ROUTES.map((route) => `\`${route}\``))}
 
 ## Audited Locales
 
@@ -411,8 +520,8 @@ ${markdownList(
 
 ## Route Results
 
-| Locale | Route | HTTP | Workspace auth | Console errors | Page errors | Failed requests | English % | Coverage | Suspected English leftovers |
-| --- | --- | ---: | --- | ---: | ---: | ---: | ---: | --- | --- |
+| Locale | Route | HTTP | Workspace auth | Console errors | Page errors | Failed requests | English % | Coverage | Pattern leftovers | English blocks |
+| --- | --- | ---: | --- | ---: | ---: | ---: | ---: | --- | --- | ---: |
 ${resultRows}
 
 ## DOM Coverage
@@ -505,8 +614,24 @@ ${markdownList(
 ${markdownList(
   leftoverRows.map(
     (result) =>
-      `\`${result.locale}\` \`${result.route}\`: ${result.suspectedEnglishLeftovers.join(", ")}`,
+      `\`${result.locale}\` \`${result.route}\`: patterns [${
+        result.suspectedEnglishLeftovers.join(", ") || "-"
+      }]; blocks ${result.suspectedEnglishBlocks
+        .slice(0, 8)
+        .map((block) => `"${block.text}"`)
+        .join(" / ") || "-"}`,
   ),
+)}
+
+## DOM Visible Text Block Evidence
+
+${markdownList(
+  results
+    .filter((result) => result.locale !== "en-US")
+    .map(
+      (result) =>
+        `\`${result.locale}\` \`${result.route}\`: ${result.visibleTextBlockCount} visible blocks, ${result.suspectedEnglishBlocks.length} suspicious English block(s)`,
+    ),
 )}
 
 ## Screenshots Path Summary
@@ -570,7 +695,12 @@ async function main() {
   const results = [];
 
   try {
-    await verifyStoredAuth(context);
+    const authCheck = await verifyStoredAuth(context);
+    if (!authCheck.authenticated) {
+      console.warn(
+        `Stored auth did not reach authenticated Workspace. Current URL: ${authCheck.finalUrl}`,
+      );
+    }
 
     console.log("IXAI production authenticated audit");
     console.log(`Base URL: ${BASE_URL}`);

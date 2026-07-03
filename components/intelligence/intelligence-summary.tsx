@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Brain, Loader2, RefreshCw } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n";
 import {
   buildEmptyWorkspaceIntelligenceReport,
   getWorkspaceIntelligenceReport,
@@ -23,7 +24,7 @@ const SEVERITY_CLASS: Record<WorkspaceIntelligenceSeverity, string> = {
     "border-[color-mix(in_srgb,var(--ixai-gold)_44%,transparent)] bg-[rgba(255,250,240,0.82)] text-[var(--ixai-forest)]",
 };
 
-const CATEGORY_LABEL: Record<WorkspaceIntelligenceCategory, string> = {
+const CATEGORY_LABEL_KEY: Record<WorkspaceIntelligenceCategory, string> = {
   fcn: "FCN Intelligence",
   portfolio: "Portfolio Intelligence",
   risk: "Risk Intelligence",
@@ -58,6 +59,7 @@ function SeverityBadge({ severity }: { severity: WorkspaceIntelligenceSeverity }
 }
 
 export function IntelligenceSummary({ autoLoad = true }: { autoLoad?: boolean }) {
+  const { t } = useTranslation("intelligence");
   const [report, setReport] = useState<WorkspaceIntelligenceReport>(() =>
     buildEmptyWorkspaceIntelligenceReport(),
   );
@@ -124,12 +126,10 @@ export function IntelligenceSummary({ autoLoad = true }: { autoLoad?: boolean })
               v4.80 Intelligence Engine v1
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
-              Structured Workspace Intelligence Cards
+              {t("structuredCardsTitle")}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Deterministic cards generated from Portfolio Truth, Market Service,
-              Market Cache, Portfolio Valuation, Risk, FCN Risk, and FCN Schedule.
-              No AI model, recommendation logic, broker logic, or trading workflow is used.
+              {t("structuredCardsBody")}
             </p>
           </div>
         </div>
@@ -144,16 +144,16 @@ export function IntelligenceSummary({ autoLoad = true }: { autoLoad?: boolean })
           ) : (
             <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           )}
-          Refresh
+          {state === "loading" ? t("loading") : t("refresh")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-4">
         {[
-          ["Cards", report.cardCount],
-          ["Critical", report.criticalCount],
-          ["Warnings", report.warningCount],
-          ["Info", report.infoCount],
+          [t("cards"), report.cardCount],
+          [t("critical"), report.criticalCount],
+          [t("warnings"), report.warningCount],
+          [t("info"), report.infoCount],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -177,7 +177,7 @@ export function IntelligenceSummary({ autoLoad = true }: { autoLoad?: boolean })
               key={category}
             >
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                {CATEGORY_LABEL[category]}
+                {t(`category_${category}`, CATEGORY_LABEL_KEY[category])}
               </p>
               <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {cards.map((item) => (
@@ -195,7 +195,7 @@ export function IntelligenceSummary({ autoLoad = true }: { autoLoad?: boolean })
                       {item.summary}
                     </p>
                     <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-[rgba(9,41,31,0.48)]">
-                      Source: {item.sourceEngine.replaceAll("_", " ")}
+                      {t("source")}: {item.sourceEngine.replaceAll("_", " ")}
                     </p>
                   </div>
                 ))}
@@ -206,16 +206,13 @@ export function IntelligenceSummary({ autoLoad = true }: { autoLoad?: boolean })
       ) : (
         <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
           {state === "error"
-            ? "Workspace Intelligence could not be loaded. Existing Workspace cards remain available."
-            : "Workspace Intelligence is available on demand. Use Refresh to load deterministic cards."}
+            ? t("loadError")
+            : t("onDemandReady")}
         </p>
       )}
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-        Generated {formatTimestamp(report.generatedAt)}. Intelligence Cards are
-        monitoring and workflow context only. IXAI does not provide buy/sell
-        instructions, order execution, automated trading, target prices, guaranteed
-        returns, or personalized investment recommendations.
+        {t("generated")} {formatTimestamp(report.generatedAt)}. {t("structuredCardsDisclaimer")}
       </p>
     </section>
   );

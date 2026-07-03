@@ -6,6 +6,122 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15 Wave 3 — Platform Experience & Navigation Polish
+
+Why:
+
+- V15 Wave 1 and Wave 2 redesigned the major Workspace content pages, but platform navigation still exposed Health and Beta as first-level destinations.
+- Settings needed to become the platform home for General, Workspace, Language, Notifications, Privacy, About, and Advanced.
+- Mobile navigation needed to fit the AI Wealth Workspace IA with no more than five primary items.
+
+What Changed:
+
+- Reorganized desktop sidebar into 首頁, 我的資產, 市場, AI, 提醒, 設定.
+- Reorganized mobile bottom navigation into 首頁, 資產, 市場, AI, 設定.
+- Reorganized mobile drawer using the same product IA and moved System Health / Beta under Settings.
+- Reworked `/my-ixai/settings` into the platform settings home with General, Workspace, Language, Notifications, Privacy, About, and Advanced sections.
+- Reworked `/my-ixai/health` as Settings / Advanced / System Health.
+- Reworked `/my-ixai/beta` as Settings / About / Beta.
+- Updated `/my-ixai` entry copy so Health, Beta, and Diagnostics are not first-level Workspace concepts.
+
+Key Decisions:
+
+- Wave 3 changes platform IA, navigation hierarchy, Settings composition, Health/Beta placement, mobile navigation, and product language only.
+- Health, Beta, and Diagnostics remain available, but are demoted into Settings -> Advanced / About.
+- No API, database, Supabase, auth, schema, migration, scheduler, market provider, portfolio engine, FCN engine, risk engine, Morning Brief engine, AI/LLM, trading, recommendation, billing, backend, or external integration behavior changed.
+
+## V15 Wave 2 — AI / Information Experience
+
+Why:
+
+- V15 Wave 1 established the shared AI Wealth Workspace hierarchy for Home, Portfolio, FCN, and Risk.
+- Intelligence, Copilot, Watchlist, Notifications, and Timeline still exposed too much source, readiness, engine, delivery, or event-log language before explaining what users should read or do next.
+- AI / information pages needed to feel like readable market and workflow surfaces while preserving explain-only and monitoring-only boundaries.
+
+What Changed:
+
+- Reworked `/my-ixai/intelligence` around Today's Market, Portfolio Impact, explain-only AI Summary, News / Watchlist, and collapsed diagnostics.
+- Reworked `/my-ixai/copilot` into an AI assistant entry point with suggested questions, empty-state guidance, explain-only summary, and collapsed diagnostics.
+- Reworked `/my-ixai/watchlist` into a market tracking page with watched symbols, market snapshot, empty state CTA, and collapsed diagnostics.
+- Reworked `/my-ixai/notifications` into a reminder center with priority-based notifications, delivery preview, empty state, and collapsed diagnostics.
+- Reworked `/my-ixai/timeline` into a recent events page with today / next 7 days grouping, FCN / portfolio events, empty state, and collapsed diagnostics.
+
+Key Decisions:
+
+- Wave 2 changes hierarchy, layout, copy, card structure, product language, and diagnostics placement only.
+- Existing Intelligence, Copilot, Watchlist, Notification, Timeline, Market, Morning Brief, Portfolio, FCN, and Risk services remain unchanged.
+- No API, database, Supabase, auth, schema, migration, scheduler, market provider, trading, recommendation, billing, external integration, AI provider, LLM behavior, or engine logic changed.
+
+## V15 Wave 1 — Portfolio Experience
+
+Why:
+
+- V15 needed to extend the Home redesign into the most important authenticated Workspace surfaces.
+- Portfolio, FCN, and Risk still presented too much provider, source, runtime, readback, and diagnostics language before answering what users should watch today.
+- Home, Portfolio, FCN, and Risk needed one consistent AI Wealth Workspace page hierarchy before deeper Intelligence, Copilot, and navigation redesign work.
+
+What Changed:
+
+- Added shared V15 product primitives for product heroes, KPI grids, product sections, and collapsed diagnostics panels.
+- Updated Home to use the shared V15 product hero and diagnostics panel.
+- Reworked `/my-ixai/portfolio` around portfolio hero, total assets, allocation, today's performance, holdings, recent changes, and collapsed diagnostics.
+- Reworked `/my-ixai/fcn` around FCN risk status, upcoming observation, schedule awareness, positions, and collapsed diagnostics.
+- Reworked `/my-ixai/risk` around today's risk, risk explanation, top risk drivers, concentration, exposure, and collapsed diagnostics.
+
+Key Decisions:
+
+- Wave 1 changes hierarchy, layout, copy, card composition, and diagnostics placement only.
+- Existing Portfolio valuation, FCN risk/schedule, Risk Engine, Market Service, Morning Brief, and Workspace runtime logic remain unchanged.
+- No API, database, Supabase, auth, schema, migration, scheduler, provider, trading, recommendation, billing, AI/LLM, or engine behavior changed.
+
+## V15 Sprint 2.1 Home Redesign
+
+Why:
+
+- V15 Product Experience Redesign shifts IXAI from a Developer Workspace toward an AI Wealth Workspace.
+- The previous Home hierarchy exposed live quote status, i18n/localization cards, runtime readiness, and diagnostics before answering the user's daily investment questions.
+- The first screen needed to prioritize Morning Brief, portfolio state, risk/alerts, market context, and next actions.
+
+What Changed:
+
+- Reworked `/my-ixai/home` to render a V15 Home dashboard composition.
+- Added Hero Summary that frames the page as an AI Wealth Workspace.
+- Promoted Morning Brief to the first-screen area.
+- Added Portfolio Snapshot with Total Assets, Allocation, Today's Performance, and Holdings Count.
+- Added Today's Alerts grouped as Critical, Warning, and Info.
+- Added Market Snapshot with provider/cache/runtime details demoted to diagnostics.
+- Added Quick Actions for Portfolio, Add Asset, FCN, Watchlist, and Copilot.
+- Added Recent Activity limited to the latest five timeline events.
+- Moved Provider, Runtime, Health, Source, Readiness, Cache, and Diagnostics into a collapsed Diagnostics section at the bottom.
+
+Key Decisions:
+
+- Sprint 2.1 changes hierarchy, layout, spacing, cards, copy, and information architecture only.
+- No API, database, business logic, Risk Engine, FCN Engine, Morning Brief Engine, Market Service, Supabase, auth, scheduler, provider, runtime, translation keys, i18n dictionaries, backend, trading, recommendation, or AI model behavior changed.
+- The V15 source of truth is `docs/V15_PRODUCT_EXPERIENCE_CONTEXT.md` plus the V15 UX Audit, IA plan, Design System 2.0, and Sprint 2 UI implementation spec.
+
+## V13.8 Full Workspace Localization Completion
+
+Why:
+
+- V13.7 added authenticated DOM coverage reporting, but the audit method over-filtered visible product/UI English and could report overly optimistic coverage.
+- Production authenticated Workspace review still needed main-content localization for Morning Brief, Health, Risk, FCN schedule, Intelligence, and shared source status badges.
+- `zh-TW`, `zh-CN`, `ja-JP`, and `ko-KR` needed visible text block evidence rather than only route-level body token scoring.
+
+What Changed:
+
+- Updated `scripts/audit-production-authenticated.mjs` to generate `docs/V138_FULL_WORKSPACE_LOCALIZATION_COMPLETION.md` and report DOM visible text blocks plus suspicious English block evidence.
+- Localized Workspace Morning Brief export/preview labels and non-English section summaries.
+- Wired Workspace Health summary, Risk Engine summary, Live Risk adapter, FCN schedule summary, Intelligence v2, and structured Intelligence cards to dictionary-backed display labels.
+- Expanded `src/lib/i18n/dictionaries.ts` for `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`, including source status badge coverage.
+
+Key Decisions:
+
+- V13.8 is translation coverage, audit evidence, and UI display mapping only.
+- Engine output remains stable; user-facing localization happens through display mapping and dictionary fallbacks.
+- Intentional technical finance terms such as FCN, KI, KO, tickers, provider names, and currency codes may remain visible.
+- No auth, API, Supabase schema, migrations, RLS, membership, billing, broker/trading, scheduler/delivery, AI provider behavior, valuation engine, risk scoring logic, FCN engine logic, market provider behavior, or recommendation logic changed.
+
 ## V13.7 Real Translation Coverage Completion Program
 
 Why:

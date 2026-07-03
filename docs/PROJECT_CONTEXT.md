@@ -56,6 +56,87 @@ This origin matters because IXAI's product center is not "content marketing" or 
 
 The current IXAI public app is live and deployed on Vercel, with `https://app.ixuan.ai` as the production public domain.
 
+## B0. V15 Product Experience Redesign Status
+
+V15 Product Experience Redesign has started. The current highest priority is product experience, not new feature expansion.
+
+Highest-priority work:
+
+- Home UX.
+- Portfolio UX.
+- FCN UX.
+- Risk UX.
+- Intelligence UX.
+- Copilot UX.
+- Watchlist UX.
+- Notifications UX.
+- Timeline UX.
+- Settings UX.
+- Platform navigation.
+- Mobile navigation.
+- Dashboard hierarchy.
+- Navigation.
+- Design System.
+- Morning Brief prominence.
+- Diagnostics demotion.
+- Workspace language.
+
+All Workspace first screens should answer:
+
+- 今天我的資產如何？
+- 今天有哪些風險？
+- 今天市場如何？
+- 下一步做什麼？
+
+V15 Product Direction:
+
+```text
+Developer Workspace
+↓
+AI Wealth Workspace
+```
+
+V15 must not add API, database, AI model behavior, Risk Engine, FCN Engine, scheduler, trading, or recommendation scope unless separately approved. V15 work should focus on UX, IA, navigation, dashboard hierarchy, design system, copywriting, component hierarchy, and demoting diagnostics below user-facing summaries.
+
+Sprint status:
+
+- V15 Sprint 2.1 Home Redesign is complete.
+- V15 Sprint 2.1a Dashboard Polish is complete.
+- V15 Wave 1 Portfolio Experience is complete for Home, Portfolio, FCN, and Risk.
+- V15 Wave 2 AI / Information Experience is complete for Intelligence, Copilot, Watchlist, Notifications, and Timeline.
+- V15 Wave 3 Platform Experience & Navigation Polish is complete for Workspace navigation, Settings, Health, Beta, Advanced diagnostics, mobile navigation, and platform consistency.
+- Next recommended sequence: Sprint 4 Design Polish and authenticated production visual QA.
+
+Wave 1 product hierarchy:
+
+```text
+Hero / Summary
+↓
+KPI Row
+↓
+Primary user-facing cards
+↓
+Detail sections
+↓
+Diagnostics collapsed by default
+```
+
+Wave 2 AI / information pages remain explain-only. They do not add AI provider calls, recommendation logic, trading behavior, external notification delivery, scheduler behavior, API contracts, database schema, Supabase behavior, or engine logic.
+
+Wave 3 Platform Experience rule:
+
+- Primary Workspace navigation is 首頁, 我的資產, 市場, AI, 提醒, 設定.
+- Health, Beta, and Diagnostics are Settings -> Advanced / About surfaces, not first-level navigation.
+- Mobile bottom navigation is limited to five items: 首頁, 資產, 市場, AI, 設定.
+
+Canonical V15 product context:
+
+- `docs/V15_PRODUCT_EXPERIENCE_CONTEXT.md`.
+- `docs/V15_UX_AUDIT.md`.
+- `docs/V15_SPRINT_1_IA_NAVIGATION_REDESIGN_PLAN.md`.
+- `docs/V15_DESIGN_SYSTEM_2.md`.
+- `docs/V15_SPRINT_2_UI_IMPLEMENTATION_SPEC.md`.
+
 ## B0. v1.80 / v1.81 Production Status — Portfolio + FCN Foundation
 
 Production foundation:
@@ -64,11 +145,11 @@ Production foundation:
 
 Current development version:
 
-`V13.7 Real Translation Coverage Completion Program`
+`V13.8 Full Workspace Localization Completion`
 
-V13.7 Real Translation Coverage Completion Program follows V13.6 authenticated production audit tooling and moves translation verification from keyword leftovers to DOM-based coverage scoring. It repairs major authenticated Workspace content surfaces, including shared Workspace Market Status, Health Center, FCN Center, Settings, Risk, Intelligence, and non-English pack coverage. This batch does not change auth, RLS, schema, migrations, API contracts, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, AI model behavior, live market provider behavior, exchange-rate provider behavior, valuation engine, risk engine, or FCN engine logic. See `docs/V137_REAL_TRANSLATION_COVERAGE.md`, `docs/V135_FULL_TRANSLATION_COVERAGE.md`, `docs/V123_TRANSLATION_MAINTENANCE_BATCH3.md`, `docs/TRANSLATION_VISUAL_QA_BATCH_2.md`, `docs/TRANSLATION_MAINTENANCE_BATCH_1.md`, `docs/V13_SPRINT_4_AUTHENTICATED_WORKSPACE_TRANSLATION_AUDIT.md`, and `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md`.
+V13.8 Full Workspace Localization Completion follows V13.7 and corrects the audit blind spot that over-filtered visible English product terms. It upgrades `scripts/audit-production-authenticated.mjs` to report DOM visible text blocks and suspicious English block evidence, then repairs authenticated Workspace main-content localization for Morning Brief exports/previews, Workspace Health summary, Risk Engine summaries, Live Risk adapter, FCN schedule/readiness cards, Intelligence v2 / structured cards, and shared source status badges across `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`. This batch does not change auth, RLS, schema, migrations, API contracts, billing, broker integration, trading, recommendations, scheduler/notification delivery, OpenAI, AI model behavior, live market provider behavior, exchange-rate provider behavior, valuation engine, risk engine, or FCN engine logic. See `docs/V138_FULL_WORKSPACE_LOCALIZATION_COMPLETION.md`, `docs/V137_REAL_TRANSLATION_COVERAGE.md`, `docs/V135_FULL_TRANSLATION_COVERAGE.md`, `docs/V123_TRANSLATION_MAINTENANCE_BATCH3.md`, `docs/TRANSLATION_VISUAL_QA_BATCH_2.md`, `docs/TRANSLATION_MAINTENANCE_BATCH_1.md`, `docs/V13_SPRINT_4_AUTHENTICATED_WORKSPACE_TRANSLATION_AUDIT.md`, and `docs/V13_SPRINT_3_TRANSLATION_COVERAGE_REPAIR.md`.
 
-V13 infrastructure foundation is complete after Sprint 2, but product translation coverage must be judged by production visual QA. Sprint 3 was the first coverage repair pass; Sprint 4 repaired Portfolio authenticated readback first; Batch 1 started the authenticated Workspace maintenance track; Batch 2 confirmed that a signed-in production browser session is required before authenticated Workspace visual QA can be claimed; Batch 3 remained blocked by the same unauthenticated browser state. V13.5 repaired the highest-exposure dictionary and UI label gaps in Settings, Risk, Intelligence, and non-English locale mapping. V13.6 added a signed-in production audit tool. V13.7 repairs major Workspace main-content gaps and adds DOM translation coverage evidence. Deep input forms, editorial/public long-form content, admin/legacy preview surfaces, and intentional technical finance terminology remain candidates for targeted dictionary migration after production verification.
+V13 infrastructure foundation is complete after Sprint 2, but product translation coverage must be judged by production visual QA. Sprint 3 was the first coverage repair pass; Sprint 4 repaired Portfolio authenticated readback first; Batch 1 started the authenticated Workspace maintenance track; Batch 2 confirmed that a signed-in production browser session is required before authenticated Workspace visual QA can be claimed; Batch 3 remained blocked by the same unauthenticated browser state. V13.5 repaired the highest-exposure dictionary and UI label gaps in Settings, Risk, Intelligence, and non-English locale mapping. V13.6 added a signed-in production audit tool. V13.7 added DOM translation coverage evidence but was too permissive for product/UI English. V13.8 repairs the remaining high-impact Workspace main-content gaps with stricter evidence. Deep input forms, editorial/public long-form content, admin/legacy preview surfaces, and intentional technical finance terminology remain candidates for targeted dictionary migration after production verification.
 
 V14 Sprint 3 PR #89 has merged into `main`, and V14 Beta Release Review is complete as a release-governance checkpoint. V14 Beta is functionally ready for invite-only Beta preparation after review, but invite-only Beta should begin only after the production verification checklist passes. See `docs/V14_SPRINT_3_BETA_READINESS_POLISH.md`, `docs/V14_BETA_RELEASE_NOTES.md`, and `docs/V14_BETA_RELEASE_REVIEW.md`.
 
@@ -117,6 +198,7 @@ Important:
 - V12 Translation Maintenance Program Batch 3 attempts authenticated Workspace visual QA but is blocked because the available production browser session is not signed in.
 - V13.5 Full Translation Coverage Program repairs high-exposure Settings diagnostics, Risk Center, Intelligence Center, and non-English locale pack mappings while preserving product/runtime boundaries.
 - V13.7 Real Translation Coverage Completion Program adds DOM coverage reporting and repairs major authenticated Workspace content translation surfaces while preserving product/runtime boundaries.
+- V13.8 Full Workspace Localization Completion fixes the V13.7 audit method and repairs high-impact Workspace main-content localization while preserving product/runtime boundaries.
 - V13 completion criteria now include signed-in Workspace manual verification, not only infrastructure completion.
 - Recommended next options are production verification after deploying V13.7, V14 Beta Production Verification / Invite-only Pilot, V15 AI Wealth OS planning, or deeper dictionary migration as maintenance for remaining long-tail surfaces.
 - V15 remains unchanged.

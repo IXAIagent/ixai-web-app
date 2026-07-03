@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CalendarDays, RefreshCw, WalletCards } from "lucide-react";
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
+import { useTranslation } from "@/src/lib/i18n";
 import { FCN_DRAFT_STORE_EVENT } from "@/src/lib/portfolio/input/fcn-draft-store";
 import { INPUT_TRUTH_BRIDGE_EVENT } from "@/src/lib/portfolio/input/input-truth-bridge";
 import { getWorkspaceFcnScheduleSummary } from "@/src/lib/fcn/schedule/fcn-schedule-service";
@@ -30,7 +31,7 @@ const SOURCE_CLASS: Record<FcnScheduleSourceStatus, string> = {
   unavailable: "border-rose-200 bg-rose-50 text-rose-800",
 };
 
-const EVENT_TYPE_LABEL: Record<FcnCouponScheduleEvent["eventType"], string> = {
+const EVENT_TYPE_LABEL_KEY: Record<FcnCouponScheduleEvent["eventType"], string> = {
   coupon: "Coupon",
   ko_observation: "KO Observation",
   maturity: "Maturity",
@@ -62,9 +63,9 @@ function formatNumber(value: number | null | undefined, digits = 0) {
   }).format(value);
 }
 
-function formatAmount(value: number | null | undefined, currency = "") {
+function formatAmount(value: number | null | undefined, currency = "", unavailableLabel = "Amount not stored") {
   if (typeof value !== "number" || !Number.isFinite(value)) {
-    return "Amount not stored";
+    return unavailableLabel;
   }
 
   return `${currency} ${formatNumber(value, 2)}`.trim();
@@ -83,32 +84,38 @@ function getPrimaryEventDate(event: FcnCouponScheduleEvent | undefined) {
 }
 
 function UrgencyBadge({ urgency }: { urgency: FcnScheduleUrgency }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <span
       className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${URGENCY_CLASS[urgency]}`}
     >
-      {urgency.replace("_", " ").toUpperCase()}
+      {t(`urgency_${urgency}`, urgency.replace("_", " "))}
     </span>
   );
 }
 
 function SourceBadge({ status }: { status: FcnScheduleSourceStatus }) {
+  const { t } = useTranslation("sourceStatus");
+
   return (
     <span
       className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${SOURCE_CLASS[status]}`}
     >
-      {status.toUpperCase()}
+      {t(status, status)}
     </span>
   );
 }
 
 function EventCard({ event }: { event: FcnCouponScheduleEvent }) {
+  const { t } = useTranslation("fcn");
+
   return (
     <article className="rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
-            {EVENT_TYPE_LABEL[event.eventType]}
+            {t(`scheduleEvent_${event.eventType}`, EVENT_TYPE_LABEL_KEY[event.eventType])}
           </p>
           <h3 className="mt-2 text-base font-semibold text-[var(--ixai-forest)]">
             {event.fcnName}
@@ -120,18 +127,18 @@ function EventCard({ event }: { event: FcnCouponScheduleEvent }) {
         {formatDate(getPrimaryEventDate(event))}
       </p>
       <p className="mt-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-        Expected coupon: {formatAmount(event.expectedCouponAmount, event.currency)}
+        {t("expectedCoupon")}: {formatAmount(event.expectedCouponAmount, event.currency, t("amountNotStored"))}
       </p>
       {typeof event.daysUntilEvent === "number" ? (
         <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
           {event.daysUntilEvent >= 0
-            ? `${event.daysUntilEvent} day(s) until event`
-            : `${Math.abs(event.daysUntilEvent)} day(s) overdue`}
+            ? t("daysUntilEvent").replace("{count}", String(event.daysUntilEvent))
+            : t("daysOverdue").replace("{count}", String(Math.abs(event.daysUntilEvent)))}
         </p>
       ) : null}
       {event.warningMessage ? (
         <p className="mt-3 rounded-md border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-          {event.warningMessage}
+          {t("scheduleWarning_unusable_schedule_dates", event.warningMessage)}
         </p>
       ) : null}
     </article>
@@ -139,6 +146,7 @@ function EventCard({ event }: { event: FcnCouponScheduleEvent }) {
 }
 
 export function FcnScheduleSummary() {
+  const { t } = useTranslation("fcn");
   const [isLoading, setIsLoading] = useState(true);
   const [summary, setSummary] = useState<FcnPortfolioScheduleSummary | null>(null);
   const mountedRef = useRef(false);
@@ -200,10 +208,10 @@ export function FcnScheduleSummary() {
           <FeatureIcon icon={CalendarDays} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              FCN Coupon & Schedule Engine
+              {t("scheduleEngine")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
-              Coupon, Observation, KO, and Maturity Calendar
+              {t("scheduleTitle")}
             </h2>
           </div>
         </div>
@@ -219,18 +227,16 @@ export function FcnScheduleSummary() {
       </div>
 
       <p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-        v4.60 reads existing FCN schedule data and local FCN drafts to organize coupon dates,
-        observation dates, KO observation dates, maturity awareness, and expected coupon cashflow
-        only when explicit coupon amount data exists.
+        {t("scheduleBody")}
       </p>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
-          ["Positions", summary?.positionCount ?? 0],
-          ["Scheduled", summary?.scheduledPositionCount ?? 0],
-          ["Unavailable", summary?.unavailablePositionCount ?? 0],
-          ["Due Soon", summary?.dueSoonEventCount ?? 0],
-          ["Overdue", summary?.overdueEventCount ?? 0],
+          [t("positions"), summary?.positionCount ?? 0],
+          [t("scheduled"), summary?.scheduledPositionCount ?? 0],
+          [t("unavailable"), summary?.unavailablePositionCount ?? 0],
+          [t("dueSoon"), summary?.dueSoonEventCount ?? 0],
+          [t("overdue"), summary?.overdueEventCount ?? 0],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -250,17 +256,17 @@ export function FcnScheduleSummary() {
         <div className="mt-5 flex flex-wrap items-center gap-2">
           <SourceBadge status={summary.sourceStatus} />
           <span className="rounded-full border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-            Upcoming events: {summary.upcomingEventCount}
+            {t("upcomingEvents")}: {summary.upcomingEventCount}
           </span>
           <span className="rounded-full border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-            Updated {new Date(summary.updatedAt).toLocaleString("zh-TW")}
+            {t("updated")} {new Date(summary.updatedAt).toLocaleString("zh-TW")}
           </span>
         </div>
       ) : null}
 
       {summary?.positionCount === 0 ? (
         <p className="mt-5 rounded-xl border border-[var(--ixai-border)] bg-white/70 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-          No FCN positions or local drafts are available for schedule monitoring yet.
+          {t("noSchedulePositions")}
         </p>
       ) : null}
 
@@ -268,7 +274,7 @@ export function FcnScheduleSummary() {
         <div className="flex items-center gap-2">
           <CalendarDays className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Next 30 Days
+            {t("next30Days")}
           </p>
         </div>
         {summary?.next30DayEvents.length ? (
@@ -279,7 +285,7 @@ export function FcnScheduleSummary() {
           </div>
         ) : (
           <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            No coupon, observation, KO, or maturity events are scheduled in the next 30 days.
+            {t("noNext30DayEvents")}
           </p>
         )}
       </section>
@@ -288,7 +294,7 @@ export function FcnScheduleSummary() {
         <div className="flex items-center gap-2">
           <WalletCards className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            Monthly Expected Coupon Cashflow
+            {t("monthlyExpectedCouponCashflow")}
           </p>
         </div>
         {summary?.monthlyCashflows.length ? (
@@ -302,17 +308,17 @@ export function FcnScheduleSummary() {
                   {cashflow.monthKey}
                 </p>
                 <p className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
-                  {formatAmount(cashflow.expectedCouponAmount, cashflow.currency)}
+                  {formatAmount(cashflow.expectedCouponAmount, cashflow.currency, t("amountNotStored"))}
                 </p>
                 <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                  {cashflow.eventCount} coupon event(s)
+                  {t("couponEventCount").replace("{count}", String(cashflow.eventCount))}
                 </p>
               </article>
             ))}
           </div>
         ) : (
           <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Coupon dates may exist, but explicit coupon amount data is not stored yet.
+            {t("couponAmountMissing")}
           </p>
         )}
       </section>
@@ -328,19 +334,19 @@ export function FcnScheduleSummary() {
                 <div>
                   <p className="font-semibold text-[var(--ixai-forest)]">{position.name}</p>
                   <p className="mt-1 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                    {position.upcomingEvents.length} schedule event(s)
+                    {t("scheduleEventCount").replace("{count}", String(position.upcomingEvents.length))}
                   </p>
                 </div>
                 <SourceBadge status={position.sourceStatus} />
               </div>
               <dl className="mt-4 grid gap-3 sm:grid-cols-3">
                 {[
-                  ["Next Coupon", formatDate(getPrimaryEventDate(position.nextCouponEvent))],
+                  [t("nextCoupon"), formatDate(getPrimaryEventDate(position.nextCouponEvent))],
                   [
-                    "Next Observation",
+                    t("nextObservation"),
                     formatDate(getPrimaryEventDate(position.nextObservationEvent)),
                   ],
-                  ["Maturity", formatDate(getPrimaryEventDate(position.nextMaturityEvent))],
+                  [t("event_maturity"), formatDate(getPrimaryEventDate(position.nextMaturityEvent))],
                 ].map(([label, value]) => (
                   <div
                     className="rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3"
@@ -362,7 +368,7 @@ export function FcnScheduleSummary() {
                       className="rounded-md border border-[var(--ixai-border)] bg-white/70 p-2"
                       key={`${position.id}-${warning.code}`}
                     >
-                      {warning.message}
+                      {t(`scheduleWarning_${warning.code}`, warning.message)}
                     </li>
                   ))}
                 </ul>
@@ -373,8 +379,7 @@ export function FcnScheduleSummary() {
       ) : null}
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-        {summary?.informationalOnlyDisclaimer ??
-          "FCN Coupon & Schedule Engine is informational and monitoring-only. It does not provide tax reporting, investment recommendations, order execution, auto trading, target prices, or return promises."}
+        {t("scheduleDisclaimer", summary?.informationalOnlyDisclaimer)}
       </p>
     </section>
   );

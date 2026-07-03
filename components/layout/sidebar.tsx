@@ -27,20 +27,44 @@ export function Sidebar() {
   const isAuthenticated = mounted && session.mode === "authenticated";
   const workspaceNavGroups: NavGroup[] = [
     {
-      heading: dictionary.workspaceNav.workspaceHeading,
+      heading: "首頁",
       items: [
         { label: dictionary.workspaceNav.home, href: "/my-ixai/home" },
+      ],
+    },
+    {
+      heading: "我的資產",
+      items: [
         { label: dictionary.workspaceNav.portfolio, href: "/my-ixai/portfolio" },
-        { label: dictionary.workspaceNav.assetInput, href: "/my-ixai/input" },
-        { label: dictionary.workspaceNav.watchlist, href: "/my-ixai/watchlist" },
-        { label: dictionary.workspaceNav.notifications, href: "/my-ixai/notifications" },
-        { label: dictionary.workspaceNav.timeline, href: "/my-ixai/timeline" },
-        { label: dictionary.workspaceNav.copilot, href: "/my-ixai/copilot" },
-        { label: dictionary.workspaceNav.health, href: "/my-ixai/health" },
-        { label: dictionary.workspaceNav.beta, href: "/my-ixai/beta" },
-        { label: dictionary.workspaceNav.risk, href: "/my-ixai/risk" },
         { label: dictionary.workspaceNav.fcn, href: "/my-ixai/fcn" },
+        { label: dictionary.workspaceNav.risk, href: "/my-ixai/risk" },
+        { label: dictionary.workspaceNav.assetInput, href: "/my-ixai/input" },
+      ],
+    },
+    {
+      heading: "市場",
+      items: [
+        { label: dictionary.workspaceNav.watchlist, href: "/my-ixai/watchlist" },
+        { label: dictionary.workspaceNav.timeline, href: "/my-ixai/timeline" },
+      ],
+    },
+    {
+      heading: "AI",
+      items: [
+        { label: "Morning Brief", href: "/my-ixai/home" },
         { label: dictionary.workspaceNav.intelligence, href: "/my-ixai/intelligence" },
+        { label: dictionary.workspaceNav.copilot, href: "/my-ixai/copilot" },
+      ],
+    },
+    {
+      heading: "提醒",
+      items: [
+        { label: dictionary.workspaceNav.notifications, href: "/my-ixai/notifications" },
+      ],
+    },
+    {
+      heading: "設定",
+      items: [
         { label: dictionary.workspaceNav.settings, href: "/my-ixai/settings" },
       ],
     },
