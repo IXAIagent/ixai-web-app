@@ -1,71 +1,123 @@
 import type { WorkspaceMorningBrief } from "@/src/lib/workspace/morning-brief/workspace-brief-types";
 
+export type WorkspaceBriefExportLabels = {
+  boundary: string;
+  date: string;
+  generatedAt: string;
+  highlights: string;
+  noHighlights: string;
+  sections: string;
+  source: string;
+  sourceStatus: string;
+  status: string;
+  shareBoundary: string;
+};
+
+const defaultLabels: WorkspaceBriefExportLabels = {
+  boundary: "Boundary",
+  date: "Date",
+  generatedAt: "Generated at",
+  highlights: "Highlights",
+  noHighlights: "No source highlights are available.",
+  sections: "Sections",
+  source: "Source",
+  sourceStatus: "Source status",
+  status: "Status",
+  shareBoundary:
+    "This is IXAI Workspace monitoring context only. No buy/sell/hold recommendation, target price, trading signal, or delivery automation is included.",
+};
+
 function line(value: string) {
   return value.trim();
 }
 
-function formatSectionList(brief: WorkspaceMorningBrief, markdown: boolean) {
+function mergeLabels(labels?: Partial<WorkspaceBriefExportLabels>) {
+  return {
+    ...defaultLabels,
+    ...(labels ?? {}),
+  };
+}
+
+function formatSectionList(
+  brief: WorkspaceMorningBrief,
+  markdown: boolean,
+  labels: WorkspaceBriefExportLabels,
+) {
   return brief.sections
     .map((section, index) => {
       const heading = markdown ? `## ${index + 1}. ${section.title}` : `${index + 1}. ${section.title}`;
       return [
         heading,
-        `Source: ${section.source}`,
-        `Status: ${section.dataQuality} / ${section.severity}`,
+        `${labels.source}: ${section.source}`,
+        `${labels.status}: ${section.dataQuality} / ${section.severity}`,
         section.summary,
       ].join("\n");
     })
     .join("\n\n");
 }
 
-export function buildWorkspaceBriefPlainText(brief: WorkspaceMorningBrief) {
+export function buildWorkspaceBriefPlainText(
+  brief: WorkspaceMorningBrief,
+  labelsInput?: Partial<WorkspaceBriefExportLabels>,
+) {
+  const labels = mergeLabels(labelsInput);
+
   return [
     line(brief.title),
-    `Date: ${brief.date}`,
-    `Generated at: ${brief.generatedAt}`,
-    `Status: ${brief.status}`,
+    `${labels.date}: ${brief.date}`,
+    `${labels.generatedAt}: ${brief.generatedAt}`,
+    `${labels.status}: ${brief.status}`,
     "",
-    "Highlights",
-    ...(brief.highlights.length > 0 ? brief.highlights.map((item) => `- ${item}`) : ["- No source highlights are available."]),
+    labels.highlights,
+    ...(brief.highlights.length > 0 ? brief.highlights.map((item) => `- ${item}`) : [`- ${labels.noHighlights}`]),
     "",
-    "Sections",
-    formatSectionList(brief, false),
+    labels.sections,
+    formatSectionList(brief, false, labels),
     "",
-    "Boundary",
+    labels.boundary,
     brief.informationalOnlyDisclaimer,
   ].join("\n");
 }
 
-export function buildWorkspaceBriefMarkdown(brief: WorkspaceMorningBrief) {
+export function buildWorkspaceBriefMarkdown(
+  brief: WorkspaceMorningBrief,
+  labelsInput?: Partial<WorkspaceBriefExportLabels>,
+) {
+  const labels = mergeLabels(labelsInput);
+
   return [
     `# ${line(brief.title)}`,
     "",
-    `- Date: ${brief.date}`,
-    `- Generated at: ${brief.generatedAt}`,
-    `- Status: ${brief.status}`,
-    `- Source status: ${brief.sourceStatus}`,
+    `- ${labels.date}: ${brief.date}`,
+    `- ${labels.generatedAt}: ${brief.generatedAt}`,
+    `- ${labels.status}: ${brief.status}`,
+    `- ${labels.sourceStatus}: ${brief.sourceStatus}`,
     "",
-    "## Highlights",
-    ...(brief.highlights.length > 0 ? brief.highlights.map((item) => `- ${item}`) : ["- No source highlights are available."]),
+    `## ${labels.highlights}`,
+    ...(brief.highlights.length > 0 ? brief.highlights.map((item) => `- ${item}`) : [`- ${labels.noHighlights}`]),
     "",
-    formatSectionList(brief, true),
+    formatSectionList(brief, true, labels),
     "",
-    "## Compliance Boundary",
+    `## ${labels.boundary}`,
     "",
     brief.informationalOnlyDisclaimer,
   ].join("\n");
 }
 
-export function buildWorkspaceBriefShareText(brief: WorkspaceMorningBrief) {
+export function buildWorkspaceBriefShareText(
+  brief: WorkspaceMorningBrief,
+  labelsInput?: Partial<WorkspaceBriefExportLabels>,
+) {
+  const labels = mergeLabels(labelsInput);
   const highlights = brief.highlights.slice(0, 4);
 
   return [
     `${brief.title}`,
-    `Status: ${brief.status} / ${brief.sourceStatus}`,
+    `${labels.status}: ${brief.status} / ${brief.sourceStatus}`,
     "",
-    "Highlights:",
-    ...(highlights.length > 0 ? highlights.map((item) => `- ${item}`) : ["- No source highlights are available."]),
+    `${labels.highlights}:`,
+    ...(highlights.length > 0 ? highlights.map((item) => `- ${item}`) : [`- ${labels.noHighlights}`]),
     "",
-    "This is IXAI Workspace monitoring context only. No buy/sell/hold recommendation, target price, trading signal, or delivery automation is included.",
+    labels.shareBoundary,
   ].join("\n");
 }

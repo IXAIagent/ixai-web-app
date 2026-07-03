@@ -11,6 +11,7 @@ import {
 
 import { FeatureIcon } from "@/components/ui/feature-icon";
 import { useTranslation } from "@/src/lib/i18n";
+import { useWorkspaceDisplayLabels } from "@/src/lib/i18n/use-workspace-display-labels";
 import { getWorkspacePortfolioRiskSummary } from "@/src/lib/risk/risk-service";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 import type {
@@ -34,9 +35,9 @@ const SEVERITY_CLASS: Record<RiskSignalSeverity, string> = {
   warning: "border-[color-mix(in_srgb,var(--ixai-risk-watch)_38%,transparent)] bg-[color-mix(in_srgb,var(--ixai-risk-watch)_10%,white)] text-[var(--ixai-forest)]",
 };
 
-function formatScore(value: number | null | undefined) {
+function formatScore(value: number | null | undefined, unknownLabel: string) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
-    return "UNKNOWN";
+    return unknownLabel;
   }
 
   return `${Math.round(value)}/100`;
@@ -68,6 +69,7 @@ function SeverityBadge({
 
 export function RiskEngineSummary() {
   const { t } = useTranslation("risk");
+  const { sourceStatusLabel } = useWorkspaceDisplayLabels();
   const [risk, setRisk] = useState<PortfolioRiskResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
@@ -129,6 +131,47 @@ export function RiskEngineSummary() {
 
   const level = risk?.summary.riskLevel ?? "unavailable";
 
+  function signalTitle(signal: PortfolioRiskResult["summary"]["topSignals"][number]) {
+    const title = signal.title.toLowerCase();
+
+    if (title.includes("single position concentration is critical")) return t("signalSinglePositionCritical");
+    if (title.includes("single position concentration is high")) return t("signalSinglePositionHigh");
+    if (title.includes("asset class allocation is highly concentrated")) return t("signalAssetClassCritical");
+    if (title.includes("asset class allocation is concentrated")) return t("signalAssetClassHigh");
+    if (title.includes("crypto exposure is critical")) return t("signalCryptoCritical");
+    if (title.includes("crypto exposure is high")) return t("signalCryptoHigh");
+    if (title.includes("crypto exposure should be monitored")) return t("signalCryptoWatch");
+    if (title.includes("valuation source unavailable")) return t("signalValuationUnavailable");
+    if (title.includes("unpriced")) return t("signalUnpricedPositions");
+    if (title.includes("fcn valuation is placeholder-based")) return t("signalFcnPlaceholder");
+    if (title.includes("risk readback unavailable")) return t("signalRiskUnavailable");
+
+    return signal.title;
+  }
+
+  function signalMessage(signal: PortfolioRiskResult["summary"]["topSignals"][number]) {
+    const message = signal.message;
+    const percentMatch = message.match(/(.+?) represents ([0-9.]+)% of estimated portfolio value\./);
+
+    if (percentMatch) {
+      return t("signalRepresentsValue")
+        .replace("{name}", percentMatch[1] ?? "")
+        .replace("{percent}", percentMatch[2] ?? "");
+    }
+
+    const unpricedMatch = message.match(/([0-9]+) position\(s\) are unpriced/);
+
+    if (unpricedMatch) {
+      return t("signalUnpricedMessage").replace("{count}", unpricedMatch[1] ?? "0");
+    }
+
+    if (message.includes("Portfolio valuation source status is unavailable")) return t("signalValuationUnavailableMessage");
+    if (message.includes("FCN valuation uses notional placeholders")) return t("signalFcnPlaceholderMessage");
+    if (message.includes("No useful portfolio valuation data")) return t("signalRiskUnavailableMessage");
+
+    return message;
+  }
+
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -136,7 +179,7 @@ export function RiskEngineSummary() {
           <FeatureIcon icon={Gauge} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              Risk Engine v1
+              {t("riskEngineEyebrow")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
               {t("portfolioRiskSummary")}
@@ -166,7 +209,7 @@ export function RiskEngineSummary() {
                 {t("foundationRiskScore")}
               </p>
               <p className="mt-2 break-words font-mono text-4xl font-semibold">
-                {formatScore(risk?.summary.riskScore)}
+                {formatScore(risk?.summary.riskScore, t("unknown"))}
               </p>
             </div>
             <StatusBadge label={t(`riskLevel_${level}`, level)} />
@@ -174,7 +217,7 @@ export function RiskEngineSummary() {
           <p className="mt-4 text-sm leading-7">
             {t("sourceStatusSentence").replace(
               "{status}",
-              risk?.summary.sourceStatus ?? t("unavailable"),
+              sourceStatusLabel(risk?.summary.sourceStatus ?? "unavailable"),
             )}
           </p>
         </article>
@@ -222,10 +265,10 @@ export function RiskEngineSummary() {
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <p className="font-semibold text-[var(--ixai-forest)]">
-                        {signal.title}
+                        {signalTitle(signal)}
                       </p>
                       <p className="mt-1 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                        {signal.message}
+                        {signalMessage(signal)}
                       </p>
                     </div>
                     <SeverityBadge label={t(signal.severity, signal.severity)} severity={signal.severity} />
@@ -275,7 +318,7 @@ export function RiskEngineSummary() {
             </div>
           ) : (
             <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/70 p-3 text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              Score breakdown is empty until the engine detects valuation, allocation, or data quality signals.
+              {t("scoreBreakdownEmpty")}
             </p>
           )}
         </article>
@@ -283,7 +326,7 @@ export function RiskEngineSummary() {
 
       <p className="mt-5 rounded-lg border border-[var(--ixai-border)] bg-white/75 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
         {risk?.summary.informationalOnlyDisclaimer ??
-          "Risk Engine v1 is informational and monitoring-only. It does not provide investment recommendations, order execution, auto trading, or return promises."}
+          t("riskEngineDisclaimer")}
       </p>
     </section>
   );

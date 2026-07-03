@@ -44,7 +44,7 @@ export function WorkspaceMorningBriefV14Card({
   autoLoad?: boolean;
   compact?: boolean;
 }) {
-  const { locale, t } = useTranslation("morningBrief");
+  const { t } = useTranslation("morningBrief");
   const { t: tStatus } = useTranslation("status");
   const [brief, setBrief] = useState<WorkspaceMorningBrief>(() => buildEmptyWorkspaceMorningBrief());
   const [isLoading, setIsLoading] = useState(autoLoad);
@@ -94,13 +94,11 @@ export function WorkspaceMorningBriefV14Card({
     informationalOnlyDisclaimer: t("disclaimer", brief.informationalOnlyDisclaimer),
     sections: brief.sections.map((section) => ({
       ...section,
-      summary: locale === "zh-TW"
-        ? t(SECTION_SUMMARY_KEYS[section.key] ?? "unavailableSummary", section.summary)
-        : section.summary,
+      summary: t(SECTION_SUMMARY_KEYS[section.key] ?? "unavailableSummary", section.summary),
       title: t(SECTION_TITLE_KEYS[section.key] ?? section.key, section.title),
     })),
     title: `${t("generatedPrefix", "Workspace Morning Brief")} · ${brief.date}`,
-  }), [brief, locale, t]);
+  }), [brief, t]);
   const visibleLocalizedSections = compact ? localizedBrief.sections.slice(0, 4) : localizedBrief.sections;
 
   return (

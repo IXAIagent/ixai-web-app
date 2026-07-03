@@ -8,6 +8,7 @@ import {
   buildLegacyLiveRiskAdapterSnapshot,
   type LegacyLiveRiskAdapterSnapshot,
 } from "@/src/lib/risk/legacy-risk-engine/live-risk-adapter";
+import { useTranslation } from "@/src/lib/i18n";
 import { loadWorkspaceLiveValuationPreview } from "@/src/lib/valuation/live-valuation-client";
 
 type LoadState = "error" | "loading" | "ready";
@@ -34,6 +35,7 @@ function formatDateTime(value: string | null | undefined) {
 }
 
 export function LiveRiskAdapterCard() {
+  const { t } = useTranslation("risk");
   const [snapshot, setSnapshot] = useState<LegacyLiveRiskAdapterSnapshot | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("loading");
 
@@ -70,14 +72,14 @@ export function LiveRiskAdapterCard() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-            Live Risk Adapter
+            {t("liveRiskAdapter")}
           </p>
           <h2 className="mt-2 flex items-center gap-2 text-xl font-semibold text-[var(--ixai-forest)]">
             <ShieldAlert className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
-            V15 Risk + Yahoo Snapshot
+            {t("liveRiskAdapterTitle")}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-            Reuses V15 Legacy Risk Engine output and overlays quote freshness metadata. No second risk engine, trading action, or recommendation logic is introduced.
+            {t("liveRiskAdapterBody")}
           </p>
         </div>
         <button
@@ -91,16 +93,16 @@ export function LiveRiskAdapterCard() {
           ) : (
             <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
           )}
-          Refresh
+          {loadState === "loading" ? t("loading") : t("refresh")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Risk Level", snapshot?.riskLevel ?? "--"],
-          ["Data Quality", snapshot?.dataQuality ?? "--"],
-          ["Portfolio Value", formatMoney(snapshot?.portfolioCurrentValue)],
-          ["Live Warnings", String(snapshot?.liveWarningCount ?? 0)],
+          [t("riskLevel"), snapshot?.riskLevel ?? "--"],
+          [t("dataQuality"), snapshot?.dataQuality ?? "--"],
+          [t("portfolioValue"), formatMoney(snapshot?.portfolioCurrentValue)],
+          [t("liveWarnings"), String(snapshot?.liveWarningCount ?? 0)],
         ].map(([label, value]) => (
           <article
             className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4"
@@ -117,15 +119,15 @@ export function LiveRiskAdapterCard() {
       </div>
 
       <p className="mt-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-        Source: {snapshot?.source ?? "yahoo_live_preview"} · As of:{" "}
-        {formatDateTime(snapshot?.marketAsOf)} · Read-only: {String(snapshot?.readOnly ?? true)} ·
-        Trading actions: off · Recommendation logic: off · Missing quotes:{" "}
+        {t("source")}: {snapshot?.source ?? "yahoo_live_preview"} · {t("asOf")}:{" "}
+        {formatDateTime(snapshot?.marketAsOf)} · {t("readOnly")}: {String(snapshot?.readOnly ?? true)} ·
+        {t("tradingActions")}: {t("off")} · {t("recommendationLogic")}: {t("off")} · {t("missingQuotes")}:{" "}
         {snapshot?.missingQuoteSymbols.length ?? 0}
       </p>
 
       {loadState === "error" ? (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-800">
-          Live risk adapter could not be loaded. Existing Risk Center readback remains available.
+          {t("liveRiskAdapterError")}
         </p>
       ) : null}
     </section>

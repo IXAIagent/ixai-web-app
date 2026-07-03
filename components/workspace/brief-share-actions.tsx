@@ -25,9 +25,21 @@ function downloadTextFile(filename: string, content: string) {
 export function BriefShareActions({ brief }: { brief: WorkspaceMorningBrief }) {
   const { t } = useTranslation("morningBrief");
   const [status, setStatus] = useState<string>("ready");
-  const markdown = useMemo(() => buildWorkspaceBriefMarkdown(brief), [brief]);
-  const plainText = useMemo(() => buildWorkspaceBriefPlainText(brief), [brief]);
-  const shareText = useMemo(() => buildWorkspaceBriefShareText(brief), [brief]);
+  const exportLabels = useMemo(() => ({
+    boundary: t("boundary"),
+    date: t("date"),
+    generatedAt: t("generatedAt"),
+    highlights: t("highlights"),
+    noHighlights: t("noHighlights"),
+    sections: t("sections"),
+    source: t("source"),
+    sourceStatus: t("sourceStatus"),
+    status: t("status"),
+    shareBoundary: t("shareBoundary"),
+  }), [t]);
+  const markdown = useMemo(() => buildWorkspaceBriefMarkdown(brief, exportLabels), [brief, exportLabels]);
+  const plainText = useMemo(() => buildWorkspaceBriefPlainText(brief, exportLabels), [brief, exportLabels]);
+  const shareText = useMemo(() => buildWorkspaceBriefShareText(brief, exportLabels), [brief, exportLabels]);
 
   async function copyBrief() {
     try {

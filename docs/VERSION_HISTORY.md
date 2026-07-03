@@ -6,6 +6,28 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V13.8 Full Workspace Localization Completion
+
+Why:
+
+- V13.7 added authenticated DOM coverage reporting, but the audit method over-filtered visible product/UI English and could report overly optimistic coverage.
+- Production authenticated Workspace review still needed main-content localization for Morning Brief, Health, Risk, FCN schedule, Intelligence, and shared source status badges.
+- `zh-TW`, `zh-CN`, `ja-JP`, and `ko-KR` needed visible text block evidence rather than only route-level body token scoring.
+
+What Changed:
+
+- Updated `scripts/audit-production-authenticated.mjs` to generate `docs/V138_FULL_WORKSPACE_LOCALIZATION_COMPLETION.md` and report DOM visible text blocks plus suspicious English block evidence.
+- Localized Workspace Morning Brief export/preview labels and non-English section summaries.
+- Wired Workspace Health summary, Risk Engine summary, Live Risk adapter, FCN schedule summary, Intelligence v2, and structured Intelligence cards to dictionary-backed display labels.
+- Expanded `src/lib/i18n/dictionaries.ts` for `zh-TW`, `zh-CN`, `en-US`, `ja-JP`, and `ko-KR`, including source status badge coverage.
+
+Key Decisions:
+
+- V13.8 is translation coverage, audit evidence, and UI display mapping only.
+- Engine output remains stable; user-facing localization happens through display mapping and dictionary fallbacks.
+- Intentional technical finance terms such as FCN, KI, KO, tickers, provider names, and currency codes may remain visible.
+- No auth, API, Supabase schema, migrations, RLS, membership, billing, broker/trading, scheduler/delivery, AI provider behavior, valuation engine, risk scoring logic, FCN engine logic, market provider behavior, or recommendation logic changed.
+
 ## V13.7 Real Translation Coverage Completion Program
 
 Why:
