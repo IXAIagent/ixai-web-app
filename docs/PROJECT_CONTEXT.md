@@ -85,6 +85,17 @@ V15.0.3 information architecture refinement:
 - Desktop sidebar main navigation scrolls independently, with Settings / exit actions fixed at the bottom.
 - Source of truth: `docs/V1503_INFORMATION_ARCHITECTURE_REFINEMENT.md`.
 
+V15.1 Product Polish Program:
+
+- V15.1 is a product-experience pass, not a new feature track.
+- The goal is to make Workspace feel externally usable by improving copywriting, Morning Brief structure, Portfolio hierarchy, Notifications grouping, empty states, CTAs, and shared product primitives.
+- Added `productPolish` dictionary namespace for new polish copy.
+- Added shared `WorkspaceEmptyState` for CTA-backed empty states.
+- Morning Brief 2.0 keeps Home summary-only and `/my-ixai/morning-brief` as the full report route.
+- Portfolio Experience 2.0 emphasizes total assets, today's performance, allocation, holdings, and FCN positions before advanced data status.
+- Notifications Experience groups user-facing reminders into Today, Important, Completed, and History.
+- Source of truth: `docs/V151_PRODUCT_POLISH_PROGRAM.md`.
+
 Highest-priority work:
 
 - Home UX.

@@ -6,6 +6,31 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15.1 — Product Polish Program
+
+Why:
+
+- V15 completed the main Workspace product redesign, but the experience still needed public-product polish before broader external use.
+- Several pages still exposed engineering vocabulary too early.
+- Morning Brief needed a clearer full-report structure after Home became summary-only.
+- Portfolio and Notifications needed stronger empty states, priority grouping, and user-facing hierarchy.
+
+What Changed:
+
+- Added `productPolish` dictionary namespace for new polish copy.
+- Added `WorkspaceEmptyState` as a reusable CTA-backed empty state primitive.
+- Updated `WorkspaceDiagnosticsPanel` default language from diagnostics wording to advanced information wording.
+- Reworked Morning Brief report presentation around daily summary, portfolio, risk, FCN, market / alerts, and next actions while preserving the existing Morning Brief engine.
+- Strengthened Portfolio first-screen language around total assets, today's performance, allocation, holdings, and FCN positions.
+- Reworked Notifications into Today, Important, Completed, and History groupings.
+- Added `docs/V151_PRODUCT_POLISH_PROGRAM.md`.
+
+Key Decisions:
+
+- V15.1 is product polish only.
+- No API, database, Supabase, auth, AI engine, Workspace Graph, provider, trading, recommendation, or core engine behavior changed.
+- Engineering details remain available in collapsed advanced information panels.
+
 ## V15.0.3 — Information Architecture Refinement
 
 Why:

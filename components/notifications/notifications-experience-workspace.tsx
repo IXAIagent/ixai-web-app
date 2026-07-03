@@ -6,10 +6,12 @@ import { Bell, CheckCircle2, Send, ShieldAlert } from "lucide-react";
 import { NotificationCenterSummary } from "@/components/notifications/notification-center-summary";
 import {
   WorkspaceDiagnosticsPanel,
+  WorkspaceEmptyState,
   WorkspaceKpiGrid,
   WorkspaceProductHero,
   WorkspaceProductSection,
 } from "@/components/workspace/product";
+import { useTranslation } from "@/src/lib/i18n";
 import { getWorkspaceNotificationSummary, type WorkspaceNotificationSummary } from "@/src/lib/notifications";
 import { getNotificationDeliveryReadiness } from "@/src/lib/notifications/delivery";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
@@ -21,6 +23,7 @@ function severityTone(severity: string) {
 }
 
 export function NotificationsExperienceWorkspace() {
+  const { t } = useTranslation("productPolish");
   const [summary, setSummary] = useState<WorkspaceNotificationSummary | null>(null);
   const mountedRef = useRef(false);
   const delivery = getNotificationDeliveryReadiness();
@@ -42,6 +45,9 @@ export function NotificationsExperienceWorkspace() {
   }, []);
 
   const infoCount = Math.max((summary?.notificationCount ?? 0) - (summary?.criticalCount ?? 0) - (summary?.highCount ?? 0), 0);
+  const importantNotifications = (summary?.notifications ?? []).filter((item) => item.severity === "critical" || item.severity === "high");
+  const todayNotifications = (summary?.notifications ?? []).filter((item) => item.severity !== "critical" && item.severity !== "high").slice(0, 6);
+  const historyNotifications = (summary?.notifications ?? []).slice(0, 8);
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -49,10 +55,10 @@ export function NotificationsExperienceWorkspace() {
         <WorkspaceProductHero
           eyebrow="Notifications"
           kpis={[
-            { description: "需要優先查看的提醒。", icon: ShieldAlert, label: "Critical", tone: summary?.criticalCount ? "critical" : "default", value: String(summary?.criticalCount ?? 0) },
-            { description: "今天值得留意的提醒。", icon: Bell, label: "Needs Attention", tone: summary?.highCount ? "warning" : "default", value: String(summary?.highCount ?? 0) },
-            { description: "一般狀態或資訊提醒。", icon: CheckCircle2, label: "Info", value: String(infoCount) },
-            { description: "外部通知尚未啟用。", icon: Send, label: "Delivery Status", value: delivery.readyChannelCount > 0 ? "App 內可用" : "準備中" },
+            { description: "需要優先查看的提醒。", icon: ShieldAlert, label: t("important"), tone: summary?.criticalCount ? "critical" : "default", value: String(summary?.criticalCount ?? 0) },
+            { description: "今天值得留意的提醒。", icon: Bell, label: t("today"), tone: summary?.highCount ? "warning" : "default", value: String(summary?.highCount ?? 0) },
+            { description: "一般狀態或資訊提醒。", icon: CheckCircle2, label: t("informationOnly"), value: String(infoCount) },
+            { description: "外部通知尚未啟用。", icon: Send, label: t("dataStatus"), value: delivery.readyChannelCount > 0 ? "App 內可用" : t("preparing") },
           ]}
           side={
             <>
@@ -70,13 +76,36 @@ export function NotificationsExperienceWorkspace() {
         />
 
         <WorkspaceProductSection
-          description="依優先級呈現今天的提醒，不像 raw event log。"
-          eyebrow="Today's Notifications"
+          description="依優先級呈現今天的提醒，不顯示原始事件紀錄。"
+          eyebrow={t("today")}
           title="今天的提醒"
         >
           {summary?.notifications.length ? (
-            <div className="grid gap-3 lg:grid-cols-2">
-              {summary.notifications.slice(0, 8).map((item) => (
+            <div className="grid gap-4">
+              <div className="grid gap-3 lg:grid-cols-2">
+                {importantNotifications.length ? importantNotifications.map((item) => (
+                  <article className={`rounded-lg border p-4 ${severityTone(item.severity)}`} key={item.id}>
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.title}</p>
+                      <span className="rounded-full border border-current/20 bg-white/48 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        {t("important")}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.message}</p>
+                  </article>
+                )) : (
+                  <WorkspaceEmptyState
+                    body={t("noImmediateAction")}
+                    icon={CheckCircle2}
+                    title={t("completed")}
+                  />
+                )}
+              </div>
+
+              <div>
+                <p className="mb-3 text-sm font-semibold text-[var(--ixai-forest)]">{t("today")}</p>
+                <div className="grid gap-3 lg:grid-cols-2">
+                  {todayNotifications.map((item) => (
                 <article className={`rounded-lg border p-4 ${severityTone(item.severity)}`} key={item.id}>
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.title}</p>
@@ -86,12 +115,29 @@ export function NotificationsExperienceWorkspace() {
                   </div>
                   <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.message}</p>
                 </article>
-              ))}
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-3 text-sm font-semibold text-[var(--ixai-forest)]">{t("history")}</p>
+                <div className="grid gap-2">
+                  {historyNotifications.map((item) => (
+                    <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-3 text-sm text-[var(--ixai-forest-soft)]" key={`history-${item.id}`}>
+                      {item.title}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
           ) : (
-            <p className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-              目前沒有需要處理的提醒。當 FCN、風險或 watchlist 有需要注意的變化時，會出現在這裡。
-            </p>
+            <WorkspaceEmptyState
+              actionHref="/my-ixai/watchlist"
+              actionLabel={t("emptyAlertsAction")}
+              body={t("emptyAlertsBody")}
+              icon={Bell}
+              title={t("emptyAlertsTitle")}
+            />
           )}
         </WorkspaceProductSection>
 
@@ -120,7 +166,7 @@ export function NotificationsExperienceWorkspace() {
           </div>
         </WorkspaceProductSection>
 
-        <WorkspaceDiagnosticsPanel description="notification delivery readiness、local state">
+        <WorkspaceDiagnosticsPanel description="通知方式、讀取狀態與安全邊界">
           <NotificationCenterSummary autoLoad={false} />
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
             {delivery.informationalOnlyDisclaimer}

@@ -8,7 +8,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Priority
 
-Current priority is `V15.0.3 Information Architecture Refinement`, a product-structure pass after the V15 Workspace redesign and V15.0.1 / V15.0.2 runtime hotfixes. IXAI's product direction remains AI Wealth Workspace, but the immediate priority is clearer Home versus Morning Brief positioning, not new feature expansion, V16 planning, or backend work.
+Current priority is `V15.1 Product Polish Program`, a product-experience pass after the V15 Workspace redesign, V15.0.1 / V15.0.2 runtime hotfixes, and V15.0.3 IA refinement. IXAI's product direction remains AI Wealth Workspace, but the immediate priority is externally usable product polish, not new feature expansion, V16 planning, or backend work.
 
 V15 current sequence:
 
@@ -31,6 +31,12 @@ V15 current sequence:
   - `/my-ixai/morning-brief` is the full daily Workspace report surface.
   - Desktop sidebar main navigation scrolls independently while Settings / exit actions remain fixed at the bottom.
   - See `docs/V1503_INFORMATION_ARCHITECTURE_REFINEMENT.md`.
+- Active: V15.1 Product Polish Program.
+  - Copywriting moves from engineering language to user language.
+  - Morning Brief 2.0 keeps Home summary-only and `/my-ixai/morning-brief` as the full report.
+  - Portfolio and Notifications gain clearer first-screen hierarchy and actionable empty states.
+  - Shared product components now include `WorkspaceEmptyState` and dictionary-backed polish copy.
+  - See `docs/V151_PRODUCT_POLISH_PROGRAM.md`.
 - Next: Sprint 4 Design Polish.
 
 V15 does not add:

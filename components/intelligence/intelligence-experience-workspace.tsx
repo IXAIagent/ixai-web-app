@@ -148,7 +148,7 @@ export function IntelligenceExperienceWorkspace() {
               </p>
             </>
           }
-          summary="把市場、Morning Brief、持倉影響與需要注意的訊號整理成一頁，不再把 source/readiness 放在第一眼。"
+          summary="把市場、Morning Brief、持倉影響與需要注意的訊號整理成一頁，資料狀態收納在頁尾進階資訊。"
           title="今日市場：先看重點，再看對我的影響。"
         />
 
@@ -190,7 +190,7 @@ export function IntelligenceExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="Explain-only 摘要，不做買賣建議、不呼叫外部 AI provider。"
+          description="Explain-only 摘要，不做買賣建議、不呼叫外部 AI model。"
           eyebrow="AI Summary"
           title="IXAI 摘要"
         >
@@ -217,7 +217,7 @@ export function IntelligenceExperienceWorkspace() {
           </p>
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="source readiness、provider status、intelligence status">
+        <WorkspaceDiagnosticsPanel description="市場資料、情報整理狀態與安全邊界">
           <IntelligenceSummary />
           <IntelligenceV2Summary />
           <WorkspaceMarketStatus contextLabel="Intelligence" />

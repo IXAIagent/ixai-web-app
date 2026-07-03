@@ -208,7 +208,7 @@ export function RiskExperienceWorkspace() {
           />
         </WorkspaceProductSection>
 
-        <WorkspaceDiagnosticsPanel description="Risk engine、live risk adapter、source readiness、provider/runtime">
+        <WorkspaceDiagnosticsPanel description="風險資料、更新狀態與安全邊界">
           <LiveRiskAdapterCard />
           <LegacyRiskEngineStatus />
           <WorkspaceMarketStatus contextLabel="Risk Center" />

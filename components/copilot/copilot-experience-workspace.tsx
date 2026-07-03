@@ -104,16 +104,16 @@ export function CopilotExperienceWorkspace() {
           <WorkspaceCopilotSummary />
         </WorkspaceProductSection>
 
-        <WorkspaceDiagnosticsPanel description="graph、runtime、source">
+        <WorkspaceDiagnosticsPanel description="摘要整理方式與安全邊界">
           <WorkspaceKpiGrid
             items={[
-              { description: "初始載入不自動讀取 Workspace Graph。", icon: Sparkles, label: "Context", value: "Manual only" },
+              { description: "初始載入不自動整理完整工作區資料。", icon: Sparkles, label: "整理方式", value: "手動" },
               { description: "Copilot 不呼叫外部 AI model。", icon: ShieldCheck, label: "Mode", value: "Explain-only" },
               { description: "點擊產生摘要後才執行。", icon: Bot, label: "Generated", value: "待手動執行" },
             ]}
           />
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-            Workspace Copilot is rule-based and explain-only. Initial page load does not run Workspace Graph, call AI models, or provide buy, sell, hold, target price, or order instructions.
+            Copilot 只整理既有工作區資訊並提供說明，不呼叫外部 AI model，也不提供買進、賣出、持有、目標價或下單指令。
           </p>
         </WorkspaceDiagnosticsPanel>
       </section>

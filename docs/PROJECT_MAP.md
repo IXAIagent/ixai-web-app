@@ -38,6 +38,7 @@ V15 Product Layer:
 - Settings — redesigned in V15 Wave 3.
 - Health — moved under Settings -> Advanced in V15 Wave 3.
 - Beta — moved under Settings -> About in V15 Wave 3.
+- V15.1 Product Polish — copywriting, Morning Brief 2.0, Portfolio 2.0, Notifications grouping, empty states, and shared design polish.
 
 These Workspace product surfaces should follow one Dashboard Layout system:
 
@@ -68,6 +69,15 @@ Current V15 source docs:
 - `docs/V15_SPRINT_1_IA_NAVIGATION_REDESIGN_PLAN.md`.
 - `docs/V15_DESIGN_SYSTEM_2.md`.
 - `docs/V15_SPRINT_2_UI_IMPLEMENTATION_SPEC.md`.
+- `docs/V1503_INFORMATION_ARCHITECTURE_REFINEMENT.md`.
+- `docs/V151_PRODUCT_POLISH_PROGRAM.md`.
+
+V15.1 product polish layer:
+
+- `src/lib/i18n/dictionaries.ts` includes `productPolish` for new polish copy.
+- `components/workspace/product/workspace-empty-state.tsx` provides CTA-backed Workspace empty states.
+- `components/workspace/product/workspace-diagnostics-panel.tsx` uses user-facing advanced information language by default.
+- `/my-ixai/morning-brief` is the full report route; Home remains summary-only.
 
 Production data ownership update:
 

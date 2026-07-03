@@ -4,18 +4,23 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
+import { useTranslation } from "@/src/lib/i18n";
+
 export function WorkspaceDiagnosticsPanel({
   children,
   defaultOpen = false,
-  description = "Health、Provider、Localization、Runtime",
-  title = "Advanced / 進階診斷",
+  description,
+  title,
 }: {
   children: ReactNode;
   defaultOpen?: boolean;
   description?: string;
   title?: string;
 }) {
+  const { t } = useTranslation("productPolish");
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const displayTitle = title ?? t("advancedPanelTitle", "Advanced / 進階資訊");
+  const displayDescription = description ?? t("advancedPanelDescription", "系統與資料狀態");
 
   return (
     <section className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3 sm:p-4">
@@ -26,9 +31,9 @@ export function WorkspaceDiagnosticsPanel({
       >
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold">
           <span>
-            {title}
+            {displayTitle}
             <span className="ml-2 text-xs font-normal text-[var(--ixai-forest-soft)]">
-              {description}
+              {displayDescription}
             </span>
           </span>
           <ChevronDown

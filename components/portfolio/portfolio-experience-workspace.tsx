@@ -21,10 +21,12 @@ import { PortfolioValuationSummary } from "@/components/portfolio/portfolio-valu
 import { RecentInputsPanel } from "@/components/portfolio/recent-inputs-panel";
 import {
   WorkspaceDiagnosticsPanel,
+  WorkspaceEmptyState,
   WorkspaceKpiGrid,
   WorkspaceProductHero,
   WorkspaceProductSection,
 } from "@/components/workspace/product";
+import { useTranslation } from "@/src/lib/i18n";
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
 import type { PortfolioValuationResult } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
@@ -44,6 +46,7 @@ function formatPercent(value: number | null | undefined) {
 }
 
 export function PortfolioExperienceWorkspace() {
+  const { t } = useTranslation("productPolish");
   const [valuation, setValuation] = useState<PortfolioValuationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
@@ -101,25 +104,25 @@ export function PortfolioExperienceWorkspace() {
             {
               description: summary?.positionCount ? "依目前可用資料估算。" : "新增資產後會顯示總資產。",
               icon: WalletCards,
-              label: "Total Assets",
+              label: t("portfolioTotalAssets"),
               value: formatCurrency(summary?.totalMarketValue, valuation?.currency),
             },
             {
               description: "目前納入資產頁的持倉數。",
               icon: BriefcaseBusiness,
-              label: "Asset Count",
+              label: t("portfolioHoldings"),
               value: String(summary?.positionCount ?? 0),
             },
             {
               description: topAllocation ? "目前占比最高的資產類別。" : "尚未有配置資料。",
               icon: PieChart,
-              label: "Allocation",
+              label: t("portfolioAllocation"),
               value: topAllocation ? `${topAllocation.assetClass.toUpperCase()} ${topAllocation.allocationPercent.toFixed(0)}%` : "暫無資料",
             },
             {
               description: summary?.unpricedPositionCount ? `${summary.unpricedPositionCount} 筆資產需要補資料。` : "目前沒有明顯資料缺口。",
               icon: ShieldAlert,
-              label: "Risk Status",
+              label: t("dataStatus"),
               value: riskStatus,
             },
           ]}
@@ -138,9 +141,19 @@ export function PortfolioExperienceWorkspace() {
               </p>
             </>
           }
-          summary="先看總資產、今日表現、配置與需要留意的資料缺口；進階資料狀態放在頁尾診斷。"
-          title="我的資產：先看總覽，再看細節。"
+          summary={t("portfolioHeroBody")}
+          title={t("portfolioHeroTitle")}
         />
+
+        {!summary?.positionCount ? (
+          <WorkspaceEmptyState
+            actionHref="/my-ixai/input"
+            actionLabel={t("emptyPortfolioAction")}
+            body={t("emptyPortfolioBody")}
+            icon={PlusCircle}
+            title={t("emptyPortfolioTitle")}
+          />
+        ) : null}
 
         <WorkspaceProductSection
           action={
@@ -152,7 +165,7 @@ export function PortfolioExperienceWorkspace() {
               <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             </Link>
           }
-          description="用使用者語言整理 allocation、holdings count、priced / unpriced。"
+          description="用使用者語言整理資產配置、持倉數、已更新價格與待補資料。"
           eyebrow="Portfolio Snapshot"
           title="資產快照"
         >
@@ -188,8 +201,8 @@ export function PortfolioExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="今日需要注意與最近變化先用 graceful empty state 呈現，避免把 readback / source status 放在第一屏。"
-          eyebrow="Today at a glance"
+          description="今日需要注意與最近變化先用友善空狀態呈現，進階資料狀態放在頁尾。"
+          eyebrow={t("todaySummary")}
           title="今天需要注意"
         >
           <div className="grid gap-3 md:grid-cols-2">
@@ -245,7 +258,7 @@ export function PortfolioExperienceWorkspace() {
 
         <RecentInputsPanel />
 
-        <WorkspaceDiagnosticsPanel description="Portfolio Truth、Persistence、Valuation source、Live valuation source">
+        <WorkspaceDiagnosticsPanel description="資產資料、估值與更新狀態">
           <PortfolioTruthSummary />
           <PortfolioPersistenceSummary />
           <PortfolioValuationSummary />

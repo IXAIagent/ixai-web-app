@@ -45,6 +45,7 @@ export function WorkspaceMorningBriefV14Card({
   compact?: boolean;
 }) {
   const { t } = useTranslation("morningBrief");
+  const { t: tPolish } = useTranslation("productPolish");
   const { t: tStatus } = useTranslation("status");
   const [brief, setBrief] = useState<WorkspaceMorningBrief>(() => buildEmptyWorkspaceMorningBrief());
   const [isLoading, setIsLoading] = useState(autoLoad);
@@ -100,6 +101,29 @@ export function WorkspaceMorningBriefV14Card({
     title: `${t("generatedPrefix", "Workspace Morning Brief")} · ${brief.date}`,
   }), [brief, t]);
   const visibleLocalizedSections = compact ? localizedBrief.sections.slice(0, 4) : localizedBrief.sections;
+  const openingSection = localizedBrief.sections.find((section) => section.key === "opening");
+  const portfolioSection = localizedBrief.sections.find((section) => section.key === "portfolio");
+  const riskSection = localizedBrief.sections.find((section) => section.key === "risk");
+  const fcnSection = localizedBrief.sections.find((section) => section.key === "fcn");
+  const marketSection = localizedBrief.sections.find((section) => section.key === "market");
+  const alertSection = localizedBrief.sections.find((section) => section.key === "watchlist") ?? localizedBrief.sections.find((section) => section.key === "timeline");
+  const reportHighlights = [
+    {
+      body: [openingSection?.summary, portfolioSection?.summary].filter(Boolean).join(" "),
+      label: tPolish("morningBriefDailySummary"),
+      value: tPolish("todaySummary"),
+    },
+    {
+      body: [riskSection?.summary, fcnSection?.summary].filter(Boolean).join(" "),
+      label: `${tPolish("morningBriefRisk")} / ${tPolish("morningBriefFcn")}`,
+      value: localizedBrief.warnings.length > 0 ? tPolish("important") : tPolish("noImmediateAction"),
+    },
+    {
+      body: [marketSection?.summary, alertSection?.summary].filter(Boolean).join(" "),
+      label: tPolish("marketAndAlerts"),
+      value: tPolish("nextStep"),
+    },
+  ];
 
   return (
     <section className="rounded-2xl border border-[rgba(9,41,31,0.14)] bg-white/82 p-5 shadow-[0_18px_48px_rgba(9,41,31,0.06)] sm:p-6">
@@ -108,13 +132,13 @@ export function WorkspaceMorningBriefV14Card({
           <FeatureIcon icon={Newspaper} shadow={false} />
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--ixai-gold)]">
-              V14.5 {t("generatedPrefix", "Workspace Morning Brief")}
+              {tPolish("morningBriefHeroEyebrow")}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-[var(--ixai-forest)]">
               {localizedBrief.title}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-forest-soft)]">
-              {t("subtitle")}
+              {tPolish("morningBriefHeroBody")}
             </p>
           </div>
         </div>
@@ -125,35 +149,24 @@ export function WorkspaceMorningBriefV14Card({
           type="button"
         >
           <RefreshCw className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-          {isLoading ? t("loading") : t("runBrief")}
+          {isLoading ? t("loading") : tPolish("morningBriefManualMode")}
         </button>
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-3">
-        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            {t("status")}
-          </p>
-          <p className="mt-2 font-mono text-xl font-semibold text-[var(--ixai-forest)]">
-            {tStatus(brief.status, brief.status)}
-          </p>
-        </article>
-        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            {t("source")}
-          </p>
-          <p className="mt-2 font-mono text-xl font-semibold text-[var(--ixai-forest)]">
-            {brief.sourceStatus}
-          </p>
-        </article>
-        <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
-            {t("warnings")}
-          </p>
-          <p className="mt-2 font-mono text-xl font-semibold text-[var(--ixai-forest)]">
-            {brief.warnings.length}
-          </p>
-        </article>
+        {reportHighlights.map((item) => (
+          <article className="rounded-xl border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.72)] p-4" key={item.label}>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(9,41,31,0.52)]">
+              {item.label}
+            </p>
+            <p className="mt-2 text-xl font-semibold text-[var(--ixai-forest)]">
+              {item.value}
+            </p>
+            <p className="mt-3 line-clamp-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              {item.body || tPolish("diagnosticsUnavailable")}
+            </p>
+          </article>
+        ))}
       </div>
 
       <div className={`mt-5 grid gap-3 ${compact ? "lg:grid-cols-2" : "xl:grid-cols-3"}`}>
@@ -166,7 +179,7 @@ export function WorkspaceMorningBriefV14Card({
               </span>
             </div>
             <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
-              {section.source} · {tStatus(section.dataQuality, section.dataQuality)}
+              {tPolish("dataStatus")} · {tStatus(section.dataQuality, section.dataQuality)}
             </p>
             <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
               {section.summary}

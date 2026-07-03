@@ -34,6 +34,7 @@ import {
 } from "@/components/workspace/product";
 import { buildEmptyWorkspaceAlertSummary, getWorkspaceAlertSummary } from "@/src/lib/alerts";
 import type { WorkspaceAlertSummary } from "@/src/lib/alerts";
+import { useTranslation } from "@/src/lib/i18n";
 import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service";
 import type { FcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-types";
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
@@ -316,9 +317,14 @@ function MorningBriefSummaryCard({
   portfolio: PortfolioValuationResult | null;
   updatedAt?: string | null;
 }) {
+  const { t } = useTranslation("productPolish");
   const attentionCount = getAttentionCount(alerts, fcnRisk);
   const riskState = getRiskState(alerts, fcnRisk);
   const updatedLabel = formatTime(updatedAt);
+  const marketState = updatedLabel === "待更新" ? "等待更新" : `最近於 ${updatedLabel} 更新`;
+  const portfolioCopy = portfolio?.summary.positionCount
+    ? t("homeSummaryPortfolioReady").replace("{count}", String(portfolio.summary.positionCount))
+    : t("homeSummaryPortfolioEmpty");
 
   return (
     <WorkspaceProductSection
@@ -327,13 +333,13 @@ function MorningBriefSummaryCard({
           className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-sm font-semibold text-[var(--ixai-cream)] sm:w-fit"
           href="/my-ixai/morning-brief"
         >
-          閱讀完整 Morning Brief
+          {t("morningBriefReadFull")}
           <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
         </Link>
       }
-      description="首頁只保留今日摘要，完整章節、分享與匯出留在 Morning Brief 頁。"
+      description={t("morningBriefSummaryBody")}
       eyebrow="Morning Brief Summary"
-      title="今日摘要"
+      title={t("morningBriefSummaryTitle")}
     >
       <div className="grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
         <article className="rounded-lg border border-[rgba(176,141,87,0.30)] bg-white/72 p-4">
@@ -343,14 +349,14 @@ function MorningBriefSummaryCard({
             </span>
             <div>
               <p className="text-base font-semibold text-[var(--ixai-forest)]">
-                今天先看 {attentionCount > 0 ? "需要留意的風險與市場更新" : "資產狀態與市場更新"}
+                {attentionCount > 0 ? t("homeSummaryAttentionTitle") : t("homeSummaryNormalTitle")}
               </p>
               <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                {portfolio?.summary.positionCount
-                  ? `目前有 ${portfolio.summary.positionCount} 筆持倉納入首頁摘要。`
-                  : "新增資產後，Morning Brief 會更完整地整理 Portfolio 與風險脈絡。"}
+                {portfolioCopy}
                 {" "}
-                風險狀態為「{riskState.value}」，市場資料{updatedLabel === "待更新" ? "等待更新" : `最近於 ${updatedLabel} 更新`}。
+                {t("homeSummaryRiskMarket")
+                  .replace("{risk}", riskState.value)
+                  .replace("{market}", marketState)}
               </p>
             </div>
           </div>
@@ -361,13 +367,13 @@ function MorningBriefSummaryCard({
             {
               description: "完整報告會整理 Portfolio、Risk、FCN、Watchlist 與時間線。",
               icon: Newspaper,
-              label: "完整報告",
-              value: "獨立頁面",
+              label: t("readFullReport"),
+              value: t("morningBriefManualMode"),
             },
             {
-              description: attentionCount > 0 ? "建議先查看今天需要留意的提醒。" : "目前沒有立即處理項目。",
+              description: attentionCount > 0 ? t("homeSummaryReviewAttention") : t("noImmediateAction"),
               icon: Bell,
-              label: "今日提醒",
+              label: t("today"),
               value: `${attentionCount} 項`,
             },
           ]}
