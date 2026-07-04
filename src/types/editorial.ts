@@ -217,6 +217,12 @@ export type DailyDraftGenerationSummary = {
   }[];
   schedulerConfigured: boolean;
   forced: boolean;
+  persistence?: {
+    durable: boolean;
+    fallbackReason?: "supabase_write_not_configured" | "supabase_write_failed";
+    notPublishable: boolean;
+    publicReadbackVisible: boolean;
+  };
 };
 
 export type WeeklyIntelligenceStatus = "draft" | "review" | "published" | "archived";

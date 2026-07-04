@@ -184,3 +184,49 @@ export async function saveDailyIntelligenceDraftToSupabase(
     return null;
   }
 }
+
+export type DailyPersistenceSaveResult = {
+  draft: DailyBriefDraft | null;
+  durable: boolean;
+  fallbackReason?: "supabase_write_not_configured" | "supabase_write_failed";
+  errorMessage?: string;
+};
+
+export async function saveDailyIntelligenceDraftToSupabaseWithStatus(
+  draft: DailyBriefDraft,
+): Promise<DailyPersistenceSaveResult> {
+  if (!canUseSupabase(true)) {
+    return {
+      draft: null,
+      durable: false,
+      fallbackReason: "supabase_write_not_configured",
+    };
+  }
+
+  try {
+    const rows = await supabaseFetch<DailyIntelligenceRow[]>(
+      `${TABLE}?on_conflict=source_id`,
+      {
+        body: JSON.stringify([draftToRow(draft)]),
+        headers: {
+          Prefer: "resolution=merge-duplicates,return=representation",
+        },
+        method: "POST",
+      },
+      true,
+    );
+
+    return {
+      draft: rows[0] ? rowToDraft(rows[0]) : draft,
+      durable: true,
+    };
+  } catch (error) {
+    logPersistenceFallback("write failed; draft is non-durable", error);
+    return {
+      draft: null,
+      durable: false,
+      errorMessage: error instanceof Error ? error.message : "Unknown Supabase write failure",
+      fallbackReason: "supabase_write_failed",
+    };
+  }
+}

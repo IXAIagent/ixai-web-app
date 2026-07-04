@@ -1,7 +1,7 @@
 import {
   findDraftForDateAsync,
   getDraftsAsync,
-  saveDraftAsync,
+  saveDraftWithPersistenceStatusAsync,
 } from "@/src/lib/editorial/repository";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { getProductDateKey } from "@/src/lib/editorial/product-date";
@@ -31,6 +31,7 @@ function buildSummary({
   inputNewsCount,
   coverageScore,
   contentQuality,
+  persistence,
 }: {
   status: DailyDraftGenerationSummary["status"];
   draftSlug: string;
@@ -43,6 +44,7 @@ function buildSummary({
   inputNewsCount?: number;
   coverageScore?: DailyDraftGenerationSummary["coverageScore"];
   contentQuality?: DailyDraftGenerationSummary["contentQuality"];
+  persistence?: DailyDraftGenerationSummary["persistence"];
 }): DailyDraftGenerationSummary {
   return {
     status,
@@ -58,6 +60,7 @@ function buildSummary({
     sourceStatus: intake.sourceStatus ?? intake.sources,
     schedulerConfigured,
     forced,
+    persistence,
   };
 }
 
@@ -131,8 +134,8 @@ export async function generateScheduledDailyDraft({
           sourceStatus: intake.sourceStatus ?? intake.sources,
         },
   );
-  const savedDrafts = await saveDraftAsync(draft);
-  const savedDraft = savedDrafts.find((item) => item.id === draft.id) ?? draft;
+  const saveResult = await saveDraftWithPersistenceStatusAsync(draft);
+  const savedDraft = saveResult.draft;
 
   lastGenerationSummary = buildSummary({
     status: "generated",
@@ -146,6 +149,7 @@ export async function generateScheduledDailyDraft({
     inputNewsCount: savedDraft.intelligence?.inputNewsCount,
     coverageScore: savedDraft.intelligence?.coverageScore,
     contentQuality: savedDraft.intelligence?.contentQuality,
+    persistence: saveResult.persistence,
   });
 
   return lastGenerationSummary;

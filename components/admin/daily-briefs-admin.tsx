@@ -71,12 +71,36 @@ type GenerationMeta = {
 };
 
 type PersistenceMeta = {
+  durable?: boolean;
+  errorMessage?: string;
+  fallbackReason?: "supabase_write_not_configured" | "supabase_write_failed";
+  notPublishable?: boolean;
+  publicReadbackVisible?: boolean;
   readable: boolean;
   revisionSchemaAvailable?: boolean;
   writable: boolean;
 };
 
 type EditorialDesk = "daily" | "weekly";
+
+type BriefHealthItem = {
+  id: string;
+  publishedAt?: string;
+  slug: string;
+  status: string;
+  title: string;
+  updatedAt: string;
+};
+
+type BriefPublishHealth = {
+  daysSinceLastPublished: number | null;
+  hasPublishGap: boolean;
+  latestDraftOrReview: BriefHealthItem | null;
+  latestGenerated: BriefHealthItem | null;
+  latestPublished: BriefHealthItem | null;
+  schedulerMode: "draft_only" | "manual_publish_required";
+  stalePublished: boolean;
+};
 
 const weeklyEditorSections = [
   "本週市場重點",
@@ -148,6 +172,86 @@ function StatusCard({
   );
 }
 
+function formatDaysSince(days: number | null) {
+  if (days === null) {
+    return "No published row";
+  }
+
+  if (days === 0) {
+    return "Published today";
+  }
+
+  return `${days} day${days === 1 ? "" : "s"} since publish`;
+}
+
+function BriefHealthPanel({
+  health,
+  label,
+}: Readonly<{
+  health: BriefPublishHealth | null;
+  label: string;
+}>) {
+  if (!health) {
+    return (
+      <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-[rgba(245,240,230,0.58)]">
+        <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+          {label} Publish Health
+        </p>
+        <p className="mt-2">Loading persisted publish state...</p>
+      </section>
+    );
+  }
+
+  return (
+    <section
+      className={`rounded-lg border p-4 text-sm leading-6 ${
+        health.hasPublishGap || health.stalePublished
+          ? "border-amber-300/25 bg-amber-300/10 text-amber-100/86"
+          : "border-emerald-300/22 bg-emerald-300/8 text-emerald-100/86"
+      }`}
+    >
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+            {label} Publish Health
+          </p>
+          <h2 className="mt-2 text-base font-semibold text-[var(--ixai-cream)]">
+            {health.hasPublishGap
+              ? "Draft / publish gap requires manual publish"
+              : health.stalePublished
+                ? "Published content is stale"
+                : "Published content is current"}
+          </h2>
+          <p className="mt-1 text-xs leading-5 text-[rgba(245,240,230,0.58)]">
+            Scheduler creates draft/review material only. Public routes read published rows only.
+          </p>
+        </div>
+        <div className="grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.66)] lg:min-w-[360px]">
+          <p>
+            Latest published:{" "}
+            <span className="text-[var(--ixai-cream)]">
+              {health.latestPublished?.slug ?? "none"}
+            </span>{" "}
+            · {formatDaysSince(health.daysSinceLastPublished)}
+          </p>
+          <p>
+            Latest draft/review:{" "}
+            <span className="text-[var(--ixai-cream)]">
+              {health.latestDraftOrReview?.slug ?? "none"}
+            </span>
+          </p>
+          <p>
+            Latest generated/updated:{" "}
+            <span className="text-[var(--ixai-cream)]">
+              {health.latestGenerated?.slug ?? "none"}
+            </span>
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function WeeklyStatusBadge({ status }: { status: WeeklyIntelligenceStatus }) {
   return (
     <span
@@ -162,6 +266,7 @@ function WeeklyEditorPreview() {
   const [weeklyDrafts, setWeeklyDrafts] = useState<WeeklyIntelligenceDraft[]>([]);
   const [selectedWeeklyId, setSelectedWeeklyId] = useState("");
   const [weeklyDebug, setWeeklyDebug] = useState<WeeklyGenerationDebug | null>(null);
+  const [weeklyHealth, setWeeklyHealth] = useState<BriefPublishHealth | null>(null);
   const [weeklyPersistence, setWeeklyPersistence] = useState<PersistenceMeta | null>(null);
   const [weeklyMessage, setWeeklyMessage] = useState("Weekly workflow is connected. Generate creates draft only; publish remains manual.");
   const [isWeeklyGenerating, setIsWeeklyGenerating] = useState(false);
@@ -244,10 +349,12 @@ function WeeklyEditorPreview() {
 
       const payload = (await response.json()) as {
         drafts: WeeklyIntelligenceDraft[];
+        health?: BriefPublishHealth;
         persistence?: PersistenceMeta;
       };
 
       refreshWeeklyDrafts(payload.drafts ?? []);
+      setWeeklyHealth(payload.health ?? null);
       setWeeklyPersistence(payload.persistence ?? null);
       return payload.drafts ?? [];
     } catch {
@@ -268,11 +375,13 @@ function WeeklyEditorPreview() {
 
         const payload = (await response.json()) as {
           drafts: WeeklyIntelligenceDraft[];
+          health?: BriefPublishHealth;
           persistence?: PersistenceMeta;
         };
 
         if (!ignore) {
           refreshWeeklyDrafts(payload.drafts ?? []);
+          setWeeklyHealth(payload.health ?? null);
           setWeeklyPersistence(payload.persistence ?? null);
         }
       } catch {
@@ -313,6 +422,7 @@ function WeeklyEditorPreview() {
       const payload = (await response.json()) as {
         draft: WeeklyIntelligenceDraft;
         drafts: WeeklyIntelligenceDraft[];
+        health?: BriefPublishHealth;
         persistence?: PersistenceMeta;
         summary?: {
           status: "generated" | "existing" | "blocked";
@@ -341,6 +451,7 @@ function WeeklyEditorPreview() {
       }
 
       setWeeklyPersistence(payload.persistence ?? null);
+      setWeeklyHealth(payload.health ?? null);
       setWeeklyDebug(payload.summary?.debug ?? null);
       setSelectedWeeklyId(payload.draft.id);
 
@@ -415,9 +526,11 @@ function WeeklyEditorPreview() {
       const payload = (await response.json()) as {
         draft: WeeklyIntelligenceDraft;
         drafts: WeeklyIntelligenceDraft[];
+        health?: BriefPublishHealth;
         persistence?: PersistenceMeta;
       };
       refreshWeeklyDrafts(payload.drafts);
+      setWeeklyHealth(payload.health ?? null);
       setWeeklyPersistence(payload.persistence ?? null);
       setSelectedWeeklyId(payload.draft.id);
       setWeeklyMessage(message);
@@ -461,9 +574,11 @@ function WeeklyEditorPreview() {
       const payload = (await response.json()) as {
         draft: WeeklyIntelligenceDraft;
         drafts: WeeklyIntelligenceDraft[];
+        health?: BriefPublishHealth;
         persistence?: PersistenceMeta;
       };
       refreshWeeklyDrafts(payload.drafts);
+      setWeeklyHealth(payload.health ?? null);
       setWeeklyPersistence(payload.persistence ?? null);
       setSelectedWeeklyId(payload.draft.id);
       setWeeklyMessage("Weekly Intelligence manually published after human review.");
@@ -595,6 +710,8 @@ function WeeklyEditorPreview() {
           </div>
         ) : null}
       </section>
+
+      <BriefHealthPanel health={weeklyHealth} label="Weekly" />
 
       <div className="grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
         <section className="rounded-lg border border-white/10 bg-white/[0.035]">
@@ -905,6 +1022,7 @@ export function DailyBriefsAdmin() {
   const [activeDesk, setActiveDesk] = useState<EditorialDesk>("daily");
   const [drafts, setDrafts] = useState<DailyBriefDraft[]>(() => getDrafts());
   const [selectedId, setSelectedId] = useState(() => drafts[0]?.id ?? "");
+  const [dailyHealth, setDailyHealth] = useState<BriefPublishHealth | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [intakeMeta, setIntakeMeta] = useState<NewsIntakeResult | null>(null);
   const [generationMeta, setGenerationMeta] = useState<GenerationMeta | null>(null);
@@ -913,6 +1031,7 @@ export function DailyBriefsAdmin() {
     lastGeneration: DailyDraftGenerationSummary | null;
   } | null>(null);
   const [persistenceMeta, setPersistenceMeta] = useState<PersistenceMeta | null>(null);
+  const [publishMessage, setPublishMessage] = useState("");
   const publishedBriefs = useMemo(
     () =>
       drafts
@@ -957,11 +1076,13 @@ export function DailyBriefsAdmin() {
 
         const payload = (await response.json()) as {
           drafts: DailyBriefDraft[];
+          health?: BriefPublishHealth;
           persistence?: PersistenceMeta;
         };
 
         if (!ignore && Array.isArray(payload.drafts)) {
           refresh(payload.drafts);
+          setDailyHealth(payload.health ?? null);
           setPersistenceMeta(payload.persistence ?? null);
         }
       } catch {
@@ -973,11 +1094,13 @@ export function DailyBriefsAdmin() {
       try {
         const response = await fetch("/api/admin/daily-briefs/scheduler/status");
         const status = (await response.json()) as {
+          health?: BriefPublishHealth;
           schedulerConfigured: boolean;
           lastGeneration: DailyDraftGenerationSummary | null;
         };
 
         if (!ignore) {
+          setDailyHealth((current) => current ?? status.health ?? null);
           setSchedulerStatus(status);
         }
       } catch {
@@ -1003,22 +1126,43 @@ export function DailyBriefsAdmin() {
       return;
     }
 
-    const response = await fetch("/api/admin/daily-briefs", {
-      body: JSON.stringify({ action: "publish", id: selectedDraft.id }),
-      headers: { "content-type": "application/json" },
-      method: "POST",
-    });
+    setPublishMessage("");
 
-    if (!response.ok) {
-      return;
+    try {
+      const response = await fetch("/api/admin/daily-briefs", {
+        body: JSON.stringify({ action: "publish", id: selectedDraft.id }),
+        headers: { "content-type": "application/json" },
+        method: "POST",
+      });
+      const payload = (await response.json().catch(() => ({}))) as {
+        drafts?: DailyBriefDraft[];
+        health?: BriefPublishHealth;
+        message?: string;
+        persistence?: PersistenceMeta;
+      };
+
+      if (!response.ok) {
+        setPublishMessage(
+          payload.message ??
+            "Daily publish failed. The row was not confirmed in durable persistence.",
+        );
+        if (payload.drafts) {
+          refresh(payload.drafts);
+        }
+        setDailyHealth(payload.health ?? null);
+        setPersistenceMeta(payload.persistence ?? null);
+        return;
+      }
+
+      if (payload.drafts) {
+        refresh(payload.drafts);
+      }
+      setDailyHealth(payload.health ?? null);
+      setPersistenceMeta(payload.persistence ?? null);
+      setPublishMessage("Daily Brief published and durable readback is available.");
+    } catch {
+      setPublishMessage("Daily publish failed. Check admin session and persistence status.");
     }
-
-    const payload = (await response.json()) as {
-      drafts: DailyBriefDraft[];
-      persistence?: PersistenceMeta;
-    };
-    refresh(payload.drafts);
-    setPersistenceMeta(payload.persistence ?? null);
   }
 
   async function handleGenerateDraft() {
@@ -1036,6 +1180,7 @@ export function DailyBriefsAdmin() {
       const payload = (await response.json()) as {
         draft: DailyBriefDraft;
         drafts: DailyBriefDraft[];
+        health?: BriefPublishHealth;
         intake: NewsIntakeResult;
         ai: GenerationMeta;
         persistence?: PersistenceMeta;
@@ -1043,6 +1188,7 @@ export function DailyBriefsAdmin() {
       const { draft, intake, ai } = payload;
       setIntakeMeta(intake);
       setGenerationMeta(ai);
+      setDailyHealth(payload.health ?? null);
       setPersistenceMeta(payload.persistence ?? null);
       setSchedulerStatus((current) => ({
         schedulerConfigured: current?.schedulerConfigured ?? false,
@@ -1137,6 +1283,8 @@ export function DailyBriefsAdmin() {
           <WeeklyEditorPreview />
         ) : (
           <>
+        <BriefHealthPanel health={dailyHealth} label="Daily" />
+
         <section className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div>
@@ -1184,6 +1332,17 @@ export function DailyBriefsAdmin() {
             <p className="rounded-md border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-amber-100/82">
               Publish requires editor control; no auto-publish
             </p>
+            {persistenceMeta?.durable === false ? (
+              <p className="rounded-md border border-red-300/25 bg-red-300/10 px-3 py-2 text-red-100/86 md:col-span-4">
+                Non-durable fallback: this draft is stored only in memory/local fallback and is not visible to public readback.
+                {persistenceMeta.fallbackReason ? ` Reason: ${persistenceMeta.fallbackReason}.` : ""}
+              </p>
+            ) : null}
+            {publishMessage ? (
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 text-[rgba(245,240,230,0.72)] md:col-span-4">
+                {publishMessage}
+              </p>
+            ) : null}
           </div>
         </section>
 

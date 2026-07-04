@@ -6,6 +6,31 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V15.2.1 — Brief Publish Reliability Hotfix
+
+Why:
+
+- Production Daily / Weekly Brief public output did not advance normally after 2026-06-29.
+- V15.2 investigation confirmed the strongest issue was a draft/publish gap: scheduler creates draft/review material, while public routes read only `status=published`.
+- Daily write failure could fall back to non-durable memory, which is not public-readback visible.
+- Admin health depended on process-local scheduler memory and could not explain stale public output.
+
+What Changed:
+
+- Added derived Daily / Weekly publish health from existing persisted rows.
+- Admin `/admin/daily-briefs` now surfaces latest published, latest draft/review, days since last publish, stale published state, and draft/publish gap.
+- Daily manual publish now returns structured persistence failure if Supabase write fails while configured.
+- Daily draft generation now returns durable/non-durable persistence metadata.
+- Weekly admin list/generate/publish responses now include publish health.
+- Scheduler status now includes derived Daily publish health and keeps manual publish requirements explicit.
+- Added `docs/V1521_BRIEF_PUBLISH_RELIABILITY_HOTFIX.md`.
+
+Key Decisions:
+
+- Scheduler still does not auto-publish.
+- No DB schema, migration, V16 implementation, new provider, AI behavior, trading, recommendation, or Social Pack publishing was added.
+- Social Pack remains downstream optional and cannot block core Brief publication.
+
 ## Docs — V16 AI Monitoring Platform Roadmap
 
 Why:

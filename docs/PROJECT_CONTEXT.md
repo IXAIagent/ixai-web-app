@@ -81,6 +81,32 @@ This origin matters because IXAI's product center is not "content marketing" or 
 
 The current IXAI public app is live and deployed on Vercel, with `https://app.ixuan.ai` as the production public domain.
 
+## B-1. V15.2 Brief Reliability Recovery
+
+V15.2 is the active production reliability blocker before V16 implementation continues.
+
+Confirmed production facts:
+
+- Daily public output last advanced to `daily-intelligence-2026-06-29`.
+- Weekly public output last published at `2026-06-29T05:37:27.62+00:00` for `weekly-intelligence-2026-07-05`.
+- Scheduler routes create draft/review material only.
+- Public Daily / Weekly routes read only published rows.
+- Social Pack is downstream optional and is not the primary blocker.
+
+V15.2.1 hotfix direction:
+
+- Admin `/admin/daily-briefs` must show persisted latest published, latest draft/review, stale state, and draft/publish gap.
+- Daily manual publish must not treat non-durable memory fallback as successful public publication.
+- Weekly manual publish remains required and must be visible in health/copy.
+- Scheduler behavior remains review-first; no silent auto-publish is introduced.
+- No V16 implementation, DB schema, migration, AI provider, trading, recommendation, or new external provider work is included.
+
+Sources of truth:
+
+- `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`
+- `docs/V152_ADMIN_BRIEF_PIPELINE_AUDIT.md`
+- `docs/V1521_BRIEF_PUBLISH_RELIABILITY_HOTFIX.md`
+
 ## B0. V15 Product Experience Redesign Status
 
 V15 Product Experience Redesign has started. The current highest priority is product experience, not new feature expansion.

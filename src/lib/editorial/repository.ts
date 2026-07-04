@@ -2,6 +2,7 @@ import { dailyBriefs, type DailyBrief } from "@/content/daily-briefs";
 import { mockGeneratedDrafts } from "@/src/lib/editorial/mockGeneratedDrafts";
 import {
   loadDailyIntelligenceDraftsFromSupabase,
+  saveDailyIntelligenceDraftToSupabaseWithStatus,
   saveDailyIntelligenceDraftToSupabase,
 } from "@/src/lib/editorial/persistence";
 import type { DailyBriefDraft, DailyIntelligenceDraft } from "@/src/types/editorial";
@@ -215,6 +216,58 @@ export async function saveDraftAsync(draft: DailyBriefDraft): Promise<DailyBrief
   return persistedDrafts.length ? persistedDrafts : localDrafts;
 }
 
+export type DailyDraftPersistenceResult = {
+  draft: DailyBriefDraft;
+  drafts: DailyBriefDraft[];
+  persistence: {
+    durable: boolean;
+    fallbackReason?: "supabase_write_not_configured" | "supabase_write_failed";
+    notPublishable: boolean;
+    publicReadbackVisible: boolean;
+    errorMessage?: string;
+  };
+};
+
+export async function saveDraftWithPersistenceStatusAsync(
+  draft: DailyBriefDraft,
+): Promise<DailyDraftPersistenceResult> {
+  const now = new Date().toISOString();
+  const nextDraft = {
+    ...draft,
+    updatedAt: now,
+  };
+  const persisted = await saveDailyIntelligenceDraftToSupabaseWithStatus(nextDraft);
+
+  if (!persisted.durable || !persisted.draft) {
+    const localDrafts = saveDraft(nextDraft);
+
+    return {
+      draft: nextDraft,
+      drafts: localDrafts,
+      persistence: {
+        durable: false,
+        errorMessage: persisted.errorMessage,
+        fallbackReason: persisted.fallbackReason,
+        notPublishable: persisted.fallbackReason === "supabase_write_failed",
+        publicReadbackVisible: false,
+      },
+    };
+  }
+
+  const localDrafts = saveDraft(persisted.draft);
+  const persistedDrafts = await getDraftsAsync();
+
+  return {
+    draft: persisted.draft,
+    drafts: persistedDrafts.length ? persistedDrafts : localDrafts,
+    persistence: {
+      durable: true,
+      notPublishable: false,
+      publicReadbackVisible: persisted.draft.status === "published",
+    },
+  };
+}
+
 export function findDraftForDate(dateKey: string): DailyBriefDraft | undefined {
   return readStoredDrafts().find((draft) => draft.slug.includes(dateKey));
 }
@@ -269,6 +322,32 @@ export async function publishDraftAsync(id: string): Promise<DailyBriefDraft[]> 
   };
 
   return saveDraftAsync(publishedDraft);
+}
+
+export async function publishDraftWithPersistenceStatusAsync(
+  id: string,
+): Promise<DailyDraftPersistenceResult | null> {
+  const draft = (await getDraftsAsync()).find((item) => item.id === id);
+
+  if (!draft) {
+    return null;
+  }
+
+  const now = new Date().toISOString();
+  const publishedDraft: DailyBriefDraft = {
+    ...draft,
+    status: "published",
+    intelligence: draft.intelligence
+      ? {
+          ...draft.intelligence,
+          publishedAt: now,
+        }
+      : undefined,
+    publishedAt: now,
+    updatedAt: now,
+  };
+
+  return saveDraftWithPersistenceStatusAsync(publishedDraft);
 }
 
 export function subscribeToEditorialUpdates(callback: () => void) {

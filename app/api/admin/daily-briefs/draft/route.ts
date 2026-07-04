@@ -4,7 +4,11 @@ import {
   isDailyIntelligencePersistenceReadable,
   isDailyIntelligencePersistenceWritable,
 } from "@/src/lib/editorial/persistence";
-import { getDraftsAsync, saveDraftAsync } from "@/src/lib/editorial/repository";
+import { buildDailyBriefPublishHealth } from "@/src/lib/editorial/brief-health";
+import {
+  getDraftsAsync,
+  saveDraftWithPersistenceStatusAsync,
+} from "@/src/lib/editorial/repository";
 import { generateDailyIntelligenceDraftFromNews } from "@/src/lib/intelligence/generator";
 import { getLatestNewsIntakeResult } from "@/src/lib/news/providers";
 
@@ -36,13 +40,16 @@ export async function POST(request: NextRequest) {
     sourceLabels,
     sourceStatus: intake.sourceStatus ?? intake.sources,
   });
-  const drafts = await saveDraftAsync(draft);
+  const saveResult = await saveDraftWithPersistenceStatusAsync(draft);
+  const drafts = saveResult.drafts;
   const intelligence = draft.intelligence;
 
   return Response.json({
-    draft,
+    draft: saveResult.draft,
     drafts,
+    health: buildDailyBriefPublishHealth({ drafts }),
     persistence: {
+      ...saveResult.persistence,
       readable: isDailyIntelligencePersistenceReadable(),
       writable: isDailyIntelligencePersistenceWritable(),
     },

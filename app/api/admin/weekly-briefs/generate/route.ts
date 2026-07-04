@@ -8,6 +8,7 @@ import {
   isWeeklyRevisionSchemaAvailableAsync,
   listAdminWeeklyDraftsAsync,
 } from "@/src/lib/editorial/weekly";
+import { buildWeeklyBriefPublishHealth } from "@/src/lib/editorial/brief-health";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,7 @@ export async function POST(request: NextRequest) {
     return Response.json({
       draft,
       drafts,
+      health: buildWeeklyBriefPublishHealth({ drafts }),
       intake,
       summary: debug ? { ...summary, debug } : summary,
       persistence: {

@@ -21,7 +21,17 @@ IXAI should not drift into being only a brokerage app, news platform, finance da
 
 ## Current Priority
 
-Current priority is V16 planning and implementation readiness for `V16 — AI Monitoring Platform`.
+Current priority is V15.2.1 Brief Publish Reliability Hotfix before V16 implementation work continues.
+
+V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
+
+Source of truth:
+
+- `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`
+- `docs/V152_ADMIN_BRIEF_PIPELINE_AUDIT.md`
+- `docs/V1521_BRIEF_PUBLISH_RELIABILITY_HOTFIX.md`
+
+After V15.2.1 production verification, priority returns to V16 planning and implementation readiness for `V16 — AI Monitoring Platform`.
 
 V15 Product Experience Redesign and V15.1 Product Polish established the AI Wealth Workspace user experience. V16 now turns that experience into true AI monitoring capability.
 
