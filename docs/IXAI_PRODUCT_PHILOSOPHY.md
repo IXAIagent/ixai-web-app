@@ -165,6 +165,39 @@ The Asset Registry must remain global-first.
 
 No future architecture should assume one market, one country, one language, one broker, one provider, or one asset class.
 
+Provider Independence Principle:
+
+```text
+No external service may be hard-bound to a single provider.
+```
+
+This applies to:
+
+- News source
+- Market price source
+- Event source
+- Earnings calendar
+- Crypto data
+- Notification channel
+- AI provider
+
+All external services must pass through an IXAI provider abstraction or channel router.
+
+Failure Degradation Principle:
+
+```text
+Provider failure must degrade intelligence, not crash the product.
+外部來源失敗，只能讓內容降級，不能讓產品停擺。
+```
+
+Examples:
+
+- News source failure -> cached / limited brief.
+- Price source failure -> data temporarily unavailable.
+- Telegram failure -> keep in-app alert.
+- LINE failure -> fallback to Telegram / Email / In-App.
+- AI provider failure -> rule-based limited summary.
+
 ## Chapter 5 — FCN Philosophy
 
 FCN is IXAI's greatest differentiation.
@@ -375,6 +408,26 @@ Telegram is not a marketing broadcast channel.
 
 Telegram is the first output surface of AI Monitoring.
 
+Telegram must still be routed through a channel abstraction.
+
+V16 notification architecture should be:
+
+```text
+AI Monitoring Engine
+↓
+Notification Engine
+↓
+Channel Router
+↓
+Telegram / LINE / Email / In-App / Browser Push / Mobile Push
+```
+
+Telegram is the first usable channel.
+
+LINE may have been planned or may leave traces in the product, so it must be audited before V16 notification implementation.
+
+Future notification work must support multi-channel delivery without rewriting monitoring logic.
+
 Examples:
 
 - FCN observation tomorrow.
@@ -392,6 +445,21 @@ Why does this matter to my investments?
 ```
 
 Notifications should be selective, relevant, and tied to the user's assets, FCNs, Portfolio, watchlist, or risk context.
+
+V16 notification must define an AI Monitoring Event Matrix before implementation.
+
+Example event types:
+
+- FCN KI distance < 10%.
+- FCN observation tomorrow.
+- FCN coupon upcoming.
+- Underlying earnings tonight.
+- Stock single-day move > threshold.
+- Crypto volatility spike.
+- BTC / ETH major move.
+- Macro event: Fed / CPI / war / oil.
+- News affects held asset.
+- News affects FCN underlying.
 
 ## Chapter 12 — SaaS Strategy
 

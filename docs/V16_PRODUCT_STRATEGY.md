@@ -127,6 +127,40 @@ AI Curated Financial Media
 
 The value is curation, ranking, and narrative clarity, not article count.
 
+Product A must not bind directly to a single news source.
+
+AI Financial Media source architecture:
+
+```text
+Source Layer
+↓
+Normalization
+↓
+Story Ranking
+↓
+Topic Ranking
+↓
+Editorial AI
+↓
+Daily Brief / Weekly Brief
+```
+
+Potential sources include:
+
+- Yahoo
+- Google News
+- 富途
+- Bloomberg
+- Reuters
+- 鉅亨網
+- 商業週刊
+- RSS
+- Exchange announcements
+- Company filings
+- Crypto sources
+
+IXAI's value is not piling up news. IXAI's value is curated relevance.
+
 ## 3. Product B — AI Investment Monitoring
 
 Product B includes:
@@ -256,6 +290,12 @@ Subscription becomes appropriate after:
 
 7. IXAI does not give investment advice.
    - It monitors, explains, prioritizes, and reminds.
+
+8. Provider independence is mandatory.
+   - News, prices, events, earnings, crypto data, notifications, and AI providers must pass through provider abstraction or channel router layers.
+
+9. Failure must degrade intelligence, not crash the product.
+   - 外部來源失敗，只能讓內容降級，不能讓產品停擺。
 
 ## 6. Editorial Principles
 
@@ -460,7 +500,63 @@ Why does this matter to my investments?
 這件事為什麼跟我的投資有關？
 ```
 
-## 10. V16 Implementation Priority
+V16 notification must use a channel router:
+
+```text
+AI Monitoring Engine
+↓
+Notification Engine
+↓
+Channel Router
+↓
+Telegram / LINE / Email / In-App / Browser Push / Mobile Push
+```
+
+Telegram is the first usable channel.
+
+LINE may have been planned or may exist as traces in the product, so it must be audited before notification implementation.
+
+V16 notification must define an event matrix before implementation:
+
+- FCN KI distance < 10%.
+- FCN observation tomorrow.
+- FCN coupon upcoming.
+- Underlying earnings tonight.
+- Stock single-day move > threshold.
+- Crypto volatility spike.
+- BTC / ETH major move.
+- Macro event: Fed / CPI / war / oil.
+- News affects held asset.
+- News affects FCN underlying.
+
+V16 integration audit must happen before notification implementation:
+
+- Telegram.
+- LINE.
+- Email.
+- In-App.
+- Browser Push.
+- iOS Push.
+- Android Push.
+- Yahoo Finance.
+- Binance.
+- Supabase.
+- Vercel Cron.
+- News / RSS / market sources.
+
+The audit must confirm whether each integration has UI, API, webhook, environment variables, production readiness, or is only a placeholder.
+
+## 10.1 Architecture Phase Required Files
+
+Before V16A / V16B implementation, complete:
+
+- `docs/V16_NOTIFICATION_ARCHITECTURE.md`
+- `docs/V16_DATA_ARCHITECTURE.md`
+- `docs/V16_EDITORIAL_ARCHITECTURE.md`
+
+These architecture files must define provider abstraction, channel routing, source normalization, failure degradation, placeholder audit, and implementation gates.
+
+## 11. V16 Implementation Priority
 
 Priority 1:
 
@@ -527,7 +623,7 @@ V16B — AI Investment Monitoring
 
 ### V16B Sprint 9 — Memory Engine
 
-## 11. Success Metrics
+## 12. Success Metrics
 
 AI Financial Media success is not news quantity.
 
@@ -562,7 +658,7 @@ Signals:
 - Portfolio impact is explained.
 - Copilot answers are grounded in user holdings.
 
-## 12. Compliance Boundary
+## 13. Compliance Boundary
 
 Both product lines remain:
 
@@ -601,7 +697,7 @@ Allowed product language:
 - 目前資料顯示
 - 這不是投資建議
 
-## 13. Source of Truth
+## 14. Source of Truth
 
 This document upgrades V16 strategy.
 
@@ -609,6 +705,9 @@ Related documents:
 
 - `docs/IXAI_PRODUCT_VISION.md`
 - `docs/V16_AI_MONITORING_PLATFORM.md`
+- `docs/V16_NOTIFICATION_ARCHITECTURE.md`
+- `docs/V16_DATA_ARCHITECTURE.md`
+- `docs/V16_EDITORIAL_ARCHITECTURE.md`
 - `docs/ROADMAP.md`
 - `docs/PROJECT_CONTEXT.md`
 - `docs/PROJECT_MAP.md`

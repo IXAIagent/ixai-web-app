@@ -15,6 +15,9 @@ Canonical strategy source:
 
 - `docs/V16_PRODUCT_STRATEGY.md`
 - `docs/IXAI_PRODUCT_PHILOSOPHY.md`
+- `docs/V16_NOTIFICATION_ARCHITECTURE.md`
+- `docs/V16_DATA_ARCHITECTURE.md`
+- `docs/V16_EDITORIAL_ARCHITECTURE.md`
 
 V16A owns Daily Brief / Weekly Brief as AI Financial Media.
 
@@ -189,6 +192,40 @@ Stock intelligence must support:
 
 The architecture must not hard-code one market, one exchange, one locale, or one provider. Different markets may require different price providers, news sources, exchange announcements, earnings calendars, filing sources, and corporate event feeds.
 
+### 3.1.1 Provider Independence
+
+No external service may be hard-bound to a single provider.
+
+This applies to:
+
+- News source.
+- Market price source.
+- Event source.
+- Earnings calendar.
+- Crypto data.
+- Notification channel.
+- AI provider.
+
+All external services must pass through IXAI provider abstraction or channel router layers.
+
+### 3.1.2 Failure Degradation
+
+Provider failure must degrade intelligence, not crash the product.
+
+中文：
+
+```text
+外部來源失敗，只能讓內容降級，不能讓產品停擺。
+```
+
+Fallback examples:
+
+- News source failure -> cached / limited brief.
+- Price source failure -> data temporarily unavailable.
+- Telegram failure -> keep in-app alert.
+- LINE failure -> fallback to Telegram / Email / In-App.
+- AI provider failure -> rule-based limited summary.
+
 ### 3.2 Asset-Centric Intelligence
 
 IXAI centers the assets the user holds, not the generic market.
@@ -295,6 +332,38 @@ Global-first news strategy should support:
 - Company filings.
 - Crypto-native sources.
 - FCN underlying news.
+
+Public Daily / Weekly Brief source strategy:
+
+```text
+Source Layer
+↓
+Normalization
+↓
+Story Ranking
+↓
+Topic Ranking
+↓
+Editorial AI
+↓
+Daily Brief / Weekly Brief
+```
+
+Potential sources:
+
+- Yahoo.
+- Google News.
+- 富途.
+- Bloomberg.
+- Reuters.
+- 鉅亨網.
+- 商業週刊.
+- RSS.
+- Exchange announcements.
+- Company filings.
+- Crypto sources.
+
+IXAI's value is curated relevance, not news volume.
 
 ### Engine 3: Event Intelligence Engine
 
@@ -416,6 +485,26 @@ Telegram is the first external notification channel for V16 AI Monitoring.
 
 V16 should not rush App Push before the monitoring value is proven.
 
+Telegram must not be hard-coded into the AI Monitoring Engine.
+
+Notification architecture:
+
+```text
+AI Monitoring Engine
+↓
+Notification Engine
+↓
+Channel Router
+↓
+Telegram / LINE / Email / In-App / Browser Push / Mobile Push
+```
+
+Telegram is the first usable channel.
+
+LINE may have been planned or may exist as traces in the product, so it must be audited before implementation.
+
+Future channels should be added behind the Channel Router without rewriting monitoring logic.
+
 Telegram examples:
 
 - FCN observation tomorrow.
@@ -433,6 +522,19 @@ Why does this matter to my investments?
 ```
 
 Telegram notifications are allowed only when they are tied to assets, FCNs, Portfolio impact, watchlist movement, or risk context.
+
+AI Monitoring Event Matrix examples:
+
+- FCN KI distance < 10%.
+- FCN observation tomorrow.
+- FCN coupon upcoming.
+- Underlying earnings tonight.
+- Stock single-day move > threshold.
+- Crypto volatility spike.
+- BTC / ETH major move.
+- Macro event: Fed / CPI / war / oil.
+- News affects held asset.
+- News affects FCN underlying.
 
 ### Engine 7: Today Focus Engine
 
@@ -582,6 +684,45 @@ All provider output should normalize into:
 - Confidence.
 
 Provider work must preserve global-first, multi-market, multi-asset assumptions.
+
+Provider work must also preserve failure degradation. A single source failure must not stop Daily Brief, Weekly Brief, Workspace Today Focus, AI Monitoring Feed, or notification delivery.
+
+V16 provider abstraction must cover:
+
+- News / RSS / editorial sources.
+- Market price sources.
+- Event and earnings sources.
+- Crypto data.
+- AI provider.
+- Notification channels.
+
+## 6.1 V16 Integration Audit Gate
+
+Before V16 notification, data, editorial, or monitoring implementation, audit:
+
+- Telegram.
+- LINE.
+- Email.
+- In-App.
+- Browser Push.
+- iOS Push.
+- Android Push.
+- Yahoo Finance.
+- Binance.
+- Supabase.
+- Vercel Cron.
+- News / RSS / market sources.
+
+For each integration, confirm:
+
+- Existing UI.
+- Existing API.
+- Existing webhook.
+- Existing environment variables.
+- Production usability.
+- Placeholder-only status.
+
+The audit result must decide whether the integration is usable, needs recovery, should stay placeholder-only, or should be deferred.
 
 ## 7. Compliance Boundary
 

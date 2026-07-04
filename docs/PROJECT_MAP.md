@@ -40,6 +40,10 @@ docs/V16_PRODUCT_STRATEGY.md
 ↓
 docs/V16_AI_MONITORING_PLATFORM.md
 ↓
+docs/V16_NOTIFICATION_ARCHITECTURE.md
+docs/V16_DATA_ARCHITECTURE.md
+docs/V16_EDITORIAL_ARCHITECTURE.md
+↓
 docs/PROJECT_CONTEXT.md
 ↓
 docs/ROADMAP.md
@@ -53,6 +57,12 @@ V16 Product Strategy:
 - Canonical planning doc: `docs/V16_PRODUCT_STRATEGY.md`.
 - Current phase: Architecture Planning Phase before coding.
 - Strategic posture: Always-On AI Monitoring before billing-first SaaS.
+- Architecture gate docs:
+  - `docs/V16_NOTIFICATION_ARCHITECTURE.md`.
+  - `docs/V16_DATA_ARCHITECTURE.md`.
+  - `docs/V16_EDITORIAL_ARCHITECTURE.md`.
+- Provider independence: external news, price, event, earnings, crypto, notification, and AI services must pass through IXAI abstractions.
+- Failure degradation: provider failures should produce cached, limited, unavailable, or fallback intelligence rather than product failure.
 - Product A: AI Financial Media.
   - Daily Brief.
   - Weekly Brief.
@@ -83,6 +93,8 @@ V16B AI Monitoring Platform:
 - Highest product question: `這件事為什麼跟我的投資有關？`
 - Always-on workflow: News -> Events -> Prices -> Earnings -> Portfolio -> FCN -> Crypto -> Risk -> AI Analysis -> Today Focus -> Telegram / Workspace.
 - Telegram-first notification strategy: Telegram is the first external monitoring channel before App Push.
+- Channel Router architecture: AI Monitoring Engine -> Notification Engine -> Channel Router -> Telegram / LINE / Email / In-App / Browser Push / Mobile Push.
+- Event matrix required before implementation: FCN KI distance, observation, coupon, earnings, price moves, crypto volatility, macro events, and news relevance.
 - Priority 2 roadmap after V16A foundation.
 - Workspace must depend on user Portfolio / asset context.
 - Engine families: Global Asset Intelligence, News Relevance, Event Intelligence, FCN Intelligence, Portfolio Intelligence, AI Monitoring Feed, Today Focus, Copilot AI Analyst, and Memory Engine.

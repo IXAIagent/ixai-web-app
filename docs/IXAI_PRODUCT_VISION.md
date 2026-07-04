@@ -157,6 +157,33 @@ IXAI 必須開始建立該資產的 intelligence layer。
 - Risk status
 - 下一步需要留意什麼
 
+這些外部資料不能直接綁死單一 provider。
+
+V16 Provider Independence Principle:
+
+```text
+No external service may be hard-bound to a single provider.
+```
+
+包含：
+
+- News source
+- Market price source
+- Event source
+- Earnings calendar
+- Crypto data
+- Notification channel
+- AI provider
+
+所有外部服務都必須經過 IXAI provider abstraction / channel router。
+
+V16 Failure Degradation Principle:
+
+```text
+Provider failure must degrade intelligence, not crash the product.
+外部來源失敗，只能讓內容降級，不能讓產品停擺。
+```
+
 ## 4. Asset Intelligence
 
 任何資產不只是資料列，而是一個被 AI 監控的投資物件。
@@ -229,6 +256,28 @@ IXAI 應該：
 - 無關新聞推送
 - 為了內容量而堆新聞
 
+Public Daily / Weekly Brief 不應綁死單一新聞來源。
+
+AI Financial Media source architecture:
+
+```text
+Source Layer
+↓
+Normalization
+↓
+Story Ranking
+↓
+Topic Ranking
+↓
+Editorial AI
+↓
+Daily Brief / Weekly Brief
+```
+
+來源可以包含 Yahoo, Google News, 富途, Bloomberg, Reuters, 鉅亨網, 商業週刊, RSS, exchange announcements, company filings, and crypto sources.
+
+IXAI 的價值不是堆新聞，而是 curated relevance。
+
 ## 8. AI Monitoring System
 
 IXAI 不是等待使用者提問的聊天工具。
@@ -291,6 +340,26 @@ V16 第一階段通知不急著做 App Push。
 
 Telegram 是第一個外部通知通道，因為它符合目前使用者已經建立的 monitoring workflow。
 
+V16 notification 不應直接寫死 Telegram 或 LINE。
+
+架構應是：
+
+```text
+AI Monitoring Engine
+↓
+Notification Engine
+↓
+Channel Router
+↓
+Telegram / LINE / Email / In-App / Browser Push / Mobile Push
+```
+
+Telegram 是第一階段可用通道。
+
+LINE 曾被規劃或可能存在痕跡，需 audit。
+
+未來需支援多通道。
+
 通知範例：
 
 - FCN observation tomorrow.
@@ -299,6 +368,11 @@ Telegram 是第一個外部通知通道，因為它符合目前使用者已經�
 - TSLA large move affects 3 FCNs.
 - BTC volatility rising.
 - Today Focus Top 3 ready.
+- FCN KI distance < 10%.
+- Stock single-day move > threshold.
+- Macro event: Fed / CPI / war / oil.
+- News affects held asset.
+- News affects FCN underlying.
 
 每一則提醒都必須回答：
 

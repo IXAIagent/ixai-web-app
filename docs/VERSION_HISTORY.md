@@ -6,6 +6,37 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Docs — V16 Provider and Notification Architecture Principles
+
+Why:
+
+- V16 needs explicit external-service architecture principles before coding.
+- Daily / Weekly, Workspace monitoring, notifications, prices, news, events, and AI summaries must not stop because one provider fails.
+- Telegram is the first notification channel, but notification architecture must not hard-code Telegram or LINE.
+
+What Changed:
+
+- Added `docs/V16_NOTIFICATION_ARCHITECTURE.md`.
+- Added `docs/V16_DATA_ARCHITECTURE.md`.
+- Added `docs/V16_EDITORIAL_ARCHITECTURE.md`.
+- Updated `docs/IXAI_PRODUCT_PHILOSOPHY.md`, `docs/IXAI_PRODUCT_VISION.md`, `docs/V16_PRODUCT_STRATEGY.md`, and `docs/V16_AI_MONITORING_PLATFORM.md`.
+- Updated `docs/ROADMAP.md`, `docs/PROJECT_CONTEXT.md`, and `docs/PROJECT_MAP.md`.
+- Added Provider Independence Principle: no external news, market price, event, earnings calendar, crypto data, notification channel, or AI provider may be hard-bound to a single provider.
+- Added Failure Degradation Principle: `Provider failure must degrade intelligence, not crash the product.`
+- Added the notification architecture: AI Monitoring Engine -> Notification Engine -> Channel Router -> Telegram / LINE / Email / In-App / Browser Push / Mobile Push.
+- Added V16 notification / integration audit requirements.
+- Added AI Monitoring Event Matrix examples.
+- Added AI Financial Media source strategy: Source Layer -> Normalization -> Story Ranking -> Topic Ranking -> Editorial AI -> Daily Brief / Weekly Brief.
+
+Key Decisions:
+
+- Telegram is first usable channel, not the notification architecture itself.
+- LINE may have planned or legacy traces and must be audited before implementation.
+- Public Brief source strategy can include Yahoo, Google News, 富途, Bloomberg, Reuters, 鉅亨網, 商業週刊, RSS, exchange announcements, company filings, and crypto sources, but IXAI's value remains curated relevance.
+- V16 Architecture Phase requires `V16_NOTIFICATION_ARCHITECTURE.md`, `V16_DATA_ARCHITECTURE.md`, and `V16_EDITORIAL_ARCHITECTURE.md` before V16A / V16B implementation.
+- Commit label for this docs-only strategy update: `docs: add V16 provider and notification architecture principles`.
+- This is docs-only. No product code, React, API, database, auth, provider runtime, scheduler, billing, trading, recommendation, or Workspace behavior changed.
+
 ## Docs — V16 Always-On AI Monitoring Strategy
 
 Why:

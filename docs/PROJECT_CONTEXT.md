@@ -46,6 +46,9 @@ V16 coding前，產品策略已確認：
 3. AI 必須在背景持續工作，不是等使用者打開才開始。
 4. Telegram 是第一階段通知通道。
 5. 暫不急著收費，先驗證使用量與價值感。
+6. 外部服務不得綁死單一 provider。
+7. 外部來源失敗只能讓內容降級，不能讓產品停擺。
+8. V16 notification 必須經過 Channel Router，不可直接寫死 Telegram / LINE。
 
 Always-on monitoring flow:
 
@@ -82,6 +85,38 @@ Before coding V16 implementation, complete:
 - Editorial Architecture.
 - Monitoring Architecture.
 - Data Architecture.
+- Notification Architecture.
+
+Required V16 architecture files before implementation:
+
+- `docs/V16_NOTIFICATION_ARCHITECTURE.md`
+- `docs/V16_DATA_ARCHITECTURE.md`
+- `docs/V16_EDITORIAL_ARCHITECTURE.md`
+
+Provider Independence Principle:
+
+- News source, market price source, event source, earnings calendar, crypto data, notification channel, and AI provider must pass through IXAI provider abstraction / channel router.
+
+Failure Degradation Principle:
+
+```text
+Provider failure must degrade intelligence, not crash the product.
+外部來源失敗，只能讓內容降級，不能讓產品停擺。
+```
+
+Notification architecture:
+
+```text
+AI Monitoring Engine
+↓
+Notification Engine
+↓
+Channel Router
+↓
+Telegram / LINE / Email / In-App / Browser Push / Mobile Push
+```
+
+Before V16 notification implementation, audit Telegram, LINE, Email, In-App, Browser Push, iOS Push, Android Push, Yahoo Finance, Binance, Supabase, Vercel Cron, and news / RSS / market sources for UI, API, webhook, env, production usability, and placeholder-only status.
 
 Core product philosophy:
 

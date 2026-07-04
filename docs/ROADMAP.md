@@ -58,6 +58,9 @@ V16 source of truth:
 - `docs/IXAI_PRODUCT_PHILOSOPHY.md`
 - `docs/V16_PRODUCT_STRATEGY.md`
 - `docs/V16_AI_MONITORING_PLATFORM.md`
+- `docs/V16_NOTIFICATION_ARCHITECTURE.md`
+- `docs/V16_DATA_ARCHITECTURE.md`
+- `docs/V16_EDITORIAL_ARCHITECTURE.md`
 - `docs/IXAI_PRODUCT_VISION.md`
 
 V16 is currently in Architecture Planning Phase.
@@ -69,6 +72,8 @@ Strategic notes before V16 Architecture Phase:
 - Workspace = AI Investment Monitoring: Workspace should explain what affects the user's own investments.
 - Telegram-first notification strategy: Telegram is the first external monitoring channel before App Push.
 - SaaS delayed until product-market signal / wow moment: billing should wait until daily usage, monitoring retention, and FCN value are proven.
+- Provider independence: news, market prices, events, earnings, crypto data, notification channels, and AI providers must go through IXAI abstractions.
+- Failure degradation: provider failure must degrade intelligence, not crash the product.
 
 Architecture Phase must happen before implementation sprints:
 
@@ -77,6 +82,30 @@ Architecture Phase must happen before implementation sprints:
 - Editorial Architecture.
 - System Architecture.
 - Data Architecture.
+- Notification Architecture.
+
+Required architecture files before V16A / V16B implementation:
+
+- `docs/V16_NOTIFICATION_ARCHITECTURE.md`.
+- `docs/V16_DATA_ARCHITECTURE.md`.
+- `docs/V16_EDITORIAL_ARCHITECTURE.md`.
+
+These files must be completed and reviewed before V16 coding begins.
+
+V16 notification / integration audit must happen before notification implementation:
+
+- Telegram.
+- LINE.
+- Email.
+- In-App.
+- Browser Push.
+- iOS Push.
+- Android Push.
+- Yahoo Finance.
+- Binance.
+- Supabase.
+- Vercel Cron.
+- News / RSS / market sources.
 
 V16A — AI Financial Media roadmap:
 
