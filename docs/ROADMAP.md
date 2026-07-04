@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V15 Product Experience Redesign`
+`V16 — AI Monitoring Platform`
 
 ## Current Strategic Direction
 
@@ -21,7 +21,53 @@ IXAI should not drift into being only a brokerage app, news platform, finance da
 
 ## Current Priority
 
-Current priority is `V15.1 Product Polish Program`, a product-experience pass after the V15 Workspace redesign, V15.0.1 / V15.0.2 runtime hotfixes, and V15.0.3 IA refinement. IXAI's product direction remains AI Wealth Workspace, but the immediate priority is externally usable product polish, not new feature expansion, V16 planning, or backend work.
+Current priority is V16 planning and implementation readiness for `V16 — AI Monitoring Platform`.
+
+V15 Product Experience Redesign and V15.1 Product Polish established the AI Wealth Workspace user experience. V16 now turns that experience into true AI monitoring capability.
+
+V16 is engine-centric, not page-centric. Every new user-facing monitoring item must answer:
+
+```text
+這件事為什麼跟我的投資有關？
+Why does this matter to my investments?
+```
+
+V16 source of truth:
+
+- `docs/V16_AI_MONITORING_PLATFORM.md`
+- `docs/IXAI_PRODUCT_VISION.md`
+
+V16 phases:
+
+- Phase A — Monitoring Foundation:
+  - News Relevance Engine Foundation.
+  - Global Asset Intelligence Foundation.
+  - Event Intelligence Foundation.
+  - Today Focus Foundation.
+- Phase B — FCN Monitoring Advantage:
+  - FCN Intelligence Engine v1.
+  - Observation Calendar.
+  - Coupon Calendar.
+  - FCN Underlying News / Event Mapping.
+  - FCN Today Watch.
+- Phase C — Portfolio Monitoring Intelligence:
+  - Portfolio Intelligence Engine.
+  - AI Monitoring Feed.
+  - Portfolio News / Event Impact.
+  - Risk Event Correlation.
+- Phase D — AI Analyst & Memory:
+  - Copilot AI Analyst.
+  - Memory Engine.
+  - Smart Alerts.
+  - Scenario Explorer.
+
+First implementation recommendation:
+
+```text
+V16 Sprint 1 — Asset Intelligence + News/Event Relevance Foundation
+```
+
+Scope should define asset intelligence types, relevance types, news/event provider contracts, mock provider first, Portfolio / FCN / Watchlist asset universe connection, and first Today Focus mock output. It should not add external provider dependency or AI model calls unless explicitly approved.
 
 V15 current sequence:
 

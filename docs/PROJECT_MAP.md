@@ -32,12 +32,25 @@ Product vision hierarchy:
 ```text
 docs/IXAI_PRODUCT_VISION.md
 ↓
+docs/V16_AI_MONITORING_PLATFORM.md
+↓
 docs/PROJECT_CONTEXT.md
 ↓
 docs/ROADMAP.md
 ↓
 V15 / V16 implementation docs
 ```
+
+V16 AI Monitoring Platform:
+
+- Canonical planning doc: `docs/V16_AI_MONITORING_PLATFORM.md`.
+- Product model: AI Investment Monitoring System.
+- Highest product question: `這件事為什麼跟我的投資有關？`
+- Phase A: Monitoring Foundation.
+- Phase B: FCN Monitoring Advantage.
+- Phase C: Portfolio Monitoring Intelligence.
+- Phase D: AI Analyst & Memory.
+- Engine families: Global Asset Intelligence, News Relevance, Event Intelligence, FCN Intelligence, Portfolio Intelligence, AI Monitoring Feed, Today Focus, Copilot AI Analyst, and Memory Engine.
 
 V15 Product Layer:
 

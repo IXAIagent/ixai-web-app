@@ -256,6 +256,14 @@ V16 應以此文件為核心，正式命名為：
 
 V16 — AI Monitoring Platform
 
+V16 的核心要求：
+
+- Global First：股票、ETF、Crypto、FCN、未來資產都必須以多市場、多地區、多資料來源為前提，不可硬寫單一市場假設。
+- FCN First Differentiation：FCN 是 IXAI 的核心差異化能力，FCN Intelligence 是主監控系統之一，不是 Portfolio 的附屬小功能。
+- Crypto-Native Intelligence：Crypto 需要自己的即時價格、新聞、on-chain、交易所、token unlock、ETF、治理與波動監控模型，不可直接套用股票模型。
+- Event Intelligence：AI 不只監控現在，也要監控未來；財報、觀察日、配息日、maturity、macro calendar、token unlock、exchange events 都應納入投資監控。
+- Asset-Centric Relevance：每一則新聞、事件、提醒、摘要都必須回答「這件事為什麼跟我的投資有關？」
+
 優先方向：
 
 1. Asset Intelligence
@@ -266,3 +274,9 @@ V16 — AI Monitoring Platform
 6. Today Focus
 7. Copilot Suggested Questions
 8. Observation / Coupon Calendar
+9. Event Intelligence
+10. Crypto-Native Intelligence
+
+V16 的規劃來源：
+
+- `docs/V16_AI_MONITORING_PLATFORM.md`

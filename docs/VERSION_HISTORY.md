@@ -6,6 +6,29 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Docs — V16 AI Monitoring Platform Roadmap
+
+Why:
+
+- IXAI needed to turn the product vision into an executable V16 roadmap.
+- V15 and V15.1 completed the AI Wealth Workspace product experience, but V16 needs a clear engine-centric plan for real AI investment monitoring.
+- Future work must avoid drifting into generic dashboards, news feeds, brokerage workflows, trading signals, or chat-only behavior.
+
+What Changed:
+
+- Added `docs/V16_AI_MONITORING_PLATFORM.md`.
+- Defined V16 as `V16 — AI Monitoring Platform`.
+- Recorded Global First, Asset-Centric Intelligence, FCN First Differentiation, Crypto-Native Intelligence, and Event Intelligence as non-negotiable product principles.
+- Defined the V16 Intelligence Engines: Global Asset Intelligence, News Relevance, Event Intelligence, FCN Intelligence, Portfolio Intelligence, AI Monitoring Feed, Today Focus, Copilot AI Analyst, and Memory Engine.
+- Added the Phase A-D roadmap and first implementation recommendation: `V16 Sprint 1 — Asset Intelligence + News/Event Relevance Foundation`.
+- Updated `IXAI_PRODUCT_VISION`, `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V16 success is not measured by page count. It is measured by whether IXAI can connect price, news, events, FCN risk, Portfolio impact, and alerts back to the user's actual assets.
+- V16 starts with mock providers and contracts before external provider dependency or AI model calls unless explicitly approved.
+- This is docs-only. No product code, React, API, database, provider runtime, auth, UI, or business logic changed.
+
 ## Docs — IXAI AI Investment Monitoring System Vision
 
 Why:

@@ -23,10 +23,21 @@ The core product layers are:
 - Workflow: watchlist, account identity, editorial review, distribution, and future Pro operating surfaces.
 - Risk layer: FCN education, gated Pro intelligence previews, and future portfolio and alert workflows.
 
-Next major direction:
+Current active planning mainline:
 
-- V16 should be `V16 — AI Monitoring Platform`.
-- V16 should prioritize Asset Intelligence, FCN Intelligence, Portfolio Intelligence, News Relevance Engine, AI Monitoring Feed, Today Focus, Copilot Suggested Questions, and Observation / Coupon Calendar.
+- V16 is `V16 — AI Monitoring Platform`.
+- V16 turns the V15 AI Wealth Workspace product experience into true AI monitoring capability.
+- V16 should prioritize Global Asset Intelligence, FCN Intelligence, Crypto-Native Intelligence, Portfolio Intelligence, News Relevance Engine, Event Intelligence, AI Monitoring Feed, Today Focus, Copilot AI Analyst, Memory Engine, and Observation / Coupon Calendar.
+- Source of truth: `docs/V16_AI_MONITORING_PLATFORM.md`.
+
+V16 non-negotiable principles:
+
+- Global First: do not hard-code US-only, Taiwan-only, English-only, or single-provider assumptions.
+- Asset-Centric Intelligence: what the user holds, AI monitors.
+- FCN First Differentiation: FCN Intelligence is a primary monitoring system.
+- Crypto-Native Intelligence: crypto requires its own price, news, on-chain, exchange, unlock, ETF, governance, and volatility monitoring model.
+- Event Intelligence: AI must monitor upcoming events, not only current prices and news.
+- Relevance rule: every news item, event, alert, summary, and Copilot answer must explain why it matters to the user's investments.
 
 I-Xuan remains the trust brand behind the product. IXAI is the AI operating layer that extends that trust into a durable market intelligence system.
 
