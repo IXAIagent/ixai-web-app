@@ -23,14 +23,20 @@ Role:
 - Active Production App.
 - Current Vercel / public app mainline.
 - Owns the public IXAI experience: landing, onboarding, Daily Brief, Weekly Intelligence, Share Intelligence, Account, Pro Preview, Admin Editorial Studio, and Social Intelligence Pack Studio.
+- Highest-level product philosophy source: `docs/IXAI_PRODUCT_PHILOSOPHY.md`.
 - Highest-level product vision source: `docs/IXAI_PRODUCT_VISION.md`.
-- Core product positioning: IXAI is an AI Investment Monitoring System, not a brokerage app, news app, generic finance dashboard, robo-advisor, trading system, or generic chatbot.
-- Next major direction: `V16 — AI Monitoring Platform`.
+- Highest-level V16 strategy source: `docs/V16_PRODUCT_STRATEGY.md`.
+- Core product positioning: IXAI has two complementary products, AI Financial Media and AI Investment Monitoring.
+- Next major direction: `V16 Product Strategy`.
 
 Product vision hierarchy:
 
 ```text
+docs/IXAI_PRODUCT_PHILOSOPHY.md
+↓
 docs/IXAI_PRODUCT_VISION.md
+↓
+docs/V16_PRODUCT_STRATEGY.md
 ↓
 docs/V16_AI_MONITORING_PLATFORM.md
 ↓
@@ -41,15 +47,44 @@ docs/ROADMAP.md
 V15 / V16 implementation docs
 ```
 
-V16 AI Monitoring Platform:
+V16 Product Strategy:
+
+- Product philosophy doc: `docs/IXAI_PRODUCT_PHILOSOPHY.md`.
+- Canonical planning doc: `docs/V16_PRODUCT_STRATEGY.md`.
+- Current phase: Architecture Planning Phase before coding.
+- Strategic posture: Always-On AI Monitoring before billing-first SaaS.
+- Product A: AI Financial Media.
+  - Daily Brief.
+  - Weekly Brief.
+  - Answers: `今天市場發生什麼？`
+  - Mission: build trust, habit, and brand.
+  - Public Brief = AI Curated Financial Media, not a generic news list.
+- Product B: AI Investment Monitoring.
+  - Workspace.
+  - Answers: `今天哪些事情影響我的投資？`
+  - Mission: AI monitors the user's own investments continuously in the background.
+- Product funnel: Public Visitor -> Daily Brief -> Weekly Brief -> trust/habit -> Workspace -> input assets -> AI Monitoring -> Subscription.
+- SaaS timing: delay paid-tier planning until product-market signal, daily usage, monitoring retention, and FCN wow moment are validated.
+
+V16A AI Financial Media:
+
+- Priority 1 roadmap.
+- Sprint 1: Editorial Architecture.
+- Sprint 2: Daily Brief 2.0.
+- Sprint 3: Weekly Brief 2.0.
+- Sprint 4: Content Quality Engine.
+- Daily / Weekly cannot depend on user Portfolio.
+- Daily / Weekly are not Workspace free tier.
+
+V16B AI Monitoring Platform:
 
 - Canonical planning doc: `docs/V16_AI_MONITORING_PLATFORM.md`.
 - Product model: AI Investment Monitoring System.
 - Highest product question: `這件事為什麼跟我的投資有關？`
-- Phase A: Monitoring Foundation.
-- Phase B: FCN Monitoring Advantage.
-- Phase C: Portfolio Monitoring Intelligence.
-- Phase D: AI Analyst & Memory.
+- Always-on workflow: News -> Events -> Prices -> Earnings -> Portfolio -> FCN -> Crypto -> Risk -> AI Analysis -> Today Focus -> Telegram / Workspace.
+- Telegram-first notification strategy: Telegram is the first external monitoring channel before App Push.
+- Priority 2 roadmap after V16A foundation.
+- Workspace must depend on user Portfolio / asset context.
 - Engine families: Global Asset Intelligence, News Relevance, Event Intelligence, FCN Intelligence, Portfolio Intelligence, AI Monitoring Feed, Today Focus, Copilot AI Analyst, and Memory Engine.
 
 V15 Product Layer:

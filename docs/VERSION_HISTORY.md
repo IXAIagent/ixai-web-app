@@ -6,6 +6,87 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## Docs — V16 Always-On AI Monitoring Strategy
+
+Why:
+
+- IXAI needed to record the latest product strategy before V16 coding.
+- The product direction is now explicitly always-on: AI should work in the background before the user opens Workspace.
+- Public Brief, Workspace, Telegram notification, and SaaS timing needed clearer boundaries.
+
+What Changed:
+
+- Refined `docs/IXAI_PRODUCT_PHILOSOPHY.md`, `docs/IXAI_PRODUCT_VISION.md`, `docs/V16_PRODUCT_STRATEGY.md`, and `docs/V16_AI_MONITORING_PLATFORM.md`.
+- Added the core strategy sentence: `IXAI is an always-on AI investment monitoring system. It works continuously in the background, so users don't have to.`
+- Added the Chinese strategy sentence: `IXAI 是全天候運作的 AI 投資監控系統。AI 在背景持續工作，讓使用者不用全天候盯著市場。`
+- Defined the always-on flow: News -> Events -> Prices -> Earnings -> Portfolio -> FCN -> Crypto -> Risk -> AI Analysis -> Today Focus -> Telegram / Workspace.
+- Clarified that Public Brief is AI Curated Financial Media, while Workspace is AI Investment Monitoring.
+- Recorded Telegram as the first V16 external notification channel.
+- Recorded that SaaS billing should wait until product-market signal, daily usage, monitoring retention, and FCN wow moment are proven.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- Public Daily / Weekly can learn from financial media organization patterns, but IXAI must not become another news list.
+- Every notification must answer: `Why does this matter to my investments?`
+- V16 should validate the wow moment before paid-tier planning.
+- Commit label for this docs-only strategy update: `docs: refine V16 always-on AI monitoring strategy`.
+- This is docs-only. No product code, React, API, database, auth, provider, AI, scheduler, billing, trading, recommendation, or Workspace runtime behavior changed.
+
+## Docs — IXAI Product Philosophy
+
+Why:
+
+- IXAI needed a permanent product philosophy beyond normal roadmap and sprint planning.
+- The latest product discussion clarified that IXAI's value is not more information, but relevance.
+- Public Daily / Weekly and Workspace must be separated by product job: Public explains the market; Workspace explains what affects the user's own investments.
+
+What Changed:
+
+- Added `docs/IXAI_PRODUCT_PHILOSOPHY.md`.
+- Defined the core principle: `The value of IXAI is not information. The value of IXAI is relevance.`
+- Defined that IXAI's AI does not make investment decisions; it saves the user time by collecting, organizing, comparing, filtering, and prioritizing investment information.
+- Added the permanent two-product philosophy:
+  - Product A — AI Financial Media.
+  - Product B — AI Investment Monitoring.
+- Added FCN philosophy: IXAI should become the most complete FCN AI Monitoring Platform.
+- Added Public vs Workspace philosophy:
+  - Public answers `今天市場發生什麼？`
+  - Workspace answers `今天哪些事情影響我的投資？`
+- Added AI Monitoring Workflow and Editorial Workflow to V16 architecture docs.
+- Updated `IXAI_PRODUCT_VISION`, `V16_PRODUCT_STRATEGY`, `V16_AI_MONITORING_PLATFORM`, `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V16 is now in Architecture Planning Phase before coding.
+- Architecture planning must cover Product Philosophy, Product Strategy, Editorial Architecture, Monitoring Architecture, and Data Architecture.
+- This is docs-only. No product code, React, API, database, auth, provider, AI, scheduler, billing, trading, recommendation, or Workspace runtime behavior changed.
+
+## Docs — V16 Product Strategy Upgrade
+
+Why:
+
+- IXAI needed to clarify that V16 is not only Workspace monitoring.
+- Daily / Weekly Briefs are strategically important as AI Financial Media, not a free Workspace tier or generic news aggregation.
+- Workspace remains AI Investment Monitoring, but it should be understood as the second product line after the public trust/habit layer.
+
+What Changed:
+
+- Added `docs/V16_PRODUCT_STRATEGY.md`.
+- Split V16 into two product lines:
+  - V16A — AI Financial Media.
+  - V16B — AI Investment Monitoring.
+- Defined the funnel: Public Visitor -> Daily Brief -> Weekly Brief -> trust/habit -> Workspace -> input assets -> AI Monitoring -> Subscription.
+- Reframed Daily / Weekly as AI Financial Media that cannot depend on the user's Portfolio.
+- Reframed Workspace as My Intelligence that must depend on the user's Portfolio.
+- Updated `V16_AI_MONITORING_PLATFORM`, `IXAI_PRODUCT_VISION`, `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V16A is the first implementation priority.
+- V16B keeps the existing nine-engine AI Monitoring roadmap.
+- This is docs-only. No product code, React, API, database, auth, provider, AI, scheduler, billing, trading, recommendation, or Workspace runtime behavior changed.
+
 ## V15.2.1 — Brief Publish Reliability Hotfix
 
 Why:

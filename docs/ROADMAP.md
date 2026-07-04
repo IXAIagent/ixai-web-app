@@ -4,11 +4,20 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V16 — AI Monitoring Platform`
+`V16 Product Strategy`
 
 ## Current Strategic Direction
 
-IXAI's long-term product direction is `AI Investment Monitoring System`.
+IXAI's long-term product direction has two complementary product lines:
+
+```text
+Product A — AI Financial Media
+Product B — AI Investment Monitoring
+```
+
+Product A helps everyone understand what matters in today's market through Daily Brief and Weekly Brief.
+
+Product B helps every investor understand what matters to their own investments through Workspace.
 
 Core sentence:
 
@@ -17,7 +26,7 @@ Core sentence:
 AI watches your investments, so you don't have to.
 ```
 
-IXAI should not drift into being only a brokerage app, news platform, finance dashboard, robo-advisor, generic chatbot, trading system, or signal-selling product. The highest-level source of truth is `docs/IXAI_PRODUCT_VISION.md`.
+IXAI should not drift into being only a brokerage app, generic news platform, finance dashboard, robo-advisor, generic chatbot, trading system, or signal-selling product. The highest-level sources of truth are `docs/IXAI_PRODUCT_VISION.md` and `docs/V16_PRODUCT_STRATEGY.md`.
 
 ## Current Priority
 
@@ -31,11 +40,13 @@ Source of truth:
 - `docs/V152_ADMIN_BRIEF_PIPELINE_AUDIT.md`
 - `docs/V1521_BRIEF_PUBLISH_RELIABILITY_HOTFIX.md`
 
-After V15.2.1 production verification, priority returns to V16 planning and implementation readiness for `V16 — AI Monitoring Platform`.
+After V15.2.1 production verification, priority returns to V16 implementation readiness under the upgraded product strategy.
 
-V15 Product Experience Redesign and V15.1 Product Polish established the AI Wealth Workspace user experience. V16 now turns that experience into true AI monitoring capability.
+V15 Product Experience Redesign and V15.1 Product Polish established the AI Wealth Workspace user experience. V16 now separates the public media habit layer from the personal monitoring layer.
 
-V16 is engine-centric, not page-centric. Every new user-facing monitoring item must answer:
+V16A AI Financial Media is the first implementation priority because Daily / Weekly creates trust, habit, and brand before users create a Workspace.
+
+V16B AI Investment Monitoring remains engine-centric, not page-centric. Every new user-facing monitoring item must answer:
 
 ```text
 這件事為什麼跟我的投資有關？
@@ -44,40 +55,70 @@ Why does this matter to my investments?
 
 V16 source of truth:
 
+- `docs/IXAI_PRODUCT_PHILOSOPHY.md`
+- `docs/V16_PRODUCT_STRATEGY.md`
 - `docs/V16_AI_MONITORING_PLATFORM.md`
 - `docs/IXAI_PRODUCT_VISION.md`
 
-V16 phases:
+V16 is currently in Architecture Planning Phase.
 
-- Phase A — Monitoring Foundation:
-  - News Relevance Engine Foundation.
-  - Global Asset Intelligence Foundation.
-  - Event Intelligence Foundation.
-  - Today Focus Foundation.
-- Phase B — FCN Monitoring Advantage:
-  - FCN Intelligence Engine v1.
-  - Observation Calendar.
-  - Coupon Calendar.
-  - FCN Underlying News / Event Mapping.
-  - FCN Today Watch.
-- Phase C — Portfolio Monitoring Intelligence:
-  - Portfolio Intelligence Engine.
-  - AI Monitoring Feed.
-  - Portfolio News / Event Impact.
-  - Risk Event Correlation.
-- Phase D — AI Analyst & Memory:
-  - Copilot AI Analyst.
-  - Memory Engine.
-  - Smart Alerts.
-  - Scenario Explorer.
+Strategic notes before V16 Architecture Phase:
+
+- Always-On AI Monitoring: AI works continuously in the background and should prepare results before the user opens Workspace.
+- Public Brief = AI Curated Financial Media: Daily / Weekly should explain what truly matters in the market, not become a generic news list.
+- Workspace = AI Investment Monitoring: Workspace should explain what affects the user's own investments.
+- Telegram-first notification strategy: Telegram is the first external monitoring channel before App Push.
+- SaaS delayed until product-market signal / wow moment: billing should wait until daily usage, monitoring retention, and FCN value are proven.
+
+Architecture Phase must happen before implementation sprints:
+
+- Product Philosophy.
+- Product Strategy.
+- Editorial Architecture.
+- System Architecture.
+- Data Architecture.
+
+V16A — AI Financial Media roadmap:
+
+- Sprint 1 — Editorial Architecture:
+  - Editorial data model.
+  - Story model.
+  - Topic model.
+  - Narrative model.
+- Sprint 2 — Daily Brief 2.0:
+  - Today Focus.
+  - Market Pulse.
+  - AI Market View.
+  - Opportunity Radar.
+- Sprint 3 — Weekly Brief 2.0:
+  - Weekly Review.
+  - Weekly Themes.
+  - Next Week Radar.
+- Sprint 4 — Content Quality Engine:
+  - Narrative diversity.
+  - Anti-repetition.
+  - Editorial memory.
+  - Dynamic prompts.
+
+V16B — AI Investment Monitoring roadmap:
+
+- Sprint 1 — Asset Intelligence Foundation.
+- Sprint 2 — News Relevance Engine.
+- Sprint 3 — Event Intelligence Engine.
+- Sprint 4 — FCN Intelligence Engine.
+- Sprint 5 — Portfolio Intelligence.
+- Sprint 6 — Today Focus.
+- Sprint 7 — AI Monitoring Feed.
+- Sprint 8 — Copilot AI Analyst.
+- Sprint 9 — Memory Engine.
 
 First implementation recommendation:
 
 ```text
-V16 Sprint 1 — Asset Intelligence + News/Event Relevance Foundation
+V16A Sprint 1 — Editorial Architecture
 ```
 
-Scope should define asset intelligence types, relevance types, news/event provider contracts, mock provider first, Portfolio / FCN / Watchlist asset universe connection, and first Today Focus mock output. It should not add external provider dependency or AI model calls unless explicitly approved.
+Scope should define editorial data model, story model, topic model, narrative model, and quality guardrails for Daily / Weekly. It should not add Workspace monitoring implementation, external provider dependency, AI model calls, scheduler delivery, trading, recommendation, or billing unless explicitly approved.
 
 V15 current sequence:
 
@@ -110,9 +151,10 @@ V15 current sequence:
 
 Next major version:
 
-- `V16 — AI Monitoring Platform`.
-- V16 should be driven by `docs/IXAI_PRODUCT_VISION.md`.
-- Priority tracks: Asset Intelligence, FCN Intelligence, Portfolio Intelligence, News Relevance Engine, AI Monitoring Feed, Today Focus, Copilot Suggested Questions, and Observation / Coupon Calendar.
+- `V16 Product Strategy`.
+- V16 should be driven by `docs/V16_PRODUCT_STRATEGY.md` and `docs/IXAI_PRODUCT_VISION.md`.
+- Priority 1: V16A AI Financial Media.
+- Priority 2: V16B AI Investment Monitoring.
 
 V15 does not add:
 

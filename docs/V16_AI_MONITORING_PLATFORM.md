@@ -1,12 +1,37 @@
-# V16 — AI Monitoring Platform
+# V16B — AI Monitoring Platform
 
 ## 1. Executive Summary
 
-V16 moves IXAI from an `AI Wealth Workspace` into an `AI Monitoring Platform`.
+This document is now the V16B roadmap: AI Investment Monitoring.
+
+The full V16 product strategy is split into two complementary product lines:
+
+```text
+V16A — AI Financial Media
+V16B — AI Investment Monitoring
+```
+
+Canonical strategy source:
+
+- `docs/V16_PRODUCT_STRATEGY.md`
+- `docs/IXAI_PRODUCT_PHILOSOPHY.md`
+
+V16A owns Daily Brief / Weekly Brief as AI Financial Media.
+
+V16B owns Workspace as AI Investment Monitoring.
+
+V16B moves IXAI from an `AI Wealth Workspace` into an `AI Monitoring Platform`.
+
+Permanent product principle:
+
+```text
+The value of IXAI is not information.
+The value of IXAI is relevance.
+```
 
 V15 completed the product experience foundation: Workspace redesign, information architecture refinement, Morning Brief route separation, product polish, user-facing copy, and diagnostics demotion. V16 starts the next major product line: true AI investment monitoring.
 
-IXAI is not a brokerage app, not a news app, not a generic finance dashboard, and not a generic chatbot. IXAI is an AI Investment Monitoring System.
+IXAI Workspace is not a brokerage app, not a news reader, not a generic finance dashboard, and not a generic chatbot. IXAI Workspace is an AI Investment Monitoring System.
 
 Core sentence:
 
@@ -15,7 +40,21 @@ Core sentence:
 AI watches your investments, so you don't have to.
 ```
 
-V16 is engine-centric, not page-centric. The product goal is not to add more screens. The product goal is to make every user-held asset, FCN, watchlist item, event, and relevant news item part of an intelligence layer that answers:
+Always-on sentence:
+
+```text
+IXAI is an always-on AI investment monitoring system.
+It works continuously in the background, so users don't have to.
+```
+
+中文：
+
+```text
+IXAI 是全天候運作的 AI 投資監控系統。
+AI 在背景持續工作，讓使用者不用全天候盯著市場。
+```
+
+V16B is engine-centric, not page-centric. The product goal is not to add more screens. The product goal is to make every user-held asset, FCN, watchlist item, event, and relevant news item part of an intelligence layer that answers:
 
 ```text
 這件事為什麼跟我的投資有關？
@@ -23,6 +62,10 @@ Why does this matter to my investments?
 ```
 
 ## 2. Core Product Thesis
+
+V16B depends on user Portfolio / asset context.
+
+Daily / Weekly Briefs cannot depend on a user's Portfolio because they are V16A AI Financial Media. Workspace must depend on the user's Portfolio because it is V16B AI Investment Monitoring.
 
 The market already has many:
 
@@ -36,6 +79,94 @@ The market already has many:
 Most tools do not truly understand what the user holds. They also do not filter the overwhelming amount of market information into the few things that matter to that specific user.
 
 IXAI's value is that AI remembers the user's assets, monitors price, news, events, FCN risk, Portfolio risk, and market context, then proactively surfaces what is important.
+
+Workspace answers:
+
+```text
+今天哪些事情影響我的投資？
+```
+
+## 2.1 AI Monitoring Workflow
+
+Always-on monitoring flow:
+
+```text
+News
+↓
+Events
+↓
+Prices
+↓
+Earnings
+↓
+Portfolio
+↓
+FCN
+↓
+Crypto
+↓
+Risk
+↓
+AI Analysis
+↓
+Today Focus
+↓
+Telegram / Workspace
+```
+
+Workspace implementation flow:
+
+```text
+User Assets
+↓
+Asset Registry
+↓
+Provider Layer
+↓
+Normalization
+↓
+Relevance Engine
+↓
+Impact Engine
+↓
+Intelligence Engine
+↓
+Monitoring Feed
+↓
+Today Focus
+↓
+Workspace
+```
+
+The user should not need to manually collect, sort, and compare every price, news item, event, and macro signal. IXAI should do the monitoring work and surface the few things that matter.
+
+The user should see prepared intelligence when opening Workspace, not wait for analysis to begin.
+
+## 2.2 Editorial Workflow
+
+Public editorial flow:
+
+```text
+Global News
+↓
+Story Ranking
+↓
+Narrative
+↓
+Editorial AI
+↓
+Daily Brief
+↓
+Weekly Brief
+```
+
+Editorial output belongs to V16A AI Financial Media.
+
+Workspace monitoring output belongs to V16B AI Investment Monitoring.
+
+These workflows should share product intelligence principles, but they must not collapse into the same product surface.
+
+Public Daily / Weekly may organize market information through familiar media modules such as 要聞, 熱榜, 自選, 快訊, 指數, and 市場概況. That is an information architecture reference only. IXAI Public Brief must remain AI Curated Financial Media: fewer, clearer, more important market items selected by AI, not another high-volume news list.
 
 ## 3. Non-Negotiable Product Principles
 
@@ -279,6 +410,30 @@ Every feed item must answer:
 為什麼這件事跟使用者有關？
 ```
 
+### Engine 6.1: Telegram Notification Channel
+
+Telegram is the first external notification channel for V16 AI Monitoring.
+
+V16 should not rush App Push before the monitoring value is proven.
+
+Telegram examples:
+
+- FCN observation tomorrow.
+- FCN KI distance approaching.
+- Underlying earnings tonight.
+- TSLA large move affects 3 FCNs.
+- BTC volatility rising.
+- Today Focus Top 3 ready.
+
+Every Telegram notification must answer:
+
+```text
+Why does this matter to my investments?
+這件事為什麼跟我的投資有關？
+```
+
+Telegram notifications are allowed only when they are tied to assets, FCNs, Portfolio impact, watchlist movement, or risk context.
+
 ### Engine 7: Today Focus Engine
 
 Today Focus is the first priority of the Home page.
@@ -372,12 +527,30 @@ P1/P2:
 
 1. Copilot AI Analyst.
 2. Memory Engine.
-3. Smart Alerts.
+3. Telegram-first Smart Alerts.
 4. Scenario Explorer.
 
 Purpose:
 
 Make AI able to remember, explain, track, and remind, not only summarize.
+
+## 5.1 SaaS Timing
+
+V16 should not start by building billing-first SaaS tiers.
+
+The first objective is to prove product-market signal:
+
+- Public Daily / Weekly becomes high-quality AI Financial Media.
+- Workspace becomes Always-On AI Monitoring.
+- Telegram creates retained monitoring behavior.
+- FCN monitoring becomes hard to replace.
+- Users return because IXAI saves time.
+
+The billing roadmap should wait until the Wow Moment is visible:
+
+```text
+原來 AI 可以每天幫我省下看盤、看新聞、追 FCN 的時間。
+```
 
 ## 6. Data / Provider Strategy
 

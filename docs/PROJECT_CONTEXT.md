@@ -4,7 +4,14 @@ This document is the long-term project memory layer for AI-assisted development 
 
 ## A. Project Identity
 
-IXAI is an AI Investment Monitoring System: AI watches the user's investments so the user does not have to watch markets all day.
+IXAI now has two complementary product lines:
+
+- Product A — AI Financial Media.
+- Product B — AI Investment Monitoring.
+
+Product A helps everyone understand what matters in today's market.
+
+Product B helps every investor understand what matters to their own investments.
 
 IXAI is not a brokerage app, not a news app, not a generic finance dashboard, not a broker, not an automated order execution system, not a robo-advisor, not a generic chatbot, and not a signal-selling product. The product direction is to remember what the user holds, monitor prices, news, events, FCN risk, Portfolio risk, and market regime, then surface only the things that matter to that user.
 
@@ -15,7 +22,7 @@ Core product sentence:
 AI watches your investments, so you don't have to.
 ```
 
-The highest-level product vision source is `docs/IXAI_PRODUCT_VISION.md`. Read it before starting V16, AI monitoring, asset intelligence, FCN intelligence, Portfolio intelligence, news relevance, alerts, Copilot, or Workspace IA work.
+The highest-level product vision sources are `docs/IXAI_PRODUCT_VISION.md` and `docs/V16_PRODUCT_STRATEGY.md`. Read them before starting V16, Daily / Weekly, AI monitoring, asset intelligence, FCN intelligence, Portfolio intelligence, news relevance, alerts, Copilot, or Workspace IA work.
 
 The core product layers are:
 
@@ -25,12 +32,98 @@ The core product layers are:
 
 Current active planning mainline:
 
-- V16 is `V16 — AI Monitoring Platform`.
-- V16 turns the V15 AI Wealth Workspace product experience into true AI monitoring capability.
-- V16 should prioritize Global Asset Intelligence, FCN Intelligence, Crypto-Native Intelligence, Portfolio Intelligence, News Relevance Engine, Event Intelligence, AI Monitoring Feed, Today Focus, Copilot AI Analyst, Memory Engine, and Observation / Coupon Calendar.
-- Source of truth: `docs/V16_AI_MONITORING_PLATFORM.md`.
+- V16 is split into `V16A — AI Financial Media` and `V16B — AI Investment Monitoring`.
+- V16A owns Daily Brief / Weekly Brief as AI Financial Media.
+- V16B owns Workspace as AI Investment Monitoring.
+- V16A is the first implementation priority because Daily / Weekly builds trust, habit, and brand.
+- V16B keeps the existing nine-engine Workspace monitoring roadmap.
+- Source of truth: `docs/IXAI_PRODUCT_PHILOSOPHY.md` and `docs/V16_PRODUCT_STRATEGY.md`.
 
-V16 non-negotiable principles:
+V16 coding前，產品策略已確認：
+
+1. Public Brief 是免費 AI 財經媒體。
+2. Workspace 是會員 AI 投資監控。
+3. AI 必須在背景持續工作，不是等使用者打開才開始。
+4. Telegram 是第一階段通知通道。
+5. 暫不急著收費，先驗證使用量與價值感。
+
+Always-on monitoring flow:
+
+```text
+News
+↓
+Events
+↓
+Prices
+↓
+Earnings
+↓
+Portfolio
+↓
+FCN
+↓
+Crypto
+↓
+Risk
+↓
+AI Analysis
+↓
+Today Focus
+↓
+Telegram / Workspace
+```
+
+V16 is now in Architecture Planning Phase.
+
+Before coding V16 implementation, complete:
+
+- Product Philosophy.
+- Product Strategy.
+- Editorial Architecture.
+- Monitoring Architecture.
+- Data Architecture.
+
+Core product philosophy:
+
+```text
+The value of IXAI is not information.
+The value of IXAI is relevance.
+```
+
+IXAI's AI does not make investment decisions for users. It saves research time by collecting, organizing, comparing, filtering, and prioritizing the information users would otherwise need to process manually.
+
+Product split:
+
+```text
+Public Visitor
+↓
+Daily Brief / Weekly Brief
+↓
+Trust + Habit
+↓
+Workspace
+↓
+User inputs assets
+↓
+AI Monitoring
+↓
+Subscription
+```
+
+Product questions:
+
+- Public / Daily / Weekly: 今天市場發生什麼？
+- Workspace: 今天哪些事情影響我的投資？
+
+V16A principles:
+
+- Daily / Weekly are not a free Workspace.
+- Daily / Weekly are AI Financial Media.
+- Daily / Weekly cannot depend on the user's Portfolio.
+- Daily Brief is not a daily rewritten article; it is a daily reinterpretation of what truly matters in the market.
+- Weekly Brief is not seven Daily Briefs stitched together; it is an AI Weekly Review.
+
+V16B non-negotiable principles:
 
 - Global First: do not hard-code US-only, Taiwan-only, English-only, or single-provider assumptions.
 - Asset-Centric Intelligence: what the user holds, AI monitors.
