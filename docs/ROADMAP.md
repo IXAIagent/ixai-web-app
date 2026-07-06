@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V16 Product Strategy`
+`V18 Workspace Product Integration`
 
 ## Current Strategic Direction
 
@@ -30,7 +30,18 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V17.4 Workspace Intelligence after V17.3 Notification Platform merged.
+Current priority is V18.1 Workspace Home Integration after V17.4 Workspace Intelligence merged.
+
+V18 starts the product integration phase. V16 and V17 created the service/domain foundations. V18 connects those read-only foundations into Workspace UI without creating new engines, notification delivery, trading actions, recommendations, schedulers, AI model calls, database schema, or migrations.
+
+V18.1 — Workspace Home Integration:
+
+- Status: implemented.
+- Connects V17.4 Workspace Intelligence to `/my-ixai/home`.
+- Adds Workspace Intelligence Summary, Today Focus, Risk Highlights, Notification Preview, and collapsed Workspace Intelligence diagnostics.
+- Reuses V16 Editorial Intelligence, V17.1 Asset Intelligence, V17.2 Monitoring Engine, V17.3 Notification Platform, and V17.4 Workspace Intelligence.
+- Keeps notifications preview-only and does not send Telegram, LINE, Email, Browser Push, or Mobile Push.
+- Source of truth: `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 

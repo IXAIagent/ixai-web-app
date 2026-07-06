@@ -6,6 +6,27 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V18.1 — Workspace Home Integration
+
+Why:
+
+- V16 and V17 completed the core service/domain foundations.
+- Workspace Home now needs to surface read-only Workspace Intelligence without creating a new engine or changing product behavior.
+
+What Changed:
+
+- Added `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
+- Updated Home through `components/home/workspace-home-dashboard.tsx`.
+- Added Workspace Intelligence Summary, Today Focus, Risk Highlights, Notification Preview, and Workspace Intelligence diagnostics to `/my-ixai/home`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V18.1 reuses V16 Editorial Intelligence, V17.1 Asset Intelligence, V17.2 Monitoring Engine, V17.3 Notification Platform, and V17.4 Workspace Intelligence.
+- Notification output is preview-only. No Telegram, LINE, Email, Browser Push, or Mobile Push is sent.
+- Diagnostics remain collapsed by default.
+- No new Intelligence Engine, Monitoring Engine, Editorial Engine, Scheduler, AI call, Trading, Recommendation, Billing, Copilot Chat, Timeline rewrite, Database Schema, or Migration was added.
+
 ## V17.4 — Workspace Intelligence
 
 Why:
