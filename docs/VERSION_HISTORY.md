@@ -6,6 +6,36 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V17.2 — Monitoring Engine
+
+Why:
+
+- V17.1 created the shared Asset Intelligence Object.
+- Workspace, Notification, and Today Focus need a common deterministic event layer before any UI, delivery, scheduler, or AI behavior is added.
+
+What Changed:
+
+- Added `docs/V17_MONITORING_ENGINE.md`.
+- Added shared Monitoring Engine foundation under `src/lib/intelligence/monitoring/`:
+  - `monitoring-types.ts`
+  - `monitoring-rule-engine.ts`
+  - `monitoring-event-engine.ts`
+  - `monitoring-priority.ts`
+  - `monitoring-timeline.ts`
+  - `today-focus-engine.ts`
+  - `monitoring-diagnostics.ts`
+  - `monitoring-service.ts`
+  - `index.ts`
+- Added deterministic monitoring event contracts, rule engine, priority scoring, Today Focus generation, timeline grouping, diagnostics, and service helpers.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V17.2 is a library-only foundation.
+- The monitoring layer reuses V17.1 Asset Intelligence, V16 Editorial Intelligence theme IDs, and V16 Provider Coverage / Quality concepts.
+- Monitoring events must answer why the event matters, but cannot use investment-advice language.
+- No UI, notification delivery, Telegram, LINE, Email, Push, Scheduler, AI call, DB schema, migration, trading, buy/sell/hold, target price, recommendation, billing, Workspace Copilot, Timeline UI, Morning Brief behavior, or major redesign was added.
+
 ## V17.1 — Asset Intelligence Platform
 
 Why:
