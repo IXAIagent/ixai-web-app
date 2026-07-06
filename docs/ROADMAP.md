@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V16A Sprint 1 Editorial Architecture Foundation after V15.2.1 source-level verification.
+Current priority is V16A Sprint 2 Daily Brief 2.0 Foundation after Sprint 1 Editorial Architecture Foundation merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -154,6 +154,15 @@ Scope defines editorial domain contracts, source normalization, story ranking, t
 Source of truth:
 
 - `docs/V16A_SPRINT_1_EDITORIAL_ARCHITECTURE_FOUNDATION.md`
+
+V16A Sprint 2 — Daily Brief 2.0 Foundation:
+
+- Status: implemented.
+- Adds the first deterministic Daily Brief 2.0 pipeline.
+- Pipeline: Mock / Existing Editorial Source -> Normalize Story -> Story Ranking -> Topic Ranking -> Daily Brief Builder -> Daily Brief 2.0 Snapshot -> Public / Admin Preview Integration.
+- Adds read-only preview integration to `/daily-brief` and `/admin/daily-briefs`.
+- Does not add external provider fetch, AI model call, scheduler auto-publish, notification delivery, DB schema, trading, recommendation, billing, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_SPRINT_2_DAILY_BRIEF_2_FOUNDATION.md`.
 
 V15 current sequence:
 

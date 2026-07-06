@@ -84,6 +84,11 @@ V16A AI Financial Media:
   - Code: `src/lib/editorial/editorial-types.ts`, `editorial-normalization.ts`, `story-ranking.ts`, `topic-ranking.ts`, `narrative-builder.ts`, `editorial-diagnostics.ts`, and `index.ts`.
   - Contract-first and deterministic only.
 - Sprint 2: Daily Brief 2.0.
+  - Source: `docs/V16A_SPRINT_2_DAILY_BRIEF_2_FOUNDATION.md`.
+  - Code: `src/lib/editorial/daily-brief/`.
+  - Public preview: `app/daily-brief/page.tsx`.
+  - Admin preview: `components/admin/daily-briefs-admin.tsx`.
+  - Deterministic foundation only; no external provider, AI call, scheduler publish, notification delivery, or DB migration.
 - Sprint 3: Weekly Brief 2.0.
 - Sprint 4: Content Quality Engine.
 - Daily / Weekly cannot depend on user Portfolio.

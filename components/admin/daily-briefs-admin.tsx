@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SocialIntelligencePackStudio } from "@/components/admin/social-intelligence-pack-studio";
+import { buildDailyBrief2Snapshot } from "@/src/lib/editorial/daily-brief";
 import { getDrafts } from "@/src/lib/editorial/repository";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
 import type {
@@ -1054,6 +1055,7 @@ export function DailyBriefsAdmin() {
   const selectedCoverage = selectedDraft?.intelligence?.coverageScore ?? generationMeta?.coverageScore;
   const selectedQuality = selectedDraft?.intelligence?.contentQuality ?? generationMeta?.contentQuality;
   const selectedProviderHealth = selectedDraft?.intelligence?.providerHealth;
+  const dailyBrief2Preview = useMemo(() => buildDailyBrief2Snapshot(), []);
 
   const refresh = useCallback((nextDrafts?: DailyBriefDraft[]) => {
     const next = nextDrafts ?? getDrafts();
@@ -1343,6 +1345,57 @@ export function DailyBriefsAdmin() {
                 {publishMessage}
               </p>
             ) : null}
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-[rgba(176,141,87,0.24)] bg-[rgba(176,141,87,0.07)] p-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                Daily Brief 2.0 Foundation Preview
+              </p>
+              <h2 className="mt-2 text-lg font-semibold text-[var(--ixai-cream)]">
+                {dailyBrief2Preview.title}
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-[rgba(245,240,230,0.62)]">
+                {dailyBrief2Preview.subtitle}
+              </p>
+            </div>
+            <div className="grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.62)] sm:grid-cols-2 lg:min-w-[360px]">
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Sources: {dailyBrief2Preview.sourceCoverage.sourceCount}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Ranked stories: {dailyBrief2Preview.sourceCoverage.rankedStoryCount}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Topics: {dailyBrief2Preview.sourceCoverage.topicCount}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Readiness: {dailyBrief2Preview.diagnostics.publicBriefReadiness}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-3">
+            {dailyBrief2Preview.todayFocus.map((item) => (
+              <article
+                className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6"
+                key={item.title}
+              >
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+                  {item.relatedTopic} · confidence {Math.round(item.confidence * 100)}%
+                </p>
+                <h3 className="mt-2 font-semibold text-[var(--ixai-cream)]">{item.title}</h3>
+                <p className="mt-2 text-xs leading-5 text-[rgba(245,240,230,0.58)]">
+                  {item.whyItMatters}
+                </p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-4 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.54)] md:grid-cols-3">
+            <p>AI dependency: {dailyBrief2Preview.diagnostics.aiDependencyStatus}</p>
+            <p>Publication: {dailyBrief2Preview.diagnostics.publicationDependencyStatus}</p>
+            <p>Social Pack blocking: {String(dailyBrief2Preview.publicationReadiness.socialPackBlocking)}</p>
           </div>
         </section>
 

@@ -1,6 +1,7 @@
 import { DailyBriefUnifiedArchive } from "@/components/daily-brief/daily-brief-unified-archive";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getAllDailyBriefs } from "@/src/lib/dailyBriefs";
+import { buildDailyBrief2Snapshot } from "@/src/lib/editorial/daily-brief";
 
 export const metadata = buildPublicMetadata({
   title: "每日晨報 — 市場情報 | IXAI",
@@ -22,6 +23,7 @@ export const metadata = buildPublicMetadata({
 
 export default function DailyBriefArchivePage() {
   const fallbackBriefs = getAllDailyBriefs();
+  const preview = buildDailyBrief2Snapshot();
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
@@ -35,6 +37,74 @@ export default function DailyBriefArchivePage() {
         <p className="mt-3 max-w-3xl text-sm leading-6 text-white/72 sm:mt-4 sm:text-base sm:leading-8">
           以利率、美股、台股、Crypto 與 AI 科技為主軸，整理每日盤前值得閱讀的市場情報與一玄觀點。
         </p>
+      </section>
+
+      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.82)] p-5 shadow-[0_18px_56px_rgba(9,41,31,0.08)] sm:p-6">
+        <div className="grid gap-5 lg:grid-cols-[1fr_18rem]">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Daily Brief 2.0 Foundation Preview
+            </p>
+            <h2 className="mt-2 text-xl font-semibold leading-8 text-[var(--ixai-forest)]">
+              {preview.title}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-ink-muted)]">
+              {preview.subtitle}
+            </p>
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              {preview.todayFocus.map((item) => (
+                <article
+                  className="rounded-lg border border-[rgba(176,141,87,0.22)] bg-white/55 p-4"
+                  key={item.title}
+                >
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                    {item.relatedTopic}
+                  </p>
+                  <h3 className="mt-2 text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+                    {item.summary}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <aside className="rounded-lg border border-[rgba(9,41,31,0.1)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+            <p className="font-mono uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+              Foundation diagnostics
+            </p>
+            <dl className="mt-3 grid gap-2">
+              <div className="flex justify-between gap-3">
+                <dt>Sources</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.sourceCoverage.sourceCount}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Ranked stories</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.sourceCoverage.rankedStoryCount}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Topics</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.sourceCoverage.topicCount}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>AI dependency</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.diagnostics.aiDependencyStatus}
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-3 border-t border-[rgba(9,41,31,0.08)] pt-3">
+              {preview.disclaimer}
+            </p>
+          </aside>
+        </div>
       </section>
 
       <DailyBriefUnifiedArchive fallbackBriefs={fallbackBriefs} />
