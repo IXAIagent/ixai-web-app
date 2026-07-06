@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V16A Sprint 2 Daily Brief 2.0 Foundation after Sprint 1 Editorial Architecture Foundation merged.
+Current priority is V16A-2 Editorial Intelligence Engine + Weekly Brief Foundation after Sprint 2 Daily Brief 2.0 Foundation merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -163,6 +163,17 @@ V16A Sprint 2 — Daily Brief 2.0 Foundation:
 - Adds read-only preview integration to `/daily-brief` and `/admin/daily-briefs`.
 - Does not add external provider fetch, AI model call, scheduler auto-publish, notification delivery, DB schema, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_SPRINT_2_DAILY_BRIEF_2_FOUNDATION.md`.
+
+V16A-2 — Editorial Intelligence Engine + Weekly Brief Foundation:
+
+- Status: implemented.
+- Adds shared Editorial Intelligence Engine for Daily / Weekly AI Financial Media.
+- Adds theme engine, story relationship engine, editorial signals, narrative priority, confidence layer, and coverage layer.
+- Adds Weekly Brief 2.0 foundation snapshot with week range, weekly review, top themes, important stories, narrative summary, next week radar, risk notes, coverage status, quality signals, fallback state, and no-investment-advice disclaimer.
+- Integrates Daily Brief 2.0 with the shared intelligence engine.
+- Adds read-only public Weekly Brief 2.0 preview and read-only admin Daily intelligence diagnostics.
+- Does not add external provider fetch, AI model call, scheduler auto-publish, notification delivery, DB schema, trading, recommendation, billing, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_2_EDITORIAL_INTELLIGENCE_ENGINE.md`.
 
 V15 current sequence:
 

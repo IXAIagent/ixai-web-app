@@ -6,6 +6,7 @@ import type {
   EditorialTopic,
   RawEditorialProviderItem,
 } from "@/src/lib/editorial/editorial-types";
+import type { EditorialIntelligenceResult } from "@/src/lib/editorial/intelligence";
 
 export type DailyBrief2MarketTone = "constructive" | "cautious" | "mixed" | "risk_off";
 
@@ -122,6 +123,7 @@ export type DailyBrief2Snapshot = {
   editorialBrief: EditorialBrief;
   fallbackState: DailyBrief2FallbackState;
   generatedAt: string;
+  intelligence: EditorialIntelligenceResult;
   keyNarratives: DailyBrief2Narrative[];
   marketPulse: DailyBrief2MarketPulse;
   publicationReadiness: DailyBrief2PublicationReadiness;

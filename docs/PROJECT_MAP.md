@@ -89,8 +89,14 @@ V16A AI Financial Media:
   - Public preview: `app/daily-brief/page.tsx`.
   - Admin preview: `components/admin/daily-briefs-admin.tsx`.
   - Deterministic foundation only; no external provider, AI call, scheduler publish, notification delivery, or DB migration.
-- Sprint 3: Weekly Brief 2.0.
-- Sprint 4: Content Quality Engine.
+- V16A-2: Editorial Intelligence Engine + Weekly Brief Foundation.
+  - Source: `docs/V16A_2_EDITORIAL_INTELLIGENCE_ENGINE.md`.
+  - Shared intelligence code: `src/lib/editorial/intelligence/`.
+  - Weekly foundation code: `src/lib/editorial/weekly-brief/`.
+  - Daily integration: `src/lib/editorial/daily-brief/`, `app/daily-brief/page.tsx`, `components/admin/daily-briefs-admin.tsx`.
+  - Weekly integration: `app/weekly-brief/page.tsx`.
+  - Deterministic foundation only; no external provider, AI call, scheduler publish, notification delivery, DB migration, trading, recommendation, billing, or V16B Workspace Monitoring.
+- Next V16A track: Content Quality Engine / Editorial Memory.
 - Daily / Weekly cannot depend on user Portfolio.
 - Daily / Weekly are not Workspace free tier.
 - Sprint 1 does not fetch external providers, call AI models, auto-publish scheduler output, deliver notifications, or alter public/admin Brief readback.

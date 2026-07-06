@@ -6,6 +6,42 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V16A-2 — Editorial Intelligence Engine + Weekly Brief Foundation
+
+Why:
+
+- Sprint 2 created the first deterministic Daily Brief 2.0 snapshot.
+- V16A needed a shared editorial intelligence layer before expanding Daily / Weekly into richer public media experiences.
+- Weekly Brief 2.0 needed a foundation that is more than a stitched set of Daily Briefs, while staying separate from Workspace monitoring and user portfolio data.
+
+What Changed:
+
+- Added `docs/V16A_2_EDITORIAL_INTELLIGENCE_ENGINE.md`.
+- Added shared Editorial Intelligence Engine under `src/lib/editorial/intelligence/`:
+  - theme engine
+  - story relationship engine
+  - editorial signals
+  - narrative priority
+  - confidence layer
+  - coverage layer
+  - orchestration engine
+- Added Weekly Brief 2.0 foundation under `src/lib/editorial/weekly-brief/`:
+  - weekly snapshot types
+  - weekly builder
+  - weekly diagnostics
+- Daily Brief 2.0 now includes shared intelligence diagnostics in its snapshot.
+- Public `/daily-brief` displays read-only theme / signal / narrative confidence diagnostics.
+- Public `/weekly-brief` displays a read-only Weekly Brief 2.0 Foundation Preview.
+- Admin `/admin/daily-briefs` displays read-only Daily intelligence diagnostics.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V16A-2 is deterministic and rule-based only.
+- Daily and Weekly share the same intelligence engine for themes, signals, confidence, coverage, and narrative priority.
+- Weekly Brief 2.0 remains public AI Financial Media and does not depend on user portfolio or Workspace context.
+- No external provider fetch, AI model call, scheduler auto-publish, notification delivery, DB schema, migration, V16B Workspace Monitoring, trading, recommendation, billing, buy/sell/hold, target price, or rebalance wording was added.
+
 ## V16A Sprint 2 — Daily Brief 2.0 Foundation
 
 Why:
