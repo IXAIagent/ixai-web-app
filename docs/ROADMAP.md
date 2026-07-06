@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V17.3 Notification Platform after V17.2 Monitoring Engine merged.
+Current priority is V17.4 Workspace Intelligence after V17.3 Notification Platform merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -248,6 +248,16 @@ V17.3 — Notification Platform:
 - Provides `createNotificationEvents()`, `routeNotificationEvents()`, `getNotificationDiagnostics()`, and `getNotificationDeliveryPreview()`.
 - Does not add Telegram / LINE / Email / Push sending, provider token / secret / env, Scheduler, AI call, DB schema, migration, trading, buy/sell/hold, target price, recommendation, billing, Workspace Copilot, or major UI redesign.
 - Source of truth: `docs/V17_NOTIFICATION_PLATFORM.md`.
+
+V17.4 — Workspace Intelligence:
+
+- Status: implemented as a service-only aggregation layer.
+- Adds `src/lib/intelligence/workspace/`.
+- Builds Workspace Summary, Today Focus presentation model, Risk Summary, Notification Preview, Diagnostics, Readiness, and service helpers.
+- Reuses V16 Editorial Intelligence, V17.1 Asset Intelligence, V17.2 Monitoring Engine, and V17.3 Notification Platform.
+- Provides `getWorkspaceSummary()`, `getWorkspaceTodayFocus()`, `getWorkspaceRiskSummary()`, `getWorkspaceNotificationPreview()`, and `getWorkspaceDiagnostics()`.
+- Does not add Telegram, LINE, Email, Push, AI call, Scheduler, Trading, Recommendation, Billing, Copilot Chat, Timeline rewrite, Database Schema, Migration, new Monitoring Engine, new Editorial Engine, API route, or major UI redesign.
+- Source of truth: `docs/V17_WORKSPACE_INTELLIGENCE.md`.
 
 V15 current sequence:
 
