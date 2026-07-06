@@ -151,6 +151,18 @@ export default async function WeeklyBriefArchivePage() {
                   {preview.providerDiagnostics.cacheHit ? "hit" : "miss"}
                 </dd>
               </div>
+              <div className="flex justify-between gap-3">
+                <dt>Production health</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.productionMetadata.health.status}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Publish guard</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.productionMetadata.pipeline.publishQueue.queueState}
+                </dd>
+              </div>
             </dl>
             <p className="mt-3 border-t border-[rgba(9,41,31,0.08)] pt-3">
               {preview.disclaimer}

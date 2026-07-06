@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V16A-4 Real Editorial Data MVP after V16A-3 Live Editorial Platform merged.
+Current priority is V16A-5 Production Editorial System after V16A-4 Real Editorial Data MVP merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -195,6 +195,17 @@ V16A-4 — Real Editorial Data MVP:
 - Admin Daily Briefs remains read-only and does not fetch providers from the browser.
 - Does not add OpenAI, Claude, Gemini, scheduler auto-publish, Telegram, LINE, Email, Push, DB schema, migration, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_4_REAL_EDITORIAL_DATA_MVP.md`.
+
+V16A-5 — Production Editorial System:
+
+- Status: implemented.
+- Adds production pipeline metadata for draft, review, publish readiness, publish queue, retry metadata, failure state, and manual publish guard.
+- Adds scheduler readiness diagnostics only; scheduler remains draft/review only and auto-publish remains disabled.
+- Adds production metrics, health helper, readiness checklist, and Admin Production Editorial Console.
+- Daily / Weekly snapshots now include production metadata.
+- Public Daily / Weekly show simplified production health and publish guard status.
+- Does not add DB schema, migration, auto-publish, Telegram, LINE, Email, Push, OpenAI, Claude, Gemini, AI call, trading, recommendation, billing, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_5_PRODUCTION_EDITORIAL_SYSTEM.md`.
 
 V15 current sequence:
 

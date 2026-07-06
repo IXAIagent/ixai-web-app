@@ -286,6 +286,16 @@ V16A-4 status:
 - It does not add OpenAI, Claude, Gemini, scheduler auto-publish, Telegram / LINE / Email / Push delivery, DB schema, migration, trading, recommendation, billing, target price, rebalance, buy/sell/hold language, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_4_REAL_EDITORIAL_DATA_MVP.md`.
 
+V16A-5 status:
+
+- Production Editorial System is implemented as readiness / diagnostics metadata for Daily / Weekly operations.
+- Added production pipeline, metrics, health, checklist, publish queue metadata, retry metadata, failure state, and manual publish guard.
+- Scheduler readiness is diagnostics-only. Scheduler remains draft/review only; no auto-publish behavior was added.
+- Admin Daily Briefs includes a Production Editorial Console with latest generated, latest draft/review, latest published, draft/publish gap, provider success rate, cache hit rate, fallback count, retry status, publish readiness, and production checklist.
+- Daily / Weekly snapshots include production metadata and public pages show simplified production health / publish guard status.
+- It does not add DB schema, migration, auto-publish, Telegram / LINE / Email / Push delivery, OpenAI, Claude, Gemini, AI call, trading, recommendation, billing, target price, rebalance, buy/sell/hold language, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_5_PRODUCTION_EDITORIAL_SYSTEM.md`.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`

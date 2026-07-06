@@ -21,6 +21,7 @@ import {
   getEditorialProviderSourceResult,
   getEditorialProviderSourceResultAsync,
 } from "@/src/lib/editorial/providers";
+import { buildEditorialProductionMetadata } from "@/src/lib/editorial/production";
 import type {
   DailyBrief2BuildInput,
   DailyBrief2FocusItem,
@@ -199,6 +200,15 @@ function buildDailyBrief2SnapshotFromProviderSource({
     topics: rankedTopics,
   });
   const diagnostics = buildDailyBrief2Diagnostics(diagnosticsInput);
+  const briefId = `daily-brief-2-${briefDate}`;
+  const productionMetadata = buildEditorialProductionMetadata({
+    briefId,
+    generatedAt,
+    productLine: "daily",
+    providerDiagnostics: providerSource.diagnostics,
+    rankedStoryCount: rankedStories.length,
+    topicCount: rankedTopics.length,
+  });
 
   return {
     briefDate,
@@ -214,6 +224,7 @@ function buildDailyBrief2SnapshotFromProviderSource({
     keyNarratives: buildKeyNarratives(rankedTopics),
     marketPulse: buildMarketPulse(rankedStories, rankedTopics),
     publicationReadiness,
+    productionMetadata,
     providerDiagnostics: providerSource.diagnostics,
     qualitySignals: [...editorialBrief.qualitySignals, pipelineDiagnostics.providerIndependence],
     rankedStories: rankedStories.map(toRankedStory),
