@@ -275,6 +275,17 @@ V16A-3 status:
 - It does not add Yahoo, Google News, Reuters, Bloomberg, RSS, OpenAI, Claude, Gemini, scheduler auto-publish, Telegram / LINE / Email / Push delivery, DB schema, trading, recommendation, billing, target price, rebalance, buy/sell/hold language, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_3_LIVE_EDITORIAL_PLATFORM.md`.
 
+V16A-4 status:
+
+- Real Editorial Data MVP is implemented through the V16A-3 Provider Framework.
+- Added Google News RSS, Yahoo Finance News, and Yahoo Finance Market Snapshot providers.
+- All providers output `EditorialRawStory` and never expose provider-specific response shapes to Daily / Weekly.
+- Public Daily / Weekly previews use real provider pipeline first, then memory cache, then deterministic foundation fallback.
+- Admin Daily Briefs remains read-only for provider diagnostics and does not fetch Google / Yahoo from the browser.
+- Provider diagnostics include fetch result, cache hit/miss, latency, error reason, fallback level, real-vs-mock source status, coverage, and quality score.
+- It does not add OpenAI, Claude, Gemini, scheduler auto-publish, Telegram / LINE / Email / Push delivery, DB schema, migration, trading, recommendation, billing, target price, rebalance, buy/sell/hold language, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_4_REAL_EDITORIAL_DATA_MVP.md`.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`

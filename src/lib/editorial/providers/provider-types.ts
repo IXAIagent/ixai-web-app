@@ -120,14 +120,19 @@ export type EditorialProviderFallbackState = {
 
 export type EditorialProviderDiagnostics = {
   cache: EditorialProviderCacheDiagnostics;
+  cacheHit: boolean;
   coverage: EditorialProviderCoverageScore;
   degradedProviders: string[];
+  errors: string[];
   fallback: EditorialProviderFallbackState;
+  fallbackLevel: EditorialProviderFallbackState["activeSource"];
+  fetchResult: "real" | "cached" | "fallback" | "empty";
   healthyProviders: string[];
   offlineProviders: string[];
   publicationReadiness: "ready" | "limited" | "unavailable";
   quality: EditorialProviderQualityScore;
   registeredProviders: number;
+  sourceStatus: "real" | "mock" | "mixed" | "empty";
 };
 
 export type EditorialProviderSourceResult = {

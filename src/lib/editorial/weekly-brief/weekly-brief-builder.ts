@@ -1,7 +1,10 @@
 import { normalizeEditorialStories } from "@/src/lib/editorial/editorial-normalization";
 import { buildEditorialIntelligence } from "@/src/lib/editorial/intelligence";
 import { buildRuleBasedEditorialBrief } from "@/src/lib/editorial/narrative-builder";
-import { getEditorialProviderSourceResult } from "@/src/lib/editorial/providers";
+import {
+  getEditorialProviderSourceResult,
+  getEditorialProviderSourceResultAsync,
+} from "@/src/lib/editorial/providers";
 import { rankEditorialStories } from "@/src/lib/editorial/story-ranking";
 import { rankEditorialTopics } from "@/src/lib/editorial/topic-ranking";
 import {
@@ -93,8 +96,13 @@ function buildNextWeekRadar(snapshot: {
   return radar.slice(0, 5);
 }
 
-export function buildWeeklyBrief2Snapshot(input: WeeklyBrief2BuildInput = {}): WeeklyBrief2Snapshot {
-  const providerSource = getEditorialProviderSourceResult();
+function buildWeeklyBrief2SnapshotFromProviderSource({
+  input,
+  providerSource,
+}: {
+  input: WeeklyBrief2BuildInput;
+  providerSource: ReturnType<typeof getEditorialProviderSourceResult>;
+}): WeeklyBrief2Snapshot {
   const items = input.items ?? providerSource.stories;
   const generatedAt = input.generatedAt ?? new Date().toISOString();
   const socialPackAvailable = input.socialPackAvailable ?? false;
@@ -162,4 +170,20 @@ export function buildWeeklyBrief2Snapshot(input: WeeklyBrief2BuildInput = {}): W
     weeklyReview:
       "This deterministic weekly foundation groups normalized market stories into themes, relationships, signals, and coverage status without calling an external provider or AI model.",
   };
+}
+
+export function buildWeeklyBrief2Snapshot(input: WeeklyBrief2BuildInput = {}): WeeklyBrief2Snapshot {
+  return buildWeeklyBrief2SnapshotFromProviderSource({
+    input,
+    providerSource: getEditorialProviderSourceResult(),
+  });
+}
+
+export async function buildWeeklyBrief2SnapshotAsync(
+  input: WeeklyBrief2BuildInput = {},
+): Promise<WeeklyBrief2Snapshot> {
+  return buildWeeklyBrief2SnapshotFromProviderSource({
+    input,
+    providerSource: await getEditorialProviderSourceResultAsync(),
+  });
 }
