@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V18.2 Portfolio / FCN Intelligence Integration after V18.1 Workspace Home Integration merged.
+Current priority is V18.3 Workspace UX & Beta Polish after V18.2 Portfolio / FCN Intelligence Integration merged.
 
 V18 starts the product integration phase. V16 and V17 created the service/domain foundations. V18 connects those read-only foundations into Workspace UI without creating new engines, notification delivery, trading actions, recommendations, schedulers, AI model calls, database schema, or migrations.
 
@@ -50,6 +50,15 @@ V18.2 — Portfolio / FCN Intelligence Integration:
 - Adds Portfolio Intelligence Summary, Position Intelligence, FCN Intelligence Summary, per-FCN monitoring cards, Watchlist Intelligence Summary, and per-watchlist-item intelligence fields.
 - Keeps all diagnostics collapsed by default and does not add notification sending, AI calls, scheduler behavior, trading, recommendation, billing, DB schema, migration, Copilot Chat, or Timeline rewrite.
 - Source of truth: `docs/V18_PORTFOLIO_FCN_INTELLIGENCE_INTEGRATION.md`.
+
+V18.3 — Workspace UX & Beta Polish:
+
+- Status: implemented.
+- Standardizes Beta readiness labels, health / readiness / priority badges, loading states, empty / error states, and diagnostics presentation across Workspace Home, Portfolio, FCN, Watchlist, Daily Brief, Weekly Brief, and Admin Daily Briefs.
+- Adds shared product primitives for `WorkspaceStatusBadge`, loading cards / skeletons, and state messages.
+- Keeps diagnostics collapsed by default for general users and developer / Beta details behind advanced panels or native details.
+- Does not add engines, services, AI calls, notification delivery, scheduler behavior, trading, recommendation, billing, DB schema, migration, Copilot Chat, Timeline rewrite, or major navigation changes.
+- Source of truth: `docs/V18_WORKSPACE_UX_BETA_POLISH.md`.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 

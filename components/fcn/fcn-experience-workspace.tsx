@@ -23,6 +23,8 @@ import {
   WorkspaceKpiGrid,
   WorkspaceProductHero,
   WorkspaceProductSection,
+  WorkspaceStateMessage,
+  WorkspaceStatusBadge,
 } from "@/components/workspace/product";
 import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service";
 import type { FcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-types";
@@ -65,13 +67,6 @@ function nextObservation(schedule: FcnPortfolioScheduleSummary | null) {
 
   if (!event) return "暫無資料";
   if (typeof event.daysUntilEvent === "number") return `${event.daysUntilEvent} 天`;
-  return "待確認";
-}
-
-function fcnRiskLabel(level: string | null | undefined) {
-  if (level === "critical") return "危險";
-  if (level === "high" || level === "medium") return "注意";
-  if (level === "low") return "安全";
   return "待確認";
 }
 
@@ -292,9 +287,9 @@ export function FcnExperienceWorkspace() {
                           Worst-of：{item.worstOfSymbol ?? "待確認"}
                         </p>
                       </div>
-                      <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/72 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                        {fcnRiskLabel(item.riskLevel)}
-                      </span>
+                      <WorkspaceStatusBadge variant={item.riskLevel === "critical" ? "critical" : item.riskLevel === "high" || item.riskLevel === "medium" ? "warning" : item.riskLevel === "low" ? "healthy" : "unknown"}>
+                        {item.riskLevel === "critical" ? "Critical" : item.riskLevel === "high" || item.riskLevel === "medium" ? "Warning" : item.riskLevel === "low" ? "Healthy" : "Unknown"}
+                      </WorkspaceStatusBadge>
                     </div>
                     <div className="mt-4 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)] sm:grid-cols-2">
                       <p>KI Risk：{item.nearestKiDistancePercent == null ? "待確認" : `${item.nearestKiDistancePercent.toFixed(1)}%`}</p>
@@ -316,6 +311,13 @@ export function FcnExperienceWorkspace() {
             </p>
           )}
         </WorkspaceProductSection>
+
+        {data.risk?.unavailablePositionCount ? (
+          <WorkspaceStateMessage
+            body={`${data.risk.unavailablePositionCount} 檔 FCN 暫時缺少足夠資料，系統會以 limited monitoring 顯示並保留風險提示。`}
+            variant="no-data"
+          />
+        ) : null}
 
         <WorkspaceProductSection
           description="優先呈現最接近 KI、Worst-of、KO readiness 與資料不足狀態。"

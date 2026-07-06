@@ -29,8 +29,10 @@ import { WorkspaceHealthSummary } from "@/components/workspace/workspace-health-
 import {
   WorkspaceDiagnosticsPanel,
   WorkspaceKpiGrid,
+  WorkspaceLoadingCard,
   WorkspaceProductHero,
   WorkspaceProductSection,
+  WorkspaceStatusBadge,
 } from "@/components/workspace/product";
 import { buildEmptyWorkspaceAlertSummary, getWorkspaceAlertSummary } from "@/src/lib/alerts";
 import type { WorkspaceAlertSummary } from "@/src/lib/alerts";
@@ -456,9 +458,8 @@ function WorkspaceIntelligenceSummarySection({
       />
       <div className="mt-4 grid gap-3 lg:grid-cols-3">
         <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
-            Notification Preview
-          </p>
+          <WorkspaceStatusBadge variant="beta">Beta Preview</WorkspaceStatusBadge>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">Notification Preview</p>
           <p className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
             {summary.notificationSummary.pending}
           </p>
@@ -467,9 +468,10 @@ function WorkspaceIntelligenceSummarySection({
           </p>
         </article>
         <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
-            Editorial / Provider
-          </p>
+          <WorkspaceStatusBadge variant={summary.providerSummary.readiness === "ready" ? "green" : "yellow"}>
+            {summary.providerSummary.readiness === "ready" ? "Green" : "Yellow"}
+          </WorkspaceStatusBadge>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">Editorial / Provider</p>
           <p className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
             {summary.providerSummary.sourceStatus}
           </p>
@@ -478,9 +480,8 @@ function WorkspaceIntelligenceSummarySection({
           </p>
         </article>
         <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
-            Last Updated
-          </p>
+          <WorkspaceStatusBadge variant="healthy">Healthy</WorkspaceStatusBadge>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">Last Updated</p>
           <p className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
             {formatTime(summary.lastUpdated)}
           </p>
@@ -966,9 +967,10 @@ export function WorkspaceHomeDashboard() {
       <RecentActivity events={recentEvents} />
 
       {isLoading ? (
-        <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-          正在整理首頁資料。主要內容會以可用資料優先顯示，缺少的資料會保留安全 placeholder。
-        </p>
+        <WorkspaceLoadingCard
+          body="主要內容會以可用資料優先顯示，缺少的資料會保留安全 placeholder。"
+          title="正在整理首頁資料"
+        />
       ) : null}
 
       <DiagnosticsPanel intelligence={workspaceIntelligence} />

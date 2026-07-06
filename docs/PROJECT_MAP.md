@@ -237,7 +237,8 @@ V18 Workspace Product Integration:
 
 - Source: `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
 - Source: `docs/V18_PORTFOLIO_FCN_INTELLIGENCE_INTEGRATION.md`.
-- Current release: V18.2 Portfolio / FCN Intelligence Integration.
+- Source: `docs/V18_WORKSPACE_UX_BETA_POLISH.md`.
+- Current release: V18.3 Workspace UX & Beta Polish.
 - Home UI: `components/home/workspace-home-dashboard.tsx`.
 - Portfolio UI: `components/portfolio/portfolio-experience-workspace.tsx`.
 - FCN UI: `components/fcn/fcn-experience-workspace.tsx`.
@@ -264,6 +265,18 @@ V18 Workspace Product Integration:
   - Watchlist Intelligence Summary.
   - Per-item monitoring / editorial fields.
   - Watchlist Intelligence diagnostics.
+- V18.3 shared product primitives:
+  - `components/workspace/product/workspace-status-badge.tsx`.
+  - `components/workspace/product/workspace-loading-state.tsx`.
+  - `components/workspace/product/workspace-state-message.tsx`.
+- V18.3 polished surfaces:
+  - `components/home/workspace-home-dashboard.tsx`.
+  - `components/portfolio/portfolio-experience-workspace.tsx`.
+  - `components/fcn/fcn-experience-workspace.tsx`.
+  - `components/watchlist/watchlist-experience-workspace.tsx`.
+  - `app/daily-brief/page.tsx`.
+  - `app/weekly-brief/page.tsx`.
+  - `components/admin/daily-briefs-admin.tsx`.
 - Reused foundations:
   - V16 Editorial Intelligence / Provider diagnostics.
   - V17.1 Asset Intelligence.
