@@ -257,6 +257,30 @@ V18.3 adds shared UI primitives only. It does not add a new engine, service, AI 
 
 Source of truth: `docs/V18_WORKSPACE_UX_BETA_POLISH.md`.
 
+V18.4 is the end-to-end Beta validation gate.
+
+It validates:
+
+- Workspace Home.
+- Portfolio.
+- FCN.
+- Watchlist.
+- Daily Brief.
+- Weekly Brief.
+- Admin Daily Briefs.
+
+It confirms the intended data flow:
+
+```text
+Editorial -> Asset Intelligence -> Monitoring Engine -> Notification Preview -> Workspace Intelligence -> Workspace UI
+```
+
+V18.4 is validation / QA / documentation only. It does not add engines, services, APIs, AI calls, scheduler behavior, notification delivery, trading, recommendation, billing, schema, migrations, Copilot, Timeline rewrite, or architecture changes.
+
+Verdict: Go for invite-only Beta preview after deployment verification and authenticated production Workspace visual QA.
+
+Source of truth: `docs/V18_END_TO_END_BETA_VALIDATION.md`.
+
 ## B-1. V15.2 Brief Reliability Recovery
 
 V15.2 was the production reliability blocker before V16 implementation.

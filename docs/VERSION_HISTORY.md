@@ -6,6 +6,33 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V18.4 — End-to-End Beta Validation
+
+Why:
+
+- V18.1, V18.2, and V18.3 completed the Workspace Beta integration and polish.
+- IXAI needed a release-gate validation pass before invite-only Beta preview.
+
+What Changed:
+
+- Added `docs/V18_END_TO_END_BETA_VALIDATION.md`.
+- Updated `scripts/validate-editorial-beta.mjs` to validate V18.3 Beta readiness and collapsed diagnostics instead of old always-visible diagnostics labels.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Validation:
+
+- `git diff --check` PASS.
+- `npm run lint` PASS.
+- `npm run build` PASS.
+- `QA_PORT=3001 npm run qa:mobile` PASS.
+- `npm run qa:editorial-beta` PASS.
+
+Key Decisions:
+
+- V18.4 is validation / QA / documentation only.
+- Verdict is Go for invite-only Beta preview after deployment verification and authenticated production Workspace visual QA.
+- No engine, service, API, AI call, scheduler, Telegram, LINE, Email, Push, trading, recommendation, billing, DB schema, migration, Copilot, Timeline rewrite, or architecture change was added.
+
 ## V18.3 — Workspace UX & Beta Polish
 
 Why:
