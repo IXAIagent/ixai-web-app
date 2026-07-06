@@ -333,6 +333,15 @@ V17.3 Notification Platform status:
 - It is library-only and is not connected to Workspace UI, Notification Center UI, Telegram, LINE, Email, Browser Push, Mobile Push, Scheduler, API routes, database writes, Copilot, billing, trading, recommendation, target price, or buy/sell/hold language.
 - Source of truth: `docs/V17_NOTIFICATION_PLATFORM.md`.
 
+V17.4 Workspace Intelligence status:
+
+- V17.4 adds the Workspace Intelligence aggregation layer under `src/lib/intelligence/workspace/`.
+- It does not create a new Intelligence Engine.
+- It reuses V16 Editorial Intelligence, V17.1 Asset Intelligence, V17.2 Monitoring Engine, and V17.3 Notification Platform.
+- It provides Workspace Summary, Today Focus presentation model, Risk Summary, Notification Preview, Diagnostics, Readiness, and service helpers.
+- It is service-only and is not connected to Workspace Home, Dashboard UI, Copilot, Timeline, Notification Center, API routes, database writes, Telegram, LINE, Email, Push, Scheduler, billing, trading, recommendation, target price, buy/sell/hold language, or AI calls.
+- Source of truth: `docs/V17_WORKSPACE_INTELLIGENCE.md`.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`

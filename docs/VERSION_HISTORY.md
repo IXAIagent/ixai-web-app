@@ -6,6 +6,35 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V17.4 — Workspace Intelligence
+
+Why:
+
+- V17.1, V17.2, and V17.3 created Asset, Monitoring, and Notification foundations.
+- Workspace now needs a single aggregation layer before any read-only UI or diagnostics surface is connected.
+
+What Changed:
+
+- Added `docs/V17_WORKSPACE_INTELLIGENCE.md`.
+- Added Workspace Intelligence service layer under `src/lib/intelligence/workspace/`:
+  - `workspace-types.ts`
+  - `workspace-summary.ts`
+  - `workspace-risk-summary.ts`
+  - `workspace-focus.ts`
+  - `workspace-notification-preview.ts`
+  - `workspace-diagnostics.ts`
+  - `workspace-readiness.ts`
+  - `workspace-service.ts`
+  - `index.ts`
+- Added Workspace Summary, Today Focus presentation model, Risk Summary, Notification Preview, Diagnostics, Readiness, and service helpers.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V17.4 does not create a new Intelligence Engine.
+- Workspace Intelligence reuses V16 Editorial Intelligence, V17.1 Asset Intelligence, V17.2 Monitoring Engine, and V17.3 Notification Platform.
+- V17.4 is service-only and does not connect to UI, API routes, database writes, notification delivery, Copilot, Timeline, Scheduler, AI, trading, recommendation, billing, or schema changes.
+
 ## V17.3 — Notification Platform
 
 Why:

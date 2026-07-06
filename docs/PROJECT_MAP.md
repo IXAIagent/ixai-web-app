@@ -205,6 +205,33 @@ V17 Notification Platform:
   - `getNotificationDiagnostics()`
   - `getNotificationDeliveryPreview()`
 - Foundation only; no Telegram / LINE / Email / Push sending, provider token / secret / env, Scheduler, AI call, DB schema, migration, trading, recommendation, billing, Workspace Copilot, or major UI redesign.
+
+V17 Workspace Intelligence:
+
+- Source: `docs/V17_WORKSPACE_INTELLIGENCE.md`.
+- Library: `src/lib/intelligence/workspace/`.
+- Exports:
+  - `workspace-types.ts`
+  - `workspace-summary.ts`
+  - `workspace-risk-summary.ts`
+  - `workspace-focus.ts`
+  - `workspace-notification-preview.ts`
+  - `workspace-diagnostics.ts`
+  - `workspace-readiness.ts`
+  - `workspace-service.ts`
+  - `index.ts`
+- Reused inputs:
+  - V16 Editorial Intelligence / Provider diagnostics.
+  - V17.1 Asset Intelligence.
+  - V17.2 Monitoring Engine / Today Focus.
+  - V17.3 Notification Platform.
+- Service helpers:
+  - `getWorkspaceSummary()`
+  - `getWorkspaceTodayFocus()`
+  - `getWorkspaceRiskSummary()`
+  - `getWorkspaceNotificationPreview()`
+  - `getWorkspaceDiagnostics()`
+- Service-only; no UI, API route, Telegram, LINE, Email, Push, AI call, Scheduler, Trading, Recommendation, Billing, Copilot Chat, Timeline rewrite, Database Schema, Migration, new Monitoring Engine, or new Editorial Engine.
 - Channel Router architecture: AI Monitoring Engine -> Notification Engine -> Channel Router -> Telegram / LINE / Email / In-App / Browser Push / Mobile Push.
 - Event matrix required before implementation: FCN KI distance, observation, coupon, earnings, price moves, crypto volatility, macro events, and news relevance.
 - Priority 2 roadmap after V16A foundation.
