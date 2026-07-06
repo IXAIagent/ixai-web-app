@@ -265,6 +265,16 @@ V16A-2 status:
 - It does not add V16B Workspace Monitoring, external provider fetches, AI model calls, scheduler auto-publish, Telegram / LINE / Email delivery, DB schema, trading, recommendation, billing, target price, rebalance, or buy/sell/hold language.
 - Source of truth: `docs/V16A_2_EDITORIAL_INTELLIGENCE_ENGINE.md`.
 
+V16A-3 status:
+
+- Live Editorial Platform is implemented as the provider framework foundation for V16A AI Financial Media.
+- All future editorial providers must output `EditorialRawStory` before normalization.
+- Added provider registry, health, memory cache, fallback, coverage, quality, source attribution, adapter, and diagnostics.
+- Daily / Weekly preview surfaces now show read-only provider readiness, coverage, quality, fallback, and publication readiness diagnostics.
+- The current provider is a deterministic foundation placeholder backed by existing editorial source data.
+- It does not add Yahoo, Google News, Reuters, Bloomberg, RSS, OpenAI, Claude, Gemini, scheduler auto-publish, Telegram / LINE / Email / Push delivery, DB schema, trading, recommendation, billing, target price, rebalance, buy/sell/hold language, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_3_LIVE_EDITORIAL_PLATFORM.md`.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`

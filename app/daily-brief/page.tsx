@@ -117,6 +117,24 @@ export default function DailyBriefArchivePage() {
                   {Math.round(preview.intelligence.confidence.narrativeConfidence * 100)}%
                 </dd>
               </div>
+              <div className="flex justify-between gap-3">
+                <dt>Provider readiness</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.providerDiagnostics.publicationReadiness}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Coverage score</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {Math.round(preview.providerDiagnostics.coverage.overall * 100)}%
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Quality score</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {Math.round(preview.providerDiagnostics.quality.overall * 100)}%
+                </dd>
+              </div>
             </dl>
             <p className="mt-3 border-t border-[rgba(9,41,31,0.08)] pt-3">
               {preview.disclaimer}

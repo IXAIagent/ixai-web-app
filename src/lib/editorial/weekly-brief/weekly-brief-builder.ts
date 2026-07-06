@@ -1,7 +1,7 @@
-import { getDailyBrief2MockSourceItems } from "@/src/lib/editorial/daily-brief/daily-brief-mock-source";
 import { normalizeEditorialStories } from "@/src/lib/editorial/editorial-normalization";
 import { buildEditorialIntelligence } from "@/src/lib/editorial/intelligence";
 import { buildRuleBasedEditorialBrief } from "@/src/lib/editorial/narrative-builder";
+import { getEditorialProviderSourceResult } from "@/src/lib/editorial/providers";
 import { rankEditorialStories } from "@/src/lib/editorial/story-ranking";
 import { rankEditorialTopics } from "@/src/lib/editorial/topic-ranking";
 import {
@@ -94,7 +94,8 @@ function buildNextWeekRadar(snapshot: {
 }
 
 export function buildWeeklyBrief2Snapshot(input: WeeklyBrief2BuildInput = {}): WeeklyBrief2Snapshot {
-  const items = input.items ?? getDailyBrief2MockSourceItems();
+  const providerSource = getEditorialProviderSourceResult();
+  const items = input.items ?? providerSource.stories;
   const generatedAt = input.generatedAt ?? new Date().toISOString();
   const socialPackAvailable = input.socialPackAvailable ?? false;
   const weekRange = buildWeekRange(input);
@@ -151,6 +152,7 @@ export function buildWeeklyBrief2Snapshot(input: WeeklyBrief2BuildInput = {}): W
       themes: topThemes,
       topStory: rankedStories[0],
     }),
+    providerDiagnostics: providerSource.diagnostics,
     qualitySignals: editorialBrief.qualitySignals,
     riskNotes,
     title: `Weekly Brief 2.0 Foundation Preview — ${productDate()}`,

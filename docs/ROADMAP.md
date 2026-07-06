@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V16A-2 Editorial Intelligence Engine + Weekly Brief Foundation after Sprint 2 Daily Brief 2.0 Foundation merged.
+Current priority is V16A-3 Live Editorial Platform after V16A-2 Editorial Intelligence Engine + Weekly Brief Foundation merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -174,6 +174,16 @@ V16A-2 — Editorial Intelligence Engine + Weekly Brief Foundation:
 - Adds read-only public Weekly Brief 2.0 preview and read-only admin Daily intelligence diagnostics.
 - Does not add external provider fetch, AI model call, scheduler auto-publish, notification delivery, DB schema, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_2_EDITORIAL_INTELLIGENCE_ENGINE.md`.
+
+V16A-3 — Live Editorial Platform:
+
+- Status: implemented.
+- Adds provider framework under `src/lib/editorial/providers/`.
+- Defines `EditorialRawStory` as the provider output contract before normalization.
+- Adds provider registry, health, memory cache, fallback, coverage score, quality score, source attribution, adapter, and diagnostics.
+- Integrates Daily / Weekly previews with read-only provider readiness, coverage, quality, fallback, and publication readiness diagnostics.
+- Does not add Yahoo, Google News, Reuters, Bloomberg, RSS, OpenAI, Claude, Gemini, scheduler auto-publish, Telegram, LINE, Email, Push, database, migration, trading, recommendation, billing, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_3_LIVE_EDITORIAL_PLATFORM.md`.
 
 V15 current sequence:
 

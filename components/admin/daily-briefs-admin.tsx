@@ -1380,6 +1380,12 @@ export function DailyBriefsAdmin() {
               <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
                 Signals: {dailyBrief2Preview.intelligence.diagnostics.signalCount}
               </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Providers: {dailyBrief2Preview.providerDiagnostics.registeredProviders}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Provider readiness: {dailyBrief2Preview.providerDiagnostics.publicationReadiness}
+              </p>
             </div>
           </div>
           <div className="mt-4 grid gap-3 lg:grid-cols-3">
@@ -1411,6 +1417,13 @@ export function DailyBriefsAdmin() {
               {Math.round(dailyBrief2Preview.intelligence.confidence.coverageConfidence * 100)}%
             </p>
             <p>Relationships: {dailyBrief2Preview.intelligence.relationships.length}</p>
+            <p>
+              Provider quality: {Math.round(dailyBrief2Preview.providerDiagnostics.quality.overall * 100)}%
+            </p>
+            <p>
+              Provider coverage: {Math.round(dailyBrief2Preview.providerDiagnostics.coverage.overall * 100)}%
+            </p>
+            <p>Fallback source: {dailyBrief2Preview.providerDiagnostics.fallback.activeSource}</p>
           </div>
         </section>
 

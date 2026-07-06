@@ -6,6 +6,7 @@ import type {
   RawEditorialProviderItem,
 } from "@/src/lib/editorial/editorial-types";
 import type { EditorialIntelligenceResult } from "@/src/lib/editorial/intelligence";
+import type { EditorialProviderDiagnostics } from "@/src/lib/editorial/providers";
 
 export type WeeklyBrief2WeekRange = {
   end: string;
@@ -73,6 +74,7 @@ export type WeeklyBrief2Snapshot = {
   intelligence: EditorialIntelligenceResult;
   narrativeSummary: string;
   nextWeekRadar: WeeklyBrief2RadarItem[];
+  providerDiagnostics: EditorialProviderDiagnostics;
   qualitySignals: EditorialQualitySignal[];
   riskNotes: WeeklyBrief2RiskNote[];
   title: string;

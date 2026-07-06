@@ -10,7 +10,6 @@ import {
 } from "@/src/lib/editorial/narrative-builder";
 import { rankEditorialStories } from "@/src/lib/editorial/story-ranking";
 import { rankEditorialTopics } from "@/src/lib/editorial/topic-ranking";
-import { getDailyBrief2MockSourceItems } from "@/src/lib/editorial/daily-brief/daily-brief-mock-source";
 import {
   buildDailyBrief2Diagnostics,
   buildDailyBrief2FallbackState,
@@ -18,6 +17,7 @@ import {
   buildDailyBrief2RiskNotes,
   buildDailyBrief2SourceCoverage,
 } from "@/src/lib/editorial/daily-brief/daily-brief-diagnostics";
+import { getEditorialProviderSourceResult } from "@/src/lib/editorial/providers";
 import type {
   DailyBrief2BuildInput,
   DailyBrief2FocusItem,
@@ -143,7 +143,8 @@ function buildKeyNarratives(topics: EditorialTopic[]): DailyBrief2Narrative[] {
 }
 
 export function buildDailyBrief2Snapshot(input: DailyBrief2BuildInput = {}): DailyBrief2Snapshot {
-  const items = input.items ?? getDailyBrief2MockSourceItems();
+  const providerSource = getEditorialProviderSourceResult();
+  const items = input.items ?? providerSource.stories;
   const generatedAt = input.generatedAt ?? new Date().toISOString();
   const briefDate = input.briefDate ?? productDate();
   const publishAvailable = input.publishAvailable ?? false;
@@ -205,6 +206,7 @@ export function buildDailyBrief2Snapshot(input: DailyBrief2BuildInput = {}): Dai
     keyNarratives: buildKeyNarratives(rankedTopics),
     marketPulse: buildMarketPulse(rankedStories, rankedTopics),
     publicationReadiness,
+    providerDiagnostics: providerSource.diagnostics,
     qualitySignals: [...editorialBrief.qualitySignals, pipelineDiagnostics.providerIndependence],
     rankedStories: rankedStories.map(toRankedStory),
     rankedTopics: rankedTopics.map(toRankedTopic),
