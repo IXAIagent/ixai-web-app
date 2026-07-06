@@ -134,6 +134,27 @@ V16B AI Monitoring Platform:
 - Highest product question: `這件事為什麼跟我的投資有關？`
 - Always-on workflow: News -> Events -> Prices -> Earnings -> Portfolio -> FCN -> Crypto -> Risk -> AI Analysis -> Today Focus -> Telegram / Workspace.
 - Telegram-first notification strategy: Telegram is the first external monitoring channel before App Push.
+
+V17 Asset Intelligence Platform:
+
+- Source: `docs/V17_ASSET_INTELLIGENCE_PLATFORM.md`.
+- Library: `src/lib/intelligence/assets/`.
+- Exports:
+  - `asset-types.ts`
+  - `asset-intelligence.ts`
+  - `asset-graph.ts`
+  - `asset-service.ts`
+  - `asset-health.ts`
+  - `asset-readiness.ts`
+  - `asset-summary.ts`
+  - `asset-diagnostics.ts`
+  - `index.ts`
+- Existing model touchpoints:
+  - Portfolio valuation positions: `src/lib/portfolio/valuation/portfolio-valuation-types.ts`.
+  - FCN positions: `src/types/fcn-position.ts`.
+  - Watchlist readback: `src/lib/watchlist/watchlist-types.ts`.
+- Reuses V16 Editorial Intelligence theme IDs and Provider Layer coverage / quality concepts.
+- Foundation only; no UI, monitoring engine, notification delivery, AI call, scheduler, trading, recommendation, billing, Workspace Copilot, Timeline, Morning Brief, API route, DB schema, or migration.
 - Channel Router architecture: AI Monitoring Engine -> Notification Engine -> Channel Router -> Telegram / LINE / Email / In-App / Browser Push / Mobile Push.
 - Event matrix required before implementation: FCN KI distance, observation, coupon, earnings, price moves, crypto volatility, macro events, and news relevance.
 - Priority 2 roadmap after V16A foundation.

@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V16.9 Editorial Beta Validation after V16A-5 Production Editorial System merged.
+Current priority is V17.1 Asset Intelligence Platform after V16.9 Editorial Beta Validation merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -216,6 +216,17 @@ V16.9 — Editorial Beta Validation:
 - Verdict: Conditional Go for Beta preview pending deployed production admin and public readback verification.
 - Does not add new providers, AI calls, scheduler auto-publish, notification delivery, DB schema, migration, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Source of truth: `docs/V169_EDITORIAL_BETA_VALIDATION.md`.
+
+V17.1 — Asset Intelligence Platform:
+
+- Status: implemented as a foundation library.
+- Starts V17 by creating the shared Workspace Asset Intelligence Layer under `src/lib/intelligence/assets/`.
+- Adds common Asset Intelligence Object support for Stock, ETF, Crypto, FCN, Watchlist, Cash placeholder, and Future Asset placeholder.
+- Adds asset health, readiness, graph, summary, diagnostics, and service helpers.
+- Integrates at the type/contract layer with existing Portfolio valuation positions, FCN positions, and Watchlist readback items.
+- Reuses V16 Editorial Intelligence theme IDs and Provider Layer coverage / quality concepts instead of creating a second source framework.
+- Does not add UI, monitoring engine, Telegram, LINE, Push, notification delivery, AI call, scheduler, trading, recommendation, billing, Workspace Copilot, Timeline, Morning Brief, API route, DB schema, or migration.
+- Source of truth: `docs/V17_ASSET_INTELLIGENCE_PLATFORM.md`.
 
 V15 current sequence:
 

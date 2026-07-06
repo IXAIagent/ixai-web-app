@@ -305,6 +305,16 @@ V16.9 Editorial Beta Validation status:
 - Beta readiness verdict is Conditional Go for Beta preview, pending deployed production public readback and authenticated admin verification.
 - It does not add new providers, AI calls, scheduler auto-publish, notification delivery, DB schema, migration, trading, recommendation, billing, target price, rebalance, buy/sell/hold language, or V16B Workspace Monitoring.
 
+V17.1 Asset Intelligence Platform status:
+
+- V17 has started with a foundation-only Asset Intelligence Layer.
+- Added `src/lib/intelligence/assets/` with shared asset types, health, readiness, graph, summary, diagnostics, and service helpers.
+- The shared `AssetIntelligence` object supports Stock, ETF, Crypto, FCN, Watchlist, Cash placeholder, and Future Asset placeholder.
+- The layer consumes existing Portfolio valuation position types, FCN position types, and Watchlist readback types at the contract level.
+- V17.1 reuses V16 Editorial Intelligence theme IDs and Provider Layer coverage / quality concepts.
+- This is not a UI, monitoring, notification, scheduler, AI, trading, recommendation, billing, API, DB schema, or migration release.
+- Source of truth: `docs/V17_ASSET_INTELLIGENCE_PLATFORM.md`.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`

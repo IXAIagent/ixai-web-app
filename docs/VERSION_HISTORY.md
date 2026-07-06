@@ -6,6 +6,37 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V17.1 — Asset Intelligence Platform
+
+Why:
+
+- V16A AI Financial Media and V16.9 Editorial Beta Validation completed the public media foundation.
+- V17 begins the Workspace-side intelligence foundation by defining what IXAI knows about each asset before adding monitoring, notification, or UI behavior.
+
+What Changed:
+
+- Added `docs/V17_ASSET_INTELLIGENCE_PLATFORM.md`.
+- Added shared Asset Intelligence foundation under `src/lib/intelligence/assets/`:
+  - `asset-types.ts`
+  - `asset-intelligence.ts`
+  - `asset-graph.ts`
+  - `asset-service.ts`
+  - `asset-health.ts`
+  - `asset-readiness.ts`
+  - `asset-summary.ts`
+  - `asset-diagnostics.ts`
+  - `index.ts`
+- Added support for Stock, ETF, Crypto, FCN, Watchlist, Cash placeholder, and Future Asset placeholder.
+- Added asset health, readiness, graph, summary, diagnostics, and pure service helpers.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V17.1 is not a UI or monitoring release.
+- The new Asset Intelligence layer reuses V16 Editorial Intelligence theme IDs and Provider Layer coverage / quality concepts.
+- Integration is contract-level only with existing Portfolio valuation positions, FCN positions, and Watchlist readback types.
+- No Monitoring Engine, Telegram, LINE, Push, notification delivery, AI call, scheduler, trading, recommendation, billing, Workspace Copilot, Timeline, Morning Brief, API route, DB schema, or migration was added.
+
 ## V16.9 — Editorial Beta Validation
 
 Why:
