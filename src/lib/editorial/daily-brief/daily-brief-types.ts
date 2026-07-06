@@ -7,6 +7,7 @@ import type {
   RawEditorialProviderItem,
 } from "@/src/lib/editorial/editorial-types";
 import type { EditorialIntelligenceResult } from "@/src/lib/editorial/intelligence";
+import type { EditorialProviderDiagnostics } from "@/src/lib/editorial/providers";
 
 export type DailyBrief2MarketTone = "constructive" | "cautious" | "mixed" | "risk_off";
 
@@ -127,6 +128,7 @@ export type DailyBrief2Snapshot = {
   keyNarratives: DailyBrief2Narrative[];
   marketPulse: DailyBrief2MarketPulse;
   publicationReadiness: DailyBrief2PublicationReadiness;
+  providerDiagnostics: EditorialProviderDiagnostics;
   qualitySignals: EditorialQualitySignal[];
   rankedStories: DailyBrief2RankedStory[];
   rankedTopics: DailyBrief2RankedTopic[];

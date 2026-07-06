@@ -6,6 +6,41 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V16A-3 — Live Editorial Platform
+
+Why:
+
+- Daily / Weekly now have editorial foundation, intelligence engine, and weekly foundation.
+- Before adding live sources, IXAI needs a provider framework so future providers do not leak provider-specific contracts into Daily / Weekly.
+- Provider failure must degrade intelligence, not crash the product.
+
+What Changed:
+
+- Added `docs/V16A_3_LIVE_EDITORIAL_PLATFORM.md`.
+- Added provider framework under `src/lib/editorial/providers/`:
+  - `provider-types.ts`
+  - `provider-registry.ts`
+  - `provider-health.ts`
+  - `provider-cache.ts`
+  - `provider-fallback.ts`
+  - `provider-coverage.ts`
+  - `provider-quality.ts`
+  - `provider-source.ts`
+  - `provider-adapter.ts`
+  - `index.ts`
+- Added `EditorialRawStory` as the provider output contract.
+- Added registry support for provider metadata, priority, status, and capabilities.
+- Added memory-only provider cache abstraction.
+- Added provider health, fallback, coverage, quality, source attribution, and diagnostics.
+- Daily / Weekly previews now include read-only provider readiness, coverage, quality, fallback, and publication readiness diagnostics.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V16A-3 is framework-only.
+- The current provider is a deterministic foundation placeholder backed by existing editorial source data.
+- No Yahoo, Google News, Reuters, Bloomberg, RSS, OpenAI, Claude, Gemini, scheduler auto-publish, Telegram, LINE, Email, Push, database, migration, trading, recommendation, billing, or V16B Workspace Monitoring was added.
+
 ## V16A-2 — Editorial Intelligence Engine + Weekly Brief Foundation
 
 Why:
