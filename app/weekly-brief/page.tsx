@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock3 } from "lucide-react";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
-import { buildWeeklyBrief2Snapshot } from "@/src/lib/editorial/weekly-brief";
+import { buildWeeklyBrief2SnapshotAsync } from "@/src/lib/editorial/weekly-brief";
 import { getAllWeeklyBriefsAsync, getLatestWeeklyBriefAsync } from "@/src/lib/weeklyBriefs";
 
 export const metadata = buildPublicMetadata({
@@ -26,7 +26,7 @@ export const metadata = buildPublicMetadata({
 export default async function WeeklyBriefArchivePage() {
   const latestBrief = await getLatestWeeklyBriefAsync();
   const allBriefs = await getAllWeeklyBriefsAsync();
-  const preview = buildWeeklyBrief2Snapshot();
+  const preview = await buildWeeklyBrief2SnapshotAsync();
 
   if (!latestBrief) {
     return (
@@ -137,6 +137,18 @@ export default async function WeeklyBriefArchivePage() {
                 <dt>Fallback</dt>
                 <dd className="font-semibold text-[var(--ixai-forest)]">
                   {preview.providerDiagnostics.fallback.activeSource}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Source mode</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.providerDiagnostics.sourceStatus}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Cache</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.providerDiagnostics.cacheHit ? "hit" : "miss"}
                 </dd>
               </div>
             </dl>

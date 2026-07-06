@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V16A-3 Live Editorial Platform after V16A-2 Editorial Intelligence Engine + Weekly Brief Foundation merged.
+Current priority is V16A-4 Real Editorial Data MVP after V16A-3 Live Editorial Platform merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -184,6 +184,17 @@ V16A-3 — Live Editorial Platform:
 - Integrates Daily / Weekly previews with read-only provider readiness, coverage, quality, fallback, and publication readiness diagnostics.
 - Does not add Yahoo, Google News, Reuters, Bloomberg, RSS, OpenAI, Claude, Gemini, scheduler auto-publish, Telegram, LINE, Email, Push, database, migration, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_3_LIVE_EDITORIAL_PLATFORM.md`.
+
+V16A-4 — Real Editorial Data MVP:
+
+- Status: implemented.
+- Adds first real editorial provider adapters through the V16A-3 Provider Framework.
+- Adds Google News RSS provider, Yahoo Finance News provider, and Yahoo Finance Market Snapshot provider.
+- Provider output is `EditorialRawStory` only; Daily / Weekly continue to consume normalized IXAI editorial stories.
+- Daily / Weekly public previews use async real provider source first, then memory cache, then deterministic foundation fallback.
+- Admin Daily Briefs remains read-only and does not fetch providers from the browser.
+- Does not add OpenAI, Claude, Gemini, scheduler auto-publish, Telegram, LINE, Email, Push, DB schema, migration, trading, recommendation, billing, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_4_REAL_EDITORIAL_DATA_MVP.md`.
 
 V15 current sequence:
 

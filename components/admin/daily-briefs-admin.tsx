@@ -1424,6 +1424,9 @@ export function DailyBriefsAdmin() {
               Provider coverage: {Math.round(dailyBrief2Preview.providerDiagnostics.coverage.overall * 100)}%
             </p>
             <p>Fallback source: {dailyBrief2Preview.providerDiagnostics.fallback.activeSource}</p>
+            <p>Source mode: {dailyBrief2Preview.providerDiagnostics.sourceStatus}</p>
+            <p>Cache entries: {dailyBrief2Preview.providerDiagnostics.cache.entries}</p>
+            <p>Provider errors: {dailyBrief2Preview.providerDiagnostics.errors.length}</p>
           </div>
         </section>
 

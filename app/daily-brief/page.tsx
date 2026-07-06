@@ -1,7 +1,7 @@
 import { DailyBriefUnifiedArchive } from "@/components/daily-brief/daily-brief-unified-archive";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 import { getAllDailyBriefs } from "@/src/lib/dailyBriefs";
-import { buildDailyBrief2Snapshot } from "@/src/lib/editorial/daily-brief";
+import { buildDailyBrief2SnapshotAsync } from "@/src/lib/editorial/daily-brief";
 
 export const metadata = buildPublicMetadata({
   title: "每日晨報 — 市場情報 | IXAI",
@@ -21,9 +21,9 @@ export const metadata = buildPublicMetadata({
   canonical: "/daily-brief",
 });
 
-export default function DailyBriefArchivePage() {
+export default async function DailyBriefArchivePage() {
   const fallbackBriefs = getAllDailyBriefs();
-  const preview = buildDailyBrief2Snapshot();
+  const preview = await buildDailyBrief2SnapshotAsync();
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
@@ -133,6 +133,18 @@ export default function DailyBriefArchivePage() {
                 <dt>Quality score</dt>
                 <dd className="font-semibold text-[var(--ixai-forest)]">
                   {Math.round(preview.providerDiagnostics.quality.overall * 100)}%
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Source mode</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.providerDiagnostics.sourceStatus}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Fallback level</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.providerDiagnostics.fallbackLevel}
                 </dd>
               </div>
             </dl>

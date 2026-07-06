@@ -102,6 +102,13 @@ V16A AI Financial Media:
   - Provider contract: `EditorialRawStory -> Normalize -> Editorial Story -> Editorial Intelligence Engine -> Daily / Weekly`.
   - Preview integration: `app/daily-brief/page.tsx`, `app/weekly-brief/page.tsx`, `components/admin/daily-briefs-admin.tsx`.
   - Framework only; no Yahoo, Google News, Reuters, Bloomberg, RSS, AI provider, scheduler publish, notification delivery, DB migration, trading, recommendation, billing, or V16B Workspace Monitoring.
+- V16A-4: Real Editorial Data MVP.
+  - Source: `docs/V16A_4_REAL_EDITORIAL_DATA_MVP.md`.
+  - Providers: `src/lib/editorial/providers/google-news-rss-provider.ts`, `yahoo-finance-news-provider.ts`, `yahoo-finance-market-provider.ts`.
+  - Provider source integration: `src/lib/editorial/providers/provider-source.ts`.
+  - Daily / Weekly async builders: `src/lib/editorial/daily-brief/`, `src/lib/editorial/weekly-brief/`.
+  - Public preview integration: `app/daily-brief/page.tsx`, `app/weekly-brief/page.tsx`.
+  - Real provider MVP only; no AI call, scheduler publish, notification delivery, DB migration, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Next V16A track: Content Quality Engine / Editorial Memory.
 - Daily / Weekly cannot depend on user Portfolio.
 - Daily / Weekly are not Workspace free tier.

@@ -6,6 +6,33 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V16A-4 — Real Editorial Data MVP
+
+Why:
+
+- V16A-3 created the provider framework but intentionally avoided real provider integrations.
+- V16A now needs the first real editorial data MVP while preserving provider independence and failure degradation.
+- Daily / Weekly must receive normalized IXAI editorial objects, not provider-specific response shapes.
+
+What Changed:
+
+- Added `docs/V16A_4_REAL_EDITORIAL_DATA_MVP.md`.
+- Added `src/lib/editorial/providers/google-news-rss-provider.ts`.
+- Added `src/lib/editorial/providers/yahoo-finance-news-provider.ts`.
+- Added `src/lib/editorial/providers/yahoo-finance-market-provider.ts`.
+- Added async provider source path that tries real providers first, then memory cache, then deterministic foundation fallback.
+- Daily Brief 2.0 and Weekly Brief 2.0 public pages now use async provider-backed builders.
+- Admin Daily Briefs keeps client-safe read-only provider diagnostics and does not fetch providers from the browser.
+- Provider diagnostics now include fetch result, cache hit / miss, provider errors, fallback level, and real-vs-mock source status.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- Real providers must output `EditorialRawStory`.
+- Daily / Weekly still consume normalized IXAI editorial stories.
+- Provider failures degrade to cached, limited, or deterministic foundation output.
+- No OpenAI, Claude, Gemini, scheduler auto-publish, Telegram, LINE, Email, Push, DB schema, migration, V16B Workspace Monitoring, trading, recommendation, billing, buy/sell/hold, target price, or rebalance wording was added.
+
 ## V16A-3 — Live Editorial Platform
 
 Why:

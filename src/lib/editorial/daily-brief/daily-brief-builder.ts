@@ -17,7 +17,10 @@ import {
   buildDailyBrief2RiskNotes,
   buildDailyBrief2SourceCoverage,
 } from "@/src/lib/editorial/daily-brief/daily-brief-diagnostics";
-import { getEditorialProviderSourceResult } from "@/src/lib/editorial/providers";
+import {
+  getEditorialProviderSourceResult,
+  getEditorialProviderSourceResultAsync,
+} from "@/src/lib/editorial/providers";
 import type {
   DailyBrief2BuildInput,
   DailyBrief2FocusItem,
@@ -142,8 +145,13 @@ function buildKeyNarratives(topics: EditorialTopic[]): DailyBrief2Narrative[] {
   });
 }
 
-export function buildDailyBrief2Snapshot(input: DailyBrief2BuildInput = {}): DailyBrief2Snapshot {
-  const providerSource = getEditorialProviderSourceResult();
+function buildDailyBrief2SnapshotFromProviderSource({
+  input,
+  providerSource,
+}: {
+  input: DailyBrief2BuildInput;
+  providerSource: ReturnType<typeof getEditorialProviderSourceResult>;
+}): DailyBrief2Snapshot {
   const items = input.items ?? providerSource.stories;
   const generatedAt = input.generatedAt ?? new Date().toISOString();
   const briefDate = input.briefDate ?? productDate();
@@ -218,4 +226,20 @@ export function buildDailyBrief2Snapshot(input: DailyBrief2BuildInput = {}): Dai
     todayFocus: buildTodayFocus(rankedTopics),
     version: "2.0-foundation",
   };
+}
+
+export function buildDailyBrief2Snapshot(input: DailyBrief2BuildInput = {}): DailyBrief2Snapshot {
+  return buildDailyBrief2SnapshotFromProviderSource({
+    input,
+    providerSource: getEditorialProviderSourceResult(),
+  });
+}
+
+export async function buildDailyBrief2SnapshotAsync(
+  input: DailyBrief2BuildInput = {},
+): Promise<DailyBrief2Snapshot> {
+  return buildDailyBrief2SnapshotFromProviderSource({
+    input,
+    providerSource: await getEditorialProviderSourceResultAsync(),
+  });
 }
