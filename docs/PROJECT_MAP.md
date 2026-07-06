@@ -180,6 +180,31 @@ V17 Monitoring Engine:
   - `getMonitoringTimeline()`
   - `getMonitoringDiagnostics()`
 - Foundation only; no UI, notification delivery, Telegram, LINE, Email, Push, Scheduler, AI call, trading, recommendation, billing, Workspace Copilot, Timeline UI, Morning Brief, API route, DB schema, or migration.
+
+V17 Notification Platform:
+
+- Source: `docs/V17_NOTIFICATION_PLATFORM.md`.
+- Library: `src/lib/intelligence/notifications/`.
+- Exports:
+  - `notification-types.ts`
+  - `notification-channel-router.ts`
+  - `notification-delivery-policy.ts`
+  - `notification-suppression.ts`
+  - `notification-priority.ts`
+  - `notification-retry.ts`
+  - `notification-diagnostics.ts`
+  - `notification-service.ts`
+  - `index.ts`
+- Reused inputs:
+  - V17.2 Monitoring Events: `src/lib/intelligence/monitoring/`.
+  - V17.1 Asset Intelligence context through Monitoring Events.
+  - V16 failure degradation principle.
+- Service helpers:
+  - `createNotificationEvents()`
+  - `routeNotificationEvents()`
+  - `getNotificationDiagnostics()`
+  - `getNotificationDeliveryPreview()`
+- Foundation only; no Telegram / LINE / Email / Push sending, provider token / secret / env, Scheduler, AI call, DB schema, migration, trading, recommendation, billing, Workspace Copilot, or major UI redesign.
 - Channel Router architecture: AI Monitoring Engine -> Notification Engine -> Channel Router -> Telegram / LINE / Email / In-App / Browser Push / Mobile Push.
 - Event matrix required before implementation: FCN KI distance, observation, coupon, earnings, price moves, crypto volatility, macro events, and news relevance.
 - Priority 2 roadmap after V16A foundation.
