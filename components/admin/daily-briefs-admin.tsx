@@ -1430,6 +1430,65 @@ export function DailyBriefsAdmin() {
           </div>
         </section>
 
+        <section className="rounded-lg border border-emerald-300/20 bg-emerald-300/8 p-4">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+                Production Editorial Console
+              </p>
+              <h2 className="mt-2 text-lg font-semibold text-[var(--ixai-cream)]">
+                {dailyBrief2Preview.productionMetadata.health.status.toUpperCase()} ·{" "}
+                {dailyBrief2Preview.productionMetadata.health.nextAction}
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[rgba(245,240,230,0.62)]">
+                Scheduler remains draft/review only. Publish requires editor control and Social Pack remains non-blocking.
+              </p>
+            </div>
+            <div className="grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.62)] sm:grid-cols-2 xl:min-w-[520px]">
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Latest generated: {dailyHealth?.latestGenerated?.slug ?? "none"}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Latest draft/review: {dailyHealth?.latestDraftOrReview?.slug ?? "none"}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Latest published: {dailyHealth?.latestPublished?.slug ?? "none"}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Draft/publish gap: {dailyHealth?.hasPublishGap ? "yes" : "no"}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Provider success: {Math.round(dailyBrief2Preview.productionMetadata.metrics.providerSuccessRate * 100)}%
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Cache hit rate: {Math.round(dailyBrief2Preview.productionMetadata.metrics.cacheHitRate * 100)}%
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Fallback count: {dailyBrief2Preview.productionMetadata.metrics.fallbackCount}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Retry status: {dailyBrief2Preview.productionMetadata.pipeline.retry.retryable ? "retryable" : "none"}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Publish readiness: {dailyBrief2Preview.productionMetadata.pipeline.publishReadiness}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Checklist: {dailyBrief2Preview.productionMetadata.checklist.passed ? "passed" : "needs review"}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2 text-xs leading-5 text-[rgba(245,240,230,0.56)] md:grid-cols-2">
+            {dailyBrief2Preview.productionMetadata.checklist.items.map((item) => (
+              <p
+                className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2"
+                key={item.key}
+              >
+                {item.passed ? "PASS" : "CHECK"} · {item.label}
+              </p>
+            ))}
+          </div>
+        </section>
+
         <div className="grid gap-4 xl:grid-cols-5">
           <StatusCard
             status={intakeMeta?.mode === "real" ? "success" : intakeMeta ? "warning" : "muted"}

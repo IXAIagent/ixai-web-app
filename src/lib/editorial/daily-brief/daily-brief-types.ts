@@ -8,6 +8,7 @@ import type {
 } from "@/src/lib/editorial/editorial-types";
 import type { EditorialIntelligenceResult } from "@/src/lib/editorial/intelligence";
 import type { EditorialProviderDiagnostics } from "@/src/lib/editorial/providers";
+import type { EditorialProductionMetadata } from "@/src/lib/editorial/production";
 
 export type DailyBrief2MarketTone = "constructive" | "cautious" | "mixed" | "risk_off";
 
@@ -128,6 +129,7 @@ export type DailyBrief2Snapshot = {
   keyNarratives: DailyBrief2Narrative[];
   marketPulse: DailyBrief2MarketPulse;
   publicationReadiness: DailyBrief2PublicationReadiness;
+  productionMetadata: EditorialProductionMetadata;
   providerDiagnostics: EditorialProviderDiagnostics;
   qualitySignals: EditorialQualitySignal[];
   rankedStories: DailyBrief2RankedStory[];

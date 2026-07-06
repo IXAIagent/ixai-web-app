@@ -109,6 +109,13 @@ V16A AI Financial Media:
   - Daily / Weekly async builders: `src/lib/editorial/daily-brief/`, `src/lib/editorial/weekly-brief/`.
   - Public preview integration: `app/daily-brief/page.tsx`, `app/weekly-brief/page.tsx`.
   - Real provider MVP only; no AI call, scheduler publish, notification delivery, DB migration, trading, recommendation, billing, or V16B Workspace Monitoring.
+- V16A-5: Production Editorial System.
+  - Source: `docs/V16A_5_PRODUCTION_EDITORIAL_SYSTEM.md`.
+  - Production helpers: `src/lib/editorial/production/`.
+  - Daily / Weekly metadata integration: `src/lib/editorial/daily-brief/`, `src/lib/editorial/weekly-brief/`.
+  - Admin production console: `components/admin/daily-briefs-admin.tsx`.
+  - Public simplified readiness: `app/daily-brief/page.tsx`, `app/weekly-brief/page.tsx`.
+  - Readiness / diagnostics only; no DB schema, migration, auto-publish, notification delivery, AI call, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Next V16A track: Content Quality Engine / Editorial Memory.
 - Daily / Weekly cannot depend on user Portfolio.
 - Daily / Weekly are not Workspace free tier.

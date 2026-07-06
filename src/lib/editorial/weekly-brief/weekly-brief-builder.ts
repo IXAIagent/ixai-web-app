@@ -5,6 +5,7 @@ import {
   getEditorialProviderSourceResult,
   getEditorialProviderSourceResultAsync,
 } from "@/src/lib/editorial/providers";
+import { buildEditorialProductionMetadata } from "@/src/lib/editorial/production";
 import { rankEditorialStories } from "@/src/lib/editorial/story-ranking";
 import { rankEditorialTopics } from "@/src/lib/editorial/topic-ranking";
 import {
@@ -136,6 +137,15 @@ function buildWeeklyBrief2SnapshotFromProviderSource({
   });
   const topThemes = intelligence.themes.slice(0, 5).map((theme) => theme.label);
   const importantStories = buildImportantStories(rankedStories);
+  const briefId = `weekly-brief-2-${weekRange.start}-${weekRange.end}`;
+  const productionMetadata = buildEditorialProductionMetadata({
+    briefId,
+    generatedAt,
+    productLine: "weekly",
+    providerDiagnostics: providerSource.diagnostics,
+    rankedStoryCount: rankedStories.length,
+    topicCount: rankedTopics.length,
+  });
 
   return {
     coverageStatus,
@@ -160,6 +170,7 @@ function buildWeeklyBrief2SnapshotFromProviderSource({
       themes: topThemes,
       topStory: rankedStories[0],
     }),
+    productionMetadata,
     providerDiagnostics: providerSource.diagnostics,
     qualitySignals: editorialBrief.qualitySignals,
     riskNotes,

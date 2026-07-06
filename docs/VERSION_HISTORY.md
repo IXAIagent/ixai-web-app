@@ -6,6 +6,39 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V16A-5 — Production Editorial System
+
+Why:
+
+- V16A-4 added real editorial data MVP providers.
+- Daily / Weekly now need operational readiness metadata before deeper production usage.
+- The system must make publish readiness, fallback, health, metrics, retry state, and manual publish guard visible without changing scheduler or persistence behavior.
+
+What Changed:
+
+- Added `docs/V16A_5_PRODUCTION_EDITORIAL_SYSTEM.md`.
+- Added production helpers under `src/lib/editorial/production/`:
+  - `editorial-production-types.ts`
+  - `editorial-production-pipeline.ts`
+  - `editorial-production-metrics.ts`
+  - `editorial-production-health.ts`
+  - `editorial-production-checklist.ts`
+  - `editorial-publish-queue.ts`
+  - `index.ts`
+- Daily Brief 2.0 snapshot now includes production metadata.
+- Weekly Brief 2.0 snapshot now includes production metadata.
+- Public Daily / Weekly show simplified production health and publish guard status.
+- Admin Daily Briefs now includes a Production Editorial Console.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- Scheduler readiness is diagnostics-only.
+- Scheduler remains draft/review only.
+- Manual publish guard remains required.
+- Social Pack remains non-blocking.
+- No DB schema, migration, auto-publish, Telegram, LINE, Email, Push, OpenAI, Claude, Gemini, AI call, V16B Workspace Monitoring, trading, recommendation, billing, buy/sell/hold, target price, or rebalance wording was added.
+
 ## V16A-4 — Real Editorial Data MVP
 
 Why:
