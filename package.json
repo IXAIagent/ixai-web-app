@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "qa:editorial-beta": "node scripts/validate-editorial-beta.mjs",
     "qa:mobile": "node scripts/qa-mobile.mjs",
     "qa:production-authenticated": "node scripts/audit-production-authenticated.mjs",
     "qa:production-runtime-evidence": "node scripts/collect-production-runtime-evidence.mjs",

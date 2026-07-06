@@ -296,6 +296,15 @@ V16A-5 status:
 - It does not add DB schema, migration, auto-publish, Telegram / LINE / Email / Push delivery, OpenAI, Claude, Gemini, AI call, trading, recommendation, billing, target price, rebalance, buy/sell/hold language, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_5_PRODUCTION_EDITORIAL_SYSTEM.md`.
 
+V16.9 Editorial Beta Validation status:
+
+- V16A AI Financial Media implementation mainline is complete enough for release-gate validation.
+- Added `docs/V169_EDITORIAL_BETA_VALIDATION.md`.
+- Added `npm run qa:editorial-beta` via `scripts/validate-editorial-beta.mjs`.
+- The validation helper checks `/daily-brief`, `/weekly-brief`, and `/admin/daily-briefs`, verifies provider diagnostics/fallback/source contracts, checks that direct provider response markers do not leak to UI, confirms no AI dependency is required, and confirms scheduler auto-publish remains disabled.
+- Beta readiness verdict is Conditional Go for Beta preview, pending deployed production public readback and authenticated admin verification.
+- It does not add new providers, AI calls, scheduler auto-publish, notification delivery, DB schema, migration, trading, recommendation, billing, target price, rebalance, buy/sell/hold language, or V16B Workspace Monitoring.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`
