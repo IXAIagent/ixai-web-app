@@ -155,6 +155,31 @@ V17 Asset Intelligence Platform:
   - Watchlist readback: `src/lib/watchlist/watchlist-types.ts`.
 - Reuses V16 Editorial Intelligence theme IDs and Provider Layer coverage / quality concepts.
 - Foundation only; no UI, monitoring engine, notification delivery, AI call, scheduler, trading, recommendation, billing, Workspace Copilot, Timeline, Morning Brief, API route, DB schema, or migration.
+
+V17 Monitoring Engine:
+
+- Source: `docs/V17_MONITORING_ENGINE.md`.
+- Library: `src/lib/intelligence/monitoring/`.
+- Exports:
+  - `monitoring-types.ts`
+  - `monitoring-rule-engine.ts`
+  - `monitoring-event-engine.ts`
+  - `monitoring-priority.ts`
+  - `monitoring-timeline.ts`
+  - `today-focus-engine.ts`
+  - `monitoring-diagnostics.ts`
+  - `monitoring-service.ts`
+  - `index.ts`
+- Reused inputs:
+  - V17.1 Asset Intelligence: `src/lib/intelligence/assets/`.
+  - V16 Editorial theme IDs: `src/lib/editorial/intelligence/`.
+  - V16 Provider Coverage / Quality: `src/lib/editorial/providers/`.
+- Service helpers:
+  - `getMonitoringEvents()`
+  - `getTodayFocus()`
+  - `getMonitoringTimeline()`
+  - `getMonitoringDiagnostics()`
+- Foundation only; no UI, notification delivery, Telegram, LINE, Email, Push, Scheduler, AI call, trading, recommendation, billing, Workspace Copilot, Timeline UI, Morning Brief, API route, DB schema, or migration.
 - Channel Router architecture: AI Monitoring Engine -> Notification Engine -> Channel Router -> Telegram / LINE / Email / In-App / Browser Push / Mobile Push.
 - Event matrix required before implementation: FCN KI distance, observation, coupon, earnings, price moves, crypto volatility, macro events, and news relevance.
 - Priority 2 roadmap after V16A foundation.
