@@ -6,6 +6,36 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V16A Sprint 2 — Daily Brief 2.0 Foundation
+
+Why:
+
+- V16A Sprint 1 established editorial contracts, normalization, ranking, narrative fallback, and diagnostics.
+- Sprint 2 needed to connect those pieces into the first deterministic Daily Brief 2.0 pipeline.
+- Daily Brief must become AI Curated Financial Media, not a generic news list, Workspace free tier, or investment recommendation surface.
+
+What Changed:
+
+- Added `docs/V16A_SPRINT_2_DAILY_BRIEF_2_FOUNDATION.md`.
+- Added Daily Brief 2.0 foundation under `src/lib/editorial/daily-brief/`:
+  - `daily-brief-types.ts`
+  - `daily-brief-builder.ts`
+  - `daily-brief-mock-source.ts`
+  - `daily-brief-diagnostics.ts`
+  - `index.ts`
+- Added deterministic mock editorial source coverage for macro, US equity, Taiwan market, crypto, FCN / structured product relevance, and risk / volatility.
+- Added Daily Brief 2.0 snapshot contract with Today Focus, Market Pulse, ranked topics, ranked stories, key narratives, source coverage, fallback state, publication readiness, diagnostics, and disclaimer.
+- Added read-only Daily Brief 2.0 preview section to `/daily-brief`.
+- Added read-only Daily Brief 2.0 diagnostics / preview to `/admin/daily-briefs`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- Sprint 2 uses deterministic mock / existing editorial source only.
+- Mock source output is normalized into IXAI-owned editorial objects before downstream use.
+- Public and Admin integrations are read-only previews and do not change existing Daily / Weekly readback, generate, review, publish, scheduler, or Social Pack behavior.
+- No external provider fetch, AI model call, scheduler auto-publish, Telegram / LINE / Email delivery, DB schema, migration, V16B Workspace Monitoring, trading, recommendation, billing, buy/sell/hold, target price, or rebalance wording was added.
+
 ## V16A Sprint 1 — Editorial Architecture Foundation
 
 Why:

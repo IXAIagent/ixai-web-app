@@ -245,6 +245,15 @@ V16A Sprint 1 status:
 - It does not add external provider fetches, AI model calls, scheduler auto-publish, Telegram / LINE / Email delivery, DB schema, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_SPRINT_1_EDITORIAL_ARCHITECTURE_FOUNDATION.md`.
 
+V16A Sprint 2 status:
+
+- Daily Brief 2.0 Foundation is implemented as a deterministic V16A AI Financial Media pipeline.
+- It connects mock editorial source input through normalization, story ranking, topic ranking, Daily Brief builder, Daily Brief 2.0 snapshot, and public/admin read-only preview integration.
+- Public `/daily-brief` includes a read-only Daily Brief 2.0 Foundation Preview without changing existing published readback.
+- Admin `/admin/daily-briefs` includes read-only Daily Brief 2.0 diagnostics without changing generate/review/publish behavior.
+- It does not add V16B Workspace Monitoring, external provider fetches, AI model calls, scheduler auto-publish, Telegram / LINE / Email delivery, DB schema, trading, recommendation, billing, target price, rebalance, or buy/sell/hold language.
+- Source of truth: `docs/V16A_SPRINT_2_DAILY_BRIEF_2_FOUNDATION.md`.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`
