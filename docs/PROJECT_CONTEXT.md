@@ -324,6 +324,15 @@ V17.2 Monitoring Engine status:
 - It is library-only and is not connected to Workspace UI, notification delivery, Telegram, LINE, Email, Push, Scheduler, Copilot, Timeline UI, Morning Brief, API routes, database writes, trading, recommendation, target price, buy/sell/hold, or billing.
 - Source of truth: `docs/V17_MONITORING_ENGINE.md`.
 
+V17.3 Notification Platform status:
+
+- V17.3 adds the foundation Notification Platform under `src/lib/intelligence/notifications/`.
+- It converts V17.2 Monitoring Events into Notification Events, maps priority, routes through allowed/fallback channel contracts, applies suppression / de-duplication, cooldown, retry metadata, and diagnostics.
+- Supported channel contracts are in-app, Telegram, LINE, Email, Browser Push, and Mobile Push.
+- Only `in-app` is available by default as a route-preview fallback; no external sender or provider integration was added.
+- It is library-only and is not connected to Workspace UI, Notification Center UI, Telegram, LINE, Email, Browser Push, Mobile Push, Scheduler, API routes, database writes, Copilot, billing, trading, recommendation, target price, or buy/sell/hold language.
+- Source of truth: `docs/V17_NOTIFICATION_PLATFORM.md`.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`

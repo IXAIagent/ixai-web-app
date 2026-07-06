@@ -6,6 +6,36 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V17.3 — Notification Platform
+
+Why:
+
+- V17.2 created Monitoring Events and Today Focus foundation.
+- Workspace, Monitoring, and future Telegram / LINE / Email / Push workflows need a shared Notification Event contract and Channel Router before any real sender is implemented.
+
+What Changed:
+
+- Added `docs/V17_NOTIFICATION_PLATFORM.md`.
+- Added shared Notification Platform foundation under `src/lib/intelligence/notifications/`:
+  - `notification-types.ts`
+  - `notification-channel-router.ts`
+  - `notification-delivery-policy.ts`
+  - `notification-suppression.ts`
+  - `notification-priority.ts`
+  - `notification-retry.ts`
+  - `notification-diagnostics.ts`
+  - `notification-service.ts`
+  - `index.ts`
+- Added Notification Event contract, Channel Router, Delivery Policy, suppression / de-duplication, cooldown, priority mapping, retry metadata, diagnostics, and service helpers.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V17.3 is a library-only foundation.
+- The notification layer consumes V17.2 Monitoring Events and keeps delivery as preview/diagnostics only.
+- Supported channel contracts are in-app, Telegram, LINE, Email, Browser Push, and Mobile Push, but no sender/provider is implemented.
+- No Telegram / LINE / Email / Push sending, provider token / secret / env, Scheduler, AI call, DB schema, migration, trading, buy/sell/hold, target price, recommendation, billing, Workspace Copilot, or major UI redesign was added.
+
 ## V17.2 — Monitoring Engine
 
 Why:

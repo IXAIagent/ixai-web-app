@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V17.2 Monitoring Engine after V17.1 Asset Intelligence Platform merged.
+Current priority is V17.3 Notification Platform after V17.2 Monitoring Engine merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -237,6 +237,17 @@ V17.2 — Monitoring Engine:
 - Provides `getMonitoringEvents()`, `getTodayFocus()`, `getMonitoringTimeline()`, and `getMonitoringDiagnostics()`.
 - Does not add UI, notification delivery, Telegram, LINE, Email, Push, Scheduler, AI call, DB schema, migration, trading, buy/sell/hold, target price, recommendation, billing, Workspace Copilot, Timeline UI, Morning Brief behavior, or major redesign.
 - Source of truth: `docs/V17_MONITORING_ENGINE.md`.
+
+V17.3 — Notification Platform:
+
+- Status: implemented as a foundation library.
+- Adds shared Notification Platform under `src/lib/intelligence/notifications/`.
+- Converts Monitoring Events into Notification Events, maps priority, routes through allowed/fallback channels, applies suppression / de-duplication, cooldown, retry metadata, and diagnostics.
+- Supports channel contracts for in-app, Telegram, LINE, Email, Browser Push, and Mobile Push.
+- Only route previews and diagnostics are implemented. No channel sends anything.
+- Provides `createNotificationEvents()`, `routeNotificationEvents()`, `getNotificationDiagnostics()`, and `getNotificationDeliveryPreview()`.
+- Does not add Telegram / LINE / Email / Push sending, provider token / secret / env, Scheduler, AI call, DB schema, migration, trading, buy/sell/hold, target price, recommendation, billing, Workspace Copilot, or major UI redesign.
+- Source of truth: `docs/V17_NOTIFICATION_PLATFORM.md`.
 
 V15 current sequence:
 
