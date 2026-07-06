@@ -233,6 +233,16 @@ V18.1 connects Workspace Intelligence to `/my-ixai/home` through:
 
 Source of truth: `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
 
+V18.2 connects Workspace Intelligence deeper into Portfolio, FCN, and Watchlist:
+
+- `/my-ixai/portfolio` now shows Portfolio Intelligence Summary, Position Intelligence, and Portfolio Intelligence diagnostics.
+- `/my-ixai/fcn` now shows FCN Intelligence Summary, per-FCN monitoring cards, and FCN Intelligence diagnostics.
+- `/my-ixai/watchlist` now shows Watchlist Intelligence Summary, per-item monitoring / coverage fields, and Watchlist Intelligence diagnostics.
+
+V18.2 reuses Asset Intelligence, Monitoring Events, Today Focus, Notification Preview, and V16 editorial coverage concepts. It does not add notification sending, AI calls, scheduler behavior, trading, recommendation, billing, schema, migration, Copilot Chat, Timeline rewrite, or navigation changes.
+
+Source of truth: `docs/V18_PORTFOLIO_FCN_INTELLIGENCE_INTEGRATION.md`.
+
 ## B-1. V15.2 Brief Reliability Recovery
 
 V15.2 was the production reliability blocker before V16 implementation.

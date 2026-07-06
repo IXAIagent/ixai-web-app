@@ -6,6 +6,28 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V18.2 — Portfolio / FCN Intelligence Integration
+
+Why:
+
+- V18.1 connected Workspace Intelligence to Home.
+- Portfolio, FCN, and Watchlist now need read-only intelligence context at the page and item level without introducing new engines or product behavior.
+
+What Changed:
+
+- Added `docs/V18_PORTFOLIO_FCN_INTELLIGENCE_INTEGRATION.md`.
+- Updated `components/portfolio/portfolio-experience-workspace.tsx` with Portfolio Intelligence Summary, Position Intelligence, and Portfolio Intelligence diagnostics.
+- Updated `components/fcn/fcn-experience-workspace.tsx` with FCN Intelligence Summary, per-FCN monitoring cards, and FCN Intelligence diagnostics.
+- Updated `components/watchlist/watchlist-experience-workspace.tsx` with Watchlist Intelligence Summary, per-item monitoring / editorial fields, and Watchlist Intelligence diagnostics.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V18.2 reuses V16 Editorial Intelligence, V17.1 Asset Intelligence, V17.2 Monitoring Engine, V17.3 Notification Platform, and V17.4 Workspace Intelligence concepts.
+- FCN integration derives read-only Asset Intelligence input from the existing FCN risk summary instead of changing FCN services or persistence.
+- Diagnostics remain collapsed by default.
+- No new engine, notification sending, AI call, scheduler, trading, recommendation, billing, DB schema, migration, Copilot Chat, Timeline rewrite, or navigation redesign was added.
+
 ## V18.1 — Workspace Home Integration
 
 Why:

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Bell, Eye, LineChart, Plus, TrendingUp } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowRight, Bell, Eye, LineChart, Newspaper, Plus, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
 
 import { WatchlistSummary } from "@/components/watchlist/watchlist-summary";
 import {
@@ -11,6 +11,11 @@ import {
   WorkspaceProductHero,
   WorkspaceProductSection,
 } from "@/components/workspace/product";
+import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
+import type { AssetIntelligence } from "@/src/lib/intelligence/assets";
+import { getMonitoringEvents, getTodayFocus } from "@/src/lib/intelligence/monitoring";
+import type { MonitoringEvent } from "@/src/lib/intelligence/monitoring";
+import { getNotificationDeliveryPreview } from "@/src/lib/intelligence/notifications";
 import {
   getWatchlistPersistenceSummary,
   type WatchlistPersistenceSummary,
@@ -34,7 +39,34 @@ function marketStatus(summary: WorkspaceWatchlistSummary | null) {
   return "已更新";
 }
 
+function formatScore(value: number | null | undefined) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "暫無資料";
+  return `${Math.round(value * 100)}%`;
+}
+
+function relatedEvents(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  if (!asset) return [];
+  return events.filter((event) => event.assetId === asset.id || event.relatedAssetIds.includes(asset.id));
+}
+
+function priorityLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  const priority = relatedEvents(asset, events).reduce(
+    (max, event) => Math.max(max, event.priorityScore),
+    0,
+  );
+  return priority > 0 ? String(priority) : "一般";
+}
+
+function monitoringLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  const eventsForAsset = relatedEvents(asset, events);
+  if (!asset) return "等待資料";
+  if (eventsForAsset.some((event) => event.severity === "critical")) return "優先查看";
+  if (eventsForAsset.some((event) => event.severity === "warning")) return "正在監控";
+  return asset.monitoringState.enabled ? "正常監控" : "準備中";
+}
+
 export function WatchlistExperienceWorkspace() {
+  const [intelligenceGeneratedAt] = useState(() => new Date().toISOString());
   const [summary, setSummary] = useState<WorkspaceWatchlistSummary | null>(null);
   const [persistence, setPersistence] = useState<WatchlistPersistenceSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,8 +96,52 @@ export function WatchlistExperienceWorkspace() {
     };
   }, []);
 
-  const items = summary?.items ?? [];
+  const items = useMemo(() => summary?.items ?? [], [summary?.items]);
   const missingQuotes = summary?.missingQuoteCount ?? summary?.unquotedItemCount ?? 0;
+  const intelligenceGeneratedAtValue = summary?.generatedAt ?? intelligenceGeneratedAt;
+  const assetIntelligence = useMemo(
+    () =>
+      getAssetIntelligence({
+        generatedAt: intelligenceGeneratedAtValue,
+        watchlistItems: items,
+      }),
+    [intelligenceGeneratedAtValue, items],
+  );
+  const monitoringEvents = useMemo(
+    () =>
+      getMonitoringEvents({
+        assets: assetIntelligence,
+        generatedAt: intelligenceGeneratedAtValue,
+      }),
+    [assetIntelligence, intelligenceGeneratedAtValue],
+  );
+  const todayFocus = useMemo(
+    () =>
+      getTodayFocus({
+        assets: assetIntelligence,
+        generatedAt: intelligenceGeneratedAtValue,
+      }),
+    [assetIntelligence, intelligenceGeneratedAtValue],
+  );
+  const notificationPreview = useMemo(
+    () =>
+      getNotificationDeliveryPreview({
+        generatedAt: intelligenceGeneratedAtValue,
+        monitoringEvents,
+      }),
+    [intelligenceGeneratedAtValue, monitoringEvents],
+  );
+  const assetsBySymbol = useMemo(() => {
+    const map = new Map<string, AssetIntelligence>();
+    assetIntelligence.forEach((asset) => {
+      map.set(asset.symbol, asset);
+    });
+    return map;
+  }, [assetIntelligence]);
+  const watchlistEvents = monitoringEvents.filter((event) => event.eventType === "watchlist-move").length;
+  const newsCoverageCount = assetIntelligence.filter((asset) => asset.newsState.status !== "missing").length;
+  const highPriorityCount = monitoringEvents.filter((event) => event.priorityScore >= 70).length;
+  const healthyAssets = assetIntelligence.filter((asset) => asset.health.status === "healthy").length;
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -104,23 +180,31 @@ export function WatchlistExperienceWorkspace() {
         >
           {items.length > 0 ? (
             <div className="grid gap-3 lg:grid-cols-3">
-              {items.slice(0, 6).map((item) => (
-                <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={item.id}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">{item.symbol}</p>
-                      <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{item.name}</p>
+              {items.slice(0, 6).map((item) => {
+                const asset = assetsBySymbol.get(item.symbol.toUpperCase());
+                return (
+                  <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={item.id}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">{item.symbol}</p>
+                        <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{item.name}</p>
+                      </div>
+                      <span className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        {item.quoteStatus === "available" ? "有行情" : "待更新"}
+                      </span>
                     </div>
-                    <span className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                      {item.quoteStatus === "available" ? "有行情" : "待更新"}
-                    </span>
-                  </div>
-                  <p className="mt-4 text-xl font-semibold text-[var(--ixai-forest)]">
-                    {formatPrice(item.quote?.quote?.price, item.quote?.quote?.currency)}
-                  </p>
-                  {item.note ? <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.note}</p> : null}
-                </article>
-              ))}
+                    <p className="mt-4 text-xl font-semibold text-[var(--ixai-forest)]">
+                      {formatPrice(item.quote?.quote?.price, item.quote?.quote?.currency)}
+                    </p>
+                    <div className="mt-4 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                      <p>Monitoring：{monitoringLabel(asset, monitoringEvents)}</p>
+                      <p>Editorial Highlights：{asset?.newsState.status === "missing" ? "待建立" : "已納入 coverage"}</p>
+                      <p>Coverage：{formatScore(asset?.coverage.score)} · Priority：{priorityLabel(asset, monitoringEvents)}</p>
+                    </div>
+                    {item.note ? <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.note}</p> : null}
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <div className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-5">
@@ -134,6 +218,23 @@ export function WatchlistExperienceWorkspace() {
               </Link>
             </div>
           )}
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="重用 Asset Intelligence、Monitoring Engine、Today Focus 與 Notification Preview，整理 watchlist 的監控關聯。"
+          eyebrow="Watchlist Intelligence"
+          title="關注標的 Intelligence 摘要"
+        >
+          <WorkspaceKpiGrid
+            items={[
+              { description: "與 watchlist 標的相關的 monitoring events。", icon: Bell, label: "Watchlist Events", value: String(watchlistEvents || monitoringEvents.length) },
+              { description: "具備 editorial/news coverage 的關注標的。", icon: Newspaper, label: "News Coverage", value: String(newsCoverageCount) },
+              { description: "高優先級監控事件。", icon: Sparkles, label: "Priority", tone: highPriorityCount > 0 ? "warning" : "default", value: String(highPriorityCount) },
+              { description: "目前健康狀態穩定的關注標的。", icon: ShieldCheck, label: "Monitoring Status", tone: "success", value: String(healthyAssets) },
+              { description: "Today Focus 中與 watchlist 相關的重點。", icon: Eye, label: "Today Focus", value: String(todayFocus.length) },
+              { description: "只做通知 preview，不發送外部通知。", icon: LineChart, label: "Preview", value: String(notificationPreview.notifications.length) },
+            ]}
+          />
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
@@ -157,6 +258,20 @@ export function WatchlistExperienceWorkspace() {
         ) : null}
 
         <WorkspaceDiagnosticsPanel description="watchlist persistence/source、market source">
+          <WorkspaceProductSection
+            description="Watchlist diagnostics 只顯示 read-only intelligence 狀態，不發送通知。"
+            eyebrow="Watchlist Diagnostics"
+            title="Watchlist Intelligence 診斷"
+          >
+            <WorkspaceKpiGrid
+              items={[
+                { description: "Watchlist Asset Intelligence 建立的資產數。", icon: Eye, label: "Assets", value: String(assetIntelligence.length) },
+                { description: "Monitoring Engine 產生的事件數。", icon: Bell, label: "Events", value: String(monitoringEvents.length) },
+                { description: "Notification Platform preview 項目。", icon: Sparkles, label: "Preview", value: String(notificationPreview.notifications.length) },
+                { description: "具備 coverage 的 watchlist 標的。", icon: Newspaper, label: "Coverage", value: String(newsCoverageCount) },
+              ]}
+            />
+          </WorkspaceProductSection>
           <WatchlistSummary />
           <WorkspaceKpiGrid
             items={[

@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V18.1 Workspace Home Integration after V17.4 Workspace Intelligence merged.
+Current priority is V18.2 Portfolio / FCN Intelligence Integration after V18.1 Workspace Home Integration merged.
 
 V18 starts the product integration phase. V16 and V17 created the service/domain foundations. V18 connects those read-only foundations into Workspace UI without creating new engines, notification delivery, trading actions, recommendations, schedulers, AI model calls, database schema, or migrations.
 
@@ -42,6 +42,14 @@ V18.1 — Workspace Home Integration:
 - Reuses V16 Editorial Intelligence, V17.1 Asset Intelligence, V17.2 Monitoring Engine, V17.3 Notification Platform, and V17.4 Workspace Intelligence.
 - Keeps notifications preview-only and does not send Telegram, LINE, Email, Browser Push, or Mobile Push.
 - Source of truth: `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
+
+V18.2 — Portfolio / FCN Intelligence Integration:
+
+- Status: implemented.
+- Connects read-only Asset Intelligence, Monitoring Events, Today Focus, and Notification Preview to `/my-ixai/portfolio`, `/my-ixai/fcn`, and `/my-ixai/watchlist`.
+- Adds Portfolio Intelligence Summary, Position Intelligence, FCN Intelligence Summary, per-FCN monitoring cards, Watchlist Intelligence Summary, and per-watchlist-item intelligence fields.
+- Keeps all diagnostics collapsed by default and does not add notification sending, AI calls, scheduler behavior, trading, recommendation, billing, DB schema, migration, Copilot Chat, or Timeline rewrite.
+- Source of truth: `docs/V18_PORTFOLIO_FCN_INTELLIGENCE_INTEGRATION.md`.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 

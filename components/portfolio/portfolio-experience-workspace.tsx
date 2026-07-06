@@ -5,11 +5,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   BarChart3,
+  Bell,
   BriefcaseBusiness,
   CandlestickChart,
+  Newspaper,
   PieChart,
   PlusCircle,
   ShieldAlert,
+  ShieldCheck,
+  Sparkles,
   WalletCards,
 } from "lucide-react";
 
@@ -27,6 +31,11 @@ import {
   WorkspaceProductSection,
 } from "@/components/workspace/product";
 import { useTranslation } from "@/src/lib/i18n";
+import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
+import type { AssetIntelligence } from "@/src/lib/intelligence/assets";
+import { getMonitoringEvents, getTodayFocus } from "@/src/lib/intelligence/monitoring";
+import type { MonitoringEvent } from "@/src/lib/intelligence/monitoring";
+import { getNotificationDeliveryPreview } from "@/src/lib/intelligence/notifications";
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
 import type { PortfolioValuationResult } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
@@ -45,8 +54,64 @@ function formatPercent(value: number | null | undefined) {
   return `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
 }
 
+function formatScore(value: number | null | undefined) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "暫無資料";
+  return `${Math.round(value * 100)}%`;
+}
+
+function formatTime(value: string | null | undefined) {
+  if (!value) return "待更新";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "待更新";
+  return new Intl.DateTimeFormat("zh-TW", {
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    month: "2-digit",
+  }).format(date);
+}
+
+function healthLabel(asset: AssetIntelligence | null | undefined) {
+  if (!asset) return "等待資料";
+  if (asset.health.status === "healthy") return "穩定";
+  if (asset.health.status === "degraded") return "需要留意";
+  if (asset.health.status === "offline") return "暫無資料";
+  return "待確認";
+}
+
+function relatedEvents(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  if (!asset) return [];
+  return events.filter((event) => event.assetId === asset.id || event.relatedAssetIds.includes(asset.id));
+}
+
+function monitoringLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  const eventsForAsset = relatedEvents(asset, events);
+  if (!asset) return "等待資料";
+  if (eventsForAsset.some((event) => event.severity === "critical")) return "優先查看";
+  if (eventsForAsset.some((event) => event.severity === "warning")) return "正在監控";
+  return asset.monitoringState.enabled ? "正常監控" : "準備中";
+}
+
+function priorityLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  const priority = relatedEvents(asset, events).reduce(
+    (max, event) => Math.max(max, event.priorityScore),
+    0,
+  );
+  return priority > 0 ? String(priority) : "一般";
+}
+
+function themesLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  if (!asset) return "待建立";
+  const themes = new Set([
+    ...asset.themes,
+    ...relatedEvents(asset, events).flatMap((event) => event.relatedThemes),
+  ]);
+  return themes.size > 0 ? Array.from(themes).slice(0, 2).join(", ") : "待建立";
+}
+
 export function PortfolioExperienceWorkspace() {
   const { t } = useTranslation("productPolish");
+  const [intelligenceGeneratedAt] = useState(() => new Date().toISOString());
   const [valuation, setValuation] = useState<PortfolioValuationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
@@ -90,6 +155,53 @@ export function PortfolioExperienceWorkspace() {
       : summary.unpricedPositionCount > 0 || summary.sourceStatus !== "live"
         ? "需要留意"
         : "穩定";
+  const intelligenceGeneratedAtValue = summary?.updatedAt ?? intelligenceGeneratedAt;
+  const assetIntelligence = useMemo(
+    () =>
+      getAssetIntelligence({
+        generatedAt: intelligenceGeneratedAtValue,
+        portfolioPositions: valuation?.positions ?? [],
+      }),
+    [intelligenceGeneratedAtValue, valuation?.positions],
+  );
+  const monitoringEvents = useMemo(
+    () =>
+      getMonitoringEvents({
+        assets: assetIntelligence,
+        generatedAt: intelligenceGeneratedAtValue,
+      }),
+    [assetIntelligence, intelligenceGeneratedAtValue],
+  );
+  const todayFocus = useMemo(
+    () =>
+      getTodayFocus({
+        assets: assetIntelligence,
+        generatedAt: intelligenceGeneratedAtValue,
+      }),
+    [assetIntelligence, intelligenceGeneratedAtValue],
+  );
+  const notificationPreview = useMemo(
+    () =>
+      getNotificationDeliveryPreview({
+        generatedAt: intelligenceGeneratedAtValue,
+        monitoringEvents,
+      }),
+    [intelligenceGeneratedAtValue, monitoringEvents],
+  );
+  const assetsBySymbol = useMemo(() => {
+    const map = new Map<string, AssetIntelligence>();
+    assetIntelligence.forEach((asset) => {
+      map.set(asset.symbol, asset);
+    });
+    return map;
+  }, [assetIntelligence]);
+  const healthyAssets = assetIntelligence.filter((asset) => asset.health.status === "healthy").length;
+  const warningAssets = assetIntelligence.filter((asset) => asset.health.status === "degraded").length;
+  const criticalEvents = monitoringEvents.filter((event) => event.severity === "critical").length;
+  const relatedNewsCount = assetIntelligence.filter((asset) => asset.newsState.status !== "missing").length;
+  const coverageScore = assetIntelligence.length
+    ? assetIntelligence.reduce((sum, asset) => sum + asset.coverage.score, 0) / assetIntelligence.length
+    : 0;
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -201,6 +313,66 @@ export function PortfolioExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
+          description="重用 Asset Intelligence、Monitoring Engine 與 Notification Preview，整理投資組合目前被 AI 監控到的狀態。"
+          eyebrow="Portfolio Intelligence"
+          title="投資組合 Intelligence 摘要"
+        >
+          <WorkspaceKpiGrid
+            items={[
+              { description: "目前資料與監控狀態穩定的資產。", icon: ShieldCheck, label: "健康資產", tone: "success", value: String(healthyAssets) },
+              { description: "需要補資料或持續留意的資產。", icon: ShieldAlert, label: "需要留意", tone: warningAssets > 0 ? "warning" : "default", value: String(warningAssets) },
+              { description: "Monitoring Engine 判定需優先查看的事件。", icon: Bell, label: "優先事件", tone: criticalEvents > 0 ? "critical" : "default", value: String(criticalEvents) },
+              { description: "Today Focus 中與投資組合相關的重點。", icon: Sparkles, label: "Today Focus", value: String(todayFocus.length) },
+              { description: "具備新聞 / editorial coverage 的資產。", icon: Newspaper, label: "相關資訊", value: String(relatedNewsCount) },
+              { description: "整體 coverage foundation 分數。", icon: BarChart3, label: "Coverage", value: formatScore(coverageScore) },
+            ]}
+          />
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="每個 position 只顯示 read-only intelligence 狀態：健康度、監控、coverage、主題、優先級與信心分數。"
+          eyebrow="Position Intelligence"
+          title="持倉 Intelligence"
+        >
+          {valuation?.positions.length ? (
+            <div className="grid gap-3 lg:grid-cols-2">
+              {valuation.positions.slice(0, 8).map((position) => {
+                const asset = assetsBySymbol.get(position.symbol.toUpperCase());
+                return (
+                  <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={position.id}>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">{position.symbol}</p>
+                        <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{position.name}</p>
+                      </div>
+                      <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/72 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        {healthLabel(asset)}
+                      </span>
+                    </div>
+                    <div className="mt-4 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)] sm:grid-cols-2">
+                      <p>監控狀態：{monitoringLabel(asset, monitoringEvents)}</p>
+                      <p>Coverage：{formatScore(asset?.coverage.score)}</p>
+                      <p>Related Themes：{themesLabel(asset, monitoringEvents)}</p>
+                      <p>Priority：{priorityLabel(asset, monitoringEvents)}</p>
+                      <p>Confidence：{formatScore(asset?.quality.confidence)}</p>
+                      <p>Last Updated：{formatTime(asset?.lastUpdated)}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <WorkspaceEmptyState
+              actionHref="/my-ixai/input"
+              actionLabel="新增資產"
+              body="新增 Portfolio position 後，IXAI 會在這裡顯示 Asset Health、Monitoring Status、Editorial Coverage 與 Priority。"
+              icon={Sparkles}
+              title="尚未建立持倉 Intelligence"
+            />
+          )}
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
           description="今日需要注意與最近變化先用友善空狀態呈現，進階資料狀態放在頁尾。"
           eyebrow={t("todaySummary")}
           title="今天需要注意"
@@ -259,6 +431,20 @@ export function PortfolioExperienceWorkspace() {
         <RecentInputsPanel />
 
         <WorkspaceDiagnosticsPanel description="資產資料、估值與更新狀態">
+          <WorkspaceProductSection
+            description="Portfolio Intelligence diagnostics 只顯示 read-only 狀態，不觸發通知或交易。"
+            eyebrow="Portfolio Diagnostics"
+            title="投資組合 Intelligence 診斷"
+          >
+            <WorkspaceKpiGrid
+              items={[
+                { description: "Asset Intelligence 建立的資產數。", icon: WalletCards, label: "Assets", value: String(assetIntelligence.length) },
+                { description: "Monitoring Engine 產生的事件數。", icon: Bell, label: "Events", value: String(monitoringEvents.length) },
+                { description: "Notification Platform preview 項目。", icon: Sparkles, label: "Preview", value: String(notificationPreview.notifications.length) },
+                { description: "整體 coverage。", icon: BarChart3, label: "Coverage", value: formatScore(coverageScore) },
+              ]}
+            />
+          </WorkspaceProductSection>
           <PortfolioTruthSummary />
           <PortfolioPersistenceSummary />
           <PortfolioValuationSummary />

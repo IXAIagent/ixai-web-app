@@ -1,13 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
+  BarChart3,
+  Bell,
   CalendarDays,
   CircleAlert,
+  Newspaper,
   ShieldAlert,
   ShieldCheck,
+  Sparkles,
   WalletCards,
 } from "lucide-react";
 
@@ -24,6 +28,12 @@ import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service"
 import type { FcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-types";
 import { getWorkspaceFcnScheduleSummary } from "@/src/lib/fcn/schedule/fcn-schedule-service";
 import type { FcnPortfolioScheduleSummary } from "@/src/lib/fcn/schedule/fcn-schedule-types";
+import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
+import type { AssetIntelligence } from "@/src/lib/intelligence/assets";
+import { getMonitoringEvents, getTodayFocus } from "@/src/lib/intelligence/monitoring";
+import type { MonitoringEvent } from "@/src/lib/intelligence/monitoring";
+import { getNotificationDeliveryPreview } from "@/src/lib/intelligence/notifications";
+import type { PositionValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 type FcnExperienceData = {
@@ -58,7 +68,64 @@ function nextObservation(schedule: FcnPortfolioScheduleSummary | null) {
   return "待確認";
 }
 
+function fcnRiskLabel(level: string | null | undefined) {
+  if (level === "critical") return "危險";
+  if (level === "high" || level === "medium") return "注意";
+  if (level === "low") return "安全";
+  return "待確認";
+}
+
+function formatScore(value: number | null | undefined) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "暫無資料";
+  return `${Math.round(value * 100)}%`;
+}
+
+function relatedEvents(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  if (!asset) return [];
+  return events.filter((event) => event.assetId === asset.id || event.relatedAssetIds.includes(asset.id));
+}
+
+function priorityLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  const priority = relatedEvents(asset, events).reduce(
+    (max, event) => Math.max(max, event.priorityScore),
+    0,
+  );
+  return priority > 0 ? String(priority) : "一般";
+}
+
+function themesLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
+  if (!asset) return "待建立";
+  const themes = new Set([
+    ...asset.themes,
+    ...relatedEvents(asset, events).flatMap((event) => event.relatedThemes),
+  ]);
+  return themes.size > 0 ? Array.from(themes).slice(0, 2).join(", ") : "待建立";
+}
+
+function fcnSummariesToPortfolioPositions(summary: FcnPortfolioRiskSummary | null): PositionValuation[] {
+  return (summary?.summaries ?? []).map((item) => ({
+    allocationPercent: summary?.positionCount ? 100 / summary.positionCount : 0,
+    assetClass: "fcn",
+    costBasis: null,
+    currency: "USD",
+    fcnRiskStatus: item.riskLevel === "unavailable" ? "unavailable" : item.riskLevel === "critical" ? "partial" : "pending",
+    id: item.id,
+    marketPrice: null,
+    marketValue: null,
+    name: item.name,
+    nearestKiDistancePercent: item.nearestKiDistancePercent,
+    quantity: null,
+    sourceStatus: item.sourceStatus,
+    symbol: item.worstOfSymbol ?? item.name,
+    unrealizedPnl: null,
+    unrealizedPnlPercent: null,
+    warningMessage: item.warnings[0]?.message,
+    worstOfSymbol: item.worstOfSymbol,
+  }));
+}
+
 export function FcnExperienceWorkspace() {
+  const [intelligenceGeneratedAt] = useState(() => new Date().toISOString());
   const [data, setData] = useState<FcnExperienceData>({ risk: null, schedule: null });
   const mountedRef = useRef(false);
 
@@ -90,6 +157,54 @@ export function FcnExperienceWorkspace() {
   const state = riskState(data.risk);
   const watchCount = (data.risk?.highRiskCount ?? 0) + (data.risk?.unavailablePositionCount ?? 0);
   const highRiskCount = data.risk?.criticalRiskCount ?? 0;
+  const intelligenceGeneratedAtValue = data.risk?.updatedAt ?? intelligenceGeneratedAt;
+  const fcnIntelligencePositions = useMemo(
+    () => fcnSummariesToPortfolioPositions(data.risk),
+    [data.risk],
+  );
+  const assetIntelligence = useMemo(
+    () =>
+      getAssetIntelligence({
+        generatedAt: intelligenceGeneratedAtValue,
+        portfolioPositions: fcnIntelligencePositions,
+      }),
+    [fcnIntelligencePositions, intelligenceGeneratedAtValue],
+  );
+  const monitoringEvents = useMemo(
+    () =>
+      getMonitoringEvents({
+        assets: assetIntelligence,
+        generatedAt: intelligenceGeneratedAtValue,
+      }),
+    [assetIntelligence, intelligenceGeneratedAtValue],
+  );
+  const todayFocus = useMemo(
+    () =>
+      getTodayFocus({
+        assets: assetIntelligence,
+        generatedAt: intelligenceGeneratedAtValue,
+      }),
+    [assetIntelligence, intelligenceGeneratedAtValue],
+  );
+  const notificationPreview = useMemo(
+    () =>
+      getNotificationDeliveryPreview({
+        generatedAt: intelligenceGeneratedAtValue,
+        monitoringEvents,
+      }),
+    [intelligenceGeneratedAtValue, monitoringEvents],
+  );
+  const assetsBySymbol = useMemo(() => {
+    const map = new Map<string, AssetIntelligence>();
+    assetIntelligence.forEach((asset) => {
+      map.set(asset.symbol, asset);
+    });
+    return map;
+  }, [assetIntelligence]);
+  const fcnKiEvents = monitoringEvents.filter((event) => event.eventType === "fcn-ki-risk").length;
+  const observationEvents = monitoringEvents.filter((event) => event.eventType === "fcn-observation").length;
+  const couponEvents = monitoringEvents.filter((event) => event.eventType === "fcn-coupon").length;
+  const relatedThemes = new Set(monitoringEvents.flatMap((event) => event.relatedThemes));
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -142,6 +257,67 @@ export function FcnExperienceWorkspace() {
         />
 
         <WorkspaceProductSection
+          description="重用 Asset Intelligence 與 Monitoring Engine，把 FCN 的 Worst-of、KI、觀察日、配息與相關主題整理成 read-only 摘要。"
+          eyebrow="FCN Intelligence"
+          title="FCN Intelligence 摘要"
+        >
+          <WorkspaceKpiGrid
+            items={[
+              { description: "最接近 KI 或資料狀態最需要留意的 Worst-of。", icon: ShieldAlert, label: "Worst-of", tone: highRiskCount > 0 ? "critical" : watchCount > 0 ? "warning" : "default", value: nearestKi(data.risk) },
+              { description: "Monitoring Engine 產生的 KI risk 事件。", icon: CircleAlert, label: "KI Events", tone: fcnKiEvents > 0 ? "warning" : "default", value: String(fcnKiEvents) },
+              { description: "未來 observation monitoring 事件。", icon: CalendarDays, label: "Observation", value: String(observationEvents) },
+              { description: "配息 monitoring 事件。", icon: WalletCards, label: "Coupon", value: String(couponEvents) },
+              { description: "Editorial / market themes 關聯。", icon: Newspaper, label: "Related Themes", value: String(relatedThemes.size) },
+              { description: "Today Focus 中與 FCN 相關的重點。", icon: Sparkles, label: "Today Focus", value: String(todayFocus.length) },
+            ]}
+          />
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="每檔 FCN 只顯示監控與 coverage 摘要，不提供買賣、持有或目標價建議。"
+          eyebrow="FCN Monitoring"
+          title="每檔 FCN 的監控狀態"
+        >
+          {data.risk?.summaries.length ? (
+            <div className="grid gap-3 lg:grid-cols-2">
+              {data.risk.summaries.slice(0, 8).map((item) => {
+                const asset = assetsBySymbol.get((item.worstOfSymbol ?? item.name).toUpperCase());
+                const eventsForAsset = relatedEvents(asset, monitoringEvents);
+                return (
+                  <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={item.id}>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.name}</p>
+                        <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">
+                          Worst-of：{item.worstOfSymbol ?? "待確認"}
+                        </p>
+                      </div>
+                      <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/72 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        {fcnRiskLabel(item.riskLevel)}
+                      </span>
+                    </div>
+                    <div className="mt-4 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)] sm:grid-cols-2">
+                      <p>KI Risk：{item.nearestKiDistancePercent == null ? "待確認" : `${item.nearestKiDistancePercent.toFixed(1)}%`}</p>
+                      <p>Observation：{item.koReady ? "可觀察 KO" : "持續監控"}</p>
+                      <p>Coupon：{data.schedule?.monthlyCashflows.length ? "有配息排程" : "待建立"}</p>
+                      <p>Editorial Signals：{eventsForAsset.length}</p>
+                      <p>Asset Health：{asset?.health.status === "healthy" ? "穩定" : asset ? "需要留意" : "等待資料"}</p>
+                      <p>Priority：{priorityLabel(asset, monitoringEvents)}</p>
+                      <p>Related Themes：{themesLabel(asset, monitoringEvents)}</p>
+                      <p>Confidence：{formatScore(asset?.quality.confidence)}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              新增 FCN 後，IXAI 會在這裡整理 Worst-of Monitoring、KI Risk、Observation、Coupon 與 Related Monitoring Events。
+            </p>
+          )}
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
           description="優先呈現最接近 KI、Worst-of、KO readiness 與資料不足狀態。"
           eyebrow="Risk Summary"
           title="需要留意的 FCN"
@@ -182,6 +358,20 @@ export function FcnExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceDiagnosticsPanel description="FCN risk source、schedule source、live underlying source、manual overlay source">
+          <WorkspaceProductSection
+            description="FCN diagnostics 整理 Asset / Monitoring / Notification Preview 的 read-only 狀態。"
+            eyebrow="FCN Diagnostics"
+            title="FCN Intelligence 診斷"
+          >
+            <WorkspaceKpiGrid
+              items={[
+                { description: "FCN Asset Intelligence 建立的資產數。", icon: WalletCards, label: "Assets", value: String(assetIntelligence.length) },
+                { description: "FCN 相關 monitoring events。", icon: Bell, label: "Events", value: String(monitoringEvents.length) },
+                { description: "Notification Platform preview 項目。", icon: Sparkles, label: "Preview", value: String(notificationPreview.notifications.length) },
+                { description: "Related theme count。", icon: BarChart3, label: "Themes", value: String(relatedThemes.size) },
+              ]}
+            />
+          </WorkspaceProductSection>
           <LiveFcnUnderlyingStatusCard />
         </WorkspaceDiagnosticsPanel>
       </section>
