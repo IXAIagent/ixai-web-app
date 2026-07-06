@@ -79,12 +79,16 @@ V16 Product Strategy:
 V16A AI Financial Media:
 
 - Priority 1 roadmap.
-- Sprint 1: Editorial Architecture.
+- Sprint 1: Editorial Architecture Foundation.
+  - Source: `docs/V16A_SPRINT_1_EDITORIAL_ARCHITECTURE_FOUNDATION.md`.
+  - Code: `src/lib/editorial/editorial-types.ts`, `editorial-normalization.ts`, `story-ranking.ts`, `topic-ranking.ts`, `narrative-builder.ts`, `editorial-diagnostics.ts`, and `index.ts`.
+  - Contract-first and deterministic only.
 - Sprint 2: Daily Brief 2.0.
 - Sprint 3: Weekly Brief 2.0.
 - Sprint 4: Content Quality Engine.
 - Daily / Weekly cannot depend on user Portfolio.
 - Daily / Weekly are not Workspace free tier.
+- Sprint 1 does not fetch external providers, call AI models, auto-publish scheduler output, deliver notifications, or alter public/admin Brief readback.
 
 V16B AI Monitoring Platform:
 
