@@ -236,15 +236,34 @@ V17 Workspace Intelligence:
 V18 Workspace Product Integration:
 
 - Source: `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
-- Current release: V18.1 Workspace Home Integration.
+- Source: `docs/V18_PORTFOLIO_FCN_INTELLIGENCE_INTEGRATION.md`.
+- Current release: V18.2 Portfolio / FCN Intelligence Integration.
 - Home UI: `components/home/workspace-home-dashboard.tsx`.
+- Portfolio UI: `components/portfolio/portfolio-experience-workspace.tsx`.
+- FCN UI: `components/fcn/fcn-experience-workspace.tsx`.
+- Watchlist UI: `components/watchlist/watchlist-experience-workspace.tsx`.
 - Reused service layer: `src/lib/intelligence/workspace/`.
+- Reused asset layer: `src/lib/intelligence/assets/`.
+- Reused monitoring layer: `src/lib/intelligence/monitoring/`.
+- Reused notification preview layer: `src/lib/intelligence/notifications/`.
 - Home sections:
   - Workspace Intelligence Summary.
   - Today Focus.
   - Risk Highlights.
   - Notification Preview.
   - Collapsed Workspace Intelligence diagnostics.
+- Portfolio sections:
+  - Portfolio Intelligence Summary.
+  - Position Intelligence.
+  - Portfolio Intelligence diagnostics.
+- FCN sections:
+  - FCN Intelligence Summary.
+  - Per-FCN monitoring cards.
+  - FCN Intelligence diagnostics.
+- Watchlist sections:
+  - Watchlist Intelligence Summary.
+  - Per-item monitoring / editorial fields.
+  - Watchlist Intelligence diagnostics.
 - Reused foundations:
   - V16 Editorial Intelligence / Provider diagnostics.
   - V17.1 Asset Intelligence.
