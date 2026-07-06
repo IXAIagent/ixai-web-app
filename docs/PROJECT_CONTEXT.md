@@ -243,6 +243,20 @@ V18.2 reuses Asset Intelligence, Monitoring Events, Today Focus, Notification Pr
 
 Source of truth: `docs/V18_PORTFOLIO_FCN_INTELLIGENCE_INTEGRATION.md`.
 
+V18.3 polishes Workspace UX and Beta readiness across Home, Portfolio, FCN, Watchlist, Daily Brief, Weekly Brief, and Admin Daily Briefs.
+
+It standardizes:
+
+- Health badges: Healthy / Warning / Critical / Unknown.
+- Readiness badges: Green / Yellow / Red.
+- Priority labels: Urgent / High / Normal / Low.
+- Loading, empty, error, fallback, no-coverage, no-data, and provider-unavailable states.
+- Collapsed diagnostics for general users, with developer / Beta details only behind advanced panels or native details.
+
+V18.3 adds shared UI primitives only. It does not add a new engine, service, AI call, notification sending, scheduler, trading, recommendation, billing, DB schema, migration, Copilot Chat, Timeline rewrite, or major navigation rewrite.
+
+Source of truth: `docs/V18_WORKSPACE_UX_BETA_POLISH.md`.
+
 ## B-1. V15.2 Brief Reliability Recovery
 
 V15.2 was the production reliability blocker before V16 implementation.

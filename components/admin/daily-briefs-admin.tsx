@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SocialIntelligencePackStudio } from "@/components/admin/social-intelligence-pack-studio";
+import { WorkspaceStatusBadge } from "@/components/workspace/product";
 import { buildDailyBrief2Snapshot } from "@/src/lib/editorial/daily-brief";
 import { getDrafts } from "@/src/lib/editorial/repository";
 import { isSupabaseClientConfigured } from "@/src/lib/supabase/client";
@@ -1233,6 +1234,15 @@ export function DailyBriefsAdmin() {
                 News Source 是情報來源，IXAI Insight Engine 先抽取事件、訊號、矛盾與觀點，再輸出 Daily / Weekly 與各自 Social Pack。
                 Daily Core 可提供 continuity context，但 Weekly 以週新聞來源、週主題與下週事件為主，不做自動發布。
               </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <WorkspaceStatusBadge variant="beta">Beta</WorkspaceStatusBadge>
+                <WorkspaceStatusBadge variant={dailyBrief2Preview.productionMetadata.health.status === "green" ? "green" : dailyBrief2Preview.productionMetadata.health.status === "red" ? "red" : "yellow"}>
+                  {dailyBrief2Preview.productionMetadata.health.status === "green" ? "Green" : dailyBrief2Preview.productionMetadata.health.status === "red" ? "Red" : "Yellow"}
+                </WorkspaceStatusBadge>
+                <span className="rounded-full border border-white/10 bg-white/[0.045] px-2.5 py-1 text-xs font-semibold text-[rgba(245,240,230,0.64)]">
+                  Last updated: {dailyBrief2Preview.generatedAt}
+                </span>
+              </div>
             </div>
             <div className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.045] p-4 text-sm leading-6 text-[rgba(245,240,230,0.62)] lg:min-w-[300px]">
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">

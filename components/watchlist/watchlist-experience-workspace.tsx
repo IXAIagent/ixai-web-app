@@ -8,8 +8,11 @@ import { WatchlistSummary } from "@/components/watchlist/watchlist-summary";
 import {
   WorkspaceDiagnosticsPanel,
   WorkspaceKpiGrid,
+  WorkspaceLoadingCard,
   WorkspaceProductHero,
   WorkspaceProductSection,
+  WorkspaceStateMessage,
+  WorkspaceStatusBadge,
 } from "@/components/workspace/product";
 import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
 import type { AssetIntelligence } from "@/src/lib/intelligence/assets";
@@ -189,9 +192,9 @@ export function WatchlistExperienceWorkspace() {
                         <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">{item.symbol}</p>
                         <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{item.name}</p>
                       </div>
-                      <span className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                        {item.quoteStatus === "available" ? "有行情" : "待更新"}
-                      </span>
+                      <WorkspaceStatusBadge variant={item.quoteStatus === "available" ? "healthy" : "unknown"}>
+                        {item.quoteStatus === "available" ? "Healthy" : "Unknown"}
+                      </WorkspaceStatusBadge>
                     </div>
                     <p className="mt-4 text-xl font-semibold text-[var(--ixai-forest)]">
                       {formatPrice(item.quote?.quote?.price, item.quote?.quote?.currency)}
@@ -252,9 +255,17 @@ export function WatchlistExperienceWorkspace() {
         </WorkspaceProductSection>
 
         {isLoading ? (
-          <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-sm text-[var(--ixai-forest-soft)]">
-            正在整理 watchlist。缺少資料時會保留安全 placeholder。
-          </p>
+          <WorkspaceLoadingCard
+            body="缺少資料時會保留安全 placeholder，不會顯示交易訊號。"
+            title="正在整理 watchlist"
+          />
+        ) : null}
+
+        {!isLoading && missingQuotes > 0 ? (
+          <WorkspaceStateMessage
+            body={`${missingQuotes} 個關注標的暫時缺少行情資料，Watchlist Intelligence 會以 limited coverage 顯示。`}
+            variant="provider-unavailable"
+          />
         ) : null}
 
         <WorkspaceDiagnosticsPanel description="watchlist persistence/source、market source">

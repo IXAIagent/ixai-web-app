@@ -29,6 +29,8 @@ import {
   WorkspaceKpiGrid,
   WorkspaceProductHero,
   WorkspaceProductSection,
+  WorkspaceStateMessage,
+  WorkspaceStatusBadge,
 } from "@/components/workspace/product";
 import { useTranslation } from "@/src/lib/i18n";
 import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
@@ -69,14 +71,6 @@ function formatTime(value: string | null | undefined) {
     minute: "2-digit",
     month: "2-digit",
   }).format(date);
-}
-
-function healthLabel(asset: AssetIntelligence | null | undefined) {
-  if (!asset) return "等待資料";
-  if (asset.health.status === "healthy") return "穩定";
-  if (asset.health.status === "degraded") return "需要留意";
-  if (asset.health.status === "offline") return "暫無資料";
-  return "待確認";
 }
 
 function relatedEvents(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
@@ -345,9 +339,9 @@ export function PortfolioExperienceWorkspace() {
                         <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">{position.symbol}</p>
                         <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{position.name}</p>
                       </div>
-                      <span className="inline-flex w-fit rounded-full border border-[var(--ixai-border)] bg-white/72 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                        {healthLabel(asset)}
-                      </span>
+                      <WorkspaceStatusBadge variant={asset?.health.status === "healthy" ? "healthy" : asset?.health.status === "degraded" ? "warning" : asset?.health.status === "offline" ? "critical" : "unknown"}>
+                        {asset?.health.status === "healthy" ? "Healthy" : asset?.health.status === "degraded" ? "Warning" : asset?.health.status === "offline" ? "Critical" : "Unknown"}
+                      </WorkspaceStatusBadge>
                     </div>
                     <div className="mt-4 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)] sm:grid-cols-2">
                       <p>監控狀態：{monitoringLabel(asset, monitoringEvents)}</p>
@@ -429,6 +423,13 @@ export function PortfolioExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <RecentInputsPanel />
+
+        {!isLoading && summary?.positionCount && summary.unpricedPositionCount > 0 ? (
+          <WorkspaceStateMessage
+            body={`${summary.unpricedPositionCount} 筆資產缺少價格或成本資料，Portfolio Intelligence 會先以 limited coverage 顯示。`}
+            variant="no-coverage"
+          />
+        ) : null}
 
         <WorkspaceDiagnosticsPanel description="資產資料、估值與更新狀態">
           <WorkspaceProductSection

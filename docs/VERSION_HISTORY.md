@@ -6,6 +6,32 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V18.3 — Workspace UX & Beta Polish
+
+Why:
+
+- V18.1 and V18.2 connected intelligence services to Workspace product pages.
+- Before the next integration phase, Workspace and public Brief surfaces needed consistent Beta, health, readiness, loading, empty, error, and diagnostics presentation.
+
+What Changed:
+
+- Added `docs/V18_WORKSPACE_UX_BETA_POLISH.md`.
+- Added shared product primitives:
+  - `WorkspaceStatusBadge`.
+  - `WorkspaceLoadingCard`.
+  - `WorkspaceLoadingKpi`.
+  - `WorkspaceSkeleton`.
+  - `WorkspaceStateMessage`.
+- Updated Workspace Home, Portfolio, FCN, Watchlist, Daily Brief, Weekly Brief, and Admin Daily Briefs with Beta / readiness / last-updated labels, shared state language, and collapsed diagnostics presentation.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V18.3 is UI polish only.
+- Public Daily / Weekly diagnostics are collapsed behind native details.
+- Workspace diagnostics remain collapsed by default.
+- No new engine, service, AI call, notification sending, scheduler, trading, recommendation, billing, DB schema, migration, Copilot Chat, Timeline rewrite, or major navigation rewrite was added.
+
 ## V18.2 — Portfolio / FCN Intelligence Integration
 
 Why:
