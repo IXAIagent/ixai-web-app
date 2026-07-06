@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V15.2.1 Brief Publish Reliability Hotfix before V16 implementation work continues.
+Current priority is V16A Sprint 1 Editorial Architecture Foundation after V15.2.1 source-level verification.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -40,7 +40,7 @@ Source of truth:
 - `docs/V152_ADMIN_BRIEF_PIPELINE_AUDIT.md`
 - `docs/V1521_BRIEF_PUBLISH_RELIABILITY_HOTFIX.md`
 
-After V15.2.1 production verification, priority returns to V16 implementation readiness under the upgraded product strategy.
+V15.2.1 source-level verification confirms the hotfix is present: Admin Daily / Weekly health derives from persisted rows, draft/publish gaps are visible, Daily publish is durable-aware, Weekly publish health is visible, scheduler remains draft/review only, and Social Pack remains downstream optional. Production should still verify the latest public Daily / Weekly readback after deploy.
 
 V15 Product Experience Redesign and V15.1 Product Polish established the AI Wealth Workspace user experience. V16 now separates the public media habit layer from the personal monitoring layer.
 
@@ -147,7 +147,13 @@ First implementation recommendation:
 V16A Sprint 1 — Editorial Architecture
 ```
 
-Scope should define editorial data model, story model, topic model, narrative model, and quality guardrails for Daily / Weekly. It should not add Workspace monitoring implementation, external provider dependency, AI model calls, scheduler delivery, trading, recommendation, or billing unless explicitly approved.
+Status: implemented as `V16A Sprint 1 — Editorial Architecture Foundation`.
+
+Scope defines editorial domain contracts, source normalization, story ranking, topic ranking, narrative model, fallback/degradation behavior, and editorial diagnostics for Daily / Weekly. It does not add Workspace monitoring implementation, external provider dependency, AI model calls, scheduler delivery, trading, recommendation, or billing.
+
+Source of truth:
+
+- `docs/V16A_SPRINT_1_EDITORIAL_ARCHITECTURE_FOUNDATION.md`
 
 V15 current sequence:
 

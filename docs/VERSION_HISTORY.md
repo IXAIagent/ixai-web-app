@@ -6,6 +6,35 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V16A Sprint 1 — Editorial Architecture Foundation
+
+Why:
+
+- V15.2.1 restored Brief publish reliability controls enough to continue V16A foundation work.
+- V16A needs a provider-neutral editorial architecture before adding new providers, AI calls, scheduler behavior, or public Brief redesign.
+- Daily / Weekly must remain AI Financial Media, not a generic news list and not a Workspace free tier.
+
+What Changed:
+
+- Added `docs/V16A_SPRINT_1_EDITORIAL_ARCHITECTURE_FOUNDATION.md`.
+- Added editorial contracts under `src/lib/editorial`:
+  - `editorial-types.ts`
+  - `editorial-normalization.ts`
+  - `story-ranking.ts`
+  - `topic-ranking.ts`
+  - `narrative-builder.ts`
+  - `editorial-diagnostics.ts`
+  - `index.ts`
+- Added provider-neutral domain types for Story, Topic, Narrative, Source, EditorialBrief, EditorialQualitySignal, and EditorialFailureState.
+- Added deterministic normalization, story ranking, topic ranking, narrative fallback, and diagnostics helpers.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V16A Sprint 1 is pure TypeScript foundation only.
+- No external provider fetch, AI model call, scheduler auto-publish, Telegram / LINE / Email delivery, DB schema, migration, trading, recommendation, billing, or V16B Workspace Monitoring was added.
+- V15.2.1 source-level verification passed: Daily / Weekly health, durable-aware Daily publish, Weekly publish health, draft-only scheduler mode, and optional downstream Social Pack behavior are present.
+
 ## Docs — V16 Provider and Notification Architecture Principles
 
 Why:

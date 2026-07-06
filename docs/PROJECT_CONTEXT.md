@@ -211,7 +211,7 @@ The current IXAI public app is live and deployed on Vercel, with `https://app.ix
 
 ## B-1. V15.2 Brief Reliability Recovery
 
-V15.2 is the active production reliability blocker before V16 implementation continues.
+V15.2 was the production reliability blocker before V16 implementation.
 
 Confirmed production facts:
 
@@ -228,6 +228,22 @@ V15.2.1 hotfix direction:
 - Weekly manual publish remains required and must be visible in health/copy.
 - Scheduler behavior remains review-first; no silent auto-publish is introduced.
 - No V16 implementation, DB schema, migration, AI provider, trading, recommendation, or new external provider work is included.
+
+V15.2.1 source-level verification result:
+
+- Admin Daily / Weekly persisted publish health is present.
+- Latest published, latest draft/review, stale published state, and draft/publish gap are visible through health helpers.
+- Daily manual publish is durable-aware and does not treat Supabase write failure memory fallback as successful public publication.
+- Weekly list/generate/publish responses include health.
+- Scheduler remains draft/review only and does not auto-publish.
+- Social Pack remains downstream optional and does not block core Brief publication.
+
+V16A Sprint 1 status:
+
+- V16A Editorial Architecture Foundation is implemented as contract-first pure TypeScript helpers under `src/lib/editorial`.
+- It adds editorial types, normalization, story ranking, topic ranking, narrative building, fallback/degradation behavior, and diagnostics.
+- It does not add external provider fetches, AI model calls, scheduler auto-publish, Telegram / LINE / Email delivery, DB schema, trading, recommendation, billing, or V16B Workspace Monitoring.
+- Source of truth: `docs/V16A_SPRINT_1_EDITORIAL_ARCHITECTURE_FOUNDATION.md`.
 
 Sources of truth:
 
