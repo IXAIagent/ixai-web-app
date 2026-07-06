@@ -254,6 +254,17 @@ V16A Sprint 2 status:
 - It does not add V16B Workspace Monitoring, external provider fetches, AI model calls, scheduler auto-publish, Telegram / LINE / Email delivery, DB schema, trading, recommendation, billing, target price, rebalance, or buy/sell/hold language.
 - Source of truth: `docs/V16A_SPRINT_2_DAILY_BRIEF_2_FOUNDATION.md`.
 
+V16A-2 status:
+
+- Editorial Intelligence Engine + Weekly Brief Foundation is implemented as a shared deterministic layer for V16A AI Financial Media.
+- It adds theme detection, story relationships, editorial signals, narrative priority, source/topic/narrative/coverage confidence, and coverage diagnostics.
+- Daily Brief 2.0 now includes shared intelligence diagnostics in its snapshot.
+- Weekly Brief 2.0 foundation now produces a deterministic snapshot with weekly review, top themes, important stories, narrative summary, next week radar, risk notes, coverage status, quality signals, fallback state, and disclaimer.
+- Public `/weekly-brief` includes a read-only Weekly Brief 2.0 Foundation Preview without changing existing weekly published readback.
+- Admin `/admin/daily-briefs` shows read-only Daily intelligence diagnostics without changing generate/review/publish behavior.
+- It does not add V16B Workspace Monitoring, external provider fetches, AI model calls, scheduler auto-publish, Telegram / LINE / Email delivery, DB schema, trading, recommendation, billing, target price, rebalance, or buy/sell/hold language.
+- Source of truth: `docs/V16A_2_EDITORIAL_INTELLIGENCE_ENGINE.md`.
+
 Sources of truth:
 
 - `docs/V152_BRIEF_RELIABILITY_RECOVERY.md`

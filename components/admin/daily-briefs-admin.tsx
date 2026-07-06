@@ -1374,6 +1374,12 @@ export function DailyBriefsAdmin() {
               <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
                 Readiness: {dailyBrief2Preview.diagnostics.publicBriefReadiness}
               </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Themes: {dailyBrief2Preview.intelligence.diagnostics.themeCount}
+              </p>
+              <p className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                Signals: {dailyBrief2Preview.intelligence.diagnostics.signalCount}
+              </p>
             </div>
           </div>
           <div className="mt-4 grid gap-3 lg:grid-cols-3">
@@ -1396,6 +1402,15 @@ export function DailyBriefsAdmin() {
             <p>AI dependency: {dailyBrief2Preview.diagnostics.aiDependencyStatus}</p>
             <p>Publication: {dailyBrief2Preview.diagnostics.publicationDependencyStatus}</p>
             <p>Social Pack blocking: {String(dailyBrief2Preview.publicationReadiness.socialPackBlocking)}</p>
+            <p>
+              Narrative confidence:{" "}
+              {Math.round(dailyBrief2Preview.intelligence.confidence.narrativeConfidence * 100)}%
+            </p>
+            <p>
+              Coverage confidence:{" "}
+              {Math.round(dailyBrief2Preview.intelligence.confidence.coverageConfidence * 100)}%
+            </p>
+            <p>Relationships: {dailyBrief2Preview.intelligence.relationships.length}</p>
           </div>
         </section>
 

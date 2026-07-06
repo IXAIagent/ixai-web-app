@@ -4,6 +4,7 @@ import {
 import {
   normalizeEditorialStories,
 } from "@/src/lib/editorial/editorial-normalization";
+import { buildEditorialIntelligence } from "@/src/lib/editorial/intelligence";
 import {
   buildRuleBasedEditorialBrief,
 } from "@/src/lib/editorial/narrative-builder";
@@ -150,6 +151,11 @@ export function buildDailyBrief2Snapshot(input: DailyBrief2BuildInput = {}): Dai
   const normalizedStories = normalizeEditorialStories(items);
   const rankedStories = rankEditorialStories(normalizedStories);
   const rankedTopics = rankEditorialTopics(rankedStories);
+  const intelligence = buildEditorialIntelligence({
+    generatedAt,
+    stories: rankedStories,
+    topics: rankedTopics,
+  });
   const editorialBrief = buildRuleBasedEditorialBrief({
     id: `daily-brief-2-${briefDate}`,
     items,
@@ -195,6 +201,7 @@ export function buildDailyBrief2Snapshot(input: DailyBrief2BuildInput = {}): Dai
     },
     fallbackState,
     generatedAt,
+    intelligence,
     keyNarratives: buildKeyNarratives(rankedTopics),
     marketPulse: buildMarketPulse(rankedStories, rankedTopics),
     publicationReadiness,

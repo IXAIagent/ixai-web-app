@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock3 } from "lucide-react";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
+import { buildWeeklyBrief2Snapshot } from "@/src/lib/editorial/weekly-brief";
 import { getAllWeeklyBriefsAsync, getLatestWeeklyBriefAsync } from "@/src/lib/weeklyBriefs";
 
 export const metadata = buildPublicMetadata({
@@ -25,6 +26,7 @@ export const metadata = buildPublicMetadata({
 export default async function WeeklyBriefArchivePage() {
   const latestBrief = await getLatestWeeklyBriefAsync();
   const allBriefs = await getAllWeeklyBriefsAsync();
+  const preview = buildWeeklyBrief2Snapshot();
 
   if (!latestBrief) {
     return (
@@ -57,6 +59,74 @@ export default async function WeeklyBriefArchivePage() {
           以更低頻、結構化的方式回顧美股、台股、AI 科技、利率、Crypto 與下週重大事件，
           不是新聞列表，而是市場研究摘要。
         </p>
+      </section>
+
+      <section className="rounded-lg border border-[rgba(176,141,87,0.28)] bg-[rgba(255,250,240,0.82)] p-5 shadow-[0_18px_56px_rgba(9,41,31,0.08)] sm:p-6">
+        <div className="grid gap-5 lg:grid-cols-[1fr_18rem]">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
+              Weekly Brief 2.0 Foundation Preview / {preview.weekRange.label}
+            </p>
+            <h2 className="mt-2 text-xl font-semibold leading-8 text-[var(--ixai-forest)]">
+              {preview.title}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--ixai-ink-muted)]">
+              {preview.weeklyReview}
+            </p>
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              {preview.nextWeekRadar.slice(0, 3).map((item) => (
+                <article
+                  className="rounded-lg border border-[rgba(176,141,87,0.22)] bg-white/55 p-4"
+                  key={item.focus}
+                >
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+                    Next week radar
+                  </p>
+                  <h3 className="mt-2 text-sm font-semibold leading-6 text-[var(--ixai-forest)]">
+                    {item.focus}
+                  </h3>
+                  <p className="mt-2 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+                    {item.whyItMatters}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <aside className="rounded-lg border border-[rgba(9,41,31,0.1)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
+            <p className="font-mono uppercase tracking-[0.16em] text-[var(--ixai-gold)]">
+              Intelligence diagnostics
+            </p>
+            <dl className="mt-3 grid gap-2">
+              <div className="flex justify-between gap-3">
+                <dt>Themes</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.diagnostics.themeCount}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Signals</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.diagnostics.signalCount}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Relationships</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {preview.diagnostics.relationshipCount}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>Narrative confidence</dt>
+                <dd className="font-semibold text-[var(--ixai-forest)]">
+                  {Math.round(preview.diagnostics.narrativeConfidence * 100)}%
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-3 border-t border-[rgba(9,41,31,0.08)] pt-3">
+              {preview.disclaimer}
+            </p>
+          </aside>
+        </div>
       </section>
 
       <section className="rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
