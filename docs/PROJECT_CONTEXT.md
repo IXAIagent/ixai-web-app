@@ -209,6 +209,30 @@ This origin matters because IXAI's product center is not "content marketing" or 
 
 The current IXAI public app is live and deployed on Vercel, with `https://app.ixuan.ai` as the production public domain.
 
+## B-0. V18 Workspace Product Integration
+
+V18 is the current Workspace product integration phase.
+
+V16 and V17 created the service/domain foundations:
+
+- V16 Editorial Intelligence and provider diagnostics.
+- V17.1 Asset Intelligence.
+- V17.2 Monitoring Engine.
+- V17.3 Notification Platform.
+- V17.4 Workspace Intelligence.
+
+V18 connects those foundations to Workspace UI as read-only product surfaces. It must not create duplicate engines, notification delivery, trading actions, recommendations, schedulers, AI model calls, database schema, or migrations.
+
+V18.1 connects Workspace Intelligence to `/my-ixai/home` through:
+
+- Workspace Intelligence Summary.
+- Today Focus.
+- Risk Highlights.
+- Notification Preview.
+- Collapsed Workspace Intelligence diagnostics.
+
+Source of truth: `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
+
 ## B-1. V15.2 Brief Reliability Recovery
 
 V15.2 was the production reliability blocker before V16 implementation.

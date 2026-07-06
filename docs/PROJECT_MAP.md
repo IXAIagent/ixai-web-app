@@ -232,6 +232,26 @@ V17 Workspace Intelligence:
   - `getWorkspaceNotificationPreview()`
   - `getWorkspaceDiagnostics()`
 - Service-only; no UI, API route, Telegram, LINE, Email, Push, AI call, Scheduler, Trading, Recommendation, Billing, Copilot Chat, Timeline rewrite, Database Schema, Migration, new Monitoring Engine, or new Editorial Engine.
+
+V18 Workspace Product Integration:
+
+- Source: `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
+- Current release: V18.1 Workspace Home Integration.
+- Home UI: `components/home/workspace-home-dashboard.tsx`.
+- Reused service layer: `src/lib/intelligence/workspace/`.
+- Home sections:
+  - Workspace Intelligence Summary.
+  - Today Focus.
+  - Risk Highlights.
+  - Notification Preview.
+  - Collapsed Workspace Intelligence diagnostics.
+- Reused foundations:
+  - V16 Editorial Intelligence / Provider diagnostics.
+  - V17.1 Asset Intelligence.
+  - V17.2 Monitoring Engine / Today Focus.
+  - V17.3 Notification Platform preview.
+  - V17.4 Workspace Intelligence.
+- Product integration only; no new engine, notification delivery, Telegram, LINE, Email, Push, Scheduler, AI call, Trading, Recommendation, Billing, Copilot Chat, Timeline rewrite, Database Schema, or Migration.
 - Channel Router architecture: AI Monitoring Engine -> Notification Engine -> Channel Router -> Telegram / LINE / Email / In-App / Browser Push / Mobile Push.
 - Event matrix required before implementation: FCN KI distance, observation, coupon, earnings, price moves, crypto volatility, macro events, and news relevance.
 - Priority 2 roadmap after V16A foundation.

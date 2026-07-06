@@ -41,6 +41,8 @@ import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/po
 import type { PortfolioValuationResult } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
 import { getWorkspaceTimelineSummary } from "@/src/lib/workspace/timeline";
 import type { WorkspaceTimelineEvent, WorkspaceTimelineSummary } from "@/src/lib/workspace/timeline";
+import { getWorkspaceIntelligence } from "@/src/lib/intelligence/workspace";
+import type { WorkspaceIntelligenceResult } from "@/src/lib/intelligence/workspace";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 type HomeData = {
@@ -146,6 +148,32 @@ function statusLabel(status: string | null | undefined) {
       return "使用備用資料";
     case "unavailable":
       return "暫無資料";
+    default:
+      return "觀察中";
+  }
+}
+
+function readinessLabel(level: string | null | undefined) {
+  switch (level) {
+    case "green":
+      return "就緒";
+    case "yellow":
+      return "需留意";
+    case "red":
+      return "需處理";
+    default:
+      return "觀察中";
+  }
+}
+
+function healthLabel(health: string | null | undefined) {
+  switch (health) {
+    case "healthy":
+      return "穩定";
+    case "degraded":
+      return "部分資料需留意";
+    case "offline":
+      return "需處理";
     default:
       return "觀察中";
   }
@@ -379,6 +407,197 @@ function MorningBriefSummaryCard({
           ]}
         />
       </div>
+    </WorkspaceProductSection>
+  );
+}
+
+function WorkspaceIntelligenceSummarySection({
+  intelligence,
+}: {
+  intelligence: WorkspaceIntelligenceResult;
+}) {
+  const summary = intelligence.summary;
+
+  return (
+    <WorkspaceProductSection
+      description="V18 先把底層 Intelligence Layer 接成 read-only 摘要，讓首頁知道 Workspace 目前掌握了什麼。"
+      eyebrow="Workspace Intelligence"
+      title="AI 已整理好的 Workspace 狀態"
+    >
+      <WorkspaceKpiGrid
+        items={[
+          {
+            description: "綜合資產、監控、通知與資料來源狀態。",
+            icon: ShieldCheck,
+            label: "Overall Health",
+            tone: summary.overallHealth === "healthy" ? "success" : summary.overallHealth === "offline" ? "critical" : "warning",
+            value: healthLabel(summary.overallHealth),
+          },
+          {
+            description: summary.overallReadiness.nextActions[0] ?? "維持 read-only preview。",
+            icon: Sparkles,
+            label: "Readiness",
+            tone: summary.overallReadiness.level === "green" ? "success" : summary.overallReadiness.level === "red" ? "critical" : "warning",
+            value: readinessLabel(summary.overallReadiness.level),
+          },
+          {
+            description: "Asset Intelligence 目前可整理的資產數。",
+            icon: WalletCards,
+            label: "Assets",
+            value: String(summary.assetSummary.assetCount),
+          },
+          {
+            description: "Monitoring Engine 產生的 read-only 事件數。",
+            icon: Bell,
+            label: "Monitoring Events",
+            value: String(summary.monitoringSummary.events),
+          },
+        ]}
+      />
+      <div className="mt-4 grid gap-3 lg:grid-cols-3">
+        <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+            Notification Preview
+          </p>
+          <p className="mt-2 text-2xl font-semibold text-[var(--ixai-forest)]">
+            {summary.notificationSummary.pending}
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            pending preview items. No notification is sent from Home.
+          </p>
+        </article>
+        <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+            Editorial / Provider
+          </p>
+          <p className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
+            {summary.providerSummary.sourceStatus}
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            Provider readiness: {summary.providerSummary.readiness}. Editorial quality: {Math.round(summary.editorialSummary.qualityScore * 100)}%.
+          </p>
+        </article>
+        <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ixai-gold)]">
+            Last Updated
+          </p>
+          <p className="mt-2 text-lg font-semibold text-[var(--ixai-forest)]">
+            {formatTime(summary.lastUpdated)}
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            Coverage {Math.round(summary.coverage * 100)}% · Quality {Math.round(summary.quality * 100)}%
+          </p>
+        </article>
+      </div>
+    </WorkspaceProductSection>
+  );
+}
+
+function WorkspaceTodayFocusSection({
+  intelligence,
+}: {
+  intelligence: WorkspaceIntelligenceResult;
+}) {
+  const focus = intelligence.todayFocus.slice(0, 3);
+
+  return (
+    <WorkspaceProductSection
+      description="Today Focus 直接重用 Monitoring Engine，Home 只負責整理成使用者可讀的三件事。"
+      eyebrow="Today Focus"
+      title="今天 AI 建議先看這些"
+    >
+      <div className="grid gap-3 lg:grid-cols-3">
+        {focus.length > 0 ? (
+          focus.map((item) => (
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={item.title}>
+              <p className="text-sm font-semibold leading-6 text-[var(--ixai-forest)]">{item.title}</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.summary}</p>
+              <p className="mt-3 rounded-lg border border-[var(--ixai-border)] bg-white/60 p-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+                為什麼重要：{item.whyItMatters}
+              </p>
+              <p className="mt-3 text-xs font-semibold text-[var(--ixai-forest)]">
+                下一步：{item.nextMonitorAction}
+              </p>
+              <p className="mt-2 text-xs text-[var(--ixai-forest-soft)]">
+                Affected assets: {item.affectedAssets.length}
+              </p>
+            </article>
+          ))
+        ) : (
+          <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)] lg:col-span-3">
+            目前沒有需要排進 Today Focus 的事件。新增資產或資料更新後，Monitoring Engine 會提供 read-only 重點。
+          </p>
+        )}
+      </div>
+    </WorkspaceProductSection>
+  );
+}
+
+function WorkspaceRiskHighlightsSection({
+  intelligence,
+}: {
+  intelligence: WorkspaceIntelligenceResult;
+}) {
+  const risk = intelligence.riskSummary;
+
+  return (
+    <WorkspaceProductSection
+      description="Risk Highlights 只整理需要留意的監控事件，不提供買賣或持有建議。"
+      eyebrow="Risk Highlights"
+      title="Workspace 風險重點"
+    >
+      <WorkspaceKpiGrid
+        items={[
+          { description: "需要優先處理的監控事件。", icon: CircleAlert, label: "Critical", tone: risk.critical > 0 ? "critical" : "default", value: String(risk.critical) },
+          { description: "今天值得留意的監控事件。", icon: ShieldAlert, label: "Warning", tone: risk.warning > 0 ? "warning" : "default", value: String(risk.warning) },
+          { description: "目前資料狀態健康的資產數。", icon: ShieldCheck, label: "Healthy", tone: "success", value: String(risk.healthy) },
+          { description: "受影響的資產 / FCN 關聯。", icon: BarChart3, label: "Affected", value: `${risk.affectedAssets.length}/${risk.affectedFcns.length}` },
+        ]}
+      />
+      <div className="mt-4 grid gap-2">
+        {risk.topRisks.length > 0 ? (
+          risk.topRisks.slice(0, 3).map((event) => (
+            <article className={`rounded-lg border p-3 ${severityTone(event.severity)}`} key={event.id}>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <p className="text-sm font-semibold">{event.title}</p>
+                <span className="inline-flex w-fit rounded-full border border-current/20 bg-white/42 px-2.5 py-1 text-xs font-semibold">
+                  {event.priorityScore}
+                </span>
+              </div>
+              <p className="mt-2 text-sm leading-6 opacity-80">{event.whyItMatters}</p>
+            </article>
+          ))
+        ) : (
+          <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            目前沒有 critical / warning 監控事件。
+          </p>
+        )}
+      </div>
+    </WorkspaceProductSection>
+  );
+}
+
+function WorkspaceNotificationPreviewSection({
+  intelligence,
+}: {
+  intelligence: WorkspaceIntelligenceResult;
+}) {
+  const preview = intelligence.notificationPreview;
+
+  return (
+    <WorkspaceProductSection
+      description="Notification Platform 目前只做 preview 與 routing diagnostics，首頁不會發送 Telegram、LINE、Email 或 Push。"
+      eyebrow="Notification Preview"
+      title="通知預覽"
+    >
+      <WorkspaceKpiGrid
+        items={[
+          { description: "最高優先級 preview。", icon: Bell, label: "Urgent", tone: preview.urgent > 0 ? "critical" : "default", value: String(preview.urgent) },
+          { description: "高優先級 preview。", icon: ShieldAlert, label: "High", tone: preview.high > 0 ? "warning" : "default", value: String(preview.high) },
+          { description: "一般提醒 preview。", icon: MessageSquareText, label: "Normal", value: String(preview.normal) },
+          { description: "被 cooldown 或去重壓制。", icon: Eye, label: "Suppressed / Pending", value: `${preview.suppressed}/${preview.pending}` },
+        ]}
+      />
     </WorkspaceProductSection>
   );
 }
@@ -630,9 +849,39 @@ function RecentActivity({ events }: { events: WorkspaceTimelineEvent[] }) {
   );
 }
 
-function DiagnosticsPanel() {
+function WorkspaceIntelligenceDiagnostics({
+  intelligence,
+}: {
+  intelligence: WorkspaceIntelligenceResult;
+}) {
+  const diagnostics = intelligence.diagnostics;
+
+  return (
+    <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+      <p className="text-sm font-semibold text-[var(--ixai-forest)]">Workspace Intelligence Diagnostics</p>
+      <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <p>Assets: {diagnostics.assetDiagnostics.assetCount} total · {diagnostics.assetDiagnostics.warningAssets} warning · {diagnostics.assetDiagnostics.offlineAssets} offline</p>
+        <p>Monitoring: {diagnostics.monitoringDiagnostics.eventCount} events · {diagnostics.monitoringDiagnostics.criticalCount} critical · {diagnostics.monitoringDiagnostics.warningCount} warning</p>
+        <p>Editorial: coverage {Math.round(diagnostics.editorialDiagnostics.coverageScore * 100)}% · quality {Math.round(diagnostics.editorialDiagnostics.qualityScore * 100)}%</p>
+        <p>Notifications: {diagnostics.notificationDiagnostics.notificationCount} preview · {diagnostics.notificationDiagnostics.suppressedCount} suppressed</p>
+        <p>Readiness: {readinessLabel(diagnostics.workspaceReadiness.level)}</p>
+        <p>Provider: {diagnostics.providerDiagnostics.sourceStatus} · {diagnostics.providerDiagnostics.readiness}</p>
+      </div>
+      {[...diagnostics.workspaceReadiness.blockingIssues, ...diagnostics.workspaceReadiness.warningIssues].length > 0 ? (
+        <ul className="mt-3 grid gap-1 border-t border-[var(--ixai-border)] pt-3">
+          {[...diagnostics.workspaceReadiness.blockingIssues, ...diagnostics.workspaceReadiness.warningIssues].slice(0, 4).map((issue) => (
+            <li key={issue}>· {issue}</li>
+          ))}
+        </ul>
+      ) : null}
+    </article>
+  );
+}
+
+function DiagnosticsPanel({ intelligence }: { intelligence: WorkspaceIntelligenceResult }) {
   return (
     <WorkspaceDiagnosticsPanel>
+      <WorkspaceIntelligenceDiagnostics intelligence={intelligence} />
       <LiveMarketDataStatus autoLoad={false} compact />
       <WorkspaceHealthSummary />
       <I18nFoundationStatusCard />
@@ -643,6 +892,7 @@ function DiagnosticsPanel() {
 
 export function WorkspaceHomeDashboard() {
   const [today] = useState(() => formatDate(new Date()));
+  const [workspaceGeneratedAt] = useState(() => new Date().toISOString());
   const [homeData, setHomeData] = useState<HomeData>(defaultHomeData);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
@@ -679,6 +929,14 @@ export function WorkspaceHomeDashboard() {
   }, []);
 
   const recentEvents = useMemo(() => sortTimelineEvents(homeData.timeline), [homeData.timeline]);
+  const workspaceIntelligence = useMemo(
+    () =>
+      getWorkspaceIntelligence({
+        generatedAt: homeData.portfolio?.summary.updatedAt ?? homeData.timeline?.generatedAt ?? workspaceGeneratedAt,
+        portfolioPositions: homeData.portfolio?.positions ?? [],
+      }),
+    [homeData.portfolio, homeData.timeline, workspaceGeneratedAt],
+  );
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
@@ -697,6 +955,10 @@ export function WorkspaceHomeDashboard() {
         updatedAt={homeData.portfolio?.summary.updatedAt ?? homeData.timeline?.generatedAt}
       />
 
+      <WorkspaceIntelligenceSummarySection intelligence={workspaceIntelligence} />
+      <WorkspaceTodayFocusSection intelligence={workspaceIntelligence} />
+      <WorkspaceRiskHighlightsSection intelligence={workspaceIntelligence} />
+      <WorkspaceNotificationPreviewSection intelligence={workspaceIntelligence} />
       <PortfolioSnapshot portfolio={homeData.portfolio} />
       <TodaysAlerts alerts={homeData.alerts} fcnRisk={homeData.fcnRisk} />
       <MarketSnapshot updatedAt={homeData.portfolio?.summary.updatedAt ?? homeData.timeline?.generatedAt} />
@@ -709,7 +971,7 @@ export function WorkspaceHomeDashboard() {
         </p>
       ) : null}
 
-      <DiagnosticsPanel />
+      <DiagnosticsPanel intelligence={workspaceIntelligence} />
     </div>
   );
 }
