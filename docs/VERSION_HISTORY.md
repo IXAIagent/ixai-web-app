@@ -6,6 +6,26 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V16.9 — Editorial Beta Validation
+
+Why:
+
+- PR #108 completed V16A AI Financial Media mainline through the Production Editorial System.
+- Before entering Beta, Daily / Weekly / Admin / Provider / Fallback / Production Editorial readiness needed a release-gate report and repeatable QA helper.
+
+What Changed:
+
+- Added `docs/V169_EDITORIAL_BETA_VALIDATION.md`.
+- Added `scripts/validate-editorial-beta.mjs`.
+- Added `npm run qa:editorial-beta`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- Beta readiness verdict is Conditional Go for Beta preview pending deployed production public readback and authenticated admin verification.
+- Validation checks route render safety, provider diagnostics readiness, fallback source contracts, no direct provider response leakage, no AI dependency, and no scheduler auto-publish dependency.
+- No new provider, AI call, scheduler auto-publish, notification delivery, DB schema, migration, V16B Workspace Monitoring, trading, recommendation, billing, buy/sell/hold, target price, or rebalance wording was added.
+
 ## V16A-5 — Production Editorial System
 
 Why:

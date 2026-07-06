@@ -116,6 +116,12 @@ V16A AI Financial Media:
   - Admin production console: `components/admin/daily-briefs-admin.tsx`.
   - Public simplified readiness: `app/daily-brief/page.tsx`, `app/weekly-brief/page.tsx`.
   - Readiness / diagnostics only; no DB schema, migration, auto-publish, notification delivery, AI call, trading, recommendation, billing, or V16B Workspace Monitoring.
+- V16.9: Editorial Beta Validation.
+  - Source: `docs/V169_EDITORIAL_BETA_VALIDATION.md`.
+  - QA helper: `scripts/validate-editorial-beta.mjs`.
+  - Package script: `npm run qa:editorial-beta`.
+  - Validates public Daily / Weekly render safety, Admin Daily route safety, provider diagnostics, fallback pipeline, source-contract boundaries, no AI dependency, no auto-publish dependency, and no direct provider payload leaks.
+  - Release-gate only; no new provider, AI call, scheduler publish, notification delivery, DB migration, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Next V16A track: Content Quality Engine / Editorial Memory.
 - Daily / Weekly cannot depend on user Portfolio.
 - Daily / Weekly are not Workspace free tier.

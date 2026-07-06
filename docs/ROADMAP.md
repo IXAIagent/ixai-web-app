@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V16A-5 Production Editorial System after V16A-4 Real Editorial Data MVP merged.
+Current priority is V16.9 Editorial Beta Validation after V16A-5 Production Editorial System merged.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 
@@ -206,6 +206,16 @@ V16A-5 — Production Editorial System:
 - Public Daily / Weekly show simplified production health and publish guard status.
 - Does not add DB schema, migration, auto-publish, Telegram, LINE, Email, Push, OpenAI, Claude, Gemini, AI call, trading, recommendation, billing, or V16B Workspace Monitoring.
 - Source of truth: `docs/V16A_5_PRODUCTION_EDITORIAL_SYSTEM.md`.
+
+V16.9 — Editorial Beta Validation:
+
+- Status: implemented as release-gate QA and documentation.
+- Adds the Beta validation report for Daily Brief, Weekly Brief, Admin Daily Briefs, provider health, cache, fallback, coverage / quality, mobile QA, known issues, and Go / No-Go checklist.
+- Adds `npm run qa:editorial-beta` through `scripts/validate-editorial-beta.mjs`.
+- The validation helper checks public Daily / Weekly route rendering, Admin Daily route rendering, provider diagnostics readiness, fallback path presence, no direct provider response leaks to UI, no AI dependency, and no scheduler auto-publish dependency.
+- Verdict: Conditional Go for Beta preview pending deployed production admin and public readback verification.
+- Does not add new providers, AI calls, scheduler auto-publish, notification delivery, DB schema, migration, trading, recommendation, billing, or V16B Workspace Monitoring.
+- Source of truth: `docs/V169_EDITORIAL_BETA_VALIDATION.md`.
 
 V15 current sequence:
 
