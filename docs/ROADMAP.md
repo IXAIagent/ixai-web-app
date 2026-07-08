@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V18.3 Workspace UX & Beta Polish after V18.2 Portfolio / FCN Intelligence Integration merged.
+Current priority is V18.4 End-to-End Beta Validation after V18.3 Workspace UX & Beta Polish merged.
 
 V18 starts the product integration phase. V16 and V17 created the service/domain foundations. V18 connects those read-only foundations into Workspace UI without creating new engines, notification delivery, trading actions, recommendations, schedulers, AI model calls, database schema, or migrations.
 
@@ -59,6 +59,16 @@ V18.3 — Workspace UX & Beta Polish:
 - Keeps diagnostics collapsed by default for general users and developer / Beta details behind advanced panels or native details.
 - Does not add engines, services, AI calls, notification delivery, scheduler behavior, trading, recommendation, billing, DB schema, migration, Copilot Chat, Timeline rewrite, or major navigation changes.
 - Source of truth: `docs/V18_WORKSPACE_UX_BETA_POLISH.md`.
+
+V18.4 — End-to-End Beta Validation:
+
+- Status: implemented as validation / QA / documentation.
+- Validates Workspace Home, Portfolio, FCN, Watchlist, Daily Brief, Weekly Brief, and Admin Daily Briefs.
+- Confirms the intended data flow: Editorial -> Asset Intelligence -> Monitoring Engine -> Notification Preview -> Workspace Intelligence -> Workspace UI.
+- Runs engineering validation, mobile QA, and editorial beta QA.
+- Updates editorial beta QA to match V18.3 collapsed diagnostics UX.
+- Verdict: Go for invite-only Beta preview after deployment verification and authenticated production Workspace visual QA.
+- Source of truth: `docs/V18_END_TO_END_BETA_VALIDATION.md`.
 
 V15.2 found that Daily / Weekly Brief public output had not advanced normally after 2026-06-29. V15.2.1 restores the publish pipeline control layer by making Admin Daily / Weekly health derive from persisted rows, surfacing stale published state, surfacing draft/publish gaps, and making Daily publish durable-aware. Scheduler still creates draft/review material only; manual publish remains required. Social Pack remains downstream optional.
 

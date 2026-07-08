@@ -238,7 +238,8 @@ V18 Workspace Product Integration:
 - Source: `docs/V18_WORKSPACE_HOME_INTEGRATION.md`.
 - Source: `docs/V18_PORTFOLIO_FCN_INTELLIGENCE_INTEGRATION.md`.
 - Source: `docs/V18_WORKSPACE_UX_BETA_POLISH.md`.
-- Current release: V18.3 Workspace UX & Beta Polish.
+- Source: `docs/V18_END_TO_END_BETA_VALIDATION.md`.
+- Current release: V18.4 End-to-End Beta Validation.
 - Home UI: `components/home/workspace-home-dashboard.tsx`.
 - Portfolio UI: `components/portfolio/portfolio-experience-workspace.tsx`.
 - FCN UI: `components/fcn/fcn-experience-workspace.tsx`.
@@ -277,6 +278,11 @@ V18 Workspace Product Integration:
   - `app/daily-brief/page.tsx`.
   - `app/weekly-brief/page.tsx`.
   - `components/admin/daily-briefs-admin.tsx`.
+- V18.4 validation helper update:
+  - `scripts/validate-editorial-beta.mjs`.
+  - Aligns editorial beta QA with V18.3 collapsed diagnostics / Beta readiness UX.
+- V18.4 validated flow:
+  - Editorial -> Asset Intelligence -> Monitoring Engine -> Notification Preview -> Workspace Intelligence -> Workspace UI.
 - Reused foundations:
   - V16 Editorial Intelligence / Provider diagnostics.
   - V17.1 Asset Intelligence.
