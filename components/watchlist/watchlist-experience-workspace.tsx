@@ -297,7 +297,7 @@ export function WatchlistExperienceWorkspace() {
           />
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="watchlist storage, market data availability, diagnostics">
+        <WorkspaceDiagnosticsPanel description="watchlist completeness and advanced checks">
           <WatchlistSummary />
           <WorkspaceKpiGrid
             items={[

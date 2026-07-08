@@ -4,7 +4,7 @@ import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 export const metadata = buildPublicMetadata({
   canonical: "/my-ixai/home",
   description:
-    "IXAI Workspace Home 是登入後主入口，整理 Portfolio、Risk、FCN、Intelligence 與 Settings。",
+    "IXAI Workspace Home 整理今日資產、風險、市場重點與下一步行動。",
   title: "Home | 我的 IXAI",
 });
 

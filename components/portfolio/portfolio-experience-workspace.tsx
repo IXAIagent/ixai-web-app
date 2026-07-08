@@ -409,7 +409,7 @@ export function PortfolioExperienceWorkspace() {
           />
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="asset data, valuation details, update status">
+        <WorkspaceDiagnosticsPanel description="asset data completeness and advanced checks">
           <PortfolioTruthSummary />
           <PortfolioPersistenceSummary />
           <PortfolioValuationSummary />

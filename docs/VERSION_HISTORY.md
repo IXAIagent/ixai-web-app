@@ -6,6 +6,27 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V19 Sprint D — Workspace Final Polish
+
+Why:
+
+- After Sprint C, the main Workspace surfaces needed one final consistency pass for hero hierarchy, cards, loading, empty states, error language, mobile-friendly spacing, and Advanced placement.
+
+What Changed:
+
+- Standardized shared Workspace product hero spacing, side-card padding, KPI wrapping, and loading / state-message language.
+- Polished Portfolio, FCN, Markets, Risk, Timeline, Morning Brief, Notifications, Intelligence, and Copilot copy so first-screen content uses user language.
+- Kept provider, runtime, cache, readback, diagnostics, engine status, placeholders, and technical details in Advanced / 進階資訊.
+- Added `docs/V19D_WORKSPACE_FINAL_POLISH.md`.
+- Updated `ROADMAP` and `PROJECT_CONTEXT`.
+
+Key Decisions:
+
+- Every Workspace page follows primary cards, secondary cards, then collapsed Advanced.
+- Empty states should explain what will appear later and what the user can do next.
+- Error states should describe unavailable or incomplete user-facing information, not provider/fetch/runtime internals.
+- No API, DB, auth, business logic, market provider, scheduler, AI model, FCN engine, risk engine, trading, recommendation, notification delivery, or billing behavior was changed.
+
 ## V19 Sprint C — Intelligence & Copilot Redesign
 
 Why:

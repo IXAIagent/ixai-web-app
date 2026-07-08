@@ -71,6 +71,10 @@ V19 implementation status:
 - V19 Sprint C redesigns Intelligence and Copilot:
   - Intelligence = what today's market means for my portfolio.
   - Copilot = ask questions.
+- V19 Sprint D completes Workspace final polish:
+  - Shared hero, card, loading, empty, error, and Advanced patterns are aligned.
+  - Engineering language stays below the primary product layer.
+  - Diagnostics remain collapsed by default.
 - These sprints are UX / page hierarchy only. Do not infer any API, DB, auth, engine, provider, scheduler, delivery, AI, valuation, FCN, trading, recommendation, or billing change from them.
 
 The core product layers are:

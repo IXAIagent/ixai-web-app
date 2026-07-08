@@ -196,11 +196,11 @@ export function IntelligenceExperienceWorkspace() {
               </p>
               <p className="mt-3 text-lg font-semibold leading-7 text-white">{insights[0]}</p>
               <p className="mt-3 text-sm leading-6 text-white/68">
-                Intelligence explains market meaning and portfolio impact. Engine, provider, and raw readback details stay in Advanced.
+                Intelligence explains market meaning, portfolio impact, and the next items worth monitoring.
               </p>
             </>
           }
-          summary="Intelligence turns market movement into portfolio context. It does not expose engine cards or provider details in the first layer."
+          summary="Intelligence turns market movement into portfolio context before showing deeper supporting details."
           title="Today’s market, translated for your portfolio."
         />
 
@@ -262,7 +262,7 @@ export function IntelligenceExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="A short explain-only summary remains available without turning this page into diagnostics."
+          description="A short explain-only summary remains available without turning this page into technical detail."
           eyebrow="Summary"
           title="IXAI 摘要"
         >
@@ -273,7 +273,7 @@ export function IntelligenceExperienceWorkspace() {
           <EmptyCard>正在整理今日市場與投資組合脈絡。可用資料會先顯示，缺少資料會以清楚文字說明。</EmptyCard>
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="engine cards, raw readback, provider and diagnostics">
+        <WorkspaceDiagnosticsPanel description="supporting cards and advanced checks">
           <IntelligenceSummary />
           <IntelligenceV2Summary />
           <WorkspaceMarketStatus contextLabel="Intelligence" />

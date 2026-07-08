@@ -137,14 +137,14 @@ export function TimelineExperienceWorkspace() {
                 What is happening next?
               </p>
               <p className="mt-3 text-2xl font-semibold text-white">
-                {nextEvent ? nextEvent.title : "No upcoming events."}
+                {nextEvent ? nextEvent.title : "No upcoming events"}
               </p>
               <p className="mt-3 text-sm leading-6 text-white/68">
-                Timeline is for real dated events only. System, provider, and quote issues live in Advanced.
+                Timeline shows dated items that help you plan the next thing to watch.
               </p>
             </>
           }
-          summary="Timeline answers one question: what is happening next? It is not a system log, provider log, or runtime log."
+          summary="Timeline answers one question: what is happening next? It keeps dated portfolio, FCN, market, and reminder items in one place."
           title="Timeline: next events in order."
         />
 
@@ -173,7 +173,7 @@ export function TimelineExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="A compact view of event types. Full technical source details stay in Advanced."
+          description="A compact view of event types so the next steps are easy to scan."
           eyebrow="Event Types"
           title="What kind of events are coming?"
         >
@@ -189,13 +189,13 @@ export function TimelineExperienceWorkspace() {
 
         {allEvents.length === 0 ? (
           <WorkspaceEmptyState
-            body="No upcoming events. Add FCN positions, reminders, or watched assets and IXAI will show what is happening next."
+            body="Add FCN positions, reminders, or watched assets and IXAI will show what is happening next."
             icon={CalendarClock}
-            title="No upcoming events."
+            title="No upcoming events"
           />
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="event readback, schedule source, advanced details">
+        <WorkspaceDiagnosticsPanel description="schedule details and advanced checks">
           <WorkspaceTimelineSummary />
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
             {timeline?.informationalOnlyDisclaimer ?? "Timeline uses existing FCN schedule and alert readback only."}

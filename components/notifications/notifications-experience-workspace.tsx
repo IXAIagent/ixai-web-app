@@ -118,11 +118,11 @@ export function NotificationsExperienceWorkspace() {
                 {topItem ? topItem.title : "No urgent notifications."}
               </p>
               <p className="mt-3 text-sm leading-6 text-white/68">
-                Notifications are for user impact, not system logs or developer event feeds.
+                Notifications are for user impact, so the most important items stay visible first.
               </p>
             </>
           }
-          summary="Notifications answer what requires attention now. Provider, runtime, delivery, and diagnostic state stay in Advanced."
+          summary="Notifications answer what requires attention now, grouped by priority and explained in user language."
           title="Notifications: what needs your attention."
         />
 
@@ -136,7 +136,7 @@ export function NotificationsExperienceWorkspace() {
               highPriority.map((item) => <NotificationCard item={item} key={item.id} />)
             ) : (
               <WorkspaceEmptyState
-                body="No high-priority notifications right now."
+                body="Nothing needs urgent attention. Important FCN, portfolio, or market items will appear here first."
                 icon={CheckCircle2}
                 title="No elevated attention needed."
               />
@@ -154,7 +154,7 @@ export function NotificationsExperienceWorkspace() {
               mediumPriority.map((item) => <NotificationCard item={item} key={item.id} />)
             ) : (
               <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                No medium-priority notifications.
+                No medium-priority notifications. Items worth checking later today will appear here.
               </p>
             )}
           </div>
@@ -174,7 +174,7 @@ export function NotificationsExperienceWorkspace() {
                     {item.title}
                   </p>
                 ))}
-                {information.length === 0 ? <p className="text-sm text-[var(--ixai-forest-soft)]">No information-only updates.</p> : null}
+                {information.length === 0 ? <p className="text-sm text-[var(--ixai-forest-soft)]">No informational updates right now.</p> : null}
               </div>
             </section>
             <section className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
@@ -185,7 +185,7 @@ export function NotificationsExperienceWorkspace() {
                     {item.title}
                   </p>
                 ))}
-                {completed.length === 0 ? <p className="text-sm text-[var(--ixai-forest-soft)]">No completed notifications yet.</p> : null}
+                {completed.length === 0 ? <p className="text-sm text-[var(--ixai-forest-soft)]">Completed items will appear here after you review them.</p> : null}
               </div>
             </section>
             <section className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
@@ -196,7 +196,7 @@ export function NotificationsExperienceWorkspace() {
                     {item.title}
                   </p>
                 ))}
-                {history.length === 0 ? <p className="text-sm text-[var(--ixai-forest-soft)]">No notification history yet.</p> : null}
+                {history.length === 0 ? <p className="text-sm text-[var(--ixai-forest-soft)]">Reviewed and older items will appear here.</p> : null}
               </div>
             </section>
           </div>
@@ -206,13 +206,13 @@ export function NotificationsExperienceWorkspace() {
           <WorkspaceEmptyState
             actionHref="/my-ixai/watchlist"
             actionLabel="Create your watchlist"
-            body="No notifications require attention. Add assets, FCNs, or watchlist items to make alerts more personal."
+            body="Add assets, FCNs, or watchlist items and IXAI will surface reminders that matter to your investments."
             icon={Bell}
             title="No notifications right now."
           />
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="delivery readiness, source details, advanced notification readback">
+        <WorkspaceDiagnosticsPanel description="delivery preview and advanced checks">
           <WorkspaceKpiGrid
             items={[
               { description: "In-app notification preview.", icon: Bell, label: "In-App", value: delivery.readyChannelCount > 0 ? "Ready" : "Preparing" },

@@ -7,7 +7,7 @@ export function WorkspaceSkeleton({ className = "" }: { className?: string }) {
   );
 }
 
-export function WorkspaceLoadingKpi({ label = "Loading" }: { label?: string }) {
+export function WorkspaceLoadingKpi({ label = "整理中" }: { label?: string }) {
   return (
     <article
       aria-busy="true"
@@ -23,7 +23,7 @@ export function WorkspaceLoadingKpi({ label = "Loading" }: { label?: string }) {
 }
 
 export function WorkspaceLoadingCard({
-  body = "正在整理資料。缺少的部分會保留安全 placeholder。",
+  body = "正在整理資料。缺少的部分會以清楚文字說明。",
   title = "資料整理中",
 }: {
   body?: string;

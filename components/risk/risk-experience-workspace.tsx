@@ -235,7 +235,7 @@ export function RiskExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="Risk is grouped by user attention area instead of duplicated raw metrics."
+          description="Risk is grouped by what deserves attention, not by implementation details."
           eyebrow="Risk Areas"
           title="風險決策區"
         >
@@ -326,7 +326,7 @@ export function RiskExperienceWorkspace() {
           variant="no-data"
         />
 
-        <WorkspaceDiagnosticsPanel description="risk data, market availability, legacy diagnostics">
+        <WorkspaceDiagnosticsPanel description="risk data availability and advanced checks">
           <RiskEngineSummary />
           <LiveRiskAdapterCard />
           <LegacyRiskEngineStatus />

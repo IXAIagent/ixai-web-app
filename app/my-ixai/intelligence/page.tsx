@@ -4,7 +4,7 @@ import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 export const metadata = buildPublicMetadata({
   canonical: "/my-ixai/intelligence",
   description:
-    "IXAI Intelligence explains what today's market means for your portfolio without exposing engine or provider details.",
+    "IXAI Intelligence explains what today's market means for your portfolio in user-facing language.",
   title: "Intelligence | 我的 IXAI",
 });
 

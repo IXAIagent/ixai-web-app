@@ -60,7 +60,7 @@ export function CopilotExperienceWorkspace() {
               </div>
             </>
           }
-          summary="Copilot has one purpose: ask questions. Runtime, source, and prompt diagnostics stay in Advanced."
+          summary="Copilot has one purpose: ask questions about your portfolio, FCN, risk, market, and Morning Brief context."
           title="Ask IXAI about your portfolio, FCN, risk, or market."
         />
 
@@ -91,13 +91,13 @@ export function CopilotExperienceWorkspace() {
               </button>
             </div>
             <p className="mt-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-              This sprint redesigns the question interface only. It does not add AI model calls or new backend behavior.
+              This page is for explain-only questions. It does not provide trading instructions, target prices, or investment advice.
             </p>
           </div>
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="Suggested questions make Copilot feel like an assistant, not a runtime panel."
+          description="Suggested questions make it clear what IXAI can help explain."
           eyebrow="Suggested Questions"
           title="You can ask this"
         >
@@ -122,13 +122,13 @@ export function CopilotExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="A clean conversation area. No runtime or rule-based wording in the main layer."
+          description="A clean conversation area for portfolio, FCN, risk, market, and brief questions."
           eyebrow="Conversation"
           title="Conversation"
         >
           <div className="grid gap-3">
             <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-              <p className="text-base font-semibold text-[var(--ixai-forest)]">No conversation yet.</p>
+              <p className="text-base font-semibold text-[var(--ixai-forest)]">Start with a question.</p>
               <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
                 Start with portfolio, FCN, risk, market, or Morning Brief questions. IXAI will explain context and next things to monitor.
               </p>
@@ -137,7 +137,7 @@ export function CopilotExperienceWorkspace() {
           </div>
         </WorkspaceProductSection>
 
-        <WorkspaceDiagnosticsPanel description="context, prompt source, readback, safety boundary">
+        <WorkspaceDiagnosticsPanel description="question context and safety boundary">
           <WorkspaceKpiGrid
             items={[
               { description: "Initial load does not auto-run a full workspace graph.", icon: Sparkles, label: "Context", value: "Manual" },
