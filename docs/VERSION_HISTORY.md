@@ -6,6 +6,26 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V19 Sprint C — Intelligence & Copilot Redesign
+
+Why:
+
+- After Sprint B, Intelligence and Copilot still needed to move away from engineering-dashboard framing.
+
+What Changed:
+
+- Redesigned Intelligence to answer "What does today's market mean for my portfolio?"
+- Redesigned Copilot to center on a large prompt, suggested questions, and clean conversation layout.
+- Added `docs/V19C_INTELLIGENCE_COPILOT_REDESIGN.md`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and route metadata for Intelligence / Copilot.
+
+Key Decisions:
+
+- Intelligence should show market meaning, portfolio impact, confidence, and things worth monitoring, not engine cards or provider state.
+- Copilot should behave like an assistant question interface, not a runtime or safe-shell status page.
+- Existing manual summary behavior remains, but technical context is moved into Advanced.
+- No API, DB, auth, AI model, market provider, scheduler, business logic, FCN engine, risk engine, notification delivery, trading, recommendation, or billing behavior was changed.
+
 ## V19 Sprint B — Timeline, Morning Brief & Notifications UX
 
 Why:

@@ -4,8 +4,8 @@ import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 export const metadata = buildPublicMetadata({
   canonical: "/my-ixai/intelligence",
   description:
-    "Intelligence Center 整合 Portfolio Truth、Risk Intelligence、FCN highlights、Daily / Weekly 入口、market source 與 readiness boundaries。",
-  title: "Intelligence Center | 我的 IXAI",
+    "IXAI Intelligence explains what today's market means for your portfolio without exposing engine or provider details.",
+  title: "Intelligence | 我的 IXAI",
 });
 
 export default function MyIxaiIntelligencePage() {

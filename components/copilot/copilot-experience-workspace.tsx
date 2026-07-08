@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bot, Copy, MessageSquareText, ShieldCheck, Sparkles, WalletCards } from "lucide-react";
+import { Bot, Copy, MessageSquareText, Send, ShieldCheck, Sparkles } from "lucide-react";
 
 import { WorkspaceCopilotSummary } from "@/components/copilot/workspace-copilot-summary";
 import {
@@ -12,17 +12,20 @@ import {
 } from "@/components/workspace/product";
 
 const suggestedQuestions = [
-  "今天有哪些 FCN 快 KI？",
-  "今天最大的風險是什麼？",
+  "Why is my portfolio down today?",
+  "Which FCN is closest to KI?",
+  "What should I watch tomorrow?",
+  "How is TSLA affecting me?",
+  "What changed in the market today?",
   "哪些新聞影響我的 Portfolio？",
-  "我的資產配置有哪些需要留意？",
-  "今天 Morning Brief 重點是什麼？",
 ];
 
 export function CopilotExperienceWorkspace() {
   const [copied, setCopied] = useState<string | null>(null);
+  const [draftQuestion, setDraftQuestion] = useState("");
 
   async function copyQuestion(question: string) {
+    setDraftQuestion(question);
     try {
       await navigator.clipboard.writeText(question);
       setCopied(question);
@@ -35,33 +38,68 @@ export function CopilotExperienceWorkspace() {
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
         <WorkspaceProductHero
-          eyebrow="AI Assistant"
+          eyebrow="Copilot"
           kpis={[
-            { description: "可直接複製或用作提問起點。", icon: MessageSquareText, label: "Suggested Questions", value: String(suggestedQuestions.length) },
-            { description: "目前以 rule-based summary 呈現。", icon: Bot, label: "Recent Conversations", value: "準備中" },
-            { description: "點擊產生摘要後才整理 Workspace 脈絡。", icon: WalletCards, label: "Available Context", value: "手動整理" },
-            { description: "只做 explain-only，不提供交易指令。", icon: ShieldCheck, label: "Safe Mode", value: "開啟" },
+            { description: "Questions you can ask immediately.", icon: MessageSquareText, label: "Suggested Questions", value: String(suggestedQuestions.length) },
+            { description: "Conversation history will appear below.", icon: Bot, label: "Conversation", value: "Ready" },
+            { description: "Only explains existing Workspace context.", icon: ShieldCheck, label: "Safe Boundary", value: "Explain-only" },
+            { description: "Manual summary remains available below.", icon: Sparkles, label: "Context", value: "Manual" },
           ]}
           side={
             <>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                你可以問
+                Ask IXAI...
               </p>
-              <div className="mt-3 grid gap-2 text-sm leading-6 text-white/72">
-                {suggestedQuestions.slice(0, 3).map((question) => (
-                  <p key={question}>{question}</p>
-                ))}
+              <div className="mt-3 rounded-lg border border-white/12 bg-white/[0.06] p-4">
+                <p className="text-lg font-semibold leading-7 text-white">
+                  {draftQuestion || "Why is my portfolio down today?"}
+                </p>
+                <p className="mt-3 text-sm leading-6 text-white/68">
+                  Choose a suggested question or type your own. Copilot is for explanation, not trading instructions.
+                </p>
               </div>
             </>
           }
-          summary="Copilot 是 IXAI 的 explain-only 問答入口，協助你把 Morning Brief、Portfolio、FCN、Risk 與市場重點整理成可追問的問題。"
-          title="問 IXAI：把今天的重點變成可理解的問題。"
+          summary="Copilot has one purpose: ask questions. Runtime, source, and prompt diagnostics stay in Advanced."
+          title="Ask IXAI about your portfolio, FCN, risk, or market."
         />
 
         <WorkspaceProductSection
-          description="先提供可用問題，避免使用者面對空白聊天頁不知道從哪裡開始。"
+          description="Start with a real investment-monitoring question instead of a blank technical panel."
+          eyebrow="Ask"
+          title="Ask IXAI..."
+        >
+          <div className="rounded-lg border border-[var(--ixai-border)] bg-white/78 p-4">
+            <label className="text-sm font-semibold text-[var(--ixai-forest)]" htmlFor="copilot-question">
+              Your question
+            </label>
+            <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto]">
+              <input
+                className="min-h-12 rounded-lg border border-[var(--ixai-border)] bg-white px-4 text-base text-[var(--ixai-forest)] outline-none focus:border-[var(--ixai-gold)]"
+                id="copilot-question"
+                onChange={(event) => setDraftQuestion(event.target.value)}
+                placeholder="Why is my portfolio down today?"
+                type="text"
+                value={draftQuestion}
+              />
+              <button
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-4 text-sm font-semibold text-[var(--ixai-cream)]"
+                type="button"
+              >
+                <Send className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
+                Ask
+              </button>
+            </div>
+            <p className="mt-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+              This sprint redesigns the question interface only. It does not add AI model calls or new backend behavior.
+            </p>
+          </div>
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="Suggested questions make Copilot feel like an assistant, not a runtime panel."
           eyebrow="Suggested Questions"
-          title="你可以這樣問"
+          title="You can ask this"
         >
           <div className="grid gap-3 lg:grid-cols-2">
             {suggestedQuestions.map((question) => (
@@ -78,42 +116,37 @@ export function CopilotExperienceWorkspace() {
           </div>
           {copied ? (
             <p className="mt-3 rounded-lg border border-[var(--ixai-border)] bg-white/55 p-3 text-sm text-[var(--ixai-forest-soft)]">
-              已複製：{copied}
+              Copied and filled: {copied}
             </p>
           ) : null}
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="尚未有對話歷史時，先用 friendly guidance 說明 Copilot 可以協助整理什麼。"
-          eyebrow="Empty State"
-          title="開始前，你可以先選一個問題"
+          description="A clean conversation area. No runtime or rule-based wording in the main layer."
+          eyebrow="Conversation"
+          title="Conversation"
         >
-          <div className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-            <p className="text-base font-semibold text-[var(--ixai-forest)]">目前沒有歷史對話</p>
-            <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-              從 FCN、今日風險、Portfolio 影響或 Morning Brief 開始。Copilot 只整理與解釋，不提供買賣建議。
-            </p>
+          <div className="grid gap-3">
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
+              <p className="text-base font-semibold text-[var(--ixai-forest)]">No conversation yet.</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                Start with portfolio, FCN, risk, market, or Morning Brief questions. IXAI will explain context and next things to monitor.
+              </p>
+            </article>
+            <WorkspaceCopilotSummary />
           </div>
         </WorkspaceProductSection>
 
-        <WorkspaceProductSection
-          description="保留既有 manual run 功能，但不讓工具狀態成為第一眼內容。"
-          eyebrow="Conversation"
-          title="產生 explain-only 摘要"
-        >
-          <WorkspaceCopilotSummary />
-        </WorkspaceProductSection>
-
-        <WorkspaceDiagnosticsPanel description="摘要整理方式與安全邊界">
+        <WorkspaceDiagnosticsPanel description="context, prompt source, readback, safety boundary">
           <WorkspaceKpiGrid
             items={[
-              { description: "初始載入不自動整理完整工作區資料。", icon: Sparkles, label: "整理方式", value: "手動" },
-              { description: "Copilot 不呼叫外部 AI model。", icon: ShieldCheck, label: "Mode", value: "Explain-only" },
-              { description: "點擊產生摘要後才執行。", icon: Bot, label: "Generated", value: "待手動執行" },
+              { description: "Initial load does not auto-run a full workspace graph.", icon: Sparkles, label: "Context", value: "Manual" },
+              { description: "No external AI model is added by this sprint.", icon: ShieldCheck, label: "Mode", value: "Explain-only" },
+              { description: "Suggested prompt source.", icon: Bot, label: "Prompt Source", value: "Static" },
             ]}
           />
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-            Copilot 只整理既有工作區資訊並提供說明，不呼叫外部 AI model，也不提供買進、賣出、持有、目標價或下單指令。
+            Copilot only organizes existing Workspace information in this sprint. It does not add AI calls, trading recommendations, target prices, or notification delivery.
           </p>
         </WorkspaceDiagnosticsPanel>
       </section>

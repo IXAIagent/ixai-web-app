@@ -30,13 +30,13 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V19 Sprint B — Timeline, Morning Brief & Notifications UX after Sprint A completed Portfolio, Markets, and Risk product redesign.
+Current priority is V19 Sprint C — Intelligence & Copilot Redesign after Sprint B completed Timeline, Morning Brief, and Notifications UX.
 
 V19.0 is documentation-only. It defines the product philosophy, Workspace UX 2.0 guide, and Workspace information architecture before implementation begins. It does not change React, routes, APIs, engines, providers, schedulers, notifications, database schema, auth, trading, recommendation, or billing.
 
 V19.1 is also documentation-only. It converts V19.0 philosophy into page-level product specifications and records the UX decisions from the V18 Workspace review.
 
-V19.2 / Sprint A / Sprint B are UX implementation sprints. They reshape page hierarchy and product language while preserving existing read models and avoiding API, DB, auth, provider, scheduler, notification delivery, AI, valuation, FCN, trading, recommendation, or billing changes.
+V19.2 / Sprint A / Sprint B / Sprint C are UX implementation sprints. They reshape page hierarchy and product language while preserving existing read models and avoiding API, DB, auth, provider, scheduler, notification delivery, AI, valuation, FCN, trading, recommendation, or billing changes.
 
 V19 North Star:
 
@@ -67,6 +67,7 @@ V19 sources of truth:
 - `docs/UX_DECISION_LOG.md`.
 - `docs/V19A_PORTFOLIO_MARKETS_RISK_PRODUCT_REDESIGN.md`.
 - `docs/V19B_TIMELINE_BRIEF_NOTIFICATION_UX.md`.
+- `docs/V19C_INTELLIGENCE_COPILOT_REDESIGN.md`.
 
 V18.4 completed End-to-End Beta Validation after V18.3 Workspace UX & Beta Polish merged.
 

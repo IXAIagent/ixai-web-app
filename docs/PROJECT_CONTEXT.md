@@ -68,6 +68,9 @@ V19 implementation status:
   - Timeline = what is happening next.
   - Morning Brief = what happened.
   - Notifications = what requires my attention.
+- V19 Sprint C redesigns Intelligence and Copilot:
+  - Intelligence = what today's market means for my portfolio.
+  - Copilot = ask questions.
 - These sprints are UX / page hierarchy only. Do not infer any API, DB, auth, engine, provider, scheduler, delivery, AI, valuation, FCN, trading, recommendation, or billing change from them.
 
 The core product layers are:
