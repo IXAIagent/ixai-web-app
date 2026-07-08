@@ -57,6 +57,19 @@ V19.1 status:
 - It records the UX decisions that future implementation must follow.
 - It does not change product code, routes, APIs, engines, providers, database schema, auth, schedulers, notifications, valuation logic, FCN logic, or UI components.
 
+V19 implementation status:
+
+- V19.2 Today Dashboard UX redesign established the first user-facing Today pattern.
+- V19 Sprint A redesigned Portfolio, Markets, and Risk around distinct product missions:
+  - Portfolio = my assets.
+  - Markets = external events.
+  - Risk = user attention.
+- V19 Sprint B redesigns Timeline, Morning Brief, and Notifications:
+  - Timeline = what is happening next.
+  - Morning Brief = what happened.
+  - Notifications = what requires my attention.
+- These sprints are UX / page hierarchy only. Do not infer any API, DB, auth, engine, provider, scheduler, delivery, AI, valuation, FCN, trading, recommendation, or billing change from them.
+
 The core product layers are:
 
 - Intelligence: daily and weekly market interpretation, cross-asset context, and AI-assisted synthesis.

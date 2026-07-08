@@ -6,6 +6,28 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V19 Sprint B — Timeline, Morning Brief & Notifications UX
+
+Why:
+
+- After Today, Portfolio, Markets, and Risk were reoriented around user questions, the remaining information surfaces needed the same product-first treatment.
+
+What Changed:
+
+- Redesigned Timeline to answer "What is happening next?" with Today, Tomorrow, and This Week event groups.
+- Added `components/morning-brief/workspace-morning-brief-experience.tsx` and updated `/my-ixai/morning-brief` to use a narrative report shell.
+- Redesigned Notifications to answer "What requires my attention?" with High, Medium, Information, Completed, and History sections.
+- Added `docs/V19B_TIMELINE_BRIEF_NOTIFICATION_UX.md`.
+- Updated `ROADMAP` and `PROJECT_CONTEXT`.
+
+Key Decisions:
+
+- Timeline is not a system log, provider log, runtime log, or quote failure feed.
+- Morning Brief should read as a narrative report, not raw cards, manual shell, markdown export, or provider output.
+- Notifications communicate user impact and action, not notification-engine or delivery-system state.
+- Provider, runtime, cache, debug, delivery, and diagnostics details remain inside Advanced.
+- No API, DB, auth, market provider, scheduler, Telegram, business logic, AI model, risk engine, FCN engine, or notification delivery behavior was changed.
+
 ## V19.1 — Workspace Page Specification & UX Decision Log
 
 Why:
