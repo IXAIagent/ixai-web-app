@@ -6,6 +6,50 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V19.1 — Workspace Page Specification & UX Decision Log
+
+Why:
+
+- V19.0 established Workspace UX 2.0 philosophy and information architecture.
+- Future React implementation needs page-level blueprints before UI work begins.
+
+What Changed:
+
+- Added `docs/WORKSPACE_PAGE_SPEC.md`.
+- Added `docs/UX_DECISION_LOG.md`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, `PROJECT_RULES`, `PROJECT_MAP`, `WORKSPACE_UX_20_PRODUCT_GUIDE`, and `WORKSPACE_INFORMATION_ARCHITECTURE`.
+
+Key Decisions:
+
+- Every Workspace page must have one mission, one user question, one first-screen answer, and clear anti-patterns.
+- Today, Portfolio, Markets, Risk, Timeline, Morning Brief, Notifications, and Copilot each have explicit product responsibilities.
+- FCN, Stocks, ETF, Crypto, and Cash remain asset classes under Portfolio.
+- Risk is a decision center, Timeline is for real events, Morning Brief is a readable/shareable narrative, Notifications communicate user impact, and Copilot starts from useful questions.
+- No product code, APIs, routes, engines, DB, auth, schedulers, notifications, market providers, valuation logic, FCN logic, or UI components were changed.
+
+## V19.0 — Workspace Product Architecture & UX 2.0 Foundation
+
+Why:
+
+- V18 completed Workspace Beta integration and validation.
+- The next product risk is not missing engines, but unclear Workspace product architecture and first-screen user value.
+- IXAI needs a product-first IA before additional Workspace UI implementation.
+
+What Changed:
+
+- Added `docs/WORKSPACE_UX_20_PRODUCT_GUIDE.md`.
+- Added `docs/WORKSPACE_INFORMATION_ARCHITECTURE.md`.
+- Updated `docs/IXAI_PRODUCT_PHILOSOPHY.md` with the V19 north star, 30-second understanding rule, 3-minute Morning Brief rule, question-driven workspace principle, progressive disclosure, and engineering-language boundaries.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, `PROJECT_RULES`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V19.0 is docs-only.
+- Workspace should be organized by user tasks: Today, Portfolio, Markets, Risk, Timeline, Notifications, Copilot.
+- Asset classes are a separate layer: FCN, Stocks, ETF, Crypto, Cash, and future asset classes.
+- Platform engines remain behind the product layer and should not dominate first-screen navigation or copy.
+- No React, API, route, business logic, provider, scheduler, notification delivery, AI call, DB schema, migration, trading, recommendation, or billing change was made.
+
 ## V18.4 — End-to-End Beta Validation
 
 Why:

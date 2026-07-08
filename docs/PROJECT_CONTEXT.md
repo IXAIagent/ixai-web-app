@@ -24,6 +24,39 @@ AI watches your investments, so you don't have to.
 
 The highest-level product vision sources are `docs/IXAI_PRODUCT_VISION.md` and `docs/V16_PRODUCT_STRATEGY.md`. Read them before starting V16, Daily / Weekly, AI monitoring, asset intelligence, FCN intelligence, Portfolio intelligence, news relevance, alerts, Copilot, or Workspace IA work.
 
+V19 begins the Workspace Product Architecture & UX 2.0 phase. V16 and V17 created domain/service foundations, and V18 connected them into Workspace UI. V19 now defines how Workspace should feel as a product.
+
+V19 North Star:
+
+```text
+Users should understand today's portfolio, risk, market, and next actions within 30 seconds.
+```
+
+V19 product context:
+
+- Workspace should be organized around user questions, not internal engines.
+- First screens must use human language before technical language.
+- User impact comes before provider, runtime, cache, readback, engine, or diagnostics status.
+- Advanced diagnostics remain available, but never dominate the first layer.
+- Today, Portfolio, Markets, Risk, Timeline, Notifications, and Copilot are user-task layers.
+- FCN, Stocks, ETF, Crypto, Cash, and future asset classes are asset layers.
+- Market, Risk, Valuation, Timeline, Alert, Intelligence, and Copilot engines are platform layers and should not define navigation labels.
+
+V19 source docs:
+
+- `docs/IXAI_PRODUCT_PHILOSOPHY.md`.
+- `docs/WORKSPACE_UX_20_PRODUCT_GUIDE.md`.
+- `docs/WORKSPACE_INFORMATION_ARCHITECTURE.md`.
+- `docs/WORKSPACE_PAGE_SPEC.md`.
+- `docs/UX_DECISION_LOG.md`.
+
+V19.1 status:
+
+- V19.1 is docs-only.
+- It defines page-level blueprints for Today, Portfolio, Markets, Risk, Timeline, Morning Brief, Notifications, and Copilot.
+- It records the UX decisions that future implementation must follow.
+- It does not change product code, routes, APIs, engines, providers, database schema, auth, schedulers, notifications, valuation logic, FCN logic, or UI components.
+
 The core product layers are:
 
 - Intelligence: daily and weekly market interpretation, cross-asset context, and AI-assisted synthesis.

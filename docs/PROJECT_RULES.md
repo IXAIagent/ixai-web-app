@@ -84,6 +84,23 @@ Public Route Gate rules:
 
 ## B. Design System Rules
 
+V19 Product-First Workspace Rules:
+
+- Every Workspace page must answer one user question before showing implementation details.
+- First screens must prioritize portfolio, risk, market, alerts, next actions, and user impact.
+- Do not let Provider, Placeholder, Runtime, Rule-based, Deterministic, Engine Status, API Route, Developer diagnostics, Cache state, Fallback source, Source status, Readback, or implementation wording dominate the first user-facing layer.
+- Engineering information belongs inside Advanced, diagnostics, or developer/debug views.
+- Workspace UX should satisfy the 30-second understanding rule: the user should understand today's portfolio, risk, market, and next action within 30 seconds.
+- Morning Brief should satisfy the 3-minute rule: readable as a concise editorial report, not an API or diagnostics output.
+- No Workspace page may lead with engine, provider, runtime, cache, fallback, readback, or debug language.
+- Every user-facing card must answer "why this matters."
+- Empty states must explain what is missing and what the user can do.
+- Error states must not become user events.
+- Asset classes belong under Portfolio unless the product architecture explicitly changes.
+- Advanced diagnostics must be collapsed by default.
+- Shareable outputs such as Morning Brief must read like human reports.
+- Future Workspace implementation must follow `docs/WORKSPACE_UX_20_PRODUCT_GUIDE.md`, `docs/WORKSPACE_INFORMATION_ARCHITECTURE.md`, `docs/WORKSPACE_PAGE_SPEC.md`, and `docs/UX_DECISION_LOG.md`.
+
 Product First Rule:
 
 - UX priority is higher than new feature creation during V15 Product Experience Redesign.
