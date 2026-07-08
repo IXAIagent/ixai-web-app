@@ -1,4 +1,4 @@
-import { WorkspaceMorningBriefReport } from "@/components/workspace/workspace-morning-brief-report";
+import { WorkspaceMorningBriefExperience } from "@/components/morning-brief/workspace-morning-brief-experience";
 import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 
 export const metadata = buildPublicMetadata({
@@ -9,5 +9,5 @@ export const metadata = buildPublicMetadata({
 });
 
 export default function MyIxaiMorningBriefPage() {
-  return <WorkspaceMorningBriefReport />;
+  return <WorkspaceMorningBriefExperience />;
 }

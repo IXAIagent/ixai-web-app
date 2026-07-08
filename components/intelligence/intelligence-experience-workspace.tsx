@@ -1,21 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowRight,
   BarChart3,
   Brain,
+  CalendarClock,
+  Coins,
+  Landmark,
+  LineChart,
   Newspaper,
   ShieldAlert,
   Sparkles,
+  WalletCards,
 } from "lucide-react";
 
 import { WorkspaceMarketStatus } from "@/components/market/workspace-market-status";
 import { IntelligenceSummary } from "@/components/intelligence/intelligence-summary";
 import { IntelligenceV2Summary } from "@/components/intelligence/intelligence-v2-summary";
 import { WorkspaceIntelligenceV14Summary } from "@/components/workspace/workspace-intelligence-v14-summary";
-import { WorkspaceMorningBriefV14Card } from "@/components/workspace/workspace-morning-brief-v14-card";
 import {
   WorkspaceDiagnosticsPanel,
   WorkspaceKpiGrid,
@@ -23,24 +25,23 @@ import {
   WorkspaceProductSection,
 } from "@/components/workspace/product";
 import { getWorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-service";
-import type {
-  WorkspaceIntelligenceCard,
-  WorkspaceIntelligenceReport,
-} from "@/src/lib/intelligence/engine/intelligence-types";
+import type { WorkspaceIntelligenceReport } from "@/src/lib/intelligence/engine/intelligence-types";
 import {
   getWorkspaceIntelligenceV2Report,
   type IntelligenceV2Report,
 } from "@/src/lib/intelligence/v2";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
+type PortfolioImpactItem = {
+  confidence: string;
+  icon: typeof WalletCards;
+  impact: string;
+  label: string;
+  why: string;
+};
+
 function formatCount(value: number | null | undefined) {
   return typeof value === "number" && Number.isFinite(value) ? String(value) : "0";
-}
-
-function severityLabel(severity: string | undefined) {
-  if (severity === "critical") return "需要留意";
-  if (severity === "warning") return "注意";
-  return "資訊";
 }
 
 function cardTone(severity: string | undefined) {
@@ -57,26 +58,82 @@ function EmptyCard({ children }: { children: string }) {
   );
 }
 
-function MarketThemeCards({ cards }: { cards: WorkspaceIntelligenceCard[] }) {
-  if (cards.length === 0) {
-    return <EmptyCard>目前沒有新的市場主題。資料整理完成後，這裡會顯示今日最值得閱讀的重點。</EmptyCard>;
-  }
+function keyInsights(report: WorkspaceIntelligenceReport | null, v2Report: IntelligenceV2Report | null) {
+  const cards = report?.cards ?? [];
+  const insights = [
+    v2Report?.marketContext,
+    v2Report?.portfolioContext,
+    v2Report?.morningBriefContext,
+    ...cards.map((card) => card.summary),
+  ].filter(Boolean) as string[];
 
-  return (
-    <div className="grid gap-3 lg:grid-cols-3">
-      {cards.slice(0, 3).map((card) => (
-        <article className={`rounded-lg border p-4 ${cardTone(card.severity)}`} key={card.id}>
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <p className="text-base font-semibold text-[var(--ixai-forest)]">{card.title}</p>
-            <span className="rounded-full border border-current/20 bg-white/48 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-              {severityLabel(card.severity)}
-            </span>
-          </div>
-          <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{card.summary}</p>
-        </article>
-      ))}
-    </div>
-  );
+  return insights.length > 0
+    ? insights.slice(0, 5)
+    : [
+        "Market context is still being organized.",
+        "Portfolio impact will improve after assets are added.",
+        "Watch upcoming macro and earnings events.",
+      ];
+}
+
+function buildPortfolioImpact(report: WorkspaceIntelligenceReport | null, v2Report: IntelligenceV2Report | null): PortfolioImpactItem[] {
+  const cards = report?.cards ?? [];
+  const riskCard = cards.find((card) => card.severity === "critical" || card.severity === "warning");
+  const marketCard = cards.find((card) => card.category === "portfolio" || card.category === "risk") ?? cards[0];
+
+  return [
+    {
+      confidence: v2Report?.portfolioContext ? "Medium" : "Limited",
+      icon: WalletCards,
+      impact: v2Report?.portfolioContext ? "Portfolio context available" : "Waiting for assets",
+      label: "Affected Assets",
+      why: v2Report?.portfolioContext ?? "Add assets so IXAI can connect market movement to your portfolio.",
+    },
+    {
+      confidence: riskCard ? "Medium" : "Limited",
+      icon: ShieldAlert,
+      impact: riskCard ? "Risk context available" : "No elevated FCN impact",
+      label: "FCN",
+      why: riskCard?.summary ?? "FCN impact will appear when FCN positions and related market events are available.",
+    },
+    {
+      confidence: marketCard ? "Medium" : "Limited",
+      icon: LineChart,
+      impact: marketCard ? "Market relationship available" : "Market impact limited",
+      label: "Stocks / ETF",
+      why: marketCard?.summary ?? "Stock and ETF impact will improve as watchlist and portfolio data become more complete.",
+    },
+    {
+      confidence: "Limited",
+      icon: Coins,
+      impact: "Crypto monitoring available when assets exist",
+      label: "Crypto",
+      why: "Crypto impact appears when crypto holdings or watched symbols are available.",
+    },
+    {
+      confidence: "Limited",
+      icon: Landmark,
+      impact: "Cash impact is informational",
+      label: "Cash",
+      why: "Cash context is kept separate from market movement unless allocation changes matter.",
+    },
+  ];
+}
+
+function opportunities(report: WorkspaceIntelligenceReport | null) {
+  const cards = report?.cards ?? [];
+  const fromCards = cards.slice(0, 3).map((card) => ({
+    body: card.summary,
+    title: card.title,
+  }));
+
+  return fromCards.length > 0
+    ? fromCards
+    : [
+        { title: "Things worth monitoring", body: "Watch large portfolio movers, upcoming FCN events, and major macro data." },
+        { title: "Upcoming events", body: "Check Timeline for observation, coupon, earnings, and macro calendar events." },
+        { title: "Sector rotation", body: "Markets page will become the place for sector and watchlist shifts." },
+      ];
 }
 
 export function IntelligenceExperienceWorkspace() {
@@ -109,118 +166,124 @@ export function IntelligenceExperienceWorkspace() {
     };
   }, []);
 
-  const marketCards = useMemo(
-    () => report?.cards.filter((card) => card.category === "portfolio" || card.category === "risk") ?? [],
-    [report],
-  );
+  const insights = useMemo(() => keyInsights(report, v2Report), [report, v2Report]);
+  const portfolioImpact = useMemo(() => buildPortfolioImpact(report, v2Report), [report, v2Report]);
+  const monitoringItems = useMemo(() => opportunities(report), [report]);
   const riskCards = useMemo(
     () => report?.cards.filter((card) => card.severity === "critical" || card.severity === "warning") ?? [],
     [report],
   );
-  const summaryText =
-    v2Report?.marketContext ??
-    marketCards[0]?.summary ??
-    "今日市場摘要正在整理中；IXAI 會先顯示可用的市場、風險與投資組合脈絡。";
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:px-8 lg:py-8">
         <WorkspaceProductHero
           actions={[
-            { href: "/my-ixai/copilot", icon: Sparkles, label: "詢問 Copilot" },
-            { href: "/my-ixai/watchlist", icon: Newspaper, label: "查看市場追蹤", variant: "secondary" },
+            { href: "/my-ixai/copilot", icon: Sparkles, label: "Ask Copilot" },
+            { href: "/my-ixai/portfolio", icon: WalletCards, label: "Open Portfolio", variant: "secondary" },
           ]}
-          eyebrow="AI / Information Workspace"
+          eyebrow="Intelligence"
           kpis={[
-            { description: "今日整理出的市場與持倉脈絡。", icon: Newspaper, label: "Market Themes", value: formatCount(report?.cardCount) },
-            { description: "市場與我的資產關聯摘要。", icon: BarChart3, label: "Portfolio Impact", value: v2Report?.portfolioContext ? "已整理" : "待整理" },
-            { description: "需要今天留意的市場或風險訊號。", icon: ShieldAlert, label: "Risk Signals", value: formatCount((report?.criticalCount ?? 0) + (report?.warningCount ?? 0)) },
-            { description: "Morning Brief 與資訊摘要可用狀態。", icon: Brain, label: "Brief Readiness", value: v2Report?.morningBriefContext ? "可閱讀" : "準備中" },
+            { description: "Market points translated into user-facing context.", icon: Newspaper, label: "Key Insights", value: String(insights.length) },
+            { description: "Asset groups with an impact explanation.", icon: WalletCards, label: "Portfolio Impact", value: String(portfolioImpact.length) },
+            { description: "Items worth monitoring, not buy recommendations.", icon: CalendarClock, label: "Watch Next", value: String(monitoringItems.length) },
+            { description: "Market or risk items requiring attention.", icon: ShieldAlert, label: "Attention", value: String(riskCards.length) },
           ]}
           side={
             <>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                今日最重要
+                What does today&apos;s market mean for my portfolio?
               </p>
-              <p className="mt-3 text-lg font-semibold leading-7 text-white">{summaryText}</p>
+              <p className="mt-3 text-lg font-semibold leading-7 text-white">{insights[0]}</p>
               <p className="mt-3 text-sm leading-6 text-white/68">
-                IXAI 只做 explain-only 市場與風險整理，不提供買賣建議、目標價或交易指令。
+                Intelligence explains market meaning, portfolio impact, and the next items worth monitoring.
               </p>
             </>
           }
-          summary="把市場、Morning Brief、持倉影響與需要注意的訊號整理成一頁，資料狀態收納在頁尾進階資訊。"
-          title="今日市場：先看重點，再看對我的影響。"
+          summary="Intelligence turns market movement into portfolio context before showing deeper supporting details."
+          title="Today’s market, translated for your portfolio."
         />
 
         <WorkspaceProductSection
-          description="用卡片呈現今日市場與資產脈絡，不把 Intelligence 當文件中心。"
+          description="Three to five plain-language insights before any details."
           eyebrow="Today's Market"
-          title="今天市場在說什麼"
+          title="今天市場代表什麼"
         >
-          <MarketThemeCards cards={marketCards.length > 0 ? marketCards : report?.cards ?? []} />
+          <ul className="grid gap-3">
+            {insights.map((insight) => (
+              <li className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4 text-sm leading-7 text-[var(--ixai-forest-soft)]" key={insight}>
+                <span className="mr-2 text-[var(--ixai-gold)]">•</span>
+                {insight}
+              </li>
+            ))}
+          </ul>
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="用使用者語言說明市場、風險與持倉的關係；資料不足時保留安全 placeholder。"
+          description="Impact is grouped by assets. It explains impact, why it matters, and confidence."
           eyebrow="Portfolio Impact"
-          title="和我的資產有什麼關係"
+          title="對我的投資有什麼影響"
         >
-          <WorkspaceKpiGrid
-            items={[
-              { description: "今日資訊卡總數。", icon: Newspaper, label: "市場主題", value: formatCount(report?.cardCount) },
-              { description: "需要今天留意的資訊。", icon: ShieldAlert, label: "需要留意", tone: riskCards.length > 0 ? "warning" : "default", value: String(riskCards.length) },
-              { description: "投資組合脈絡可用狀態。", icon: BarChart3, label: "資產影響", value: v2Report?.portfolioContext ? "已整理" : "待整理" },
-              { description: "Explain-only 安全邊界。", icon: Brain, label: "模式", value: "監控" },
-            ]}
-          />
-          <div className="mt-4 grid gap-3 lg:grid-cols-3">
-            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4 lg:col-span-2">
-              <p className="text-base font-semibold text-[var(--ixai-forest)]">投資組合影響</p>
-              <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                {v2Report?.portfolioContext ?? "尚未有足夠持倉脈絡。新增資產後，這裡會整理市場與 Portfolio 的關聯。"}
-              </p>
-            </article>
-            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-              <p className="text-base font-semibold text-[var(--ixai-forest)]">今天要留意</p>
-              <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                {riskCards[0]?.summary ?? "目前沒有需要優先處理的市場風險訊號。"}
-              </p>
-            </article>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {portfolioImpact.map((item) => {
+              const Icon = item.icon;
+              return (
+                <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={item.label}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.label}</p>
+                      <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{item.impact}</p>
+                    </div>
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
+                      <Icon className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">Why: {item.why}</p>
+                  <p className="mt-3 text-xs font-semibold text-[var(--ixai-forest)]">Confidence: {item.confidence}</p>
+                </article>
+              );
+            })}
           </div>
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="Explain-only 摘要，不做買賣建議、不呼叫外部 AI model。"
-          eyebrow="AI Summary"
+          description="These are things worth monitoring, not investment recommendations."
+          eyebrow="Today's Opportunities"
+          title="值得接下來觀察"
+        >
+          <div className="grid gap-3 lg:grid-cols-3">
+            {monitoringItems.map((item) => (
+              <article className={`rounded-lg border p-4 ${cardTone(report?.cards.find((card) => card.title === item.title)?.severity)}`} key={item.title}>
+                <p className="text-base font-semibold text-[var(--ixai-forest)]">{item.title}</p>
+                <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="A short explain-only summary remains available without turning this page into technical detail."
+          eyebrow="Summary"
           title="IXAI 摘要"
         >
           <WorkspaceIntelligenceV14Summary autoLoad />
         </WorkspaceProductSection>
 
-        <WorkspaceProductSection
-          description="保留 Morning Brief 與可閱讀資訊，但以產品卡片呈現。"
-          eyebrow="News / Watchlist"
-          title="延伸閱讀與關注"
-          action={
-            <Link className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)]" href="/my-ixai/watchlist">
-              市場追蹤
-              <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-            </Link>
-          }
-        >
-          <WorkspaceMorningBriefV14Card autoLoad compact />
-        </WorkspaceProductSection>
-
         {isLoading ? (
-          <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-            正在整理今日市場摘要。可用資料會先顯示，缺少資料會保留 placeholder。
-          </p>
+          <EmptyCard>正在整理今日市場與投資組合脈絡。可用資料會先顯示，缺少資料會以清楚文字說明。</EmptyCard>
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="市場資料、情報整理狀態與安全邊界">
+        <WorkspaceDiagnosticsPanel description="supporting cards and advanced checks">
           <IntelligenceSummary />
           <IntelligenceV2Summary />
           <WorkspaceMarketStatus contextLabel="Intelligence" />
+          <WorkspaceKpiGrid
+            items={[
+              { description: "Raw card count.", icon: Brain, label: "Raw Cards", value: formatCount(report?.cardCount) },
+              { description: "Critical or warning raw cards.", icon: ShieldAlert, label: "Raw Attention", value: String(riskCards.length) },
+              { description: "Report source details remain advanced.", icon: BarChart3, label: "Readback", value: report ? "Available" : "Limited" },
+            ]}
+          />
         </WorkspaceDiagnosticsPanel>
       </section>
     </main>

@@ -4,6 +4,37 @@ This is the permanent product philosophy for IXAI.
 
 Roadmaps can change. Sprint scope can change. This philosophy should remain the product north star.
 
+## V19 Product North Star
+
+V19 moves Workspace from an engineering-driven dashboard toward a product-driven investment workspace.
+
+The north star:
+
+```text
+Users should understand today's portfolio, risk, market, and next actions within 30 seconds.
+```
+
+IXAI is an AI Investment Monitoring System. It is not a brokerage app, generic news platform, generic finance dashboard, robo-advisor, signal seller, trading system, or chatbot-only product.
+
+Core mission:
+
+```text
+讓 AI 全天候監控你的投資，而不是你全天候盯著市場。
+AI watches your investments, so you don't have to.
+```
+
+Workspace product philosophy:
+
+- User-first: begin with the user's question, not the system module.
+- Human language first: explain impact before implementation.
+- Question-driven: every page should answer one clear user question.
+- Progressive disclosure: summary first, details second, diagnostics last.
+- 30-second understanding rule: portfolio, risk, market, and next action must be understandable quickly.
+- 3-minute Morning Brief rule: the full report should read like a concise human editorial brief.
+- Actionable insight principle: every major card should explain what changed, why it matters, and what to inspect next.
+
+Engineering information should never dominate the first user layer. Provider, runtime, cache, readback, fallback, deterministic, rule-based, engine status, API route, and developer diagnostics belong in Advanced or debug views, not the primary Workspace experience.
+
 ## Chapter 1 — Why IXAI Exists
 
 The market problem is not that investors have too little information.

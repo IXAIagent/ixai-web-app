@@ -20,7 +20,7 @@ export function WorkspaceDiagnosticsPanel({
   const { t } = useTranslation("productPolish");
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const displayTitle = title ?? t("advancedPanelTitle", "Advanced / 進階資訊");
-  const displayDescription = description ?? t("advancedPanelDescription", "系統與資料狀態");
+  const displayDescription = description ?? t("advancedPanelDescription", "僅供進階檢查");
 
   return (
     <section className="rounded-lg border border-[var(--ixai-border)] bg-white/42 p-3 sm:p-4">

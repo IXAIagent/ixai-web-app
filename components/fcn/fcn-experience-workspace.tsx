@@ -252,24 +252,24 @@ export function FcnExperienceWorkspace() {
         />
 
         <WorkspaceProductSection
-          description="重用 Asset Intelligence 與 Monitoring Engine，把 FCN 的 Worst-of、KI、觀察日、配息與相關主題整理成 read-only 摘要。"
-          eyebrow="FCN Intelligence"
+          description="把 Worst-of、KI、觀察日、配息與相關主題整理成一眼可看的摘要。"
+          eyebrow="FCN Summary"
           title="FCN Intelligence 摘要"
         >
           <WorkspaceKpiGrid
             items={[
               { description: "最接近 KI 或資料狀態最需要留意的 Worst-of。", icon: ShieldAlert, label: "Worst-of", tone: highRiskCount > 0 ? "critical" : watchCount > 0 ? "warning" : "default", value: nearestKi(data.risk) },
-              { description: "Monitoring Engine 產生的 KI risk 事件。", icon: CircleAlert, label: "KI Events", tone: fcnKiEvents > 0 ? "warning" : "default", value: String(fcnKiEvents) },
-              { description: "未來 observation monitoring 事件。", icon: CalendarDays, label: "Observation", value: String(observationEvents) },
-              { description: "配息 monitoring 事件。", icon: WalletCards, label: "Coupon", value: String(couponEvents) },
-              { description: "Editorial / market themes 關聯。", icon: Newspaper, label: "Related Themes", value: String(relatedThemes.size) },
+              { description: "與 KI 距離相關的注意事項。", icon: CircleAlert, label: "KI Events", tone: fcnKiEvents > 0 ? "warning" : "default", value: String(fcnKiEvents) },
+              { description: "未來觀察日事項。", icon: CalendarDays, label: "Observation", value: String(observationEvents) },
+              { description: "未來配息事項。", icon: WalletCards, label: "Coupon", value: String(couponEvents) },
+              { description: "相關市場主題。", icon: Newspaper, label: "Related Themes", value: String(relatedThemes.size) },
               { description: "Today Focus 中與 FCN 相關的重點。", icon: Sparkles, label: "Today Focus", value: String(todayFocus.length) },
             ]}
           />
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="每檔 FCN 只顯示監控與 coverage 摘要，不提供買賣、持有或目標價建議。"
+          description="每檔 FCN 只顯示需要留意的狀態，不提供買賣、持有或目標價建議。"
           eyebrow="FCN Monitoring"
           title="每檔 FCN 的監控狀態"
         >
@@ -295,7 +295,7 @@ export function FcnExperienceWorkspace() {
                       <p>KI Risk：{item.nearestKiDistancePercent == null ? "待確認" : `${item.nearestKiDistancePercent.toFixed(1)}%`}</p>
                       <p>Observation：{item.koReady ? "可觀察 KO" : "持續監控"}</p>
                       <p>Coupon：{data.schedule?.monthlyCashflows.length ? "有配息排程" : "待建立"}</p>
-                      <p>Editorial Signals：{eventsForAsset.length}</p>
+                      <p>Market Signals：{eventsForAsset.length}</p>
                       <p>Asset Health：{asset?.health.status === "healthy" ? "穩定" : asset ? "需要留意" : "等待資料"}</p>
                       <p>Priority：{priorityLabel(asset, monitoringEvents)}</p>
                       <p>Related Themes：{themesLabel(asset, monitoringEvents)}</p>
@@ -307,7 +307,7 @@ export function FcnExperienceWorkspace() {
             </div>
           ) : (
             <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-              新增 FCN 後，IXAI 會在這裡整理 Worst-of Monitoring、KI Risk、Observation、Coupon 與 Related Monitoring Events。
+                新增 FCN 後，IXAI 會在這裡整理 Worst-of、KI 距離、觀察日、配息與相關市場變化。
             </p>
           )}
         </WorkspaceProductSection>
@@ -328,7 +328,7 @@ export function FcnExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="整理 observation、coupon、maturity 與 next 30 days，讓時間壓力比 source details 更早被看見。"
+          description="整理 observation、coupon、maturity 與 next 30 days，讓時間壓力先被看見。"
           eyebrow="Upcoming Schedule"
           title="觀察日、配息與到期"
         >
@@ -345,7 +345,7 @@ export function FcnExperienceWorkspace() {
               <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
             </Link>
           }
-          description="Positions 先以風險摘要與 schedule cards 呈現；raw source/readback/provider 保留在進階診斷。"
+          description="Positions 先以風險摘要與時間表呈現；更細的資料狀態保留在進階資訊。"
           eyebrow="Positions"
           title="FCN Positions"
         >
@@ -359,17 +359,17 @@ export function FcnExperienceWorkspace() {
           />
         </WorkspaceProductSection>
 
-        <WorkspaceDiagnosticsPanel description="FCN risk source、schedule source、live underlying source、manual overlay source">
+        <WorkspaceDiagnosticsPanel description="FCN 資料狀態與進階檢查">
           <WorkspaceProductSection
-            description="FCN diagnostics 整理 Asset / Monitoring / Notification Preview 的 read-only 狀態。"
+            description="整理 FCN 相關資料完整度、提醒預覽與主題覆蓋。"
             eyebrow="FCN Diagnostics"
             title="FCN Intelligence 診斷"
           >
             <WorkspaceKpiGrid
               items={[
                 { description: "FCN Asset Intelligence 建立的資產數。", icon: WalletCards, label: "Assets", value: String(assetIntelligence.length) },
-                { description: "FCN 相關 monitoring events。", icon: Bell, label: "Events", value: String(monitoringEvents.length) },
-                { description: "Notification Platform preview 項目。", icon: Sparkles, label: "Preview", value: String(notificationPreview.notifications.length) },
+                { description: "FCN 相關注意事項。", icon: Bell, label: "Events", value: String(monitoringEvents.length) },
+                { description: "提醒預覽項目。", icon: Sparkles, label: "Preview", value: String(notificationPreview.notifications.length) },
                 { description: "Related theme count。", icon: BarChart3, label: "Themes", value: String(relatedThemes.size) },
               ]}
             />

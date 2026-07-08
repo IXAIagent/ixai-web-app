@@ -14,7 +14,7 @@ const stateCopy: Record<WorkspaceStateMessageVariant, { icon: LucideIcon; title:
   },
   "no-coverage": {
     icon: ShieldAlert,
-    title: "Coverage 尚未建立",
+    title: "覆蓋範圍尚未建立",
   },
   "no-data": {
     icon: AlertCircle,
@@ -22,7 +22,7 @@ const stateCopy: Record<WorkspaceStateMessageVariant, { icon: LucideIcon; title:
   },
   "provider-unavailable": {
     icon: ShieldAlert,
-    title: "資料來源暫時不可用",
+    title: "資料暫時無法更新",
   },
 };
 

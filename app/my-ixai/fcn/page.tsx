@@ -4,8 +4,8 @@ import { buildPublicMetadata } from "@/src/lib/brand/metadata";
 export const metadata = buildPublicMetadata({
   canonical: "/my-ixai/fcn",
   description:
-    "FCN Risk Workspace 顯示 FCN 風險、KI 距離、觀察日、配息、到期與進階資料狀態。",
-  title: "FCN Risk Workspace | 我的 IXAI",
+    "IXAI FCN 監控整理 KI 距離、觀察日、配息、到期與需要留意的產品。",
+  title: "FCN | 我的 IXAI",
 });
 
 export default function MyIxaiFcnPage() {

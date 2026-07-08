@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V18 Workspace Product Integration`
+`V19 Workspace Product Architecture & UX 2.0 Foundation`
 
 ## Current Strategic Direction
 
@@ -30,7 +30,48 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V18.4 End-to-End Beta Validation after V18.3 Workspace UX & Beta Polish merged.
+Current priority is V19E — Workspace UX Review & Beta QA after Sprint D completed Workspace final polish.
+
+V19.0 is documentation-only. It defines the product philosophy, Workspace UX 2.0 guide, and Workspace information architecture before implementation begins. It does not change React, routes, APIs, engines, providers, schedulers, notifications, database schema, auth, trading, recommendation, or billing.
+
+V19.1 is also documentation-only. It converts V19.0 philosophy into page-level product specifications and records the UX decisions from the V18 Workspace review.
+
+V19.2 / Sprint A / Sprint B / Sprint C / Sprint D are UX implementation sprints. V19E is the product QA / Beta review layer. Together they reshape and validate page hierarchy, product language, empty/loading/error states, and shared visual hierarchy while preserving existing read models and avoiding API, DB, auth, provider, scheduler, notification delivery, AI, valuation, FCN, trading, recommendation, or billing changes.
+
+V19 North Star:
+
+```text
+Users should understand today's portfolio, risk, market, and next actions within 30 seconds.
+```
+
+V19 roadmap:
+
+- V19.0 — Product Philosophy & IA Foundation.
+- V19.1 — Workspace Page Specification & UX Decision Log.
+- V19.2 — Today Dashboard UX Implementation.
+- V19.3 — Portfolio Live Valuation UX Implementation.
+- V19.4 — Markets & Watchlist UX Implementation.
+- V19.5 — Risk Decision Center UX Implementation.
+- V19.6 — Timeline UX Implementation.
+- V19.7 — Morning Brief UX Implementation.
+- V19.8 — Notifications UX Implementation.
+- V19.9 — Copilot UX Implementation.
+- V19.10 — Product QA, Translation, Beta RC.
+
+V19 sources of truth:
+
+- `docs/IXAI_PRODUCT_PHILOSOPHY.md`.
+- `docs/WORKSPACE_UX_20_PRODUCT_GUIDE.md`.
+- `docs/WORKSPACE_INFORMATION_ARCHITECTURE.md`.
+- `docs/WORKSPACE_PAGE_SPEC.md`.
+- `docs/UX_DECISION_LOG.md`.
+- `docs/V19A_PORTFOLIO_MARKETS_RISK_PRODUCT_REDESIGN.md`.
+- `docs/V19B_TIMELINE_BRIEF_NOTIFICATION_UX.md`.
+- `docs/V19C_INTELLIGENCE_COPILOT_REDESIGN.md`.
+- `docs/V19D_WORKSPACE_FINAL_POLISH.md`.
+- `docs/V19E_WORKSPACE_BETA_QA.md`.
+
+V18.4 completed End-to-End Beta Validation after V18.3 Workspace UX & Beta Polish merged.
 
 V18 starts the product integration phase. V16 and V17 created the service/domain foundations. V18 connects those read-only foundations into Workspace UI without creating new engines, notification delivery, trading actions, recommendations, schedulers, AI model calls, database schema, or migrations.
 

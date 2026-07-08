@@ -1,19 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowRight,
-  BarChart3,
-  Bell,
   BriefcaseBusiness,
   CandlestickChart,
-  Newspaper,
+  Coins,
+  Landmark,
+  LineChart,
   PieChart,
   PlusCircle,
   ShieldAlert,
-  ShieldCheck,
-  Sparkles,
+  TrendingUp,
   WalletCards,
 } from "lucide-react";
 
@@ -26,21 +23,36 @@ import { RecentInputsPanel } from "@/components/portfolio/recent-inputs-panel";
 import {
   WorkspaceDiagnosticsPanel,
   WorkspaceEmptyState,
-  WorkspaceKpiGrid,
   WorkspaceProductHero,
   WorkspaceProductSection,
   WorkspaceStateMessage,
-  WorkspaceStatusBadge,
 } from "@/components/workspace/product";
-import { useTranslation } from "@/src/lib/i18n";
-import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
-import type { AssetIntelligence } from "@/src/lib/intelligence/assets";
-import { getMonitoringEvents, getTodayFocus } from "@/src/lib/intelligence/monitoring";
-import type { MonitoringEvent } from "@/src/lib/intelligence/monitoring";
-import { getNotificationDeliveryPreview } from "@/src/lib/intelligence/notifications";
 import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
-import type { PortfolioValuationResult } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
+import type {
+  AssetClassValuation,
+  PortfolioValuationResult,
+  PositionValuation,
+} from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
+
+type PortfolioAssetClassCard = {
+  allocation: string;
+  icon: typeof WalletCards;
+  key: string;
+  label: string;
+  marketValue: string;
+  positionCount: string;
+  unrealized: string;
+};
+
+const portfolioAssetClasses = [
+  { icon: WalletCards, key: "all", label: "All Assets" },
+  { icon: ShieldAlert, key: "fcn", label: "FCN" },
+  { icon: CandlestickChart, key: "stock", label: "Stocks" },
+  { icon: PieChart, key: "etf", label: "ETF" },
+  { icon: Coins, key: "crypto", label: "Crypto" },
+  { icon: Landmark, key: "cash", label: "Cash" },
+];
 
 function formatCurrency(value: number | null | undefined, currency = "USD") {
   if (typeof value !== "number" || !Number.isFinite(value)) return "暫無資料";
@@ -51,61 +63,122 @@ function formatCurrency(value: number | null | undefined, currency = "USD") {
   }).format(value);
 }
 
+function formatSignedCurrency(value: number | null | undefined, currency = "USD") {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "暫無資料";
+  return `${value >= 0 ? "+" : "-"}${formatCurrency(Math.abs(value), currency)}`;
+}
+
 function formatPercent(value: number | null | undefined) {
   if (typeof value !== "number" || !Number.isFinite(value)) return "暫無資料";
   return `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
 }
 
-function formatScore(value: number | null | undefined) {
-  if (typeof value !== "number" || !Number.isFinite(value)) return "暫無資料";
-  return `${Math.round(value * 100)}%`;
+function getLargestPosition(positions: PositionValuation[]) {
+  return positions
+    .filter((position) => typeof position.marketValue === "number" && Number.isFinite(position.marketValue))
+    .sort((a, b) => (b.marketValue ?? 0) - (a.marketValue ?? 0))[0];
 }
 
-function formatTime(value: string | null | undefined) {
-  if (!value) return "待更新";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "待更新";
-  return new Intl.DateTimeFormat("zh-TW", {
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    month: "2-digit",
-  }).format(date);
+function getLargestGain(positions: PositionValuation[]) {
+  return positions
+    .filter((position) => typeof position.unrealizedPnl === "number" && Number.isFinite(position.unrealizedPnl))
+    .sort((a, b) => (b.unrealizedPnl ?? 0) - (a.unrealizedPnl ?? 0))[0];
 }
 
-function relatedEvents(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
-  if (!asset) return [];
-  return events.filter((event) => event.assetId === asset.id || event.relatedAssetIds.includes(asset.id));
+function getLargestLoss(positions: PositionValuation[]) {
+  return positions
+    .filter((position) => typeof position.unrealizedPnl === "number" && Number.isFinite(position.unrealizedPnl))
+    .sort((a, b) => (a.unrealizedPnl ?? 0) - (b.unrealizedPnl ?? 0))[0];
 }
 
-function monitoringLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
-  const eventsForAsset = relatedEvents(asset, events);
-  if (!asset) return "等待資料";
-  if (eventsForAsset.some((event) => event.severity === "critical")) return "優先查看";
-  if (eventsForAsset.some((event) => event.severity === "warning")) return "正在監控";
-  return asset.monitoringState.enabled ? "正常監控" : "準備中";
+function describePosition(position: PositionValuation | undefined, mode: "gain" | "loss" | "value") {
+  if (!position) return "暫無資料";
+  if (mode === "value") return `${position.symbol} · ${formatCurrency(position.marketValue, position.currency)}`;
+  return `${position.symbol} · ${formatSignedCurrency(position.unrealizedPnl, position.currency)}`;
 }
 
-function priorityLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
-  const priority = relatedEvents(asset, events).reduce(
-    (max, event) => Math.max(max, event.priorityScore),
-    0,
-  );
-  return priority > 0 ? String(priority) : "一般";
+function assetClassLabel(assetClass: string) {
+  switch (assetClass) {
+    case "cash":
+      return "Cash";
+    case "crypto":
+      return "Crypto";
+    case "fcn":
+      return "FCN";
+    case "stock":
+      return "Stocks";
+    default:
+      return "Other";
+  }
 }
 
-function themesLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
-  if (!asset) return "待建立";
-  const themes = new Set([
-    ...asset.themes,
-    ...relatedEvents(asset, events).flatMap((event) => event.relatedThemes),
-  ]);
-  return themes.size > 0 ? Array.from(themes).slice(0, 2).join(", ") : "待建立";
+function buildAssetClassCards(valuation: PortfolioValuationResult | null): PortfolioAssetClassCard[] {
+  const summary = valuation?.summary;
+  const allocationByClass = new Map<string, AssetClassValuation>();
+  summary?.assetAllocation.forEach((item) => allocationByClass.set(item.assetClass, item));
+
+  return portfolioAssetClasses.map((assetClass) => {
+    if (assetClass.key === "all") {
+      return {
+        allocation: summary?.positionCount ? "100%" : "暫無資料",
+        icon: assetClass.icon,
+        key: assetClass.key,
+        label: assetClass.label,
+        marketValue: formatCurrency(summary?.totalMarketValue, valuation?.currency),
+        positionCount: String(summary?.positionCount ?? 0),
+        unrealized: formatSignedCurrency(summary?.totalUnrealizedPnl, valuation?.currency),
+      };
+    }
+
+    const allocation = allocationByClass.get(assetClass.key);
+
+    return {
+      allocation: allocation ? `${allocation.allocationPercent.toFixed(0)}%` : "0%",
+      icon: assetClass.icon,
+      key: assetClass.key,
+      label: assetClass.label,
+      marketValue: formatCurrency(allocation?.marketValue, valuation?.currency),
+      positionCount: String(allocation?.positionCount ?? 0),
+      unrealized: formatSignedCurrency(allocation?.unrealizedPnl, valuation?.currency),
+    };
+  });
+}
+
+function buildInsights(valuation: PortfolioValuationResult | null) {
+  const summary = valuation?.summary;
+  const positions = valuation?.positions ?? [];
+  const insights: string[] = [];
+  const topAllocation = summary?.assetAllocation
+    .filter((item) => item.marketValue > 0)
+    .sort((a, b) => b.allocationPercent - a.allocationPercent)[0];
+  const largestPosition = getLargestPosition(positions);
+  const cryptoAllocation = summary?.assetAllocation.find((item) => item.assetClass === "crypto");
+  const fcnAllocation = summary?.assetAllocation.find((item) => item.assetClass === "fcn");
+
+  if (fcnAllocation && fcnAllocation.allocationPercent >= 30) {
+    insights.push(`FCN allocation is high at ${fcnAllocation.allocationPercent.toFixed(0)}%.`);
+  }
+
+  if (largestPosition) {
+    insights.push(`${largestPosition.symbol} contributes the largest exposure.`);
+  }
+
+  if (cryptoAllocation && cryptoAllocation.allocationPercent > 0) {
+    insights.push(`Crypto represents ${cryptoAllocation.allocationPercent.toFixed(0)}% of assets.`);
+  }
+
+  if (topAllocation && insights.length < 3) {
+    insights.push(`${assetClassLabel(topAllocation.assetClass)} is currently the largest asset class.`);
+  }
+
+  if (summary?.unpricedPositionCount) {
+    insights.push(`${summary.unpricedPositionCount} holdings need more data before valuation is complete.`);
+  }
+
+  return insights.length > 0 ? insights.slice(0, 4) : ["No assets yet. Add your first position to see portfolio insights."];
 }
 
 export function PortfolioExperienceWorkspace() {
-  const { t } = useTranslation("productPolish");
-  const [intelligenceGeneratedAt] = useState(() => new Date().toISOString());
   const [valuation, setValuation] = useState<PortfolioValuationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
@@ -136,66 +209,12 @@ export function PortfolioExperienceWorkspace() {
   }, []);
 
   const summary = valuation?.summary;
-  const topAllocation = useMemo(
-    () =>
-      summary?.assetAllocation
-        .filter((item) => item.marketValue > 0)
-        .sort((a, b) => b.marketValue - a.marketValue)[0],
-    [summary],
-  );
-  const riskStatus =
-    !summary || summary.positionCount === 0
-      ? "暫無資料"
-      : summary.unpricedPositionCount > 0 || summary.sourceStatus !== "live"
-        ? "需要留意"
-        : "穩定";
-  const intelligenceGeneratedAtValue = summary?.updatedAt ?? intelligenceGeneratedAt;
-  const assetIntelligence = useMemo(
-    () =>
-      getAssetIntelligence({
-        generatedAt: intelligenceGeneratedAtValue,
-        portfolioPositions: valuation?.positions ?? [],
-      }),
-    [intelligenceGeneratedAtValue, valuation?.positions],
-  );
-  const monitoringEvents = useMemo(
-    () =>
-      getMonitoringEvents({
-        assets: assetIntelligence,
-        generatedAt: intelligenceGeneratedAtValue,
-      }),
-    [assetIntelligence, intelligenceGeneratedAtValue],
-  );
-  const todayFocus = useMemo(
-    () =>
-      getTodayFocus({
-        assets: assetIntelligence,
-        generatedAt: intelligenceGeneratedAtValue,
-      }),
-    [assetIntelligence, intelligenceGeneratedAtValue],
-  );
-  const notificationPreview = useMemo(
-    () =>
-      getNotificationDeliveryPreview({
-        generatedAt: intelligenceGeneratedAtValue,
-        monitoringEvents,
-      }),
-    [intelligenceGeneratedAtValue, monitoringEvents],
-  );
-  const assetsBySymbol = useMemo(() => {
-    const map = new Map<string, AssetIntelligence>();
-    assetIntelligence.forEach((asset) => {
-      map.set(asset.symbol, asset);
-    });
-    return map;
-  }, [assetIntelligence]);
-  const healthyAssets = assetIntelligence.filter((asset) => asset.health.status === "healthy").length;
-  const warningAssets = assetIntelligence.filter((asset) => asset.health.status === "degraded").length;
-  const criticalEvents = monitoringEvents.filter((event) => event.severity === "critical").length;
-  const relatedNewsCount = assetIntelligence.filter((asset) => asset.newsState.status !== "missing").length;
-  const coverageScore = assetIntelligence.length
-    ? assetIntelligence.reduce((sum, asset) => sum + asset.coverage.score, 0) / assetIntelligence.length
-    : 0;
+  const positions = useMemo(() => valuation?.positions ?? [], [valuation?.positions]);
+  const largestPosition = useMemo(() => getLargestPosition(positions), [positions]);
+  const largestGain = useMemo(() => getLargestGain(positions), [positions]);
+  const largestLoss = useMemo(() => getLargestLoss(positions), [positions]);
+  const assetClassCards = useMemo(() => buildAssetClassCards(valuation), [valuation]);
+  const insights = useMemo(() => buildInsights(valuation), [valuation]);
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -205,256 +224,202 @@ export function PortfolioExperienceWorkspace() {
             { href: "/my-ixai/input", icon: PlusCircle, label: "新增資產" },
             { href: "/my-ixai/risk", icon: ShieldAlert, label: "查看風險", variant: "secondary" },
           ]}
-          eyebrow="我的資產"
+          eyebrow="Portfolio"
           kpis={[
             {
-              description: summary?.positionCount ? "依目前可用資料估算。" : "新增資產後會顯示總資產。",
+              description: summary?.positionCount ? "以目前可用資料估算。" : "新增資產後會顯示總資產。",
               icon: WalletCards,
-              label: t("portfolioTotalAssets"),
+              label: "Estimated Portfolio Value",
               value: formatCurrency(summary?.totalMarketValue, valuation?.currency),
             },
             {
-              description: "目前納入資產頁的持倉數。",
+              description: "今日可估未實現變化。",
+              icon: LineChart,
+              label: "Today's P/L",
+              value: `${formatSignedCurrency(summary?.totalUnrealizedPnl, valuation?.currency)} · ${formatPercent(summary?.totalUnrealizedPnlPercent)}`,
+            },
+            {
+              description: "目前最大的資產部位。",
               icon: BriefcaseBusiness,
-              label: t("portfolioHoldings"),
-              value: String(summary?.positionCount ?? 0),
+              label: "Largest Position",
+              value: describePosition(largestPosition, "value"),
             },
             {
-              description: topAllocation ? "目前占比最高的資產類別。" : "尚未有配置資料。",
-              icon: PieChart,
-              label: t("portfolioAllocation"),
-              value: topAllocation ? `${topAllocation.assetClass.toUpperCase()} ${topAllocation.allocationPercent.toFixed(0)}%` : "暫無資料",
-            },
-            {
-              description: summary?.unpricedPositionCount ? `${summary.unpricedPositionCount} 筆資產需要補資料。` : "目前沒有明顯資料缺口。",
-              icon: ShieldAlert,
-              label: t("dataStatus"),
-              value: riskStatus,
+              description: "持倉中的最大正向與負向變化。",
+              icon: TrendingUp,
+              label: "Largest Gain / Loss",
+              value: `${largestGain?.symbol ?? "暫無"} / ${largestLoss?.symbol ?? "暫無"}`,
             },
           ]}
           side={
             <>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                今日表現
+                How is my money performing?
               </p>
               <p className="mt-3 text-2xl font-semibold text-white">
-                {formatPercent(summary?.totalUnrealizedPnlPercent)}
+                {summary?.positionCount ? `${summary.positionCount} holdings · ${formatPercent(summary.totalUnrealizedPnlPercent)}` : "No assets yet."}
               </p>
               <p className="mt-3 text-sm leading-6 text-white/68">
-                {summary?.positionCount
-                  ? "這裡先呈現資產總覽與今日可用變化，資料來源細節已移到進階診斷。"
-                  : "尚未有完整資產資料。新增資產後，IXAI 會整理總資產、配置與風險。"}
+                Portfolio is about your assets: value, allocation, gains, losses, and holdings. Market events and risk decisions live on their own pages.
               </p>
             </>
           }
-          summary={t("portfolioHeroBody")}
-          title={t("portfolioHeroTitle")}
+          summary="Portfolio answers how your money is performing. It does not duplicate market news or risk decision center content."
+          title="Portfolio: your assets in one view."
         />
 
         {!summary?.positionCount ? (
           <WorkspaceEmptyState
             actionHref="/my-ixai/input"
-            actionLabel={t("emptyPortfolioAction")}
-            body={t("emptyPortfolioBody")}
+            actionLabel="新增第一筆資產"
+            body="No assets yet. Import or add your first portfolio position to see value, allocation, gains, losses, and asset-class summaries."
             icon={PlusCircle}
-            title={t("emptyPortfolioTitle")}
+            title="No assets yet."
           />
         ) : null}
 
         <WorkspaceProductSection
-          action={
-            <Link
-              className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--ixai-border)] bg-white/70 px-3 py-2 text-sm font-semibold text-[var(--ixai-forest)] sm:w-fit"
-              href="/my-ixai/input"
-            >
-              新增資產
-              <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-            </Link>
-          }
-          description="用使用者語言整理資產配置、持倉數、已更新價格與待補資料。"
-          eyebrow="Portfolio Snapshot"
-          title="資產快照"
-        >
-          <WorkspaceKpiGrid
-            items={[
-              {
-                description: topAllocation ? "目前資產配置中最大的類別。" : "新增資產後會顯示配置。",
-                icon: PieChart,
-                label: "配置重點",
-                value: topAllocation ? `${topAllocation.assetClass.toUpperCase()} ${topAllocation.allocationPercent.toFixed(0)}%` : "暫無資料",
-              },
-              {
-                description: "目前已整理的資產筆數。",
-                icon: BarChart3,
-                label: "持倉數",
-                value: String(summary?.positionCount ?? 0),
-              },
-              {
-                description: "可估價的資產筆數。",
-                icon: CandlestickChart,
-                label: "已更新價格",
-                value: String(summary?.pricedPositionCount ?? 0),
-              },
-              {
-                description: "需要補價格或成本資料的資產。",
-                icon: ShieldAlert,
-                label: "待補資料",
-                tone: summary?.unpricedPositionCount ? "warning" : "default",
-                value: String(summary?.unpricedPositionCount ?? 0),
-              },
-            ]}
-          />
-        </WorkspaceProductSection>
-
-        <WorkspaceProductSection
-          description="重用 Asset Intelligence、Monitoring Engine 與 Notification Preview，整理投資組合目前被 AI 監控到的狀態。"
-          eyebrow="Portfolio Intelligence"
-          title="投資組合 Intelligence 摘要"
-        >
-          <WorkspaceKpiGrid
-            items={[
-              { description: "目前資料與監控狀態穩定的資產。", icon: ShieldCheck, label: "健康資產", tone: "success", value: String(healthyAssets) },
-              { description: "需要補資料或持續留意的資產。", icon: ShieldAlert, label: "需要留意", tone: warningAssets > 0 ? "warning" : "default", value: String(warningAssets) },
-              { description: "Monitoring Engine 判定需優先查看的事件。", icon: Bell, label: "優先事件", tone: criticalEvents > 0 ? "critical" : "default", value: String(criticalEvents) },
-              { description: "Today Focus 中與投資組合相關的重點。", icon: Sparkles, label: "Today Focus", value: String(todayFocus.length) },
-              { description: "具備新聞 / editorial coverage 的資產。", icon: Newspaper, label: "相關資訊", value: String(relatedNewsCount) },
-              { description: "整體 coverage foundation 分數。", icon: BarChart3, label: "Coverage", value: formatScore(coverageScore) },
-            ]}
-          />
-        </WorkspaceProductSection>
-
-        <WorkspaceProductSection
-          description="每個 position 只顯示 read-only intelligence 狀態：健康度、監控、coverage、主題、優先級與信心分數。"
-          eyebrow="Position Intelligence"
-          title="持倉 Intelligence"
-        >
-          {valuation?.positions.length ? (
-            <div className="grid gap-3 lg:grid-cols-2">
-              {valuation.positions.slice(0, 8).map((position) => {
-                const asset = assetsBySymbol.get(position.symbol.toUpperCase());
-                return (
-                  <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={position.id}>
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">{position.symbol}</p>
-                        <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{position.name}</p>
-                      </div>
-                      <WorkspaceStatusBadge variant={asset?.health.status === "healthy" ? "healthy" : asset?.health.status === "degraded" ? "warning" : asset?.health.status === "offline" ? "critical" : "unknown"}>
-                        {asset?.health.status === "healthy" ? "Healthy" : asset?.health.status === "degraded" ? "Warning" : asset?.health.status === "offline" ? "Critical" : "Unknown"}
-                      </WorkspaceStatusBadge>
-                    </div>
-                    <div className="mt-4 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)] sm:grid-cols-2">
-                      <p>監控狀態：{monitoringLabel(asset, monitoringEvents)}</p>
-                      <p>Coverage：{formatScore(asset?.coverage.score)}</p>
-                      <p>Related Themes：{themesLabel(asset, monitoringEvents)}</p>
-                      <p>Priority：{priorityLabel(asset, monitoringEvents)}</p>
-                      <p>Confidence：{formatScore(asset?.quality.confidence)}</p>
-                      <p>Last Updated：{formatTime(asset?.lastUpdated)}</p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          ) : (
-            <WorkspaceEmptyState
-              actionHref="/my-ixai/input"
-              actionLabel="新增資產"
-              body="新增 Portfolio position 後，IXAI 會在這裡顯示 Asset Health、Monitoring Status、Editorial Coverage 與 Priority。"
-              icon={Sparkles}
-              title="尚未建立持倉 Intelligence"
-            />
-          )}
-        </WorkspaceProductSection>
-
-        <WorkspaceProductSection
-          description="今日需要注意與最近變化先用友善空狀態呈現，進階資料狀態放在頁尾。"
-          eyebrow={t("todaySummary")}
-          title="今天需要注意"
-        >
-          <div className="grid gap-3 md:grid-cols-2">
-            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-              <p className="text-sm font-semibold text-[var(--ixai-forest)]">資料完整度</p>
-              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                {summary?.unpricedPositionCount
-                  ? `${summary.unpricedPositionCount} 筆資產需要補齊價格、成本或數量，才會讓風險與估值更完整。`
-                  : "目前沒有需要立即處理的資料缺口。"}
-              </p>
-            </article>
-            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-              <p className="text-sm font-semibold text-[var(--ixai-forest)]">最近變化</p>
-              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                {isLoading
-                  ? "正在整理資產資料。"
-                  : "最近新增與輸入紀錄保留在下方，方便回到原始輸入檢查。"}
-              </p>
-            </article>
-          </div>
-        </WorkspaceProductSection>
-
-        <WorkspaceProductSection
-          description="保留原有 holdings / allocation 入口，但不把 technical source 放在主要區塊前面。"
-          eyebrow="Holdings / Allocation"
+          description="All Assets, FCN, Stocks, ETF, Crypto, and Cash stay inside Portfolio as asset classes."
+          eyebrow="Asset Classes"
           title="資產類別"
         >
-          <div className="grid gap-3 md:grid-cols-3">
-            {[
-              { href: "/my-ixai/input/stock", icon: CandlestickChart, label: "股票 / ETF", text: "新增或檢查股票與 ETF 持倉。" },
-              { href: "/my-ixai/input/crypto", icon: BarChart3, label: "Crypto", text: "整理 crypto 持倉與觀察標的。" },
-              { href: "/my-ixai/input/fcn", icon: ShieldAlert, label: "FCN", text: "新增 FCN 後可在 FCN 風險頁追蹤 KI 與觀察日。" },
-            ].map((item) => {
-              const Icon = item.icon;
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {assetClassCards.map((card) => {
+              const Icon = card.icon;
               return (
-                <Link
-                  className="group rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4 transition hover:-translate-y-0.5 hover:bg-white/86"
-                  href={item.href}
-                  key={item.href}
-                >
-                  <Icon className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
-                  <p className="mt-3 text-base font-semibold text-[var(--ixai-forest)]">{item.label}</p>
-                  <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.text}</p>
-                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--ixai-forest)]">
-                    開啟
-                    <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)] transition group-hover:translate-x-0.5" aria-hidden="true" />
-                  </span>
-                </Link>
+                <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={card.key}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-base font-semibold text-[var(--ixai-forest)]">{card.label}</p>
+                      <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{card.positionCount} positions</p>
+                    </div>
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.86)]">
+                      <Icon className="h-5 w-5 text-[var(--ixai-gold)]" aria-hidden="true" />
+                    </span>
+                  </div>
+                  <div className="mt-4 grid gap-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                    <p>Allocation: <span className="font-semibold text-[var(--ixai-forest)]">{card.allocation}</span></p>
+                    <p>Market value: <span className="font-semibold text-[var(--ixai-forest)]">{card.marketValue}</span></p>
+                    <p>Unrealized P/L: <span className="font-semibold text-[var(--ixai-forest)]">{card.unrealized}</span></p>
+                  </div>
+                </article>
               );
             })}
           </div>
         </WorkspaceProductSection>
 
-        <RecentInputsPanel />
+        <WorkspaceProductSection
+          description="Insights explain the portfolio shape without becoming market news or risk alerts."
+          eyebrow="Insights"
+          title="Portfolio insights"
+        >
+          <div className="grid gap-3 lg:grid-cols-2">
+            {insights.map((insight) => (
+              <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={insight}>
+                <p className="text-sm font-semibold text-[var(--ixai-forest)]">{insight}</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                  Why this matters: it changes how concentrated, diversified, or complete your asset picture is.
+                </p>
+              </article>
+            ))}
+          </div>
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="A lightweight allocation view before the detailed holdings list."
+          eyebrow="Allocation"
+          title="配置視覺化"
+        >
+          <div className="grid gap-3">
+            {(summary?.assetAllocation ?? []).length > 0 ? (
+              summary?.assetAllocation.map((item) => (
+                <div className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={item.assetClass}>
+                  <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[var(--ixai-forest)]">
+                    <span>{assetClassLabel(item.assetClass)}</span>
+                    <span>{item.allocationPercent.toFixed(1)}%</span>
+                  </div>
+                  <div className="mt-3 h-3 overflow-hidden rounded-full bg-[rgba(9,41,31,0.08)]">
+                    <div
+                      className="h-full rounded-full bg-[var(--ixai-gold)]"
+                      style={{ width: `${Math.min(Math.max(item.allocationPercent, 0), 100)}%` }}
+                    />
+                  </div>
+                  <p className="mt-2 text-sm text-[var(--ixai-forest-soft)]">
+                    {formatCurrency(item.marketValue, valuation?.currency)} · {item.positionCount} positions
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                No allocation yet. Add assets to see how your portfolio is distributed.
+              </p>
+            )}
+          </div>
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="Detailed holdings stay on Portfolio. They should not appear on Markets or Risk."
+          eyebrow="Holdings"
+          title="Detailed holdings"
+        >
+          {positions.length > 0 ? (
+            <div className="overflow-hidden rounded-lg border border-[var(--ixai-border)] bg-white/68">
+              <div className="grid grid-cols-[1.2fr_0.8fr_0.8fr] gap-3 border-b border-[var(--ixai-border)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)] md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]">
+                <span>Asset</span>
+                <span>Class</span>
+                <span>Value</span>
+                <span className="hidden md:block">Unrealized</span>
+                <span className="hidden md:block">Allocation</span>
+              </div>
+              {positions.slice(0, 12).map((position) => (
+                <article className="grid grid-cols-[1.2fr_0.8fr_0.8fr] gap-3 border-b border-[var(--ixai-border)] px-4 py-3 text-sm last:border-b-0 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]" key={position.id}>
+                  <span>
+                    <span className="block font-semibold text-[var(--ixai-forest)]">{position.symbol}</span>
+                    <span className="block text-xs text-[var(--ixai-forest-soft)]">{position.name}</span>
+                  </span>
+                  <span className="text-[var(--ixai-forest-soft)]">{assetClassLabel(position.assetClass)}</span>
+                  <span className="font-semibold text-[var(--ixai-forest)]">{formatCurrency(position.marketValue, position.currency)}</span>
+                  <span className="hidden text-[var(--ixai-forest-soft)] md:block">{formatSignedCurrency(position.unrealizedPnl, position.currency)}</span>
+                  <span className="hidden text-[var(--ixai-forest-soft)] md:block">{position.allocationPercent.toFixed(1)}%</span>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <WorkspaceEmptyState
+              actionHref="/my-ixai/input"
+              actionLabel="新增資產"
+              body="No holdings yet. Add a stock, ETF, crypto, FCN, or cash position to start building your asset dashboard."
+              icon={PlusCircle}
+              title="No holdings yet."
+            />
+          )}
+        </WorkspaceProductSection>
+
+        {isLoading ? (
+          <WorkspaceStateMessage
+            body="Portfolio is organizing your assets. Missing pieces will appear as clear empty states."
+            variant="no-data"
+          />
+        ) : null}
 
         {!isLoading && summary?.positionCount && summary.unpricedPositionCount > 0 ? (
           <WorkspaceStateMessage
-            body={`${summary.unpricedPositionCount} 筆資產缺少價格或成本資料，Portfolio Intelligence 會先以 limited coverage 顯示。`}
+            body={`${summary.unpricedPositionCount} holdings need more price, cost, or quantity data before Portfolio is complete.`}
             variant="no-coverage"
           />
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="資產資料、估值與更新狀態">
-          <WorkspaceProductSection
-            description="Portfolio Intelligence diagnostics 只顯示 read-only 狀態，不觸發通知或交易。"
-            eyebrow="Portfolio Diagnostics"
-            title="投資組合 Intelligence 診斷"
-          >
-            <WorkspaceKpiGrid
-              items={[
-                { description: "Asset Intelligence 建立的資產數。", icon: WalletCards, label: "Assets", value: String(assetIntelligence.length) },
-                { description: "Monitoring Engine 產生的事件數。", icon: Bell, label: "Events", value: String(monitoringEvents.length) },
-                { description: "Notification Platform preview 項目。", icon: Sparkles, label: "Preview", value: String(notificationPreview.notifications.length) },
-                { description: "整體 coverage。", icon: BarChart3, label: "Coverage", value: formatScore(coverageScore) },
-              ]}
-            />
-          </WorkspaceProductSection>
+        <WorkspaceDiagnosticsPanel description="asset data completeness and advanced checks">
           <PortfolioTruthSummary />
           <PortfolioPersistenceSummary />
           <PortfolioValuationSummary />
           <LivePortfolioValuationCard />
           <WorkspaceMarketStatus contextLabel="Portfolio Center" />
+          <RecentInputsPanel />
         </WorkspaceDiagnosticsPanel>
 
         <p className="rounded-lg border border-[var(--ixai-border)] bg-white/55 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
-          IXAI 提供投資監控與風險 awareness，不提供買賣建議、持有建議或目標價。
+          IXAI provides monitoring and awareness. It does not provide buy, sell, hold, target price, or trading instructions.
         </p>
       </section>
     </main>

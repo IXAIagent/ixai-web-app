@@ -6,6 +6,133 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V19E — Workspace UX Review & Beta QA
+
+Why:
+
+- After Sprint D, IXAI needed a Workspace-wide product QA pass before treating V19 as Beta-ready.
+
+What Changed:
+
+- Added `docs/V19E_WORKSPACE_BETA_QA.md`.
+- Audited Today, Portfolio, Markets, Risk, Timeline, Morning Brief, Notifications, Intelligence, Copilot, and FCN against the V19 page missions.
+- Recorded overall UX score, page-by-page PASS / FAIL results, engineering wording audit, visual consistency review, mobile source review, empty/loading/error state review, accessibility source review, Top 20 findings, and Go / No-Go checklist.
+- Updated `ROADMAP` and `PROJECT_CONTEXT`.
+
+Key Decisions:
+
+- V19E is QA / documentation only.
+- Beta readiness verdict is Near Ready.
+- Authenticated browser visual QA and production console/network QA remain required before broad release.
+- No API, DB, auth, business logic, market provider, scheduler, AI model, FCN engine, risk engine, trading, recommendation, notification delivery, or billing behavior was changed.
+
+## V19 Sprint D — Workspace Final Polish
+
+Why:
+
+- After Sprint C, the main Workspace surfaces needed one final consistency pass for hero hierarchy, cards, loading, empty states, error language, mobile-friendly spacing, and Advanced placement.
+
+What Changed:
+
+- Standardized shared Workspace product hero spacing, side-card padding, KPI wrapping, and loading / state-message language.
+- Polished Portfolio, FCN, Markets, Risk, Timeline, Morning Brief, Notifications, Intelligence, and Copilot copy so first-screen content uses user language.
+- Kept provider, runtime, cache, readback, diagnostics, engine status, placeholders, and technical details in Advanced / 進階資訊.
+- Added `docs/V19D_WORKSPACE_FINAL_POLISH.md`.
+- Updated `ROADMAP` and `PROJECT_CONTEXT`.
+
+Key Decisions:
+
+- Every Workspace page follows primary cards, secondary cards, then collapsed Advanced.
+- Empty states should explain what will appear later and what the user can do next.
+- Error states should describe unavailable or incomplete user-facing information, not provider/fetch/runtime internals.
+- No API, DB, auth, business logic, market provider, scheduler, AI model, FCN engine, risk engine, trading, recommendation, notification delivery, or billing behavior was changed.
+
+## V19 Sprint C — Intelligence & Copilot Redesign
+
+Why:
+
+- After Sprint B, Intelligence and Copilot still needed to move away from engineering-dashboard framing.
+
+What Changed:
+
+- Redesigned Intelligence to answer "What does today's market mean for my portfolio?"
+- Redesigned Copilot to center on a large prompt, suggested questions, and clean conversation layout.
+- Added `docs/V19C_INTELLIGENCE_COPILOT_REDESIGN.md`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and route metadata for Intelligence / Copilot.
+
+Key Decisions:
+
+- Intelligence should show market meaning, portfolio impact, confidence, and things worth monitoring, not engine cards or provider state.
+- Copilot should behave like an assistant question interface, not a runtime or safe-shell status page.
+- Existing manual summary behavior remains, but technical context is moved into Advanced.
+- No API, DB, auth, AI model, market provider, scheduler, business logic, FCN engine, risk engine, notification delivery, trading, recommendation, or billing behavior was changed.
+
+## V19 Sprint B — Timeline, Morning Brief & Notifications UX
+
+Why:
+
+- After Today, Portfolio, Markets, and Risk were reoriented around user questions, the remaining information surfaces needed the same product-first treatment.
+
+What Changed:
+
+- Redesigned Timeline to answer "What is happening next?" with Today, Tomorrow, and This Week event groups.
+- Added `components/morning-brief/workspace-morning-brief-experience.tsx` and updated `/my-ixai/morning-brief` to use a narrative report shell.
+- Redesigned Notifications to answer "What requires my attention?" with High, Medium, Information, Completed, and History sections.
+- Added `docs/V19B_TIMELINE_BRIEF_NOTIFICATION_UX.md`.
+- Updated `ROADMAP` and `PROJECT_CONTEXT`.
+
+Key Decisions:
+
+- Timeline is not a system log, provider log, runtime log, or quote failure feed.
+- Morning Brief should read as a narrative report, not raw cards, manual shell, markdown export, or provider output.
+- Notifications communicate user impact and action, not notification-engine or delivery-system state.
+- Provider, runtime, cache, debug, delivery, and diagnostics details remain inside Advanced.
+- No API, DB, auth, market provider, scheduler, Telegram, business logic, AI model, risk engine, FCN engine, or notification delivery behavior was changed.
+
+## V19.1 — Workspace Page Specification & UX Decision Log
+
+Why:
+
+- V19.0 established Workspace UX 2.0 philosophy and information architecture.
+- Future React implementation needs page-level blueprints before UI work begins.
+
+What Changed:
+
+- Added `docs/WORKSPACE_PAGE_SPEC.md`.
+- Added `docs/UX_DECISION_LOG.md`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, `PROJECT_RULES`, `PROJECT_MAP`, `WORKSPACE_UX_20_PRODUCT_GUIDE`, and `WORKSPACE_INFORMATION_ARCHITECTURE`.
+
+Key Decisions:
+
+- Every Workspace page must have one mission, one user question, one first-screen answer, and clear anti-patterns.
+- Today, Portfolio, Markets, Risk, Timeline, Morning Brief, Notifications, and Copilot each have explicit product responsibilities.
+- FCN, Stocks, ETF, Crypto, and Cash remain asset classes under Portfolio.
+- Risk is a decision center, Timeline is for real events, Morning Brief is a readable/shareable narrative, Notifications communicate user impact, and Copilot starts from useful questions.
+- No product code, APIs, routes, engines, DB, auth, schedulers, notifications, market providers, valuation logic, FCN logic, or UI components were changed.
+
+## V19.0 — Workspace Product Architecture & UX 2.0 Foundation
+
+Why:
+
+- V18 completed Workspace Beta integration and validation.
+- The next product risk is not missing engines, but unclear Workspace product architecture and first-screen user value.
+- IXAI needs a product-first IA before additional Workspace UI implementation.
+
+What Changed:
+
+- Added `docs/WORKSPACE_UX_20_PRODUCT_GUIDE.md`.
+- Added `docs/WORKSPACE_INFORMATION_ARCHITECTURE.md`.
+- Updated `docs/IXAI_PRODUCT_PHILOSOPHY.md` with the V19 north star, 30-second understanding rule, 3-minute Morning Brief rule, question-driven workspace principle, progressive disclosure, and engineering-language boundaries.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, `PROJECT_RULES`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V19.0 is docs-only.
+- Workspace should be organized by user tasks: Today, Portfolio, Markets, Risk, Timeline, Notifications, Copilot.
+- Asset classes are a separate layer: FCN, Stocks, ETF, Crypto, Cash, and future asset classes.
+- Platform engines remain behind the product layer and should not dominate first-screen navigation or copy.
+- No React, API, route, business logic, provider, scheduler, notification delivery, AI call, DB schema, migration, trading, recommendation, or billing change was made.
+
 ## V18.4 — End-to-End Beta Validation
 
 Why:

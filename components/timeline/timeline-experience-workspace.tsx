@@ -6,52 +6,83 @@ import { Bell, CalendarClock, Clock3, ShieldAlert } from "lucide-react";
 import { WorkspaceTimelineSummary } from "@/components/workspace/workspace-timeline-summary";
 import {
   WorkspaceDiagnosticsPanel,
+  WorkspaceEmptyState,
   WorkspaceKpiGrid,
   WorkspaceProductHero,
   WorkspaceProductSection,
 } from "@/components/workspace/product";
-import { getWorkspaceTimelineSummary, type WorkspaceTimelineEvent, type WorkspaceTimelineSummary as TimelineSummary } from "@/src/lib/workspace/timeline";
+import {
+  getWorkspaceTimelineSummary,
+  type WorkspaceTimelineEvent,
+  type WorkspaceTimelineSummary as TimelineSummary,
+} from "@/src/lib/workspace/timeline";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
-function formatDate(value: string) {
+function formatEventTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "時間待確認";
   return new Intl.DateTimeFormat("zh-TW", {
-    day: "2-digit",
-    month: "2-digit",
-  }).format(new Date(value));
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
 }
 
 function eventLabel(type: string) {
-  if (type.includes("fcn")) return "FCN";
-  if (type === "alert") return "提醒";
-  if (type === "portfolio") return "資產";
-  if (type === "watchlist") return "市場";
-  return "事件";
+  if (type === "fcn_coupon") return "Coupon Date";
+  if (type === "fcn_maturity") return "Maturity";
+  if (type.includes("observation")) return "FCN Observation";
+  if (type === "alert") return "Reminder";
+  if (type === "portfolio") return "Portfolio";
+  if (type === "watchlist") return "Market";
+  return "Event";
 }
 
-function EventList({ events, empty }: { empty: string; events: WorkspaceTimelineEvent[] }) {
-  if (events.length === 0) {
-    return <p className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">{empty}</p>;
-  }
+function sortEvents(events: WorkspaceTimelineEvent[]) {
+  return [...events]
+    .filter((event) => event.eventType !== "system")
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+}
 
+function EventGroup({
+  empty,
+  events,
+  title,
+}: {
+  empty: string;
+  events: WorkspaceTimelineEvent[];
+  title: string;
+}) {
   return (
-    <div className="grid gap-3 lg:grid-cols-2">
-      {events.slice(0, 8).map((event) => (
-        <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={event.id}>
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <div>
-              <p className="text-base font-semibold text-[var(--ixai-forest)]">{event.title}</p>
-              <p className="mt-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-                {formatDate(event.date)} · {eventLabel(event.eventType)}
-              </p>
-            </div>
-            <span className="rounded-full border border-[var(--ixai-border)] bg-white/70 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
-              {event.daysUntil === 0 ? "今天" : `${event.daysUntil} 天`}
-            </span>
-          </div>
-          <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{event.description}</p>
-        </article>
-      ))}
-    </div>
+    <section className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
+      <h3 className="text-lg font-semibold text-[var(--ixai-forest)]">{title}</h3>
+      <div className="mt-4 grid gap-3">
+        {events.length > 0 ? (
+          events.map((event) => (
+            <article className="grid gap-3 rounded-lg border border-[var(--ixai-border)] bg-[rgba(255,250,240,0.68)] p-4 sm:grid-cols-[5rem_1fr]" key={event.id}>
+              <div className="font-mono text-sm font-semibold text-[var(--ixai-gold)]">
+                {formatEventTime(event.date)}
+              </div>
+              <div>
+                <p className="text-base font-semibold text-[var(--ixai-forest)]">
+                  {event.title}
+                </p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ixai-forest-soft)]">
+                  {eventLabel(event.eventType)}
+                  {event.relatedSymbol ? ` · ${event.relatedSymbol}` : ""}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                  {event.description}
+                </p>
+              </div>
+            </article>
+          ))
+        ) : (
+          <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+            {empty}
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -75,17 +106,19 @@ export function TimelineExperienceWorkspace() {
     };
   }, []);
 
-  const todayEvents = useMemo(
-    () => timeline?.groups.find((group) => group.key === "today")?.events ?? [],
+  const allEvents = useMemo(
+    () => sortEvents(timeline?.groups.flatMap((group) => group.events) ?? []),
     [timeline],
   );
-  const next7Events = useMemo(
-    () => timeline?.groups.find((group) => group.key === "next7Days")?.events ?? [],
-    [timeline],
+  const todayEvents = useMemo(() => allEvents.filter((event) => event.daysUntil === 0), [allEvents]);
+  const tomorrowEvents = useMemo(() => allEvents.filter((event) => event.daysUntil === 1), [allEvents]);
+  const thisWeekEvents = useMemo(
+    () => allEvents.filter((event) => event.daysUntil > 1 && event.daysUntil <= 7),
+    [allEvents],
   );
-  const allEvents = useMemo(() => timeline?.groups.flatMap((group) => group.events) ?? [], [timeline]);
-  const fcnEvents = allEvents.filter((event) => event.eventType.includes("fcn"));
-  const alertEvents = allEvents.filter((event) => event.eventType === "alert");
+  const fcnEvents = useMemo(() => allEvents.filter((event) => event.eventType.includes("fcn")), [allEvents]);
+  const alertEvents = useMemo(() => allEvents.filter((event) => event.eventType === "alert"), [allEvents]);
+  const nextEvent = allEvents[0];
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -93,56 +126,76 @@ export function TimelineExperienceWorkspace() {
         <WorkspaceProductHero
           eyebrow="Timeline"
           kpis={[
-            { description: "今天需要查看的事件。", icon: CalendarClock, label: "Today", value: String(todayEvents.length) },
-            { description: "未來 7 天要留意的事件。", icon: Clock3, label: "Next 7 Days", value: String(next7Events.length) },
-            { description: "FCN observation、coupon、maturity。", icon: ShieldAlert, label: "FCN Events", value: String(fcnEvents.length) },
-            { description: "和提醒相關的日期事件。", icon: Bell, label: "Alerts", value: String(alertEvents.length) },
+            { description: "Events happening today.", icon: CalendarClock, label: "Today", value: String(todayEvents.length) },
+            { description: "Events happening tomorrow.", icon: Clock3, label: "Tomorrow", value: String(tomorrowEvents.length) },
+            { description: "Events in the next seven days.", icon: ShieldAlert, label: "This Week", value: String(thisWeekEvents.length) },
+            { description: "Reminders connected to dated events.", icon: Bell, label: "Reminders", value: String(alertEvents.length) },
           ]}
           side={
             <>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                今天 / 本週
+                What is happening next?
               </p>
-              <p className="mt-3 text-2xl font-semibold text-white">{todayEvents.length + next7Events.length} 個近期事件</p>
+              <p className="mt-3 text-2xl font-semibold text-white">
+                {nextEvent ? nextEvent.title : "No upcoming events"}
+              </p>
               <p className="mt-3 text-sm leading-6 text-white/68">
-                {allEvents.length > 0 ? "先看今天與本週，再往下看 FCN 與資產事件。" : "近期沒有重要事件。"}
+                Timeline shows dated items that help you plan the next thing to watch.
               </p>
             </>
           }
-          summary="把 FCN 觀察日、配息、到期與 dated alerts 整理成今天與本週要看的事件。"
-          title="近期事件：今天和本週要注意什麼。"
+          summary="Timeline answers one question: what is happening next? It keeps dated portfolio, FCN, market, and reminder items in one place."
+          title="Timeline: next events in order."
         />
 
         <WorkspaceProductSection
-          description="用 grouping 呈現，不像 raw timeline dump。"
-          eyebrow="Today / This Week"
-          title="今天與本週"
+          description="Only real date-based user events appear here."
+          eyebrow="Upcoming"
+          title="Today, Tomorrow, This Week"
         >
-          <EventList
-            empty="近期沒有重要事件。新增 FCN、Portfolio 或提醒後，這裡會顯示接下來需要注意的日期。"
-            events={[...todayEvents, ...next7Events]}
-          />
-        </WorkspaceProductSection>
-
-        <WorkspaceProductSection
-          description="保留 observation、coupon、maturity 與 alerts，但用產品事件卡呈現。"
-          eyebrow="Upcoming Events"
-          title="FCN / Portfolio 事件"
-        >
-          <WorkspaceKpiGrid
-            items={[
-              { description: "FCN observation、coupon、maturity。", icon: ShieldAlert, label: "FCN", value: String(fcnEvents.length) },
-              { description: "與提醒相關的日期事件。", icon: Bell, label: "提醒", tone: alertEvents.length > 0 ? "warning" : "default", value: String(alertEvents.length) },
-              { description: "所有近期事件數。", icon: CalendarClock, label: "全部", value: String(allEvents.length) },
-              { description: "今天加未來七天。", icon: Clock3, label: "本週", value: String(todayEvents.length + next7Events.length) },
-            ]}
-          />
-          <div className="mt-4">
-            <EventList empty="目前沒有 FCN 或資產事件。" events={[...fcnEvents, ...alertEvents]} />
+          <div className="grid gap-4">
+            <EventGroup
+              empty="No important events today. You are all caught up."
+              events={todayEvents}
+              title="Today"
+            />
+            <EventGroup
+              empty="No important events tomorrow."
+              events={tomorrowEvents}
+              title="Tomorrow"
+            />
+            <EventGroup
+              empty="No important events later this week."
+              events={thisWeekEvents}
+              title="This Week"
+            />
           </div>
         </WorkspaceProductSection>
 
-        <WorkspaceDiagnosticsPanel description="timeline source、schedule source">
+        <WorkspaceProductSection
+          description="A compact view of event types so the next steps are easy to scan."
+          eyebrow="Event Types"
+          title="What kind of events are coming?"
+        >
+          <WorkspaceKpiGrid
+            items={[
+              { description: "Observation, coupon, or maturity events.", icon: ShieldAlert, label: "FCN", value: String(fcnEvents.length) },
+              { description: "User-facing reminders with dates.", icon: Bell, label: "Reminders", tone: alertEvents.length > 0 ? "warning" : "default", value: String(alertEvents.length) },
+              { description: "All real upcoming events.", icon: CalendarClock, label: "All Events", value: String(allEvents.length) },
+              { description: "Events today through the next seven days.", icon: Clock3, label: "This Week", value: String(todayEvents.length + tomorrowEvents.length + thisWeekEvents.length) },
+            ]}
+          />
+        </WorkspaceProductSection>
+
+        {allEvents.length === 0 ? (
+          <WorkspaceEmptyState
+            body="Add FCN positions, reminders, or watched assets and IXAI will show what is happening next."
+            icon={CalendarClock}
+            title="No upcoming events"
+          />
+        ) : null}
+
+        <WorkspaceDiagnosticsPanel description="schedule details and advanced checks">
           <WorkspaceTimelineSummary />
           <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-xs leading-6 text-[var(--ixai-forest-soft)]">
             {timeline?.informationalOnlyDisclaimer ?? "Timeline uses existing FCN schedule and alert readback only."}

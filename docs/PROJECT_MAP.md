@@ -27,12 +27,17 @@ Role:
 - Highest-level product vision source: `docs/IXAI_PRODUCT_VISION.md`.
 - Highest-level V16 strategy source: `docs/V16_PRODUCT_STRATEGY.md`.
 - Core product positioning: IXAI has two complementary products, AI Financial Media and AI Investment Monitoring.
-- Next major direction: `V16 Product Strategy`.
+- Current major direction: `V19 Workspace Product Architecture & UX 2.0 Foundation`.
 
 Product vision hierarchy:
 
 ```text
 docs/IXAI_PRODUCT_PHILOSOPHY.md
+↓
+docs/WORKSPACE_UX_20_PRODUCT_GUIDE.md
+docs/WORKSPACE_INFORMATION_ARCHITECTURE.md
+docs/WORKSPACE_PAGE_SPEC.md
+docs/UX_DECISION_LOG.md
 ↓
 docs/IXAI_PRODUCT_VISION.md
 ↓
@@ -50,6 +55,19 @@ docs/ROADMAP.md
 ↓
 V15 / V16 implementation docs
 ```
+
+V19 Workspace Product Architecture & UX 2.0:
+
+- Product philosophy source: `docs/IXAI_PRODUCT_PHILOSOPHY.md`.
+- UX 2.0 source: `docs/WORKSPACE_UX_20_PRODUCT_GUIDE.md`.
+- Workspace IA source: `docs/WORKSPACE_INFORMATION_ARCHITECTURE.md`.
+- Page-level product spec: `docs/WORKSPACE_PAGE_SPEC.md`.
+- UX governance log: `docs/UX_DECISION_LOG.md`.
+- North Star: users should understand today's portfolio, risk, market, and next actions within 30 seconds.
+- Top-level user-task IA: Today, Portfolio, Markets, Risk, Timeline, Notifications, Copilot.
+- Asset layer: FCN, Stocks, ETF, Crypto, Cash, and future asset classes.
+- Platform engine layer: Market Engine, Risk Engine, Valuation Engine, Timeline Engine, Alert Engine, Intelligence Engine, Copilot Engine.
+- V19.0 / V19.1 are docs-only. No React, API, route, engine, provider, scheduler, DB, migration, auth, notification delivery, trading, recommendation, or billing changes.
 
 V16 Product Strategy:
 
