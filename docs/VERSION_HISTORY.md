@@ -6,6 +6,26 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V19E — Workspace UX Review & Beta QA
+
+Why:
+
+- After Sprint D, IXAI needed a Workspace-wide product QA pass before treating V19 as Beta-ready.
+
+What Changed:
+
+- Added `docs/V19E_WORKSPACE_BETA_QA.md`.
+- Audited Today, Portfolio, Markets, Risk, Timeline, Morning Brief, Notifications, Intelligence, Copilot, and FCN against the V19 page missions.
+- Recorded overall UX score, page-by-page PASS / FAIL results, engineering wording audit, visual consistency review, mobile source review, empty/loading/error state review, accessibility source review, Top 20 findings, and Go / No-Go checklist.
+- Updated `ROADMAP` and `PROJECT_CONTEXT`.
+
+Key Decisions:
+
+- V19E is QA / documentation only.
+- Beta readiness verdict is Near Ready.
+- Authenticated browser visual QA and production console/network QA remain required before broad release.
+- No API, DB, auth, business logic, market provider, scheduler, AI model, FCN engine, risk engine, trading, recommendation, notification delivery, or billing behavior was changed.
+
 ## V19 Sprint D — Workspace Final Polish
 
 Why:
