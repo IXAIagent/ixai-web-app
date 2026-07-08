@@ -1,30 +1,37 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Bell, Eye, LineChart, Newspaper, Plus, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
+import {
+  Bell,
+  CalendarClock,
+  Eye,
+  Globe2,
+  Landmark,
+  LineChart,
+  Newspaper,
+  Plus,
+  Radio,
+  ShieldCheck,
+} from "lucide-react";
 
 import { WatchlistSummary } from "@/components/watchlist/watchlist-summary";
 import {
   WorkspaceDiagnosticsPanel,
+  WorkspaceEmptyState,
   WorkspaceKpiGrid,
   WorkspaceLoadingCard,
   WorkspaceProductHero,
   WorkspaceProductSection,
   WorkspaceStateMessage,
-  WorkspaceStatusBadge,
 } from "@/components/workspace/product";
 import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
 import type { AssetIntelligence } from "@/src/lib/intelligence/assets";
 import { getMonitoringEvents, getTodayFocus } from "@/src/lib/intelligence/monitoring";
 import type { MonitoringEvent } from "@/src/lib/intelligence/monitoring";
-import { getNotificationDeliveryPreview } from "@/src/lib/intelligence/notifications";
-import {
-  getWatchlistPersistenceSummary,
-  type WatchlistPersistenceSummary,
-} from "@/src/lib/watchlist/persistence";
+import { getWatchlistPersistenceSummary } from "@/src/lib/watchlist/persistence/watchlist-persistence-service";
+import type { WatchlistPersistenceSummary } from "@/src/lib/watchlist/persistence/watchlist-persistence-types";
 import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
-import type { WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
+import type { WorkspaceWatchlistItemReadback, WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 function formatPrice(value: number | null | undefined, currency = "USD") {
@@ -36,10 +43,14 @@ function formatPrice(value: number | null | undefined, currency = "USD") {
   }).format(value);
 }
 
-function marketStatus(summary: WorkspaceWatchlistSummary | null) {
-  if (!summary) return "準備中";
-  if ((summary.missingQuoteCount ?? 0) > 0 || summary.unquotedItemCount > 0) return "部分可用";
-  return "已更新";
+function formatTime(value: string | null | undefined) {
+  if (!value) return "待更新";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "待更新";
+  return new Intl.DateTimeFormat("zh-TW", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
 }
 
 function formatScore(value: number | null | undefined) {
@@ -52,20 +63,24 @@ function relatedEvents(asset: AssetIntelligence | null | undefined, events: Moni
   return events.filter((event) => event.assetId === asset.id || event.relatedAssetIds.includes(asset.id));
 }
 
-function priorityLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
-  const priority = relatedEvents(asset, events).reduce(
-    (max, event) => Math.max(max, event.priorityScore),
-    0,
-  );
-  return priority > 0 ? String(priority) : "一般";
+function whyWatchlistMatters(item: WorkspaceWatchlistItemReadback, asset: AssetIntelligence | undefined, events: MonitoringEvent[]) {
+  const eventCount = relatedEvents(asset, events).length;
+
+  if (eventCount > 0) {
+    return `${item.symbol} has ${eventCount} monitoring signals connected to today's market context.`;
+  }
+
+  if (item.quoteStatus !== "available") {
+    return `${item.symbol} needs a market update before IXAI can explain today's movement.`;
+  }
+
+  return `${item.symbol} is ready for market tracking. Add alerts or review related news when available.`;
 }
 
-function monitoringLabel(asset: AssetIntelligence | null | undefined, events: MonitoringEvent[]) {
-  const eventsForAsset = relatedEvents(asset, events);
-  if (!asset) return "等待資料";
-  if (eventsForAsset.some((event) => event.severity === "critical")) return "優先查看";
-  if (eventsForAsset.some((event) => event.severity === "warning")) return "正在監控";
-  return asset.monitoringState.enabled ? "正常監控" : "準備中";
+function marketState(summary: WorkspaceWatchlistSummary | null) {
+  if (!summary?.itemCount) return "No watchlist yet.";
+  if ((summary.missingQuoteCount ?? summary.unquotedItemCount) > 0) return "Some symbols need updates.";
+  return "Your watchlist is ready.";
 }
 
 export function WatchlistExperienceWorkspace() {
@@ -126,14 +141,6 @@ export function WatchlistExperienceWorkspace() {
       }),
     [assetIntelligence, intelligenceGeneratedAtValue],
   );
-  const notificationPreview = useMemo(
-    () =>
-      getNotificationDeliveryPreview({
-        generatedAt: intelligenceGeneratedAtValue,
-        monitoringEvents,
-      }),
-    [intelligenceGeneratedAtValue, monitoringEvents],
-  );
   const assetsBySymbol = useMemo(() => {
     const map = new Map<string, AssetIntelligence>();
     assetIntelligence.forEach((asset) => {
@@ -141,10 +148,8 @@ export function WatchlistExperienceWorkspace() {
     });
     return map;
   }, [assetIntelligence]);
-  const watchlistEvents = monitoringEvents.filter((event) => event.eventType === "watchlist-move").length;
   const newsCoverageCount = assetIntelligence.filter((asset) => asset.newsState.status !== "missing").length;
   const highPriorityCount = monitoringEvents.filter((event) => event.priorityScore >= 70).length;
-  const healthyAssets = assetIntelligence.filter((asset) => asset.health.status === "healthy").length;
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -152,34 +157,59 @@ export function WatchlistExperienceWorkspace() {
         <WorkspaceProductHero
           actions={[
             { href: "/my-ixai/input", icon: Plus, label: "新增追蹤標的" },
-            { href: "/my-ixai/intelligence", icon: LineChart, label: "查看市場摘要", variant: "secondary" },
+            { href: "/my-ixai/morning-brief", icon: Newspaper, label: "閱讀市場摘要", variant: "secondary" },
           ]}
-          eyebrow="Market"
+          eyebrow="Markets"
           kpis={[
-            { description: "目前在 Workspace 追蹤的標的。", icon: Eye, label: "Watched Symbols", value: String(summary?.itemCount ?? 0) },
-            { description: "本頁先顯示狀態，不做交易訊號。", icon: TrendingUp, label: "Movers", value: "觀察中" },
-            { description: "有價格或資料缺口時會提醒。", icon: Bell, label: "Alerts", value: String(missingQuotes) },
-            { description: "資料來源細節放在進階診斷。", icon: LineChart, label: "Market Status", value: marketStatus(summary) },
+            { description: "目前用 Watchlist 代表你的市場關注範圍。", icon: Eye, label: "Watchlist", value: String(summary?.itemCount ?? 0) },
+            { description: "與關注標的相關的高優先級變化。", icon: Bell, label: "Market Movers", value: String(highPriorityCount) },
+            { description: "已有新聞或主題覆蓋的標的。", icon: Newspaper, label: "Market News", value: String(newsCoverageCount) },
+            { description: "下一步會由 Timeline 顯示更完整的事件日程。", icon: CalendarClock, label: "Economic Calendar", value: "觀察中" },
           ]}
           side={
             <>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ixai-gold)]">
-                今天你關注的市場
+                What happened today that affects me?
               </p>
-              <p className="mt-3 text-2xl font-semibold text-white">{summary?.itemCount ?? 0} 個標的</p>
+              <p className="mt-3 text-2xl font-semibold text-white">{marketState(summary)}</p>
               <p className="mt-3 text-sm leading-6 text-white/68">
-                {items.length > 0 ? `${items.slice(0, 3).map((item) => item.symbol).join("、")} 正在整理中。` : "新增 watchlist 後，這裡會整理今日關注標的。"}
+                Markets is about external events: watchlist, market movers, news, and calendar. Portfolio performance stays on Portfolio.
               </p>
             </>
           }
-          summary="把關注標的、行情狀態與需要補資料的地方整理在一起，provider/cache 細節收到底部。"
-          title="市場追蹤：今天你關注的市場。"
+          summary="Markets explains what happened outside your portfolio that may affect your attention today."
+          title="Markets: what moved around you today."
         />
 
+        {!summary?.itemCount ? (
+          <WorkspaceEmptyState
+            actionHref="/my-ixai/input"
+            actionLabel="建立 Watchlist"
+            body="No watchlist yet. Create your watchlist so IXAI can explain which market moves affect you."
+            icon={Plus}
+            title="No market focus yet."
+          />
+        ) : null}
+
         <WorkspaceProductSection
-          description="用使用者語言呈現關注標的，不先顯示 persistence 或 source 狀態。"
-          eyebrow="Watchlist Summary"
-          title="我的關注標的"
+          description="A concise market answer before individual symbols."
+          eyebrow="Today's Market Summary"
+          title="今天市場重點"
+        >
+          <WorkspaceKpiGrid
+            items={[
+              { description: "US market impact will focus on your watched US symbols.", icon: Globe2, label: "US Market", value: items.some((item) => item.assetType === "stock") ? "需留意" : "待建立" },
+              { description: "Taiwan market context appears when related symbols or news are available.", icon: Landmark, label: "Taiwan Market", value: "觀察中" },
+              { description: "Crypto context appears when crypto symbols are watched.", icon: Radio, label: "Crypto", value: items.some((item) => item.assetType === "crypto") ? "需留意" : "待建立" },
+              { description: "Watchlist is the user's personal market lens.", icon: Eye, label: "Watchlist", value: `${summary?.itemCount ?? 0} symbols` },
+            ]}
+          />
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="Every watched symbol explains why it matters instead of only showing a price."
+          eyebrow="Watchlist"
+          title="你關注的市場"
         >
           {items.length > 0 ? (
             <div className="grid gap-3 lg:grid-cols-3">
@@ -192,103 +222,89 @@ export function WatchlistExperienceWorkspace() {
                         <p className="font-mono text-base font-semibold text-[var(--ixai-forest)]">{item.symbol}</p>
                         <p className="mt-1 text-sm text-[var(--ixai-forest-soft)]">{item.name}</p>
                       </div>
-                      <WorkspaceStatusBadge variant={item.quoteStatus === "available" ? "healthy" : "unknown"}>
-                        {item.quoteStatus === "available" ? "Healthy" : "Unknown"}
-                      </WorkspaceStatusBadge>
+                      <span className="rounded-full border border-[var(--ixai-border)] bg-white/72 px-2.5 py-1 text-xs font-semibold text-[var(--ixai-forest-soft)]">
+                        {formatPrice(item.quote?.quote?.price, item.quote?.quote?.currency)}
+                      </span>
                     </div>
-                    <p className="mt-4 text-xl font-semibold text-[var(--ixai-forest)]">
-                      {formatPrice(item.quote?.quote?.price, item.quote?.quote?.currency)}
+                    <p className="mt-4 rounded-lg border border-[var(--ixai-border)] bg-white/56 p-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                      Why it matters: {whyWatchlistMatters(item, asset, monitoringEvents)}
                     </p>
-                    <div className="mt-4 grid gap-2 text-xs leading-5 text-[var(--ixai-forest-soft)]">
-                      <p>Monitoring：{monitoringLabel(asset, monitoringEvents)}</p>
-                      <p>Editorial Highlights：{asset?.newsState.status === "missing" ? "待建立" : "已納入 coverage"}</p>
-                      <p>Coverage：{formatScore(asset?.coverage.score)} · Priority：{priorityLabel(asset, monitoringEvents)}</p>
-                    </div>
-                    {item.note ? <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">{item.note}</p> : null}
+                    <p className="mt-3 text-xs text-[var(--ixai-forest-soft)]">
+                      Coverage {formatScore(asset?.coverage.score)} · Updated {formatTime(item.updatedAt ?? summary?.liveMarketAsOf)}
+                    </p>
                   </article>
                 );
               })}
             </div>
           ) : (
-            <div className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-5">
-              <p className="text-base font-semibold text-[var(--ixai-forest)]">還沒有追蹤標的</p>
-              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                新增股票、ETF 或 Crypto 後，IXAI 會在這裡整理市場追蹤摘要。
-              </p>
-              <Link className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-lg bg-[var(--ixai-forest)] px-3 py-2 text-sm font-semibold text-[var(--ixai-cream)]" href="/my-ixai/input">
-                新增追蹤標的
-                <ArrowRight className="h-4 w-4 text-[var(--ixai-gold)]" aria-hidden="true" />
-              </Link>
-            </div>
+            <WorkspaceEmptyState
+              actionHref="/my-ixai/input"
+              actionLabel="新增追蹤標的"
+              body="No market events today because no symbols are being watched yet."
+              icon={Eye}
+              title="No watchlist yet."
+            />
           )}
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="重用 Asset Intelligence、Monitoring Engine、Today Focus 與 Notification Preview，整理 watchlist 的監控關聯。"
-          eyebrow="Watchlist Intelligence"
-          title="關注標的 Intelligence 摘要"
+          description="Market movers are external events. They do not repeat Portfolio value or allocation."
+          eyebrow="Market Movers"
+          title="今天值得留意的市場變化"
         >
-          <WorkspaceKpiGrid
-            items={[
-              { description: "與 watchlist 標的相關的 monitoring events。", icon: Bell, label: "Watchlist Events", value: String(watchlistEvents || monitoringEvents.length) },
-              { description: "具備 editorial/news coverage 的關注標的。", icon: Newspaper, label: "News Coverage", value: String(newsCoverageCount) },
-              { description: "高優先級監控事件。", icon: Sparkles, label: "Priority", tone: highPriorityCount > 0 ? "warning" : "default", value: String(highPriorityCount) },
-              { description: "目前健康狀態穩定的關注標的。", icon: ShieldCheck, label: "Monitoring Status", tone: "success", value: String(healthyAssets) },
-              { description: "Today Focus 中與 watchlist 相關的重點。", icon: Eye, label: "Today Focus", value: String(todayFocus.length) },
-              { description: "只做通知 preview，不發送外部通知。", icon: LineChart, label: "Preview", value: String(notificationPreview.notifications.length) },
-            ]}
-          />
+          <div className="grid gap-3 lg:grid-cols-3">
+            {(todayFocus.length > 0 ? todayFocus.slice(0, 3) : monitoringEvents.slice(0, 3)).map((event, index) => (
+              <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={`${event.title}-${index}`}>
+                <p className="text-base font-semibold text-[var(--ixai-forest)]">{event.title}</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                  {event.whyItMatters}
+                </p>
+              </article>
+            ))}
+            {todayFocus.length === 0 && monitoringEvents.length === 0 ? (
+              <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)] lg:col-span-3">
+                No market events today. Add watchlist symbols to make this view more useful.
+              </p>
+            ) : null}
+          </div>
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="主卡只顯示關注標的狀態；資料來源細節放在進階診斷。"
-          eyebrow="Market Snapshot"
-          title="行情狀態"
+          description="Market news and calendar remain a market context layer, not a portfolio valuation layer."
+          eyebrow="Market News / Economic Calendar"
+          title="新聞與日程"
         >
           <WorkspaceKpiGrid
             items={[
-              { description: "已有行情的關注標的。", icon: LineChart, label: "可用行情", value: String(summary?.quotedItemCount ?? 0) },
-              { description: "暫時缺少行情的標的。", icon: Bell, label: "待更新", tone: missingQuotes > 0 ? "warning" : "default", value: String(missingQuotes) },
-              { description: "最近可用市場資料時間。", icon: Eye, label: "更新時間", value: summary?.liveMarketAsOf ? new Intl.DateTimeFormat("zh-TW", { hour: "2-digit", minute: "2-digit" }).format(new Date(summary.liveMarketAsOf)) : "待更新" },
+              { description: "具備新聞覆蓋的關注標的。", icon: Newspaper, label: "Relevant News", value: String(newsCoverageCount) },
+              { description: "高優先級市場事件。", icon: Bell, label: "Important Items", tone: highPriorityCount > 0 ? "warning" : "default", value: String(highPriorityCount) },
+              { description: "日程內容會在 Timeline 中完整呈現。", icon: CalendarClock, label: "Calendar", value: "See Timeline" },
             ]}
           />
         </WorkspaceProductSection>
 
         {isLoading ? (
           <WorkspaceLoadingCard
-            body="缺少資料時會保留安全 placeholder，不會顯示交易訊號。"
-            title="正在整理 watchlist"
+            body="正在整理你關注的市場。缺少的部分會用清楚文字說明。"
+            title="正在整理 Markets"
           />
         ) : null}
 
         {!isLoading && missingQuotes > 0 ? (
           <WorkspaceStateMessage
-            body={`${missingQuotes} 個關注標的暫時缺少行情資料，Watchlist Intelligence 會以 limited coverage 顯示。`}
+            body={`${missingQuotes} watched symbols need a market update. They remain visible, but market impact is limited.`}
             variant="provider-unavailable"
           />
         ) : null}
 
-        <WorkspaceDiagnosticsPanel description="watchlist persistence/source、market source">
-          <WorkspaceProductSection
-            description="Watchlist diagnostics 只顯示 read-only intelligence 狀態，不發送通知。"
-            eyebrow="Watchlist Diagnostics"
-            title="Watchlist Intelligence 診斷"
-          >
-            <WorkspaceKpiGrid
-              items={[
-                { description: "Watchlist Asset Intelligence 建立的資產數。", icon: Eye, label: "Assets", value: String(assetIntelligence.length) },
-                { description: "Monitoring Engine 產生的事件數。", icon: Bell, label: "Events", value: String(monitoringEvents.length) },
-                { description: "Notification Platform preview 項目。", icon: Sparkles, label: "Preview", value: String(notificationPreview.notifications.length) },
-                { description: "具備 coverage 的 watchlist 標的。", icon: Newspaper, label: "Coverage", value: String(newsCoverageCount) },
-              ]}
-            />
-          </WorkspaceProductSection>
+        <WorkspaceDiagnosticsPanel description="watchlist storage, market data availability, diagnostics">
           <WatchlistSummary />
           <WorkspaceKpiGrid
             items={[
-              { description: "目前 watchlist 讀取狀態。", icon: Eye, label: "Watchlist Source", value: persistence?.sourceStatus ?? summary?.sourceStatus ?? "unknown" },
-              { description: "已儲存項目數。", icon: Plus, label: "Persisted", value: String(persistence?.persistedItems ?? 0) },
-              { description: "Local fallback 項目數。", icon: Bell, label: "Local / Fallback", value: String((persistence?.localItems ?? 0) + (persistence?.fallbackItems ?? 0)) },
+              { description: "Persisted watchlist items.", icon: Eye, label: "Persisted", value: String(persistence?.persistedItems ?? 0) },
+              { description: "Local or fallback watchlist items.", icon: Bell, label: "Local / Fallback", value: String((persistence?.localItems ?? 0) + (persistence?.fallbackItems ?? 0)) },
+              { description: "Symbols with available quotes.", icon: LineChart, label: "Available Quotes", value: String(summary?.quotedItemCount ?? 0) },
+              { description: "Symbols waiting for quotes.", icon: ShieldCheck, label: "Waiting", value: String(missingQuotes) },
             ]}
           />
         </WorkspaceDiagnosticsPanel>
