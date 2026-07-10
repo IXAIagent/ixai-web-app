@@ -6,6 +6,28 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V20C — Workspace Productization
+
+Why:
+
+- V20A and V20B created the shared intelligence and alert layers, but Workspace pages still needed a product layer that prioritizes, explains, and routes users instead of dumping all available information.
+
+What Changed:
+
+- Added `docs/V20C_WORKSPACE_PRODUCTIZATION.md`.
+- Added `WorkspaceInsightCard` as a shared card primitive for What happened, Why it matters, and Inspect.
+- Refocused Home around Today Focus, Portfolio Health, Critical Alerts, FCN Watch, Market Summary, and Morning Brief Preview.
+- Added V20A/V20B read-only intelligence context to Portfolio, FCN, Markets / Watchlist, Risk, and Notifications.
+- Refined Notifications into Open Alerts, Recent Alerts, Resolved, History, Channel Status, Alert Detail, and Advanced diagnostics.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V20C is product layer only.
+- It reuses V20A Intelligence Platform, V20B Alert Platform, Risk Engine, FCN Engine, Portfolio Truth, Market Provider, Notification Router, and existing Workspace product primitives.
+- Technical details remain in collapsed Advanced sections.
+- No API, DB schema, migration, auth / RLS, provider, scheduler, AI call, notification delivery, trading, recommendation, target price, or billing behavior was added.
+
 ## V20B — Alert & Notification Platform
 
 Why:

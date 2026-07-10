@@ -27,7 +27,7 @@ Role:
 - Highest-level product vision source: `docs/IXAI_PRODUCT_VISION.md`.
 - Highest-level V16 strategy source: `docs/V16_PRODUCT_STRATEGY.md`.
 - Core product positioning: IXAI has two complementary products, AI Financial Media and AI Investment Monitoring.
-- Current major direction: `V20B Alert & Notification Platform`.
+- Current major direction: `V20C Workspace Productization`.
 
 Product vision hierarchy:
 
@@ -87,6 +87,16 @@ V20B Alert & Notification Platform:
 - Integrates with `/my-ixai/notifications` as read-only alert preview.
 - In-app preview is available; Telegram, LINE, email, browser push, and mobile push remain disabled / dry-run only.
 - Does not add API routes, DB schema, migrations, auth changes, providers, schedulers, AI calls, actual notification delivery, trading, recommendation, billing, target price, or V20C UI expansion.
+
+V20C Workspace Productization:
+
+- Source: `docs/V20C_WORKSPACE_PRODUCTIZATION.md`.
+- Purpose: turn V20A and V20B into a clearer Workspace product layer without creating new engines.
+- Touches Workspace Home, Portfolio, FCN, Markets / Watchlist, Risk, and Notifications UI.
+- Adds shared `WorkspaceInsightCard` for cards that answer What happened, Why it matters, and Inspect.
+- Keeps technical details in collapsed Advanced panels.
+- Reuses V20A Intelligence Platform, V20B Alert Platform, existing Portfolio / Risk / FCN / Watchlist read models, and existing Workspace product primitives.
+- Does not add API routes, DB schema, migrations, auth changes, providers, schedulers, AI calls, delivery behavior, trading, recommendations, target prices, billing, or V20D validation.
 
 V19 Workspace Product Architecture & UX 2.0:
 

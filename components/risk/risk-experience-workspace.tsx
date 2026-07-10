@@ -21,18 +21,25 @@ import { RiskEngineSummary } from "@/components/risk/risk-engine-summary";
 import {
   WorkspaceDiagnosticsPanel,
   WorkspaceEmptyState,
+  WorkspaceInsightCard,
   WorkspaceProductHero,
   WorkspaceProductSection,
   WorkspaceStateMessage,
 } from "@/components/workspace/product";
-import { buildEmptyWorkspaceAlertSummary, getWorkspaceAlertSummary } from "@/src/lib/alerts";
-import type { WorkspaceAlertSummary } from "@/src/lib/alerts";
-import { getWorkspacePortfolioRiskSummary } from "@/src/lib/risk/risk-service";
+import {
+  getIntelligenceAlertSnapshot,
+  type IntelligenceAlert,
+  type IntelligenceAlertSnapshot,
+} from "@/src/lib/intelligence/alerts";
+import {
+  buildIntelligencePlatformContext,
+  getIntelligencePlatformSnapshot,
+} from "@/src/lib/intelligence/platform";
 import type { PortfolioRiskResult, RiskSignal } from "@/src/lib/risk/risk-engine-types";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 type RiskExperienceData = {
-  alerts: WorkspaceAlertSummary;
+  intelligenceAlerts: IntelligenceAlertSnapshot | null;
   risk: PortfolioRiskResult | null;
 };
 
@@ -101,9 +108,15 @@ function recentRiskHistory(signals: RiskSignal[]) {
     .slice(0, 5);
 }
 
+function alertTone(alert: IntelligenceAlert) {
+  if (alert.severity === "critical" || alert.notificationPriority === "urgent") return "critical" as const;
+  if (alert.severity === "warning" || alert.notificationPriority === "high") return "warning" as const;
+  return "default" as const;
+}
+
 export function RiskExperienceWorkspace() {
   const [data, setData] = useState<RiskExperienceData>({
-    alerts: buildEmptyWorkspaceAlertSummary(),
+    intelligenceAlerts: null,
     risk: null,
   });
   const mountedRef = useRef(false);
@@ -112,16 +125,23 @@ export function RiskExperienceWorkspace() {
     mountedRef.current = true;
 
     async function loadRiskExperience() {
-      const [riskResult, alertsResult] = await Promise.all([
-        runWorkspaceSafe("risk-experience-summary", getWorkspacePortfolioRiskSummary, null),
-        runWorkspaceSafe("risk-experience-alerts", getWorkspaceAlertSummary, buildEmptyWorkspaceAlertSummary()),
-      ]);
+      const result = await runWorkspaceSafe(
+        "risk-experience-intelligence-context",
+        async () => {
+          const context = await buildIntelligencePlatformContext();
+          const platformSnapshot = await getIntelligencePlatformSnapshot({ context });
+          const alertSnapshot = await getIntelligenceAlertSnapshot({ platformSnapshot });
+
+          return {
+            intelligenceAlerts: alertSnapshot,
+            risk: context.portfolioRisk,
+          };
+        },
+        { intelligenceAlerts: null, risk: null } as RiskExperienceData,
+      );
 
       if (!mountedRef.current) return;
-      setData({
-        alerts: alertsResult.data ?? buildEmptyWorkspaceAlertSummary(),
-        risk: riskResult.data,
-      });
+      setData(result.data);
     }
 
     queueMicrotask(() => {
@@ -136,13 +156,17 @@ export function RiskExperienceWorkspace() {
   const summary = data.risk?.summary;
   const signals = useMemo(() => data.risk?.signals ?? [], [data.risk?.signals]);
   const firstSignal = summary?.topSignals[0];
-  const alertCount = data.alerts.criticalCount + data.alerts.highCount + data.alerts.warningCount;
   const concentration = useMemo(() => categorySummary(signals, "concentration"), [signals]);
   const fcnRisk = useMemo(() => categorySummary(signals, "fcn_placeholder"), [signals]);
   const marketRisk = useMemo(() => categorySummary(signals, "market_data"), [signals]);
   const portfolioRisk = useMemo(() => categorySummary(signals, "asset_allocation"), [signals]);
   const dataQuality = useMemo(() => categorySummary(signals, "data_quality"), [signals]);
   const history = useMemo(() => recentRiskHistory(signals), [signals]);
+  const intelligenceRisk = data.intelligenceAlerts?.platformSnapshot.risk;
+  const riskAlerts = (data.intelligenceAlerts?.alerts ?? [])
+    .filter((alert) => alert.ruleFamily === "risk" || alert.ruleFamily === "portfolio" || alert.type === "data-quality")
+    .slice(0, 4);
+  const alertCount = riskAlerts.length;
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -272,24 +296,59 @@ export function RiskExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description="Upcoming risk events come from alerts and recent risk signals. Full scheduling belongs to Timeline."
+          description="Upcoming risk events come from V20 alerts and recent risk signals. Full scheduling belongs to Timeline."
           eyebrow="Upcoming Risk Events"
           title="接下來要留意"
         >
           <div className="grid gap-3 lg:grid-cols-2">
-            {data.alerts.alerts.slice(0, 4).map((alert) => (
-              <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={alert.id}>
-                <p className="text-base font-semibold text-[var(--ixai-forest)]">{alert.title}</p>
-                <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
-                  Why this matters: {alert.message}
-                </p>
-              </article>
+            {riskAlerts.map((alert) => (
+              <WorkspaceInsightCard
+                actionHref="/my-ixai/notifications"
+                actionLabel="Inspect Alert"
+                badge={alert.notificationPriority}
+                badgeVariant={alert.notificationPriority}
+                icon={ShieldAlert}
+                key={alert.id}
+                summary={alert.summary}
+                title={alert.title}
+                tone={alertTone(alert)}
+                why={alert.whyItMatters}
+              />
             ))}
-            {data.alerts.alerts.length === 0 ? (
+            {riskAlerts.length === 0 ? (
               <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)] lg:col-span-2">
                 No upcoming risk events. You are all caught up.
               </p>
             ) : null}
+          </div>
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="Data quality is separated from user action so missing coverage does not look like a market risk."
+          eyebrow="Data Quality"
+          title="哪些只是資料品質問題"
+        >
+          <div className="grid gap-3 lg:grid-cols-3">
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
+              <p className="text-base font-semibold text-[var(--ixai-forest)]">Coverage</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                {intelligenceRisk?.confidence.limitations.length
+                  ? intelligenceRisk.confidence.limitations.slice(0, 2).join(" ")
+                  : "Coverage is sufficient for today's risk summary."}
+              </p>
+            </article>
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
+              <p className="text-base font-semibold text-[var(--ixai-forest)]">Warnings</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                {data.intelligenceAlerts?.platformSnapshot.diagnostics.warningIssues.length ?? 0} advanced warnings are available under diagnostics.
+              </p>
+            </article>
+            <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
+              <p className="text-base font-semibold text-[var(--ixai-forest)]">Readiness</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                {data.intelligenceAlerts?.platformSnapshot.diagnostics.readiness ?? "unknown"}
+              </p>
+            </article>
           </div>
         </WorkspaceProductSection>
 

@@ -18,19 +18,28 @@ import { WatchlistSummary } from "@/components/watchlist/watchlist-summary";
 import {
   WorkspaceDiagnosticsPanel,
   WorkspaceEmptyState,
+  WorkspaceInsightCard,
   WorkspaceKpiGrid,
   WorkspaceLoadingCard,
   WorkspaceProductHero,
   WorkspaceProductSection,
   WorkspaceStateMessage,
 } from "@/components/workspace/product";
+import {
+  getIntelligenceAlertSnapshot,
+  type IntelligenceAlert,
+  type IntelligenceAlertSnapshot,
+} from "@/src/lib/intelligence/alerts";
 import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
 import type { AssetIntelligence } from "@/src/lib/intelligence/assets";
 import { getMonitoringEvents, getTodayFocus } from "@/src/lib/intelligence/monitoring";
 import type { MonitoringEvent } from "@/src/lib/intelligence/monitoring";
+import {
+  buildIntelligencePlatformContext,
+  getIntelligencePlatformSnapshot,
+} from "@/src/lib/intelligence/platform";
 import { getWatchlistPersistenceSummary } from "@/src/lib/watchlist/persistence/watchlist-persistence-service";
 import type { WatchlistPersistenceSummary } from "@/src/lib/watchlist/persistence/watchlist-persistence-types";
-import { getWorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-service";
 import type { WorkspaceWatchlistItemReadback, WorkspaceWatchlistSummary } from "@/src/lib/watchlist/watchlist-types";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
@@ -83,10 +92,17 @@ function marketState(summary: WorkspaceWatchlistSummary | null) {
   return "Your watchlist is ready.";
 }
 
+function alertTone(alert: IntelligenceAlert) {
+  if (alert.severity === "critical" || alert.notificationPriority === "urgent") return "critical" as const;
+  if (alert.severity === "warning" || alert.notificationPriority === "high") return "warning" as const;
+  return "default" as const;
+}
+
 export function WatchlistExperienceWorkspace() {
   const [intelligenceGeneratedAt] = useState(() => new Date().toISOString());
   const [summary, setSummary] = useState<WorkspaceWatchlistSummary | null>(null);
   const [persistence, setPersistence] = useState<WatchlistPersistenceSummary | null>(null);
+  const [alertSnapshot, setAlertSnapshot] = useState<IntelligenceAlertSnapshot | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
 
@@ -97,13 +113,35 @@ export function WatchlistExperienceWorkspace() {
       setIsLoading(true);
       const result = await runWorkspaceSafe(
         "watchlist-experience-load",
-        async () => Promise.all([getWorkspaceWatchlistSummary(), getWatchlistPersistenceSummary()]),
-        [null, null] as [WorkspaceWatchlistSummary | null, WatchlistPersistenceSummary | null],
+        async () => {
+          const [context, persistenceSummary] = await Promise.all([
+            buildIntelligencePlatformContext(),
+            getWatchlistPersistenceSummary(),
+          ]);
+          const platformSnapshot = await getIntelligencePlatformSnapshot({ context });
+          const alertSnapshot = await getIntelligenceAlertSnapshot({ platformSnapshot });
+
+          return {
+            alerts: alertSnapshot,
+            persistence: persistenceSummary,
+            watchlist: context.watchlist,
+          };
+        },
+        {
+          alerts: null,
+          persistence: null,
+          watchlist: null,
+        } as {
+          alerts: IntelligenceAlertSnapshot | null;
+          persistence: WatchlistPersistenceSummary | null;
+          watchlist: WorkspaceWatchlistSummary | null;
+        },
       );
 
       if (!mountedRef.current) return;
-      setSummary(result.data[0]);
-      setPersistence(result.data[1]);
+      setSummary(result.data.watchlist);
+      setPersistence(result.data.persistence);
+      setAlertSnapshot(result.data.alerts);
       setIsLoading(false);
     }
 
@@ -150,6 +188,10 @@ export function WatchlistExperienceWorkspace() {
   }, [assetIntelligence]);
   const newsCoverageCount = assetIntelligence.filter((asset) => asset.newsState.status !== "missing").length;
   const highPriorityCount = monitoringEvents.filter((event) => event.priorityScore >= 70).length;
+  const marketSnapshot = alertSnapshot?.platformSnapshot.market;
+  const marketAlerts = (alertSnapshot?.alerts ?? [])
+    .filter((alert) => alert.ruleFamily === "market" || alert.ruleFamily === "watchlist")
+    .slice(0, 4);
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -204,6 +246,39 @@ export function WatchlistExperienceWorkspace() {
               { description: "Watchlist is the user's personal market lens.", icon: Eye, label: "Watchlist", value: `${summary?.itemCount ?? 0} symbols` },
             ]}
           />
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="Market Overview uses the shared V20 intelligence layer, then lets Watchlist provide symbol-level detail."
+          eyebrow="Market Overview"
+          title="和我有關的市場變化"
+        >
+          <div className="grid gap-3 lg:grid-cols-2">
+            {marketSnapshot?.items.length ? (
+              marketSnapshot.items.slice(0, 4).map((item) => (
+                <WorkspaceInsightCard
+                  actionHref="/my-ixai/watchlist"
+                  actionLabel="Inspect Market"
+                  badge={item.priority}
+                  badgeVariant={item.priority}
+                  icon={Globe2}
+                  key={item.id}
+                  summary={item.summary}
+                  title={item.title}
+                  tone={item.health === "critical" ? "critical" : item.health === "watch" || item.health === "elevated" ? "warning" : "default"}
+                  why={item.whyItMatters}
+                />
+              ))
+            ) : (
+              <WorkspaceEmptyState
+                actionHref="/my-ixai/input"
+                actionLabel="新增追蹤標的"
+                body="No market events today. Add symbols so IXAI can connect external events to what you follow."
+                icon={Globe2}
+                title="No relevant market events."
+              />
+            )}
+          </div>
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
@@ -283,6 +358,37 @@ export function WatchlistExperienceWorkspace() {
           />
         </WorkspaceProductSection>
 
+        <WorkspaceProductSection
+          description="Portfolio exposure stays lightweight here. Detailed value and allocation remain on Portfolio."
+          eyebrow="Portfolio Exposure"
+          title="哪些關注標的可能影響我"
+        >
+          <div className="grid gap-3 lg:grid-cols-2">
+            {marketAlerts.length > 0 ? (
+              marketAlerts.map((alert) => (
+                <WorkspaceInsightCard
+                  actionHref="/my-ixai/notifications"
+                  actionLabel="Inspect Alert"
+                  badge={alert.notificationPriority}
+                  badgeVariant={alert.notificationPriority}
+                  icon={Bell}
+                  key={alert.id}
+                  summary={alert.summary}
+                  title={alert.title}
+                  tone={alertTone(alert)}
+                  why={alert.whyItMatters}
+                />
+              ))
+            ) : (
+              <WorkspaceEmptyState
+                body="No market alert affects your watchlist right now. New market-moving items will appear here."
+                icon={Bell}
+                title="No market alerts today."
+              />
+            )}
+          </div>
+        </WorkspaceProductSection>
+
         {isLoading ? (
           <WorkspaceLoadingCard
             body="正在整理你關注的市場。缺少的部分會用清楚文字說明。"
@@ -305,6 +411,7 @@ export function WatchlistExperienceWorkspace() {
               { description: "Local or fallback watchlist items.", icon: Bell, label: "Local / Fallback", value: String((persistence?.localItems ?? 0) + (persistence?.fallbackItems ?? 0)) },
               { description: "Symbols with available quotes.", icon: LineChart, label: "Available Quotes", value: String(summary?.quotedItemCount ?? 0) },
               { description: "Symbols waiting for quotes.", icon: ShieldCheck, label: "Waiting", value: String(missingQuotes) },
+              { description: "Shared provider and coverage readiness.", icon: Globe2, label: "Readiness", value: alertSnapshot?.platformSnapshot.diagnostics.readiness ?? "unknown" },
             ]}
           />
         </WorkspaceDiagnosticsPanel>

@@ -102,6 +102,14 @@ export function NotificationsExperienceWorkspace() {
     () => alerts.filter((item) => item.notificationPriority === "low"),
     [alerts],
   );
+  const resolvedAlerts = useMemo(
+    () => alerts.filter((item) => item.status === "resolved" || item.status === "archived"),
+    [alerts],
+  );
+  const openAlerts = useMemo(
+    () => alerts.filter((item) => item.status === "open" || item.status === "snoozed" || item.status === "acknowledged"),
+    [alerts],
+  );
   const suppressed = snapshot?.notificationPreview.notifications.filter((item) => item.status === "suppressed") ?? [];
   const pending = snapshot?.notificationPreview.notifications.filter((item) => item.status === "pending") ?? [];
   const topItem = urgentPriority[0] ?? highPriority[0] ?? normalPriority[0] ?? lowPriority[0];
@@ -135,8 +143,8 @@ export function NotificationsExperienceWorkspace() {
         />
 
         <WorkspaceProductSection
-          description={t("urgentSectionDescription", "Urgent and high priority alerts come first and always explain why they matter.")}
-          eyebrow={t("priority", "Priority")}
+          description={t("urgentSectionDescription", "Open urgent and high priority alerts come first and always explain why they matter.")}
+          eyebrow={t("openAlerts", "Open Alerts")}
           title={t("urgentAndHigh", "Urgent / High")}
         >
           <div className="grid gap-3 lg:grid-cols-2">
@@ -153,8 +161,8 @@ export function NotificationsExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description={t("normalSectionDescription", "Normal priority alerts are worth checking, but they do not interrupt the top priority queue.")}
-          eyebrow={t("priority", "Priority")}
+          description={t("normalSectionDescription", "Recent alerts are worth checking, but they do not interrupt the top priority queue.")}
+          eyebrow={t("recentAlerts", "Recent Alerts")}
           title={t("priorityNormal", "Normal")}
         >
           <div className="grid gap-3 lg:grid-cols-2">
@@ -169,13 +177,13 @@ export function NotificationsExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
-          description={t("everythingElseDescription", "Lower priority and suppressed previews stay below attention items.")}
-          eyebrow={t("everythingElse", "Everything Else")}
-          title={t("lowSuppressedPreview", "Low / Suppressed / Channel Preview")}
+          description={t("everythingElseDescription", "Resolved, historical, and channel-readiness items stay below active attention items.")}
+          eyebrow={t("history", "History")}
+          title={t("lowSuppressedPreview", "Resolved / History / Channel Status")}
         >
           <div className="grid gap-4 lg:grid-cols-3">
             <section className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-              <h3 className="text-base font-semibold text-[var(--ixai-forest)]">{t("priorityLow", "Low")}</h3>
+              <h3 className="text-base font-semibold text-[var(--ixai-forest)]">{t("priorityLow", "Low / History")}</h3>
               <div className="mt-3 grid gap-2">
                 {lowPriority.slice(0, 4).map((item) => (
                   <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-3 text-sm text-[var(--ixai-forest-soft)]" key={item.id}>
@@ -186,18 +194,18 @@ export function NotificationsExperienceWorkspace() {
               </div>
             </section>
             <section className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-              <h3 className="text-base font-semibold text-[var(--ixai-forest)]">{t("suppressed", "Suppressed")}</h3>
+              <h3 className="text-base font-semibold text-[var(--ixai-forest)]">{t("resolved", "Resolved")}</h3>
               <div className="mt-3 grid gap-2">
-                {suppressed.slice(0, 4).map((item) => (
+                {resolvedAlerts.slice(0, 4).map((item) => (
                   <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-3 text-sm text-[var(--ixai-forest-soft)]" key={item.id}>
                     {item.title}
                   </p>
                 ))}
-                {suppressed.length === 0 ? <p className="text-sm text-[var(--ixai-forest-soft)]">{t("emptySuppressed", "No alerts are hidden by cooldown right now.")}</p> : null}
+                {resolvedAlerts.length === 0 ? <p className="text-sm text-[var(--ixai-forest-soft)]">{t("emptyResolved", "No resolved alerts yet.")}</p> : null}
               </div>
             </section>
             <section className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4">
-              <h3 className="text-base font-semibold text-[var(--ixai-forest)]">{t("channels", "Channels")}</h3>
+              <h3 className="text-base font-semibold text-[var(--ixai-forest)]">{t("channels", "Channel Status")}</h3>
               <div className="mt-3 grid gap-2">
                 {snapshot?.diagnostics.channelStatus.map((channel) => (
                   <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-3 text-sm text-[var(--ixai-forest-soft)]" key={channel.channel}>
@@ -208,6 +216,25 @@ export function NotificationsExperienceWorkspace() {
               </div>
             </section>
           </div>
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description={t("detailDescription", "A focused alert detail helps you inspect the highest-priority item before looking at the full list.")}
+          eyebrow={t("alertDetail", "Alert Detail")}
+          title={t("topAlert", "Top alert detail")}
+        >
+          {topItem ? (
+            <NotificationCard item={topItem} />
+          ) : (
+            <WorkspaceEmptyState
+              body={t("emptyDetailBody", "No alert requires inspection right now. Open alerts will appear here when they are generated.")}
+              icon={CheckCircle2}
+              title={t("emptyDetailTitle", "Nothing to inspect.")}
+            />
+          )}
+          <p className="mt-3 text-xs leading-5 text-[var(--ixai-forest-soft)]">
+            {t("openCount", "Open alerts")}: {openAlerts.length} · {t("suppressed", "Suppressed")}: {suppressed.length}
+          </p>
         </WorkspaceProductSection>
 
         {!alerts.length ? (
