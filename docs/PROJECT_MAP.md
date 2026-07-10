@@ -27,7 +27,7 @@ Role:
 - Highest-level product vision source: `docs/IXAI_PRODUCT_VISION.md`.
 - Highest-level V16 strategy source: `docs/V16_PRODUCT_STRATEGY.md`.
 - Core product positioning: IXAI has two complementary products, AI Financial Media and AI Investment Monitoring.
-- Current major direction: `V19 Workspace Product Architecture & UX 2.0 Foundation`.
+- Current major direction: `V20A Intelligence Platform`.
 
 Product vision hierarchy:
 
@@ -55,6 +55,22 @@ docs/ROADMAP.md
 ↓
 V15 / V16 implementation docs
 ```
+
+V20A Intelligence Platform:
+
+- Source: `docs/V20A_INTELLIGENCE_PLATFORM.md`.
+- Library: `src/lib/intelligence/platform/`.
+- Purpose: shared request-scoped intelligence data layer for Portfolio, Market, Risk, FCN, Monitoring, and data quality.
+- Exports:
+  - `getIntelligencePlatformSnapshot()`.
+  - `getPortfolioIntelligenceSnapshot()`.
+  - `getMarketIntelligenceSnapshot()`.
+  - `getRiskIntelligenceSnapshot()`.
+  - `getFcnIntelligenceSnapshot()`.
+  - `getTodayFocusV2()`.
+  - `getIntelligencePlatformDiagnostics()`.
+- Reuses V16 Editorial, V17 Asset / Monitoring / Notification / Workspace Intelligence, and existing Portfolio / Risk / FCN / Watchlist read models.
+- Does not add new engines, API routes, DB schema, migrations, auth changes, providers, schedulers, AI calls, notification delivery, trading, recommendation, billing, or major UI.
 
 V19 Workspace Product Architecture & UX 2.0:
 

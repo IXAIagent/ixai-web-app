@@ -6,6 +6,29 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V20A — Intelligence Platform
+
+Why:
+
+- V19 completed Workspace UX 2.0, but future Workspace pages need one shared intelligence data contract instead of each page interpreting Portfolio, Market, Risk, FCN, Monitoring, and provider state independently.
+
+What Changed:
+
+- Added `src/lib/intelligence/platform/`.
+- Added shared Intelligence Platform contracts for domain, source state, health, priority, confidence, and normalized intelligence items.
+- Added request-scoped platform context orchestration that safely reads existing Portfolio, FCN, Watchlist, Editorial Provider, Asset Intelligence, Monitoring, and Notification Preview sources.
+- Added Portfolio, Market, Risk, FCN, Today Focus v2, and Diagnostics snapshot builders.
+- Added `scripts/validate-v20a-intelligence-platform.mjs` and `npm run qa:v20a-intelligence`.
+- Added `docs/V20A_INTELLIGENCE_PLATFORM.md`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V20A is a shared data layer, not a UI redesign.
+- It reuses V16 / V17 / V18 systems and does not create a second Portfolio, Risk, FCN, Monitoring, Market, Morning Brief, or Workspace Intelligence engine.
+- Single source failure is contained as source errors and limited snapshots.
+- No API, DB, migration, auth / RLS, provider, scheduler, AI call, notification delivery, Copilot, trading, recommendation, target price, or billing behavior was added.
+
 ## V19E — Workspace UX Review & Beta QA
 
 Why:

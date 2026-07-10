@@ -24,6 +24,22 @@ AI watches your investments, so you don't have to.
 
 The highest-level product vision sources are `docs/IXAI_PRODUCT_VISION.md` and `docs/V16_PRODUCT_STRATEGY.md`. Read them before starting V16, Daily / Weekly, AI monitoring, asset intelligence, FCN intelligence, Portfolio intelligence, news relevance, alerts, Copilot, or Workspace IA work.
 
+V20A begins the Intelligence Platform phase. V19 completed Workspace Product Architecture & UX 2.0, while V16 / V17 / V18 created and integrated domain/service foundations. V20A now creates a shared intelligence data layer that normalizes Portfolio, Market, Risk, FCN, Monitoring, and data-quality context into one request-scoped snapshot.
+
+V20A source of truth:
+
+- `docs/V20A_INTELLIGENCE_PLATFORM.md`.
+- Library: `src/lib/intelligence/platform/`.
+- Validation: `npm run qa:v20a-intelligence`.
+
+V20A rules:
+
+- Reuse V16 Editorial Intelligence, V17 Asset Intelligence, V17 Monitoring Engine, V17 Notification Platform, V17 Workspace Intelligence, and existing Portfolio / Risk / FCN / Watchlist read models.
+- Do not create a second Portfolio, Risk, FCN, Monitoring, Market, Morning Brief, or Workspace Intelligence engine.
+- Do not add API routes, DB schema, migrations, auth / RLS changes, market providers, scheduler behavior, AI model calls, notification delivery, Copilot behavior, trading, recommendation, target price, or billing.
+- Provider or module failures must degrade intelligence into limited snapshots, not crash the product.
+- No import-time data reads and no global mutable user-data cache.
+
 V19 begins the Workspace Product Architecture & UX 2.0 phase. V16 and V17 created domain/service foundations, and V18 connected them into Workspace UI. V19 now defines how Workspace should feel as a product.
 
 V19 North Star:
