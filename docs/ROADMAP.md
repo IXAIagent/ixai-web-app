@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V19 Workspace Product Architecture & UX 2.0 Foundation`
+`V20A Intelligence Platform`
 
 ## Current Strategic Direction
 
@@ -30,7 +30,27 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V19E — Workspace UX Review & Beta QA after Sprint D completed Workspace final polish.
+Current priority is V20A — Intelligence Platform Foundation after V19 Workspace UX 2.0 completed the product-facing redesign and Beta QA documentation.
+
+V20A creates the shared Workspace intelligence data layer:
+
+- Portfolio Intelligence snapshot.
+- Market Intelligence snapshot.
+- Risk Intelligence snapshot.
+- FCN Intelligence snapshot.
+- Today Focus v2.
+- Intelligence Platform diagnostics.
+
+V20A is a foundation layer only. It reuses V16 Editorial Intelligence, V17 Asset Intelligence, V17 Monitoring Engine, V17 Notification Platform, V17 Workspace Intelligence, and existing Portfolio / Risk / FCN / Watchlist read models. It does not add new engines, providers, schedulers, AI calls, notification delivery, DB schema, migrations, trading, recommendation, billing, or major UI.
+
+Source of truth: `docs/V20A_INTELLIGENCE_PLATFORM.md`.
+
+V20 roadmap:
+
+- V20A — Intelligence Platform Foundation.
+- V20B — Intelligence Alert Foundation.
+- V20C — Productized Intelligence UI Integration.
+- V20D — Authenticated Workspace Beta Validation.
 
 V19.0 is documentation-only. It defines the product philosophy, Workspace UX 2.0 guide, and Workspace information architecture before implementation begins. It does not change React, routes, APIs, engines, providers, schedulers, notifications, database schema, auth, trading, recommendation, or billing.
 
