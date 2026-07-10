@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V20B Alert & Notification Platform`
+`V20C Workspace Productization`
 
 ## Current Strategic Direction
 
@@ -30,7 +30,7 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V20B — Alert & Notification Platform after V20A Intelligence Platform Foundation merged.
+Current priority is V20C — Workspace Productization after V20A Intelligence Platform and V20B Alert & Notification Platform merged.
 
 V20A created the shared Workspace intelligence data layer:
 
@@ -60,12 +60,25 @@ V20B is preview-only. In-app preview is available, while Telegram, LINE, email, 
 
 Source of truth: `docs/V20B_ALERT_NOTIFICATION_PLATFORM.md`.
 
+V20C productizes V20A/V20B into the Workspace UI:
+
+- Home focuses on Today Focus, Portfolio Health, Critical Alerts, FCN Watch, Market Summary, and Morning Brief Preview.
+- Portfolio adds Position Health and Portfolio Risk Summary using shared intelligence / alert snapshots.
+- FCN adds FCN Alerts, Worst-of Overview, KI / KO status, Observation / Coupon Timeline, Upcoming Events, and Data Coverage hierarchy.
+- Markets separates Market Overview, Relevant Symbols, Portfolio Exposure, Market News / Calendar, and Advanced readiness.
+- Risk separates investment risk from data quality and uses V20B alerts for inspection.
+- Notifications reads as Open Alerts, Recent Alerts, Resolved, History, Channel Status, Alert Detail, and Advanced technical diagnostics.
+
+V20C is UI / product layer only. It does not rewrite V20A, V20B, Risk Engine, FCN Engine, Portfolio Truth, Market Provider, Notification Router, API, DB, auth, scheduler, AI, trading, recommendation, target price, billing, or delivery behavior.
+
+Source of truth: `docs/V20C_WORKSPACE_PRODUCTIZATION.md`.
+
 V20 roadmap:
 
-- V20A — Intelligence Platform Foundation.
-- V20B — Alert & Notification Platform.
-- V20C — Productized Intelligence UI Integration.
-- V20D — Authenticated Workspace Beta Validation.
+- V20A — Intelligence Platform Foundation. Completed.
+- V20B — Alert & Notification Platform. Completed.
+- V20C — Workspace Productization. Current.
+- V20D — Authenticated Workspace Beta Validation. Next.
 
 V19.0 is documentation-only. It defines the product philosophy, Workspace UX 2.0 guide, and Workspace information architecture before implementation begins. It does not change React, routes, APIs, engines, providers, schedulers, notifications, database schema, auth, trading, recommendation, or billing.
 

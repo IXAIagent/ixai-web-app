@@ -24,7 +24,7 @@ AI watches your investments, so you don't have to.
 
 The highest-level product vision sources are `docs/IXAI_PRODUCT_VISION.md` and `docs/V16_PRODUCT_STRATEGY.md`. Read them before starting V16, Daily / Weekly, AI monitoring, asset intelligence, FCN intelligence, Portfolio intelligence, news relevance, alerts, Copilot, or Workspace IA work.
 
-V20B continues the Intelligence Platform phase after V20A. V19 completed Workspace Product Architecture & UX 2.0, while V16 / V17 / V18 created and integrated domain/service foundations. V20A created the shared intelligence data layer that normalizes Portfolio, Market, Risk, FCN, Monitoring, and data-quality context into one request-scoped snapshot.
+V20C continues the Intelligence Platform phase after V20A and V20B. V19 completed Workspace Product Architecture & UX 2.0, while V16 / V17 / V18 created and integrated domain/service foundations. V20A created the shared intelligence data layer that normalizes Portfolio, Market, Risk, FCN, Monitoring, and data-quality context into one request-scoped snapshot.
 
 V20A source of truth:
 
@@ -54,6 +54,19 @@ V20B rules:
 - Telegram, LINE, email, browser push, and mobile push remain disabled / dry-run only until a separate delivery implementation and consent / persistence model exists.
 - Do not add API routes, DB schema, migrations, auth / RLS changes, providers, scheduler behavior, AI model calls, actual notification delivery, trading, recommendation, target price, or billing.
 - V20A must not import V20B.
+
+V20C source of truth:
+
+- `docs/V20C_WORKSPACE_PRODUCTIZATION.md`.
+
+V20C rules:
+
+- Productize existing V20A/V20B capabilities in Workspace UI.
+- Home should prioritize Today Focus, Portfolio Health, Critical Alerts, FCN Watch, Market Summary, and Morning Brief Preview.
+- Portfolio, FCN, Markets, Risk, and Notifications should answer user questions before exposing technical details.
+- All provider, cache, runtime, readback, diagnostics, source, availability, fallback, and data-quality details stay in collapsed Advanced unless they are converted into user-facing guidance.
+- Reuse V20A Intelligence Platform, V20B Alert Platform, Risk Engine, FCN Engine, Portfolio Truth, Market Provider, and Notification Router. Do not rewrite or duplicate them.
+- Do not add API routes, DB schema, migrations, auth / RLS changes, providers, scheduler behavior, AI model calls, notification delivery, trading, recommendation, target price, or billing.
 
 V19 begins the Workspace Product Architecture & UX 2.0 phase. V16 and V17 created domain/service foundations, and V18 connected them into Workspace UI. V19 now defines how Workspace should feel as a product.
 

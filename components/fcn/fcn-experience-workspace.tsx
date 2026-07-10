@@ -26,19 +26,27 @@ import {
   WorkspaceStateMessage,
   WorkspaceStatusBadge,
 } from "@/components/workspace/product";
-import { getWorkspaceFcnRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-service";
 import type { FcnPortfolioRiskSummary } from "@/src/lib/fcn/risk/fcn-risk-types";
-import { getWorkspaceFcnScheduleSummary } from "@/src/lib/fcn/schedule/fcn-schedule-service";
 import type { FcnPortfolioScheduleSummary } from "@/src/lib/fcn/schedule/fcn-schedule-types";
+import {
+  getIntelligenceAlertSnapshot,
+  type IntelligenceAlert,
+  type IntelligenceAlertSnapshot,
+} from "@/src/lib/intelligence/alerts";
 import { getAssetIntelligence } from "@/src/lib/intelligence/assets";
 import type { AssetIntelligence } from "@/src/lib/intelligence/assets";
 import { getMonitoringEvents, getTodayFocus } from "@/src/lib/intelligence/monitoring";
 import type { MonitoringEvent } from "@/src/lib/intelligence/monitoring";
 import { getNotificationDeliveryPreview } from "@/src/lib/intelligence/notifications";
+import {
+  buildIntelligencePlatformContext,
+  getIntelligencePlatformSnapshot,
+} from "@/src/lib/intelligence/platform";
 import type { PositionValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-types";
 import { runWorkspaceSafe } from "@/src/lib/workspace/runtime-safety";
 
 type FcnExperienceData = {
+  alerts: IntelligenceAlertSnapshot | null;
   risk: FcnPortfolioRiskSummary | null;
   schedule: FcnPortfolioScheduleSummary | null;
 };
@@ -119,25 +127,39 @@ function fcnSummariesToPortfolioPositions(summary: FcnPortfolioRiskSummary | nul
   }));
 }
 
+function alertTone(alert: IntelligenceAlert) {
+  if (alert.severity === "critical" || alert.notificationPriority === "urgent") return "critical";
+  if (alert.severity === "warning" || alert.notificationPriority === "high") return "warning";
+  return "normal";
+}
+
 export function FcnExperienceWorkspace() {
   const [intelligenceGeneratedAt] = useState(() => new Date().toISOString());
-  const [data, setData] = useState<FcnExperienceData>({ risk: null, schedule: null });
+  const [data, setData] = useState<FcnExperienceData>({ alerts: null, risk: null, schedule: null });
   const mountedRef = useRef(false);
 
   useEffect(() => {
     mountedRef.current = true;
 
     async function loadFcnExperience() {
-      const [riskResult, scheduleResult] = await Promise.all([
-        runWorkspaceSafe("fcn-experience-risk", getWorkspaceFcnRiskSummary, null),
-        runWorkspaceSafe("fcn-experience-schedule", getWorkspaceFcnScheduleSummary, null),
-      ]);
+      const result = await runWorkspaceSafe(
+        "fcn-experience-intelligence-context",
+        async () => {
+          const context = await buildIntelligencePlatformContext();
+          const platformSnapshot = await getIntelligencePlatformSnapshot({ context });
+          const alertSnapshot = await getIntelligenceAlertSnapshot({ platformSnapshot });
+
+          return {
+            alerts: alertSnapshot,
+            risk: context.fcnRisk,
+            schedule: context.fcnSchedule,
+          };
+        },
+        { alerts: null, risk: null, schedule: null } as FcnExperienceData,
+      );
 
       if (!mountedRef.current) return;
-      setData({
-        risk: riskResult.data,
-        schedule: scheduleResult.data,
-      });
+      setData(result.data);
     }
 
     queueMicrotask(() => {
@@ -200,6 +222,10 @@ export function FcnExperienceWorkspace() {
   const observationEvents = monitoringEvents.filter((event) => event.eventType === "fcn-observation").length;
   const couponEvents = monitoringEvents.filter((event) => event.eventType === "fcn-coupon").length;
   const relatedThemes = new Set(monitoringEvents.flatMap((event) => event.relatedThemes));
+  const v20Fcn = data.alerts?.platformSnapshot.fcn;
+  const fcnAlerts = (data.alerts?.alerts ?? [])
+    .filter((alert) => alert.ruleFamily === "fcn" || alert.affectedFcnIds.length > 0)
+    .slice(0, 4);
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -259,8 +285,8 @@ export function FcnExperienceWorkspace() {
           <WorkspaceKpiGrid
             items={[
               { description: "最接近 KI 或資料狀態最需要留意的 Worst-of。", icon: ShieldAlert, label: "Worst-of", tone: highRiskCount > 0 ? "critical" : watchCount > 0 ? "warning" : "default", value: nearestKi(data.risk) },
-              { description: "與 KI 距離相關的注意事項。", icon: CircleAlert, label: "KI Events", tone: fcnKiEvents > 0 ? "warning" : "default", value: String(fcnKiEvents) },
-              { description: "未來觀察日事項。", icon: CalendarDays, label: "Observation", value: String(observationEvents) },
+              { description: "與 KI 距離相關的注意事項。", icon: CircleAlert, label: "KI Events", tone: (v20Fcn?.topRiskFcnIds.length ?? fcnKiEvents) > 0 ? "warning" : "default", value: String(v20Fcn?.topRiskFcnIds.length ?? fcnKiEvents) },
+              { description: "未來觀察日事項。", icon: CalendarDays, label: "Observation", value: String(v20Fcn?.observationEventCount ?? observationEvents) },
               { description: "未來配息事項。", icon: WalletCards, label: "Coupon", value: String(couponEvents) },
               { description: "相關市場主題。", icon: Newspaper, label: "Related Themes", value: String(relatedThemes.size) },
               { description: "Today Focus 中與 FCN 相關的重點。", icon: Sparkles, label: "Today Focus", value: String(todayFocus.length) },
@@ -269,9 +295,43 @@ export function FcnExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
+          description="FCN alerts come from V20B and stay read-only. They explain why an FCN deserves attention."
+          eyebrow="FCN Alerts"
+          title="FCN 重要提醒"
+        >
+          {fcnAlerts.length > 0 ? (
+            <div className="grid gap-3 lg:grid-cols-2">
+              {fcnAlerts.map((alert) => (
+                <article className="rounded-lg border border-[var(--ixai-border)] bg-white/68 p-4" key={alert.id}>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="text-base font-semibold text-[var(--ixai-forest)]">{alert.title}</p>
+                      <p className="mt-2 text-sm leading-6 text-[var(--ixai-forest-soft)]">{alert.summary}</p>
+                    </div>
+                    <WorkspaceStatusBadge variant={alertTone(alert)}>
+                      {alert.notificationPriority}
+                    </WorkspaceStatusBadge>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+                    Why this matters: {alert.whyItMatters}
+                  </p>
+                  <p className="mt-2 text-xs font-semibold text-[var(--ixai-forest)]">
+                    Monitor: {alert.whatToMonitor}
+                  </p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-lg border border-[var(--ixai-border)] bg-white/62 p-4 text-sm leading-6 text-[var(--ixai-forest-soft)]">
+              No FCN alerts right now. Observation, KI/KO, coupon, and data-coverage items will appear here when they matter.
+            </p>
+          )}
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
           description="每檔 FCN 只顯示需要留意的狀態，不提供買賣、持有或目標價建議。"
-          eyebrow="FCN Monitoring"
-          title="每檔 FCN 的監控狀態"
+          eyebrow="Worst-of Overview"
+          title="Worst-of、KI / KO 與資料覆蓋"
         >
           {data.risk?.summaries.length ? (
             <div className="grid gap-3 lg:grid-cols-2">
@@ -321,7 +381,7 @@ export function FcnExperienceWorkspace() {
 
         <WorkspaceProductSection
           description="優先呈現最接近 KI、Worst-of、KO readiness 與資料不足狀態。"
-          eyebrow="Risk Summary"
+          eyebrow="KI / KO Status"
           title="需要留意的 FCN"
         >
           <FcnRiskSummary />
@@ -329,7 +389,7 @@ export function FcnExperienceWorkspace() {
 
         <WorkspaceProductSection
           description="整理 observation、coupon、maturity 與 next 30 days，讓時間壓力先被看見。"
-          eyebrow="Upcoming Schedule"
+          eyebrow="Observation / Coupon Timeline"
           title="觀察日、配息與到期"
         >
           <FcnScheduleSummary />
@@ -346,8 +406,8 @@ export function FcnExperienceWorkspace() {
             </Link>
           }
           description="Positions 先以風險摘要與時間表呈現；更細的資料狀態保留在進階資訊。"
-          eyebrow="Positions"
-          title="FCN Positions"
+          eyebrow="Upcoming Events"
+          title="接下來的 FCN 事件"
         >
           <WorkspaceKpiGrid
             items={[

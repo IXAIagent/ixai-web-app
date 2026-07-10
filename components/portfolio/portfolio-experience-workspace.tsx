@@ -9,6 +9,7 @@ import {
   LineChart,
   PieChart,
   PlusCircle,
+  Radar,
   ShieldAlert,
   TrendingUp,
   WalletCards,
@@ -23,11 +24,23 @@ import { RecentInputsPanel } from "@/components/portfolio/recent-inputs-panel";
 import {
   WorkspaceDiagnosticsPanel,
   WorkspaceEmptyState,
+  WorkspaceInsightCard,
+  WorkspaceKpiGrid,
   WorkspaceProductHero,
   WorkspaceProductSection,
   WorkspaceStateMessage,
 } from "@/components/workspace/product";
-import { getWorkspacePortfolioValuation } from "@/src/lib/portfolio/valuation/portfolio-valuation-service";
+import {
+  getIntelligenceAlertSnapshot,
+  type IntelligenceAlert,
+  type IntelligenceAlertSnapshot,
+} from "@/src/lib/intelligence/alerts";
+import {
+  buildIntelligencePlatformContext,
+  getIntelligencePlatformSnapshot,
+  type IntelligenceHealth,
+  type IntelligenceItem,
+} from "@/src/lib/intelligence/platform";
 import type {
   AssetClassValuation,
   PortfolioValuationResult,
@@ -178,8 +191,30 @@ function buildInsights(valuation: PortfolioValuationResult | null) {
   return insights.length > 0 ? insights.slice(0, 4) : ["No assets yet. Add your first position to see portfolio insights."];
 }
 
+function intelligenceTone(health: IntelligenceHealth | undefined) {
+  if (health === "critical") return "critical" as const;
+  if (health === "elevated" || health === "watch") return "warning" as const;
+  if (health === "healthy") return "success" as const;
+  return "default" as const;
+}
+
+function intelligenceBadge(item: IntelligenceItem) {
+  if (item.priority === "urgent") return "Urgent";
+  if (item.priority === "high") return "High";
+  if (item.health === "critical") return "Critical";
+  if (item.health === "watch" || item.health === "elevated") return "Watch";
+  return "Info";
+}
+
+function alertTone(alert: IntelligenceAlert) {
+  if (alert.severity === "critical" || alert.notificationPriority === "urgent") return "critical" as const;
+  if (alert.severity === "warning" || alert.notificationPriority === "high") return "warning" as const;
+  return "default" as const;
+}
+
 export function PortfolioExperienceWorkspace() {
   const [valuation, setValuation] = useState<PortfolioValuationResult | null>(null);
+  const [alertSnapshot, setAlertSnapshot] = useState<IntelligenceAlertSnapshot | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mountedRef = useRef(false);
 
@@ -189,13 +224,26 @@ export function PortfolioExperienceWorkspace() {
     async function loadValuation() {
       setIsLoading(true);
       const result = await runWorkspaceSafe(
-        "portfolio-experience-valuation",
-        getWorkspacePortfolioValuation,
-        null,
+        "portfolio-experience-intelligence-context",
+        async () => {
+          const context = await buildIntelligencePlatformContext();
+          const platformSnapshot = await getIntelligencePlatformSnapshot({ context });
+          const alertSnapshot = await getIntelligenceAlertSnapshot({ platformSnapshot });
+
+          return {
+            alertSnapshot,
+            valuation: context.portfolioValuation,
+          };
+        },
+        { alertSnapshot: null, valuation: null } as {
+          alertSnapshot: IntelligenceAlertSnapshot | null;
+          valuation: PortfolioValuationResult | null;
+        },
       );
 
       if (!mountedRef.current) return;
-      setValuation(result.data);
+      setValuation(result.data.valuation);
+      setAlertSnapshot(result.data.alertSnapshot);
       setIsLoading(false);
     }
 
@@ -215,6 +263,13 @@ export function PortfolioExperienceWorkspace() {
   const largestLoss = useMemo(() => getLargestLoss(positions), [positions]);
   const assetClassCards = useMemo(() => buildAssetClassCards(valuation), [valuation]);
   const insights = useMemo(() => buildInsights(valuation), [valuation]);
+  const platformPortfolio = alertSnapshot?.platformSnapshot.portfolio;
+  const platformRisk = alertSnapshot?.platformSnapshot.risk;
+  const portfolioAlerts = useMemo(
+    () => (alertSnapshot?.alerts ?? []).filter((alert) => alert.ruleFamily === "portfolio" || alert.ruleFamily === "risk").slice(0, 3),
+    [alertSnapshot?.alerts],
+  );
+  const positionHealth = platformPortfolio?.items.slice(0, 4) ?? [];
 
   return (
     <main className="min-h-screen bg-[var(--ixai-cream)] text-[var(--ixai-forest)]">
@@ -309,6 +364,39 @@ export function PortfolioExperienceWorkspace() {
         </WorkspaceProductSection>
 
         <WorkspaceProductSection
+          description="Position health reuses the shared V20A/V20B intelligence layer. It explains what happened, why it matters, and where to inspect."
+          eyebrow="Position Health"
+          title="持倉健康狀態"
+        >
+          <div className="grid gap-3 lg:grid-cols-2">
+            {positionHealth.length > 0 ? (
+              positionHealth.map((item) => (
+                <WorkspaceInsightCard
+                  actionHref="/my-ixai/portfolio"
+                  actionLabel="Inspect"
+                  badge={intelligenceBadge(item)}
+                  badgeVariant={item.priority}
+                  icon={Radar}
+                  key={item.id}
+                  summary={item.summary}
+                  title={item.title}
+                  tone={intelligenceTone(item.health)}
+                  why={item.whyItMatters}
+                />
+              ))
+            ) : (
+              <WorkspaceEmptyState
+                actionHref="/my-ixai/input"
+                actionLabel="新增資產"
+                body="No position health signals yet. Add holdings so IXAI can connect value, allocation, and risk context."
+                icon={Radar}
+                title="Position health is waiting for assets."
+              />
+            )}
+          </div>
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
           description="Insights explain the portfolio shape without becoming market news or risk alerts."
           eyebrow="Insights"
           title="Portfolio insights"
@@ -322,6 +410,63 @@ export function PortfolioExperienceWorkspace() {
                 </p>
               </article>
             ))}
+          </div>
+        </WorkspaceProductSection>
+
+        <WorkspaceProductSection
+          description="Risk summary stays concise here. The full decision center remains on Risk."
+          eyebrow="Risk Summary"
+          title="資產相關風險"
+        >
+          <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+            <WorkspaceKpiGrid
+              items={[
+                {
+                  description: "Portfolio-related critical items.",
+                  icon: ShieldAlert,
+                  label: "Critical",
+                  tone: (platformRisk?.criticalCount ?? 0) > 0 ? "critical" : "default",
+                  value: String(platformRisk?.criticalCount ?? 0),
+                },
+                {
+                  description: "Items worth monitoring.",
+                  icon: TrendingUp,
+                  label: "Warnings",
+                  tone: (platformRisk?.elevatedCount ?? 0) > 0 ? "warning" : "default",
+                  value: String(platformRisk?.elevatedCount ?? 0),
+                },
+                {
+                  description: "Symbols currently driving the risk picture.",
+                  icon: BriefcaseBusiness,
+                  label: "Top Symbols",
+                  value: platformRisk?.topRiskSymbols.slice(0, 3).join(", ") || "暫無",
+                },
+              ]}
+            />
+            <div className="grid gap-3">
+              {portfolioAlerts.length > 0 ? (
+                portfolioAlerts.map((alert) => (
+                  <WorkspaceInsightCard
+                    actionHref="/my-ixai/risk"
+                    actionLabel="Inspect Risk"
+                    badge={alert.notificationPriority}
+                    badgeVariant={alert.notificationPriority}
+                    icon={ShieldAlert}
+                    key={alert.id}
+                    summary={alert.summary}
+                    title={alert.title}
+                    tone={alertTone(alert)}
+                    why={alert.whyItMatters}
+                  />
+                ))
+              ) : (
+                <WorkspaceEmptyState
+                  body="No elevated portfolio risk today. Risk items will appear here when they affect your assets."
+                  icon={ShieldAlert}
+                  title="No elevated portfolio risk."
+                />
+              )}
+            </div>
           </div>
         </WorkspaceProductSection>
 
