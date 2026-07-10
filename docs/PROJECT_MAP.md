@@ -27,7 +27,7 @@ Role:
 - Highest-level product vision source: `docs/IXAI_PRODUCT_VISION.md`.
 - Highest-level V16 strategy source: `docs/V16_PRODUCT_STRATEGY.md`.
 - Core product positioning: IXAI has two complementary products, AI Financial Media and AI Investment Monitoring.
-- Current major direction: `V20A Intelligence Platform`.
+- Current major direction: `V20B Alert & Notification Platform`.
 
 Product vision hierarchy:
 
@@ -71,6 +71,22 @@ V20A Intelligence Platform:
   - `getIntelligencePlatformDiagnostics()`.
 - Reuses V16 Editorial, V17 Asset / Monitoring / Notification / Workspace Intelligence, and existing Portfolio / Risk / FCN / Watchlist read models.
 - Does not add new engines, API routes, DB schema, migrations, auth changes, providers, schedulers, AI calls, notification delivery, trading, recommendation, billing, or major UI.
+
+V20B Alert & Notification Platform:
+
+- Source: `docs/V20B_ALERT_NOTIFICATION_PLATFORM.md`.
+- Library: `src/lib/intelligence/alerts/`.
+- Validation: `npm run qa:v20b-alert-notification`.
+- Purpose: convert V20A Intelligence Platform snapshots into normalized attention alerts and in-app notification previews.
+- Exports:
+  - `getIntelligenceAlertSnapshot()`.
+  - `getIntelligenceAlerts()`.
+  - `getIntelligenceAlertDiagnostics()`.
+  - `getIntelligenceAlertNotificationPreview()`.
+- Reuses V20A Intelligence Platform and V17 Notification Platform channel routing / suppression / retry contracts.
+- Integrates with `/my-ixai/notifications` as read-only alert preview.
+- In-app preview is available; Telegram, LINE, email, browser push, and mobile push remain disabled / dry-run only.
+- Does not add API routes, DB schema, migrations, auth changes, providers, schedulers, AI calls, actual notification delivery, trading, recommendation, billing, target price, or V20C UI expansion.
 
 V19 Workspace Product Architecture & UX 2.0:
 
