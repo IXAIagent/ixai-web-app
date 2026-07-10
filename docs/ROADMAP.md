@@ -4,7 +4,7 @@ This document is the high-level product continuity layer for IXAI. It should hel
 
 ## Current Version
 
-`V20A Intelligence Platform`
+`V20B Alert & Notification Platform`
 
 ## Current Strategic Direction
 
@@ -30,9 +30,9 @@ IXAI should not drift into being only a brokerage app, generic news platform, fi
 
 ## Current Priority
 
-Current priority is V20A — Intelligence Platform Foundation after V19 Workspace UX 2.0 completed the product-facing redesign and Beta QA documentation.
+Current priority is V20B — Alert & Notification Platform after V20A Intelligence Platform Foundation merged.
 
-V20A creates the shared Workspace intelligence data layer:
+V20A created the shared Workspace intelligence data layer:
 
 - Portfolio Intelligence snapshot.
 - Market Intelligence snapshot.
@@ -45,10 +45,25 @@ V20A is a foundation layer only. It reuses V16 Editorial Intelligence, V17 Asset
 
 Source of truth: `docs/V20A_INTELLIGENCE_PLATFORM.md`.
 
+V20B builds the alert and notification orchestration layer on top of V20A:
+
+- Normalized alert contracts.
+- Deterministic alert rule families.
+- Alert correlation and de-duplication.
+- Alert lifecycle states.
+- Suppression / cooldown metadata.
+- Notification preview events.
+- V17 channel router reuse.
+- `/my-ixai/notifications` read-only alert preview integration.
+
+V20B is preview-only. In-app preview is available, while Telegram, LINE, email, browser push, and mobile push remain disabled. It does not add API routes, DB schema, migrations, auth / RLS changes, providers, scheduler behavior, AI model calls, actual notification delivery, trading, recommendation, target prices, or billing.
+
+Source of truth: `docs/V20B_ALERT_NOTIFICATION_PLATFORM.md`.
+
 V20 roadmap:
 
 - V20A — Intelligence Platform Foundation.
-- V20B — Intelligence Alert Foundation.
+- V20B — Alert & Notification Platform.
 - V20C — Productized Intelligence UI Integration.
 - V20D — Authenticated Workspace Beta Validation.
 

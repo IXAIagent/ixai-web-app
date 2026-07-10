@@ -12,6 +12,7 @@
     "qa:production-authenticated": "node scripts/audit-production-authenticated.mjs",
     "qa:production-runtime-evidence": "node scripts/collect-production-runtime-evidence.mjs",
     "qa:v20a-intelligence": "node scripts/validate-v20a-intelligence-platform.mjs",
+    "qa:v20b-alert-notification": "node scripts/validate-v20b-alert-notification.mjs",
     "qa:visual": "node scripts/qa-visual.mjs"
   },
   "dependencies": {

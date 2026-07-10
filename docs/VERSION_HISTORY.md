@@ -6,6 +6,30 @@ This document is a concise continuity layer for AI handoff. It captures why each
 
 - `docs/AI_MORNING_BRIEF_HISTORY.md`: detailed pre-app history of the Telegram Morning Brief, FCN risk monitor, Binance Grid / Dual monitoring, IXAI Agent, and Public App evolution.
 
+## V20B — Alert & Notification Platform
+
+Why:
+
+- V20A created the shared Intelligence Platform snapshot, but Workspace still needed a single alert layer that can decide what deserves attention, explain why it matters, and preview notification routing without duplicating monitoring or notification engines.
+
+What Changed:
+
+- Added `src/lib/intelligence/alerts/`.
+- Added normalized alert contracts, deterministic rule families, alert priority mapping, correlation, de-duplication, cooldown keys, lifecycle transition helpers, notification preview orchestration, and alert diagnostics.
+- Reuses V20A Intelligence Platform snapshots as the only intelligence input.
+- Reuses V17 Notification Platform channel router, retry metadata, and diagnostics.
+- Updated `/my-ixai/notifications` to show V20B alert preview groups in user language while keeping legacy notification readback inside Advanced with `autoLoad={false}`.
+- Added `scripts/validate-v20b-alert-notification.mjs` and `npm run qa:v20b-alert-notification`.
+- Added `docs/V20B_ALERT_NOTIFICATION_PLATFORM.md`.
+- Updated `ROADMAP`, `PROJECT_CONTEXT`, and `PROJECT_MAP`.
+
+Key Decisions:
+
+- V20B is preview-only. In-app alert preview is available, while Telegram, LINE, email, browser push, and mobile push remain disabled / dry-run only.
+- V20B does not create a second Monitoring Engine, Notification Platform, Channel Router, Workspace Intelligence layer, or DB-backed alert history system.
+- V20A does not import V20B.
+- No API, DB schema, migration, auth / RLS, external provider, scheduler, AI call, actual notification delivery, trading, recommendation, target price, or billing behavior was added.
+
 ## V20A — Intelligence Platform
 
 Why:
